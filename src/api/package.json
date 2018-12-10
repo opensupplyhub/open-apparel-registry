@@ -1,0 +1,36 @@
+{
+	"name": "ursa",
+	"version": "0.0.1",
+	"scripts": {
+		"start": "node src/app.js",
+		"dev": "NODE_ENV=development nodemon --watch src src/app.js",
+		"test": "jest --watchAll",
+		"script": "node scripts/runner.js $1"
+	},
+	"dependencies": {
+		"@mapbox/mapbox-sdk": "^0.4.1",
+		"async": "^2.6.1",
+		"dotenv": "^6.0.0",
+		"fast-csv": "^2.4.1",
+		"fs": "0.0.1-security",
+		"lodash": "^4.17.10",
+		"mongoosastic": "github:sourcemap/mongoosastic",
+		"mongoose": "*",
+		"mongoose-history": "^0.6.0",
+		"raven": "^2.6.3",
+		"restify": "*",
+		"restify-cors-middleware": "^1.1.1",
+		"restify-errors": "^6.1.1",
+		"uuid": "^3.3.2"
+	},
+	"devDependencies": {
+		"axios": "^0.18.0",
+		"babel-polyfill": "^6.26.0",
+		"babel-preset-es2015": "^6.24.1",
+		"babel-register": "^6.26.0",
+		"jest": "^23.1.0",
+		"nodemon": "^1.17.5",
+		"superagent": "^3.8.3",
+		"supertest": "^3.1.0"
+	}
+}

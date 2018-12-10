@@ -1,0 +1,10 @@
+.DS_Store
+/node_modules
+/config/config.json
+factories.csv
+*_factories.csv
+.env
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

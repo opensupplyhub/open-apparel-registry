@@ -1,0 +1,16 @@
+.uploadButton {
+  background: transparent;
+  border: none;
+  color: #1A2779;
+  text-decoration: underline;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.uploadButton:focus {
+  outline: none;
+}
