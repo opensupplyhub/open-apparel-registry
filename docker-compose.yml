@@ -1,0 +1,70 @@
+version: '2.3'
+services:
+  react:
+    image: node:8-slim
+    volumes:
+      - ./src/react:/usr/local/src
+      - $HOME/.aws:/root/.aws:ro
+    env_file: .env.frontend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=2000
+      - PORT=3000
+    ports:
+      - 3000:3000
+    working_dir: /usr/local/src
+    entrypoint: yarn
+    command: run start
+
+  api:
+    image: openapparelregistry-api
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/api/config:/usr/local/src/config
+      - ./src/api/src:/usr/local/src/src
+      - ./src/api/yarn.lock:/usr/local/src/yarn.lock
+      - ./src/api/package.json:/usr/local/src/package.json
+      - $HOME/.aws:/root/.aws:ro
+    env_file: .env.backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=2000
+      - PORT=8000
+    ports:
+      - 8000:8000
+    working_dir: /usr/local/src
+    depends_on:
+        mongo:
+            condition: service_healthy
+        elasticsearch:
+            condition: service_healthy
+    entrypoint: yarn
+    command: run dev
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.4
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    env_file: .env.backend
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    healthcheck:
+      test: curl --silent --fail localhost:9200/_cluster/health || exit 1
+      interval: 3s
+      timeout: 3s
+      retries: 6
+
+  mongo:
+    image: mongo:4.1.6-xenial
+    env_file: .env.backend
+    healthcheck:
+        test: echo 'db.stats().ok' | mongo --quiet
+        interval: 3s
+        timeout: 3s
+        retries: 6

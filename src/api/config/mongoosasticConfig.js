@@ -1,7 +1,7 @@
 module.exports = name => ({
   host: process.env.ES_HOST,
   port: process.env.ES_PORT,
-  protocol: "https",
+  protocol: `${process.env.NODE_ENV === 'development' ? 'http' : 'https'}`,
   auth: process.env.ES_AUTH,
   // hydrate: true,
   // hydrateWithESResults: true,

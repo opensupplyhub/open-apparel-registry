@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0")
+Run tests.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else        
+        # Execute backend tests with Jest
+        docker-compose run --rm \
+            api run test
+
+        # Execute frontend tests with react-scripts
+        docker-compose run --rm \
+            react run test
+    fi
+fi

@@ -3,8 +3,8 @@
 	"version": "0.0.1",
 	"scripts": {
 		"start": "node src/app.js",
-		"dev": "NODE_ENV=development nodemon --watch src src/app.js",
-		"test": "jest --watchAll",
+		"dev": "nodemon -L --watch src src/app.js",
+		"test": "CI=1 jest --forceExit",
 		"script": "node scripts/runner.js $1"
 	},
 	"dependencies": {
@@ -14,11 +14,11 @@
 		"fast-csv": "^2.4.1",
 		"fs": "0.0.1-security",
 		"lodash": "^4.17.10",
-		"mongoosastic": "github:sourcemap/mongoosastic",
-		"mongoose": "*",
+		"mongoosastic": "^4.4.1",
+		"mongoose": "^5.3.15",
 		"mongoose-history": "^0.6.0",
 		"raven": "^2.6.3",
-		"restify": "*",
+		"restify": "7.3.0",
 		"restify-cors-middleware": "^1.1.1",
 		"restify-errors": "^6.1.1",
 		"uuid": "^3.3.2"
