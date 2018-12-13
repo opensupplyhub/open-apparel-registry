@@ -1,0 +1,31 @@
+# Compiled files
+*.tfstate
+*.tfstate.backup
+
+# Module directory
+.terraform/
+
+# Ansible
+deployment/ansible/roles/azavea.*
+*.retry
+
+# Vagrant
+.vagrant
+
+# JS
+node_modules/
+npm-debug.log
+bundle.js
+vendor.bundle.js
+bundle.js.map
+dist/
+yarn-error.log
+
+# macOS
+.DS_Store
+
+# OAR
+.env.backend
+.env.frontend
+factories.csv
+*_factories.csv

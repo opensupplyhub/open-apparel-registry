@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0")
+Build container images and update frontend dependencies.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        # Update backend dependencies
+        docker-compose build --pull \
+            api
+
+        # Update frontend dependencies
+        docker-compose run --rm \
+            react install
+    fi
+fi

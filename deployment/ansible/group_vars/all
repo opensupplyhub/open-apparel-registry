@@ -1,0 +1,8 @@
+---
+aws_cli_version: "1.16.*"
+aws_profile: "open-apparel-registry"
+
+docker_version: "18.*"
+docker_compose_version: "1.21.*"
+docker_users:
+  - "vagrant"
