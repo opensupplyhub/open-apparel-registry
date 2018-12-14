@@ -38,9 +38,13 @@ Vagrant.configure("2") do |config|
     if ! grep -q "cd /vagrant" "/home/vagrant/.bashrc"; then
       echo "cd /vagrant" >> "/home/vagrant/.bashrc"
     fi
+
+    export AWS_PROFILE=open-apparel-registry
+    export OAR_SETTINGS_BUCKET=openapparelregistry-development-config-us-east-1
     
     cd /vagrant
     su vagrant ./scripts/update
+    su vagrant ./scripts/bootstrap
     SHELL
   end
 

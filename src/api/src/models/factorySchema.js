@@ -89,19 +89,5 @@ module.exports = (function factorySchema() {
     }
   });
 
-  // Indexing
-  // let stream = Factory.synchronize();
-  // let count = 0;
-
-  // stream.on('data', (err, doc) => {
-  //   count++;
-  // });
-  // stream.on('close', () => {
-  //   console.log('indexed ' + count + ' Factory documents!');
-  // });
-  // stream.on('error', err => {
-  //   console.log(err);
-  // });
-
   return Factory;
 })();

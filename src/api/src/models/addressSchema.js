@@ -84,19 +84,5 @@ module.exports = (function addressSchema() {
     }
   });
 
-  // // Indexing
-  // let stream = Address.synchronize();
-  // let count = 0;
-
-  // stream.on('data', (err, doc) => {
-  //   count++;
-  // });
-  // stream.on('close', () => {
-  //   console.log('indexed ' + count + ' Address documents!');
-  // });
-  // stream.on('error', err => {
-  //   console.log(err);
-  // });
-
   return Address;
 })();

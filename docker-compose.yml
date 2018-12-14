@@ -49,6 +49,8 @@ services:
       memlock:
         soft: -1
         hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
     env_file: .env.backend
     environment:
       - cluster.name=docker-cluster
@@ -58,13 +60,21 @@ services:
       test: curl --silent --fail localhost:9200/_cluster/health || exit 1
       interval: 3s
       timeout: 3s
-      retries: 6
+      retries: 12
 
   mongo:
     image: mongo:4.1.6-xenial
+    volumes:
+      - mongo_data:/data/db
     env_file: .env.backend
     healthcheck:
         test: echo 'db.stats().ok' | mongo --quiet
         interval: 3s
         timeout: 3s
-        retries: 6
+        retries: 12
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  mongo_data:
+    driver: local

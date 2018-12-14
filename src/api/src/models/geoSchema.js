@@ -89,19 +89,5 @@ module.exports = (function geoSchema() {
     }
   });
 
-  // Indexing
-  // let stream = Geo.synchronize();
-  // let count = 0;
-
-  // stream.on('data', (err, doc) => {
-  //   count++;
-  // });
-  // stream.on('close', () => {
-  //   console.log('indexed ' + count + ' Geo documents!');
-  // });
-  // stream.on('error', err => {
-  //   console.log(err);
-  // });
-
   return Geo;
 })();
