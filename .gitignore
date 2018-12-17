@@ -19,6 +19,7 @@ bundle.js
 vendor.bundle.js
 bundle.js.map
 dist/
+build/
 yarn-error.log
 
 # macOS
