@@ -4,10 +4,9 @@ The Open Apparel Registry (OAR) is a tool to identify every apparel facility wor
 
 * [Requirements](#requirements)
 * [Setup](#setup)
-  * [Setting Development Environment Variables](#setting-development-environment-variables)
+  * [AWS](#aws)
 * [Development](#development)
   * [Hot Reloading 🔥](#hot-reloading-)
-  * [Indexing production database](#indexing-production-database)
   * [Upload a batch of files in for each account](#upload-a-batch-of-files-in-for-each-account)
 * [Ports](#ports)
 * [Scripts](#scripts)
@@ -24,7 +23,12 @@ Setup the project's development environment:
 $ ./scripts/setup
 ```
 
-`setup` will provision a Vagrant VM, using `vboxsf` to mount `./` (relative to `Vagrantfile`) to `/vagrant`, as well as `~/.aws` to `/home/vagrant/.aws`.
+`setup` will:
+
+* provision a Vagrant VM, using `vboxsf` to mount `./` (relative to `Vagrantfile`) to `/vagrant`, as well as `~/.aws` to `/home/vagrant/.aws`.
+* build container images and update frontend dependencies.
+* pull down development environment variables and import database dumps.
+
 
 After running `setup`, you can access the VM by running:
 
@@ -33,9 +37,17 @@ $ vagrant ssh
 vagrant@vagrant:/vagrant$
 ```
 
-## Setting Development Environment Variables
+#### AWS
 
-The `.env.template` file is a template file with environment variables that get injected into running containers during development. This needs to be copied into a file named `.env` and provisioned with a Mapbox API token. 
+Before running `setup`, you need to configure an AWS profile with IAM credentials from the Open Apparel Registry account.
+
+```bash
+$ aws configure --profile open-apparel-registry
+AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+Default region name [None]: us-east-1
+Default output format [None]:
+```
 
 # Development
 
@@ -49,20 +61,14 @@ $ vagrant ssh
 vagrant@vagrant:/vagrant$ ./scripts/server
 ```
 
-## Hot Reloading 🔥
+#### Hot Reloading 🔥
 
 Because the frontend uses [Create React App](https://github.com/facebook/create-react-app/), which integrates with webpack, the page will automatically reload if you make changes to the code. 
 
 In development, the backend uses [Nodemon](https://nodemon.io) to monitor for any source code changes and will automatically restart the API server.
 
-## Indexing production database
-- connect to prod database, update .env file
-- Uncomment indexing code in `addressSchema.js`, `factorySchema.js` and `geoSchema.js`
-- In app.js, comment out `// if (process.env.NODE_ENV === 'development') {` and `// } else if (process.env.NODE_ENV === 'production') { Raven.config(process.env.SENTRY_KEY).install()}`
-- Run $`NODE_ENV=production node src/app.js`
+#### Upload a batch of files in for each account
 
-
-## Upload a batch of files in for each account
 Uncomment `routes.js`, `app.get('/uploadMultipleFiles', temp.uploadMultipleFiles);`
 Create a folder `files` at the root directory, put all the CSV files in it.
 Update `accounts` in `uploadFiles.js` with your uid, file_name, file_description, csv_file_name.
@@ -81,10 +87,14 @@ GET localhost:8000/uploadMultipleFiles
 
 # Scripts
 
-| Name             | Description                                                   |
-| --------------   | ------------------------------------------------------------- |
-| `infra`      	   | Plan and apply remote infrastructure changes 			       |
-| `server`         | Run `docker-compose.yml` services                             |
-| `setup`          | Provision Vagrant VM and run `update`                         |
-| `test`           | Runs tests                                                    |
-| `update`         | Build container images and update frontend dependencies       |
+| Name                   | Description                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `bootstrap`            | Pull (from S3) `.env` files and import database dumps 		                    |
+| `generate_fixed_dumps` | Import database dumps from Sourcemap, run `create_master_account_api_key.js`, and export new database dumps |
+| `infra`      	         | Plan and apply remote infrastructure changes 			                    |
+| `server`               | Run `docker-compose.yml` services                                            |
+| `setup`                | Provision Vagrant VM and run `update`                                        |
+| `test`                 | Run tests                                                                   |
+| `update`               | Build container images and update frontend dependencies                      |
+| `src/api/scripts/create_master_account_api_key.js` | Generate a new API key associated with the UID defined by `MASTER_ACCOUNT` (in `.env.backend`) and print it in the console |
+| `src/api/scripts/synchronize.js` | Index existing `Factory`, `Address`, and `Geo` MongoDB collections for ElasticSearch ([with `.synchronize()`](https://github.com/mongoosastic/mongoosastic#indexing-an-existing-collection)) |
