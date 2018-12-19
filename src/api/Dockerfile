@@ -1,11 +1,5 @@
 FROM node:8-slim
 
-RUN set -ex \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends \
-		python \
-	&& rm -rf /var/lib/apt/lists/*
-
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src
 

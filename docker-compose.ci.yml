@@ -1,0 +1,4 @@
+version: '2.3'
+services:
+  api:
+    image: "openapparelregistry-api:${GIT_COMMIT:-latest}"

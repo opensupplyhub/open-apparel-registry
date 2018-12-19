@@ -4,6 +4,7 @@ services:
     image: node:8-slim
     volumes:
       - ./src/react:/usr/local/src
+      - ./dist:/usr/local/src/build
       - $HOME/.aws:/root/.aws:ro
     env_file: .env.frontend
     environment:

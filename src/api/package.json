@@ -7,6 +7,9 @@
 		"test": "CI=1 jest --forceExit",
 		"script": "node scripts/runner.js $1"
 	},
+	"jest": {
+		"testEnvironment": "node"
+	},
 	"dependencies": {
 		"@mapbox/mapbox-sdk": "^0.4.1",
 		"async": "^2.6.1",
