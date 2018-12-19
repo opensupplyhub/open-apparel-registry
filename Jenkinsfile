@@ -15,8 +15,8 @@ node {
 	    // console.
 		stage('setup') {
 			wrap([$class: 'AnsiColorBuildWrapper']) {
-				sh './scripts/update'
 				sh './scripts/bootstrap --env'
+				sh './scripts/update'
 			}
 		}
 
