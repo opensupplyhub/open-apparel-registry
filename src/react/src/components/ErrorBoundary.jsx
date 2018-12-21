@@ -40,7 +40,7 @@ class ErrorBoundary extends Component {
                         this problem persists, contact support and send along
                         this text:
                     </p>
-                    <div style={styles.hash} className='notranslate'>
+                    <div style={styles.hash} className="notranslate">
                         {this.encodeErrorMessage(this.state.error)}
                     </div>
                 </div>

@@ -10,13 +10,13 @@ import ShowOnly from './ShowOnly';
 export default class FactoryInfo extends PureComponent {
     render() {
         const { info, onClearSelection } = this.props;
-        const sources = info.source.map(i => {
+        const sources = info.source.map((i) => {
             const updateTime = new Date(i.updated).toLocaleDateString();
             return (
-                <div key={`${i.uid}-source`} className='margin-bottom-16'>
+                <div key={`${i.uid}-source`} className="margin-bottom-16">
                     <p style={{ marginBottom: '0px' }}>
                         <Link
-                            className='link-underline notranslate'
+                            className="link-underline notranslate"
                             key={`${i.uid}-link`}
                             to={`/profile/${i.uid}`}
                         >
@@ -44,10 +44,10 @@ export default class FactoryInfo extends PureComponent {
                 : [];
         return (
             <React.Fragment>
-                <div className='panel-header display-flex'>
+                <div className="panel-header display-flex">
                     <IconButton
-                        aria-label='ArrowBack'
-                        className='color-white'
+                        aria-label="ArrowBack"
+                        className="color-white"
                         style={{ width: '24px', marginRight: '16px' }}
                         onClick={onClearSelection}
                     >
@@ -55,14 +55,14 @@ export default class FactoryInfo extends PureComponent {
                     </IconButton>
                     <div>
                         <h3
-                            key='name'
-                            className='panel-header__title notranslate'
+                            key="name"
+                            className="panel-header__title notranslate"
                         >
                             {info.name}
                         </h3>
                         <p
-                            key='address'
-                            className='panel-header__subheading notranslate'
+                            key="address"
+                            className="panel-header__subheading notranslate"
                         >
                             {info.address}
                         </p>
@@ -71,30 +71,30 @@ export default class FactoryInfo extends PureComponent {
 
                 <StaticMap lat={info.latitude} lon={info.longitude} />
 
-                <div className='control-panel__content'>
-                    <div className='control-panel__group'>
-                        <h1 className='control-panel__heading'>
+                <div className="control-panel__content">
+                    <div className="control-panel__group">
+                        <h1 className="control-panel__heading">
                             OAR ID: &nbsp;
                         </h1>
-                        <p key='_id' className='control-panel__body'>
+                        <p key="_id" className="control-panel__body">
                             {info.nameId}
                         </p>
                     </div>
-                    <div className='control-panel__group'>
-                        <h1 className='control-panel__heading'>
+                    <div className="control-panel__group">
+                        <h1 className="control-panel__heading">
                             GPS Coordinates:
                         </h1>
-                        <p key='geo' className='control-panel__body'>
+                        <p key="geo" className="control-panel__body">
                             {info.latitude}, {info.longitude}
                         </p>
                     </div>
 
                     <ShowOnly if={otherNames.length > 0}>
-                        <div className='control-panel__group'>
-                            <h1 className='control-panel__heading'>
+                        <div className="control-panel__group">
+                            <h1 className="control-panel__heading">
                                 Also known as:
                             </h1>
-                            <div className='control-panel__body'>
+                            <div className="control-panel__body">
                                 {otherNames}
                             </div>
                         </div>
@@ -102,27 +102,27 @@ export default class FactoryInfo extends PureComponent {
 
                     <ShowOnly
                         if={otherAddresses.length > 0}
-                        className='control-panel__group'
+                        className="control-panel__group"
                     >
-                        <div className='control-panel__group'>
-                            <h1 className='control-panel__heading'>
+                        <div className="control-panel__group">
+                            <h1 className="control-panel__heading">
                                 Other Addresses:
                             </h1>
-                            <div className='control-panel__body'>
+                            <div className="control-panel__body">
                                 {otherAddresses}
                             </div>
                         </div>
                     </ShowOnly>
 
-                    <div className='control-panel__group'>
-                        <h1 className='control-panel__heading'>
+                    <div className="control-panel__group">
+                        <h1 className="control-panel__heading">
                             Contributors:
                         </h1>
-                        <div className='control-panel__body'>{sources}</div>
+                        <div className="control-panel__body">{sources}</div>
                     </div>
-                    <div className='control-panel__group'>
+                    <div className="control-panel__group">
                         <a
-                            className='link-underline small'
+                            className="link-underline small"
                             href={mail}
                             style={{ display: 'inline-block' }}
                         >

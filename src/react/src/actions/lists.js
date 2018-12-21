@@ -2,14 +2,14 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 // Get lists for this user from ursa
-export const setLists = (uid, callback) => dispatch => {
+export const setLists = (uid, callback) => (dispatch) => {
     axios({
         method: 'get',
         url: `${process.env.REACT_APP_API_URL}/getLists/${uid}?key=${
             process.env.REACT_APP_API_KEY
         }`,
     })
-        .then(response => {
+        .then((response) => {
             if (
                 response &&
                 response.data.lists &&
@@ -25,7 +25,7 @@ export const setLists = (uid, callback) => dispatch => {
 };
 
 // Pin ursa to parse Temp, and return a new list
-export const updateList = (uid, selectedList, callback) => dispatch => {
+export const updateList = (uid, selectedList, callback) => (dispatch) => {
     axios({
         method: 'get',
         url: `${
@@ -34,7 +34,7 @@ export const updateList = (uid, selectedList, callback) => dispatch => {
             process.env.REACT_APP_API_KEY
         }`,
     })
-        .then(response => {
+        .then((response) => {
             const newList = {};
             newList[selectedList] = response.data.temps;
             dispatch({ type: 'UPDATE_LIST', payload: newList });
@@ -48,7 +48,7 @@ export const toggleRow = rowId => dispatch =>
     dispatch({ type: 'TOGGLE_ROW', payload: { rowId } });
 
 // Update one match in temp.matched[], confirm: true / false
-export const confirmDenyMatch = (confirm, tempId, matchedId) => dispatch => {
+export const confirmDenyMatch = (confirm, tempId, matchedId) => (dispatch) => {
     axios({
         method: 'post',
         url: `${process.env.REACT_APP_API_URL}/confirmTemp/${tempId}?key=${
@@ -56,7 +56,7 @@ export const confirmDenyMatch = (confirm, tempId, matchedId) => dispatch => {
         }`,
         data: { confirm, matchedId },
     })
-        .then(response => {
+        .then((response) => {
             if (response.status === 200) {
                 dispatch({
                     type: 'CONFIRM_DENY_MATCH',

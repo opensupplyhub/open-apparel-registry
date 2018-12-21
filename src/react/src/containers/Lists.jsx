@@ -81,7 +81,7 @@ class Lists extends Component {
         this.props.actions.updateList(
             this.props.user.uid,
             selectedList,
-            this.checkIfProcessed
+            this.checkIfProcessed,
         );
 
     selectList = selectedList => this.props.actions.selectList(selectedList);
@@ -140,16 +140,16 @@ class Lists extends Component {
     handleChangeRowsPerPage = event =>
         this.setState({ rowsPerPage: event.target.value });
 
-    factoriesCSV = data => {
+    factoriesCSV = (data) => {
         const cleanedData = [];
-        data.forEach(temp => {
+        data.forEach((temp) => {
             const { country, name, address } = temp.data;
             if (
                 temp.matched &&
                 temp.matched.length &&
                 temp.matched.length > 0
             ) {
-                temp.matched.forEach(m => {
+                temp.matched.forEach((m) => {
                     const matchedName = m.name;
                     const matchedAddress = m.address;
                     const factoryObj = {
@@ -201,7 +201,9 @@ class Lists extends Component {
             lists && selectedList && lists[selectedList]
                 ? lists[selectedList]
                 : [];
-        const { rowsPerPage, page, showPendingMsg, isSpinning } = this.state;
+        const {
+            rowsPerPage, page, showPendingMsg, isSpinning,
+        } = this.state;
         const processdate =
             showPendingMsg && showPendingMsg > 0
                 ? new Date(showPendingMsg * 1000)
@@ -211,8 +213,8 @@ class Lists extends Component {
             : '';
         return (
             <ShowOnly if={user.loaded}>
-                <AppGrid title='My Lists'>
-                    <Grid container className='margin-bottom-16'>
+                <AppGrid title="My Lists">
+                    <Grid container className="margin-bottom-16">
                         <Grid item xs={12}>
                             <ShowOnly if={isSpinning}>
                                 <CircularProgress size={50} />
@@ -224,10 +226,10 @@ class Lists extends Component {
                                         Please contribute a list of factories to
                                         the OAR first.
                                     </p>
-                                    <div className='margin-top-16'>
+                                    <div className="margin-top-16">
                                         <Link
-                                            to='/contribute'
-                                            className='outlined-button outlined-button--link'
+                                            to="/contribute"
+                                            className="outlined-button outlined-button--link"
                                         >
                                             Contribute
                                         </Link>
@@ -246,15 +248,15 @@ class Lists extends Component {
                                     <Select
                                         value={selectedList}
                                         onChange={this.chooseList}
-                                        name='lists'
+                                        name="lists"
                                         displayEmpty
-                                        className='margin-top-16 margin-bottom-10 notranslate'
+                                        className="margin-top-16 margin-bottom-10 notranslate"
                                         autoWidth
                                         input={
                                             <Input
-                                                name='lists'
-                                                id='lists'
-                                                className='notranslate'
+                                                name="lists"
+                                                id="lists"
+                                                className="notranslate"
                                             />
                                         }
                                         MenuProps={{
@@ -263,23 +265,22 @@ class Lists extends Component {
                                             },
                                         }}
                                     >
-                                        <MenuItem value=''>
+                                        <MenuItem value="">
                                             Choose a List
                                         </MenuItem>
                                         {Object.keys(lists)
                                             .sort((a, b) => b - a)
-                                            .map(c => {
+                                            .map((c) => {
                                                 const splitC = c.split('_');
                                                 const timeStamp = splitC.pop();
-                                                const formatTime = new Date(
-                                                    Number(timeStamp)
-                                                ).toLocaleDateString();
+                                                const formatTime = new Date(Number(timeStamp)).toLocaleDateString();
                                                 return (
                                                     <MenuItem
-                                                        className='notranslate'
+                                                        className="notranslate"
                                                         value={c}
                                                         key={c}
-                                                    >{`${splitC}_${formatTime}`}</MenuItem>
+                                                    >{`${splitC}_${formatTime}`}
+                                                    </MenuItem>
                                                 );
                                             })}
                                     </Select>
@@ -287,7 +288,7 @@ class Lists extends Component {
                             </ShowOnly>
                         </Grid>
                     </Grid>
-                    <Grid container className='margin-bottom-64'>
+                    <Grid container className="margin-bottom-64">
                         <ShowOnly if={data.length > 0}>
                             <ShowOnly
                                 if={
@@ -300,7 +301,7 @@ class Lists extends Component {
                                     <p>
                                         {`We are in the process of parsing this list. It will take approximately ${processdateStr}. Please come back later. `}
                                     </p>
-                                    <Link className='link-underline' to='/'>
+                                    <Link className="link-underline" to="/">
                                         Back to map
                                     </Link>
                                 </div>
@@ -311,13 +312,13 @@ class Lists extends Component {
                                     onClick={() =>
                                         DownloadCSV(
                                             this.factoriesCSV(data),
-                                            'factories.csv'
+                                            'factories.csv',
                                         )
                                     }
-                                    variant='contained'
-                                    size='small'
-                                    color='primary'
-                                    className='margin-bottom-16 blue-background'
+                                    variant="contained"
+                                    size="small"
+                                    color="primary"
+                                    className="margin-bottom-16 blue-background"
                                     disableRipple
                                     style={{
                                         boxShadow: 'none',
@@ -329,23 +330,23 @@ class Lists extends Component {
                                     <Table style={styles.table}>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell padding='dense' />
-                                                <TableCell padding='none'>
+                                                <TableCell padding="dense" />
+                                                <TableCell padding="none">
                                                     Country
                                                 </TableCell>
-                                                <TableCell padding='dense'>
+                                                <TableCell padding="dense">
                                                     Status
                                                 </TableCell>
-                                                <TableCell padding='none'>
+                                                <TableCell padding="none">
                                                     Name
                                                 </TableCell>
-                                                <TableCell padding='none'>
+                                                <TableCell padding="none">
                                                     OAR ID
                                                 </TableCell>
-                                                <TableCell padding='dense'>
+                                                <TableCell padding="dense">
                                                     Address
                                                 </TableCell>
-                                                <TableCell padding='dense'>
+                                                <TableCell padding="dense">
                                                     Matched Results
                                                 </TableCell>
                                             </TableRow>
@@ -355,7 +356,7 @@ class Lists extends Component {
                                                 .slice(
                                                     page * rowsPerPage,
                                                     page * rowsPerPage +
-                                                        rowsPerPage
+                                                        rowsPerPage,
                                                 )
                                                 .map((n, nIndex) => {
                                                     if (
@@ -370,36 +371,36 @@ class Lists extends Component {
                                                                         'lightgray',
                                                                 }}
                                                             >
-                                                                <TableCell padding='dense'>
+                                                                <TableCell padding="dense">
                                                                     {nIndex + 1}
                                                                 </TableCell>
                                                                 <TableCell
-                                                                    padding='none'
-                                                                    className='notranslate'
+                                                                    padding="none"
+                                                                    className="notranslate"
                                                                 >
                                                                     {
                                                                         n.data
                                                                             .country
                                                                     }
                                                                 </TableCell>
-                                                                <TableCell padding='dense'>
+                                                                <TableCell padding="dense">
                                                                     {n.processed
                                                                         ? 'Processed'
                                                                         : 'Pending'}
                                                                 </TableCell>
                                                                 <TableCell
-                                                                    padding='none'
-                                                                    className='notranslate'
+                                                                    padding="none"
+                                                                    className="notranslate"
                                                                 >
                                                                     {
                                                                         n.data
                                                                             .name
                                                                     }
                                                                 </TableCell>
-                                                                <TableCell padding='none' />
+                                                                <TableCell padding="none" />
                                                                 <TableCell
-                                                                    padding='dense'
-                                                                    className='notranslate'
+                                                                    padding="dense"
+                                                                    className="notranslate"
                                                                     style={{
                                                                         fontSize:
                                                                             '10px',
@@ -410,7 +411,7 @@ class Lists extends Component {
                                                                             .address
                                                                     }
                                                                 </TableCell>
-                                                                <TableCell padding='dense'>
+                                                                <TableCell padding="dense">
                                                                     No Match
                                                                 </TableCell>
                                                             </TableRow>
@@ -421,127 +422,124 @@ class Lists extends Component {
                                                         {},
                                                         {},
                                                     ].concat(n.matched);
-                                                    return matchedData.map(
-                                                        (m, i) => {
-                                                            if (i === 0) {
+                                                    return matchedData.map((m, i) => {
+                                                        if (i === 0) {
+                                                            return (
+                                                                <TableRow
+                                                                    key={`${
+                                                                        m._id
+                                                                    }_first`}
+                                                                    style={{
+                                                                        background:
+                                                                                'lightgray',
+                                                                    }}
+                                                                >
+                                                                    <TableCell
+                                                                        padding="dense"
+                                                                        className="notranslate"
+                                                                    >
+                                                                        {nIndex +
+                                                                                1}
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        padding="none"
+                                                                        className="notranslate"
+                                                                    >
+                                                                        {
+                                                                            n
+                                                                                .data
+                                                                                .country
+                                                                        }
+                                                                    </TableCell>
+                                                                    <TableCell padding="dense">
+                                                                        {n.processed
+                                                                            ? 'Processed'
+                                                                            : 'Pending'}
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        padding="none"
+                                                                        className="notranslate"
+                                                                    >
+                                                                        {
+                                                                            n
+                                                                                .data
+                                                                                .name
+                                                                        }
+                                                                    </TableCell>
+                                                                    <TableCell padding="none" />
+                                                                    <TableCell
+                                                                        padding="dense"
+                                                                        className="notranslate"
+                                                                        style={{
+                                                                            fontSize:
+                                                                                    '10px',
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            n
+                                                                                .data
+                                                                                .address
+                                                                        }
+                                                                    </TableCell>
+                                                                    <TableCell padding="dense">
+                                                                        <IconButton
+                                                                            aria-label="expand-more"
+                                                                            onClick={this.toggleRow(n._id)}
+                                                                            className={
+                                                                                n.hidden
+                                                                                    ? 'expand'
+                                                                                    : 'expandOpen'
+                                                                            }
+                                                                        >
+                                                                            <ExpandMoreIcon />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        }
+                                                        if (!n.hidden) {
+                                                            if (i === 1) {
                                                                 return (
                                                                     <TableRow
                                                                         key={`${
                                                                             m._id
-                                                                        }_first`}
-                                                                        style={{
-                                                                            background:
-                                                                                'lightgray',
-                                                                        }}
+                                                                        }_second`}
                                                                     >
+                                                                        <TableCell padding="dense" />
+                                                                        <TableCell padding="none" />
+                                                                        <TableCell padding="dense" />
                                                                         <TableCell
-                                                                            padding='dense'
-                                                                            className='notranslate'
-                                                                        >
-                                                                            {nIndex +
-                                                                                1}
-                                                                        </TableCell>
-                                                                        <TableCell
-                                                                            padding='none'
-                                                                            className='notranslate'
-                                                                        >
-                                                                            {
-                                                                                n
-                                                                                    .data
-                                                                                    .country
+                                                                            padding="none"
+                                                                            style={
+                                                                                styles.header
                                                                             }
+                                                                        >
+                                                                                Matched
+                                                                                Name
                                                                         </TableCell>
-                                                                        <TableCell padding='dense'>
-                                                                            {n.processed
-                                                                                ? 'Processed'
-                                                                                : 'Pending'}
+                                                                        <TableCell padding="none" />
+                                                                        <TableCell
+                                                                            padding="dense"
+                                                                            style={
+                                                                                styles.header
+                                                                            }
+                                                                        >
+                                                                                Matched
+                                                                                Address
                                                                         </TableCell>
                                                                         <TableCell
-                                                                            padding='none'
-                                                                            className='notranslate'
-                                                                        >
-                                                                            {
-                                                                                n
-                                                                                    .data
-                                                                                    .name
+                                                                            padding="dense"
+                                                                            style={
+                                                                                styles.header
                                                                             }
-                                                                        </TableCell>
-                                                                        <TableCell padding='none' />
-                                                                        <TableCell
-                                                                            padding='dense'
-                                                                            className='notranslate'
-                                                                            style={{
-                                                                                fontSize:
-                                                                                    '10px',
-                                                                            }}
                                                                         >
-                                                                            {
-                                                                                n
-                                                                                    .data
-                                                                                    .address
-                                                                            }
-                                                                        </TableCell>
-                                                                        <TableCell padding='dense'>
-                                                                            <IconButton
-                                                                                aria-label='expand-more'
-                                                                                onClick={this.toggleRow(
-                                                                                    n._id
-                                                                                )}
-                                                                                className={
-                                                                                    n.hidden
-                                                                                        ? 'expand'
-                                                                                        : 'expandOpen'
-                                                                                }
-                                                                            >
-                                                                                <ExpandMoreIcon />
-                                                                            </IconButton>
+                                                                                Actions
                                                                         </TableCell>
                                                                     </TableRow>
                                                                 );
                                                             }
-                                                            if (!n.hidden) {
-                                                                if (i === 1) {
-                                                                    return (
-                                                                        <TableRow
-                                                                            key={`${
-                                                                                m._id
-                                                                            }_second`}
-                                                                        >
-                                                                            <TableCell padding='dense' />
-                                                                            <TableCell padding='none' />
-                                                                            <TableCell padding='dense' />
-                                                                            <TableCell
-                                                                                padding='none'
-                                                                                style={
-                                                                                    styles.header
-                                                                                }
-                                                                            >
-                                                                                Matched
-                                                                                Name
-                                                                            </TableCell>
-                                                                            <TableCell padding='none' />
-                                                                            <TableCell
-                                                                                padding='dense'
-                                                                                style={
-                                                                                    styles.header
-                                                                                }
-                                                                            >
-                                                                                Matched
-                                                                                Address
-                                                                            </TableCell>
-                                                                            <TableCell
-                                                                                padding='dense'
-                                                                                style={
-                                                                                    styles.header
-                                                                                }
-                                                                            >
-                                                                                Actions
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                    );
-                                                                }
-                                                                if (i !== 1) {
-                                                                    const exactMatch =
+                                                            if (i !== 1) {
+                                                                const exactMatch =
                                                                         m.name ===
                                                                             n
                                                                                 .data
@@ -550,136 +548,135 @@ class Lists extends Component {
                                                                             n
                                                                                 .data
                                                                                 .address;
-                                                                    return (
-                                                                        <TableRow
-                                                                            key={
-                                                                                m._id
-                                                                            }
+                                                                return (
+                                                                    <TableRow
+                                                                        key={
+                                                                            m._id
+                                                                        }
+                                                                    >
+                                                                        <TableCell padding="dense" />
+                                                                        <TableCell padding="none" />
+                                                                        <TableCell padding="dense" />
+                                                                        <TableCell
+                                                                            padding="none"
+                                                                            className="notranslate"
                                                                         >
-                                                                            <TableCell padding='dense' />
-                                                                            <TableCell padding='none' />
-                                                                            <TableCell padding='dense' />
-                                                                            <TableCell
-                                                                                padding='none'
-                                                                                className='notranslate'
-                                                                            >
-                                                                                {
-                                                                                    m.name
-                                                                                }
-                                                                            </TableCell>
-                                                                            <TableCell
-                                                                                padding='none'
-                                                                                className='notranslate'
-                                                                                style={{
-                                                                                    fontSize:
+                                                                            {
+                                                                                m.name
+                                                                            }
+                                                                        </TableCell>
+                                                                        <TableCell
+                                                                            padding="none"
+                                                                            className="notranslate"
+                                                                            style={{
+                                                                                fontSize:
                                                                                         '10px',
-                                                                                }}
-                                                                            >
-                                                                                {
-                                                                                    m
-                                                                                        .nameId
-                                                                                        ._id
-                                                                                }
-                                                                            </TableCell>
-                                                                            <TableCell
-                                                                                padding='dense'
-                                                                                className='notranslate'
-                                                                                style={{
-                                                                                    fontSize:
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                m
+                                                                                    .nameId
+                                                                                    ._id
+                                                                            }
+                                                                        </TableCell>
+                                                                        <TableCell
+                                                                            padding="dense"
+                                                                            className="notranslate"
+                                                                            style={{
+                                                                                fontSize:
                                                                                         '10px',
-                                                                                }}
-                                                                            >
-                                                                                {
-                                                                                    m.address
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                m.address
+                                                                            }
+                                                                        </TableCell>
+                                                                        <TableCell padding="dense">
+                                                                            <ShowOnly
+                                                                                if={
+                                                                                    n.processed !==
+                                                                                        undefined
                                                                                 }
-                                                                            </TableCell>
-                                                                            <TableCell padding='dense'>
+                                                                            >
                                                                                 <ShowOnly
                                                                                     if={
-                                                                                        n.processed !==
-                                                                                        undefined
+                                                                                        exactMatch
                                                                                     }
+                                                                                    className="display-flex"
                                                                                 >
-                                                                                    <ShowOnly
-                                                                                        if={
-                                                                                            exactMatch
-                                                                                        }
-                                                                                        className='display-flex'
-                                                                                    >
                                                                                         Exact
                                                                                         Match
-                                                                                    </ShowOnly>
-                                                                                    <ShowOnly
-                                                                                        if={
-                                                                                            m.confirm ===
+                                                                                </ShowOnly>
+                                                                                <ShowOnly
+                                                                                    if={
+                                                                                        m.confirm ===
                                                                                                 undefined &&
                                                                                             !exactMatch
-                                                                                        }
-                                                                                    >
-                                                                                        <div className='display-flex'>
-                                                                                            <Button
-                                                                                                size='small'
-                                                                                                variant='outlined'
-                                                                                                color='primary'
-                                                                                                className='outlined-button'
-                                                                                                disableRipple
-                                                                                                style={{
-                                                                                                    boxShadow:
+                                                                                    }
+                                                                                >
+                                                                                    <div className="display-flex">
+                                                                                        <Button
+                                                                                            size="small"
+                                                                                            variant="outlined"
+                                                                                            color="primary"
+                                                                                            className="outlined-button"
+                                                                                            disableRipple
+                                                                                            style={{
+                                                                                                boxShadow:
                                                                                                         'none',
-                                                                                                }}
-                                                                                                onClick={this.confirmDenyMatch(
-                                                                                                    true,
-                                                                                                    n._id,
-                                                                                                    m._id
-                                                                                                )}
-                                                                                            >
+                                                                                            }}
+                                                                                            onClick={this.confirmDenyMatch(
+                                                                                                true,
+                                                                                                n._id,
+                                                                                                m._id,
+                                                                                            )}
+                                                                                        >
                                                                                                 Confirm
-                                                                                            </Button>
-                                                                                            <Button
-                                                                                                size='small'
-                                                                                                className='margin-left-16'
-                                                                                                onClick={this.confirmDenyMatch(
-                                                                                                    false,
-                                                                                                    n._id,
-                                                                                                    m._id
-                                                                                                )}
-                                                                                            >
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                            size="small"
+                                                                                            className="margin-left-16"
+                                                                                            onClick={this.confirmDenyMatch(
+                                                                                                false,
+                                                                                                n._id,
+                                                                                                m._id,
+                                                                                            )}
+                                                                                        >
                                                                                                 Deny
-                                                                                            </Button>
-                                                                                        </div>
-                                                                                    </ShowOnly>
-                                                                                    <ShowOnly
-                                                                                        if={
-                                                                                            !exactMatch &&
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </ShowOnly>
+                                                                                <ShowOnly
+                                                                                    if={
+                                                                                        !exactMatch &&
                                                                                             (m.confirm ||
                                                                                                 m.confirm ===
                                                                                                     false)
-                                                                                        }
-                                                                                        className='display-flex'
-                                                                                    >
-                                                                                        {m.confirm
-                                                                                            ? 'Confirmed'
-                                                                                            : 'Denied'}
-                                                                                    </ShowOnly>
+                                                                                    }
+                                                                                    className="display-flex"
+                                                                                >
+                                                                                    {m.confirm
+                                                                                        ? 'Confirmed'
+                                                                                        : 'Denied'}
                                                                                 </ShowOnly>
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                    );
-                                                                }
+                                                                            </ShowOnly>
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                );
                                                             }
-                                                            return (
-                                                                <TableRow
-                                                                    key={`${
-                                                                        m._id
-                                                                    }_empty`}
-                                                                    style={{
-                                                                        display:
-                                                                            'none',
-                                                                    }}
-                                                                />
-                                                            );
                                                         }
-                                                    );
+                                                        return (
+                                                            <TableRow
+                                                                key={`${
+                                                                    m._id
+                                                                }_empty`}
+                                                                style={{
+                                                                    display:
+                                                                            'none',
+                                                                }}
+                                                            />
+                                                        );
+                                                    });
                                                 })}
                                         </TableBody>
                                         <TableFooter>
@@ -726,5 +723,5 @@ Lists.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(Lists);

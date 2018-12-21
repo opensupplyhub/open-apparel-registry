@@ -25,16 +25,13 @@ export default class APIkey extends Component {
         this.generateKey(uid);
     }
 
-    generateKey = uid => {
-        fetch(
-            `${process.env.REACT_APP_API_URL}/generateKey/${uid}?key=${
-                process.env.REACT_APP_API_KEY
-            }`
-        )
+    generateKey = (uid) => {
+        fetch(`${process.env.REACT_APP_API_URL}/generateKey/${uid}?key=${
+            process.env.REACT_APP_API_KEY
+        }`)
             .then(response => response.json())
-            .then(data => {
-                if (data && data.key && data.key.key)
-                    this.setState({ key: data.key.key });
+            .then((data) => {
+                if (data && data.key && data.key.key) { this.setState({ key: data.key.key }); }
             });
     };
 
@@ -44,13 +41,13 @@ export default class APIkey extends Component {
         const { showKey, key } = this.state;
 
         return (
-            <div className='margin-bottom-100'>
+            <div className="margin-bottom-100">
                 <Button
-                    variant='outlined'
-                    color='primary'
-                    size='small'
+                    variant="outlined"
+                    color="primary"
+                    size="small"
                     disableRipple
-                    className='outlined-button'
+                    className="outlined-button"
                     onClick={this.showKey()}
                 >
                     Generate API Key
@@ -59,8 +56,8 @@ export default class APIkey extends Component {
                     <input
                         style={styles.apiInput}
                         readOnly
-                        id='apikey'
-                        type='text'
+                        id="apikey"
+                        type="text"
                         value={key}
                     />
                 )}

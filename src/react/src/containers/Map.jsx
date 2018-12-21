@@ -58,11 +58,9 @@ class Map extends Component {
             zoom,
             attributionControl: false,
             logoPosition: 'bottom-right',
-        }).addControl(
-            new mapboxgl.AttributionControl({
-                compact: true,
-            })
-        );
+        }).addControl(new mapboxgl.AttributionControl({
+            compact: true,
+        }));
 
         this.cluster = supercluster({
             radius: clusterRadius,
@@ -89,14 +87,14 @@ class Map extends Component {
         this.map.on(
             'mouseenter',
             'points',
-            () => (this.map.getCanvas().style.cursor = 'pointer')
+            () => (this.map.getCanvas().style.cursor = 'pointer'),
         );
 
         // Change it back to a pointer when it leaves.
         this.map.on(
             'mouseleave',
             'points',
-            () => (this.map.getCanvas().style.cursor = '')
+            () => (this.map.getCanvas().style.cursor = ''),
         );
     };
 
@@ -105,11 +103,11 @@ class Map extends Component {
         this.props.actions.setViewport(
             lat.toFixed(4),
             lng.toFixed(4),
-            this.map.getZoom().toFixed(2)
+            this.map.getZoom().toFixed(2),
         );
     };
 
-    onMapPointClick = e => {
+    onMapPointClick = (e) => {
         const features = this.map.queryRenderedFeatures(e.point, {
             layers: ['points'],
         });
@@ -141,12 +139,12 @@ class Map extends Component {
         this.all_features = this.cluster.getLeaves(
             this.cluster_id,
             Math.floor(this.map.getZoom()),
-            Infinity
+            Infinity,
         );
 
         // DISPLAY THE HOVERED FEATURES IN THE POPUP
         let featuresToDisplay = '';
-        this.all_features.forEach(f => {
+        this.all_features.forEach((f) => {
             featuresToDisplay += `<div class="popup-item display-flex notranslate" id="${
                 f.properties.uniqueId
             }"><div class="display-flex"><div class="circle circle-size-12" id="${
@@ -159,43 +157,37 @@ class Map extends Component {
         // based on the feature found.
         this.popup
             .setLngLat(features[0].geometry.coordinates)
-            .setHTML(
-                `<div class='popup-container notranslate'> ${featuresToDisplay} </div>`
-            )
+            .setHTML(`<div class='popup-container notranslate'> ${featuresToDisplay} </div>`)
             .addTo(this.map);
 
         // Attach onclick event to popup items
-        _.values(document.getElementsByClassName('popup-item')).forEach(
-            point => {
-                point.onclick = p => {
-                    this.props.actions.selectFactory(p.target.id);
-                    // Close popup
-                    this.popup.remove();
+        _.values(document.getElementsByClassName('popup-item')).forEach((point) => {
+            point.onclick = (p) => {
+                this.props.actions.selectFactory(p.target.id);
+                // Close popup
+                this.popup.remove();
 
-                    // Fit bounds to the selected point
-                    const selectedGeo = this.props.map.factoryGeojson.find(
-                        f => f.properties.uniqueId === p.target.id
-                    );
-                    // Fly to the selected point, center the map around the selected point
-                    // this.flyto(selectedGeo)
-                    const twoNearestP = this.findNearestPoint(
-                        selectedGeo,
-                        this.all_features
-                    );
-                    if (twoNearestP) {
-                        this.fitToBounds(twoNearestP, 100);
-                    }
+                // Fit bounds to the selected point
+                const selectedGeo = this.props.map.factoryGeojson.find(f => f.properties.uniqueId === p.target.id);
+                // Fly to the selected point, center the map around the selected point
+                // this.flyto(selectedGeo)
+                const twoNearestP = this.findNearestPoint(
+                    selectedGeo,
+                    this.all_features,
+                );
+                if (twoNearestP) {
+                    this.fitToBounds(twoNearestP, 100);
+                }
 
-                    // Highlight the selected point
-                    // Update the filter in the highlighted-point layer to only show the matching state, thus making a hover effect.
-                    this.map.setFilter('highlighted-point', [
-                        '==',
-                        'uniqueId',
-                        p.target.id,
-                    ]);
-                };
-            }
-        );
+                // Highlight the selected point
+                // Update the filter in the highlighted-point layer to only show the matching state, thus making a hover effect.
+                this.map.setFilter('highlighted-point', [
+                    '==',
+                    'uniqueId',
+                    p.target.id,
+                ]);
+            };
+        });
     };
 
     onLoadMap = () => {
@@ -224,7 +216,7 @@ class Map extends Component {
         this.fitToBounds(this.props.map.factoryGeojson, 100);
     };
 
-    onUpdate = val => {
+    onUpdate = (val) => {
         if (!val || val.length <= 0) {
             // Reset map
             if (this.map.getSource('point')) {
@@ -243,16 +235,18 @@ class Map extends Component {
                 bearing: 0,
             });
         } else {
-            const geojson = val.map(
-                ({ name, address, source, uniqueId, longitude, latitude }) => ({
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [longitude, latitude],
-                    },
-                    properties: { name, address, source, uniqueId },
-                })
-            );
+            const geojson = val.map(({
+                name, address, source, uniqueId, longitude, latitude,
+            }) => ({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [longitude, latitude],
+                },
+                properties: {
+                    name, address, source, uniqueId,
+                },
+            }));
 
             this.fitToBounds(geojson, 100);
 
@@ -275,7 +269,7 @@ class Map extends Component {
 
     onSelectFactory = id => this.props.actions.selectFactory(id);
 
-    onChangeStyle = styleName => {
+    onChangeStyle = (styleName) => {
         const classicStyle = ['light', 'dark', 'streets', 'satellite'];
         const darkStyles = ['dark', 'satellite'];
         let circleTextColor = '#fff';
@@ -307,15 +301,13 @@ class Map extends Component {
     };
 
     getClipboardText = () =>
-        `${window.location.host}/${this.objToQueryString(
-            Object.assign(
-                {},
-                this.state.searchButton,
-                this.props.map.selectedFactory
-                    ? { factory: this.props.map.selectedFactory }
-                    : {}
-            )
-        )}`;
+        `${window.location.host}/${this.objToQueryString(Object.assign(
+            {},
+            this.state.searchButton,
+            this.props.map.selectedFactory
+                ? { factory: this.props.map.selectedFactory }
+                : {},
+        ))}`;
 
     updateSearchButton = (name, country, contributor = null) =>
         this.setState({ searchButton: { name, country, contributor } });
@@ -342,7 +334,7 @@ class Map extends Component {
         this.map.fitBounds(bounds, { padding, maxZoom: clusterMaxZoom });
     };
 
-    flyto = selectedGeo => {
+    flyto = (selectedGeo) => {
         this.map.flyTo({
             // These options control the ending camera position: centered at
             // the target, at max zoom level, and north up.
@@ -371,17 +363,14 @@ class Map extends Component {
             return;
         }
         const targetPoint = turf.point(targetFeature.geometry.coordinates);
-        const uniqueFeatues = allFeatures.filter(
-            a =>
-                a.geometry.coordinates[0] !==
+        const uniqueFeatues = allFeatures.filter(a =>
+            a.geometry.coordinates[0] !==
                     targetFeature.geometry.coordinates[0] &&
                 a.geometry.coordinates[1] !==
-                    targetFeature.geometry.coordinates[1]
-        );
+                    targetFeature.geometry.coordinates[1]);
 
         const allPoints = uniqueFeatues.map(f =>
-            turf.point(f.geometry.coordinates)
-        );
+            turf.point(f.geometry.coordinates));
         const points = turf.featureCollection(allPoints);
         const nearest = turf.nearestPoint(targetPoint, points);
         if (!nearest) {
@@ -472,23 +461,21 @@ class Map extends Component {
     copySearchToClipboard = () => toast('Copied Search to Clipboard');
 
     // Converts an query string to a valid object. Ex: "?foo=bar" => { foo: "bar" }
-    queryStringToObj = query => {
+    queryStringToObj = (query) => {
         if (!query) {
             return {};
         }
 
-        const jsonObj = decodeURI(
-            query
-                .substring(1)
-                .replace(/&/g, '","')
-                .replace(/=/g, '":"')
-        );
+        const jsonObj = decodeURI(query
+            .substring(1)
+            .replace(/&/g, '","')
+            .replace(/=/g, '":"'));
 
         return JSON.parse(`{"${jsonObj}"}`);
     };
 
     // Converts an object to a valid url query string. Ex: { foo: "bar" } => "?foo=bar"
-    objToQueryString = obj => {
+    objToQueryString = (obj) => {
         if (!Object.keys(obj).length) {
             return '';
         }
@@ -496,7 +483,7 @@ class Map extends Component {
         const str = Object.keys(obj).reduce(
             (acc, k) =>
                 acc + (obj[k] && obj[k].length > 0 ? `${k}=${obj[k]}&` : ''),
-            '?'
+            '?',
         );
         return str.substr(0, str.length - 1);
     };
@@ -516,9 +503,7 @@ class Map extends Component {
                 container: '.mapboxgl-ctrl-group.mapboxgl-ctrl',
             };
 
-            const container = document.querySelector(
-                '.mapboxgl-ctrl-group.mapboxgl-ctrl'
-            );
+            const container = document.querySelector('.mapboxgl-ctrl-group.mapboxgl-ctrl');
 
             container.insertAdjacentHTML('afterbegin', selectors.layer);
             container.insertAdjacentHTML('afterbegin', selectors.extent);
@@ -552,7 +537,7 @@ class Map extends Component {
             <div>
                 <LandingAlert />
                 <Grid container>
-                    <Grid item xs={12} sm={3} id='panel-container'>
+                    <Grid item xs={12} sm={3} id="panel-container">
                         <ControlPanel
                             onUpdate={this.onUpdate}
                             onSelectFactory={this.onSelectFactory}
@@ -567,14 +552,14 @@ class Map extends Component {
                     </Grid>
                     <Grid item xs={12} sm={9} style={{ position: 'relative' }}>
                         <div
-                            ref={el => {
+                            ref={(el) => {
                                 this.mapContainer = el;
                             }}
-                            id='map'
+                            id="map"
                         />
                         <CopyToClipboard text={this.getClipboardText()}>
                             <Button
-                                text='Share This Search'
+                                text="Share This Search"
                                 onClick={this.copySearchToClipboard}
                                 style={{
                                     position: 'absolute',
@@ -611,5 +596,5 @@ Map.defaultProps = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(Map);

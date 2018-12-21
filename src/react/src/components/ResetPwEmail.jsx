@@ -34,15 +34,13 @@ class ResetPwEmail extends Component {
         this.setState({ open: false });
     };
 
-    updateResetEmail = () => event => {
+    updateResetEmail = () => (event) => {
         const email = event.target.value;
         this.setState({ email });
     };
 
     validateEmail = () => () => {
-        const validEmail = this.state.email.match(
-            /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i
-        );
+        const validEmail = this.state.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
         let error = false;
         if (!validEmail) error = true;
         this.setState({ error });
@@ -58,8 +56,8 @@ class ResetPwEmail extends Component {
         return (
             <div>
                 <div
-                    role='presentation'
-                    className='margin-bottom-64 link-underline cursor'
+                    role="presentation"
+                    className="margin-bottom-64 link-underline cursor"
                     onClick={() => this.handleOpen()}
                 >
                     Forgot your password?
@@ -67,9 +65,9 @@ class ResetPwEmail extends Component {
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}
-                    aria-labelledby='form-dialog-title'
+                    aria-labelledby="form-dialog-title"
                 >
-                    <DialogTitle id='form-dialog-title'>
+                    <DialogTitle id="form-dialog-title">
                         Forgot your password?
                     </DialogTitle>
                     <DialogContent>
@@ -79,10 +77,10 @@ class ResetPwEmail extends Component {
                         </DialogContentText>
                         <TextField
                             autoFocus
-                            margin='dense'
-                            id='name'
-                            label='Email Address'
-                            type='email'
+                            margin="dense"
+                            id="name"
+                            label="Email Address"
+                            type="email"
                             fullWidth
                             onChange={this.updateResetEmail()}
                             onBlur={this.validateEmail()}
@@ -96,14 +94,14 @@ class ResetPwEmail extends Component {
                     <DialogActions>
                         <MaterialButton
                             onClick={this.handleClose}
-                            color='primary'
+                            color="primary"
                         >
                             Cancel
                         </MaterialButton>
                         <MaterialButton
                             disabled={error}
                             onClick={this.sendEmail}
-                            color='primary'
+                            color="primary"
                         >
                             Send Me Instructions
                         </MaterialButton>
@@ -120,5 +118,5 @@ ResetPwEmail.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(ResetPwEmail);

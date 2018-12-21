@@ -26,9 +26,9 @@ export default class StaticMap extends PureComponent {
         }`;
 
         return (
-            <div className='no-lineheight'>
+            <div className="no-lineheight">
                 <canvas
-                    ref={c => {
+                    ref={(c) => {
                         this.canvas = c;
                     }}
                     width={320}
@@ -36,14 +36,14 @@ export default class StaticMap extends PureComponent {
                     style={{ width: '100%' }}
                 />
                 <img
-                    ref={c => {
+                    ref={(c) => {
                         this.img = c;
                     }}
                     style={{ display: 'none' }}
-                    alt='static-map'
+                    alt="static-map"
                     src={maplink}
                 />
-                <div className='stripe' style={{ background: MAP_COLOR }} />
+                <div className="stripe" style={{ background: MAP_COLOR }} />
             </div>
         );
     }

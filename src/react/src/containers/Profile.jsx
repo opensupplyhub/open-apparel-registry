@@ -94,23 +94,20 @@ class Profile extends Component {
         }
     }
 
-    setUserData = props => {
+    setUserData = (props) => {
         const requestedUid = props.match.params.id;
 
         if (props.user && props.user.uid === requestedUid) {
             this.setState(this.props.user);
         } else {
             props.actions.loadSelectedUser(requestedUid, user =>
-                this.setState(user)
-            );
+                this.setState(user));
         }
     };
 
     getRecentList = () => {
         const { source } = this.props.source;
-        const targetSource = source.find(
-            s => s.uid === this.props.match.params.id
-        );
+        const targetSource = source.find(s => s.uid === this.props.match.params.id);
         let recentList;
         if (targetSource) recentList = targetSource.list;
         if (recentList && recentList.file_name) {
@@ -127,20 +124,17 @@ class Profile extends Component {
         this.props.actions.updateUser(user, nameOrTypeUpdated);
     };
 
-    updateInputField = field => event => {
+    updateInputField = field => (event) => {
         const attribute = {};
         attribute[field] = event.target.value;
 
         this.setState(attribute);
 
-        if (field === 'name' || field === 'contributorType')
-            this.setState({ nameOrTypeUpdated: true });
+        if (field === 'name' || field === 'contributorType') { this.setState({ nameOrTypeUpdated: true }); }
     };
 
     formValid = () =>
-        ['name', 'description', 'contributorType', 'password', 'email'].every(
-            key => this.state[key]
-        );
+        ['name', 'description', 'contributorType', 'password', 'email'].every(key => this.state[key]);
 
     uploadPhotoSuccess = ({ filesUploaded }) => {
         if (filesUploaded.length) {
@@ -173,12 +167,12 @@ class Profile extends Component {
             >
                 <Grid item xs={12} sm={7}>
                     <ShowOnly if={isUser}>
-                        <div className='control-panel__group'>
-                            <div className='form__field'>
-                                <p className='form__label'>Email Address</p>
+                        <div className="control-panel__group">
+                            <div className="form__field">
+                                <p className="form__label">Email Address</p>
                                 <TextInput
-                                    type='email'
-                                    placeholder='Email Address'
+                                    type="email"
+                                    placeholder="Email Address"
                                     onChange={this.updateInputField('email')}
                                     value={email}
                                     disabled
@@ -186,60 +180,56 @@ class Profile extends Component {
                             </div>
                         </div>
                     </ShowOnly>
-                    <div className='control-panel__group'>
-                        <div className='form__field'>
-                            <p className='form__label'>Name</p>
+                    <div className="control-panel__group">
+                        <div className="form__field">
+                            <p className="form__label">Name</p>
                             <TextInput
-                                placeholder='Name'
+                                placeholder="Name"
                                 onChange={this.updateInputField('name')}
                                 value={name}
                                 disabled={!isUser}
                             />
                         </div>
                     </div>
-                    <div className='control-panel__group'>
-                        <div className='form__field'>
-                            <p className='form__label'>Description</p>
+                    <div className="control-panel__group">
+                        <div className="form__field">
+                            <p className="form__label">Description</p>
                             <TextInput
-                                placeholder='Description'
+                                placeholder="Description"
                                 onChange={this.updateInputField('description')}
                                 value={description}
                                 disabled={!isUser}
                             />
                         </div>
                     </div>
-                    <div className='control-panel__group'>
-                        <div className='form__field'>
-                            <p className='form__label'>Contributor Type</p>
+                    <div className="control-panel__group">
+                        <div className="form__field">
+                            <p className="form__label">Contributor Type</p>
                             <SelectInput
                                 disabled={!isUser}
-                                onChange={this.updateInputField(
-                                    'contributorType'
-                                )}
+                                onChange={this.updateInputField('contributorType')}
                                 options={contributorTypeOptions}
-                                placeholder=''
+                                placeholder=""
                                 initialValue={contributorType}
                             />
                             <ShowOnly if={contributorType === 'Other'}>
-                                <p className='form__label'>
+                                <p className="form__label">
                                     Other Contributor Type
                                 </p>
                                 <TextInput
                                     value={otherContributor}
                                     disabled={!isUser}
-                                    placeholder='Please specify'
-                                    onChange={this.updateInputField(
-                                        'otherContributor'
-                                    )}
+                                    placeholder="Please specify"
+                                    onChange={this.updateInputField('otherContributor')}
                                 />
                             </ShowOnly>
                         </div>
                     </div>
-                    <div className='control-panel__group'>
-                        <div className='form__field'>
-                            <p className='form__label'>Website</p>
+                    <div className="control-panel__group">
+                        <div className="form__field">
+                            <p className="form__label">Website</p>
                             <TextInput
-                                placeholder='Website'
+                                placeholder="Website"
                                 onChange={this.updateInputField('website')}
                                 value={website}
                                 disabled={!isUser}
@@ -247,11 +237,11 @@ class Profile extends Component {
                         </div>
                     </div>
                     {recentList && recentList.displayName && (
-                        <div className='control-panel__group'>
-                            <div className='form__field'>
-                                <p className='form__label'>Most Recent List</p>
+                        <div className="control-panel__group">
+                            <div className="form__field">
+                                <p className="form__label">Most Recent List</p>
                                 <TextInput
-                                    placeholder='Most Recent List'
+                                    placeholder="Most Recent List"
                                     value={recentList.displayName}
                                     disabled
                                 />
@@ -259,11 +249,11 @@ class Profile extends Component {
                         </div>
                     )}
                     {recentList && recentList.file_description && (
-                        <div className='control-panel__group'>
-                            <div className='form__field'>
-                                <p className='form__label'>List Description</p>
+                        <div className="control-panel__group">
+                            <div className="form__field">
+                                <p className="form__label">List Description</p>
                                 <TextInput
-                                    placeholder='List Description'
+                                    placeholder="List Description"
                                     value={recentList.file_description}
                                     disabled
                                 />
@@ -272,17 +262,15 @@ class Profile extends Component {
                     )}
                     {isUser ? (
                         <React.Fragment>
-                            <div className='control-panel__group'>
-                                <div className='form__field'>
-                                    <p className='form__label'>
+                            <div className="control-panel__group">
+                                <div className="form__field">
+                                    <p className="form__label">
                                         Confirm current password to save changes
                                     </p>
                                     <TextInput
-                                        type='password'
-                                        placeholder='Current password'
-                                        onChange={this.updateInputField(
-                                            'password'
-                                        )}
+                                        type="password"
+                                        placeholder="Current password"
+                                        onChange={this.updateInputField('password')}
                                         disabled={!isUser}
                                     />
                                 </div>
@@ -295,11 +283,11 @@ class Profile extends Component {
                                 }}
                             >
                                 <Button
-                                    text='Save Changes'
+                                    text="Save Changes"
                                     onClick={this.saveChanges}
                                     disabled={!this.formValid()}
-                                    color='primary'
-                                    variant='contained'
+                                    color="primary"
+                                    variant="contained"
                                     disableRipple
                                 >
                                     Save Changes
@@ -309,8 +297,8 @@ class Profile extends Component {
                         </React.Fragment>
                     ) : (
                         <Link
-                            to='/'
-                            className='outlined-button outlined-button--link'
+                            to="/"
+                            className="outlined-button outlined-button--link"
                         >
                             BACK TO MAP
                         </Link>
@@ -322,15 +310,15 @@ class Profile extends Component {
                             <img
                                 src={isUser ? this.props.user.photo : photo}
                                 style={styles.image}
-                                alt=''
+                                alt=""
                             />
                         </div>
                     </div>
                     <ShowOnly if={isUser}>
                         <ReactFilestack
                             apikey={process.env.REACT_APP_FILESTACK_KEY}
-                            buttonText='Change Profile Photo'
-                            buttonClass='uploadButton'
+                            buttonText="Change Profile Photo"
+                            buttonClass="uploadButton"
                             onSuccess={this.uploadPhotoSuccess}
                             options={{
                                 transformations: {
@@ -363,5 +351,5 @@ Profile.defaultProps = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(Profile);

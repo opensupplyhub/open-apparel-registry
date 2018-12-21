@@ -57,7 +57,7 @@ class AuthLogin extends Component {
         logIn(email, password).catch(error => this.setState({ error }));
     };
 
-    updateInputField = field => event => {
+    updateInputField = field => (event) => {
         const attribute = {};
         attribute[field] = event.target.value;
 
@@ -68,13 +68,13 @@ class AuthLogin extends Component {
         const { error } = this.state;
 
         return (
-            <AppGrid title='Log In'>
+            <AppGrid title="Log In">
                 <p>
                     You must be a registered user to contribute to the Open
                     Apparel Registry.
                     <br />
                     Don&apos;t have an account?{' '}
-                    <Link to='/auth/register' className='link-underline'>
+                    <Link to="/auth/register" className="link-underline">
                         Register
                     </Link>
                     .
@@ -91,25 +91,25 @@ class AuthLogin extends Component {
                     <p>{this.getError()}</p>
                 </ShowOnly>
                 <Grid item xs={12} sm={7}>
-                    <div className='form__field'>
-                        <p className='form__label'>Email Address</p>
+                    <div className="form__field">
+                        <p className="form__label">Email Address</p>
                         <TextInput
-                            type='email'
-                            placeholder='Email Address'
+                            type="email"
+                            placeholder="Email Address"
                             onChange={this.updateInputField('email')}
                         />
                     </div>
-                    <div className='form__field'>
-                        <p className='form__label'>Password</p>
+                    <div className="form__field">
+                        <p className="form__label">Password</p>
                         <TextInput
-                            type='password'
-                            placeholder='Password'
+                            type="password"
+                            placeholder="Password"
                             onChange={this.updateInputField('password')}
                         />
                     </div>
                     <ResetPwEmail />
                     <Button
-                        text='Log In'
+                        text="Log In"
                         onClick={this.login}
                         disabled={!this.formValid()}
                     />
@@ -126,5 +126,5 @@ AuthLogin.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(AuthLogin);

@@ -20,7 +20,7 @@ export default class Translate extends PureComponent {
         this.setState({ open: false });
     };
 
-    handleListItemClick = value => {
+    handleListItemClick = (value) => {
         window.location = `#googtrans(en|${value})`;
         window.location.reload(true);
         this.handleClose();
@@ -32,7 +32,7 @@ export default class Translate extends PureComponent {
         return (
             <div>
                 <Button
-                    className='btn-text'
+                    className="btn-text"
                     disableRipple
                     onClick={this.handleClickOpen}
                 >
@@ -42,11 +42,11 @@ export default class Translate extends PureComponent {
                 <Dialog
                     open={open}
                     onClose={this.handleClose}
-                    aria-labelledby='alert-dialog-title'
-                    aria-describedby='alert-dialog-description'
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
                     classes={{ paper: 'max-height-70' }}
                 >
-                    <DialogTitle id='alert-dialog-title'>
+                    <DialogTitle id="alert-dialog-title">
                         Choose a language
                     </DialogTitle>
                     <div>
@@ -61,7 +61,7 @@ export default class Translate extends PureComponent {
                                 >
                                     <ListItemText
                                         primary={lang.lang}
-                                        className='notranslate'
+                                        className="notranslate"
                                     />
                                 </ListItem>
                             ))}

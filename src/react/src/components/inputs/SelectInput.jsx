@@ -48,19 +48,19 @@ class SelectInput extends Component {
                 <ShowOnly if={!disabled}>
                     <div style={{ position: 'relative' }}>
                         <p
-                            role='presentation'
+                            role="presentation"
                             onClick={this.toggleSelect}
-                            className='form__select-input-container'
+                            className="form__select-input-container"
                         >
                             {value || placeholder}
                         </p>
                         <ShowOnly if={open} style={styles.dropdown}>
                             {options.map(o => (
                                 <div
-                                    role='presentation'
+                                    role="presentation"
                                     key={o}
                                     onClick={this.select(o)}
-                                    className='form__select-input--selected'
+                                    className="form__select-input--selected"
                                 >
                                     {o}
                                 </div>
@@ -70,7 +70,7 @@ class SelectInput extends Component {
                 </ShowOnly>
                 <ShowOnly if={disabled}>
                     <TextInput
-                        placeholder='Contributor Type'
+                        placeholder="Contributor Type"
                         value={value}
                         disabled
                     />

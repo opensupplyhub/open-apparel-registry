@@ -21,48 +21,48 @@ const BrowserSupport = () => (
             tool for our community.
         </p>
         <p>
-            <a href='https://whatbrowser.org/' className='link'>
+            <a href="https://whatbrowser.org/" className="link">
                 More about browsers
             </a>
         </p>
-        <div className='display-flex justify-space-between'>
+        <div className="display-flex justify-space-between">
             <div>
                 <a
-                    href='https://www.google.com/chrome/?hl=en'
-                    aria-label='Download Google Chrome'
+                    href="https://www.google.com/chrome/?hl=en"
+                    aria-label="Download Google Chrome"
                 >
                     <img
-                        alt='Google Chrome'
-                        src='https://ssl.gstatic.com/social/photosui/images/browsers/chrome.jpg'
-                        className='square-img'
+                        alt="Google Chrome"
+                        src="https://ssl.gstatic.com/social/photosui/images/browsers/chrome.jpg"
+                        className="square-img"
                     />
-                    <p className='link text-center'>Google Chrome</p>
+                    <p className="link text-center">Google Chrome</p>
                 </a>
             </div>
             <div>
                 <a
-                    href='https://www.mozilla.com/firefox/'
-                    aria-label='Download Firefox'
+                    href="https://www.mozilla.com/firefox/"
+                    aria-label="Download Firefox"
                 >
                     <img
-                        alt='Firefox'
-                        src='https://ssl.gstatic.com/social/photosui/images/browsers/firefox.jpg'
-                        className='square-img'
+                        alt="Firefox"
+                        src="https://ssl.gstatic.com/social/photosui/images/browsers/firefox.jpg"
+                        className="square-img"
                     />
-                    <p className='link text-center'>Firefox</p>
+                    <p className="link text-center">Firefox</p>
                 </a>
             </div>
             <div>
                 <a
-                    href='https://www.apple.com/safari/'
-                    aria-label='Download Safari'
+                    href="https://www.apple.com/safari/"
+                    aria-label="Download Safari"
                 >
                     <img
-                        alt='Safari'
-                        src='https://ssl.gstatic.com/social/photosui/images/browsers/safari.jpg'
-                        className='square-img'
+                        alt="Safari"
+                        src="https://ssl.gstatic.com/social/photosui/images/browsers/safari.jpg"
+                        className="square-img"
                     />
-                    <p className='link text-center'>Safari</p>
+                    <p className="link text-center">Safari</p>
                 </a>
             </div>
         </div>

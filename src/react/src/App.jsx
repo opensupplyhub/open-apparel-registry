@@ -67,22 +67,19 @@ class App extends Component {
         // Safari 3.0+
         const isSafari =
             /constructor/i.test(window.HTMLElement) ||
-            (p => p.toString() === '[object SafariRemoteNotification]')(
-                !window.safari ||
+            (p => p.toString() === '[object SafariRemoteNotification]')(!window.safari ||
                     (typeof safari !== 'undefined' &&
                         window.safari &&
-                        window.safari.pushNotification)
-            );
+                        window.safari.pushNotification));
 
         // Internet Explorer 11+
         const isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
-        const isIE = /*@cc_on!@*/ false || !!document.documentMode;
+        const isIE = /* @cc_on!@ */ false || !!document.documentMode;
 
         // Edge 20+
         const isEdge = !isIE && !!window.StyleMedia;
 
-        if (isSafari || isChrome || isFirefox || isEdge || isOpera || isIE11)
-            this.browserSupported = true;
+        if (isSafari || isChrome || isFirefox || isEdge || isOpera || isIE11) { this.browserSupported = true; }
     }
 
     render() {
@@ -102,44 +99,40 @@ class App extends Component {
                                 {/* { user.betaAccess
                       ? ( */}
                                 <Router history={history}>
-                                    <div className='App'>
+                                    <div className="App">
                                         <Navbar user={user} />
                                         <div>
                                             <Switch>
                                                 <Route
                                                     exact
-                                                    path='/'
+                                                    path="/"
                                                     component={Map}
                                                 />
                                                 <Route
-                                                    path='/auth/register'
+                                                    path="/auth/register"
                                                     component={AuthRegister}
                                                 />
                                                 <Route
-                                                    path='/auth/login'
+                                                    path="/auth/login"
                                                     component={AuthLogin}
                                                 />
                                                 <Route
-                                                    path='/profile/:id'
+                                                    path="/profile/:id"
                                                     component={Profile}
                                                 />
                                                 <Route
-                                                    path='/contribute'
-                                                    component={requireAuth(
-                                                        Contribute
-                                                    )}
+                                                    path="/contribute"
+                                                    component={requireAuth(Contribute)}
                                                 />
                                                 <Route
-                                                    path='/lists'
-                                                    component={requireAuth(
-                                                        Lists
-                                                    )}
+                                                    path="/lists"
+                                                    component={requireAuth(Lists)}
                                                 />
                                             </Switch>
                                         </div>
                                         <Footer />
                                         <ToastContainer
-                                            position='bottom-center'
+                                            position="bottom-center"
                                             transition={Slide}
                                         />
                                     </div>
@@ -163,5 +156,5 @@ App.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(withStyles(styles)(App));

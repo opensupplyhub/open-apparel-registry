@@ -9,28 +9,28 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-const itemMap = item => {
+const itemMap = (item) => {
     switch (item.type) {
         case 'link':
             return (
-                <Link to={item.url} className='link full-width-height'>
+                <Link to={item.url} className="link full-width-height">
                     {item.text}
                 </Link>
             );
         case 'external':
             return (
                 <a
-                    className='link full-width-height'
+                    className="link full-width-height"
                     href={item.url}
-                    target='_blank'
-                    rel='noopener noreferrer'
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     {item.text}
                 </a>
             );
         default:
             return (
-                <Button color='primary' onClick={item.action}>
+                <Button color="primary" onClick={item.action}>
                     {item.text}
                 </Button>
             );
@@ -44,7 +44,7 @@ class NavbarDropdown extends Component {
 
     handleToggle = () => this.setState(state => ({ open: !state.open }));
 
-    handleClose = event => {
+    handleClose = (event) => {
         if (this.anchorEl.contains(event.target)) {
             return;
         }
@@ -66,19 +66,19 @@ class NavbarDropdown extends Component {
         return (
             <div>
                 <Button
-                    className='btn-text'
+                    className="btn-text"
                     disableRipple
-                    buttonRef={node => {
+                    buttonRef={(node) => {
                         this.anchorEl = node;
                     }}
                     aria-owns={open ? 'menu-list-grow' : null}
-                    aria-haspopup='true'
+                    aria-haspopup="true"
                     onClick={this.handleToggle}
                 >
                     {title}
                 </Button>
                 <Popper
-                    className='dropdown'
+                    className="dropdown"
                     open={open}
                     anchorEl={this.anchorEl}
                     transition
@@ -87,7 +87,7 @@ class NavbarDropdown extends Component {
                     {({ TransitionProps, placement }) => (
                         <Grow
                             {...TransitionProps}
-                            id='menu-list-grow'
+                            id="menu-list-grow"
                             style={{
                                 transformOrigin:
                                     placement === 'bottom'

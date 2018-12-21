@@ -8,7 +8,7 @@ class BetaAccessLogin extends Component {
         checkAccess();
     };
 
-    updatePassword = e => {
+    updatePassword = (e) => {
         this.setState({ password: e.target.value });
     };
 
@@ -30,9 +30,9 @@ class BetaAccessLogin extends Component {
                     provided to you by an administrator.
                 </p>
                 <input
-                    type='password'
+                    type="password"
                     onChange={this.updatePassword}
-                    placeholder='Password'
+                    placeholder="Password"
                     style={{
                         width: '350px',
                         height: '20px',
@@ -43,7 +43,7 @@ class BetaAccessLogin extends Component {
                 <button
                     onClick={this.login}
                     style={{ float: 'right', height: '24px' }}
-                    type='button'
+                    type="button"
                 >
                     Enter Beta
                 </button>

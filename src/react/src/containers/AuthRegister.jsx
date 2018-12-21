@@ -79,10 +79,10 @@ class AuthRegister extends Component {
     };
 
     getErrorElement = () => (
-        <p className='form__error'>This field is required.</p>
+        <p className="form__error">This field is required.</p>
     );
 
-    updateInputField = field => event => {
+    updateInputField = field => (event) => {
         const attribute = {};
         attribute[field] = event.target.value;
 
@@ -155,10 +155,10 @@ class AuthRegister extends Component {
         } = this.state;
 
         return (
-            <AppGrid title='Register'>
+            <AppGrid title="Register">
                 <p>
                     Already have an account?{' '}
-                    <Link to='/auth/login' className='link-underline'>
+                    <Link to="/auth/login" className="link-underline">
                         Log In
                     </Link>
                     .
@@ -175,100 +175,92 @@ class AuthRegister extends Component {
                 >
                     <p>{this.getError()}</p>
                 </ShowOnly>
-                <Grid container className='margin-bottom-100'>
+                <Grid container className="margin-bottom-100">
                     <Grid item xs={12} sm={8}>
                         <p>
                             Thank you for contributing to the OAR. Every
                             contribution further improves the accuracy of the
                             database. Create an account to begin:
                         </p>
-                        <div className='form__field'>
-                            <p className='form__label'>
+                        <div className="form__field">
+                            <p className="form__label">
                                 Email Address{' '}
                                 <span style={{ color: 'red' }}>*</span>
                             </p>
                             <TextInput
-                                type='email'
-                                placeholder=''
+                                type="email"
+                                placeholder=""
                                 onChange={this.updateInputField('email')}
                                 onBlur={this.onBlurInputField('emailBlur')}
                             />
                             {emailBlur && !email && this.getErrorElement()}
                         </div>
-                        <div className='form__field'>
-                            <p className='form__label'>
+                        <div className="form__field">
+                            <p className="form__label">
                                 Account Name{' '}
                                 <span style={{ color: 'red' }}>*</span>
                             </p>
                             <TextInput
-                                placeholder=''
-                                hint='Your account name will appear as the contributor name on all facilities that you upload as the data source for each facility contributed.'
+                                placeholder=""
+                                hint="Your account name will appear as the contributor name on all facilities that you upload as the data source for each facility contributed."
                                 onChange={this.updateInputField('name')}
                                 onBlur={this.onBlurInputField('nameBlur')}
                             />
                             {nameBlur && !name && this.getErrorElement()}
                         </div>
-                        <div className='form__field'>
-                            <p className='form__label'>
+                        <div className="form__field">
+                            <p className="form__label">
                                 Account Description{' '}
                                 <span style={{ color: 'red' }}>*</span>
                             </p>
                             <TextInput
-                                placeholder=''
-                                hint='Enter a description of your account. This will appear in your account profile.'
+                                placeholder=""
+                                hint="Enter a description of your account. This will appear in your account profile."
                                 onChange={this.updateInputField('description')}
-                                onBlur={this.onBlurInputField(
-                                    'descriptionBlur'
-                                )}
+                                onBlur={this.onBlurInputField('descriptionBlur')}
                             />
                             {descriptionBlur &&
                                 !description &&
                                 this.getErrorElement()}
                         </div>
-                        <div className='form__field'>
-                            <p className='form__label'>Website (optional)</p>
+                        <div className="form__field">
+                            <p className="form__label">Website (optional)</p>
                             <TextInput
-                                placeholder='Website'
+                                placeholder="Website"
                                 onChange={this.updateInputField('website')}
                             />
                         </div>
-                        <div className='form__field'>
-                            <p className='form__label'>
+                        <div className="form__field">
+                            <p className="form__label">
                                 Contributor Type{' '}
                                 <span style={{ color: 'red' }}>*</span>
                             </p>
                             <SelectInput
-                                onChange={this.updateInputField(
-                                    'contributorType'
-                                )}
+                                onChange={this.updateInputField('contributorType')}
                                 options={contributorTypeOptions}
-                                placeholder=' '
-                                onBlur={this.onBlurInputField(
-                                    'descriptionBlur'
-                                )}
+                                placeholder=" "
+                                onBlur={this.onBlurInputField('descriptionBlur')}
                             />
                             {contributorTypeBlur &&
                                 !contributorType &&
                                 this.getErrorElement()}
                             <ShowOnly if={contributorType === 'Other'}>
-                                <p className='form__label'>
+                                <p className="form__label">
                                     Other Contributor Type
                                 </p>
                                 <TextInput
-                                    placeholder='Please specify'
-                                    onChange={this.updateInputField(
-                                        'otherContributor'
-                                    )}
+                                    placeholder="Please specify"
+                                    onChange={this.updateInputField('otherContributor')}
                                 />
                             </ShowOnly>
                         </div>
-                        <div className='form__field'>
-                            <p className='form__label'>
+                        <div className="form__field">
+                            <p className="form__label">
                                 Password <span style={{ color: 'red' }}>*</span>
                             </p>
                             <TextInput
-                                type='password'
-                                placeholder='Password'
+                                type="password"
+                                placeholder="Password"
                                 onChange={this.updateInputField('password')}
                                 onBlur={this.onBlurInputField('passwordBlur')}
                             />
@@ -276,35 +268,29 @@ class AuthRegister extends Component {
                                 !password &&
                                 this.getErrorElement()}
                         </div>
-                        <div className='form__field'>
-                            <p className='form__label'>
+                        <div className="form__field">
+                            <p className="form__label">
                                 Confirm Password{' '}
                                 <span style={{ color: 'red' }}>*</span>
                             </p>
                             <TextInput
-                                type='password'
-                                placeholder='Confirm Password'
-                                onChange={this.updateInputField(
-                                    'confirmPassword'
-                                )}
-                                onBlur={this.onBlurInputField(
-                                    'confirmPasswordBlur'
-                                )}
+                                type="password"
+                                placeholder="Confirm Password"
+                                onChange={this.updateInputField('confirmPassword')}
+                                onBlur={this.onBlurInputField('confirmPasswordBlur')}
                             />
                             {confirmPasswordBlur &&
                                 !confirmPassword &&
                                 this.getErrorElement()}
                         </div>
-                        <div className='form__field'>
+                        <div className="form__field">
                             <Checkbox
-                                onChange={this.updateCheckbox(
-                                    'newsletterOptIn'
-                                )}
-                                text='Sign up for OAR newsletter'
+                                onChange={this.updateCheckbox('newsletterOptIn')}
+                                text="Sign up for OAR newsletter"
                             />
                             <Checkbox
                                 onChange={this.updateCheckbox('termsOptIn')}
-                                text='Agree to '
+                                text="Agree to "
                                 link={{
                                     text: 'Terms of Services',
                                     url: 'https://info.openapparel.org/tos/',
@@ -312,7 +298,7 @@ class AuthRegister extends Component {
                             />
                         </div>
                         <Button
-                            text='Register'
+                            text="Register"
                             onClick={this.register}
                             disabled={!this.formValid()}
                         />
@@ -330,5 +316,5 @@ AuthRegister.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(AuthRegister);

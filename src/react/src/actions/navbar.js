@@ -1,3 +1,3 @@
-export const toggleUserDropdown = () => dispatch => {
+export const toggleUserDropdown = () => (dispatch) => {
     dispatch({ type: 'TOGGLE_USER_DROPDOWN' });
 };

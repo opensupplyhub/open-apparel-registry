@@ -6,7 +6,7 @@ const mapStateToProps = state => ({
     user: state.user,
 });
 
-export default function(ComposedComponent) {
+export default function RequireAuthWrapper(ComposedComponent) {
     class Authentication extends Component {
         static contextTypes = {
             router: PropTypes.object,

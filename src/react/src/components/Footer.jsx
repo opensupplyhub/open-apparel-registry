@@ -25,17 +25,17 @@ const links = [
 ];
 
 export default () => (
-    <div className='footerContainer' xs={12}>
-        <div className='links'>
-            {links.map(l => {
+    <div className="footerContainer" xs={12}>
+        <div className="links">
+            {links.map((l) => {
                 if (l.external && 'prefix' in l) {
                     return (
-                        <p className='link' key={l.text}>
+                        <p className="link" key={l.text}>
                             {l.prefix}
                             <a
                                 href={l.href}
                                 target={l.newTab ? '_blank' : null}
-                                rel='noopener noreferrer'
+                                rel="noopener noreferrer"
                             >
                                 {l.text}
                             </a>
@@ -44,11 +44,11 @@ export default () => (
                 }
                 if (l.external) {
                     return (
-                        <p className='link' key={l.text}>
+                        <p className="link" key={l.text}>
                             <a
                                 href={l.href}
                                 target={l.newTab ? '_blank' : null}
-                                rel='noopener noreferrer'
+                                rel="noopener noreferrer"
                             >
                                 {l.text}
                             </a>
@@ -63,14 +63,14 @@ export default () => (
             })}
         </div>
         <a
-            href='https://creativecommons.org/licenses/by-sa/4.0/legalcode'
-            target='_blank'
-            rel='noopener noreferrer'
+            href="https://creativecommons.org/licenses/by-sa/4.0/legalcode"
+            target="_blank"
+            rel="noopener noreferrer"
         >
             <img
-                className='footer-image'
+                className="footer-image"
                 src={logo}
-                alt='Creative Commons Attribution'
+                alt="Creative Commons Attribution"
             />
         </a>
     </div>

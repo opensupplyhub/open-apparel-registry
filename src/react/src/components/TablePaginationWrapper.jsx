@@ -7,25 +7,25 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
 export default class TablePaginationWrapper extends Component {
-    handleFirstPageButtonClick = event => {
+    handleFirstPageButtonClick = (event) => {
         this.props.onChangePage(event, 0);
     };
 
-    handleBackButtonClick = event => {
+    handleBackButtonClick = (event) => {
         this.props.onChangePage(event, this.props.page - 1);
     };
 
-    handleNextButtonClick = event => {
+    handleNextButtonClick = (event) => {
         this.props.onChangePage(event, this.props.page + 1);
     };
 
-    handleLastPageButtonClick = event => {
+    handleLastPageButtonClick = (event) => {
         this.props.onChangePage(
             event,
             Math.max(
                 0,
-                Math.ceil(this.props.count / this.props.rowsPerPage) - 1
-            )
+                Math.ceil(this.props.count / this.props.rowsPerPage) - 1,
+            ),
         );
     };
 
@@ -37,28 +37,28 @@ export default class TablePaginationWrapper extends Component {
                 <IconButton
                     onClick={this.handleFirstPageButtonClick}
                     disabled={page === 0}
-                    aria-label='First Page'
+                    aria-label="First Page"
                 >
                     <FirstPageIcon />
                 </IconButton>
                 <IconButton
                     onClick={this.handleBackButtonClick}
                     disabled={page === 0}
-                    aria-label='Previous Page'
+                    aria-label="Previous Page"
                 >
                     <KeyboardArrowLeft />
                 </IconButton>
                 <IconButton
                     onClick={this.handleNextButtonClick}
                     disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                    aria-label='Next Page'
+                    aria-label="Next Page"
                 >
                     <KeyboardArrowRight />
                 </IconButton>
                 <IconButton
                     onClick={this.handleLastPageButtonClick}
                     disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                    aria-label='Last Page'
+                    aria-label="Last Page"
                 >
                     <LastPageIcon />
                 </IconButton>

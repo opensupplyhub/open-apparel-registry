@@ -21,9 +21,9 @@ class LandingAlert extends PureComponent {
                 <Grid container>
                     <Grid item xs={12} sm={3} />
                     <Grid item xs={12} sm={9}>
-                        <div className='alert-wrapper'>
-                            <div className='alert'>
-                                <p className='heading'>
+                        <div className="alert-wrapper">
+                            <div className="alert">
+                                <p className="heading">
                                     Welcome to the Open Apparel Registry (beta)!
                                 </p>
                                 <p>
@@ -35,7 +35,7 @@ class LandingAlert extends PureComponent {
                                     improve and refine the tool, please email
                                     comments to{' '}
                                     <a
-                                        href='mailto:info@openapparel.org'
+                                        href="mailto:info@openapparel.org"
                                         style={{ color: 'white' }}
                                     >
                                         info@openapparel.org
@@ -43,10 +43,10 @@ class LandingAlert extends PureComponent {
                                     .
                                 </p>
                                 <button
-                                    type='button'
-                                    className='alert-close'
+                                    type="button"
+                                    className="alert-close"
                                     onClick={this.dismissAlert}
-                                    aria-label='Close'
+                                    aria-label="Close"
                                 >
                                     &times;
                                 </button>

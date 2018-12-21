@@ -62,17 +62,17 @@ class LoggedInBadge extends PureComponent {
         return (
             <span
                 style={{ display: 'inline-flex', justifyContent: 'middle' }}
-                className='line-height'
+                className="line-height"
             >
                 <Translate />
                 <div
                     style={styles.logoContainer}
                     onClick={toggleUserDropdown}
-                    role='button'
+                    role="button"
                     tabIndex={0}
                 >
                     <div style={styles.logoSpacer}>
-                        <img src={user.photo} style={styles.logo} alt='' />
+                        <img src={user.photo} style={styles.logo} alt="" />
                     </div>
                 </div>
                 <NavbarDropdown
@@ -91,5 +91,5 @@ LoggedInBadge.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(LoggedInBadge);

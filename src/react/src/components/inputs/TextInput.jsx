@@ -5,18 +5,20 @@ import '../../styles/css/specialStates.css';
 
 class TextInput extends PureComponent {
     render() {
-        const { name, placeholder, type, hint, style, ...rest } = this.props;
+        const {
+            name, placeholder, type, hint, style, ...rest
+        } = this.props;
 
         return (
             <div>
                 <ShowOnly if={!!hint}>
-                    <p className='form__hint'>{hint}</p>
+                    <p className="form__hint">{hint}</p>
                 </ShowOnly>
                 <input
                     type={type}
                     name={name}
                     placeholder={placeholder}
-                    className='noFocus form__text-input'
+                    className="noFocus form__text-input"
                     style={Object.assign({}, style)}
                     {...rest}
                 />

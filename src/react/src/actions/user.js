@@ -15,13 +15,13 @@ firebase.initializeApp({
 // Add a user to the store. Should only be used to store the current user
 export const addUser = user => () => ({ type: 'ADD_USER', ...user });
 
-export const createUser = user => dispatch => {
+export const createUser = user => (dispatch) => {
     let uid;
 
     return firebase
         .auth()
         .createUserWithEmailAndPassword(user.email, user.password)
-        .then(res => {
+        .then((res) => {
             const { password, ...userWithoutPassword } = user;
 
             if (res.user) {
@@ -45,13 +45,13 @@ export const createUser = user => dispatch => {
 
 // Create a firebase auth hook that will dispatch based on logged in state.
 // This either populates the current user or removes a user from the store entirely
-export const loadUser = () => dispatch => {
-    firebase.auth().onAuthStateChanged(user => {
+export const loadUser = () => (dispatch) => {
+    firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             firebase
                 .database()
                 .ref(`users/${user.uid}`)
-                .on('value', snapshot => {
+                .on('value', (snapshot) => {
                     if (snapshot && snapshot.val()) {
                         const userInfo = {
                             uid: user.uid,
@@ -76,7 +76,7 @@ export const loadUser = () => dispatch => {
 };
 
 // Post the new source's name and contributorType to Ursa
-const updateSourceNameOrType = user => {
+const updateSourceNameOrType = (user) => {
     const { uid, name, contributorType } = user;
 
     if (!uid || !name) {
@@ -96,7 +96,7 @@ const updateSourceNameOrType = user => {
         }`,
         data,
     })
-        .then(response => {
+        .then((response) => {
             if (response.status === 200) {
                 toast('Contributor account created / updated successfully.');
             }
@@ -104,11 +104,11 @@ const updateSourceNameOrType = user => {
         .catch(error => toast(error.message));
 };
 
-export const updateUser = (user, nameOrTypeUpdated) => dispatch => {
+export const updateUser = (user, nameOrTypeUpdated) => (dispatch) => {
     const { currentUser } = firebase.auth();
     const credential = firebase.auth.EmailAuthProvider.credential(
         currentUser.email,
-        user.password
+        user.password,
     );
     const { password, ...userWithoutPassword } = user;
 
@@ -121,11 +121,9 @@ export const updateUser = (user, nameOrTypeUpdated) => dispatch => {
                     ...userWithoutPasswordAndPhoto
                 } = userWithoutPassword;
                 // Remove blank attributes from an Object userWithoutPasswordAndPhoto, otherwise firebase will throw error
-                Object.keys(userWithoutPasswordAndPhoto).forEach(
-                    key =>
-                        userWithoutPasswordAndPhoto[key] == null &&
-                        delete userWithoutPasswordAndPhoto[key]
-                );
+                Object.keys(userWithoutPasswordAndPhoto).forEach(key =>
+                    userWithoutPasswordAndPhoto[key] == null &&
+                        delete userWithoutPasswordAndPhoto[key]);
 
                 firebase
                     .database()
@@ -134,9 +132,7 @@ export const updateUser = (user, nameOrTypeUpdated) => dispatch => {
                     .then(() => dispatch({ type: 'ADD_USER', ...user }))
                     .then(() => {
                         if (!nameOrTypeUpdated) {
-                            toast(
-                                'Contributor account created / updated successfully.'
-                            );
+                            toast('Contributor account created / updated successfully.');
                         } else {
                             updateSourceNameOrType(user);
                         }
@@ -151,7 +147,7 @@ export const logIn = (email, password) => () =>
     firebase.auth().signInWithEmailAndPassword(email, password);
 export const logOut = () => () => firebase.auth().signOut();
 
-export const updateProfilePhoto = url => dispatch => {
+export const updateProfilePhoto = url => (dispatch) => {
     const { currentUser } = firebase.auth();
     firebase
         .database()
@@ -167,7 +163,7 @@ export const uploadFactoriesListToUrsa = (
     fileDisplayName,
     fileDescription,
     callback,
-    done
+    done,
 ) => () => {
     axios({
         method: 'post',
@@ -182,7 +178,7 @@ export const uploadFactoriesListToUrsa = (
             user_type: user.contributorType ? user.contributorType : 'Other',
         },
     })
-        .then(response => {
+        .then((response) => {
             if (response.data && response.data.message) {
                 toast(response.data.message);
                 done(false);
@@ -190,7 +186,7 @@ export const uploadFactoriesListToUrsa = (
                 callback();
             }
         })
-        .catch(error => {
+        .catch((error) => {
             done(false);
             toast(error.message);
         });
@@ -214,7 +210,7 @@ export const sendUserEmail = emailAddress => () => {
         .then(() => {
             toast(`Successfully sent instructions to ${emailAddress}`);
         })
-        .catch(error => {
+        .catch((error) => {
             toast(error.message);
         });
 };

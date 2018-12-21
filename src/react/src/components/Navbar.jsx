@@ -35,7 +35,7 @@ class Navbar extends PureComponent {
         const reset = () => this.props.actions.selectFactory(null);
 
         return (
-            <AppBar position='static' className='App-header'>
+            <AppBar position="static" className="App-header">
                 <Toolbar style={{ padding: 0 }}>
                     <div
                         style={{
@@ -44,41 +44,41 @@ class Navbar extends PureComponent {
                             marginRight: 'auto',
                         }}
                     >
-                        <Link to='/' className='navButton' onClick={reset}>
+                        <Link to="/" className="navButton" onClick={reset}>
                             HOME
                         </Link>
-                        <NavbarDropdown title='ABOUT' links={aboutLinks} />
+                        <NavbarDropdown title="ABOUT" links={aboutLinks} />
                         <a
-                            target='_blank'
-                            className='navButton'
-                            rel='noopener noreferrer'
-                            href='https://info.openapparel.org/faq/'
+                            target="_blank"
+                            className="navButton"
+                            rel="noopener noreferrer"
+                            href="https://info.openapparel.org/faq/"
                         >
                             FAQs
                         </a>
                         <a
-                            target='_blank'
-                            className='navButton'
-                            rel='noopener noreferrer'
-                            href='https://info.openapparel.org/apiinstructions'
+                            target="_blank"
+                            className="navButton"
+                            rel="noopener noreferrer"
+                            href="https://info.openapparel.org/apiinstructions"
                         >
                             API
                         </a>
                         <span>
                             {user.loaded ? (
-                                <Link to='/contribute' className='navButton'>
+                                <Link to="/contribute" className="navButton">
                                     CONTRIBUTE
                                 </Link>
                             ) : (
-                                <Link to='/auth/login' className='navButton'>
+                                <Link to="/auth/login" className="navButton">
                                     CONTRIBUTE
                                 </Link>
                             )}
                         </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'middle' }}>
-                        <Link to='/' style={{ display: 'inline-flex' }}>
-                            <img src={logo} className='App-logo' alt='logo' />
+                        <Link to="/" style={{ display: 'inline-flex' }}>
+                            <img src={logo} className="App-logo" alt="logo" />
                         </Link>
                     </div>
                     <div
@@ -93,10 +93,10 @@ class Navbar extends PureComponent {
                         ) : (
                             <div style={{ display: 'flex' }}>
                                 <Translate />
-                                <Link to='/auth/register' className='navButton'>
+                                <Link to="/auth/register" className="navButton">
                                     REGISTER
                                 </Link>
-                                <Link to='/auth/login' className='navButton'>
+                                <Link to="/auth/login" className="navButton">
                                     LOG IN
                                 </Link>
                             </div>
@@ -115,5 +115,5 @@ Navbar.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(Navbar);

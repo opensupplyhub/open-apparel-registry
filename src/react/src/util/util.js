@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 export function DownloadCSV(data, fileName) {
     // eslint-disable-line import/prefer-default-export
     const csvData = new Blob([data], { type: 'text/csv;charset=utf-8;' });

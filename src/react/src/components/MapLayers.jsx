@@ -21,11 +21,11 @@ export default class MapLayers extends PureComponent {
                     fullWidth
                     open={open}
                     onClose={this.handleClose}
-                    aria-labelledby='alert-dialog-title'
-                    aria-describedby='alert-dialog-description'
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
                     classes={{ paper: 'max-height-70' }}
                 >
-                    <DialogTitle id='alert-dialog-title'>
+                    <DialogTitle id="alert-dialog-title">
                         Choose a map style
                     </DialogTitle>
                     <DialogContent>
@@ -51,7 +51,7 @@ export default class MapLayers extends PureComponent {
                                         />
                                         <p
                                             key={`${l.value}_p`}
-                                            className='text-center'
+                                            className="text-center"
                                         >
                                             {l.display}
                                         </p>
@@ -61,7 +61,7 @@ export default class MapLayers extends PureComponent {
                         </Grid>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClose} color='primary'>
+                        <Button onClick={this.handleClose} color="primary">
                             Close
                         </Button>
                     </DialogActions>

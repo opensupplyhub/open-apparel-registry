@@ -61,8 +61,7 @@ class Contribute extends Component {
             !this.fileInput.files ||
             !this.fileInput.files[0] ||
             !this.fileInput.files[0].name
-        )
-            return;
+        ) { return; }
         this.setState({ fileName: this.fileInput.files[0].name });
     };
 
@@ -89,7 +88,7 @@ class Contribute extends Component {
                         fileDisplayName,
                         description,
                         this.uploadSuccess,
-                        this.setSpin
+                        this.setSpin,
                     );
             } else {
                 toast('File too large. Please make it be less than 5 MB');
@@ -101,21 +100,19 @@ class Contribute extends Component {
         }
     };
 
-    fieldUpdated = field => event => {
+    fieldUpdated = field => (event) => {
         const attribute = {};
         attribute[field] = event.target.value;
 
         this.setState(attribute);
 
         if (field === 'fileDisplayName') {
-            const ifHasSpecialChar = this.checkIfHasSpecialChar(
-                event.target.value
-            );
+            const ifHasSpecialChar = this.checkIfHasSpecialChar(event.target.value);
             this.setState({ ifHasSpecialChar });
         }
     };
 
-    checkIfHasSpecialChar = inputStr => {
+    checkIfHasSpecialChar = (inputStr) => {
         if (inputStr && inputStr.match(/[^a-zA-Z0-9 ]/g)) return true;
         return false;
     };
@@ -129,51 +126,51 @@ class Contribute extends Component {
             isSpinning,
             ifHasSpecialChar,
         } = this.state;
-        const csvTemplate = `country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt`;
+        const csvTemplate = 'country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt';
 
         return (
-            <AppGrid title='Contribute'>
-                <Grid container className='margin-bottom-64'>
+            <AppGrid title="Contribute">
+                <Grid container className="margin-bottom-64">
                     <Grid item xs={12}>
                         <p>
                             To contribute your supplier list to the OAR, please
                             complete the following steps:
                         </p>
-                        <div className='control-panel__group'>
-                            <div className='form__field'>
-                                <p className='form__label'>
+                        <div className="control-panel__group">
+                            <div className="form__field">
+                                <p className="form__label">
                                     Download the OAR Contributor Template and
                                     copy and paste your list into the template.
                                 </p>
-                                <ul className='helper-list'>
-                                    <li className='helper-list__item'>
+                                <ul className="helper-list">
+                                    <li className="helper-list__item">
                                         Do not change the column heading titles
                                         in the first row.
                                     </li>
-                                    <li className='helper-list__item'>
+                                    <li className="helper-list__item">
                                         Your list should only contain production
                                         facilities, not office addresses or
                                         headquarters. This can include
                                         dyehouses, mills, laundries, cut and
                                         sew, RMG, embellishments and printing.
                                     </li>
-                                    <li className='helper-list__item'>
+                                    <li className="helper-list__item">
                                         File size limit: 5MB
                                     </li>
-                                    <li className='helper-list__item'>
+                                    <li className="helper-list__item">
                                         Save your file as a CSV file:{' '}
                                         <strong>CSV UTF-8 (.csv)</strong>
                                     </li>
                                 </ul>
                                 <MaterialButton
                                     disableRipple
-                                    variant='outlined'
-                                    color='primary'
-                                    className='outlined-button'
+                                    variant="outlined"
+                                    color="primary"
+                                    className="outlined-button"
                                     onClick={() =>
                                         DownloadCSV(
                                             csvTemplate,
-                                            'OAR_Contributor_Template'
+                                            'OAR_Contributor_Template',
                                         )
                                     }
                                 >
@@ -182,55 +179,53 @@ class Contribute extends Component {
                             </div>
                         </div>
 
-                        <div className='control-panel__group'>
-                            <div className='form__field'>
-                                <p className='form__label'>
+                        <div className="control-panel__group">
+                            <div className="form__field">
+                                <p className="form__label">
                                     Enter the organization name for this
                                     facility list
                                 </p>
                                 <TextInput
-                                    type='text'
-                                    hint='Use only letters (a-z) or numbers (0-9), e.g, Alpha Brand Facility List June 2018'
-                                    placeholder='Facility List Name'
-                                    onChange={this.fieldUpdated(
-                                        'fileDisplayName'
-                                    )}
+                                    type="text"
+                                    hint="Use only letters (a-z) or numbers (0-9), e.g, Alpha Brand Facility List June 2018"
+                                    placeholder="Facility List Name"
+                                    onChange={this.fieldUpdated('fileDisplayName')}
                                 />
                                 {ifHasSpecialChar && (
-                                    <p className='form__error'>
+                                    <p className="form__error">
                                         Use only letters (a-z, A-Z) and numbers
                                         (0-9).
                                     </p>
                                 )}
                             </div>
-                            <div className='form__field'>
-                                <p className='form__label'>
+                            <div className="form__field">
+                                <p className="form__label">
                                     Enter a description of this facility list
                                     and include a timeframe for the list&rsquo;s
                                     validity
                                 </p>
                                 <TextInput
-                                    type='text'
-                                    hint='Use only letters (a-z) or numbers (0-9), e.g. This is the Alpha Brand list of suppliers for their apparel products valid from June 2018 to Sept 2018'
-                                    placeholder='Facility List Description'
+                                    type="text"
+                                    hint="Use only letters (a-z) or numbers (0-9), e.g. This is the Alpha Brand list of suppliers for their apparel products valid from June 2018 to Sept 2018"
+                                    placeholder="Facility List Description"
                                     onChange={this.fieldUpdated('description')}
                                 />
                             </div>
-                            <div className='form__field'>
+                            <div className="form__field">
                                 <MaterialButton
                                     onClick={this.selectFile}
-                                    type='button'
-                                    variant='outlined'
-                                    color='primary'
-                                    className='outlined-button'
+                                    type="button"
+                                    variant="outlined"
+                                    color="primary"
+                                    className="outlined-button"
                                     disableRipple
                                 >
                                     Select Facility List File
                                 </MaterialButton>
                                 <p style={styles.fileNameText}>{fileName}</p>
                                 <input
-                                    type='file'
-                                    accept='.csv'
+                                    type="file"
+                                    accept=".csv"
                                     ref={c => (this.fileInput = c)}
                                     style={{
                                         display: 'none',
@@ -239,7 +234,7 @@ class Contribute extends Component {
                                     onChange={this.fileChosen}
                                 />
                             </div>
-                            <div className='form__field'>
+                            <div className="form__field">
                                 {isSpinning ? (
                                     <CircularProgress size={30} />
                                 ) : (
@@ -251,8 +246,8 @@ class Contribute extends Component {
                                             !fileName ||
                                             ifHasSpecialChar
                                         }
-                                        text='SUBMIT'
-                                        variant='contained'
+                                        text="SUBMIT"
+                                        variant="contained"
                                         disableRipple
                                     >
                                         SUBMIT
@@ -265,17 +260,17 @@ class Contribute extends Component {
                                     </p>
                                 </ShowOnly>
                             </div>
-                            <div className='form__field'>
-                                <p className='form__label'>
+                            <div className="form__field">
+                                <p className="form__label">
                                     Once the list has been successfully
                                     uploaded, view your list and confirm or deny
                                     matches.
                                 </p>
                             </div>
-                            <div className='form__field'>
+                            <div className="form__field">
                                 <Link
-                                    to='/lists'
-                                    className='outlined-button outlined-button--link margin-top-16'
+                                    to="/lists"
+                                    className="outlined-button outlined-button--link margin-top-16"
                                 >
                                     View My Lists
                                 </Link>
@@ -283,25 +278,25 @@ class Contribute extends Component {
                         </div>
                     </Grid>
                     <Grid item xs={12}>
-                        <div className='control-panel__group margin-bottom-64'>
-                            <div className='form__field'>
-                                <p className='form__label'>
+                        <div className="control-panel__group margin-bottom-64">
+                            <div className="form__field">
+                                <p className="form__label">
                                     Troubleshooting Common Issues
                                 </p>
-                                <ul className='helper-list'>
-                                    <li className='helper-list__item'>
+                                <ul className="helper-list">
+                                    <li className="helper-list__item">
                                         Check that you have not changed the
                                         column titles in the CSV template,
                                         switched the order of the columns, or
                                         added any additional columns.
                                     </li>
-                                    <li className='helper-list__item'>
+                                    <li className="helper-list__item">
                                         Check that you do not have any blank
                                         cells in the country, name, or address
                                         columns, or any merged cells in your
                                         CSV.
                                     </li>
-                                    <li className='helper-list__item'>
+                                    <li className="helper-list__item">
                                         Check that you have not used any special
                                         characters in the name of your CSV file,
                                         the title of your list, or the
@@ -314,8 +309,8 @@ class Contribute extends Component {
                                         If you are still experiencing issues
                                         uploading to the OAR, please{' '}
                                         <a
-                                            href='mailto:info@openapparel.org'
-                                            className='link-underline'
+                                            href="mailto:info@openapparel.org"
+                                            className="link-underline"
                                         >
                                             contact the team
                                         </a>
@@ -338,5 +333,5 @@ Contribute.propTypes = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(Contribute);

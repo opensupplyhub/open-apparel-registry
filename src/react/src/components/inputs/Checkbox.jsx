@@ -19,7 +19,7 @@ class Checkbox extends PureComponent {
         return (
             <div>
                 <MaterialCheckbox
-                    color='primary'
+                    color="primary"
                     onChange={onChange}
                     style={styles.checkbox}
                 />
@@ -27,9 +27,9 @@ class Checkbox extends PureComponent {
                     {text}
                     {link && (
                         <a
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className='link-underline'
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="link-underline"
                             href={link.url}
                         >
                             {link.text}

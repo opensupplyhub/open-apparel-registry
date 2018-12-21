@@ -16,9 +16,8 @@ const ListsReducer = (state = initialState, action) => {
         case 'TOGGLE_ROW': {
             const { rowId } = action.payload;
             const listName = state.selectedList;
-            const newList = state.lists[listName].map(row => {
-                if (row._id === rowId) {
-                    // eslint-disable-line no-underscore-dangle
+            const newList = state.lists[listName].map((row) => {
+                if (row._id === rowId) { // eslint-disable-line no-underscore-dangle
                     row.hidden = !row.hidden; // eslint-disable-line no-param-reassign
                     return row;
                 }
@@ -32,15 +31,12 @@ const ListsReducer = (state = initialState, action) => {
         case 'CONFIRM_DENY_MATCH': {
             const { confirm, tempId, matchedId } = action.payload;
             const listName = state.selectedList;
-            const newList = state.lists[listName].map(row => {
+            const newList = state.lists[listName].map((row) => {
                 /* eslint-disable no-underscore-dangle */
-                if (row._id === tempId) {
-                    // eslint-disable-line no-param-reassign
+                if (row._id === tempId) { // eslint-disable-line no-param-reassign
                     /* eslint-enable no-underscore-dangle */
-                    row.matched = row.matched.map(m => {
-                        // eslint-disable-line no-param-reassign
-                        if (m._id === matchedId) {
-                            // eslint-disable-line no-underscore-dangle
+                    row.matched = row.matched.map((m) => { // eslint-disable-line no-param-reassign
+                        if (m._id === matchedId) { // eslint-disable-line no-underscore-dangle
                             m.confirm = confirm; // eslint-disable-line no-param-reassign
                             return m;
                         }

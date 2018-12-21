@@ -25,10 +25,10 @@ import { DownloadCSV } from '../util/util';
 import * as sourceActions from '../actions/source';
 
 const defaultContainer = ({ children }) => (
-    <div className='control-panel'>{children}</div>
+    <div className="control-panel">{children}</div>
 );
 const TabContainer = props => (
-    <Typography component='div'>{props.children}</Typography>
+    <Typography component="div">{props.children}</Typography>
 );
 
 const mapStateToProps = state => ({
@@ -69,10 +69,12 @@ class ControlPanel extends PureComponent {
 
         fetch(`${process.env.REACT_APP_API_URL}/allsource`)
             .then(response => response.json())
-            .then(data => {
+            .then((data) => {
                 const sources = data.sources
                     .filter(s => s.name)
-                    .map(({ name, _id, uid, list, user_type }) => ({
+                    .map(({
+                        name, _id, uid, list, user_type,
+                    }) => ({
                         name,
                         _id,
                         uid,
@@ -85,9 +87,9 @@ class ControlPanel extends PureComponent {
 
         fetch(`${process.env.REACT_APP_API_URL}/allcountry`)
             .then(response => response.json())
-            .then(data => {
+            .then((data) => {
                 const countryNames = data.countries
-                    .map(s => {
+                    .map((s) => {
                         const cname = countries.find(c => c.code === s);
                         return cname;
                     })
@@ -99,7 +101,7 @@ class ControlPanel extends PureComponent {
 
         fetch(`${process.env.REACT_APP_API_URL}/totalFactories`)
             .then(response => response.json())
-            .then(data => {
+            .then((data) => {
                 if (data && data.total) {
                     this.setState({
                         totalFactories: data.total,
@@ -134,7 +136,7 @@ class ControlPanel extends PureComponent {
             .map(c => (
                 <MenuItem value={c.code} key={c.code}>
                     <Checkbox
-                        color='primary'
+                        color="primary"
                         checked={this.state.country.indexOf(c.code) > -1}
                     />
                     <ListItemText primary={c.names ? c.names[0] : c.name} />
@@ -144,15 +146,14 @@ class ControlPanel extends PureComponent {
     checkboxSources = () =>
         this.state.sources
             .sort((a, b) =>
-                a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-            )
+                a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
             .map(c => (
                 <MenuItem value={c._id} key={c._id}>
                     <Checkbox
-                        color='primary'
+                        color="primary"
                         checked={this.state.contributor.indexOf(c._id) > -1}
                     />
-                    <ListItemText primary={c.name} className='notranslate' />
+                    <ListItemText primary={c.name} className="notranslate" />
                 </MenuItem>
             ));
 
@@ -163,24 +164,25 @@ class ControlPanel extends PureComponent {
                 .sort((a, b) =>
                     a.user_type
                         .toLowerCase()
-                        .localeCompare(b.user_type.toLowerCase())
-                ),
-            'user_type'
+                        .localeCompare(b.user_type.toLowerCase())),
+            'user_type',
         ).map(c => (
             <MenuItem value={c.user_type} key={c.user_type}>
                 <Checkbox
-                    color='primary'
+                    color="primary"
                     checked={
                         this.state.contributorType.indexOf(c.user_type) > -1
                     }
                 />
-                <ListItemText primary={c.user_type} className='notranslate' />
+                <ListItemText primary={c.user_type} className="notranslate" />
             </MenuItem>
         ));
 
     // If someone has pasted a url into the browser, search OAR with the provided
     // parameters
-    handleSharedUrl = ({ name, contributor, country, factory }) =>
+    handleSharedUrl = ({
+        name, contributor, country, factory,
+    }) =>
         this.setState(
             {
                 name: name || '',
@@ -192,10 +194,10 @@ class ControlPanel extends PureComponent {
                     country && country.split(',') ? country.split(',') : [],
                 tabValue: 1,
             },
-            () => this.searchFactory({ preventDefault: () => {} }, factory)
+            () => this.searchFactory({ preventDefault: () => {} }, factory),
         );
 
-    updateInputField = field => event => {
+    updateInputField = field => (event) => {
         const attribute = {};
         attribute[field] = event.target.value;
         this.setState(attribute);
@@ -204,7 +206,9 @@ class ControlPanel extends PureComponent {
     searchFactory = (e, specificFactory) => {
         e.preventDefault();
 
-        const { name, country, contributor, contributorType } = this.state;
+        const {
+            name, country, contributor, contributorType,
+        } = this.state;
 
         this.setState({ isSpinning: true });
         let url = `${
@@ -217,7 +221,7 @@ class ControlPanel extends PureComponent {
 
         fetch(url)
             .then(results => results.json())
-            .then(data => {
+            .then((data) => {
                 if (
                     !data ||
                     !Array.isArray(data) ||
@@ -238,17 +242,15 @@ class ControlPanel extends PureComponent {
                 // Filter out factories that don't have searched key word in their name
                 let factories = !name
                     ? data
-                    : data.filter(
-                          f =>
-                              _.includes(
-                                  f.name.toLowerCase(),
-                                  name.toLowerCase()
-                              ) || _.includes(f.otherNames, name)
-                      );
+                    : data.filter(f =>
+                        _.includes(
+                            f.name.toLowerCase(),
+                            name.toLowerCase(),
+                        ) || _.includes(f.otherNames, name));
                 // Filter out factories that don't have the contributors in their source
                 if (contributor && contributor.length > 0) {
                     // factories = factories.filter(f => f.source.some((s => _.includes(contributor, s._id))))
-                    factories = factories.filter(f => {
+                    factories = factories.filter((f) => {
                         const fSourceId = f.source.map(s => s._id);
                         return (
                             _.difference(contributor, fSourceId).length === 0
@@ -258,11 +260,9 @@ class ControlPanel extends PureComponent {
 
                 // Filter out factories that don't have contributor types, $and filter, has type A and type B for their sources[]
                 if (contributorType && contributorType.length > 0) {
-                    factories = factories.filter(f => {
+                    factories = factories.filter((f) => {
                         if (!f.source || f.source.length <= 0) return false;
-                        const fSourceTypes = f.source.map(
-                            s => s.user_type || null
-                        );
+                        const fSourceTypes = f.source.map(s => s.user_type || null);
                         return (
                             _.difference(contributorType, fSourceTypes)
                                 .length === 0
@@ -293,7 +293,7 @@ class ControlPanel extends PureComponent {
                     },
                     () => {
                         this.props.onUpdate(factories);
-                    }
+                    },
                 );
 
                 if (specificFactory) {
@@ -302,7 +302,7 @@ class ControlPanel extends PureComponent {
             });
     };
 
-    createfactoriesRes = factories => {
+    createfactoriesRes = (factories) => {
         const { totalFactories } = this.state;
 
         if (!factories.length) {
@@ -316,9 +316,9 @@ class ControlPanel extends PureComponent {
             !this.state.contributorType.length
         ) {
             return (
-                <div className='control-panel__group'>
-                    <h1 className='control-panel__heading'>SEARCH RESULTS:</h1>
-                    <p className='helper-text'>
+                <div className="control-panel__group">
+                    <h1 className="control-panel__heading">SEARCH RESULTS:</h1>
+                    <p className="helper-text">
                         Your search criteria was too broad. Results are limited
                         to {factories.length} Facilities of {totalFactories}{' '}
                         Total Facilities.
@@ -328,9 +328,9 @@ class ControlPanel extends PureComponent {
         }
 
         return (
-            <div className='control-panel__group'>
-                <h1 className='control-panel__heading'>SEARCH RESULTS:</h1>
-                <p className='helper-text'>
+            <div className="control-panel__group">
+                <h1 className="control-panel__heading">SEARCH RESULTS:</h1>
+                <p className="helper-text">
                     Found {factories.length} Facilities of {totalFactories}{' '}
                     Total Facilities.
                 </p>
@@ -338,9 +338,9 @@ class ControlPanel extends PureComponent {
         );
     };
 
-    createfactoriesList = factories => {
+    createfactoriesList = (factories) => {
         if (!factories || factories.length <= 0) return [];
-        if (process.env.REACT_APP_CLICKABLE_LIST)
+        if (process.env.REACT_APP_CLICKABLE_LIST) {
             return factories.map((f, i) => (
                 <p
                     className={
@@ -348,13 +348,14 @@ class ControlPanel extends PureComponent {
                             ? 'notranslate link-underline cursor margin-bottom-64'
                             : 'notranslate link-underline cursor'
                     }
-                    role='presentation'
+                    role="presentation"
                     onClick={() => this.onSelectFactory(f.uniqueId)}
                     key={f.uniqueId}
                 >
                     {f.name}
                 </p>
             ));
+        }
         return factories.map((f, i) => (
             <p
                 className={
@@ -375,10 +376,10 @@ class ControlPanel extends PureComponent {
     flatten = array =>
         array.reduce(
             (acc, val) =>
-                Array.isArray(val)
+                (Array.isArray(val)
                     ? acc.concat(this.flatten(val))
-                    : acc.concat(val),
-            []
+                    : acc.concat(val)),
+            [],
         );
 
     factoriesCSV = () =>
@@ -386,15 +387,13 @@ class ControlPanel extends PureComponent {
             fields: ['nameId', 'longitude', 'latitude', 'name', 'address'],
         });
 
-    convertIdToName = ids => {
+    convertIdToName = (ids) => {
         const sources = this.state.sources.filter(s => ids.indexOf(s._id) > -1);
         return sources.map(s => s.name);
     };
 
-    convertCodeToName = codes => {
-        const filteredCountries = this.state.countries.filter(
-            s => codes.indexOf(s.code) > -1
-        );
+    convertCodeToName = (codes) => {
+        const filteredCountries = this.state.countries.filter(s => codes.indexOf(s.code) > -1);
         return filteredCountries.map(s => (s.name ? s.name : s.names[0]));
     };
 
@@ -413,7 +412,7 @@ class ControlPanel extends PureComponent {
             },
             () => {
                 this.props.onUpdate([]);
-            }
+            },
         );
 
     toggleList = () => {
@@ -445,15 +444,15 @@ class ControlPanel extends PureComponent {
                     />
                 </ShowOnly>
                 <ShowOnly if={!selectedFactory}>
-                    <div className='panel-header'>
-                        <h3 className='panel-header__title'>
+                    <div className="panel-header">
+                        <h3 className="panel-header__title">
                             Open Apparel Registry
                         </h3>
-                        <p className='panel-header__subheading'>
+                        <p className="panel-header__subheading">
                             The open map of global apparel factories.
                         </p>
                     </div>
-                    <AppBar position='static'>
+                    <AppBar position="static">
                         <Tabs
                             value={tabValue}
                             onChange={this.handleTabChange}
@@ -462,14 +461,14 @@ class ControlPanel extends PureComponent {
                                 indicator: 'tabs-indicator-color',
                             }}
                         >
-                            <Tab label='Guide' className='tab-minwidth' />
-                            <Tab label='Search' className='tab-minwidth' />
+                            <Tab label="Guide" className="tab-minwidth" />
+                            <Tab label="Search" className="tab-minwidth" />
                         </Tabs>
                     </AppBar>
                     <ShowOnly if={tabValue === 0}>
                         <TabContainer>
-                            <div className='control-panel__content'>
-                                <p className='control-panel__body'>
+                            <div className="control-panel__content">
+                                <p className="control-panel__body">
                                     The Open Apparel Registry (OAR) is a tool to
                                     identify every apparel facility worldwide.
                                     It is an open sourced, global database of
@@ -483,7 +482,7 @@ class ControlPanel extends PureComponent {
                                     contributor is listed next to every facility
                                     it has submitted.
                                 </p>
-                                <p className='control-panel__body'>
+                                <p className="control-panel__body">
                                     To contribute to the database, users must
                                     create an account. Anyone can sign up and
                                     contribute. Users interested in browsing the
@@ -491,10 +490,10 @@ class ControlPanel extends PureComponent {
                                     creating an account.
                                 </p>
                                 <a
-                                    href='http://info.openapparel.org/about'
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='link-underline'
+                                    href="http://info.openapparel.org/about"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="link-underline"
                                 >
                                     Learn More
                                 </a>
@@ -503,20 +502,18 @@ class ControlPanel extends PureComponent {
                     </ShowOnly>
                     <ShowOnly if={tabValue === 1}>
                         <TabContainer>
-                            <div className='control-panel__content'>
+                            <div className="control-panel__content">
                                 <form onSubmit={this.searchFactory}>
-                                    <div className='form__field'>
-                                        <InputLabel className='form__label'>
+                                    <div className="form__field">
+                                        <InputLabel className="form__label">
                                             Search a Facility Name
                                         </InputLabel>
                                         <TextField
-                                            id='name'
-                                            placeholder='Facility Name'
-                                            className='full-width margin-bottom-16 form__text-input'
+                                            id="name"
+                                            placeholder="Facility Name"
+                                            className="full-width margin-bottom-16 form__text-input"
                                             value={this.state.name}
-                                            onChange={this.updateInputField(
-                                                'name'
-                                            )}
+                                            onChange={this.updateInputField('name')}
                                         />
                                     </div>
 
@@ -528,7 +525,7 @@ class ControlPanel extends PureComponent {
                                     >
                                         <InputLabel
                                             shrink={false}
-                                            htmlFor='contributor'
+                                            htmlFor="contributor"
                                             style={{
                                                 fontSize: '16px',
                                                 fontWeight: 500,
@@ -542,22 +539,18 @@ class ControlPanel extends PureComponent {
                                         <Select
                                             multiple
                                             value={this.state.contributor}
-                                            onChange={this.updateInputField(
-                                                'contributor'
-                                            )}
-                                            name='contributor'
-                                            className='full-width margin-top-16 margin-bottom-16 notranslate'
+                                            onChange={this.updateInputField('contributor')}
+                                            name="contributor"
+                                            className="full-width margin-top-16 margin-bottom-16 notranslate"
                                             input={
                                                 <Input
-                                                    name='contributor'
-                                                    id='contributor'
-                                                    className='notranslate'
+                                                    name="contributor"
+                                                    id="contributor"
+                                                    className="notranslate"
                                                 />
                                             }
-                                            renderValue={selected => {
-                                                const selectedNames = this.convertIdToName(
-                                                    selected
-                                                );
+                                            renderValue={(selected) => {
+                                                const selectedNames = this.convertIdToName(selected);
                                                 return selectedNames.join(', ');
                                             }}
                                             MenuProps={{
@@ -579,7 +572,7 @@ class ControlPanel extends PureComponent {
                                     >
                                         <InputLabel
                                             shrink={false}
-                                            htmlFor='contributor_type'
+                                            htmlFor="contributor_type"
                                             style={{
                                                 fontSize: '16px',
                                                 fontWeight: 500,
@@ -593,16 +586,14 @@ class ControlPanel extends PureComponent {
                                         <Select
                                             multiple
                                             value={this.state.contributorType}
-                                            onChange={this.updateInputField(
-                                                'contributorType'
-                                            )}
-                                            name='contributorType'
-                                            className='full-width margin-top-16 margin-bottom-16 notranslate'
+                                            onChange={this.updateInputField('contributorType')}
+                                            name="contributorType"
+                                            className="full-width margin-top-16 margin-bottom-16 notranslate"
                                             input={
                                                 <Input
-                                                    name='contributorType'
-                                                    id='contributorType'
-                                                    className='notranslate'
+                                                    name="contributorType"
+                                                    id="contributorType"
+                                                    className="notranslate"
                                                 />
                                             }
                                             renderValue={selected =>
@@ -622,7 +613,7 @@ class ControlPanel extends PureComponent {
                                     <FormControl style={{ width: '100%' }}>
                                         <InputLabel
                                             shrink={false}
-                                            htmlFor='country'
+                                            htmlFor="country"
                                             style={{
                                                 fontSize: '16px',
                                                 fontWeight: 500,
@@ -636,21 +627,17 @@ class ControlPanel extends PureComponent {
                                         <Select
                                             multiple
                                             value={this.state.country}
-                                            onChange={this.updateInputField(
-                                                'country'
-                                            )}
-                                            name='country'
-                                            className='full-width margin-top-16 margin-bottom-16'
+                                            onChange={this.updateInputField('country')}
+                                            name="country"
+                                            className="full-width margin-top-16 margin-bottom-16"
                                             input={
                                                 <Input
-                                                    name='country'
-                                                    id='country'
+                                                    name="country"
+                                                    id="country"
                                                 />
                                             }
-                                            renderValue={selected => {
-                                                const selectedNames = this.convertCodeToName(
-                                                    selected
-                                                );
+                                            renderValue={(selected) => {
+                                                const selectedNames = this.convertCodeToName(selected);
                                                 return selectedNames.join(', ');
                                             }}
                                             MenuProps={{
@@ -664,36 +651,36 @@ class ControlPanel extends PureComponent {
                                     </FormControl>
                                     <br />
 
-                                    <div className='form__action'>
+                                    <div className="form__action">
                                         <a
-                                            className='control-link'
-                                            href='mailto:info@openapparel.org?subject=Reporting an issue'
+                                            className="control-link"
+                                            href="mailto:info@openapparel.org?subject=Reporting an issue"
                                         >
                                             Report an issue
                                         </a>
-                                        <div className='offset offset-right'>
+                                        <div className="offset offset-right">
                                             <Button
-                                                size='small'
-                                                variant='outlined'
+                                                size="small"
+                                                variant="outlined"
                                                 onClick={this.resetSearch}
                                                 disableRipple
-                                                color='primary'
-                                                className='outlined-button'
+                                                color="primary"
+                                                className="outlined-button"
                                             >
                                                 Reset
                                             </Button>
                                             {this.state.isSpinning ? (
                                                 <CircularProgress
                                                     size={30}
-                                                    className='margin-left-16'
+                                                    className="margin-left-16"
                                                 />
                                             ) : (
                                                 <Button
-                                                    variant='contained'
-                                                    size='small'
-                                                    type='submit'
-                                                    color='primary'
-                                                    className='margin-left-16 blue-background'
+                                                    variant="contained"
+                                                    size="small"
+                                                    type="submit"
+                                                    color="primary"
+                                                    className="margin-left-16 blue-background"
                                                     style={{
                                                         boxShadow: 'none',
                                                     }}
@@ -709,14 +696,14 @@ class ControlPanel extends PureComponent {
                                 {factoriesRes}
 
                                 <ShowOnly if={this.state.factories.length > 0}>
-                                    <div className='control-panel__action control-panel__action--center'>
-                                        <div className='offset offset-right'>
+                                    <div className="control-panel__action control-panel__action--center">
+                                        <div className="offset offset-right">
                                             <Button
-                                                size='small'
-                                                variant='outlined'
-                                                color='primary'
+                                                size="small"
+                                                variant="outlined"
+                                                color="primary"
                                                 onClick={this.toggleList}
-                                                className='blue-color notranslate'
+                                                className="blue-color notranslate"
                                                 disableRipple
                                             >
                                                 <ShowOnly
@@ -730,15 +717,15 @@ class ControlPanel extends PureComponent {
                                                 FACILITY LIST
                                             </Button>
                                             <Button
-                                                className='blue-color margin-left-16'
-                                                size='small'
-                                                variant='outlined'
-                                                color='primary'
+                                                className="blue-color margin-left-16"
+                                                size="small"
+                                                variant="outlined"
+                                                color="primary"
                                                 disableRipple
                                                 onClick={() =>
                                                     DownloadCSV(
                                                         this.factoriesCSV(),
-                                                        'factories.csv'
+                                                        'factories.csv',
                                                     )
                                                 }
                                             >
@@ -747,7 +734,7 @@ class ControlPanel extends PureComponent {
                                         </div>
                                     </div>
                                     <ShowOnly if={showFacroiesList}>
-                                        <div className='control-panel__scroll'>
+                                        <div className="control-panel__scroll">
                                             {factoriesList}
                                         </div>
                                     </ShowOnly>
@@ -757,7 +744,7 @@ class ControlPanel extends PureComponent {
                     </ShowOnly>
                     <ShowOnly if={tabValue === 2}>
                         <TabContainer>
-                            <div className='padding-all' />
+                            <div className="padding-all" />
                         </TabContainer>
                     </ShowOnly>
                 </ShowOnly>
@@ -785,5 +772,5 @@ ControlPanel.defaultProps = {
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(ControlPanel);
