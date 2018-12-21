@@ -1,3 +1,5 @@
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';

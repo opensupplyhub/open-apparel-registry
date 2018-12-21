@@ -41,7 +41,7 @@ class Map extends Component {
         circleColor: CIRCLE_COLOR,
         circleColorShadow: MAP_COLOR_TRANSPARENT,
         circleTextColor: '#fff',
-        alertOpen: true,
+        alertOpen: true, // eslint-disable-line react/no-unused-state
     };
 
     componentDidMount() {
@@ -87,14 +87,14 @@ class Map extends Component {
         this.map.on(
             'mouseenter',
             'points',
-            () => (this.map.getCanvas().style.cursor = 'pointer'),
+            () => (this.map.getCanvas().style.cursor = 'pointer'), // eslint-disable-line no-return-assign
         );
 
         // Change it back to a pointer when it leaves.
         this.map.on(
             'mouseleave',
             'points',
-            () => (this.map.getCanvas().style.cursor = ''),
+            () => (this.map.getCanvas().style.cursor = ''), // eslint-disable-line no-return-assign
         );
     };
 
@@ -122,7 +122,8 @@ class Map extends Component {
         if (!features[0].properties.cluster) {
             this.props.actions.selectFactory(features[0].properties.uniqueId);
             // Highlight the selected point
-            // Update the filter in the highlighted-point layer to only show the matching state, thus making a hover effect.
+            // Update the filter in the highlighted-point layer to only show the matching
+            // state, thus making a hover effect.
             this.map.setFilter('highlighted-point', [
                 '==',
                 'uniqueId',
@@ -162,13 +163,14 @@ class Map extends Component {
 
         // Attach onclick event to popup items
         _.values(document.getElementsByClassName('popup-item')).forEach((point) => {
-            point.onclick = (p) => {
+            point.onclick = (p) => { // eslint-disable-line no-param-reassign
                 this.props.actions.selectFactory(p.target.id);
                 // Close popup
                 this.popup.remove();
 
                 // Fit bounds to the selected point
-                const selectedGeo = this.props.map.factoryGeojson.find(f => f.properties.uniqueId === p.target.id);
+                const selectedGeo = this.props.map.factoryGeojson
+                    .find(f => f.properties.uniqueId === p.target.id);
                 // Fly to the selected point, center the map around the selected point
                 // this.flyto(selectedGeo)
                 const twoNearestP = this.findNearestPoint(
@@ -180,7 +182,8 @@ class Map extends Component {
                 }
 
                 // Highlight the selected point
-                // Update the filter in the highlighted-point layer to only show the matching state, thus making a hover effect.
+                // Update the filter in the highlighted-point layer to only show
+                // the matching state, thus making a hover effect.
                 this.map.setFilter('highlighted-point', [
                     '==',
                     'uniqueId',
@@ -377,7 +380,7 @@ class Map extends Component {
             return;
         }
         const nearestFeature = uniqueFeatues[nearest.properties.featureIndex];
-        return [targetFeature, nearestFeature];
+        return [targetFeature, nearestFeature]; // eslint-disable-line consistent-return
     };
 
     addMapLayers = () => {
@@ -494,10 +497,11 @@ class Map extends Component {
 
         // If REACT_APP_MAP_THEME is true, enable multiple map themes
         if (process.env.REACT_APP_MAP_THEME) {
-            // Forked these following code from bumblebee to have two customized buttons for nav control
+            // Forked these following code from bumblebee to have two customized
+            // buttons for nav control
             const selectors = {
                 layer:
-                    '<button class="mapboxgl-ctrl-icon mapboxgl-ctrl-layers notranslate" id="mapboxgl-ctrl-layers" type="button"><i class="material-icons">layers</i></button>',
+                    '<button class="mapboxgl-ctrl-icon mapboxgl-ctrl-layers notranslate" id="mapboxgl-ctrl-layers" type="button"><i class="material-icons">layers</i></button>', // eslint-disable-line max-len
                 extent:
                     '<button class="mapboxgl-ctrl-icon mapboxgl-ctrl-extent notranslate" id="mapboxgl-ctrl-extent" type="button"><i class="material-icons">zoom_out_map</i></button>',
                 container: '.mapboxgl-ctrl-group.mapboxgl-ctrl',

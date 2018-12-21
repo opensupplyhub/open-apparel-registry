@@ -226,7 +226,7 @@ class Contribute extends Component {
                                 <input
                                     type="file"
                                     accept=".csv"
-                                    ref={c => (this.fileInput = c)}
+                                    ref={(c) => { this.fileInput = c; }}
                                     style={{
                                         display: 'none',
                                         visibility: 'hidden',
@@ -270,6 +270,7 @@ class Contribute extends Component {
                             <div className="form__field">
                                 <Link
                                     to="/lists"
+                                    href="/lists"
                                     className="outlined-button outlined-button--link margin-top-16"
                                 >
                                     View My Lists

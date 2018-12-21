@@ -19,6 +19,7 @@ export default class FactoryInfo extends PureComponent {
                             className="link-underline notranslate"
                             key={`${i.uid}-link`}
                             to={`/profile/${i.uid}`}
+                            href={`/profile/${i.uid}`}
                         >
                             {i.name}
                         </Link>

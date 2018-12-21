@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ShowOnly from '../ShowOnly';
@@ -81,7 +82,7 @@ class SelectInput extends Component {
 }
 
 SelectInput.propTypes = {
-    options: PropTypes.array.isRequired,
+    options: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
     initialValue: PropTypes.string,

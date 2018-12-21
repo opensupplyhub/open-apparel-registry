@@ -120,7 +120,8 @@ export const updateUser = (user, nameOrTypeUpdated) => (dispatch) => {
                     photo,
                     ...userWithoutPasswordAndPhoto
                 } = userWithoutPassword;
-                // Remove blank attributes from an Object userWithoutPasswordAndPhoto, otherwise firebase will throw error
+                // Remove blank attributes from an Object userWithoutPasswordAndPhoto,
+                // otherwise firebase will throw error
                 Object.keys(userWithoutPasswordAndPhoto).forEach(key =>
                     userWithoutPasswordAndPhoto[key] == null &&
                         delete userWithoutPasswordAndPhoto[key]);

@@ -74,7 +74,7 @@ class AuthLogin extends Component {
                     Apparel Registry.
                     <br />
                     Don&apos;t have an account?{' '}
-                    <Link to="/auth/register" className="link-underline">
+                    <Link to="/auth/register" href="/auth/register" className="link-underline">
                         Register
                     </Link>
                     .

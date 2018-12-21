@@ -13,7 +13,7 @@ const itemMap = (item) => {
     switch (item.type) {
         case 'link':
             return (
-                <Link to={item.url} className="link full-width-height">
+                <Link to={item.url} href={item.url} className="link full-width-height">
                     {item.text}
                 </Link>
             );
@@ -117,7 +117,7 @@ class NavbarDropdown extends Component {
 
 NavbarDropdown.propTypes = {
     title: PropTypes.string.isRequired,
-    links: PropTypes.array.isRequired,
+    links: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default NavbarDropdown;

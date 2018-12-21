@@ -158,7 +158,7 @@ class AuthRegister extends Component {
             <AppGrid title="Register">
                 <p>
                     Already have an account?{' '}
-                    <Link to="/auth/login" className="link-underline">
+                    <Link to="/auth/login" href="/auth/login" className="link-underline">
                         Log In
                     </Link>
                     .

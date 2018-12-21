@@ -1,3 +1,6 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable max-len */
+/* eslint-disable no-mixed-operators */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -119,7 +122,7 @@ class Lists extends Component {
             if (unProcessedNum && unProcessedNum > 0) {
                 const previousNum = this.state.showPendingMsg;
                 this.setState({ showPendingMsg: unProcessedNum });
-                // Only ask ursa for new list again in 10s if the new unProcessedNum decreased (unProcessedNum < previousNum)
+                // Only ask ursa for new list again in 10s if the new unProcessedNum decreased (unProcessedNum < previousNum) eslint-disable-line max-len
                 // Or user just select a new list (first === true)
                 if (unProcessedNum < previousNum || first) {
                     setTimeout(() => this.updateList(selectedList), 10000);
@@ -229,6 +232,7 @@ class Lists extends Component {
                                     <div className="margin-top-16">
                                         <Link
                                             to="/contribute"
+                                            href="/contribute"
                                             className="outlined-button outlined-button--link"
                                         >
                                             Contribute
@@ -301,7 +305,7 @@ class Lists extends Component {
                                     <p>
                                         {`We are in the process of parsing this list. It will take approximately ${processdateStr}. Please come back later. `}
                                     </p>
-                                    <Link className="link-underline" to="/">
+                                    <Link className="link-underline" to="/" href="/">
                                         Back to map
                                     </Link>
                                 </div>

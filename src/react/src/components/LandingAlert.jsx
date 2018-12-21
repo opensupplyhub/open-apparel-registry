@@ -7,7 +7,9 @@ class LandingAlert extends PureComponent {
 
     componentDidMount() {
         const dismissed = sessionStorage.getItem('dismissedLandingAlert');
-        if (dismissed) this.setState({ open: false });
+        if (dismissed) {
+            this.setState({ open: false }); // eslint-disable-line react/no-did-mount-set-state
+        }
     }
 
     dismissAlert = () => {

@@ -20,7 +20,7 @@ import Lists from './containers/Lists';
 import ErrorBoundary from './components/ErrorBoundary';
 import Maintenance from './containers/Maintenance';
 import BrowserSupport from './containers/BrowserSupport';
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
 import './App.css';
 
 const styles = {
@@ -79,7 +79,9 @@ class App extends Component {
         // Edge 20+
         const isEdge = !isIE && !!window.StyleMedia;
 
-        if (isSafari || isChrome || isFirefox || isEdge || isOpera || isIE11) { this.browserSupported = true; }
+        if (isSafari || isChrome || isFirefox || isEdge || isOpera || isIE11) {
+            this.browserSupported = true;
+        }
     }
 
     render() {
@@ -150,8 +152,8 @@ class App extends Component {
 }
 
 App.propTypes = {
-    user: PropTypes.object.isRequired,
-    actions: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    actions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default connect(

@@ -1,3 +1,6 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable max-len */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -66,7 +69,7 @@ class ControlPanel extends PureComponent {
 
     componentDidMount() {
         const { factories, sharedSearch } = this.props;
-
+        /* eslint-disable react/no-did-mount-set-state */
         fetch(`${process.env.REACT_APP_API_URL}/allsource`)
             .then(response => response.json())
             .then((data) => {
@@ -119,6 +122,7 @@ class ControlPanel extends PureComponent {
         if (Object.keys(sharedSearch).length) {
             this.handleSharedUrl(sharedSearch);
         }
+        /* eslint-enable react/no-did-mount-set-state */
     }
 
     onChildClear = () => this.props.onClearSelectedFac();
@@ -249,7 +253,7 @@ class ControlPanel extends PureComponent {
                         ) || _.includes(f.otherNames, name));
                 // Filter out factories that don't have the contributors in their source
                 if (contributor && contributor.length > 0) {
-                    // factories = factories.filter(f => f.source.some((s => _.includes(contributor, s._id))))
+                    // factories = factories.filter(f => f.source.some((s => _.includes(contributor, s._id)))) eslint-disable max-len
                     factories = factories.filter((f) => {
                         const fSourceId = f.source.map(s => s._id);
                         return (
@@ -258,7 +262,7 @@ class ControlPanel extends PureComponent {
                     });
                 }
 
-                // Filter out factories that don't have contributor types, $and filter, has type A and type B for their sources[]
+                // Filter out factories that don't have contributor types, $and filter, has type A and type B for their sources[] eslint-disable max-len
                 if (contributorType && contributorType.length > 0) {
                     factories = factories.filter((f) => {
                         if (!f.source || f.source.length <= 0) return false;
@@ -754,7 +758,7 @@ class ControlPanel extends PureComponent {
 }
 
 ControlPanel.propTypes = {
-    factories: PropTypes.array.isRequired,
+    factories: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     sharedSearch: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onClearSelectedFac: PropTypes.func.isRequired,
     updateSearchButton: PropTypes.func.isRequired,

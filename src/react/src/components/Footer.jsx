@@ -56,7 +56,7 @@ export default () => (
                     );
                 }
                 return (
-                    <Link to={l.href} key={l.text}>
+                    <Link to={l.href} href={l.href} key={l.text}>
                         {l.text}
                     </Link>
                 );

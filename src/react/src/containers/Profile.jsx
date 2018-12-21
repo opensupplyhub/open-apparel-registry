@@ -298,6 +298,7 @@ class Profile extends Component {
                     ) : (
                         <Link
                             to="/"
+                            href="/"
                             className="outlined-button outlined-button--link"
                         >
                             BACK TO MAP
