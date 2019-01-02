@@ -52,59 +52,64 @@ class App extends Component {
     render() {
         // const { user, actions: { checkAccess } } = this.props
         const { user } = this.props;
-        const ifMaintenance = process.env.REACT_APP_MAINTENANCE;
+        const isMaintenance = process.env.REACT_APP_MAINTENANCE;
+
+        if (isMaintenance) {
+            return (
+                <ErrorBoundary>
+                    <div>
+                        <Maintenance />
+                    </div>
+                </ErrorBoundary>
+            );
+        }
+
         return (
             <ErrorBoundary>
                 <div>
-                    {ifMaintenance ? (
-                        <Maintenance />
-                    ) : (
-                        <div>
-                            {/* { user.betaAccess
-                    ? ( */}
-                            <Router history={history}>
-                                <div className="App">
-                                    <Navbar user={user} />
-                                    <div>
-                                        <Switch>
-                                            <Route
-                                                exact
-                                                path="/"
-                                                component={Map}
-                                            />
-                                            <Route
-                                                path="/auth/register"
-                                                component={AuthRegister}
-                                            />
-                                            <Route
-                                                path="/auth/login"
-                                                component={AuthLogin}
-                                            />
-                                            <Route
-                                                path="/profile/:id"
-                                                component={Profile}
-                                            />
-                                            <Route
-                                                path="/contribute"
-                                                component={requireAuth(Contribute)}
-                                            />
-                                            <Route
-                                                path="/lists"
-                                                component={requireAuth(Lists)}
-                                            />
-                                        </Switch>
-                                    </div>
-                                    <Footer />
-                                    <ToastContainer
-                                        position="bottom-center"
-                                        transition={Slide}
-                                    />
+                    <div>
+                        {/* { user.betaAccess ? ( */}
+                        <Router history={history}>
+                            <div className="App">
+                                <Navbar user={user} />
+                                <div>
+                                    <Switch>
+                                        <Route
+                                            exact
+                                            path="/"
+                                            component={Map}
+                                        />
+                                        <Route
+                                            path="/auth/register"
+                                            component={AuthRegister}
+                                        />
+                                        <Route
+                                            path="/auth/login"
+                                            component={AuthLogin}
+                                        />
+                                        <Route
+                                            path="/profile/:id"
+                                            component={Profile}
+                                        />
+                                        <Route
+                                            path="/contribute"
+                                            component={requireAuth(Contribute)}
+                                        />
+                                        <Route
+                                            path="/lists"
+                                            component={requireAuth(Lists)}
+                                        />
+                                    </Switch>
                                 </div>
-                            </Router>
-                            )
-                            {/* <BetaAccessLogin checkAccess={ checkAccess } /> */}
-                        </div>
-                    )}
+                                <Footer />
+                                <ToastContainer
+                                    position="bottom-center"
+                                    transition={Slide}
+                                />
+                            </div>
+                        </Router>
+                        {/* <BetaAccessLogin checkAccess={ checkAccess } /> */}
+                    </div>
                 </div>
             </ErrorBoundary>
         );
