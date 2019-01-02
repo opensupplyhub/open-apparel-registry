@@ -1,11 +1,8 @@
 const restify = require('restify');
 const dotenv = require('dotenv');
-const Raven = require('raven')
 console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'development') {
 	dotenv.config();
-} else if (process.env.NODE_ENV === 'production') {
-	Raven.config(process.env.SENTRY_KEY).install()
 }
 
 let app = restify.createServer({ name:'REST-api' });

@@ -1,6 +1,5 @@
 import firebase from 'firebase';
 import axios from 'axios';
-import Raven from 'raven-js';
 import { toast } from 'react-toastify';
 
 firebase.initializeApp({
@@ -63,7 +62,6 @@ export const loadUser = () => (dispatch) => {
                             contributorType: snapshot.val().contributorType,
                         };
 
-                        Raven.setUserContext(userInfo);
                         dispatch({ type: 'ADD_USER', ...userInfo });
                     } else {
                         dispatch({ type: 'NO_USER' });
