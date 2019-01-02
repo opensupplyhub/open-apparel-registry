@@ -24,15 +24,16 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         usage
     else
         ./scripts/test
-        ./scripts/lint
 
         # Build tagged container images
         GIT_COMMIT="${GIT_COMMIT}" docker-compose \
             -f docker-compose.yml \
             -f docker-compose.ci.yml \
-            build api
+            build django
 
-        docker-compose run --rm \
-            react run build
+        # Build static asset bundle for React frontend
+        docker-compose \
+            run --rm --no-deps app \
+            yarn run build
     fi
 fi

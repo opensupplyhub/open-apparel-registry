@@ -1,9 +1,14 @@
 # Compiled files
+*.pyc
+__pycache__/
+
+# Terraform
+.terraform
+.terraform/
+*.tfplan
 *.tfstate
 *.tfstate.backup
-
-# Module directory
-.terraform/
+*.tfvars
 
 # Ansible
 deployment/ansible/roles/azavea.*

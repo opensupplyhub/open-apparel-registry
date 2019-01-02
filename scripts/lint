@@ -8,7 +8,7 @@ fi
 
 function usage() {
     echo -n "Usage: $(basename "$0")
-Run linters on the project's code
+Run linters on the project's code.
 "
 }
 
@@ -21,10 +21,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             shellcheck scripts/*
         fi
 
-        # Lint JavaScript
+        # Lint React frontend
         docker-compose \
-            -f docker-compose.yml \
-            run --rm --entrypoint ./node_modules/react-scripts/node_modules/.bin/eslint \
-            react src/ --ext .js --ext .jsx
+            run --rm --no-deps app \
+            yarn lint
+
+        # Lint Django app
+        docker-compose \
+            run --rm --no-deps --entrypoint flake8 django \
+            --exclude settings.py,manage.py,*.pyc,api/migrations/*
     fi
 fi

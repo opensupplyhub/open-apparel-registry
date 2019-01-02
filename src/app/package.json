@@ -34,6 +34,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "CI=1 react-scripts test --env=jsdom",
+    "lint": "eslint src/ --ext .js --ext .jsx",
     "eject": "react-scripts eject",
     "deploy": "npm run build && firebase deploy"
   },

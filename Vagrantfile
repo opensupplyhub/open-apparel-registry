@@ -19,8 +19,11 @@ Vagrant.configure("2") do |config|
 
   # React development server
   config.vm.network :forwarded_port, guest: 3000, host: 3000
+
+  # Gunicorn for Django app
+  config.vm.network :forwarded_port, guest: 8080, host: 8080
  
-  # API server
+  # Restify development server
   config.vm.network :forwarded_port, guest: 8000, host: 8000
 
   config.vm.provision "ansible_local" do |ansible|
