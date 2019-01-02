@@ -14,7 +14,6 @@
     "lodash": "4.17.10",
     "mapbox-gl": "0.46.0-beta.1",
     "prop-types": "15.6.2",
-    "raven-js": "3.26.3",
     "react": "16.4.0",
     "react-copy-to-clipboard": "5.0.1",
     "react-dom": "16.4.0",
