@@ -38,7 +38,10 @@ const mapDispatchToProps = dispatch => ({
 
 class App extends Component {
     componentWillMount() {
-        if (!this.props.user.betaAccess) this.props.actions.checkAccess();
+        if (!this.props.user.betaAccess) {
+            this.props.actions.checkAccess();
+        }
+
         this.props.actions.loadUser();
     }
 
