@@ -34,14 +34,14 @@ services:
       database:
         condition: service_healthy
     command:
-        - '-b :8080'
+        - '-b :8081'
         - '--reload'
         - '--access-logfile=-'
         - '--error-logfile=-'
         - '--log-level=debug'
         - 'oar.wsgi'
     ports:
-        - '8080:8080'
+        - '8081:8081'
 
   app:
     image: node:8-slim
@@ -51,7 +51,7 @@ services:
       - $HOME/.aws:/root/.aws:ro
     env_file: .env.frontend
     environment:
-      - REACT_APP_API_URL=http://localhost:8080
+      - REACT_APP_API_URL=http://localhost:8081
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=2000
       - PORT=3000

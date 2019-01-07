@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /usr/local/src
 
-CMD ["-b :8080", \
+CMD ["-b :8081", \
 "--workers=2", \
 "--timeout=60", \
 "--access-logfile=-", \
