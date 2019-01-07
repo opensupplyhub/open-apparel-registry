@@ -22,13 +22,13 @@ const styles = {
 class ErrorBoundary extends Component {
     state = {};
 
-    // To decode this later, just run "atob(hashedStringHere)"
-    encodeErrorMessage = error =>
-        btoa(`${error.message} ::::::: ${error.stack}`);
-
     componentDidCatch(error) {
         this.setState({ error });
     }
+
+    // To decode this later, just run "atob(hashedStringHere)"
+    encodeErrorMessage = error =>
+        btoa(`${error.message} ::::::: ${error.stack}`);
 
     render() {
         if (this.state.error) {

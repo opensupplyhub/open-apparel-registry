@@ -76,7 +76,7 @@ class ControlPanel extends PureComponent {
                 const sources = data.sources
                     .filter(s => s.name)
                     .map(({
-                        name, _id, uid, list, user_type,
+                        name, _id, uid, list, user_type, // eslint-disable-line camelcase
                     }) => ({
                         name,
                         _id,
