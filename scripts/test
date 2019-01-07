@@ -17,14 +17,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else       
-        echo "Tests are commented out"
+    	echo "TODO: Run django and js tests"
 
-        # # Execute backend tests with Jest
-        # docker-compose run --rm \
-        #     api run test
-
-        # # Execute frontend tests with react-scripts
-        # docker-compose run --rm \
-        #     react run test
+        ./scripts/lint
     fi
 fi

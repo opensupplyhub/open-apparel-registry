@@ -1,4 +1,4 @@
 version: '2.3'
 services:
-  api:
-    image: "openapparelregistry-api:${GIT_COMMIT:-latest}"
+  django:
+    image: "open-apparel-registry-api:${GIT_COMMIT:-latest}"

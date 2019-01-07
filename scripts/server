@@ -16,8 +16,12 @@ Starts servers using docker-compose.
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
+    elif [ "${1:-}" = "--restify" ]; then
+        docker-compose \
+            -f docker-compose.yml \
+        	-f docker-compose.restify.yml \
+        	up app restify 
     else
-        docker-compose up --build \
-        	react api
+        docker-compose up
     fi
 fi

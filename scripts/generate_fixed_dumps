@@ -29,36 +29,48 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         tar -zxvf ./oar_mongodump.tar.gz
 
-        # Bring up MongoDB and ElasticSearch and respect healthchecks using the API service
-        docker-compose up -d api
-        docker-compose stop api
+        # Bring up MongoDB and ElasticSearch and respect healthchecks using the Restify service
+        docker-compose \
+            -f docker-compose.restify.yml \
+            up -d restify
+        docker-compose \
+            -f docker-compose.restify.yml \
+            stop restify
 
         # Run mongorestore on Sourcemap database dumps
-        docker-compose run --rm \
+        docker-compose \
+            -f docker-compose.restify.yml \
+            run --rm \
             --entrypoint mongorestore \
             -v "$(pwd)/oar_mongodump/:/opt/oar_mongodump/openapparelregistry" \
             mongo \
             --drop --uri=mongodb://mongo:27017/openapparelregistry /opt/oar_mongodump/ -vvvvv
 
         # Create and print the master account API key
-        docker-compose run --rm \
+        docker-compose \
+            -f docker-compose.restify.yml \
+            run --rm \
             --entrypoint node \
-            -v "$(pwd)/src/api/scripts:/usr/local/src/scripts" \
-            api \
+            -v "$(pwd)/src/restify/scripts:/usr/local/src/scripts" \
+            restify \
             scripts/create_master_account_api_key.js
 
         # Run mongodump
-        mkdir oar_mongodump_fixed 
+        mkdir oar_mongodump_fixed
 
-        docker-compose run --rm \
+        docker-compose \
+            -f docker-compose.restify.yml \
+            run --rm \
         	--entrypoint mongodump \
         	-v "$(pwd)/oar_mongodump_fixed:/opt/oar_mongodump_fixed/" \
         	mongo \
-        	--uri=mongodb://mongo:27017/openapparelregistry --out=/opt/oar_mongodump_fixed/  
+        	--uri=mongodb://mongo:27017/openapparelregistry --out=/opt/oar_mongodump_fixed/
 
         tar -zcvf oar_mongodump_fixed.tar.gz oar_mongodump_fixed
 
-        docker-compose down
+        docker-compose \
+            -f docker-compose.restify.yml \
+            down
 
         rm -rf ./oar_mongodump
         rm ./oar_mongodump.tar.gz

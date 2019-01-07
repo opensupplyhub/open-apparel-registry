@@ -1,0 +1,9 @@
+Django==2.0.9
+django-jsonview==1.2.0
+django-watchman==0.15.0
+django-cors-headers==2.4.0
+flake8==3.6.0
+mccabe==0.6.1
+pycodestyle==2.4.0
+pyflakes==2.0.0
+pytz==2018.7
