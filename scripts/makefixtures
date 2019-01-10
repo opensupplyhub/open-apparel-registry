@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n "Usage: $(basename "$0")
+
+Generate random but reasonable Django data fixtures
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        docker-compose exec django /bin/bash -c "pip install -q -r requirements.dev.txt && ./manage.py makefixtures"
+    fi
+fi
