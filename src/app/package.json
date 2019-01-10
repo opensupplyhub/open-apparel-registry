@@ -14,11 +14,11 @@
     "lodash": "4.17.10",
     "mapbox-gl": "0.46.0-beta.1",
     "prop-types": "15.6.2",
-    "react": "16.4.0",
+    "react": "16.7.0",
     "react-copy-to-clipboard": "5.0.1",
-    "react-dom": "16.4.0",
+    "react-dom": "16.7.0",
     "react-map-gl": "3.2.8",
-    "react-redux": "5.0.7",
+    "react-redux": "5.1.0",
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
     "react-scripts": "1.1.4",
@@ -31,20 +31,22 @@
     "viewport-mercator-project": "5.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=6543 react-scripts start",
     "build": "react-scripts build",
-    "test": "CI=1 react-scripts test --env=jsdom",
+    "test": "CI=1 react-scripts test",
     "lint": "eslint src/ --ext .js --ext .jsx",
     "eject": "react-scripts eject",
     "deploy": "npm run build && firebase deploy"
   },
   "devDependencies": {
     "@babel/cli": "7.0.0-beta.49",
+    "@babel/core": "7.0.0-beta.49",
     "@babel/preset-env": "7.0.0-beta.49",
     "babel-plugin-lodash": "3.3.3",
     "eslint": "4.19.1",
     "eslint-config-airbnb": "16.1.0",
     "eslint-plugin-import": "2.13.0",
+    "eslint-plugin-jest": "21.27.2",
     "eslint-plugin-jsx-a11y": "6.1.1",
     "eslint-plugin-react": "7.10.0"
   }

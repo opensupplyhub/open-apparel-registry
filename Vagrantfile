@@ -18,11 +18,11 @@ Vagrant.configure("2") do |config|
   end
 
   # React development server
-  config.vm.network :forwarded_port, guest: 3000, host: 3000
+  config.vm.network :forwarded_port, guest: 6543, host: 6543
 
   # Gunicorn for Django app
   config.vm.network :forwarded_port, guest: 8081, host: 8081
- 
+
   # Restify development server
   config.vm.network :forwarded_port, guest: 8000, host: 8000
 
@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
 
     export AWS_PROFILE=open-apparel-registry
     export OAR_SETTINGS_BUCKET=openapparelregistry-development-config-us-east-1
-    
+
     cd /vagrant
     su vagrant ./scripts/bootstrap
     su vagrant ./scripts/update

@@ -5,8 +5,12 @@
     "browser": true,
     "node": true,
     "es6": true,
-    "mocha": true
+    "mocha": true,
+    "jest/globals": true
   },
+  "plugins": [
+    "jest"
+  ],
   "rules": {
     "indent": [2, 4, { "SwitchCase": 1, "VariableDeclarator": 2 }],
     "react/jsx-indent": [2, 4],

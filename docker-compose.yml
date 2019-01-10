@@ -44,7 +44,7 @@ services:
         - '8081:8081'
 
   app:
-    image: node:8-slim
+    image: node:10-slim
     volumes:
       - ./src/app:/usr/local/src
       - ./dist:/usr/local/src/build
@@ -54,8 +54,8 @@ services:
       - REACT_APP_API_URL=http://localhost:8081
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=2000
-      - PORT=3000
+      - PORT=6543
     ports:
-      - 3000:3000
+      - 6543:6543
     working_dir: /usr/local/src
     command: yarn run start

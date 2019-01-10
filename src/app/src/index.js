@@ -7,9 +7,6 @@ import { store, persistor } from './configureStore';
 import './index.css';
 import App from './App';
 
-// TODO: Remove store from window
-window.store = store;
-
 /* eslint-disable react/jsx-filename-extension */
 render(
     <Provider store={store}>

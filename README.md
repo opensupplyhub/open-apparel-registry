@@ -94,7 +94,7 @@ In development, the [Django](https://www.djangoproject.com) app sits behind a [G
 
 | Service                          | Port                            |
 | -------------------------------- | ------------------------------- |
-| React development server         | [`3000`](http://localhost:3000) |
+| React development server         | [`6543`](http://localhost:6543) |
 | Gunicorn for Django app          | [`8081`](http://localhost:8081) |
 | Restify development server       | [`8000`](http://localhost:8000) |
 
