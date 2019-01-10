@@ -31,7 +31,7 @@
     "viewport-mercator-project": "5.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=6543 react-scripts start",
     "build": "react-scripts build",
     "test": "CI=1 react-scripts test --env=jsdom",
     "lint": "eslint src/ --ext .js --ext .jsx",
