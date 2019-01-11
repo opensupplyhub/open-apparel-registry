@@ -14,13 +14,13 @@ module.exports = function(app) {
   app.get('/searchFactoryNameCountry', factory.searchFactoryNameCountry); // Search factories by name (fuzzy match) within a country
 
   // GET http://localhost:8000/allcountry
-  app.get('/allcountry', geo.getAllCountry); // Get all countries in the databse API
+  app.get('/allcountry/', geo.getAllCountry); // Get all countries in the databse API
 
   // GET http://localhost:8000/totalFactories
-  app.get('/totalFactories', factory.totalFactories); // Get total factories
+  app.get('/totalFactories/', factory.totalFactories); // Get total factories
 
   // GET http://localhost:8000/allsource
-  app.get('/allsource', source.getAllSource); // Get all source in the databse API
+  app.get('/allsource/', source.getAllSource); // Get all source in the databse API
 
   // GET http://localhost:8000/matchSingleFactory?name=xx&country=xx&address=xx
   app.get('/matchSingleFactory', factory.matchSingleFactory); // Match one factory
