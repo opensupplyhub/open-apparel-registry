@@ -10,6 +10,8 @@ const {
     makeAllCountryURL,
     makeTotalFacilityURL,
     makeSearchFacilityByNameAndCountryURL,
+    getValueFromEvent,
+    getCheckedFromEvent,
 } = require('../util/util');
 
 const REACT_APP_API_URL = 'REACT_APP_API_URL';
@@ -96,4 +98,26 @@ it('creates an API URL for searching facilities by name, country, and optional c
 
     expect(makeSearchFacilityByNameAndCountryURL(name, country, contributor))
         .toEqual(expectedMatchWithContributor);
+});
+
+it('gets the value from an event on a DOM input', () => {
+    const value = 'value';
+    const mockEvent = {
+        target: {
+            value,
+        },
+    };
+
+    expect(getValueFromEvent(mockEvent)).toEqual(value);
+});
+
+it('gets the checked state from an even on a DOM checkbox input', () => {
+    const checked = true;
+    const mockEvent = {
+        target: {
+            checked,
+        },
+    };
+
+    expect(getCheckedFromEvent(mockEvent)).toEqual(true);
 });

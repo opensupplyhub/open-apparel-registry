@@ -11,7 +11,7 @@ class TextInput extends PureComponent {
 
         return (
             <div>
-                <ShowOnly if={!!hint}>
+                <ShowOnly showChildren={!!hint}>
                     <p className="form__hint">{hint}</p>
                 </ShowOnly>
                 <input

@@ -9,8 +9,8 @@ import history from './util/history';
 import * as userActions from './actions/user';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import AuthRegister from './containers/AuthRegister';
-import AuthLogin from './containers/AuthLogin';
+import RegisterForm from './components/RegisterForm';
+import LoginForm from './components/LoginForm';
 import Profile from './containers/Profile';
 import Contribute from './containers/Contribute';
 import Map from './containers/Map';
@@ -37,13 +37,13 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class App extends Component {
-    componentWillMount() {
-        if (!this.props.user.betaAccess) {
-            this.props.actions.checkAccess();
-        }
+    // componentWillMount() {
+    //     if (!this.props.user.betaAccess) {
+    //         this.props.actions.checkAccess();
+    //     }
 
-        this.props.actions.loadUser();
-    }
+    //     this.props.actions.loadUser();
+    // }
 
     shouldComponentUpdate(nextProps) {
         return (
@@ -84,11 +84,11 @@ class App extends Component {
                                         />
                                         <Route
                                             path="/auth/register"
-                                            component={AuthRegister}
+                                            component={RegisterForm}
                                         />
                                         <Route
                                             path="/auth/login"
-                                            component={AuthLogin}
+                                            component={LoginForm}
                                         />
                                         <Route
                                             path="/profile/:id"
@@ -121,7 +121,8 @@ class App extends Component {
 
 App.propTypes = {
     user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    actions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // TODO: re-enable the following line once auth check is possible
+    // actions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default connect(

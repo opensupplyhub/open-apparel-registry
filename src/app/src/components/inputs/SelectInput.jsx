@@ -46,7 +46,7 @@ class SelectInput extends Component {
         const { open, value } = this.state;
         return (
             <span>
-                <ShowOnly if={!disabled}>
+                <ShowOnly showChildren={!disabled}>
                     <div style={{ position: 'relative' }}>
                         <p
                             role="presentation"
@@ -55,7 +55,7 @@ class SelectInput extends Component {
                         >
                             {value || placeholder}
                         </p>
-                        <ShowOnly if={open} style={styles.dropdown}>
+                        <ShowOnly showChildren={open} style={styles.dropdown}>
                             {options.map(o => (
                                 <div
                                     role="presentation"
@@ -69,7 +69,7 @@ class SelectInput extends Component {
                         </ShowOnly>
                     </div>
                 </ShowOnly>
-                <ShowOnly if={disabled}>
+                <ShowOnly showChildren={disabled}>
                     <TextInput
                         placeholder="Contributor Type"
                         value={value}

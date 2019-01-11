@@ -253,7 +253,7 @@ class Contribute extends Component {
                                         SUBMIT
                                     </Button>
                                 )}
-                                <ShowOnly if={success}>
+                                <ShowOnly showChildren={success}>
                                     <p style={styles.fileNameText}>
                                         Your facility list has been successfully
                                         uploaded !

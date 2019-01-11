@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 export function DownloadCSV(data, fileName) {
     const csvData = new Blob([data], { type: 'text/csv;charset=utf-8;' });
     if (window.navigator.msSaveOrOpenBlob) {
@@ -42,3 +44,27 @@ export const makeSearchFacilityByNameAndCountryURL = (name, country, contributor
         ? baseURL.concat(contributor)
         : baseURL;
 };
+
+export function logErrorAndDispatchFailure(error, defaultMessage, failureAction) {
+    return (dispatch) => {
+        const response = get(error, 'response', { data: null, status: null });
+
+        if (!response.status || response.status >= 500) {
+            window.console.warn(error);
+            return dispatch(failureAction([defaultMessage]));
+        }
+
+        if (response.status === 404) {
+            window.console.warn(error);
+            return dispatch(failureAction(['Not found']));
+        }
+
+        const errorMessages = response.data || [defaultMessage];
+        window.console.warn(errorMessages);
+        return dispatch(failureAction(errorMessages));
+    };
+}
+
+export const getValueFromEvent = ({ target: { value } }) => value;
+
+export const getCheckedFromEvent = ({ target: { checked } }) => checked;

@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-class ShowOnly extends PureComponent {
+export default class ShowOnly extends PureComponent {
     render() {
-        const { style, children, if: _if } = this.props;
+        const { style, children, showChildren } = this.props;
 
-        if (_if) {
+        if (showChildren) {
             return (
                 <React.Fragment>
                     {Object.keys(style).length ? (
@@ -22,14 +22,11 @@ class ShowOnly extends PureComponent {
 }
 
 ShowOnly.propTypes = {
-    if: PropTypes.bool,
+    showChildren: PropTypes.bool.isRequired,
     style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node.isRequired,
 };
 
 ShowOnly.defaultProps = {
     style: {},
-    if: false,
 };
-
-export default ShowOnly;
