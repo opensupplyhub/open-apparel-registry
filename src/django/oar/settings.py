@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth.registration',
     'watchman',
-    'rest_framework_gis',
     'api',
 ]
 
@@ -175,3 +174,6 @@ WATCHMAN_ERROR_CODE = 503
 WATCHMAN_CHECKS = (
     'watchman.checks.databases',
 )
+
+# Application settings
+MAX_UPLOADED_FILE_SIZE_IN_BYTES = 5242880
