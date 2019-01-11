@@ -56,6 +56,9 @@ class Organization(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return '{name} ({id})'.format(**self.__dict__)
+
 
 class FacilityList(models.Model):
     """
@@ -95,6 +98,10 @@ class FacilityList(models.Model):
                    'list specified by this field.'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{0} - {1} ({2})'.format(
+            self.organization.name, self.name, self.id)
 
 
 class FacilityListItem(models.Model):
@@ -178,11 +185,17 @@ class FacilityListItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return 'FacilityListItem {id} - {status}'.format(**self.__dict__)
+
 
 class Facility(models.Model):
     """
     An official OAR facility. Search results are returned from this table.
     """
+    class Meta:
+        verbose_name_plural = "facilities"
+
     id = models.CharField(
         max_length=32,
         primary_key=True,
@@ -217,11 +230,17 @@ class Facility(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return '{name} ({id})'.format(**self.__dict__)
+
 
 class FacilityMatch(models.Model):
     """
     Matches between existing facilities and uploaded facility list items.
     """
+    class Meta:
+        verbose_name_plural = "facility matches"
+
     PENDING = 'PENDING'
     AUTOMATIC = 'AUTOMATIC'
     CONFIRMED = 'CONFIRMED'
@@ -267,3 +286,7 @@ class FacilityMatch(models.Model):
                    'or CONFIRMED status'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{0} - {1} - {2}'.format(self.facility_list_item, self.facility,
+                                        self.status)
