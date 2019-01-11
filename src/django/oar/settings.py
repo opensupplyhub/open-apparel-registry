@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth.registration',
     'watchman',
+    'rest_framework_gis',
     'api',
 ]
 
