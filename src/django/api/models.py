@@ -79,6 +79,11 @@ class FacilityList(models.Model):
         blank=False,
         editable=False,
         help_text='The full name of the uploaded file.')
+    header = models.TextField(
+        null=False,
+        blank=False,
+        editable=False,
+        help_text='The header row of the uploaded CSV.')
     is_active = models.BooleanField(
         null=False,
         default=True,

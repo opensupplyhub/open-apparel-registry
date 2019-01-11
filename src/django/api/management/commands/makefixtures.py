@@ -158,6 +158,7 @@ def make_facility_list(pk, organization_pk=None):
             'organization': organization,
             'name': name,
             'file_name': name + '.csv',
+            'header': 'country,name,address',
             'is_active': make_bool(),
             'is_public': make_bool(),
             'created_at': created_at,
