@@ -35,3 +35,4 @@ yarn-error.log
 .env.frontend
 factories.csv
 *_factories.csv
+src/django/static

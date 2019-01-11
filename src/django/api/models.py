@@ -10,26 +10,25 @@ class User(AbstractUser):
     pass
 
 
-ORG_TYPE_CHOICES = (
-    ('Auditor', 'Auditor'),
-    ('Brand/Retailer', 'Brand/Retailer'),
-    ('Civil Society Organization', 'Civil Society Organization'),
-    ('Factory / Facility', 'Factory / Facility'),
-    ('Manufacturing Group / Supplier / Vendor',
-     'Manufacturing Group / Supplier / Vendor'),
-    ('Multi Stakeholder Initiative', 'Multi Stakeholder Initiative'),
-    ('Researcher / Academic', 'Researcher / Academic'),
-    ('Service Provider', 'Service Provider'),
-    ('Union', 'Union'),
-    ('Other', 'Other'),
-)
-
-
 class Organization(models.Model):
     """
     A participant in or observer of the supply chain that will
     upload facility lists to the registry.
     """
+    ORG_TYPE_CHOICES = (
+        ('Auditor', 'Auditor'),
+        ('Brand/Retailer', 'Brand/Retailer'),
+        ('Civil Society Organization', 'Civil Society Organization'),
+        ('Factory / Facility', 'Factory / Facility'),
+        ('Manufacturing Group / Supplier / Vendor',
+         'Manufacturing Group / Supplier / Vendor'),
+        ('Multi Stakeholder Initiative', 'Multi Stakeholder Initiative'),
+        ('Researcher / Academic', 'Researcher / Academic'),
+        ('Service Provider', 'Service Provider'),
+        ('Union', 'Union'),
+        ('Other', 'Other'),
+    )
+
     admin = models.OneToOneField(
         'User',
         on_delete=models.PROTECT,
@@ -56,6 +55,9 @@ class Organization(models.Model):
         help_text='The category to which this organization belongs.')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{name} ({id})'.format(**self.__dict__)
 
 
 class FacilityList(models.Model):
@@ -97,17 +99,9 @@ class FacilityList(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
-UPLOADED = 'UPLOADED'
-FACILITY_LIST_ITEM_STATUS_CHOICES = (
-    (UPLOADED, UPLOADED),
-    ('PARSED', 'PARSED'),
-    ('GEOCODED', 'GEOCODED'),
-    ('MATCHED', 'MATCHED'),
-    ('POTENTIAL_MATCH', 'POTENTIAL_MATCH'),
-    ('CONFIRMED_MATCH', 'CONFIRMED_MATCH'),
-    ('ERROR', 'ERROR'),
-)
+    def __str__(self):
+        return '{0} - {1} ({2})'.format(
+            self.organization.name, self.name, self.id)
 
 
 class FacilityListItem(models.Model):
@@ -115,6 +109,24 @@ class FacilityListItem(models.Model):
     Data, metadata, and workflow status and results for a single line from a
     facility list file.
     """
+    UPLOADED = 'UPLOADED'
+    PARSED = 'PARSED'
+    GEOCODED = 'GEOCODED'
+    MATCHED = 'MATCHED'
+    POTENTIAL_MATCH = 'POTENTIAL_MATCH'
+    CONFIRMED_MATCH = 'CONFIRMED_MATCH'
+    ERROR = 'ERROR'
+
+    STATUS_CHOICES = (
+        (UPLOADED, UPLOADED),
+        (PARSED, PARSED),
+        (GEOCODED, GEOCODED),
+        (MATCHED, MATCHED),
+        (POTENTIAL_MATCH, POTENTIAL_MATCH),
+        (CONFIRMED_MATCH, CONFIRMED_MATCH),
+        (ERROR, ERROR),
+    )
+
     facility_list = models.ForeignKey(
         'FacilityList',
         on_delete=models.CASCADE,
@@ -127,7 +139,7 @@ class FacilityListItem(models.Model):
         max_length=200,
         null=False,
         blank=False,
-        choices=FACILITY_LIST_ITEM_STATUS_CHOICES,
+        choices=STATUS_CHOICES,
         default=UPLOADED,
         help_text='The current workflow progress of the line item.')
     processing_started_at = models.DateTimeField(
@@ -173,11 +185,17 @@ class FacilityListItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return 'FacilityListItem {id} - {status}'.format(**self.__dict__)
+
 
 class Facility(models.Model):
     """
     An official OAR facility. Search results are returned from this table.
     """
+    class Meta:
+        verbose_name_plural = "facilities"
+
     id = models.CharField(
         max_length=32,
         primary_key=True,
@@ -212,16 +230,22 @@ class Facility(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return '{name} ({id})'.format(**self.__dict__)
+
 
 class FacilityMatch(models.Model):
     """
     Matches between existing facilities and uploaded facility list items.
     """
+    class Meta:
+        verbose_name_plural = "facility matches"
 
     PENDING = 'PENDING'
     AUTOMATIC = 'AUTOMATIC'
     CONFIRMED = 'CONFIRMED'
     REJECTED = 'REJECTED'
+
     STATUS_CHOICES = (
         (PENDING, PENDING),
         (AUTOMATIC, AUTOMATIC),
@@ -262,3 +286,7 @@ class FacilityMatch(models.Model):
                    'or CONFIRMED status'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{0} - {1} - {2}'.format(self.facility_list_item, self.facility,
+                                        self.status)
