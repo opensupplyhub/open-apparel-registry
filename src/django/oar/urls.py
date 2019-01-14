@@ -27,6 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     # TODO: Remove the following URLs once the Django versions have been
     # implemented. These are here as imitations of the URLs available via
     # the legacy Restify API:

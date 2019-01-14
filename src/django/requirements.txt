@@ -4,6 +4,9 @@ django-watchman==0.15.0
 django-cors-headers==2.4.0
 django-extensions==2.1.4
 djangorestframework==3.9.0
+djangorestframework-gis==0.14
+django-rest-auth==0.9.3
+django-allauth==0.37.0
 flake8==3.6.0
 mccabe==0.6.1
 pycodestyle==2.4.0
