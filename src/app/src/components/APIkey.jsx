@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 
+import { makeGenerateAPIKeyURL } from '../util/util';
+
 const styles = {
     apiInput: {
         padding: '8px 16px',
@@ -26,9 +28,7 @@ export default class APIkey extends Component {
     }
 
     generateKey = (uid) => {
-        fetch(`${process.env.REACT_APP_API_URL}/generateKey/${uid}?key=${
-            process.env.REACT_APP_API_KEY
-        }`)
+        fetch(makeGenerateAPIKeyURL(uid))
             .then(response => response.json())
             .then((data) => {
                 if (data && data.key && data.key.key) { this.setState({ key: data.key.key }); }

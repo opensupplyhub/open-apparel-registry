@@ -16,10 +16,31 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, re_path, include
+from django.conf.urls import url
+
+from api import views
+
 
 from oar import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
+    url(r'^api-auth/', include('rest_framework.urls')),
+    # TODO: Remove the following URLs once the Django versions have been
+    # implemented. These are here as imitations of the URLs available via
+    # the legacy Restify API:
+    url(r'getLists/', views.get_lists, name='get_lists'),
+    url(r'getList/', views.get_list, name='get_list'),
+    url(r'confirmTemp/', views.confirm_temp, name='confirm_temp'),
+    url(r'updateSourceName/', views.update_source_name,
+        name='update_source_name'),
+    url(r'uploadTempFactory/', views.upload_temp_factory,
+        name='upload_temp_factory'),
+    url(r'generateKey/', views.generate_key, name='generate_key'),
+    url(r'allsource/', views.all_source, name='all_source'),
+    url(r'allcountry/', views.all_country, name='all_country'),
+    url(r'totalFactories/', views.total_factories, name='total_factories'),
+    url(r'searchFactoryNameCountry/', views.search_factories,
+        name='search_factories'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

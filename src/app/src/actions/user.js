@@ -2,6 +2,11 @@ import firebase from 'firebase';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import {
+    makeUpdateSourceNameURL,
+    makeUploadTempFacilityURL,
+} from '../util/util';
+
 firebase.initializeApp({
     apiKey: `${process.env.REACT_APP_FIREBASE_API_KEY}`,
     authDomain: `${process.env.REACT_APP_FIREBASE_AUTH_DOMAIN}`,
@@ -78,22 +83,15 @@ const updateSourceNameOrType = (user) => {
     const { uid, name, contributorType } = user;
 
     if (!uid || !name) {
-        return;
+        return null;
     }
 
-    const data = { name };
+    const data = contributorType
+        ? { name, user_type: contributorType }
+        : { name };
 
-    if (contributorType) {
-        data.user_type = contributorType;
-    }
-
-    axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/updateSourceName/${uid}?key=${
-            process.env.REACT_APP_API_KEY
-        }`,
-        data,
-    })
+    return axios
+        .post(makeUpdateSourceNameURL, data)
         .then((response) => {
             if (response.status === 200) {
                 toast('Contributor account created / updated successfully.');
@@ -164,19 +162,16 @@ export const uploadFactoriesListToUrsa = (
     callback,
     done,
 ) => () => {
-    axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/uploadTempFactory/${
-            user.uid
-        }?key=${process.env.REACT_APP_API_KEY}`,
-        data: {
-            file: JSON.stringify(list),
-            file_name: fileDisplayName.replace(/[^a-zA-Z0-9 ]/g, ''),
-            file_description: fileDescription,
-            user_name: user.name,
-            user_type: user.contributorType ? user.contributorType : 'Other',
-        },
-    })
+    const data = {
+        file: JSON.stringify(list),
+        file_name: fileDisplayName.replace(/[^a-zA-Z0-9 ]/g, ''),
+        file_description: fileDescription,
+        user_name: user.name,
+        user_type: user.contributorType ? user.contributorType : 'Other',
+    };
+
+    return axios
+        .post(makeUploadTempFacilityURL(user.uid), data)
         .then((response) => {
             if (response.data && response.data.message) {
                 toast(response.data.message);

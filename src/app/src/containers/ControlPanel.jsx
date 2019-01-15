@@ -24,8 +24,16 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FactoryInfo from '../components/FactoryInfo';
 import ShowOnly from '../components/ShowOnly';
 import countries from '../data/countries.json';
-import { DownloadCSV } from '../util/util';
 import * as sourceActions from '../actions/source';
+
+import {
+    DownloadCSV,
+    makeAllSourceURL,
+    makeAllCountryURL,
+    makeTotalFacilityURL,
+    makeSearchFacilityByNameAndCountryURL,
+} from '../util/util';
+
 
 const defaultContainer = ({ children }) => (
     <div className="control-panel">{children}</div>
@@ -70,7 +78,7 @@ class ControlPanel extends PureComponent {
     componentDidMount() {
         const { factories, sharedSearch } = this.props;
         /* eslint-disable react/no-did-mount-set-state */
-        fetch(`${process.env.REACT_APP_API_URL}/allsource`)
+        fetch(makeAllSourceURL())
             .then(response => response.json())
             .then((data) => {
                 const sources = data.sources
@@ -88,7 +96,7 @@ class ControlPanel extends PureComponent {
                 this.props.actions.setSource(sources);
             });
 
-        fetch(`${process.env.REACT_APP_API_URL}/allcountry`)
+        fetch(makeAllCountryURL())
             .then(response => response.json())
             .then((data) => {
                 const countryNames = data.countries
@@ -102,7 +110,7 @@ class ControlPanel extends PureComponent {
                 });
             });
 
-        fetch(`${process.env.REACT_APP_API_URL}/totalFactories`)
+        fetch(makeTotalFacilityURL())
             .then(response => response.json())
             .then((data) => {
                 if (data && data.total) {
@@ -215,15 +223,12 @@ class ControlPanel extends PureComponent {
         } = this.state;
 
         this.setState({ isSpinning: true });
-        let url = `${
-            process.env.REACT_APP_API_URL
-        }/searchFactoryNameCountry?name=${name}&country=${country}`;
-        if (contributor && contributor.length > 0) {
-            url += `&contributor=${contributor}`;
-            this.props.updateSearchButton(name, country, contributor);
-        } else url += '&contributor=';
 
-        fetch(url)
+        if (contributor && contributor.length > 0) {
+            this.props.updateSearchButton(name, country, contributor);
+        }
+
+        fetch(makeSearchFacilityByNameAndCountryURL(name, country, contributor))
             .then(results => results.json())
             .then((data) => {
                 if (

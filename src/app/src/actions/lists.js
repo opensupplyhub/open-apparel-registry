@@ -1,14 +1,16 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import {
+    makeGetListsURL,
+    makeUpdateListURL,
+    makeConfirmTempURL,
+} from '../util/util';
+
 // Get lists for this user from ursa
-export const setLists = (uid, callback) => (dispatch) => {
-    axios({
-        method: 'get',
-        url: `${process.env.REACT_APP_API_URL}/getLists/${uid}?key=${
-            process.env.REACT_APP_API_KEY
-        }`,
-    })
+export const setLists = (uid, callback) => dispatch =>
+    axios
+        .get(makeGetListsURL(uid))
         .then((response) => {
             if (
                 response &&
@@ -22,18 +24,11 @@ export const setLists = (uid, callback) => (dispatch) => {
             callback();
         })
         .catch(error => toast(error.message));
-};
 
 // Pin ursa to parse Temp, and return a new list
-export const updateList = (uid, selectedList, callback) => (dispatch) => {
-    axios({
-        method: 'get',
-        url: `${
-            process.env.REACT_APP_API_URL
-        }/getList/${uid}?file_name=${selectedList}&key=${
-            process.env.REACT_APP_API_KEY
-        }`,
-    })
+export const updateList = (uid, selectedList, callback) => dispatch =>
+    axios
+        .get(makeUpdateListURL(uid, selectedList))
         .then((response) => {
             const newList = {};
             newList[selectedList] = response.data.temps;
@@ -41,21 +36,15 @@ export const updateList = (uid, selectedList, callback) => (dispatch) => {
             callback(selectedList, false);
         })
         .catch(error => toast(error.message));
-};
 
 // Toggle one row in a list to be open or closed
 export const toggleRow = rowId => dispatch =>
     dispatch({ type: 'TOGGLE_ROW', payload: { rowId } });
 
 // Update one match in temp.matched[], confirm: true / false
-export const confirmDenyMatch = (confirm, tempId, matchedId) => (dispatch) => {
-    axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/confirmTemp/${tempId}?key=${
-            process.env.REACT_APP_API_KEY
-        }`,
-        data: { confirm, matchedId },
-    })
+export const confirmDenyMatch = (confirm, tempId, matchedId) => dispatch =>
+    axios
+        .post(makeConfirmTempURL(tempId), { confirm, matchedId })
         .then((response) => {
             if (response.status === 200) {
                 dispatch({
@@ -65,7 +54,6 @@ export const confirmDenyMatch = (confirm, tempId, matchedId) => (dispatch) => {
             }
         })
         .catch(error => toast(error.message));
-};
 
 // Select one list
 export const selectList = selectedList => dispatch =>
