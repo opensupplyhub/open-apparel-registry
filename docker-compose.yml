@@ -47,6 +47,7 @@ services:
     image: node:10-slim
     volumes:
       - ./src/app:/usr/local/src
+      - /var/cache/open-apparel-registry-node-modules:/usr/local/src/node_modules
       - ./dist:/usr/local/src/build
       - $HOME/.aws:/root/.aws:ro
     env_file: .env.frontend
