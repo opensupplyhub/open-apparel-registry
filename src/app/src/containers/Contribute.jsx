@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MaterialButton from '@material-ui/core/Button';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
-import * as userActions from '../actions/user';
 import { DownloadCSV } from '../util/util';
 import AppGrid from './AppGrid';
-import TextInput from '../components/inputs/TextInput';
+import ControlledTextInput from '../components/ControlledTextInput';
 import Button from '../components/Button';
 import ShowOnly from '../components/ShowOnly';
 import COLOURS from '../util/COLOURS';
@@ -38,8 +36,8 @@ const mapStateToProps = state => ({
     user: state.user,
 });
 
-const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(userActions, dispatch),
+const mapDispatchToProps = () => ({
+    actions: {},
 });
 
 class Contribute extends Component {
@@ -185,11 +183,12 @@ class Contribute extends Component {
                                     Enter the organization name for this
                                     facility list
                                 </p>
-                                <TextInput
+                                <ControlledTextInput
                                     type="text"
                                     hint="Use only letters (a-z) or numbers (0-9), e.g, Alpha Brand Facility List June 2018"
                                     placeholder="Facility List Name"
                                     onChange={this.fieldUpdated('fileDisplayName')}
+                                    value={fileDisplayName}
                                 />
                                 {ifHasSpecialChar && (
                                     <p className="form__error">
@@ -204,11 +203,12 @@ class Contribute extends Component {
                                     and include a timeframe for the list&rsquo;s
                                     validity
                                 </p>
-                                <TextInput
+                                <ControlledTextInput
                                     type="text"
                                     hint="Use only letters (a-z) or numbers (0-9), e.g. This is the Alpha Brand list of suppliers for their apparel products valid from June 2018 to Sept 2018"
                                     placeholder="Facility List Description"
                                     onChange={this.fieldUpdated('description')}
+                                    value={description}
                                 />
                             </div>
                             <div className="form__field">
@@ -253,7 +253,7 @@ class Contribute extends Component {
                                         SUBMIT
                                     </Button>
                                 )}
-                                <ShowOnly showChildren={success}>
+                                <ShowOnly when={success}>
                                     <p style={styles.fileNameText}>
                                         Your facility list has been successfully
                                         uploaded !

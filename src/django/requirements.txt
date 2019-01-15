@@ -1,7 +1,6 @@
 Django==2.0.9
 django-jsonview==1.2.0
 django-watchman==0.15.0
-django-cors-headers==2.4.0
 django-extensions==2.1.4
 djangorestframework==3.9.0
 djangorestframework-gis==0.14

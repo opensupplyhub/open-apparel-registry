@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import { ToastContainer, Slide } from 'react-toastify';
-import { PropTypes } from 'prop-types';
+import { func } from 'prop-types';
 import history from './util/history';
-import * as userActions from './actions/user';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
-import Profile from './containers/Profile';
+// TODO: Re-implement Profile view/edit functionality in
+// https://github.com/open-apparel-registry/open-apparel-registry/issues/104
+// (we keep the existing component around for reference)
+// import Profile from './containers/Profile';
+import UserProfile from './components/UserProfile';
 import Contribute from './containers/Contribute';
 import Map from './containers/Map';
 // import BetaAccessLogin from './containers/BetaAccessLogin'
@@ -22,38 +24,22 @@ import Maintenance from './containers/Maintenance';
 import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
 import './App.css';
 
+import { sessionLogin } from './actions/auth';
+
+import { userPropType } from './util/propTypes';
+
 const styles = {
     root: {
         flexGrow: 1,
     },
 };
 
-const mapStateToProps = state => ({
-    user: state.user,
-});
-
-const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(userActions, dispatch),
-});
-
 class App extends Component {
-    // componentWillMount() {
-    //     if (!this.props.user.betaAccess) {
-    //         this.props.actions.checkAccess();
-    //     }
-
-    //     this.props.actions.loadUser();
-    // }
-
-    shouldComponentUpdate(nextProps) {
-        return (
-            nextProps.user.loaded !== this.props.user.loaded ||
-            nextProps.user.betaAccess !== this.props.user.betaAccess
-        );
+    componentDidMount() {
+        return this.props.logIn();
     }
 
     render() {
-        // const { user, actions: { checkAccess } } = this.props
         const { user } = this.props;
         const isMaintenance = process.env.REACT_APP_MAINTENANCE;
 
@@ -92,7 +78,7 @@ class App extends Component {
                                         />
                                         <Route
                                             path="/profile/:id"
-                                            component={Profile}
+                                            component={UserProfile}
                                         />
                                         <Route
                                             path="/contribute"
@@ -119,13 +105,31 @@ class App extends Component {
     }
 }
 
-App.propTypes = {
-    user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // TODO: re-enable the following line once auth check is possible
-    // actions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+App.defaultProps = {
+    user: null,
 };
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(withStyles(styles)(App));
+App.propTypes = {
+    user: userPropType,
+    logIn: func.isRequired,
+};
+
+function mapStateToProps({
+    auth: {
+        user: {
+            user,
+        },
+    },
+}) {
+    return {
+        user,
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        logIn: () => dispatch(sessionLogin()),
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App));

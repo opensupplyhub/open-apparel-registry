@@ -19,7 +19,7 @@ class LandingAlert extends PureComponent {
 
     render() {
         return (
-            <ShowOnly showChildren={this.state.open}>
+            <ShowOnly when={this.state.open}>
                 <Grid container>
                     <Grid item xs={12} sm={3} />
                     <Grid item xs={12} sm={9}>

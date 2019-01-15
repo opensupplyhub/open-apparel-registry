@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { func, string } from 'prop-types';
 
-import '../../styles/css/specialStates.css';
+import '../styles/css/specialStates.css';
 
 export default function ControlledTextInput({
     id,

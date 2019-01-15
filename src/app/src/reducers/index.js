@@ -10,7 +10,6 @@ import NavbarReducer from './NavbarReducer';
 import MapReducer from './MapReducer';
 import ListsReducer from './ListsReducer';
 import SourceReducer from './SourceReducer';
-import UserReducer from './UserReducer';
 import AuthReducer from './AuthReducer';
 
 export default combineReducers({
@@ -18,6 +17,5 @@ export default combineReducers({
     map: MapReducer,
     lists: ListsReducer,
     source: SourceReducer,
-    user: UserReducer,
     auth: AuthReducer,
 });

@@ -8,6 +8,9 @@ import {
     startSubmitLoginForm,
     failSubmitLoginForm,
     completeSubmitLoginForm,
+    startSessionLogin,
+    failSessionLogin,
+    completeSessionLogin,
     startSubmitForgotPassword,
     failSubmitForgotPassword,
     completeSubmitForgotPassword,
@@ -20,6 +23,7 @@ import {
     openForgotPasswordDialog,
     closeForgotPasswordDialog,
     updateForgotPasswordEmailAddress,
+    resetAuthFormState,
     resetAuthState,
 } from '../actions/auth';
 
@@ -27,7 +31,6 @@ import { registrationFieldsEnum } from '../util/constants';
 
 const initialState = Object.freeze({
     signup: Object.freeze({
-        data: null,
         form: Object.freeze({
             [registrationFieldsEnum.email]: '',
             [registrationFieldsEnum.name]: '',
@@ -42,18 +45,23 @@ const initialState = Object.freeze({
         }),
     }),
     login: Object.freeze({
-        data: null,
         form: Object.freeze({
             email: '',
             password: '',
         }),
     }),
     forgotPassword: Object.freeze({
-        data: null,
         form: Object.freeze({
             email: '',
         }),
         dialogIsOpen: false,
+    }),
+    user: Object.freeze({
+        user: null,
+        key: null,
+    }),
+    session: Object.freeze({
+        fetching: false,
     }),
     fetching: false,
     error: null,
@@ -116,16 +124,39 @@ export default createReducer({
         fetching: { $set: false },
         error: { $set: null },
         signup: {
-            data: { $set: payload },
             form: { $set: initialState.signup.form },
+        },
+        user: {
+            user: { $set: payload },
         },
     }),
     [completeSubmitLoginForm]: (state, payload) => update(state, {
         fetching: { $set: false },
         error: { $set: null },
         login: {
-            data: { $set: payload },
             form: { $set: initialState.login.form },
+        },
+        user: {
+            key: { $set: payload.key },
+            user: { $set: payload.user },
+        },
+    }),
+    [startSessionLogin]: state => update(state, {
+        session: {
+            fetching: { $set: true },
+        },
+    }),
+    [completeSessionLogin]: (state, payload) => update(state, {
+        session: {
+            fetching: { $set: false },
+        },
+        user: {
+            user: { $set: payload },
+        },
+    }),
+    [failSessionLogin]: state => update(state, {
+        session: {
+            fetching: { $set: false },
         },
     }),
     [completeSubmitForgotPassword]: state => update(state, {
@@ -134,7 +165,6 @@ export default createReducer({
         forgotPassword: { $set: initialState.forgotPassword },
     }),
     [completeSubmitLogOut]: () => initialState,
-    [resetAuthState]: () => initialState,
     [openForgotPasswordDialog]: state => update(state, {
         forgotPassword: {
             dialogIsOpen: { $set: true },
@@ -143,4 +173,12 @@ export default createReducer({
     [closeForgotPasswordDialog]: state => update(state, {
         forgotPassword: { $set: initialState.forgotPassword },
     }),
+    [resetAuthFormState]: state => update(state, {
+        signup: { $set: initialState.signup },
+        login: { $set: initialState.login },
+        forgotPassword: { $set: initialState.forgotPassword },
+        fetching: { $set: false },
+        error: { $set: null },
+    }),
+    [resetAuthState]: () => initialState,
 }, initialState);

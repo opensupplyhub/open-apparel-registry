@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 export default class ShowOnly extends PureComponent {
     render() {
-        const { style, children, showChildren } = this.props;
+        const { style, children, when } = this.props;
 
-        if (showChildren) {
+        if (when) {
             return (
                 <React.Fragment>
                     {Object.keys(style).length ? (
@@ -21,8 +21,12 @@ export default class ShowOnly extends PureComponent {
     }
 }
 
+ShowOnly.defaultProps = {
+    when: false,
+};
+
 ShowOnly.propTypes = {
-    showChildren: PropTypes.bool.isRequired,
+    when: PropTypes.bool,
     style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node.isRequired,
 };

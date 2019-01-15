@@ -1,4 +1,9 @@
 import get from 'lodash/get';
+import isArray from 'lodash/isArray';
+import isObject from 'lodash/isObject';
+import flatten from 'lodash/flatten';
+
+import { registrationFormFields } from './constants';
 
 export function DownloadCSV(data, fileName) {
     const csvData = new Blob([data], { type: 'text/csv;charset=utf-8;' });
@@ -14,36 +19,49 @@ export function DownloadCSV(data, fileName) {
     }
 }
 
+export const makeUserLoginURL = () => '/user-login/';
+export const makeUserLogoutURL = () => '/user-logout/';
+export const makeUserSignupURL = () => '/user-signup/';
+
 export const makeGetListsURL = uid =>
-    `${process.env.REACT_APP_API_URL}/getLists/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+    `/getLists/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
 
 export const makeUpdateListURL = (uid, filename) =>
-    `${process.env.REACT_APP_API_URL}/getList/${uid}/?file_name=${filename}&key=${process.env.REACT_APP_API_KEY}`;
+    `/getList/${uid}/?file_name=${filename}&key=${process.env.REACT_APP_API_KEY}`;
 
 export const makeConfirmTempURL = tempId =>
-    `${process.env.REACT_APP_API_URL}/confirmTemp/${tempId}/?key=${process.env.REACT_APP_API_KEY}`;
+    `/confirmTemp/${tempId}/?key=${process.env.REACT_APP_API_KEY}`;
 
 export const makeUpdateSourceNameURL = uid =>
-    `${process.env.REACT_APP_API_URL}/updateSourceName/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+    `/updateSourceName/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
 
 export const makeUploadTempFacilityURL = uid =>
-    `${process.env.REACT_APP_API_URL}/uploadTempFactory/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+    `/uploadTempFactory/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
 
 export const makeGenerateAPIKeyURL = uid =>
-    `${process.env.REACT_APP_API_URL}/generateKey/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+    `/generateKey/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
 
-export const makeAllSourceURL = () => `${process.env.REACT_APP_API_URL}/allsource/`;
-export const makeAllCountryURL = () => `${process.env.REACT_APP_API_URL}/allcountry/`;
-export const makeTotalFacilityURL = () => `${process.env.REACT_APP_API_URL}/totalFactories/`;
+export const makeAllSourceURL = () => '/allsource/';
+export const makeAllCountryURL = () => '/allcountry/';
+export const makeTotalFacilityURL = () => '/totalFactories/';
 
 export const makeSearchFacilityByNameAndCountryURL = (name, country, contributor = null) => {
-    const baseURL =
-        `${process.env.REACT_APP_API_URL}/searchFactoryNameCountry/?name=${name}&country=${country}&contributor=`;
+    const baseURL = `/searchFactoryNameCountry/?name=${name}&country=${country}&contributor=`;
 
     return contributor
         ? baseURL.concat(contributor)
         : baseURL;
 };
+
+export const createErrorListFromResponseObject = data => flatten(Object
+    .entries(data)
+    .map(([field, errors]) => {
+        if (isArray(errors)) {
+            return errors.map(err => `${field}: ${err}`);
+        }
+
+        return [];
+    }));
 
 export function logErrorAndDispatchFailure(error, defaultMessage, failureAction) {
     return (dispatch) => {
@@ -59,8 +77,27 @@ export function logErrorAndDispatchFailure(error, defaultMessage, failureAction)
             return dispatch(failureAction(['Not found']));
         }
 
-        const errorMessages = response.data || [defaultMessage];
-        window.console.warn(errorMessages);
+        const errorMessages = (() => {
+            if (!response || !response.data) {
+                return [defaultMessage];
+            }
+
+            // For signin-error
+            if (response.data.non_field_errors) {
+                return response.data.non_field_errors;
+            }
+
+            if (isArray(response.data)) {
+                return response.data;
+            }
+
+            if (isObject(response.data)) {
+                return createErrorListFromResponseObject(response.data);
+            }
+
+            return [defaultMessage];
+        })();
+
         return dispatch(failureAction(errorMessages));
     };
 }
@@ -68,3 +105,21 @@ export function logErrorAndDispatchFailure(error, defaultMessage, failureAction)
 export const getValueFromEvent = ({ target: { value } }) => value;
 
 export const getCheckedFromEvent = ({ target: { checked } }) => checked;
+
+export const createSignupErrorMessages = form => registrationFormFields
+    .reduce((acc, { id, label, required }) => {
+        if (!required) {
+            return acc;
+        }
+
+        if (form[id]) {
+            return acc;
+        }
+
+        return acc.concat(`Missing required field ${label}`);
+    }, []);
+
+export const createSignupRequestData = form => registrationFormFields
+    .reduce((acc, { id, modelFieldName }) => Object.assign({}, acc, {
+        [modelFieldName]: form[id],
+    }), {});

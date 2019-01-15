@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
-from corsheaders.defaults import default_headers
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,8 +37,8 @@ DEBUG = (ENVIRONMENT == 'Development')
 
 ALLOWED_HOSTS = [
     'localhost',
+    'django'
 ]
-
 
 # Application definition
 
@@ -53,7 +51,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
@@ -71,22 +68,27 @@ SITE_ID = 1
 
 AUTH_USER_MODEL = 'api.User'
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'api.serializers.UserSerializer',
+    'TOKEN_SERIALIZER': 'api.serializers.TokenSerializer',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# Django CORS Headers
-# https://github.com/ottoyiu/django-cors-headers
-
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_HEADERS = default_headers + ('credentials',)
 
 ROOT_URLCONF = 'oar.urls'
 

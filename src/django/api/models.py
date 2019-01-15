@@ -7,6 +7,8 @@ from django.db import models
 
 from api.countries import COUNTRY_CHOICES
 
+# These choices must be kept in sync with the identical list kept in the
+# React client's constants file
 ORG_TYPE_CHOICES = (
     ('Auditor', 'Auditor'),
     ('Brand/Retailer', 'Brand/Retailer'),

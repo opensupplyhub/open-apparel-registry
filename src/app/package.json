@@ -51,5 +51,6 @@
         "eslint-plugin-jest": "21.27.2",
         "eslint-plugin-jsx-a11y": "6.1.1",
         "eslint-plugin-react": "7.10.0"
-    }
+    },
+    "proxy": "http://django:8081"
 }

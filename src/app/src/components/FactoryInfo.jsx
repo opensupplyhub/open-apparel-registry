@@ -90,7 +90,7 @@ export default class FactoryInfo extends PureComponent {
                         </p>
                     </div>
 
-                    <ShowOnly showChildren={otherNames.length > 0}>
+                    <ShowOnly when={otherNames.length > 0}>
                         <div className="control-panel__group">
                             <h1 className="control-panel__heading">
                                 Also known as:
@@ -102,7 +102,7 @@ export default class FactoryInfo extends PureComponent {
                     </ShowOnly>
 
                     <ShowOnly
-                        showChildren={otherAddresses.length > 0}
+                        when={otherAddresses.length > 0}
                         className="control-panel__group"
                     >
                         <div className="control-panel__group">

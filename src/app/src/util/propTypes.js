@@ -1,4 +1,4 @@
-import { bool, func, shape, string } from 'prop-types';
+import { bool, func, number, shape, string } from 'prop-types';
 
 import { registrationFieldsEnum } from './constants';
 
@@ -13,9 +13,13 @@ export const registrationFormValuesPropType = shape({
     [registrationFieldsEnum.confirmPassword]: string.isRequired,
     [registrationFieldsEnum.newsletter]: bool.isRequired,
     [registrationFieldsEnum.tos]: bool.isRequired,
-}).isRequired;
+});
 
 export const registrationFormInputHandlersPropType = shape(Object
     .values(registrationFieldsEnum)
-    .reduce((accumulator, key) => Object.assign({}, accumulator, { [key]: func.isRequired })))
-    .isRequired;
+    .reduce((accumulator, key) => Object.assign({}, accumulator, { [key]: func.isRequired }), {}));
+
+export const userPropType = shape({
+    email: string.isRequired,
+    id: number.isRequired,
+});

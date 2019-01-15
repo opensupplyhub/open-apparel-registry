@@ -1,8 +1,9 @@
 import React from 'react';
-import { arrayOf, bool, func, oneOf, string } from 'prop-types';
+import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from 'prop-types';
 
-import ControlledTextInput from '../components/inputs/ControlledTextInput';
-import ControlledSelectInput from '../components/inputs/ControlledSelectInput';
+import ControlledTextInput from './ControlledTextInput';
+import ControlledSelectInput from './ControlledSelectInput';
+import ControlledCheckboxInput from './ControlledCheckboxInput';
 
 import {
     inputTypesEnum,
@@ -13,6 +14,7 @@ import {
 export default function RegisterFormField({
     id,
     label,
+    link,
     type,
     options,
     required,
@@ -25,12 +27,23 @@ export default function RegisterFormField({
         return null;
     }
 
+    const requiredIndicator = required
+        ? (
+            <span style={{ color: 'red' }}>
+                {' *'}
+            </span>)
+        : null;
+
     if (type === inputTypesEnum.select) {
         return (
             <div className="form__field">
-                <p className="form__label">
+                <label
+                    htmlFor={id}
+                    className="form__label"
+                >
                     {label}
-                </p>
+                    {requiredIndicator}
+                </label>
                 <ControlledSelectInput
                     handleChange={handleChange}
                     options={options}
@@ -40,12 +53,20 @@ export default function RegisterFormField({
         );
     }
 
-    const requiredIndicator = required
-        ? (
-            <span style={{ color: 'red' }}>
-                {' *'}
-            </span>)
-        : null;
+    if (type === inputTypesEnum.checkbox) {
+        return (
+            <div className="form__field">
+                <ControlledCheckboxInput
+                    key={id}
+                    id={id}
+                    onChange={handleChange}
+                    checked={value}
+                    text={label}
+                    link={link}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="form__field">
@@ -61,6 +82,7 @@ export default function RegisterFormField({
                 onChange={handleChange}
                 id={id}
                 hint={hint}
+                type={type}
             />
         </div>
     );
@@ -71,6 +93,7 @@ RegisterFormField.defaultProps = {
     hint: null,
     value: '',
     options: null,
+    link: null,
 };
 
 RegisterFormField.propTypes = {
@@ -80,7 +103,11 @@ RegisterFormField.propTypes = {
     options: arrayOf(oneOf(contributorTypeOptions)),
     required: bool,
     hint: string,
-    value: string,
+    value: oneOfType([bool, string]),
     handleChange: func.isRequired,
     isHidden: bool.isRequired,
+    link: shape({
+        prefixText: string,
+        url: string.isRequired,
+    }),
 };

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { arrayOf, bool, func, string } from 'prop-types';
-import ShowOnly from '../ShowOnly';
+import ShowOnly from './ShowOnly';
 
 const styles = {
     dropdown: {
@@ -44,20 +44,21 @@ export default class ControlledSelectInput extends Component {
                 open,
             },
         } = this;
-
+        /* eslint-disable  jsx-a11y/no-noninteractive-tabindex */
         return (
             <span>
-                <ShowOnly showChildren={!disabled}>
+                <ShowOnly when={!disabled}>
                     <div style={{ position: 'relative' }}>
                         <p
                             role="presentation"
                             onClick={this.toggleSelect}
                             onKeyPress={this.toggleSelect}
                             className="form__select-input-container"
+                            tabIndex={0}
                         >
                             {value || 'Please Select'}
                         </p>
-                        <ShowOnly showChildren={open} style={styles.dropdown}>
+                        <ShowOnly when={open} style={styles.dropdown}>
                             {options.map(opt => (
                                 <div
                                     role="presentation"
@@ -65,6 +66,7 @@ export default class ControlledSelectInput extends Component {
                                     onClick={() => this.makeSelection(opt)}
                                     onKeyPress={() => this.makeSelection(opt)}
                                     className="form__select-input--selected"
+                                    tabIndex={0}
                                 >
                                     {opt}
                                 </div>
@@ -74,6 +76,7 @@ export default class ControlledSelectInput extends Component {
                 </ShowOnly>
             </span>
         );
+        /* eslint-enable jsx-a11y/no-noninteractive-tabindex */
     }
 }
 
