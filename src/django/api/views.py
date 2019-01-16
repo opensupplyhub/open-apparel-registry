@@ -1,4 +1,3 @@
-import csv
 import os
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -16,6 +15,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES
 
 from api.constants import CsvHeaderField
 from api.models import FacilityList, FacilityListItem, Organization, User
+from api.processing import parse_csv_line
 from api.serializers import FacilityListSerializer, UserSerializer
 
 
@@ -120,13 +120,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     queryset = FacilityList.objects.all()
     serializer_class = FacilityListSerializer
 
-    def _parse_csv_line(self, line):
-        return list(csv.reader([line]))[0]
-
     def _validate_header(self, header):
         if header is None or header == '':
             raise ValidationError('Header cannot be blank.')
-        parsed_header = [i.lower() for i in self._parse_csv_line(header)]
+        parsed_header = [i.lower() for i in parse_csv_line(header)]
         if CsvHeaderField.COUNTRY not in parsed_header \
            or CsvHeaderField.NAME not in parsed_header \
            or CsvHeaderField.ADDRESS not in parsed_header:
