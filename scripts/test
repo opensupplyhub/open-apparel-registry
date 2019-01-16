@@ -23,7 +23,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             run --rm --no-deps app \
             yarn test
 
-        echo "TODO: Run django unit tests"
-        # TODO: https://github.com/azavea/open-apparel-registry/issues/66
+        docker-compose \
+            run --rm --entrypoint python django \
+            manage.py test --noinput
     fi
 fi
