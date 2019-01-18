@@ -1,6 +1,6 @@
 from rest_framework.serializers import (CharField, ModelSerializer)
 from rest_auth.models import TokenModel
-from api.models import User
+from api.models import FacilityList, User
 
 
 class UserSerializer(ModelSerializer):
@@ -23,3 +23,9 @@ class TokenSerializer(ModelSerializer):
     class Meta:
         model = TokenModel
         fields = ('key', 'user')
+
+
+class FacilityListSerializer(ModelSerializer):
+    class Meta:
+        model = FacilityList
+        fields = ('id', 'name', 'file_name', 'is_active', 'is_public')

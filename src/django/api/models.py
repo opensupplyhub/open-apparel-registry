@@ -224,6 +224,7 @@ class FacilityList(models.Model):
     replaces = models.OneToOneField(
         'self',
         null=True,
+        blank=True,
         unique=True,
         on_delete=models.PROTECT,
         help_text=('If not null this list is an updated version of the '
@@ -283,6 +284,7 @@ class FacilityListItem(models.Model):
         help_text=('When background processing of this item finished. '
                    'Items awaiting or in process will have a null value.'))
     processing_results = postgres.JSONField(
+        default=dict,
         help_text=('Diagnostic details logged by background processing '
                    'including details returned from the geocoder.'))
     name = models.CharField(

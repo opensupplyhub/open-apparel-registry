@@ -21,9 +21,16 @@ from django.conf.urls import url
 from api import views
 
 
+from rest_framework import routers
+
 from oar import settings
 
+router = routers.DefaultRouter()
+router.register('facility-lists', views.FacilityListViewSet, 'facility-list')
+
+
 urlpatterns = [
+    url(r'^api/', include(router.urls)),
     path('admin/', admin.site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
@@ -43,7 +50,8 @@ urlpatterns = [
     url(r'confirmTemp/', views.confirm_temp, name='confirm_temp'),
     url(r'updateSourceName/', views.update_source_name,
         name='update_source_name'),
-    url(r'uploadTempFactory/', views.upload_temp_factory,
+    url(r'uploadTempFactory/',
+        views.FacilityListViewSet.as_view({'post': 'create'}),
         name='upload_temp_factory'),
     url(r'generateKey/', views.generate_key, name='generate_key'),
     url(r'allsource/', views.all_source, name='all_source'),
