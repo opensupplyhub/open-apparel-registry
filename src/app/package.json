@@ -8,8 +8,6 @@
         "@material-ui/icons": "3.0.1",
         "@turf/turf": "5.1.6",
         "axios": "0.18.0",
-        "filestack-js": "1.0.2",
-        "filestack-react": "2.0.0",
         "json2csv": "4.1.6",
         "immutability-helper": "2.9.0",
         "lodash": "4.17.10",

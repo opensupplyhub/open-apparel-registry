@@ -104,21 +104,6 @@ function NavbarLoginButtonGroup({
                 className="line-height"
             >
                 <Translate />
-                <div
-                    style={componentStyles.logoContainer}
-                    onClick={() => window.console.dir('Profile button was clicked')}
-                    onKeyPress={() => window.console.dir('Profile button keypress')}
-                    role="button"
-                    tabIndex={0}
-                >
-                    <div style={componentStyles.logoSpacer}>
-                        <img
-                            src={user.photo}
-                            style={componentStyles.logo}
-                            alt=""
-                        />
-                    </div>
-                </div>
                 <NavbarDropdown
                     title={user.email.toUpperCase()}
                     links={createUserDropdownLinks(user, logout)}
