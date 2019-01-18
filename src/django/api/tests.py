@@ -1,12 +1,15 @@
 import json
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
 from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.constants import ProcessingResultSection
 from api.models import FacilityList, FacilityListItem, Organization, User
+from api.processing import parse_facility_list_item
 
 
 class FacilityListCreateTest(APITestCase):
@@ -162,3 +165,65 @@ class FacilityListCreateTest(APITestCase):
 
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 2)
+
+
+class FacilityListItemParseTest(TestCase):
+    def assert_successful_parse_results(self, item):
+        self.assertEqual(FacilityListItem.PARSED, item.status)
+        self.assertTrue(ProcessingResultSection.PARSING
+                        in item.processing_results)
+        results = item.processing_results[ProcessingResultSection.PARSING]
+        self.assertTrue('error' in results)
+        self.assertFalse(results['error'])
+        self.assertTrue('started_at' in results)
+        self.assertTrue('finished_at' in results)
+        self.assertTrue(results['finished_at'] > results['started_at'])
+
+    def assert_failed_parse_results(self, item, message=None):
+        self.assertEqual(FacilityListItem.ERROR, item.status)
+        self.assertTrue(ProcessingResultSection.PARSING
+                        in item.processing_results)
+        results = item.processing_results[ProcessingResultSection.PARSING]
+        self.assertTrue('error' in results)
+        self.assertTrue(results['error'])
+        self.assertTrue('message' in results)
+        if message is not None:
+            self.assertEqual(message, results['message'])
+        self.assertTrue('started_at' in results)
+        self.assertTrue('finished_at' in results)
+        self.assertTrue(results['finished_at'] > results['started_at'])
+
+    def test_expects_facility_list_item(self):
+        self.assertRaises(ValueError, parse_facility_list_item, 'bad')
+
+    def test_raises_if_item_is_not_uploaded(self):
+        item = FacilityListItem(status=FacilityListItem.ERROR)
+        self.assertRaises(ValueError, parse_facility_list_item, item)
+
+    def test_parses_using_header(self):
+        facility_list = FacilityList(header='address,country,name')
+        item = FacilityListItem(raw_data='1234 main st,de,Shirts!',
+                                facility_list=facility_list)
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual('DE', item.country_code)
+        self.assertEqual('Shirts!', item.name)
+        self.assertEqual('1234 main st', item.address)
+
+    def test_converts_country_name_to_code(self):
+        facility_list = FacilityList(header='address,country,name')
+        item = FacilityListItem(raw_data='1234 main st,ChInA,Shirts!',
+                                facility_list=facility_list)
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual('CN', item.country_code)
+        self.assertEqual('Shirts!', item.name)
+        self.assertEqual('1234 main st', item.address)
+
+    def test_error_status_if_country_is_unknown(self):
+        facility_list = FacilityList(header='address,country,name')
+        item = FacilityListItem(raw_data='1234 main st,Unknownistan,Shirts!',
+                                facility_list=facility_list)
+        parse_facility_list_item(item)
+        self.assert_failed_parse_results(
+            item, 'Could not find a country code for "Unknownistan".')

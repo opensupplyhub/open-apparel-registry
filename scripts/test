@@ -13,18 +13,34 @@ Run tests.
 "
 }
 
+function lint() {
+    ./scripts/lint
+}
+
+function test_django() {
+    docker-compose \
+        run --rm --entrypoint python django \
+        manage.py test --noinput
+}
+
+function test_app() {
+    docker-compose \
+        run --rm --no-deps app \
+        yarn test
+}
+
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
+    elif [ "${1:-}" = "--lint" ]; then
+        lint
+    elif [ "${1:-}" = "--app" ]; then
+        test_app
+    elif [ "${1:-}" = "--django" ]; then
+        test_django
     else
-        ./scripts/lint
-
-        docker-compose \
-            run --rm --no-deps app \
-            yarn test
-
-        docker-compose \
-            run --rm --entrypoint python django \
-            manage.py test --noinput
+        lint
+        test_app
+        test_django
     fi
 fi
