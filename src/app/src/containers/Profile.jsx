@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
-import ReactFilestack from 'filestack-react';
 import PropTypes from 'prop-types';
 import Button from '../components/Button';
 import TextInput from '../components/inputs/TextInput';
@@ -19,7 +18,6 @@ import AppGrid from './AppGrid';
 import ShowOnly from '../components/ShowOnly';
 import APIkey from '../components/APIkey';
 import '../styles/css/specialStates.css';
-import '../styles/css/filestack.css';
 
 const contributorTypeOptions = [
     'Auditor',
@@ -140,12 +138,6 @@ class Profile extends Component {
 
     formValid = () =>
         ['name', 'description', 'contributorType', 'password', 'email'].every(key => this.state[key]);
-
-    uploadPhotoSuccess = ({ filesUploaded }) => {
-        if (filesUploaded.length) {
-            this.props.actions.updateProfilePhoto(filesUploaded[0].url);
-        }
-    };
 
     render() {
         const {
@@ -314,29 +306,12 @@ class Profile extends Component {
                     <div style={styles.logoContainer}>
                         <div style={styles.logoSpacer}>
                             <img
-                                src={isUser ? this.props.user.photo : photo}
+                                src={photo}
                                 style={styles.image}
                                 alt=""
                             />
                         </div>
                     </div>
-                    <ShowOnly when={isUser}>
-                        <ReactFilestack
-                            apikey={process.env.REACT_APP_FILESTACK_KEY}
-                            buttonText="Change Profile Photo"
-                            buttonClass="uploadButton"
-                            onSuccess={this.uploadPhotoSuccess}
-                            options={{
-                                transformations: {
-                                    crop: { aspectRatio: 1, force: true },
-                                },
-                                maxFiles: 1,
-                                minFiles: 1,
-                                accept: 'image/*',
-                                fromSources: ['local_file_system'],
-                            }}
-                        />
-                    </ShowOnly>
                 </Grid>
             </AppGrid>
         );
