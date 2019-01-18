@@ -14,6 +14,7 @@ from rest_auth.views import LoginView, LogoutView
 
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES
 
+from api.constants import CsvHeaderField
 from api.models import FacilityList, FacilityListItem, Organization, User
 from api.serializers import FacilityListSerializer, UserSerializer
 
@@ -126,11 +127,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if header is None or header == '':
             raise ValidationError('Header cannot be blank.')
         parsed_header = [i.lower() for i in self._parse_csv_line(header)]
-        if 'country' not in parsed_header \
-           or 'name' not in parsed_header \
-           or 'address' not in parsed_header:
+        if CsvHeaderField.COUNTRY not in parsed_header \
+           or CsvHeaderField.NAME not in parsed_header \
+           or CsvHeaderField.ADDRESS not in parsed_header:
             raise ValidationError(
-                'Header must contain country, name, and address fields.')
+                'Header must contain {0}, {1}, and {2} fields.'.format(
+                    CsvHeaderField.COUNTRY, CsvHeaderField.NAME,
+                    CsvHeaderField.ADDRESS))
 
     @transaction.atomic
     def create(self, request):
