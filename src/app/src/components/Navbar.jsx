@@ -7,10 +7,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import logo from '../styles/images/OAR_Logo.png';
-import LoggedInBadge from './LoggedInBadge';
-import Translate from './Translate';
 import NavbarDropdown from './NavbarDropdown';
 import * as mapActions from '../actions/map';
+
+import NavbarLoginButtonGroup from './NavbarLoginButtonGroup';
+
+import {
+    authLoginFormRoute,
+    contributeRoute,
+} from '../util/constants';
+
+import { userPropType } from '../util/propTypes';
 
 const mapStateToProps = ({ map }) => ({ map });
 
@@ -20,7 +27,6 @@ const mapDispatchToProps = dispatch => ({
 
 class Navbar extends PureComponent {
     render() {
-        const { user } = this.props;
         const aboutLinks = [
             {
                 text: 'Team',
@@ -33,6 +39,7 @@ class Navbar extends PureComponent {
                 type: 'external',
             },
         ];
+
         const reset = () => this.props.actions.selectFactory(null);
 
         return (
@@ -66,15 +73,13 @@ class Navbar extends PureComponent {
                             API
                         </a>
                         <span>
-                            {user.loaded ? (
-                                <Link to="/contribute" className="navButton">
-                                    CONTRIBUTE
-                                </Link>
-                            ) : (
-                                <Link to="/auth/login" className="navButton">
-                                    CONTRIBUTE
-                                </Link>
-                            )}
+                            <Link
+                                className="navButton"
+                                to={this.props.user ? contributeRoute : authLoginFormRoute}
+                                href={this.props.user ? contributeRoute : authLoginFormRoute}
+                            >
+                                CONTRIBUTE
+                            </Link>
                         </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'middle' }}>
@@ -82,35 +87,19 @@ class Navbar extends PureComponent {
                             <img src={logo} className="App-logo" alt="logo" />
                         </Link>
                     </div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            marginLeft: 'auto',
-                            overflow: 'auto',
-                        }}
-                    >
-                        {user.loaded ? (
-                            <LoggedInBadge />
-                        ) : (
-                            <div style={{ display: 'flex' }}>
-                                <Translate />
-                                <Link to="/auth/register" className="navButton">
-                                    REGISTER
-                                </Link>
-                                <Link to="/auth/login" className="navButton">
-                                    LOG IN
-                                </Link>
-                            </div>
-                        )}
-                    </div>
+                    <NavbarLoginButtonGroup />
                 </Toolbar>
             </AppBar>
         );
     }
 }
 
+Navbar.defaultProps = {
+    user: null,
+};
+
 Navbar.propTypes = {
-    user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    user: userPropType,
     actions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 

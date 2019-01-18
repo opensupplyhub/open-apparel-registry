@@ -15,6 +15,11 @@
     "indent": [2, 4, { "SwitchCase": 1, "VariableDeclarator": 2 }],
     "react/jsx-indent": [2, 4],
     "react/jsx-indent-props": [2, 4],
-    "max-statements": [0, 10]
+    "max-statements": [0, 10],
+    "jsx-a11y/label-has-for": [2, {
+      "required": {
+         "every": ["id"]
+      }
+    }]
   }
 }

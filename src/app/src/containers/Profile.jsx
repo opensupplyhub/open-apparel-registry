@@ -1,3 +1,8 @@
+/* eslint-disable */
+/* This component's gradually going to be deprecated in favor of
+   UserProfile.jsx. We retain the file until it has been fully
+   replaced */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -166,7 +171,7 @@ class Profile extends Component {
                 }}
             >
                 <Grid item xs={12} sm={7}>
-                    <ShowOnly if={isUser}>
+                    <ShowOnly when={isUser}>
                         <div className="control-panel__group">
                             <div className="form__field">
                                 <p className="form__label">Email Address</p>
@@ -212,7 +217,7 @@ class Profile extends Component {
                                 placeholder=""
                                 initialValue={contributorType}
                             />
-                            <ShowOnly if={contributorType === 'Other'}>
+                            <ShowOnly when={contributorType === 'Other'}>
                                 <p className="form__label">
                                     Other Contributor Type
                                 </p>
@@ -315,7 +320,7 @@ class Profile extends Component {
                             />
                         </div>
                     </div>
-                    <ShowOnly if={isUser}>
+                    <ShowOnly when={isUser}>
                         <ReactFilestack
                             apikey={process.env.REACT_APP_FILESTACK_KEY}
                             buttonText="Change Profile Photo"

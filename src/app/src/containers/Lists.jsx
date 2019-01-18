@@ -25,7 +25,6 @@ import PropTypes from 'prop-types';
 import { parse } from 'json2csv';
 import ShowOnly from '../components/ShowOnly';
 import TablePaginationWrapper from '../components/TablePaginationWrapper';
-import * as userActions from '../actions/user';
 import * as listsActions from '../actions/lists';
 import AppGrid from './AppGrid';
 import { DownloadCSV } from '../util/util';
@@ -56,7 +55,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators({ ...userActions, ...listsActions }, dispatch),
+    actions: bindActionCreators({ ...listsActions }, dispatch),
 });
 
 class Lists extends Component {
@@ -215,15 +214,15 @@ class Lists extends Component {
             ? `${processdate.getUTCHours()} hours, ${processdate.getUTCMinutes()} minutes and ${processdate.getUTCSeconds()} second(s)`
             : '';
         return (
-            <ShowOnly if={user.loaded}>
+            <ShowOnly when={user.loaded}>
                 <AppGrid title="My Lists">
                     <Grid container className="margin-bottom-16">
                         <Grid item xs={12}>
-                            <ShowOnly if={isSpinning}>
+                            <ShowOnly when={isSpinning}>
                                 <CircularProgress size={50} />
                             </ShowOnly>
-                            <ShowOnly if={!isSpinning}>
-                                <ShowOnly if={Object.keys(lists).length === 0}>
+                            <ShowOnly when={!isSpinning}>
+                                <ShowOnly when={Object.keys(lists).length === 0}>
                                     <p>
                                         You currently have no lists to view.
                                         Please contribute a list of factories to
@@ -239,7 +238,7 @@ class Lists extends Component {
                                         </Link>
                                     </div>
                                 </ShowOnly>
-                                <ShowOnly if={Object.keys(lists).length > 0}>
+                                <ShowOnly when={Object.keys(lists).length > 0}>
                                     <p>
                                         Review your uploaded list below,
                                         including exact matches and partial
@@ -293,9 +292,9 @@ class Lists extends Component {
                         </Grid>
                     </Grid>
                     <Grid container className="margin-bottom-64">
-                        <ShowOnly if={data.length > 0}>
+                        <ShowOnly when={data.length > 0}>
                             <ShowOnly
-                                if={
+                                showChildren={
                                     processdate &&
                                     processdateStr &&
                                     processdateStr !== ''
@@ -597,13 +596,13 @@ class Lists extends Component {
                                                                         </TableCell>
                                                                         <TableCell padding="dense">
                                                                             <ShowOnly
-                                                                                if={
+                                                                                showChildren={
                                                                                     n.processed !==
                                                                                         undefined
                                                                                 }
                                                                             >
                                                                                 <ShowOnly
-                                                                                    if={
+                                                                                    showChildren={
                                                                                         exactMatch
                                                                                     }
                                                                                     className="display-flex"
@@ -612,7 +611,7 @@ class Lists extends Component {
                                                                                         Match
                                                                                 </ShowOnly>
                                                                                 <ShowOnly
-                                                                                    if={
+                                                                                    showChildren={
                                                                                         m.confirm ===
                                                                                                 undefined &&
                                                                                             !exactMatch
@@ -651,7 +650,7 @@ class Lists extends Component {
                                                                                     </div>
                                                                                 </ShowOnly>
                                                                                 <ShowOnly
-                                                                                    if={
+                                                                                    showChildren={
                                                                                         !exactMatch &&
                                                                                             (m.confirm ||
                                                                                                 m.confirm ===

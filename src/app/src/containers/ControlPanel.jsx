@@ -446,13 +446,13 @@ class ControlPanel extends PureComponent {
 
         return (
             <Container>
-                <ShowOnly if={!!selectedFactory}>
+                <ShowOnly when={!!selectedFactory}>
                     <FactoryInfo
                         info={selectFac}
                         onClearSelection={this.onChildClear}
                     />
                 </ShowOnly>
-                <ShowOnly if={!selectedFactory}>
+                <ShowOnly when={!selectedFactory}>
                     <div className="panel-header">
                         <h3 className="panel-header__title">
                             Open Apparel Registry
@@ -474,7 +474,7 @@ class ControlPanel extends PureComponent {
                             <Tab label="Search" className="tab-minwidth" />
                         </Tabs>
                     </AppBar>
-                    <ShowOnly if={tabValue === 0}>
+                    <ShowOnly when={tabValue === 0}>
                         <TabContainer>
                             <div className="control-panel__content">
                                 <p className="control-panel__body">
@@ -509,7 +509,7 @@ class ControlPanel extends PureComponent {
                             </div>
                         </TabContainer>
                     </ShowOnly>
-                    <ShowOnly if={tabValue === 1}>
+                    <ShowOnly when={tabValue === 1}>
                         <TabContainer>
                             <div className="control-panel__content">
                                 <form onSubmit={this.searchFactory}>
@@ -704,7 +704,7 @@ class ControlPanel extends PureComponent {
 
                                 {factoriesRes}
 
-                                <ShowOnly if={this.state.factories.length > 0}>
+                                <ShowOnly when={this.state.factories.length > 0}>
                                     <div className="control-panel__action control-panel__action--center">
                                         <div className="offset offset-right">
                                             <Button
@@ -716,11 +716,11 @@ class ControlPanel extends PureComponent {
                                                 disableRipple
                                             >
                                                 <ShowOnly
-                                                    if={!showFacroiesList}
+                                                    showChildren={!showFacroiesList}
                                                 >
                                                     VIEW{' '}
                                                 </ShowOnly>
-                                                <ShowOnly if={showFacroiesList}>
+                                                <ShowOnly when={showFacroiesList}>
                                                     HIDE{' '}
                                                 </ShowOnly>
                                                 FACILITY LIST
@@ -742,7 +742,7 @@ class ControlPanel extends PureComponent {
                                             </Button>
                                         </div>
                                     </div>
-                                    <ShowOnly if={showFacroiesList}>
+                                    <ShowOnly when={showFacroiesList}>
                                         <div className="control-panel__scroll">
                                             {factoriesList}
                                         </div>
@@ -751,7 +751,7 @@ class ControlPanel extends PureComponent {
                             </div>
                         </TabContainer>
                     </ShowOnly>
-                    <ShowOnly if={tabValue === 2}>
+                    <ShowOnly when={tabValue === 2}>
                         <TabContainer>
                             <div className="padding-all" />
                         </TabContainer>

@@ -37,8 +37,8 @@ DEBUG = (ENVIRONMENT == 'Development')
 
 ALLOWED_HOSTS = [
     'localhost',
+    'django'
 ]
-
 
 # Application definition
 
@@ -48,30 +48,47 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.gis',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
-    'corsheaders',
+    'rest_framework.authtoken',
+    'rest_framework_gis',
+    'rest_auth',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
     'watchman',
     'api',
 ]
 
+# For allauth
+SITE_ID = 1
+
+AUTH_USER_MODEL = 'api.User'
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'api.serializers.UserSerializer',
+    'TOKEN_SERIALIZER': 'api.serializers.TokenSerializer',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# Django CORS Headers
-# https://github.com/ottoyiu/django-cors-headers
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'oar.urls'
 

@@ -1,13 +1,140 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import (AbstractBaseUser,
+                                        BaseUserManager,
+                                        PermissionsMixin)
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
 
 from api.countries import COUNTRY_CHOICES
 
+# These choices must be kept in sync with the identical list kept in the
+# React client's constants file
+ORG_TYPE_CHOICES = (
+    ('Auditor', 'Auditor'),
+    ('Brand/Retailer', 'Brand/Retailer'),
+    ('Civil Society Organization', 'Civil Society Organization'),
+    ('Factory / Facility', 'Factory / Facility'),
+    ('Manufacturing Group / Supplier / Vendor',
+     'Manufacturing Group / Supplier / Vendor'),
+    ('Multi Stakeholder Initiative', 'Multi Stakeholder Initiative'),
+    ('Researcher / Academic', 'Researcher / Academic'),
+    ('Service Provider', 'Service Provider'),
+    ('Union', 'Union'),
+    ('Other', 'Other'),
+)
 
-class User(AbstractUser):
-    pass
+
+class EmailAsUsernameUserManager(BaseUserManager):
+    """
+    A custom user manager which uses emails as unique identifiers for auth
+    instead of usernames.
+    """
+
+    def _create_user(self, email, password, **extra_fields):
+        """
+        Creates and saves a User with the given email and password.
+        """
+        if not email:
+            raise ValueError('Email must be set')
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        return self._create_user(email, password, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    USERNAME_FIELD = 'email'
+    objects = EmailAsUsernameUserManager()
+
+    is_staff = models.BooleanField(
+        ('staff status'),
+        default=False,
+        help_text=('Designates whether the user can log into this site.'),
+    )
+    is_active = models.BooleanField(
+        ('active'),
+        default=True,
+        help_text=(
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
+        ),
+    )
+
+    email = models.EmailField(
+        unique=True,
+        null=False,
+        blank=False,
+        help_text='Unique email address used as a username'
+    )
+    username = models.CharField(max_length=20, null=True, blank=True)
+    name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='Display name for the user account'
+    )
+    description = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='Description displayed for the user account'
+    )
+    website = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text='Website for the user account'
+    )
+    contributor_type = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=ORG_TYPE_CHOICES,
+        help_text='A user\'s contributor type'
+    )
+    other_contributor_type = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text='Free text field if selected contributor type is other'
+    )
+    should_receive_newsletter = models.BooleanField(
+        default=False,
+        help_text='User has asked to receive the newsletter'
+    )
+    has_agreed_to_terms_of_service = models.BooleanField(
+        default=False,
+        help_text='User has agreed to the terms of service'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_full_name(self):
+        return self.name
+
+    def get_short_name(self):
+        return self.name
+
+    def first_name(self):
+        pass
+
+    def last_name(self):
+        pass
 
 
 class Organization(models.Model):
