@@ -38,8 +38,7 @@ export const makeUpdateSourceNameURL = uid =>
 export const makeUploadTempFacilityURL = uid =>
     `/uploadTempFactory/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
 
-export const makeGenerateAPIKeyURL = uid =>
-    `/generateKey/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeAllSourceURL = () => '/allsource/';
 export const makeAllCountryURL = () => '/allcountry/';

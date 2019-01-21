@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
 from rest_framework import viewsets
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -58,6 +59,26 @@ class LogoutOfOARClient(LogoutView):
     pass
 
 
+class APIAuthToken(ObtainAuthToken):
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        return Response()
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        return Response()
+
+    def delete(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        return Response()
+
+
 # TODO: Remove the following URLS once Django versions have been
 # implemented. These are here as imitations of the URLS available via
 # the legacy Restify API.
@@ -83,12 +104,6 @@ def confirm_temp(request):
 @permission_classes((AllowAny,))
 def update_source_name(request):
     return Response({"source": None})
-
-
-@api_view(['GET'])
-@permission_classes((AllowAny,))
-def generate_key(request):
-    return Response({"key": "key"})
 
 
 @api_view(['GET'])

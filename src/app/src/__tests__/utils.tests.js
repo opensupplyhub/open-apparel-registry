@@ -8,7 +8,7 @@ const {
     makeConfirmTempURL,
     makeUpdateSourceNameURL,
     makeUploadTempFacilityURL,
-    makeGenerateAPIKeyURL,
+    makeAPITokenURL,
     makeAllSourceURL,
     makeAllCountryURL,
     makeTotalFacilityURL,
@@ -68,12 +68,10 @@ it('creates an API URL for uploading facilities', () => {
     expect(makeUploadTempFacilityURL(uid)).toEqual(expectedMatch);
 });
 
-it('creates an API URL for generating an API key', () => {
+it('creates an API URL for generating an API token', () => {
     const uid = 123;
-    const expectedMatch =
-        '/generateKey/123/?key=REACT_APP_API_KEY';
-
-    expect(makeGenerateAPIKeyURL(uid)).toEqual(expectedMatch);
+    const expectedMatch = '/api-token-auth/';
+    expect(makeAPITokenURL(uid)).toEqual(expectedMatch);
 });
 
 it('creates an API URL for getting all sources', () => {
