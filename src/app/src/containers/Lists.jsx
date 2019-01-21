@@ -294,7 +294,7 @@ class Lists extends Component {
                     <Grid container className="margin-bottom-64">
                         <ShowOnly when={data.length > 0}>
                             <ShowOnly
-                                showChildren={
+                                when={
                                     processdate &&
                                     processdateStr &&
                                     processdateStr !== ''
@@ -596,13 +596,13 @@ class Lists extends Component {
                                                                         </TableCell>
                                                                         <TableCell padding="dense">
                                                                             <ShowOnly
-                                                                                showChildren={
+                                                                                when={
                                                                                     n.processed !==
                                                                                         undefined
                                                                                 }
                                                                             >
                                                                                 <ShowOnly
-                                                                                    showChildren={
+                                                                                    when={
                                                                                         exactMatch
                                                                                     }
                                                                                     className="display-flex"
@@ -611,7 +611,7 @@ class Lists extends Component {
                                                                                         Match
                                                                                 </ShowOnly>
                                                                                 <ShowOnly
-                                                                                    showChildren={
+                                                                                    when={
                                                                                         m.confirm ===
                                                                                                 undefined &&
                                                                                             !exactMatch
@@ -650,7 +650,7 @@ class Lists extends Component {
                                                                                     </div>
                                                                                 </ShowOnly>
                                                                                 <ShowOnly
-                                                                                    showChildren={
+                                                                                    when={
                                                                                         !exactMatch &&
                                                                                             (m.confirm ||
                                                                                                 m.confirm ===
