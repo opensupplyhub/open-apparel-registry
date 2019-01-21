@@ -716,7 +716,7 @@ class ControlPanel extends PureComponent {
                                                 disableRipple
                                             >
                                                 <ShowOnly
-                                                    showChildren={!showFacroiesList}
+                                                    when={!showFacroiesList}
                                                 >
                                                     VIEW{' '}
                                                 </ShowOnly>
