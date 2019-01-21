@@ -16,13 +16,30 @@ export const completeCreateAPIToken = createAction('COMPLETE_CREATE_API_TOKEN');
 
 export const updateProfileFormInput = createAction('UPDATE_PROFILE_FORM_INPUT');
 
+const mockToken = Object.freeze({
+    id: 1,
+    token: 'HELLO-WORLD-FOO-BAR-BAZ',
+    created_at: '12345',
+});
+
+const otherMockToken = Object.freeze({
+    id: 2,
+    token: 'FOO-BAR-BAZ-HELLO-WORLD',
+    created_at: '54321',
+});
+
+const mockTokenData = Object.freeze([
+    mockToken,
+    otherMockToken,
+]);
+
 export function fetchAPITokens() {
     return (dispatch) => {
         dispatch(startFetchAPITokens());
 
         return Promise
             .resolve(true)
-            .then(() => dispatch(completeFetchAPITokens()))
+            .then(() => dispatch(completeFetchAPITokens(mockTokenData)))
             .catch(() => dispatch(logErrorAndDispatchFailure(
                 null,
                 'An error prevented fetching API tokens',
@@ -37,7 +54,7 @@ export function deleteAPIToken() {
 
         return Promise
             .resolve(true)
-            .then(() => dispatch(completeDeleteAPIToken()))
+            .then(() => dispatch(completeDeleteAPIToken(mockTokenData)))
             .catch(() => dispatch(logErrorAndDispatchFailure(
                 null,
                 'An error prevented deleting the API token',
@@ -52,7 +69,7 @@ export function createAPIToken() {
 
         return Promise
             .resolve(true)
-            .then(() => dispatch(completeCreateAPIToken()))
+            .then(() => dispatch(completeCreateAPIToken(mockTokenData)))
             .catch(() => dispatch(logErrorAndDispatchFailure(
                 null,
                 'An error prevented creating an API token',

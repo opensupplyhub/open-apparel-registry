@@ -8,6 +8,7 @@ import noop from 'lodash/noop';
 import AppGrid from './AppGrid';
 import Button from './Button';
 import UserProfileField from './UserProfileField';
+import UserAPITokens from './UserAPITokens';
 
 import '../styles/css/specialStates.css';
 
@@ -129,6 +130,7 @@ function UserProfile({
                         Save Changes
                     </Button>
                 </div>
+                <UserAPITokens />
             </Grid>
         </AppGrid>
     );

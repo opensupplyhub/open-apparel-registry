@@ -16,7 +16,6 @@ import * as userActions from '../actions/user';
 import COLOURS from '../util/COLOURS';
 import AppGrid from '../components/AppGrid';
 import ShowOnly from '../components/ShowOnly';
-import APIkey from '../components/APIkey';
 import '../styles/css/specialStates.css';
 
 const contributorTypeOptions = [
@@ -290,7 +289,6 @@ class Profile extends Component {
                                     Save Changes
                                 </Button>
                             </div>
-                            <APIkey uid={this.props.user.uid} />
                         </React.Fragment>
                     ) : (
                         <Link

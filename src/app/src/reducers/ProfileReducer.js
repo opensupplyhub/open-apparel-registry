@@ -31,26 +31,36 @@ const initialState = Object.freeze({
         otherContributorType: '',
         password: '',
     }),
-    tokens: Object.freeze([]),
+    tokens: Object.freeze({
+        tokens: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
     isEditable: false,
     fetching: false,
     error: null,
 });
 
-const startFetching = state => update(state, {
-    fetching: { $set: true },
-    error: { $set: null },
+const startFetchingTokens = state => update(state, {
+    tokens: {
+        fetching: { $set: true },
+        error: { $set: null },
+    },
 });
 
-const failFetching = (state, payload) => update(state, {
-    fetching: { $set: false },
-    error: { $set: payload },
+const failFetchingTokens = (state, payload) => update(state, {
+    tokens: {
+        fetching: { $set: false },
+        error: { $set: payload },
+    },
 });
 
 const completeUpdatingTokens = (state, payload) => update(state, {
-    fetching: { $set: false },
-    error: { $set: null },
-    tokens: { $set: payload },
+    tokens: {
+        tokens: { $set: payload },
+        fetching: { $set: false },
+        error: { $set: null },
+    },
 });
 
 const setProfileOnFormLogin = (state, { user: payload }) => update(state, {
@@ -76,12 +86,12 @@ const setProfileOnSessionLogin = (state, payload) => update(state, {
 });
 
 export default createReducer({
-    [startFetchAPITokens]: startFetching,
-    [startDeleteAPIToken]: startFetching,
-    [startCreateAPIToken]: startFetching,
-    [failFetchAPITokens]: failFetching,
-    [failDeleteAPIToken]: failFetching,
-    [failCreateAPIToken]: failFetching,
+    [startFetchAPITokens]: startFetchingTokens,
+    [startDeleteAPIToken]: startFetchingTokens,
+    [startCreateAPIToken]: startFetchingTokens,
+    [failFetchAPITokens]: failFetchingTokens,
+    [failDeleteAPIToken]: failFetchingTokens,
+    [failCreateAPIToken]: failFetchingTokens,
     [completeFetchAPITokens]: completeUpdatingTokens,
     [completeDeleteAPIToken]: completeUpdatingTokens,
     [completeCreateAPIToken]: completeUpdatingTokens,
