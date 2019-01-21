@@ -1,6 +1,9 @@
 import { bool, func, number, shape, string } from 'prop-types';
 
-import { registrationFieldsEnum } from './constants';
+import {
+    registrationFieldsEnum,
+    profileFieldsEnum,
+} from './constants';
 
 export const registrationFormValuesPropType = shape({
     [registrationFieldsEnum.email]: string.isRequired,
@@ -17,9 +20,20 @@ export const registrationFormValuesPropType = shape({
 
 export const registrationFormInputHandlersPropType = shape(Object
     .values(registrationFieldsEnum)
-    .reduce((accumulator, key) => Object.assign({}, accumulator, { [key]: func.isRequired }), {}));
+    .reduce((accumulator, key) =>
+        Object.assign({}, accumulator, { [key]: func.isRequired }), {}));
 
 export const userPropType = shape({
     email: string.isRequired,
     id: number.isRequired,
 });
+
+export const profileFormValuesPropType = shape(Object
+    .values(profileFieldsEnum)
+    .reduce((accumulator, key) =>
+        Object.assign({}, accumulator, { [key]: string.isRequired }), {}));
+
+export const profileFormInputHandlersPropType = shape(Object
+    .values(profileFieldsEnum)
+    .reduce((accumulator, key) =>
+        Object.assign({}, accumulator, { [key]: func.isRequired }), {}));

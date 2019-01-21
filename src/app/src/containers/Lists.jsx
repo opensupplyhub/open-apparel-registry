@@ -26,7 +26,7 @@ import { parse } from 'json2csv';
 import ShowOnly from '../components/ShowOnly';
 import TablePaginationWrapper from '../components/TablePaginationWrapper';
 import * as listsActions from '../actions/lists';
-import AppGrid from './AppGrid';
+import AppGrid from '../components/AppGrid';
 import { DownloadCSV } from '../util/util';
 
 const styles = {

@@ -2,8 +2,12 @@ import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isObject from 'lodash/isObject';
 import flatten from 'lodash/flatten';
+import identity from 'lodash/identity';
 
-import { registrationFormFields } from './constants';
+import {
+    inputTypesEnum,
+    registrationFormFields,
+} from './constants';
 
 export function DownloadCSV(data, fileName) {
     const csvData = new Blob([data], { type: 'text/csv;charset=utf-8;' });
@@ -122,3 +126,10 @@ export const createSignupRequestData = form => registrationFormFields
     .reduce((acc, { id, modelFieldName }) => Object.assign({}, acc, {
         [modelFieldName]: form[id],
     }), {});
+
+export const getStateFromEventForEventType = Object.freeze({
+    [inputTypesEnum.checkbox]: getCheckedFromEvent,
+    [inputTypesEnum.select]: identity,
+    [inputTypesEnum.text]: getValueFromEvent,
+    [inputTypesEnum.password]: getValueFromEvent,
+});

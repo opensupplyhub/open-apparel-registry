@@ -58,7 +58,6 @@ const initialState = Object.freeze({
     }),
     user: Object.freeze({
         user: null,
-        key: null,
     }),
     session: Object.freeze({
         fetching: false,

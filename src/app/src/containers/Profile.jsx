@@ -14,7 +14,7 @@ import TextInput from '../components/inputs/TextInput';
 import SelectInput from '../components/inputs/SelectInput';
 import * as userActions from '../actions/user';
 import COLOURS from '../util/COLOURS';
-import AppGrid from './AppGrid';
+import AppGrid from '../components/AppGrid';
 import ShowOnly from '../components/ShowOnly';
 import APIkey from '../components/APIkey';
 import '../styles/css/specialStates.css';

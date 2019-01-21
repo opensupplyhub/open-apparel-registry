@@ -3,10 +3,9 @@ import { arrayOf, bool, func, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
-import identity from 'lodash/identity';
 import memoize from 'lodash/memoize';
 
-import AppGrid from '../containers/AppGrid';
+import AppGrid from './AppGrid';
 import ShowOnly from './ShowOnly';
 import Button from './Button';
 import RegisterFormField from './RegisterFormField';
@@ -19,7 +18,6 @@ import {
 
 import {
     OTHER,
-    inputTypesEnum,
     registrationFieldsEnum,
     registrationFormFields,
     authLoginFormRoute,
@@ -31,10 +29,7 @@ import {
     userPropType,
 } from '../util/propTypes';
 
-import {
-    getValueFromEvent,
-    getCheckedFromEvent,
-} from '../util/util';
+import { getStateFromEventForEventType } from '../util/util';
 
 import { formValidationErrorMessageStyle } from '../util/styles';
 
@@ -175,13 +170,6 @@ function mapStateToProps({
         user,
     };
 }
-
-const getStateFromEventForEventType = Object.freeze({
-    [inputTypesEnum.checkbox]: getCheckedFromEvent,
-    [inputTypesEnum.select]: identity,
-    [inputTypesEnum.text]: getValueFromEvent,
-    [inputTypesEnum.password]: getValueFromEvent,
-});
 
 const mapDispatchToProps = memoize((dispatch) => {
     const makeInputChangeHandler = (field, getStateFromEvent) => e =>

@@ -11,6 +11,7 @@ import MapReducer from './MapReducer';
 import ListsReducer from './ListsReducer';
 import SourceReducer from './SourceReducer';
 import AuthReducer from './AuthReducer';
+import ProfileReducer from './ProfileReducer';
 
 export default combineReducers({
     nav: NavbarReducer,
@@ -18,4 +19,5 @@ export default combineReducers({
     lists: ListsReducer,
     source: SourceReducer,
     auth: AuthReducer,
+    profile: ProfileReducer,
 });
