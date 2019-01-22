@@ -17,13 +17,15 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
-        # Ensure container images are current
-        docker-compose build --pull
-
         # Install frontend NPM modules
         docker-compose \
             run --rm --no-deps app \
             yarn install
+
+        # Build static asset bundle for React frontend
+        docker-compose \
+            run --rm --no-deps app \
+            yarn run build
 
         # Bring up PostgreSQL and Django in a way that respects
         # configured service health checks.
