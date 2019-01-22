@@ -4,6 +4,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib import auth
+from django.conf import settings
+from django.contrib.gis.geos import Point
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -11,7 +13,11 @@ from rest_framework.test import APITestCase
 
 from api.constants import ProcessingResultSection
 from api.models import FacilityList, FacilityListItem, Organization, User
-from api.processing import parse_facility_list_item
+from api.processing import parse_facility_list_item, geocode_facility_list_item
+from api.geocoding import (create_geocoding_api_url,
+                           format_geocoded_address_data,
+                           geocode_address)
+from api.test_data import parsed_city_hall_data
 
 
 class FacilityListCreateTest(APITestCase):
@@ -259,3 +265,98 @@ class UserTokenGenerationTest(TestCase):
         self.assertFalse(user.is_authenticated)
         token = Token.objects.filter(user=self.user)
         self.assertEqual(token.count(), 1)
+
+
+class GeocodingUtilsTest(TestCase):
+    def setUp(self):
+        settings.GOOGLE_GEOCODING_API_KEY = "world"
+
+    def test_geocoding_api_url_is_created_correctly(self):
+        self.assertEqual(
+            create_geocoding_api_url("hello", "US"),
+            (
+                "https://maps.googleapis.com/maps/api/geocode/json"
+                "?components=country:US&address=hello&key=world"
+            )
+        )
+
+    def test_geocoded_address_data_is_formatted_correctly(self):
+        formatted_data = format_geocoded_address_data(
+            parsed_city_hall_data['full_response'])
+        self.assertEqual(formatted_data, parsed_city_hall_data)
+
+
+class GeocodingTest(TestCase):
+    def test_correct_address_is_geocoded_properly(self):
+        geocoded_data = geocode_address('City Hall, Philly', 'US')
+        self.assertDictEqual(geocoded_data, parsed_city_hall_data)
+
+    def test_ungeocodable_address_returns_value_error(self):
+        with self.assertRaises(ValueError) as cm:
+            geocode_address('hello world', '$#')
+
+        self.assertEqual(cm.exception.args, ('No results were found',))
+
+
+class FacilityListItemGeocodingTest(TestCase):
+    def test_invalid_argument_raises_error(self):
+        with self.assertRaises(ValueError) as cm:
+            geocode_facility_list_item("hello")
+
+        self.assertEqual(
+            cm.exception.args,
+            ('Argument must be a FacilityListItem',)
+        )
+
+    def test_unparsed_item_raises_error(self):
+        facility_list = FacilityList(header='address,country,name')
+        item = FacilityListItem(
+            raw_data='1400 JFK Blvd, Philly,us,Shirts!',
+            facility_list=facility_list
+        )
+
+        with self.assertRaises(ValueError) as cm:
+            geocode_facility_list_item(item)
+
+        self.assertEqual(
+            cm.exception.args,
+            ('Items to be geocoded must be in the PARSED status',),
+        )
+
+    def test_successfully_geocoded_item_has_correct_results(self):
+        facility_list = FacilityList(header='address,country,name')
+        item = FacilityListItem(
+            raw_data='"City Hall, Philly, PA",us,Shirts!',
+            facility_list=facility_list
+        )
+        parse_facility_list_item(item)
+        geocode_facility_list_item(item)
+
+        self.assertEqual(
+            item.geocoded_address,
+            "1400 John F Kennedy Blvd, Philadelphia, PA 19107, USA",
+        )
+        self.assertIsInstance(item.geocoded_point, Point)
+        self.assertEqual(item.status, FacilityListItem.GEOCODED)
+        self.assertIn(
+            'results',
+            item.processing_results[ProcessingResultSection.GEOCODING]['data'],
+        )
+
+    def test_failed_geocoded_item_has_error_results(self):
+        facility_list = FacilityList(header='address,country,name')
+        item = FacilityListItem(
+            raw_data='"hello, world, foo, bar, baz",us,Shirts!',
+            facility_list=facility_list
+        )
+        parse_facility_list_item(item)
+        item.country_code = "$%"
+        geocode_facility_list_item(item)
+
+        self.assertEqual(item.status, FacilityListItem.ERROR)
+        self.assertIsNone(item.geocoded_address)
+        self.assertIsNone(item.geocoded_point)
+        self.assertIn(
+            'error',
+            item.processing_results[ProcessingResultSection.GEOCODING],
+        )

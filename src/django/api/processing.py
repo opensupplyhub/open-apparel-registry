@@ -3,9 +3,12 @@ import traceback
 
 from datetime import datetime
 
+from django.contrib.gis.geos import Point
+
 from api.constants import CsvHeaderField, ProcessingResultSection
 from api.models import FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
+from api.geocoding import geocode_address
 
 
 def parse_csv_line(line):
@@ -49,6 +52,38 @@ def parse_facility_list_item(item):
     except Exception as e:
         item.status = FacilityListItem.ERROR
         item.processing_results[ProcessingResultSection.PARSING] = {
+            'started_at': started,
+            'error': True,
+            'message': str(e),
+            'trace': traceback.format_exc(),
+            'finished_at': str(datetime.utcnow()),
+        }
+
+
+def geocode_facility_list_item(item):
+    started = str(datetime.utcnow())
+    if type(item) != FacilityListItem:
+        raise ValueError('Argument must be a FacilityListItem')
+    if item.status != FacilityListItem.PARSED:
+        raise ValueError('Items to be geocoded must be in the PARSED status')
+    try:
+        data = geocode_address(item.address, item.country_code)
+        item.status = FacilityListItem.GEOCODED
+        item.geocoded_point = Point(
+            data["geocoded_point"]["lng"],
+            data["geocoded_point"]["lat"]
+        )
+        item.geocoded_address = data["geocoded_address"]
+        item.processing_results[ProcessingResultSection.GEOCODING] = {
+            'started_at': started,
+            'error': False,
+            'data': data["full_response"],
+            'trace': traceback.format_exc(),
+            'finished_at': str(datetime.utcnow()),
+        }
+    except Exception as e:
+        item.status = FacilityListItem.ERROR
+        item.processing_results[ProcessingResultSection.GEOCODING] = {
             'started_at': started,
             'error': True,
             'message': str(e),
