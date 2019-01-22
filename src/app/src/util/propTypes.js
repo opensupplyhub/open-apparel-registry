@@ -39,7 +39,6 @@ export const profileFormInputHandlersPropType = shape(Object
         Object.assign({}, accumulator, { [key]: func.isRequired }), {}));
 
 export const tokenPropType = shape({
-    id: number.isRequired,
     token: string.isRequired,
-    created_at: string.isRequired,
+    created: string.isRequired,
 });

@@ -3,9 +3,9 @@ import update from 'immutability-helper';
 import identity from 'lodash/identity';
 
 import {
-    startFetchAPITokens,
-    failFetchAPITokens,
-    completeFetchAPITokens,
+    startFetchAPIToken,
+    failFetchAPIToken,
+    completeFetchAPIToken,
     startDeleteAPIToken,
     failDeleteAPIToken,
     completeDeleteAPIToken,
@@ -41,21 +41,21 @@ const initialState = Object.freeze({
     error: null,
 });
 
-const startFetchingTokens = state => update(state, {
+const startFetchingToken = state => update(state, {
     tokens: {
         fetching: { $set: true },
         error: { $set: null },
     },
 });
 
-const failFetchingTokens = (state, payload) => update(state, {
+const failFetchingToken = (state, payload) => update(state, {
     tokens: {
         fetching: { $set: false },
         error: { $set: payload },
     },
 });
 
-const completeUpdatingTokens = (state, payload) => update(state, {
+const completeGettingAPIToken = (state, payload) => update(state, {
     tokens: {
         tokens: { $set: payload },
         fetching: { $set: false },
@@ -86,15 +86,17 @@ const setProfileOnSessionLogin = (state, payload) => update(state, {
 });
 
 export default createReducer({
-    [startFetchAPITokens]: startFetchingTokens,
-    [startDeleteAPIToken]: startFetchingTokens,
-    [startCreateAPIToken]: startFetchingTokens,
-    [failFetchAPITokens]: failFetchingTokens,
-    [failDeleteAPIToken]: failFetchingTokens,
-    [failCreateAPIToken]: failFetchingTokens,
-    [completeFetchAPITokens]: completeUpdatingTokens,
-    [completeDeleteAPIToken]: completeUpdatingTokens,
-    [completeCreateAPIToken]: completeUpdatingTokens,
+    [startFetchAPIToken]: startFetchingToken,
+    [startDeleteAPIToken]: startFetchingToken,
+    [startCreateAPIToken]: startFetchingToken,
+    [failFetchAPIToken]: failFetchingToken,
+    [failDeleteAPIToken]: failFetchingToken,
+    [failCreateAPIToken]: failFetchingToken,
+    [completeDeleteAPIToken]: state => update(state, {
+        tokens: { $set: initialState.tokens },
+    }),
+    [completeCreateAPIToken]: completeGettingAPIToken,
+    [completeFetchAPIToken]: completeGettingAPIToken,
     [updateProfileFormInput]: identity,
     [completeSessionLogin]: setProfileOnSessionLogin,
     [completeSubmitLoginForm]: setProfileOnFormLogin,

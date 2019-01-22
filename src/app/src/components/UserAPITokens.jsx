@@ -5,11 +5,16 @@ import { arrayOf, bool, func, string } from 'prop-types';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import UserAPITokenListItem from './UserAPITokenListItem';
 
 import {
-    fetchAPITokens,
+    fetchAPIToken,
     deleteAPIToken,
     createAPIToken,
 } from '../actions/profile';
@@ -28,9 +33,27 @@ const componentStyles = Object.freeze({
 });
 
 class UserAPITokens extends Component {
+    state = {
+        deleteDialogOpen: false,
+    };
+
     componentDidMount() {
         return this.props.getTokens();
     }
+
+    closeDialog = () =>
+        this.setState(state => Object.assign({}, state, { deleteDialogOpen: false }));
+
+    openDialog = () =>
+        this.setState(state => Object.assign({}, state, { deleteDialogOpen: true }));
+
+    deleteTokenAndCloseDialog = () => {
+        this.props.deleteToken();
+
+        return this.setState(state => Object.assign({}, state, {
+            deleteDialogOpen: false,
+        }));
+    };
 
     render() {
         const {
@@ -38,34 +61,26 @@ class UserAPITokens extends Component {
             error,
             tokens,
             createToken,
-            deleteToken,
         } = this.props;
 
         if (error) {
-            return (
-                <div>
-                    An error occurred!
-                </div>
-            );
+            window.console.warn(error);
         }
 
-        return (
-            <div className="margin-bottom">
-                <Divider />
-                <h3 style={componentStyles.header}>
-                    API Tokens
-                </h3>
+        const insetComponent = tokens.length
+            ? (
                 <List>
                     {
                         tokens
                             .map(token => (
                                 <UserAPITokenListItem
-                                    key={token.id}
+                                    key={token.token}
                                     token={token}
-                                    handleDelete={deleteToken}
+                                    handleDelete={this.openDialog}
                                 />))
                     }
-                </List>
+                </List>)
+            : (
                 <div style={componentStyles.generateTokenButton}>
                     <Button
                         variant="outlined"
@@ -77,7 +92,50 @@ class UserAPITokens extends Component {
                     >
                         Generate a new API token
                     </Button>
-                </div>
+                </div>);
+
+        const deleteTokenDialog = (
+            <Dialog
+                open={this.state.deleteDialogOpen}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Delete this API token?
+                </DialogTitle>
+                <DialogContent id="alert-dialog-description">
+                    <DialogContentText>
+                        This action will irrevocably delete the API token
+                        associated with your account.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={this.closeDialog}
+                    >
+                        No, do not delete the API token
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={this.deleteTokenAndCloseDialog}
+                    >
+                        Yes, delete the API token
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+
+        return (
+            <div className="margin-bottom">
+                <Divider />
+                <h3 style={componentStyles.header}>
+                    API Tokens
+                </h3>
+                {insetComponent}
+                {deleteTokenDialog}
             </div>
         );
     }
@@ -115,8 +173,8 @@ function mapStateToProps({
 function mapDispatchToProps(dispatch) {
     return {
         createToken: () => dispatch(createAPIToken()),
-        deleteToken: token => dispatch(deleteAPIToken(token)),
-        getTokens: () => dispatch(fetchAPITokens()),
+        deleteToken: () => dispatch(deleteAPIToken()),
+        getTokens: () => dispatch(fetchAPIToken()),
     };
 }
 

@@ -5,27 +5,43 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { toast } from 'react-toastify';
 
 import { tokenPropType } from '../util/propTypes';
 
 export default function UserAPITokenListItem({
     token: {
         token,
-        id,
-        created_at: created,
+        created,
     },
     handleDelete,
 }) {
+    const secondaryText = created
+        ? `created ${new Date(Date.parse(created)).toUTCString()}`
+        : 'API token';
+
+    const displayToast = () => toast('Copied Token to clipboard');
+
     return (
         <ListItem>
             <ListItemText
                 primary={token}
-                secondary={created}
+                secondary={secondaryText}
             />
             <ListItemSecondaryAction>
+                <CopyToClipboard
+                    text={token}
+                    onCopy={displayToast}
+                >
+                    <IconButton aria-label="Copy Token to clipboard">
+                        <FileCopyIcon />
+                    </IconButton>
+                </CopyToClipboard>
                 <IconButton
                     aria-label="Delete"
-                    action={() => handleDelete(id)}
+                    onClick={handleDelete}
                 >
                     <DeleteIcon />
                 </IconButton>

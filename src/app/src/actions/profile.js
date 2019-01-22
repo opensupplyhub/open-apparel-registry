@@ -1,10 +1,15 @@
 import { createAction } from 'redux-act';
 
-import { logErrorAndDispatchFailure } from '../util/util';
+import csrfRequest from '../util/csrfRequest';
 
-export const startFetchAPITokens = createAction('START_FETCH_API_TOKENS');
-export const failFetchAPITokens = createAction('FAIL_FETCH_API_TOKENS');
-export const completeFetchAPITokens = createAction('COMPLETE_FETCH_API_TOKENS');
+import {
+    makeAPITokenURL,
+    logErrorAndDispatchFailure,
+} from '../util/util';
+
+export const startFetchAPIToken = createAction('START_FETCH_API_TOKEN');
+export const failFetchAPIToken = createAction('FAIL_FETCH_API_TOKEN');
+export const completeFetchAPIToken = createAction('COMPLETE_FETCH_API_TOKEN');
 
 export const startDeleteAPIToken = createAction('START_DELETE_API_TOKEN');
 export const failDeleteAPIToken = createAction('FAIL_DELETE_API_TOKEN');
@@ -16,34 +21,20 @@ export const completeCreateAPIToken = createAction('COMPLETE_CREATE_API_TOKEN');
 
 export const updateProfileFormInput = createAction('UPDATE_PROFILE_FORM_INPUT');
 
-const mockToken = Object.freeze({
-    id: 1,
-    token: 'HELLO-WORLD-FOO-BAR-BAZ',
-    created_at: '12345',
-});
-
-const otherMockToken = Object.freeze({
-    id: 2,
-    token: 'FOO-BAR-BAZ-HELLO-WORLD',
-    created_at: '54321',
-});
-
-const mockTokenData = Object.freeze([
-    mockToken,
-    otherMockToken,
-]);
-
-export function fetchAPITokens() {
+export function fetchAPIToken() {
     return (dispatch) => {
-        dispatch(startFetchAPITokens());
+        dispatch(startFetchAPIToken());
 
-        return Promise
-            .resolve(true)
-            .then(() => dispatch(completeFetchAPITokens(mockTokenData)))
-            .catch(() => dispatch(logErrorAndDispatchFailure(
-                null,
-                'An error prevented fetching API tokens',
-                failFetchAPITokens,
+        return csrfRequest
+            .get(makeAPITokenURL())
+            // Return a list here to afford potentially retrieving and displaying
+            // multiple API tokens per user.
+            // See https://github.com/open-apparel-registry/open-apparel-registry/issues/119
+            .then(({ data }) => dispatch(completeFetchAPIToken([data])))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented fetching the API token',
+                failFetchAPIToken,
             )));
     };
 }
@@ -52,11 +43,11 @@ export function deleteAPIToken() {
     return (dispatch) => {
         dispatch(startDeleteAPIToken());
 
-        return Promise
-            .resolve(true)
-            .then(() => dispatch(completeDeleteAPIToken(mockTokenData)))
-            .catch(() => dispatch(logErrorAndDispatchFailure(
-                null,
+        return csrfRequest
+            .delete(makeAPITokenURL())
+            .then(() => dispatch(completeDeleteAPIToken()))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
                 'An error prevented deleting the API token',
                 failDeleteAPIToken,
             )));
@@ -67,11 +58,14 @@ export function createAPIToken() {
     return (dispatch) => {
         dispatch(startCreateAPIToken());
 
-        return Promise
-            .resolve(true)
-            .then(() => dispatch(completeCreateAPIToken(mockTokenData)))
-            .catch(() => dispatch(logErrorAndDispatchFailure(
-                null,
+        return csrfRequest
+            .post(makeAPITokenURL())
+            // Return a list here to afford potentially retrieving and displaying
+            // multiple API tokens per user.
+            // See https://github.com/open-apparel-registry/open-apparel-registry/issues/119
+            .then(({ data }) => dispatch(completeCreateAPIToken([data])))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
                 'An error prevented creating an API token',
                 failCreateAPIToken,
             )));

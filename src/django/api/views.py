@@ -3,9 +3,10 @@ import os
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.exceptions import ValidationError
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -64,19 +65,42 @@ class APIAuthToken(ObtainAuthToken):
         if not request.user.is_authenticated:
             raise PermissionDenied
 
-        return Response()
+        try:
+            token = Token.objects.get(user=request.user)
+
+            token_data = {
+                'token': token.key,
+                'created': token.created.isoformat(),
+            }
+
+            return Response(token_data)
+        except Token.DoesNotExist:
+            raise NotFound()
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied
 
-        return Response()
+        token, _ = Token.objects.get_or_create(user=request.user)
+
+        token_data = {
+            'token': token.key,
+            'created': token.created.isoformat(),
+        }
+
+        return Response(token_data)
 
     def delete(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied
 
-        return Response()
+        try:
+            token = Token.objects.get(user=request.user)
+            token.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Token.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # TODO: Remove the following URLS once Django versions have been
