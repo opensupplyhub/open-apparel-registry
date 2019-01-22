@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_auth.views import LoginView, LogoutView
 
@@ -101,6 +101,13 @@ class APIAuthToken(ObtainAuthToken):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Token.DoesNotExist:
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def token_auth_example(request):
+    name = request.user.name
+    return Response({'name': name})
 
 
 # TODO: Remove the following URLS once Django versions have been

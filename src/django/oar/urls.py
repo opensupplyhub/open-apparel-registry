@@ -44,6 +44,8 @@ urlpatterns = [
         name='submit_new_user_form'),
     url(r'^api-token-auth/', views.APIAuthToken.as_view(),
         name='api_token_auth'),
+    url(r'^token-auth-example/', views.token_auth_example,
+        name='token_auth_example'),
     # TODO: Remove the following URLs once the Django versions have been
     # implemented. These are here as imitations of the URLs available via
     # the legacy Restify API:
