@@ -14,6 +14,7 @@ services:
 
   django:
     image: open-apparel-registry-api
+    env_file: .env.backend
     environment:
         - POSTGRES_HOST=database
         - POSTGRES_PORT=5432
