@@ -4,24 +4,20 @@ import { connect } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, Slide } from 'react-toastify';
 import { func } from 'prop-types';
+import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
+
 import history from './util/history';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
-// TODO: Re-implement Profile view/edit functionality in
-// https://github.com/open-apparel-registry/open-apparel-registry/issues/104
-// (we keep the existing component around for reference)
-// import Profile from './containers/Profile';
 import UserProfile from './components/UserProfile';
 import Contribute from './containers/Contribute';
 import Map from './containers/Map';
-// import BetaAccessLogin from './containers/BetaAccessLogin'
 import requireAuth from './requireAuth';
 import Lists from './containers/Lists';
 import ErrorBoundary from './components/ErrorBoundary';
-import Maintenance from './containers/Maintenance';
-import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
+
 import './App.css';
 
 import { sessionLogin } from './actions/auth';
@@ -41,23 +37,11 @@ class App extends Component {
 
     render() {
         const { user } = this.props;
-        const isMaintenance = process.env.REACT_APP_MAINTENANCE;
-
-        if (isMaintenance) {
-            return (
-                <ErrorBoundary>
-                    <div>
-                        <Maintenance />
-                    </div>
-                </ErrorBoundary>
-            );
-        }
 
         return (
             <ErrorBoundary>
                 <div>
                     <div>
-                        {/* { user.betaAccess ? ( */}
                         <Router history={history}>
                             <div className="App">
                                 <Navbar user={user} />
@@ -97,7 +81,6 @@ class App extends Component {
                                 />
                             </div>
                         </Router>
-                        {/* <BetaAccessLogin checkAccess={ checkAccess } /> */}
                     </div>
                 </div>
             </ErrorBoundary>

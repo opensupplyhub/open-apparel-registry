@@ -58,7 +58,6 @@ const initialState = Object.freeze({
     }),
     user: Object.freeze({
         user: null,
-        key: null,
     }),
     session: Object.freeze({
         fetching: false,
@@ -120,14 +119,11 @@ export default createReducer({
     [failSubmitLoginForm]: failFetching,
     [failSubmitLogOut]: failFetching,
     [failSubmitForgotPassword]: failFetching,
-    [completeSubmitSignUpForm]: (state, payload) => update(state, {
+    [completeSubmitSignUpForm]: state => update(state, {
         fetching: { $set: false },
         error: { $set: null },
         signup: {
             form: { $set: initialState.signup.form },
-        },
-        user: {
-            user: { $set: payload },
         },
     }),
     [completeSubmitLoginForm]: (state, payload) => update(state, {
@@ -137,8 +133,7 @@ export default createReducer({
             form: { $set: initialState.login.form },
         },
         user: {
-            key: { $set: payload.key },
-            user: { $set: payload.user },
+            user: { $set: payload },
         },
     }),
     [startSessionLogin]: state => update(state, {

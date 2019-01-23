@@ -2,8 +2,12 @@ import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isObject from 'lodash/isObject';
 import flatten from 'lodash/flatten';
+import identity from 'lodash/identity';
 
-import { registrationFormFields } from './constants';
+import {
+    inputTypesEnum,
+    registrationFormFields,
+} from './constants';
 
 export function DownloadCSV(data, fileName) {
     const csvData = new Blob([data], { type: 'text/csv;charset=utf-8;' });
@@ -38,8 +42,7 @@ export const makeUpdateSourceNameURL = uid =>
 export const makeUploadTempFacilityURL = uid =>
     `/uploadTempFactory/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
 
-export const makeGenerateAPIKeyURL = uid =>
-    `/generateKey/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeAllSourceURL = () => '/allsource/';
 export const makeAllCountryURL = () => '/allcountry/';
@@ -91,6 +94,10 @@ export function logErrorAndDispatchFailure(error, defaultMessage, failureAction)
                 return response.data;
             }
 
+            if (response.data.detail) {
+                return [response.data.detail];
+            }
+
             if (isObject(response.data)) {
                 return createErrorListFromResponseObject(response.data);
             }
@@ -123,3 +130,10 @@ export const createSignupRequestData = form => registrationFormFields
     .reduce((acc, { id, modelFieldName }) => Object.assign({}, acc, {
         [modelFieldName]: form[id],
     }), {});
+
+export const getStateFromEventForEventType = Object.freeze({
+    [inputTypesEnum.checkbox]: getCheckedFromEvent,
+    [inputTypesEnum.select]: identity,
+    [inputTypesEnum.text]: getValueFromEvent,
+    [inputTypesEnum.password]: getValueFromEvent,
+});

@@ -42,6 +42,10 @@ urlpatterns = [
         name='logout_of_oar_client'),
     url(r'^user-signup/', views.SubmitNewUserForm.as_view(),
         name='submit_new_user_form'),
+    url(r'^api-token-auth/', views.APIAuthToken.as_view(),
+        name='api_token_auth'),
+    url(r'^token-auth-example/', views.token_auth_example,
+        name='token_auth_example'),
     # TODO: Remove the following URLs once the Django versions have been
     # implemented. These are here as imitations of the URLs available via
     # the legacy Restify API:
@@ -53,7 +57,6 @@ urlpatterns = [
     url(r'uploadTempFactory/',
         views.FacilityListViewSet.as_view({'post': 'create'}),
         name='upload_temp_factory'),
-    url(r'generateKey/', views.generate_key, name='generate_key'),
     url(r'allsource/', views.all_source, name='all_source'),
     url(r'allcountry/', views.all_country, name='all_country'),
     url(r'totalFactories/', views.total_factories, name='total_factories'),

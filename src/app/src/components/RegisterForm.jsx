@@ -3,10 +3,9 @@ import { arrayOf, bool, func, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
-import identity from 'lodash/identity';
 import memoize from 'lodash/memoize';
 
-import AppGrid from '../containers/AppGrid';
+import AppGrid from './AppGrid';
 import ShowOnly from './ShowOnly';
 import Button from './Button';
 import RegisterFormField from './RegisterFormField';
@@ -19,7 +18,6 @@ import {
 
 import {
     OTHER,
-    inputTypesEnum,
     registrationFieldsEnum,
     registrationFormFields,
     authLoginFormRoute,
@@ -28,26 +26,33 @@ import {
 import {
     registrationFormValuesPropType,
     registrationFormInputHandlersPropType,
-    userPropType,
 } from '../util/propTypes';
 
-import {
-    getValueFromEvent,
-    getCheckedFromEvent,
-} from '../util/util';
+import { getStateFromEventForEventType } from '../util/util';
 
 import { formValidationErrorMessageStyle } from '../util/styles';
 
 class RegisterForm extends Component {
-    componentDidUpdate() {
+    componentDidUpdate({ fetching: wasFetching }) {
         const {
-            user,
+            fetching,
+            error,
             history,
         } = this.props;
 
-        return user
-            ? history.push(`/profile/${user.id}`)
-            : null;
+        if (error) {
+            return null;
+        }
+
+        if (fetching) {
+            return null;
+        }
+
+        if (!wasFetching) {
+            return null;
+        }
+
+        return history.push('/auth/login');
     }
 
     componentWillUnmount() {
@@ -135,7 +140,6 @@ class RegisterForm extends Component {
 
 RegisterForm.defaultProps = {
     error: null,
-    user: null,
 };
 
 RegisterForm.propTypes = {
@@ -146,7 +150,6 @@ RegisterForm.propTypes = {
     inputUpdates: registrationFormInputHandlersPropType.isRequired,
     submitForm: func.isRequired,
     sessionFetching: bool.isRequired,
-    user: userPropType,
     history: shape({
         push: func.isRequired,
     }).isRequired,
@@ -162,9 +165,6 @@ function mapStateToProps({
         signup: {
             form,
         },
-        user: {
-            user,
-        },
     },
 }) {
     return {
@@ -172,16 +172,8 @@ function mapStateToProps({
         error,
         form,
         sessionFetching,
-        user,
     };
 }
-
-const getStateFromEventForEventType = Object.freeze({
-    [inputTypesEnum.checkbox]: getCheckedFromEvent,
-    [inputTypesEnum.select]: identity,
-    [inputTypesEnum.text]: getValueFromEvent,
-    [inputTypesEnum.password]: getValueFromEvent,
-});
 
 const mapDispatchToProps = memoize((dispatch) => {
     const makeInputChangeHandler = (field, getStateFromEvent) => e =>

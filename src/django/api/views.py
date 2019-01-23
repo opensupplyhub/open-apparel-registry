@@ -3,11 +3,16 @@ import os
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
-from rest_framework import viewsets
-from rest_framework.exceptions import ValidationError
+from django.contrib.auth import (authenticate, login, logout)
+from rest_framework import viewsets, status
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import (ValidationError,
+                                       NotFound,
+                                       AuthenticationFailed)
 from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_auth.views import LoginView, LogoutView
 
@@ -42,10 +47,24 @@ class SubmitNewUserForm(CreateAPIView):
 
 
 class LoginToOARClient(LoginView):
+    serializer_class = UserSerializer
+
     def post(self, request, *args, **kwargs):
-        return super(LoginToOARClient, self).post(request,
-                                                  *args,
-                                                  **kwargs)
+        email = request.data.get('email', None)
+        password = request.data.get('password', None)
+
+        if email is None or password is None:
+            raise AuthenticationFailed('Email and password are required')
+
+        user = authenticate(email=email, password=password)
+
+        if user is None:
+            raise AuthenticationFailed(
+                'Unable to login with those credentials')
+
+        login(request, user)
+
+        return Response(UserSerializer(user).data)
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -55,7 +74,62 @@ class LoginToOARClient(LoginView):
 
 
 class LogoutOfOARClient(LogoutView):
-    pass
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class APIAuthToken(ObtainAuthToken):
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        try:
+            token = Token.objects.get(user=request.user)
+
+            token_data = {
+                'token': token.key,
+                'created': token.created.isoformat(),
+            }
+
+            return Response(token_data)
+        except Token.DoesNotExist:
+            raise NotFound()
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        token, _ = Token.objects.get_or_create(user=request.user)
+
+        token_data = {
+            'token': token.key,
+            'created': token.created.isoformat(),
+        }
+
+        return Response(token_data)
+
+    def delete(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        try:
+            token = Token.objects.get(user=request.user)
+            token.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Token.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def token_auth_example(request):
+    name = request.user.name
+    return Response({'name': name})
 
 
 # TODO: Remove the following URLS once Django versions have been
@@ -83,12 +157,6 @@ def confirm_temp(request):
 @permission_classes((AllowAny,))
 def update_source_name(request):
     return Response({"source": None})
-
-
-@api_view(['GET'])
-@permission_classes((AllowAny,))
-def generate_key(request):
-    return Response({"key": "key"})
 
 
 @api_view(['GET'])
