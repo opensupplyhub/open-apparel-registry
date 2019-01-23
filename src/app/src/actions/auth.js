@@ -110,7 +110,7 @@ export function submitLoginForm() {
         }
 
         return csrfRequest
-            .post(makeUserLoginURL(), { username: email, password })
+            .post(makeUserLoginURL(), { email, password })
             .then(({ data }) => dispatch(completeSubmitLoginForm(data)))
             .catch(e => dispatch(logErrorAndDispatchFailure(
                 e,

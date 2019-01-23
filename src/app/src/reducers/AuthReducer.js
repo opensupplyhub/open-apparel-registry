@@ -136,8 +136,7 @@ export default createReducer({
             form: { $set: initialState.login.form },
         },
         user: {
-            key: { $set: payload.key },
-            user: { $set: payload.user },
+            user: { $set: payload },
         },
     }),
     [startSessionLogin]: state => update(state, {

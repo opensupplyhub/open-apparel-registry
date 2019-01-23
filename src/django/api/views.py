@@ -3,10 +3,11 @@ import os
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth import (authenticate, login)
 from rest_framework import viewsets, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError, NotFound, AuthenticationFailed
 from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -44,10 +45,24 @@ class SubmitNewUserForm(CreateAPIView):
 
 
 class LoginToOARClient(LoginView):
+    serializer_class = UserSerializer
+
     def post(self, request, *args, **kwargs):
-        return super(LoginToOARClient, self).post(request,
-                                                  *args,
-                                                  **kwargs)
+        email = request.data.get('email', None)
+        password = request.data.get('password', None)
+
+        if email is None or password is None:
+            raise AuthenticationFailed('Email and password are required')
+
+        user = authenticate(email=email, password=password)
+
+        if user is None:
+            raise AuthenticationFailed(
+                'Unable to login with those credentials')
+
+        login(request, user)
+
+        return Response(UserSerializer(user).data)
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:

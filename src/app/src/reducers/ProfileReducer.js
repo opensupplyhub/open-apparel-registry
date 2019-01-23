@@ -63,18 +63,7 @@ const completeGettingAPIToken = (state, payload) => update(state, {
     },
 });
 
-const setProfileOnFormLogin = (state, { user: payload }) => update(state, {
-    profile: {
-        email: { $set: payload.email || '' },
-        name: { $set: payload.name || '' },
-        description: { $set: payload.description || '' },
-        website: { $set: payload.website || '' },
-        contributorType: { $set: payload.contributor_type || '' },
-        otherContributorType: { $set: payload.other_contributor_type || '' },
-    },
-});
-
-const setProfileOnSessionLogin = (state, payload) => update(state, {
+const setProfileOnLogin = (state, payload) => update(state, {
     profile: {
         email: { $set: payload.email || '' },
         name: { $set: payload.name || '' },
@@ -98,8 +87,8 @@ export default createReducer({
     [completeCreateAPIToken]: completeGettingAPIToken,
     [completeFetchAPIToken]: completeGettingAPIToken,
     [updateProfileFormInput]: identity,
-    [completeSessionLogin]: setProfileOnSessionLogin,
-    [completeSubmitLoginForm]: setProfileOnFormLogin,
+    [completeSessionLogin]: setProfileOnLogin,
+    [completeSubmitLoginForm]: setProfileOnLogin,
     [completeSubmitLogOut]: state => update(state, {
         profile: { $set: initialState.profile },
     }),

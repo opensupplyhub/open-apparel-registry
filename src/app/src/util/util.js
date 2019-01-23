@@ -94,6 +94,10 @@ export function logErrorAndDispatchFailure(error, defaultMessage, failureAction)
                 return response.data;
             }
 
+            if (response.data.detail) {
+                return [response.data.detail];
+            }
+
             if (isObject(response.data)) {
                 return createErrorListFromResponseObject(response.data);
             }
