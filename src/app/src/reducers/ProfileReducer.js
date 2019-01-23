@@ -89,7 +89,5 @@ export default createReducer({
     [updateProfileFormInput]: identity,
     [completeSessionLogin]: setProfileOnLogin,
     [completeSubmitLoginForm]: setProfileOnLogin,
-    [completeSubmitLogOut]: state => update(state, {
-        profile: { $set: initialState.profile },
-    }),
+    [completeSubmitLogOut]: () => initialState,
 }, initialState);
