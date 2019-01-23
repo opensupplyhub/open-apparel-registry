@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -181,3 +183,8 @@ WATCHMAN_CHECKS = (
 
 # Application settings
 MAX_UPLOADED_FILE_SIZE_IN_BYTES = 5242880
+
+GOOGLE_GEOCODING_API_KEY = os.getenv('GOOGLE_GEOCODING_API_KEY')
+if GOOGLE_GEOCODING_API_KEY is None:
+    raise ImproperlyConfigured(
+        'Invalid GOOGLE_GEOCODING_API_KEY provided, must be set')
