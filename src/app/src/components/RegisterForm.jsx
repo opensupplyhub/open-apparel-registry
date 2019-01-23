@@ -26,7 +26,6 @@ import {
 import {
     registrationFormValuesPropType,
     registrationFormInputHandlersPropType,
-    userPropType,
 } from '../util/propTypes';
 
 import { getStateFromEventForEventType } from '../util/util';
@@ -34,15 +33,26 @@ import { getStateFromEventForEventType } from '../util/util';
 import { formValidationErrorMessageStyle } from '../util/styles';
 
 class RegisterForm extends Component {
-    componentDidUpdate() {
+    componentDidUpdate({ fetching: wasFetching }) {
         const {
-            user,
+            fetching,
+            error,
             history,
         } = this.props;
 
-        return user
-            ? history.push(`/profile/${user.id}`)
-            : null;
+        if (error) {
+            return null;
+        }
+
+        if (fetching) {
+            return null;
+        }
+
+        if (!wasFetching) {
+            return null;
+        }
+
+        return history.push('/auth/login');
     }
 
     componentWillUnmount() {
@@ -130,7 +140,6 @@ class RegisterForm extends Component {
 
 RegisterForm.defaultProps = {
     error: null,
-    user: null,
 };
 
 RegisterForm.propTypes = {
@@ -141,7 +150,6 @@ RegisterForm.propTypes = {
     inputUpdates: registrationFormInputHandlersPropType.isRequired,
     submitForm: func.isRequired,
     sessionFetching: bool.isRequired,
-    user: userPropType,
     history: shape({
         push: func.isRequired,
     }).isRequired,
@@ -157,9 +165,6 @@ function mapStateToProps({
         signup: {
             form,
         },
-        user: {
-            user,
-        },
     },
 }) {
     return {
@@ -167,7 +172,6 @@ function mapStateToProps({
         error,
         form,
         sessionFetching,
-        user,
     };
 }
 

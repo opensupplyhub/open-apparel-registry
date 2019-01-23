@@ -119,14 +119,11 @@ export default createReducer({
     [failSubmitLoginForm]: failFetching,
     [failSubmitLogOut]: failFetching,
     [failSubmitForgotPassword]: failFetching,
-    [completeSubmitSignUpForm]: (state, payload) => update(state, {
+    [completeSubmitSignUpForm]: state => update(state, {
         fetching: { $set: false },
         error: { $set: null },
         signup: {
             form: { $set: initialState.signup.form },
-        },
-        user: {
-            user: { $set: payload },
         },
     }),
     [completeSubmitLoginForm]: (state, payload) => update(state, {
