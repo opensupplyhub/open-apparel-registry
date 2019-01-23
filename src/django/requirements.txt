@@ -5,6 +5,7 @@ djangorestframework==3.9.0
 djangorestframework-gis==0.14
 django-rest-auth==0.9.3
 django-allauth==0.37.0
+django-spa==0.2.0
 flake8==3.6.0
 mccabe==0.6.1
 pycodestyle==2.4.0
