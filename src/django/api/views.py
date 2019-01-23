@@ -3,11 +3,13 @@ import os
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth import (authenticate, login)
+from django.contrib.auth import (authenticate, login, logout)
 from rest_framework import viewsets, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import ValidationError, NotFound, AuthenticationFailed
+from rest_framework.exceptions import (ValidationError,
+                                       NotFound,
+                                       AuthenticationFailed)
 from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -72,7 +74,12 @@ class LoginToOARClient(LoginView):
 
 
 class LogoutOfOARClient(LogoutView):
-    pass
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class APIAuthToken(ObtainAuthToken):
