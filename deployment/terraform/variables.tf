@@ -1,0 +1,157 @@
+variable "project" {
+  default = "OpenApparelRegistry"
+}
+
+variable "environment" {
+  default = "Staging"
+}
+
+variable "aws_region" {
+  default = "us-east-1"
+}
+
+variable "aws_availability_zones" {
+  default = ["us-east-1a", "us-east-1b"]
+}
+
+variable "aws_key_name" {}
+
+variable "r53_private_hosted_zone" {}
+
+variable "r53_public_hosted_zone" {}
+
+variable "cloudfront_price_class" {}
+
+variable "vpc_cidr_block" {
+  default = "10.0.0.0/16"
+}
+
+variable "external_access_cidr_block" {}
+
+variable "vpc_private_subnet_cidr_blocks" {
+  default = ["10.0.1.0/24", "10.0.3.0/24"]
+}
+
+variable "vpc_public_subnet_cidr_blocks" {
+  default = ["10.0.0.0/24", "10.0.2.0/24"]
+}
+
+variable "bastion_ami" {}
+
+variable "bastion_instance_type" {}
+
+variable "fargate_cpu" {
+  default = "256"
+}
+
+variable "fargate_memory" {
+  default = "512"
+}
+
+variable "image_tag" {}
+
+variable "app_port" {
+  default = "8080"
+}
+
+variable "django_secret_key" {}
+
+variable "app_count" {
+  default = "2"
+}
+
+variable "deployment_minimum_healthy_percent" {
+  default = "100"
+}
+
+variable "deployment_maximum_percent" {
+  default = "150"
+}
+
+variable "rds_allocated_storage" {
+  default = "64"
+}
+
+variable "rds_engine_version" {
+  default = "10.6"
+}
+
+variable "rds_parameter_group_family" {
+  default = "postgres10"
+}
+
+variable "rds_instance_type" {
+  default = "db.t2.micro"
+}
+
+variable "rds_storage_type" {
+  default = "gp2"
+}
+
+variable "rds_database_identifier" {}
+
+variable "rds_database_name" {}
+
+variable "rds_database_username" {}
+
+variable "rds_database_password" {}
+
+variable "rds_backup_retention_period" {
+  default = "30"
+}
+
+variable "rds_backup_window" {
+  default = "04:00-04:30"
+}
+
+variable "rds_maintenance_window" {
+  default = "sun:04:30-sun:05:30"
+}
+
+variable "rds_auto_minor_version_upgrade" {
+  default = true
+}
+
+variable "rds_final_snapshot_identifier" {
+  default = "oar-rds-snapshot"
+}
+
+variable "rds_monitoring_interval" {
+  default = "60"
+}
+
+variable "rds_skip_final_snapshot" {
+  default = false
+}
+
+variable "rds_copy_tags_to_snapshot" {
+  default = true
+}
+
+variable "rds_multi_az" {
+  default = false
+}
+
+variable "rds_storage_encrypted" {
+  default = false
+}
+
+variable "rds_cpu_threshold_percent" {
+  default = "75"
+}
+
+variable "rds_disk_queue_threshold" {
+  default = "10"
+}
+
+variable "rds_free_disk_threshold_bytes" {
+  default = "5000000000"
+}
+
+variable "rds_free_memory_threshold_bytes" {
+  default = "128000000"
+}
+
+variable "rds_cpu_credit_balance_threshold" {
+  default = "30"
+}

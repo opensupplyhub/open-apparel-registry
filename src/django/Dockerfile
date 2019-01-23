@@ -11,7 +11,7 @@ COPY . /usr/local/src
 RUN GOOGLE_GEOCODING_API_KEY="" \
     python manage.py collectstatic --no-input
 
-CMD ["-b :8081", \
+CMD ["-b :8080", \
 "--workers=2", \
 "--timeout=60", \
 "--access-logfile=-", \
