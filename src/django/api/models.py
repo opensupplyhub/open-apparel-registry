@@ -309,6 +309,11 @@ class FacilityListItem(models.Model):
         null=True,
         help_text=('The geocoded location the facility address field taken '
                    'from the raw data.'))
+    geocoded_address = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The geocoded address of the facility.')
     facility = models.ForeignKey(
         'Facility',
         null=True,
