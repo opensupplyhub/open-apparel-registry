@@ -15,6 +15,8 @@ const {
     makeSearchFacilityByNameAndCountryURL,
     getValueFromEvent,
     getCheckedFromEvent,
+    getFileFromInputRef,
+    getFileNameFromInputRef,
     createSignupErrorMessages,
     createSignupRequestData,
     createErrorListFromResponseObject,
@@ -129,6 +131,45 @@ it('gets the checked state from an even on a DOM checkbox input', () => {
     expect(getCheckedFromEvent(mockEvent)).toEqual(true);
 });
 
+it('gets the file from a file input ref', () => {
+    const file = {
+        current: {
+            files: [
+                'file',
+            ],
+        },
+    };
+
+    expect(getFileFromInputRef(file)).toEqual('file');
+});
+
+it('gets null from an empty file input ref', () => {
+    const file = undefined;
+
+    expect(getFileFromInputRef(file)).toEqual(null);
+});
+
+it('gets the filename from a file input ref', () => {
+    const file = {
+        current: {
+            files: [
+                {
+                    name: 'file',
+                },
+            ],
+        },
+    };
+
+    expect(getFileNameFromInputRef(file))
+        .toEqual('file');
+});
+
+it('gets an empty string for the filename from an empty file input ref', () => {
+    const file = undefined;
+
+    expect(getFileNameFromInputRef(file))
+        .toEqual('');
+});
 
 it('creates a list of error messages if any required signup fields are missing', () => {
     const incompleteForm = mapValues(registrationFieldsEnum, '');

@@ -66,7 +66,7 @@ class App extends Component {
                                         />
                                         <Route
                                             path="/contribute"
-                                            component={requireAuth(Contribute)}
+                                            component={Contribute}
                                         />
                                         <Route
                                             path="/lists"

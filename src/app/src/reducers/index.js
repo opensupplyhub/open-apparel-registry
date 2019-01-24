@@ -12,6 +12,7 @@ import ListsReducer from './ListsReducer';
 import SourceReducer from './SourceReducer';
 import AuthReducer from './AuthReducer';
 import ProfileReducer from './ProfileReducer';
+import UploadReducer from './UploadReducer';
 
 export default combineReducers({
     nav: NavbarReducer,
@@ -20,4 +21,5 @@ export default combineReducers({
     source: SourceReducer,
     auth: AuthReducer,
     profile: ProfileReducer,
+    upload: UploadReducer,
 });
