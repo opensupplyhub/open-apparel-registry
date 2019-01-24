@@ -12,10 +12,10 @@ import Footer from './components/Footer';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
-import Contribute from './containers/Contribute';
-import Map from './containers/Map';
+import Contribute from './components/Contribute';
+import Map from './components/Map';
 import requireAuth from './requireAuth';
-import Lists from './containers/Lists';
+import Lists from './components/Lists';
 import ErrorBoundary from './components/ErrorBoundary';
 
 import './App.css';

@@ -11,9 +11,9 @@ import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import ControlPanel from './ControlPanel';
 import * as mapActions from '../actions/map';
-import Button from '../components/Button';
-import MapLayers from '../components/MapLayers';
-import LandingAlert from '../components/LandingAlert';
+import Button from './Button';
+import MapLayers from './MapLayers';
+import LandingAlert from './LandingAlert';
 import '../styles/css/Map.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;

@@ -21,8 +21,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import { parse } from 'json2csv';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import FactoryInfo from '../components/FactoryInfo';
-import ShowOnly from '../components/ShowOnly';
+import FactoryInfo from './FactoryInfo';
+import ShowOnly from './ShowOnly';
 import countries from '../data/countries.json';
 import * as sourceActions from '../actions/source';
 
