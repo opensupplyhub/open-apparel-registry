@@ -23,10 +23,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import PropTypes from 'prop-types';
 import { parse } from 'json2csv';
-import ShowOnly from '../components/ShowOnly';
-import TablePaginationWrapper from '../components/TablePaginationWrapper';
+import ShowOnly from './ShowOnly';
+import TablePaginationWrapper from './TablePaginationWrapper';
 import * as listsActions from '../actions/lists';
-import AppGrid from '../components/AppGrid';
+import AppGrid from './AppGrid';
 import { DownloadCSV } from '../util/util';
 
 const styles = {

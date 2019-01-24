@@ -7,10 +7,10 @@ import MaterialButton from '@material-ui/core/Button';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import { DownloadCSV } from '../util/util';
-import AppGrid from '../components/AppGrid';
-import ControlledTextInput from '../components/ControlledTextInput';
-import Button from '../components/Button';
-import ShowOnly from '../components/ShowOnly';
+import AppGrid from './AppGrid';
+import ControlledTextInput from './ControlledTextInput';
+import Button from './Button';
+import ShowOnly from './ShowOnly';
 import COLOURS from '../util/COLOURS';
 
 const styles = {
