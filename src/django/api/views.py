@@ -184,9 +184,9 @@ def search_factories(request):
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):
-    # TODO: Filter based on auth.
     queryset = FacilityList.objects.all()
     serializer_class = FacilityListSerializer
+    permission_classes = [IsAuthenticated]
 
     def _validate_header(self, header):
         if header is None or header == '':
@@ -202,7 +202,6 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request):
-        # TODO: Require authenticated user with related organization
         if 'file' not in request.data:
             raise ValidationError('No file specified.')
         csv_file = request.data['file']
@@ -216,8 +215,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         header = csv_file.readline().decode().rstrip()
         self._validate_header(header)
 
-        # TODO: Get the organization from the authenticated user
-        organization = Organization.objects.first()
+        organization = Organization.objects.get(name=request.user.name)
 
         if 'name' in request.data:
             name = request.data['name']
@@ -262,3 +260,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(new_list)
         return Response(serializer.data)
+
+    def list(self, request):
+        organization = Organization.objects.get(name=request.user.name)
+        queryset = FacilityList.objects.filter(organization=organization)
+        response_data = self.serializer_class(queryset, many=True).data
+        return Response(response_data)
