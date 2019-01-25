@@ -6,7 +6,7 @@ from datetime import datetime
 from django.contrib.gis.geos import Point
 
 from api.constants import CsvHeaderField, ProcessingResultSection
-from api.models import FacilityListItem
+from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
 
@@ -84,6 +84,49 @@ def geocode_facility_list_item(item):
     except Exception as e:
         item.status = FacilityListItem.ERROR
         item.processing_results[ProcessingResultSection.GEOCODING] = {
+            'started_at': started,
+            'error': True,
+            'message': str(e),
+            'trace': traceback.format_exc(),
+            'finished_at': str(datetime.utcnow()),
+        }
+
+
+def match_facility_list_item(item):
+    started = str(datetime.utcnow())
+    if type(item) != FacilityListItem:
+        raise ValueError('Argument must be a FacilityListItem')
+    if item.status != FacilityListItem.GEOCODED:
+        raise ValueError('Items to be matched must be in the GEOCODED status')
+    try:
+        matches = Facility.objects.filter(
+            country_code=item.country_code, name__iexact=item.name,
+            address__iexact=item.geocoded_address)
+        if matches.count() == 0:
+            facility = Facility(name=item.name, address=item.geocoded_address,
+                                country_code=item.country_code,
+                                location=item.geocoded_point,
+                                created_from=item)
+        else:
+            facility = matches[0]
+
+        match = FacilityMatch(facility_list_item=item, facility=facility,
+                              results={
+                                  'version': '0', 'match_type': 'exact'
+                              },
+                              confidence=1.0,
+                              status=FacilityMatch.AUTOMATIC)
+
+        item.status = FacilityListItem.MATCHED
+        item.processing_results[ProcessingResultSection.MATCHING] = {
+            'started_at': started,
+            'error': False,
+            'finished_at': str(datetime.utcnow()),
+        }
+        return facility, match
+    except Exception as e:
+        item.status = FacilityListItem.ERROR
+        item.processing_results[ProcessingResultSection.MATCHING] = {
             'started_at': started,
             'error': True,
             'message': str(e),

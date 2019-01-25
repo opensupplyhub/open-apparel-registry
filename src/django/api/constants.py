@@ -7,3 +7,4 @@ class CsvHeaderField:
 class ProcessingResultSection:
     PARSING = 'parsing'
     GEOCODING = 'geocoding'
+    MATCHING = 'matching'
