@@ -11,7 +11,8 @@
         { "name": "POSTGRES_PASSWORD", "value": "${postgres_password}" },
         { "name": "POSTGRES_DB", "value": "${postgres_db}" },
         { "name": "DJANGO_ENV", "value": "${environment}" },
-        { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" }
+        { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
+        { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" }
     ],
     "portMappings": [
       {

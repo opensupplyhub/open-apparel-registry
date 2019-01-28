@@ -54,6 +54,8 @@ variable "app_port" {
   default = "8080"
 }
 
+variable "google_geocoding_api_key" {}
+
 variable "django_secret_key" {}
 
 variable "app_count" {

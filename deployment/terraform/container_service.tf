@@ -100,6 +100,8 @@ data "template_file" "app" {
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
 
+    google_geocoding_api_key = "${var.google_geocoding_api_key}"
+
     django_secret_key = "${var.django_secret_key}"
 
     app_port = "${var.app_port}"
@@ -136,6 +138,8 @@ data "template_file" "app_cli" {
     postgres_user     = "${var.rds_database_username}"
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
+
+    google_geocoding_api_key = "${var.google_geocoding_api_key}"
 
     django_secret_key = "${var.django_secret_key}"
 
