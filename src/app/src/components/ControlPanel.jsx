@@ -4,7 +4,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -24,7 +23,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FactoryInfo from './FactoryInfo';
 import ShowOnly from './ShowOnly';
 import countries from '../data/countries.json';
-import * as sourceActions from '../actions/source';
 
 import {
     DownloadCSV,
@@ -43,11 +41,11 @@ const TabContainer = props => (
 );
 
 const mapStateToProps = state => ({
-    source: state.source,
+    source: {},
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(sourceActions, dispatch),
+    actions: {},
 });
 
 TabContainer.propTypes = {
