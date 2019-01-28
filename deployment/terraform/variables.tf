@@ -136,6 +136,38 @@ variable "rds_storage_encrypted" {
   default = false
 }
 
+variable "rds_seq_page_cost" {
+  default = "1"
+}
+
+variable "rds_random_page_cost" {
+  default = "1"
+}
+
+variable "rds_log_min_duration_statement" {
+  default = "500"
+}
+
+variable "rds_log_connections" {
+  default = "0"
+}
+
+variable "rds_log_disconnections" {
+  default = "0"
+}
+
+variable "rds_log_lock_waits" {
+  default = "1"
+}
+
+variable "rds_log_temp_files" {
+  default = "500"
+}
+
+variable "rds_log_autovacuum_min_duration" {
+  default = "250"
+}
+
 variable "rds_cpu_threshold_percent" {
   default = "75"
 }

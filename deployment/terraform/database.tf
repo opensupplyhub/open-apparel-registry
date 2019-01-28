@@ -20,42 +20,42 @@ resource "aws_db_parameter_group" "default" {
 
   parameter {
     name  = "seq_page_cost"
-    value = "1"
+    value = "${var.rds_seq_page_cost}"
   }
 
   parameter {
     name  = "random_page_cost"
-    value = "1"
+    value = "${var.rds_random_page_cost}"
   }
 
   parameter {
     name  = "log_min_duration_statement"
-    value = "500"
+    value = "${var.rds_log_min_duration_statement}"
   }
 
   parameter {
     name  = "log_connections"
-    value = "0"
+    value = "${var.rds_log_connections}"
   }
 
   parameter {
     name  = "log_disconnections"
-    value = "0"
+    value = "${var.rds_log_disconnections}"
   }
 
   parameter {
     name  = "log_lock_waits"
-    value = "1"
+    value = "${var.rds_log_lock_waits}"
   }
 
   parameter {
     name  = "log_temp_files"
-    value = "500"
+    value = "${var.rds_log_temp_files}"
   }
 
   parameter {
     name  = "log_autovacuum_min_duration"
-    value = "250"
+    value = "${var.rds_log_autovacuum_min_duration}"
   }
 
   tags {
