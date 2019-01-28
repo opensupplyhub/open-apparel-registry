@@ -6,8 +6,6 @@ if [[ -n "${OAR_DEBUG}" ]]; then
     set -x
 fi
 
-DIR="$(dirname "$0")"
-
 function usage() {
     echo -n \
 "Usage: $(basename "$0") COMMAND OPTION[S]
@@ -25,7 +23,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
-        TERRAFORM_DIR="${DIR}/../deployment/terraform"
+        TERRAFORM_DIR="$(dirname "$0")/../deployment/terraform"
         echo
         echo "Attempting to deploy application version [${GIT_COMMIT}]..."
         echo "-----------------------------------------------------"

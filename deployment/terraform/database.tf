@@ -35,12 +35,12 @@ resource "aws_db_parameter_group" "default" {
 
   parameter {
     name  = "log_connections"
-    value = "1"
+    value = "0"
   }
 
   parameter {
     name  = "log_disconnections"
-    value = "1"
+    value = "0"
   }
 
   parameter {

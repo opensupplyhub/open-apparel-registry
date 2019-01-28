@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "ecs_task_execution_assume_role" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name               = "ecsTaskExecutionRole${title(var.project)}${title(var.environment)}"
+  name               = "ecsTaskExecutionRole${var.environment}"
   assume_role_policy = "${data.aws_iam_policy_document.ecs_task_execution_assume_role.json}"
 }
 

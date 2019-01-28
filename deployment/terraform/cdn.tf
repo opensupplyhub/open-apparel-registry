@@ -1,7 +1,7 @@
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
     domain_name = "origin.${var.r53_public_hosted_zone}"
-    origin_id   = "alb-${var.aws_region}"
+    origin_id   = "originAlb"
 
     custom_origin_config {
       http_port              = 80
@@ -22,7 +22,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-${var.aws_region}"
+    target_origin_id = "originAlb"
 
     forwarded_values {
       query_string = true
@@ -44,7 +44,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     path_pattern     = "static/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-${var.aws_region}"
+    target_origin_id = "originAlb"
 
     forwarded_values {
       query_string = false
@@ -74,7 +74,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   viewer_certificate {
     acm_certificate_arn      = "${module.cert.arn}"
-    minimum_protocol_version = "TLSv1"
+    minimum_protocol_version = "TLSv1.2_2018"
     ssl_support_method       = "sni-only"
   }
 }

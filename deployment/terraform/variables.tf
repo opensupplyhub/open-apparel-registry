@@ -1,5 +1,5 @@
 variable "project" {
-  default = "OpenApparelRegistry"
+  default = "Open Apparel Registry"
 }
 
 variable "environment" {

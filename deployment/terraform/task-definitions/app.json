@@ -1,6 +1,6 @@
 [
   {
-    "name": "openapparelregistry",
+    "name": "django",
     "image": "${image}",
     "cpu": ${cpu},
     "memory": ${memory},
@@ -21,9 +21,9 @@
     "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-            "awslogs-group": "log${title(project)}${title(environment)}",
+            "awslogs-group": "log${environment}App",
             "awslogs-region": "${aws_region}",
-            "awslogs-stream-prefix": "openapparelregistry"
+            "awslogs-stream-prefix": "django"
         }
     }
   }

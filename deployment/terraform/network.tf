@@ -1,7 +1,7 @@
 module "vpc" {
   source = "github.com/azavea/terraform-aws-vpc?ref=4.0.0"
 
-  name                       = "vpc${title(var.project)}${title(var.environment)}"
+  name                       = "vpc${var.environment}"
   region                     = "${var.aws_region}"
   key_name                   = "${var.aws_key_name}"
   cidr_block                 = "${var.vpc_cidr_block}"

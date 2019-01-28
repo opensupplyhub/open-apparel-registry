@@ -9,7 +9,7 @@ resource "aws_security_group" "alb" {
   vpc_id = "${module.vpc.id}"
 
   tags {
-    Name        = "sgLoadBalancer${title(var.project)}${title(var.environment)}"
+    Name        = "sgLoadBalancer"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -19,7 +19,7 @@ resource "aws_security_group" "ecs_cluster" {
   vpc_id = "${module.vpc.id}"
 
   tags {
-    Name        = "sgEcsCluster${title(var.project)}${title(var.environment)}"
+    Name        = "sgEcsCluster"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -28,20 +28,20 @@ resource "aws_security_group" "ecs_cluster" {
 #
 # ALB Resources
 #
-resource "aws_lb" "oar" {
-  name            = "alb${title(var.project)}${title(var.environment)}"
+resource "aws_lb" "app" {
+  name            = "alb${var.environment}"
   security_groups = ["${aws_security_group.alb.id}"]
   subnets         = ["${module.vpc.public_subnet_ids}"]
 
   tags {
-    Name        = "alb${title(var.project)}${title(var.environment)}"
+    Name        = "alb${var.environment}"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
 }
 
-resource "aws_lb_target_group" "oar" {
-  name = "tg${title(var.project)}${title(var.environment)}"
+resource "aws_lb_target_group" "app" {
+  name = "tg${var.environment}"
 
   health_check {
     healthy_threshold   = "3"
@@ -60,20 +60,20 @@ resource "aws_lb_target_group" "oar" {
   target_type = "ip"
 
   tags {
-    Name        = "tg${title(var.project)}${title(var.environment)}"
+    Name        = "tg${var.environment}"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
 }
 
-resource "aws_lb_listener" "oar" {
-  load_balancer_arn = "${aws_lb.oar.id}"
+resource "aws_lb_listener" "app" {
+  load_balancer_arn = "${aws_lb.app.id}"
   port              = "443"
   protocol          = "HTTPS"
   certificate_arn   = "${module.cert.arn}"
 
   default_action {
-    target_group_arn = "${aws_lb_target_group.oar.id}"
+    target_group_arn = "${aws_lb_target_group.app.id}"
     type             = "forward"
   }
 }
@@ -82,19 +82,19 @@ resource "aws_lb_listener" "oar" {
 # ECS Resources
 #
 
-resource "aws_ecs_cluster" "oar" {
-  name = "ecsCluster${title(var.project)}${title(var.environment)}"
+resource "aws_ecs_cluster" "app" {
+  name = "ecs${var.environment}Cluster"
 }
 
-data "template_file" "oar_ecs_task" {
-  template = "${file("task-definitions/oar.json")}"
+data "template_file" "app" {
+  template = "${file("task-definitions/app.json")}"
 
   vars = {
     cpu    = "${var.fargate_cpu}"
     image  = "${local.app_image}"
     memory = "${var.fargate_memory}"
 
-    postgres_host     = "${module.database.hostname}"
+    postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database.port}"
     postgres_user     = "${var.rds_database_username}"
     postgres_password = "${var.rds_database_password}"
@@ -111,8 +111,8 @@ data "template_file" "oar_ecs_task" {
   }
 }
 
-resource "aws_ecs_task_definition" "oar" {
-  family                   = "oar"
+resource "aws_ecs_task_definition" "app" {
+  family                   = "${var.environment}App"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "${var.fargate_cpu}"
@@ -120,18 +120,18 @@ resource "aws_ecs_task_definition" "oar" {
 
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
 
-  container_definitions = "${data.template_file.oar_ecs_task.rendered}"
+  container_definitions = "${data.template_file.app.rendered}"
 }
 
-data "template_file" "oar_management_ecs_task" {
-  template = "${file("task-definitions/oar_management.json")}"
+data "template_file" "app_cli" {
+  template = "${file("task-definitions/app_cli.json")}"
 
   vars = {
     cpu    = "${var.fargate_cpu}"
     image  = "${local.app_image}"
     memory = "${var.fargate_memory}"
 
-    postgres_host     = "${module.database.hostname}"
+    postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database.port}"
     postgres_user     = "${var.rds_database_username}"
     postgres_password = "${var.rds_database_password}"
@@ -148,8 +148,8 @@ data "template_file" "oar_management_ecs_task" {
   }
 }
 
-resource "aws_ecs_task_definition" "oar_management" {
-  family                   = "mgmt${title(var.project)}${title(var.environment)}"
+resource "aws_ecs_task_definition" "app_cli" {
+  family                   = "${var.environment}AppCLI"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "${var.fargate_cpu}"
@@ -157,13 +157,13 @@ resource "aws_ecs_task_definition" "oar_management" {
 
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
 
-  container_definitions = "${data.template_file.oar_management_ecs_task.rendered}"
+  container_definitions = "${data.template_file.app_cli.rendered}"
 }
 
-resource "aws_ecs_service" "oar" {
-  name            = "ecsService${title(var.project)}${title(var.environment)}"
-  cluster         = "${aws_ecs_cluster.oar.id}"
-  task_definition = "${aws_ecs_task_definition.oar.arn}"
+resource "aws_ecs_service" "app" {
+  name            = "${var.environment}${replace(var.project, " ", "")}"
+  cluster         = "${aws_ecs_cluster.app.id}"
+  task_definition = "${aws_ecs_task_definition.app.arn}"
 
   desired_count                      = "${var.app_count}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
@@ -177,25 +177,25 @@ resource "aws_ecs_service" "oar" {
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.oar.arn}"
+    target_group_arn = "${aws_lb_target_group.app.arn}"
     container_name   = "openapparelregistry"
     container_port   = "${var.app_port}"
   }
 
   depends_on = [
-    "aws_lb_listener.oar",
+    "aws_lb_listener.app",
   ]
 }
 
 #
 # CloudWatch Resources
 #
-resource "aws_cloudwatch_log_group" "oar" {
-  name              = "log${title(var.project)}${title(var.environment)}"
+resource "aws_cloudwatch_log_group" "app" {
+  name              = "log${var.environment}App"
   retention_in_days = 30
 }
 
-resource "aws_cloudwatch_log_group" "oar_mangement" {
-  name              = "logMgmt${title(var.project)}${title(var.environment)}"
+resource "aws_cloudwatch_log_group" "cli" {
+  name              = "log${var.environment}AppCLI"
   retention_in_days = 30
 }
