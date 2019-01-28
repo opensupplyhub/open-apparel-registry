@@ -15,11 +15,11 @@ resource "aws_security_group" "alb" {
   }
 }
 
-resource "aws_security_group" "ecs_cluster" {
+resource "aws_security_group" "ecs_service" {
   vpc_id = "${module.vpc.id}"
 
   tags {
-    Name        = "sgEcsCluster"
+    Name        = "sgEcsService"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -161,7 +161,7 @@ resource "aws_ecs_task_definition" "app_cli" {
 }
 
 resource "aws_ecs_service" "app" {
-  name            = "${var.environment}${replace(var.project, " ", "")}"
+  name            = "${var.environment}App"
   cluster         = "${aws_ecs_cluster.app.id}"
   task_definition = "${aws_ecs_task_definition.app.arn}"
 
@@ -172,13 +172,13 @@ resource "aws_ecs_service" "app" {
   launch_type = "FARGATE"
 
   network_configuration {
-    security_groups = ["${aws_security_group.ecs_cluster.id}"]
+    security_groups = ["${aws_security_group.ecs_service.id}"]
     subnets         = ["${module.vpc.private_subnet_ids}"]
   }
 
   load_balancer {
     target_group_arn = "${aws_lb_target_group.app.arn}"
-    container_name   = "openapparelregistry"
+    container_name   = "django"
     container_port   = "${var.app_port}"
   }
 
