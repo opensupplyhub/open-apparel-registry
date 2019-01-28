@@ -31,20 +31,8 @@ export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
 export const makeUserSignupURL = () => '/user-signup/';
 
-export const makeGetListsURL = uid =>
-    `/getLists/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeUpdateListURL = (uid, filename) =>
-    `/getList/${uid}/?file_name=${filename}&key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeConfirmTempURL = tempId =>
-    `/confirmTemp/${tempId}/?key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeUpdateSourceNameURL = uid =>
-    `/updateSourceName/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeUploadTempFacilityURL = uid =>
-    `/uploadTempFactory/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+export const makeFacilityListsURL = () => '/api/facility-lists/';
+export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 

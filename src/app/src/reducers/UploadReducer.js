@@ -5,17 +5,21 @@ import {
     updateFileUploadName,
     updateFileUploadDescription,
     updateFileUploadFileName,
+    updateFileUploadListToReplaceID,
     startUploadFile,
     failUploadFile,
     completeUploadFile,
     resetUploadState,
 } from '../actions/upload';
 
+import { contributeReplacesNoneSelectionID } from '../util/constants';
+
 const initialState = Object.freeze({
     form: Object.freeze({
         name: '',
         description: '',
         filename: '',
+        replaces: contributeReplacesNoneSelectionID,
     }),
     fetching: false,
     error: null,
@@ -37,6 +41,12 @@ export default createReducer({
     [updateFileUploadFileName]: (state, payload) => update(state, {
         form: {
             filename: { $set: payload },
+        },
+        error: { $set: null },
+    }),
+    [updateFileUploadListToReplaceID]: (state, payload) => update(state, {
+        form: {
+            replaces: { $set: payload },
         },
         error: { $set: null },
     }),

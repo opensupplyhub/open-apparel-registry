@@ -1,10 +1,19 @@
 import { createAction } from 'redux-act';
 
-import { logErrorAndDispatchFailure } from '../util/util';
+import csrfRequest from '../util/csrfRequest';
+
+import {
+    logErrorAndDispatchFailure,
+    makeFacilityListsURL,
+} from '../util/util';
+
+import { contributeReplacesNoneSelectionID } from '../util/constants';
 
 export const updateFileUploadName = createAction('UPDATE_FILE_UPLOAD_NAME');
 export const updateFileUploadDescription = createAction('UPDATE_FILE_UPLOAD_DESCRIPTION');
 export const updateFileUploadFileName = createAction('UPDATE_FILE_UPLOAD_FILE_NAME');
+export const updateFileUploadListToReplaceID =
+    createAction('UPDATE_FILE_UPLOAD_LIST_TO_REPLACE_ID');
 
 export const startUploadFile = createAction('START_UPLOAD_FILE');
 export const failUploadFile = createAction('FAIL_UPLOAD_FILE');
@@ -12,7 +21,7 @@ export const completeUploadFile = createAction('COMPLETE_UPLOAD_FILE');
 
 export const resetUploadState = createAction('RESET_UPLOAD_STATE');
 
-export function uploadFile(file) {
+export function uploadFile(file = null) {
     return (dispatch, getState) => {
         dispatch(startUploadFile());
 
@@ -21,24 +30,36 @@ export function uploadFile(file) {
                 form: {
                     name,
                     description,
+                    replaces,
                 },
             },
         } = getState();
 
-        window.console.dir(name, description, file);
+        if (!file) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'Missing required facility list file',
+                failUploadFile,
+            ));
+        }
 
-        // Validate that name does not have any special char:
-        //
-        // e.g.
-        //
-        // {ifHasSpecialChar && (
-        //         <p className="form__error">
-        //         Use only letters (a-z, A-Z) and numbers (0-9).
-        //         </p>
-        // )}
+        const formData = new FormData();
+        formData.append('file', file);
 
-        return Promise
-            .resolve()
+        if (name) {
+            formData.append('name', name);
+        }
+
+        if (description) {
+            formData.append('description', description);
+        }
+
+        if (replaces !== contributeReplacesNoneSelectionID) {
+            formData.append('replaces', replaces);
+        }
+
+        return csrfRequest
+            .post(makeFacilityListsURL(), formData)
             .then(() => dispatch(completeUploadFile()))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
