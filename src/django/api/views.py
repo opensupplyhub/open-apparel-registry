@@ -206,7 +206,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             raise ValidationError('No file specified.')
         csv_file = request.data['file']
         if type(csv_file) is not InMemoryUploadedFile:
-            raise ValidationError('File not submitted propertly.')
+            raise ValidationError('File not submitted properly.')
         if csv_file.size > MAX_UPLOADED_FILE_SIZE_IN_BYTES:
             mb = MAX_UPLOADED_FILE_SIZE_IN_BYTES / (1024*1024)
             raise ValidationError(
@@ -221,6 +221,11 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             name = request.data['name']
         else:
             name = os.path.splitext(csv_file.name)[0]
+
+        if 'description' in request.data:
+            description = request.data['description']
+        else:
+            description = None
 
         replaces = None
         if 'replaces' in request.data:
@@ -242,6 +247,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         new_list = FacilityList(
             organization=organization,
             name=name,
+            description=description,
             file_name=csv_file.name,
             header=header,
             replaces=replaces)
