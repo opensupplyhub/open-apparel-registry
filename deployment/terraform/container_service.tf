@@ -1,5 +1,5 @@
 locals {
-  app_image = "${module.ecr-repository.repository_url}:${var.image_tag}"
+  app_image = "${module.ecr_repository.repository_url}:${var.image_tag}"
 }
 
 #
