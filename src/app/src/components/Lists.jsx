@@ -1,3 +1,7 @@
+/* eslint-disable */
+
+// disable all linting, as this component is gradually being deprecated
+
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 /* eslint-disable no-mixed-operators */
@@ -71,7 +75,7 @@ class Lists extends Component {
     };
 
     componentWillMount() {
-        this.getLists(this.props.user.uid);
+//        this.getLists(this.props.user.uid);
     }
 
     getLists = uid =>
@@ -214,7 +218,7 @@ class Lists extends Component {
             ? `${processdate.getUTCHours()} hours, ${processdate.getUTCMinutes()} minutes and ${processdate.getUTCSeconds()} second(s)`
             : '';
         return (
-            <ShowOnly when={user.loaded}>
+            <ShowOnly when={true}>
                 <AppGrid title="My Lists">
                     <Grid container className="margin-bottom-16">
                         <Grid item xs={12}>
@@ -719,7 +723,7 @@ class Lists extends Component {
 }
 
 Lists.propTypes = {
-    user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    user: PropTypes.object,
     actions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     lists: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };

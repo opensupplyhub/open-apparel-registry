@@ -175,9 +175,8 @@ export const contributeFieldsEnum = Object.freeze({
 
 export const contributeFileName = Object.freeze({
     id: contributeFieldsEnum.name,
-    label: 'Enter the organization name for this facility list',
-    required: true,
-    hint: 'Use only letters (a-z) or numbers (0-9), e.g, Alpha Brand Facility List June 2018',
+    label: 'Enter the name for this facility list',
+    hint: 'example: \'Alpha Brand Facility List June 2018\'',
     type: inputTypesEnum.text,
     placeholder: 'Facility List Name',
 });
@@ -186,9 +185,8 @@ export const contributeFileDescription = Object.freeze({
     id: contributeFieldsEnum.description,
     label: `Enter a description of this facility list and include a timeframe
 for the list's validity`,
-    required: true,
-    hint: `Use only letters (a-z) or numbers (0-9), e.g. This is the Alpha
-Brand list of suppliers for their apparel products valid from June 2018 to Sept 2018`,
+    hint: `example: 'This is the Alpha Brand list of suppliers for their apparel
+products valid from June 2018 to Sept 2018'`,
     type: inputTypesEnum.text,
     placeholder: 'Facility List Description',
 });
@@ -197,3 +195,5 @@ export const contributeFormFields = Object.freeze([
     contributeFileName,
     contributeFileDescription,
 ]);
+
+export const contributeReplacesNoneSelectionID = -1;

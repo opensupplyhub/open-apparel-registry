@@ -1,15 +1,53 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bool } from 'prop-types';
 import Grid from '@material-ui/core/Grid';
-import AppGrid from './AppGrid';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
+import AppGrid from './AppGrid';
 import ContributeHeader from './ContributeHeader';
 import ContributeForm from './ContributeForm';
 import ContributeTroubleshooting from './ContributeTroubleshooting';
 
-import { listsRoute } from '../util/constants';
+import {
+    listsRoute,
+    authLoginFormRoute,
+} from '../util/constants';
 
-export default function ContributeList() {
+function ContributeList({
+    userHasSignedIn,
+    fetchingSessionSignIn,
+}) {
+    if (fetchingSessionSignIn) {
+        return (
+            <AppGrid title="Contribute">
+                <Grid container className="margin-bottom-64">
+                    <Grid item xs={12}>
+                        <CircularProgress />
+                    </Grid>
+                </Grid>
+            </AppGrid>
+        );
+    }
+
+    if (!userHasSignedIn) {
+        return (
+            <AppGrid title="Contribute">
+                <Grid container className="margin-bottom-64">
+                    <Grid item xs={12}>
+                        <Link
+                            to={authLoginFormRoute}
+                            href={authLoginFormRoute}
+                        >
+                            Log in to contribute to Open Apparel Registry
+                        </Link>
+                    </Grid>
+                </Grid>
+            </AppGrid>
+        );
+    }
+
     return (
         <AppGrid title="Contribute">
             <Grid container className="margin-bottom-64">
@@ -38,3 +76,26 @@ export default function ContributeList() {
         </AppGrid>
     );
 }
+
+ContributeList.propTypes = {
+    userHasSignedIn: bool.isRequired,
+    fetchingSessionSignIn: bool.isRequired,
+};
+
+function mapStateToProps({
+    auth: {
+        user: {
+            user,
+        },
+        session: {
+            fetching,
+        },
+    },
+}) {
+    return {
+        userHasSignedIn: !!user,
+        fetchingSessionSignIn: fetching,
+    };
+}
+
+export default connect(mapStateToProps)(ContributeList);

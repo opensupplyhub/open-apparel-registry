@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { arrayOf, bool, func, string } from 'prop-types';
+import { arrayOf, bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MaterialButton from '@material-ui/core/Button';
@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 
 import ControlledTextInput from './ControlledTextInput';
 import Button from './Button';
+import ContributeFormSelectListToReplace from './ContributeFormSelectListToReplace';
 
 import COLOURS from '../util/COLOURS';
 
@@ -25,8 +26,17 @@ import {
     updateFileUploadName,
     updateFileUploadDescription,
     updateFileUploadFileName,
+    updateFileUploadListToReplaceID,
     uploadFile,
+    resetUploadState,
 } from '../actions/upload';
+
+import {
+    fetchUserFacilityLists,
+    resetUserFacilityLists,
+} from '../actions/facilityLists';
+
+import { facilityListPropType } from '../util/propTypes';
 
 const contributeFormStyles = Object.freeze({
     fileNameText: Object.freeze({
@@ -48,6 +58,10 @@ class ContributeForm extends Component {
         this.fileInput = React.createRef();
     }
 
+    componentDidMount() {
+        return this.props.fetchLists();
+    }
+
     componentDidUpdate({ fetching: wasFetching }) {
         const {
             fetching,
@@ -66,7 +80,12 @@ class ContributeForm extends Component {
             return null;
         }
 
+        this.props.fetchLists();
         return toast('Your facility list has been uploaded successfully!');
+    }
+
+    componentWillUnmount() {
+        return this.props.resetForm();
     }
 
     selectFile = () => this.fileInput.current.click();
@@ -80,17 +99,32 @@ class ContributeForm extends Component {
             name,
             description,
             filename,
+            replaces,
             fetching,
             error,
             updateName,
             updateDescription,
-            uploadList,
+            updateListToReplace,
+            fetchingFacilityLists,
+            facilityLists,
         } = this.props;
 
-        if (error) {
-            // TODO: render error messages
-            window.console.warn(error);
-        }
+
+        const errorMessages = error && error.length
+            ? (
+                <ul>
+                    {
+                        error
+                            .map(err => (
+                                <li
+                                    key={err}
+                                    style={{ color: 'red' }}
+                                >
+                                    {err}
+                                </li>))
+                    }
+                </ul>)
+            : null;
 
         const formInputs = contributeFormFields
             .map(field => (
@@ -122,7 +156,16 @@ class ContributeForm extends Component {
                     />
                 </div>));
 
-        const submitButtonIsDisabled = (fetching || !name || !description);
+        const submitButtonIsDisabled = (fetching || fetchingFacilityLists);
+
+        const replacesSection = facilityLists && facilityLists.length
+            ? (
+                <ContributeFormSelectListToReplace
+                    lists={facilityLists}
+                    replaces={replaces}
+                    handleChange={updateListToReplace}
+                />)
+            : null;
 
         return (
             <div className="control-panel__group">
@@ -149,13 +192,15 @@ class ContributeForm extends Component {
                         onChange={this.updateSelectedFileName}
                     />
                 </div>
+                {replacesSection}
                 <div className="form__field">
+                    {errorMessages}
                     {
                         fetching
                             ? <CircularProgress size={30} />
                             : (
                                 <Button
-                                    onClick={uploadList}
+                                    onClick={this.handleUploadList}
                                     disabled={submitButtonIsDisabled}
                                     text="SUBMIT"
                                     variant="contained"
@@ -178,12 +223,18 @@ ContributeForm.propTypes = {
     name: string.isRequired,
     description: string.isRequired,
     filename: string.isRequired,
+    replaces: number.isRequired,
     fetching: bool.isRequired,
     error: arrayOf(string),
     updateName: func.isRequired,
     updateDescription: func.isRequired,
     updateFileName: func.isRequired,
+    updateListToReplace: func.isRequired,
     uploadList: func.isRequired,
+    facilityLists: arrayOf(facilityListPropType).isRequired,
+    fetchingFacilityLists: bool.isRequired,
+    fetchLists: func.isRequired,
+    resetForm: func.isRequired,
 };
 
 function mapStateToProps({
@@ -192,17 +243,25 @@ function mapStateToProps({
             name,
             description,
             filename,
+            replaces,
         },
         fetching,
         error,
+    },
+    facilityLists: {
+        facilityLists,
+        fetching: fetchingFacilityLists,
     },
 }) {
     return {
         name,
         description,
         filename,
+        replaces,
         fetching,
         error,
+        facilityLists,
+        fetchingFacilityLists,
     };
 }
 
@@ -211,7 +270,14 @@ function mapDispatchToProps(dispatch) {
         updateName: e => dispatch(updateFileUploadName(getValueFromEvent(e))),
         updateDescription: e => dispatch(updateFileUploadDescription(getValueFromEvent(e))),
         updateFileName: r => dispatch(updateFileUploadFileName(getFileNameFromInputRef(r))),
-        uploadList: file => dispatch(uploadFile(getFileFromInputRef(file))),
+        updateListToReplace: e =>
+            dispatch(updateFileUploadListToReplaceID(getValueFromEvent(e))),
+        uploadList: r => dispatch(uploadFile(getFileFromInputRef(r))),
+        fetchLists: () => dispatch(fetchUserFacilityLists()),
+        resetForm: () => {
+            dispatch(resetUserFacilityLists());
+            return dispatch(resetUploadState());
+        },
     };
 }
 
