@@ -197,3 +197,8 @@ export const contributeFormFields = Object.freeze([
 ]);
 
 export const contributeReplacesNoneSelectionID = -1;
+
+export const filterSidebarTabsEnum = Object.freeze({
+    guide: 'guide',
+    search: 'search',
+});
