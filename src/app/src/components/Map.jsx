@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+/* eslint-disable no-unused-vars */
+// temporarily disabled in order to move the FilterSidebar out of this map component
+
+import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import mapboxgl from 'mapbox-gl';
 import _ from 'lodash';
 import * as turf from '@turf/turf';
 import supercluster from 'supercluster';
-import Grid from '@material-ui/core/Grid';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
-import ControlPanel from './ControlPanel';
 import * as mapActions from '../actions/map';
 import Button from './Button';
 import MapLayers from './MapLayers';
-import LandingAlert from './LandingAlert';
 import '../styles/css/Map.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
@@ -538,50 +538,32 @@ class Map extends Component {
         const { openLayerDialog, mapStyle } = this.state;
 
         return (
-            <div>
-                <LandingAlert />
-                <Grid container>
-                    <Grid item xs={12} sm={3} id="panel-container">
-                        <ControlPanel
-                            onUpdate={this.onUpdate}
-                            onSelectFactory={this.onSelectFactory}
-                            selectedFactory={selectedFactory}
-                            onClearSelectedFac={this.onClearSelectedFac}
-                            factories={factories}
-                            sharedSearch={this.queryStringToObj(search)}
-                            updateSearchButton={this.updateSearchButton}
-                            setSpecificFactory={selectFactory}
-                            user={user}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={9} style={{ position: 'relative' }}>
-                        <div
-                            ref={(el) => {
-                                this.mapContainer = el;
-                            }}
-                            id="map"
-                        />
-                        <CopyToClipboard text={this.getClipboardText()}>
-                            <Button
-                                text="Share This Search"
-                                onClick={this.copySearchToClipboard}
-                                style={{
-                                    position: 'absolute',
-                                    right: '84px',
-                                    top: '84px',
-                                    fontSize: '12px',
-                                }}
-                            />
-                        </CopyToClipboard>
-                        <MapLayers
-                            mapStyle={mapStyle}
-                            open={openLayerDialog}
-                            close={this.toggleLayerDialog}
-                            onClickStyle={this.onChangeStyle}
-                        />
-                    </Grid>
-                </Grid>
-            </div>
+            <Fragment>
+                <div
+                    ref={(el) => {
+                        this.mapContainer = el;
+                    }}
+                    id="map"
+                />
+                <CopyToClipboard text={this.getClipboardText()}>
+                    <Button
+                        text="Share This Search"
+                        onClick={this.copySearchToClipboard}
+                        style={{
+                            position: 'absolute',
+                            right: '84px',
+                            top: '84px',
+                            fontSize: '12px',
+                        }}
+                    />
+                </CopyToClipboard>
+                <MapLayers
+                    mapStyle={mapStyle}
+                    open={openLayerDialog}
+                    close={this.toggleLayerDialog}
+                    onClickStyle={this.onChangeStyle}
+                />
+            </Fragment>
         );
     }
 }

@@ -13,7 +13,7 @@ import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
 import Contribute from './components/Contribute';
-import Map from './components/Map';
+import MapAndSidebar from './components/MapAndSidebar';
 import FacilityLists from './components/FacilityLists';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -49,7 +49,7 @@ class App extends Component {
                                         <Route
                                             exact
                                             path="/"
-                                            component={Map}
+                                            component={MapAndSidebar}
                                         />
                                         <Route
                                             path="/auth/register"

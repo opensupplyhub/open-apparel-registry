@@ -202,3 +202,14 @@ export const filterSidebarTabsEnum = Object.freeze({
     guide: 'guide',
     search: 'search',
 });
+
+export const filterSidebarTabs = Object.freeze([
+    Object.freeze({
+        tab: filterSidebarTabsEnum.guide,
+        label: 'Guide',
+    }),
+    Object.freeze({
+        tab: filterSidebarTabsEnum.search,
+        label: 'Search',
+    }),
+]);
