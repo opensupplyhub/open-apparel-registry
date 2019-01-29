@@ -4,9 +4,9 @@ import logo from '../styles/images/Creative-Commons-Attribution-ShareAlike-40-In
 
 const links = [
     {
-        href: 'http://www.sourcemap.com/',
+        href: 'https://www.azavea.com/',
         prefix: 'powered by ',
-        text: 'Sourcemap',
+        text: 'Azavea',
         external: true,
         newTab: true,
     },
