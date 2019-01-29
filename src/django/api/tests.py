@@ -20,7 +20,7 @@ from api.processing import (parse_facility_list_item,
 from api.geocoding import (create_geocoding_api_url,
                            format_geocoded_address_data,
                            geocode_address)
-from api.test_data import parsed_city_hall_data
+from api.test_data import azavea_office_data, parsed_city_hall_data
 
 
 class FacilityListCreateTest(APITestCase):
@@ -291,8 +291,8 @@ class GeocodingUtilsTest(TestCase):
 
 class GeocodingTest(TestCase):
     def test_correct_address_is_geocoded_properly(self):
-        geocoded_data = geocode_address('City Hall, Philly', 'US')
-        self.assertDictEqual(geocoded_data, parsed_city_hall_data)
+        geocoded_data = geocode_address('990 Spring Garden St, Philly', 'US')
+        self.assertDictEqual(geocoded_data, azavea_office_data)
 
     def test_ungeocodable_address_returns_value_error(self):
         with self.assertRaises(ValueError) as cm:
