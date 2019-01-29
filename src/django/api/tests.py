@@ -235,6 +235,22 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
+    def test_upload_by_user_with_no_organization_returns_400(self):
+        Organization.objects.all().delete()
+        token = Token.objects.create(user=self.user)
+        self.client.post('/user-logout/')
+        header = {'HTTP_AUTHORIZATION': "Token {0}".format(token)}
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'file': self.test_file},
+                                    format='multipart',
+                                    **header)
+        self.assertEqual(response.status_code, 400)
+
+    def test_list_request_by_user_with_no_organization_returns_400(self):
+        Organization.objects.all().delete()
+        response = self.client.get(reverse('facility-list-list'))
+        self.assertEqual(response.status_code, 400)
+
 
 class FacilityListItemParseTest(TestCase):
     def assert_successful_parse_results(self, item):

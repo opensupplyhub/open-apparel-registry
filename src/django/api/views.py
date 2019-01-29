@@ -215,7 +215,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         header = csv_file.readline().decode().rstrip()
         self._validate_header(header)
 
-        organization = Organization.objects.get(name=request.user.name)
+        try:
+            organization = request.user.organization
+        except Organization.DoesNotExist:
+            raise ValidationError('User organization cannot be None')
 
         if 'name' in request.data:
             name = request.data['name']
@@ -268,7 +271,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def list(self, request):
-        organization = Organization.objects.get(name=request.user.name)
-        queryset = FacilityList.objects.filter(organization=organization)
-        response_data = self.serializer_class(queryset, many=True).data
-        return Response(response_data)
+        try:
+            organization = request.user.organization
+            queryset = FacilityList.objects.filter(organization=organization)
+            response_data = self.serializer_class(queryset, many=True).data
+            return Response(response_data)
+        except Organization.DoesNotExist:
+            raise ValidationError('User organization cannot be None')
