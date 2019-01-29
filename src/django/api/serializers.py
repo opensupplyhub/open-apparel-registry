@@ -19,4 +19,5 @@ class UserSerializer(ModelSerializer):
 class FacilityListSerializer(ModelSerializer):
     class Meta:
         model = FacilityList
-        fields = ('id', 'name', 'file_name', 'is_active', 'is_public')
+        fields = ('id', 'name', 'description', 'file_name', 'is_active',
+                  'is_public')

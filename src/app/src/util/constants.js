@@ -163,3 +163,37 @@ export const profileFormFields = Object.freeze([
 export const authLoginFormRoute = '/auth/login';
 export const authRegisterFormRoute = '/auth/register';
 export const contributeRoute = '/contribute';
+export const listsRoute = '/lists';
+
+export const contributeCSVTemplate =
+    'country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt';
+
+export const contributeFieldsEnum = Object.freeze({
+    name: 'name',
+    description: 'description',
+});
+
+export const contributeFileName = Object.freeze({
+    id: contributeFieldsEnum.name,
+    label: 'Enter the name for this facility list',
+    hint: 'example: \'Alpha Brand Facility List June 2018\'',
+    type: inputTypesEnum.text,
+    placeholder: 'Facility List Name',
+});
+
+export const contributeFileDescription = Object.freeze({
+    id: contributeFieldsEnum.description,
+    label: `Enter a description of this facility list and include a timeframe
+for the list's validity`,
+    hint: `example: 'This is the Alpha Brand list of suppliers for their apparel
+products valid from June 2018 to Sept 2018'`,
+    type: inputTypesEnum.text,
+    placeholder: 'Facility List Description',
+});
+
+export const contributeFormFields = Object.freeze([
+    contributeFileName,
+    contributeFileDescription,
+]);
+
+export const contributeReplacesNoneSelectionID = -1;

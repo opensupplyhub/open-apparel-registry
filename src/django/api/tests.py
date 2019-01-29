@@ -25,10 +25,19 @@ from api.test_data import azavea_office_data, parsed_city_hall_data
 
 class FacilityListCreateTest(APITestCase):
     def setUp(self):
-        self.user = User(username='Test', email='test@example.com')
-        self.user.set_password('password')
+        self.email = 'test@example.com'
+        self.password = 'password'
+        self.name = 'Test User'
+        self.user = User(name=self.name, email=self.email)
+        self.user.set_password(self.password)
         self.user.save()
-        self.organization = Organization(name='Test Org', admin=self.user)
+
+        self.client.post('/user-login/',
+                         {"email": self.email,
+                          "password": self.password},
+                         format="json")
+
+        self.organization = Organization(name=self.name, admin=self.user)
         self.organization.save()
         self.test_csv_rows = [
             'country,name,address',
@@ -176,6 +185,71 @@ class FacilityListCreateTest(APITestCase):
 
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 2)
+
+    def test_user_must_be_authenticated(self):
+        self.client.post('/user-logout/')
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'file': self.test_file},
+                                    format='multipart')
+        self.assertEqual(response.status_code, 401)
+
+    def test_upload_with_authentication_token_succeeds(self):
+        token = Token.objects.create(user=self.user)
+        self.client.post('/user-logout/')
+        header = {'HTTP_AUTHORIZATION': "Token {0}".format(token)}
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'file': self.test_file},
+                                    format='multipart',
+                                    **header)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_request_for_user_with_no_lists_returns_empty_array(self):
+        response = self.client.get(reverse('facility-list-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+        self.assertEqual(len(response.json()), 0)
+
+    def test_get_request_for_user_with_test_file_list_returns_items(self):
+        self.client.post(reverse('facility-list-list'),
+                         {'file': self.test_file},
+                         format='multipart')
+        response = self.client.get(reverse('facility-list-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_get_request_for_unauthenticated_user_returns_401(self):
+        self.client.post('/user-logout/')
+        response = self.client.get(reverse('facility-list-list'))
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_with_authentication_token_returns_items(self):
+        token = Token.objects.create(user=self.user)
+        self.client.post('/user-logout/')
+        header = {'HTTP_AUTHORIZATION': "Token {0}".format(token)}
+        self.client.post(reverse('facility-list-list'),
+                         {'file': self.test_file},
+                         format='multipart',
+                         **header)
+        response = self.client.get(reverse('facility-list-list'),
+                                   **header)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_upload_by_user_with_no_organization_returns_400(self):
+        Organization.objects.all().delete()
+        token = Token.objects.create(user=self.user)
+        self.client.post('/user-logout/')
+        header = {'HTTP_AUTHORIZATION': "Token {0}".format(token)}
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'file': self.test_file},
+                                    format='multipart',
+                                    **header)
+        self.assertEqual(response.status_code, 400)
+
+    def test_list_request_by_user_with_no_organization_returns_400(self):
+        Organization.objects.all().delete()
+        response = self.client.get(reverse('facility-list-list'))
+        self.assertEqual(response.status_code, 400)
 
 
 class FacilityListItemParseTest(TestCase):

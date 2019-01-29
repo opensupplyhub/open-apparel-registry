@@ -7,6 +7,7 @@ import identity from 'lodash/identity';
 import {
     inputTypesEnum,
     registrationFormFields,
+    contributeCSVTemplate,
 } from './constants';
 
 export function DownloadCSV(data, fileName) {
@@ -23,24 +24,15 @@ export function DownloadCSV(data, fileName) {
     }
 }
 
+export const downloadContributorTemplate = () =>
+    DownloadCSV(contributeCSVTemplate, 'OAR_Contributor_Template');
+
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
 export const makeUserSignupURL = () => '/user-signup/';
 
-export const makeGetListsURL = uid =>
-    `/getLists/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeUpdateListURL = (uid, filename) =>
-    `/getList/${uid}/?file_name=${filename}&key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeConfirmTempURL = tempId =>
-    `/confirmTemp/${tempId}/?key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeUpdateSourceNameURL = uid =>
-    `/updateSourceName/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
-
-export const makeUploadTempFacilityURL = uid =>
-    `/uploadTempFactory/${uid}/?key=${process.env.REACT_APP_API_KEY}`;
+export const makeFacilityListsURL = () => '/api/facility-lists/';
+export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 
@@ -112,6 +104,12 @@ export function logErrorAndDispatchFailure(error, defaultMessage, failureAction)
 export const getValueFromEvent = ({ target: { value } }) => value;
 
 export const getCheckedFromEvent = ({ target: { checked } }) => checked;
+
+export const getFileFromInputRef = inputRef =>
+    get(inputRef, 'current.files[0]', null);
+
+export const getFileNameFromInputRef = inputRef =>
+    get(inputRef, 'current.files[0].name', '');
 
 export const createSignupErrorMessages = form => registrationFormFields
     .reduce((acc, { id, label, required }) => {

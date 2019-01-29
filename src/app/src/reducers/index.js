@@ -8,16 +8,18 @@ import { combineReducers } from 'redux';
 
 import NavbarReducer from './NavbarReducer';
 import MapReducer from './MapReducer';
-import ListsReducer from './ListsReducer';
 import SourceReducer from './SourceReducer';
 import AuthReducer from './AuthReducer';
 import ProfileReducer from './ProfileReducer';
+import UploadReducer from './UploadReducer';
+import FacilityListsReducer from './FacilityListsReducer';
 
 export default combineReducers({
     nav: NavbarReducer,
     map: MapReducer,
-    lists: ListsReducer,
     source: SourceReducer,
     auth: AuthReducer,
     profile: ProfileReducer,
+    upload: UploadReducer,
+    facilityLists: FacilityListsReducer,
 });

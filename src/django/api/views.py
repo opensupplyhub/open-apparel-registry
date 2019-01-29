@@ -184,9 +184,9 @@ def search_factories(request):
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):
-    # TODO: Filter based on auth.
     queryset = FacilityList.objects.all()
     serializer_class = FacilityListSerializer
+    permission_classes = [IsAuthenticated]
 
     def _validate_header(self, header):
         if header is None or header == '':
@@ -202,12 +202,11 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request):
-        # TODO: Require authenticated user with related organization
         if 'file' not in request.data:
             raise ValidationError('No file specified.')
         csv_file = request.data['file']
         if type(csv_file) is not InMemoryUploadedFile:
-            raise ValidationError('File not submitted propertly.')
+            raise ValidationError('File not submitted properly.')
         if csv_file.size > MAX_UPLOADED_FILE_SIZE_IN_BYTES:
             mb = MAX_UPLOADED_FILE_SIZE_IN_BYTES / (1024*1024)
             raise ValidationError(
@@ -216,13 +215,20 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         header = csv_file.readline().decode().rstrip()
         self._validate_header(header)
 
-        # TODO: Get the organization from the authenticated user
-        organization = Organization.objects.first()
+        try:
+            organization = request.user.organization
+        except Organization.DoesNotExist:
+            raise ValidationError('User organization cannot be None')
 
         if 'name' in request.data:
             name = request.data['name']
         else:
             name = os.path.splitext(csv_file.name)[0]
+
+        if 'description' in request.data:
+            description = request.data['description']
+        else:
+            description = None
 
         replaces = None
         if 'replaces' in request.data:
@@ -244,6 +250,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         new_list = FacilityList(
             organization=organization,
             name=name,
+            description=description,
             file_name=csv_file.name,
             header=header,
             replaces=replaces)
@@ -262,3 +269,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(new_list)
         return Response(serializer.data)
+
+    def list(self, request):
+        try:
+            organization = request.user.organization
+            queryset = FacilityList.objects.filter(organization=organization)
+            response_data = self.serializer_class(queryset, many=True).data
+            return Response(response_data)
+        except Organization.DoesNotExist:
+            raise ValidationError('User organization cannot be None')

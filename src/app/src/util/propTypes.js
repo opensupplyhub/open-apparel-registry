@@ -42,3 +42,12 @@ export const tokenPropType = shape({
     token: string.isRequired,
     created: string.isRequired,
 });
+
+export const facilityListPropType = shape({
+    id: number.isRequired,
+    name: string,
+    description: string,
+    file_name: string.isRequired,
+    is_active: bool.isRequired,
+    is_public: bool.isRequired,
+});

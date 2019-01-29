@@ -3,11 +3,8 @@
 const mapValues = require('lodash/mapValues');
 
 const {
-    makeGetListsURL,
-    makeUpdateListURL,
-    makeConfirmTempURL,
-    makeUpdateSourceNameURL,
-    makeUploadTempFacilityURL,
+    makeFacilityListsURL,
+    makeSingleFacilityListURL,
     makeAPITokenURL,
     makeAllSourceURL,
     makeAllCountryURL,
@@ -15,6 +12,8 @@ const {
     makeSearchFacilityByNameAndCountryURL,
     getValueFromEvent,
     getCheckedFromEvent,
+    getFileFromInputRef,
+    getFileNameFromInputRef,
     createSignupErrorMessages,
     createSignupRequestData,
     createErrorListFromResponseObject,
@@ -25,47 +24,11 @@ const {
     registrationFormFields,
 } = require('../util/constants');
 
-const REACT_APP_API_KEY = 'REACT_APP_API_KEY';
-
-const setEnvironmentVariables = () =>
-    Object.assign(
-        process.env,
-        {
-            REACT_APP_API_KEY,
-        },
-    );
-
-beforeEach(setEnvironmentVariables);
-
-it('creates an API URL for getting lists', () => {
-    const uid = 123;
-    const expectedMatch = '/getLists/123/?key=REACT_APP_API_KEY';
-    expect(makeGetListsURL(uid)).toEqual(expectedMatch);
-});
-
-it('creates an API URL for updating a list', () => {
-    const uid = 123;
-    const file = 'file';
-    const expectedMatch = '/getList/123/?file_name=file&key=REACT_APP_API_KEY';
-    expect(makeUpdateListURL(uid, file)).toEqual(expectedMatch);
-});
-
-it('creates an API URL for confirming temp', () => {
-    const tempId = 'tempId';
-    const expectedMatch = '/confirmTemp/tempId/?key=REACT_APP_API_KEY';
-    expect(makeConfirmTempURL(tempId)).toEqual(expectedMatch);
-});
-
-it('creates an API URL for updating a source name', () => {
-    const uid = 123;
-    const expectedMatch = '/updateSourceName/123/?key=REACT_APP_API_KEY';
-    expect(makeUpdateSourceNameURL(uid)).toEqual(expectedMatch);
-});
-
-it('creates an API URL for uploading facilities', () => {
-    const uid = 123;
-    const expectedMatch = '/uploadTempFactory/123/?key=REACT_APP_API_KEY';
-    expect(makeUploadTempFacilityURL(uid)).toEqual(expectedMatch);
+it('creates API URLs for a user\'s facility lists viewset', () => {
+    const facilityListsURL = '/api/facility-lists/';
+    expect(makeFacilityListsURL()).toEqual(facilityListsURL);
+    const singleFacilityListURL = '/api/facility-lists/2/';
+    expect(makeSingleFacilityListURL(2)).toEqual(singleFacilityListURL);
 });
 
 it('creates an API URL for generating an API token', () => {
@@ -129,6 +92,45 @@ it('gets the checked state from an even on a DOM checkbox input', () => {
     expect(getCheckedFromEvent(mockEvent)).toEqual(true);
 });
 
+it('gets the file from a file input ref', () => {
+    const file = {
+        current: {
+            files: [
+                'file',
+            ],
+        },
+    };
+
+    expect(getFileFromInputRef(file)).toEqual('file');
+});
+
+it('gets null from an empty file input ref', () => {
+    const file = undefined;
+
+    expect(getFileFromInputRef(file)).toEqual(null);
+});
+
+it('gets the filename from a file input ref', () => {
+    const file = {
+        current: {
+            files: [
+                {
+                    name: 'file',
+                },
+            ],
+        },
+    };
+
+    expect(getFileNameFromInputRef(file))
+        .toEqual('file');
+});
+
+it('gets an empty string for the filename from an empty file input ref', () => {
+    const file = undefined;
+
+    expect(getFileNameFromInputRef(file))
+        .toEqual('');
+});
 
 it('creates a list of error messages if any required signup fields are missing', () => {
     const incompleteForm = mapValues(registrationFieldsEnum, '');
@@ -161,7 +163,7 @@ it('correctly reformats data to send to Django from the signup form state', () =
         expect(requestData[modelFieldName]).toEqual(completeForm[id]));
 });
 
-it('creates a list of field errors from an Django error object', () => {
+it('creates a list of field errors from a Django error object', () => {
     const djangoErrors = {
         email: [
             'this email is already used',

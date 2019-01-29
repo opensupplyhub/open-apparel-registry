@@ -200,6 +200,10 @@ class FacilityList(models.Model):
         null=False,
         blank=False,
         help_text='The name of list. Defaults to name of the uploaded file.')
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text='The description of list.')
     file_name = models.CharField(
         max_length=200,
         null=False,
