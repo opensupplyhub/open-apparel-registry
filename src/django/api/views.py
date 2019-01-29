@@ -19,9 +19,14 @@ from rest_auth.views import LoginView, LogoutView
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES
 
 from api.constants import CsvHeaderField
-from api.models import FacilityList, FacilityListItem, Organization, User
+from api.models import (FacilityList,
+                        FacilityListItem,
+                        Organization,
+                        User,
+                        ORG_TYPE_CHOICES)
 from api.processing import parse_csv_line
 from api.serializers import FacilityListSerializer, UserSerializer
+from api.countries import COUNTRY_CHOICES
 
 
 @permission_classes((AllowAny,))
@@ -132,6 +137,29 @@ def token_auth_example(request):
     return Response({'name': name})
 
 
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def all_contributors(request):
+    response_data = [
+        (organization.id, organization.name)
+        for organization
+        in Organization.objects.all()
+    ]
+    return Response(response_data)
+
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def all_contributor_types(request):
+    return Response(ORG_TYPE_CHOICES)
+
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def all_countries(request):
+    return Response(COUNTRY_CHOICES)
+
+
 # TODO: Remove the following URLS once Django versions have been
 # implemented. These are here as imitations of the URLS available via
 # the legacy Restify API.
@@ -157,18 +185,6 @@ def confirm_temp(request):
 @permission_classes((AllowAny,))
 def update_source_name(request):
     return Response({"source": None})
-
-
-@api_view(['GET'])
-@permission_classes((AllowAny,))
-def all_source(request):
-    return Response({"sources": []})
-
-
-@api_view(['GET'])
-@permission_classes((AllowAny,))
-def all_country(request):
-    return Response({"countries": []})
 
 
 @api_view(['GET'])

@@ -11,9 +11,9 @@ import {
 
 const initialState = Object.freeze({
     facilityName: '',
-    contributor: '',
-    contributorType: '',
-    country: '',
+    contributors: Object.freeze([]),
+    contributorTypes: Object.freeze([]),
+    countries: Object.freeze([]),
 });
 
 export default createReducer({
@@ -21,13 +21,13 @@ export default createReducer({
         facilityName: { $set: payload },
     }),
     [updateContributorFilter]: (state, payload) => update(state, {
-        contributor: { $set: payload },
+        contributors: { $set: payload },
     }),
     [updateContributorTypeFilter]: (state, payload) => update(state, {
-        contributorType: { $set: payload },
+        contributorTypes: { $set: payload },
     }),
     [updateCountryFilter]: (state, payload) => update(state, {
-        country: { $set: payload },
+        countries: { $set: payload },
     }),
     [resetAllFilters]: () => initialState,
 }, initialState);

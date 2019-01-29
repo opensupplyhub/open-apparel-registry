@@ -1,6 +1,14 @@
 import { createAction } from 'redux-act';
 
-import { logErrorAndDispatchFailure } from '../util/util';
+import csrfRequest from '../util/csrfRequest';
+
+import {
+    logErrorAndDispatchFailure,
+    makeGetContributorsURL,
+    makeGetContributorTypesURL,
+    makeGetCountriesURL,
+    mapDjangoChoiceTuplesToSelectOptions,
+} from '../util/util';
 
 export const startFetchContributorOptions = createAction('START_FETCH_CONTRIBUTOR_OPTIONS');
 export const failFetchContributorOptions = createAction('FAIL_FETCH_CONTRIBUTOR_OPTIONS');
@@ -20,16 +28,14 @@ export const completeFetchCountryOptions = createAction('COMPLETE_FETCH_COUNTRY_
 
 export const resetFilterOptions = createAction('RESET_FILTER_OPTIONS');
 
-const mockData = Object.freeze({ data: Object.freeze([]) });
-
 export function fetchContributorOptions() {
     return (dispatch) => {
         dispatch(startFetchContributorOptions());
 
-        return Promise
-            .resolve(mockData)
-            .then(({ data }) =>
-                  dispatch(completeFetchContributorOptions(Object.freeze(data))))
+        return csrfRequest
+            .get(makeGetContributorsURL())
+            .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
+            .then(data => dispatch(completeFetchContributorOptions(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching contributor options',
@@ -42,10 +48,10 @@ export function fetchContributorTypeOptions() {
     return (dispatch) => {
         dispatch(startFetchContributorTypeOptions());
 
-        return Promise
-            .resolve(mockData)
-            .then(({ data }) =>
-                  dispatch(completeFetchContributorTypeOptions(Object.freeze(data))))
+        return csrfRequest
+            .get(makeGetContributorTypesURL())
+            .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
+            .then(data => dispatch(completeFetchContributorTypeOptions(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching contributor type options',
@@ -58,10 +64,10 @@ export function fetchCountryOptions() {
     return (dispatch) => {
         dispatch(startFetchCountryOptions());
 
-        return Promise
-            .resolve(mockData)
-            .then(({ data }) =>
-                  dispatch(completeFetchCountryOptions(Object.freeze(data))))
+        return csrfRequest
+            .get(makeGetCountriesURL())
+            .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
+            .then(data => dispatch(completeFetchCountryOptions(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching country options',

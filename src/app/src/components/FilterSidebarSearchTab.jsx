@@ -1,182 +1,135 @@
 import React from 'react';
+import { func, string } from 'prop-types';
 import { connect } from 'react-redux';
-import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import ReactSelect from 'react-select';
 
 import {
     updateFacilityNameFilter,
     updateContributorFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    resetAllFilters,
 } from '../actions/filters';
 
-export default function FilterSidebarSearchTab({
+import {
+    contributorOptionsPropType,
+    contributorTypeOptionsPropType,
+    countryOptionsPropType,
+} from '../util/propTypes';
+
+import { getValueFromEvent } from '../util/util';
+
+const filterSidebarSearchTabStyles = Object.freeze({
+    formStyle: Object.freeze({
+        width: '100%',
+        marginBottom: '32px',
+    }),
+    inputLabelStyle: Object.freeze({
+        fontSize: '16px',
+        fontWeight: 500,
+        color: '#000',
+        transform: 'translate(0, -8px) scale(1)',
+        paddingBottom: '0.5rem',
+    }),
+});
+
+const FACILITIES = 'FACILITIES';
+const CONTRIBUTORS = 'CONTRIBUTORS';
+const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
+const COUNTRIES = 'COUNTRIES';
+
+function FilterSidebarSearchTab({
     contributorOptions,
-    fetchingContributorOptions,
     contributorTypeOptions,
-    fetchingContributorTypeOptions,
     countryOptions,
-    fetchingCountryOptions,
+    resetFilters,
     facilityName,
-    contributor,
-    contributorType,
-    country,
+    updateFacilityName,
+    contributors,
+    updateContributor,
+    contributorTypes,
+    updateContributorType,
+    countries,
+    updateCountry,
 }) {
     return (
         <div className="control-panel__content">
-            <form onSubmit={window.console.dir}>
+            <div>
                 <div className="form__field">
-                    <InputLabel className="form__label">
+                    <InputLabel
+                        htmlFor={FACILITIES}
+                        className="form__label"
+                    >
                         Search a Facility Name
                     </InputLabel>
                     <TextField
-                        id="name"
+                        id={FACILITIES}
                         placeholder="Facility Name"
                         className="full-width margin-bottom-16 form__text-input"
-                        value={this.state.name}
-                        onChange={this.updateInputField('name')}
+                        value={facilityName}
+                        onChange={updateFacilityName}
                     />
                 </div>
-
-                <FormControl
-                    style={{
-                        width: '100%',
-                        marginBottom: '32px',
-                    }}
-                >
+                <div className="form__field">
                     <InputLabel
                         shrink={false}
-                        htmlFor="contributor"
-                        style={{
-                            fontSize: '16px',
-                            fontWeight: 500,
-                            color: '#000',
-                            transform:
-                                'translate(0, -8px) scale(1)',
-                        }}
+                        htmlFor={CONTRIBUTORS}
+                        style={filterSidebarSearchTabStyles.inputLabelStyle}
                     >
                         Filter by Contributor
                     </InputLabel>
-                    <Select
-                        multiple
-                        value={this.state.contributor}
-                        onChange={this.updateInputField('contributor')}
-                        name="contributor"
-                        className="full-width margin-top-16 margin-bottom-16 notranslate"
-                        input={
-                            <Input
-                                name="contributor"
-                                id="contributor"
-                                className="notranslate"
-                            />
-                        }
-                        renderValue={(selected) => {
-                            const selectedNames = this.convertIdToName(selected);
-                            return selectedNames.join(', ');
-                        }}
-                        MenuProps={{
-                            style: {
-                                maxHeight: '50vh',
-                            },
-                        }}
-                    >
-                        {this.checkboxSources()}
-                    </Select>
-                </FormControl>
-                <br />
-
-                <FormControl
-                    style={{
-                        width: '100%',
-                        marginBottom: '32px',
-                    }}
-                >
+                    <ReactSelect
+                        isMulti
+                        id={CONTRIBUTORS}
+                        name={CONTRIBUTORS}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        options={contributorOptions}
+                        value={contributors}
+                        onChange={updateContributor}
+                    />
+                </div>
+                <div className="form__field">
                     <InputLabel
                         shrink={false}
-                        htmlFor="contributor_type"
-                        style={{
-                            fontSize: '16px',
-                            fontWeight: 500,
-                            color: '#000',
-                            transform:
-                                'translate(0, -8px) scale(1)',
-                        }}
+                        htmlFor={CONTRIBUTOR_TYPES}
+                        style={filterSidebarSearchTabStyles.inputLabelStyle}
                     >
                         Filter by Contributor Type
                     </InputLabel>
-                    <Select
-                        multiple
-                        value={this.state.contributorType}
-                        onChange={this.updateInputField('contributorType')}
-                        name="contributorType"
-                        className="full-width margin-top-16 margin-bottom-16 notranslate"
-                        input={
-                            <Input
-                                name="contributorType"
-                                id="contributorType"
-                                className="notranslate"
-                            />
-                        }
-                        renderValue={selected =>
-                            selected.join(', ')
-                        }
-                        MenuProps={{
-                            style: {
-                                maxHeight: '50vh',
-                            },
-                        }}
-                    >
-                        {this.sourcesTypes()}
-                    </Select>
-                </FormControl>
-                <br />
-
-                <FormControl style={{ width: '100%' }}>
+                    <ReactSelect
+                        isMulti
+                        id={CONTRIBUTOR_TYPES}
+                        name="contributorTypes"
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        options={contributorTypeOptions}
+                        value={contributorTypes}
+                        onChange={updateContributorType}
+                    />
+                </div>
+                <div className="form__field">
                     <InputLabel
                         shrink={false}
-                        htmlFor="country"
-                        style={{
-                            fontSize: '16px',
-                            fontWeight: 500,
-                            color: '#000',
-                            transform:
-                                'translate(0, -8px) scale(1)',
-                        }}
+                        htmlFor={COUNTRIES}
+                        style={filterSidebarSearchTabStyles.inputLabelStyle}
                     >
-                        Filter by Country
+                        Filter by Country Name
                     </InputLabel>
-                    <Select
-                        multiple
-                        value={this.state.country}
-                        onChange={this.updateInputField('country')}
-                        name="country"
-                        className="full-width margin-top-16 margin-bottom-16"
-                        input={
-                            <Input
-                                name="country"
-                                id="country"
-                            />
-                        }
-                        renderValue={(selected) => {
-                            const selectedNames = this.convertCodeToName(selected);
-                            return selectedNames.join(', ');
-                        }}
-                        MenuProps={{
-                            style: {
-                                maxHeight: '50vh',
-                            },
-                        }}
-                    >
-                        {this.sortedCountries()}
-                    </Select>
-                </FormControl>
-                <br />
-
+                    <ReactSelect
+                        isMulti
+                        id={COUNTRIES}
+                        name={COUNTRIES}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        options={countryOptions}
+                        value={countries}
+                        onChange={updateCountry}
+                    />
+                </div>
                 <div className="form__action">
                     <a
                         className="control-link"
@@ -188,80 +141,83 @@ export default function FilterSidebarSearchTab({
                         <Button
                             size="small"
                             variant="outlined"
-                            onClick={this.resetSearch}
+                            onClick={resetFilters}
                             disableRipple
                             color="primary"
                             className="outlined-button"
                         >
                             Reset
                         </Button>
-                        {this.state.isSpinning ? (
-                            <CircularProgress
-                                size={30}
-                                className="margin-left-16"
-                            />
-                        ) : (
-                            <Button
-                                variant="contained"
-                                size="small"
-                                type="submit"
-                                color="primary"
-                                className="margin-left-16 blue-background"
-                                style={{
-                                    boxShadow: 'none',
-                                }}
-                            >
-                                Search
-                            </Button>
-                        )}
+                        <Button
+                            variant="contained"
+                            size="small"
+                            type="submit"
+                            color="primary"
+                            className="margin-left-16 blue-background"
+                            style={{ boxShadow: 'none' }}
+                        >
+                            Search
+                        </Button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }
+
+FilterSidebarSearchTab.propTypes = {
+    contributorOptions: contributorOptionsPropType.isRequired,
+    contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
+    countryOptions: countryOptionsPropType.isRequired,
+    resetFilters: func.isRequired,
+    updateFacilityName: func.isRequired,
+    updateContributor: func.isRequired,
+    updateContributorType: func.isRequired,
+    updateCountry: func.isRequired,
+    facilityName: string.isRequired,
+    contributors: contributorOptionsPropType.isRequired,
+    contributorTypes: contributorTypeOptionsPropType.isRequired,
+    countries: countryOptionsPropType.isRequired,
+};
 
 function mapStateToProps({
     filterOptions: {
         contributors: {
             data: contributorOptions,
-            fetching: fetchingContributorOptions,
         },
         contributorTypes: {
             data: contributorTypeOptions,
-            fetching: fetchingContributorTypeOptions,
         },
         countries: {
             data: countryOptions,
-            fetching: fetchingCountryOptions,
         },
     },
     filters: {
         facilityName,
-        contributor,
-        contributorType,
-        country,
-    }
+        contributors,
+        contributorTypes,
+        countries,
+    },
 }) {
     return {
         contributorOptions,
-        fetchingContributorOptions,
         contributorTypeOptions,
-        fetchingContributorTypeOptions,
         countryOptions,
-        fetchingCountryOptions,
         facilityName,
-        contributor,
-        contributorType,
-        country,
+        contributors,
+        contributorTypes,
+        countries,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateFacilityName: e => dispatch(updateFacilityNameFilter(e)),
-        updateContributor: e => dispatch(updateContributorFilter(e)),
-        updateContributorType: e => dispatch(updateContributorTypeFilter(e)),
-        updateCountry: e => dispatch(updateCountryFilter(e)),
+        updateFacilityName: e => dispatch(updateFacilityNameFilter(getValueFromEvent(e))),
+        updateContributor: v => dispatch(updateContributorFilter(v)),
+        updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
+        updateCountry: v => dispatch(updateCountryFilter(v)),
+        resetFilters: () => dispatch(resetAllFilters()),
     };
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(FilterSidebarSearchTab);

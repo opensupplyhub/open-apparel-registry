@@ -1,3 +1,6 @@
+/* eslint-disable */
+// turn off linting as this component's gradually being deprecated
+
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
