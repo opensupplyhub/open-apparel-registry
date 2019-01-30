@@ -29,8 +29,7 @@ To do this, we can use the `cibuild` and `cipublish` scripts:
 
 ```bash
 $ vagrant ssh
-vagrant@vagrant:/vagrant$ export OAR_SETTINGS_BUCKET=openapparelregistry-testing-config-us-east-1
-vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=555555EXAMPLE.dkr.ecr.us-east-1.amazonaws.com
+vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=123456789012.dkr.ecr.us-east-1.amazonaws.com
 vagrant@vagrant:/vagrant$ ./scripts/cibuild
 vagrant@vagrant:/vagrant$ ./scripts/cipublish
 ```
