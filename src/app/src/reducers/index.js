@@ -6,7 +6,6 @@ import { combineReducers } from 'redux';
 // import { persistReducer } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
 
-import MapReducer from './MapReducer';
 import AuthReducer from './AuthReducer';
 import ProfileReducer from './ProfileReducer';
 import UploadReducer from './UploadReducer';
@@ -15,9 +14,9 @@ import FilterOptionsReducer from './FilterOptionsReducer';
 import FiltersReducer from './FiltersReducer';
 import UIReducer from './UIReducer';
 import FacilitiesReducer from './FacilitiesReducer';
+import OARMapReducer from './OARMapReducer';
 
 export default combineReducers({
-    map: MapReducer,
     auth: AuthReducer,
     profile: ProfileReducer,
     upload: UploadReducer,
@@ -26,4 +25,5 @@ export default combineReducers({
     filters: FiltersReducer,
     ui: UIReducer,
     facilities: FacilitiesReducer,
+    oarMap: OARMapReducer,
 });

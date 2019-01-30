@@ -3,7 +3,6 @@
 
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import mapboxgl from 'mapbox-gl';
 import _ from 'lodash';
 import * as turf from '@turf/turf';
@@ -11,10 +10,8 @@ import supercluster from 'supercluster';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
-import * as mapActions from '../actions/map';
 import Button from './Button';
 import MapLayers from './MapLayers';
-import '../styles/css/Map.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -27,10 +24,10 @@ const MAP_COLOR_LIGHT_TRANSPARENT =
 const clusterMaxZoom = 100;
 const clusterRadius = 50;
 
-const mapStateToProps = ({ map, user }) => ({ map, user });
+const mapStateToProps = ({ oarMap: map, user }) => ({ map, user });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(mapActions, dispatch),
+    actions: {},
 });
 
 class Map extends Component {

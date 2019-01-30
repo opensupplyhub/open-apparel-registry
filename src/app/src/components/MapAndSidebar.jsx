@@ -4,7 +4,9 @@ import Grid from '@material-ui/core/Grid';
 
 import LandingAlert from './LandingAlert';
 import FilterSidebar from './FilterSidebar';
-import OARMap from './Map';
+import OARMap from './OARMap';
+
+import '../styles/css/Map.css';
 
 export default function MapAndSidebar() {
     return (
@@ -17,7 +19,7 @@ export default function MapAndSidebar() {
                     sm={4}
                     id="panel-container"
                 >
-                    <FilterSidebar />
+                    <Route component={FilterSidebar} />
                 </Grid>
                 <Grid
                     item
