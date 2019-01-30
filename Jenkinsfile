@@ -45,9 +45,10 @@ node {
 				}
 			}
 
-			// Plan and apply the current state of the instracture as
-			// outlined by the `develop` branch of the `open-apparel-registry`
-			// repository.
+			// Plan and apply the current state of the infrastructure as
+			// outlined by whatever branch of the `open-apparel-registry`
+			// repository passes the conditional above (`develop`, 
+			// `release/*`, `test/*`).
 			stage('infra') {
 				wrap([$class: 'AnsiColorBuildWrapper']) {
 					sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra plan'

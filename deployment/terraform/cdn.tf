@@ -77,4 +77,9 @@ resource "aws_cloudfront_distribution" "cdn" {
     minimum_protocol_version = "TLSv1.2_2018"
     ssl_support_method       = "sni-only"
   }
+
+  tags {
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
+  }
 }

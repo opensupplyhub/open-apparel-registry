@@ -9,17 +9,17 @@ resource "aws_security_group" "alb" {
   vpc_id = "${module.vpc.id}"
 
   tags {
-    Name        = "sgLoadBalancer"
+    Name        = "sgAppLoadBalancer"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
 }
 
-resource "aws_security_group" "ecs_service" {
+resource "aws_security_group" "app" {
   vpc_id = "${module.vpc.id}"
 
   tags {
-    Name        = "sgEcsService"
+    Name        = "sgAppEcsService"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -29,7 +29,7 @@ resource "aws_security_group" "ecs_service" {
 # ALB Resources
 #
 resource "aws_lb" "app" {
-  name            = "alb${var.environment}"
+  name            = "alb${var.environment}App"
   security_groups = ["${aws_security_group.alb.id}"]
   subnets         = ["${module.vpc.public_subnet_ids}"]
 
@@ -41,7 +41,7 @@ resource "aws_lb" "app" {
 }
 
 resource "aws_lb_target_group" "app" {
-  name = "tg${var.environment}"
+  name = "tg${var.environment}App"
 
   health_check {
     healthy_threshold   = "3"
@@ -176,7 +176,7 @@ resource "aws_ecs_service" "app" {
   launch_type = "FARGATE"
 
   network_configuration {
-    security_groups = ["${aws_security_group.ecs_service.id}"]
+    security_groups = ["${aws_security_group.app.id}"]
     subnets         = ["${module.vpc.private_subnet_ids}"]
   }
 
