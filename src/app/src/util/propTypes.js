@@ -1,4 +1,4 @@
-import { bool, func, number, shape, string } from 'prop-types';
+import { arrayOf, bool, func, number, shape, string } from 'prop-types';
 
 import {
     registrationFieldsEnum,
@@ -51,3 +51,18 @@ export const facilityListPropType = shape({
     is_active: bool.isRequired,
     is_public: bool.isRequired,
 });
+
+export const contributorOptionsPropType = arrayOf(shape({
+    value: number.isRequired,
+    label: string.isRequired,
+}));
+
+export const contributorTypeOptionsPropType = arrayOf(shape({
+    value: string.isRequired,
+    label: string.isRequired,
+}));
+
+export const countryOptionsPropType = arrayOf(shape({
+    value: string.isRequired,
+    label: string.isRequired,
+}));

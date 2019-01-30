@@ -46,6 +46,11 @@ urlpatterns = [
         name='api_token_auth'),
     url(r'^token-auth-example/', views.token_auth_example,
         name='token_auth_example'),
+    url(r'^api/contributors/', views.all_contributors,
+        name='all_contributors'),
+    url(r'^api/contributor-types/', views.all_contributor_types,
+        name='all_contributor_types'),
+    url(r'^api/countries/', views.all_countries, name='all_countries'),
     # TODO: Remove the following URLs once the Django versions have been
     # implemented. These are here as imitations of the URLs available via
     # the legacy Restify API:
@@ -54,11 +59,6 @@ urlpatterns = [
     url(r'confirmTemp/', views.confirm_temp, name='confirm_temp'),
     url(r'updateSourceName/', views.update_source_name,
         name='update_source_name'),
-    url(r'uploadTempFactory/',
-        views.FacilityListViewSet.as_view({'post': 'create'}),
-        name='upload_temp_factory'),
-    url(r'allsource/', views.all_source, name='all_source'),
-    url(r'allcountry/', views.all_country, name='all_country'),
     url(r'totalFactories/', views.total_factories, name='total_factories'),
     url(r'searchFactoryNameCountry/', views.search_factories,
         name='search_factories'),

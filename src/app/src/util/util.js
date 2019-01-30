@@ -3,6 +3,9 @@ import isArray from 'lodash/isArray';
 import isObject from 'lodash/isObject';
 import flatten from 'lodash/flatten';
 import identity from 'lodash/identity';
+import some from 'lodash/some';
+import size from 'lodash/size';
+import negate from 'lodash/negate';
 
 import {
     inputTypesEnum,
@@ -36,8 +39,10 @@ export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 
-export const makeAllSourceURL = () => '/allsource/';
-export const makeAllCountryURL = () => '/allcountry/';
+export const makeGetContributorsURL = () => '/api/contributors/';
+export const makeGetContributorTypesURL = () => '/api/contributor-types/';
+export const makeGetCountriesURL = () => '/api/countries/';
+
 export const makeTotalFacilityURL = () => '/totalFactories/';
 
 export const makeSearchFacilityByNameAndCountryURL = (name, country, contributor = null) => {
@@ -135,3 +140,13 @@ export const getStateFromEventForEventType = Object.freeze({
     [inputTypesEnum.text]: getValueFromEvent,
     [inputTypesEnum.password]: getValueFromEvent,
 });
+
+const mapSingleChoiceToSelectOption = ([value, label]) => (Object.freeze({
+    value,
+    label,
+}));
+
+export const mapDjangoChoiceTuplesToSelectOptions = data =>
+    Object.freeze(data.map(mapSingleChoiceToSelectOption));
+
+export const allListsAreEmpty = (...lists) => negate(some)(lists, size);

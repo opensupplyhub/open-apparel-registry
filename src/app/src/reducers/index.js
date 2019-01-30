@@ -6,20 +6,24 @@ import { combineReducers } from 'redux';
 // import { persistReducer } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
 
-import NavbarReducer from './NavbarReducer';
 import MapReducer from './MapReducer';
-import SourceReducer from './SourceReducer';
 import AuthReducer from './AuthReducer';
 import ProfileReducer from './ProfileReducer';
 import UploadReducer from './UploadReducer';
 import FacilityListsReducer from './FacilityListsReducer';
+import FilterOptionsReducer from './FilterOptionsReducer';
+import FiltersReducer from './FiltersReducer';
+import UIReducer from './UIReducer';
+import FacilitiesReducer from './FacilitiesReducer';
 
 export default combineReducers({
-    nav: NavbarReducer,
     map: MapReducer,
-    source: SourceReducer,
     auth: AuthReducer,
     profile: ProfileReducer,
     upload: UploadReducer,
     facilityLists: FacilityListsReducer,
+    filterOptions: FilterOptionsReducer,
+    filters: FiltersReducer,
+    ui: UIReducer,
+    facilities: FacilitiesReducer,
 });

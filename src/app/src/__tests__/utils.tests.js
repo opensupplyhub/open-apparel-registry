@@ -1,13 +1,15 @@
 /* eslint-env jest */
 
 const mapValues = require('lodash/mapValues');
+const isEqual = require('lodash/isEqual');
 
 const {
     makeFacilityListsURL,
     makeSingleFacilityListURL,
     makeAPITokenURL,
-    makeAllSourceURL,
-    makeAllCountryURL,
+    makeGetContributorsURL,
+    makeGetContributorTypesURL,
+    makeGetCountriesURL,
     makeTotalFacilityURL,
     makeSearchFacilityByNameAndCountryURL,
     getValueFromEvent,
@@ -17,6 +19,8 @@ const {
     createSignupErrorMessages,
     createSignupRequestData,
     createErrorListFromResponseObject,
+    mapDjangoChoiceTuplesToSelectOptions,
+    allListsAreEmpty,
 } = require('../util/util');
 
 const {
@@ -37,14 +41,14 @@ it('creates an API URL for generating an API token', () => {
     expect(makeAPITokenURL(uid)).toEqual(expectedMatch);
 });
 
-it('creates an API URL for getting all sources', () => {
-    const expectedMatch = '/allsource/';
-    expect(makeAllSourceURL()).toEqual(expectedMatch);
-});
+it('creates API URLs for getting contributor, contributor type, and country options', () => {
+    const contributorMatch = '/api/contributors/';
+    const contributorTypesMatch = '/api/contributor-types/';
+    const countriesMatch = '/api/countries/';
 
-it('creates an API URL for getting all countries', () => {
-    const expectedMatch = '/allcountry/';
-    expect(makeAllCountryURL()).toEqual(expectedMatch);
+    expect(makeGetContributorsURL()).toEqual(contributorMatch);
+    expect(makeGetContributorTypesURL()).toEqual(contributorTypesMatch);
+    expect(makeGetCountriesURL()).toEqual(countriesMatch);
 });
 
 it('creates an API URL for getting all facilities', () => {
@@ -183,4 +187,51 @@ it('creates a list of field errors from a Django error object', () => {
     const errorMessages = createErrorListFromResponseObject(djangoErrors);
 
     expect(errorMessages).toEqual(expectedErrorMessages);
+});
+
+it('correctly maps a list of Choice tuples from Django into an array of select options', () => {
+    const expectedOptions = [
+        {
+            value: 'one',
+            label: 'one',
+        },
+        {
+            value: 'two',
+            label: 'two',
+        },
+    ];
+
+    const mockChoices = [['one', 'one'], ['two', 'two']];
+
+    const optionsFromChoices = mapDjangoChoiceTuplesToSelectOptions(mockChoices);
+
+    expect(isEqual(expectedOptions, optionsFromChoices)).toBe(true);
+});
+
+it('correctly checks whether an array of arrays contains only empty arrays', () => {
+    const fourEmptyLists = [[], [], [], []];
+    const zeroEmptyLists = [];
+    const oneEmptyList = [[]];
+
+    expect(allListsAreEmpty(...fourEmptyLists)).toBe(true);
+    expect(allListsAreEmpty(...zeroEmptyLists)).toBe(true);
+    expect(allListsAreEmpty(...oneEmptyList)).toBe(true);
+
+    const oneNonEmptyList = [['hello']];
+    const threeEmptyListsOneNonEmptyList = [[], [], [], [{ hello: 'world' }]];
+    const sixNonEmptyLists = [
+        ['hello'],
+        [
+            { hello: 'hello' },
+            { world: 'world' },
+        ],
+        [1, 2, 3, 4, 5],
+        [isEqual],
+        [new Set([1, 2, 3, 4])],
+        [new Map([['hello', 'hello'], ['world', 'world']])],
+    ];
+
+    expect(allListsAreEmpty(...oneNonEmptyList)).toBe(false);
+    expect(allListsAreEmpty(...threeEmptyListsOneNonEmptyList)).toBe(false);
+    expect(allListsAreEmpty(...sixNonEmptyLists)).toBe(false);
 });
