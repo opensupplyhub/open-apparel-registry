@@ -31,7 +31,11 @@ To do this, we can use the `cibuild` and `cipublish` scripts:
 $ vagrant ssh
 vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=123456789012.dkr.ecr.us-east-1.amazonaws.com
 vagrant@vagrant:/vagrant$ ./scripts/cibuild
+...
+Successfully built 20dcf93f6907
+Successfully tagged openapparelregistry:a476b78
 vagrant@vagrant:/vagrant$ ./scripts/cipublish
+...
 ```
 
 ## Terraform
@@ -72,13 +76,15 @@ This file lives at `s3://openapparelregistry-staging-config-us-east-1/terraform/
 To deploy this project's core infrastructure, use the `infra` wrapper script to lookup the remote state of the infrastructure and assemble a plan for work to be done:
 
 ```bash
-vagrant@vagrant:/vagrant$ docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra plan
+vagrant@vagrant:/vagrant$ docker-compose -f docker-compose.ci.yml run --rm terraform
+bash-4.4# export GIT_COMMIT=a476b78
+bash-4.4# ./scripts/infra plan
 ```
 
 Once the plan has been assembled, and you agree with the changes, apply it:
 
 ```bash
-vagrant@vagrant:/vagrant$ docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply
+bash-4.4# ./scripts/infra apply
 ```
 
 This will attempt to apply the plan assembled in the previous step using Amazon's APIs.
