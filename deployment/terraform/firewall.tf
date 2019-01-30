@@ -1,7 +1,7 @@
 #
 # Bastion security group resources
 #
-resource "aws_security_group_rule" "bastion_ingress_ssh" {
+resource "aws_security_group_rule" "bastion_ssh_ingress" {
   type        = "ingress"
   from_port   = 22
   to_port     = 22
@@ -11,7 +11,17 @@ resource "aws_security_group_rule" "bastion_ingress_ssh" {
   security_group_id = "${module.vpc.bastion_security_group_id}"
 }
 
-resource "aws_security_group_rule" "bastion_egress_rds" {
+resource "aws_security_group_rule" "bastion_ssh_egress" {
+  type        = "egress"
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks       = ["${module.vpc.cidr_block}"]
+
+  security_group_id = "${module.vpc.bastion_security_group_id}"
+}
+
+resource "aws_security_group_rule" "bastion_rds_egress" {
   type      = "egress"
   from_port = "${module.database.port}"
   to_port   = "${module.database.port}"
@@ -21,7 +31,7 @@ resource "aws_security_group_rule" "bastion_egress_rds" {
   source_security_group_id = "${module.database.database_security_group_id}"
 }
 
-resource "aws_security_group_rule" "bastion_egress_app" {
+resource "aws_security_group_rule" "bastion_app_egress" {
   type      = "egress"
   from_port = "${var.app_port}"
   to_port   = "${var.app_port}"
@@ -31,7 +41,7 @@ resource "aws_security_group_rule" "bastion_egress_app" {
   source_security_group_id = "${aws_security_group.app.id}"
 }
 
-resource "aws_security_group_rule" "bastion_egress_http" {
+resource "aws_security_group_rule" "bastion_http_egress" {
   type             = "egress"
   from_port        = "80"
   to_port          = "80"
@@ -42,7 +52,7 @@ resource "aws_security_group_rule" "bastion_egress_http" {
   security_group_id = "${module.vpc.bastion_security_group_id}"
 }
 
-resource "aws_security_group_rule" "bastion_egress_https" {
+resource "aws_security_group_rule" "bastion_https_egress" {
   type             = "egress"
   from_port        = "443"
   to_port          = "443"
@@ -56,7 +66,7 @@ resource "aws_security_group_rule" "bastion_egress_https" {
 #
 # App ALB security group resources
 #
-resource "aws_security_group_rule" "alb_ingress_https" {
+resource "aws_security_group_rule" "alb_https_ingress" {
   type             = "ingress"
   from_port        = 443
   to_port          = 443
@@ -67,7 +77,7 @@ resource "aws_security_group_rule" "alb_ingress_https" {
   security_group_id = "${aws_security_group.alb.id}"
 }
 
-resource "aws_security_group_rule" "alb_egress_app" {
+resource "aws_security_group_rule" "alb_app_egress" {
   type      = "egress"
   from_port = "${var.app_port}"
   to_port   = "${var.app_port}"
@@ -80,7 +90,7 @@ resource "aws_security_group_rule" "alb_egress_app" {
 #
 # RDS security group resources
 #
-resource "aws_security_group_rule" "rds_ingress_app" {
+resource "aws_security_group_rule" "rds_app_ingress" {
   type      = "ingress"
   from_port = "${module.database.port}"
   to_port   = "${module.database.port}"
@@ -90,7 +100,7 @@ resource "aws_security_group_rule" "rds_ingress_app" {
   source_security_group_id = "${aws_security_group.app.id}"
 }
 
-resource "aws_security_group_rule" "rds_ingress_bastion" {
+resource "aws_security_group_rule" "rds_bastion_ingress" {
   type      = "ingress"
   from_port = "${module.database.port}"
   to_port   = "${module.database.port}"
@@ -103,7 +113,7 @@ resource "aws_security_group_rule" "rds_ingress_bastion" {
 #
 # Container instance security group resources
 #
-resource "aws_security_group_rule" "app_egress_https" {
+resource "aws_security_group_rule" "app_https_egress" {
   type             = "egress"
   from_port        = 443
   to_port          = 443
@@ -114,7 +124,7 @@ resource "aws_security_group_rule" "app_egress_https" {
   security_group_id = "${aws_security_group.app.id}"
 }
 
-resource "aws_security_group_rule" "app_egress_rds" {
+resource "aws_security_group_rule" "app_rds_egress" {
   type      = "egress"
   from_port = "${module.database.port}"
   to_port   = "${module.database.port}"
@@ -124,7 +134,7 @@ resource "aws_security_group_rule" "app_egress_rds" {
   source_security_group_id = "${module.database.database_security_group_id}"
 }
 
-resource "aws_security_group_rule" "app_ingress_alb" {
+resource "aws_security_group_rule" "app_alb_ingress" {
   type      = "ingress"
   from_port = "${var.app_port}"
   to_port   = "${var.app_port}"
@@ -134,7 +144,7 @@ resource "aws_security_group_rule" "app_ingress_alb" {
   source_security_group_id = "${aws_security_group.alb.id}"
 }
 
-resource "aws_security_group_rule" "app_ingress_bastion" {
+resource "aws_security_group_rule" "app_bastion_ingress" {
   type      = "ingress"
   from_port = "${var.app_port}"
   to_port   = "${var.app_port}"
