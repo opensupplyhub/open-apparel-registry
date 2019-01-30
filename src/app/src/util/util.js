@@ -39,9 +39,9 @@ export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 
-export const makeGetContributorsURL = () => '/contributors/';
-export const makeGetContributorTypesURL = () => '/contributor-types/';
-export const makeGetCountriesURL = () => '/countries/';
+export const makeGetContributorsURL = () => '/api/contributors/';
+export const makeGetContributorTypesURL = () => '/api/contributor-types/';
+export const makeGetCountriesURL = () => '/api/countries/';
 
 export const makeTotalFacilityURL = () => '/totalFactories/';
 

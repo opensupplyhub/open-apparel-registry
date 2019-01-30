@@ -46,10 +46,11 @@ urlpatterns = [
         name='api_token_auth'),
     url(r'^token-auth-example/', views.token_auth_example,
         name='token_auth_example'),
-    url(r'^contributors/', views.all_contributors, name='all_contributors'),
-    url(r'^contributor-types/', views.all_contributor_types,
+    url(r'^api/contributors/', views.all_contributors,
+        name='all_contributors'),
+    url(r'^api/contributor-types/', views.all_contributor_types,
         name='all_contributor_types'),
-    url(r'^countries/', views.all_countries, name='all_countries'),
+    url(r'^api/countries/', views.all_countries, name='all_countries'),
     # TODO: Remove the following URLs once the Django versions have been
     # implemented. These are here as imitations of the URLs available via
     # the legacy Restify API:

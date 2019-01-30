@@ -42,9 +42,9 @@ it('creates an API URL for generating an API token', () => {
 });
 
 it('creates API URLs for getting contributor, contributor type, and country options', () => {
-    const contributorMatch = '/contributors/';
-    const contributorTypesMatch = '/contributor-types/';
-    const countriesMatch = '/countries/';
+    const contributorMatch = '/api/contributors/';
+    const contributorTypesMatch = '/api/contributor-types/';
+    const countriesMatch = '/api/countries/';
 
     expect(makeGetContributorsURL()).toEqual(contributorMatch);
     expect(makeGetContributorTypesURL()).toEqual(contributorTypesMatch);
