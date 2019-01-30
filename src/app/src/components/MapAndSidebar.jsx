@@ -14,7 +14,7 @@ export default function MapAndSidebar() {
                 <Grid
                     item
                     xs={12}
-                    sm={3}
+                    sm={4}
                     id="panel-container"
                 >
                     <FilterSidebar />
@@ -22,7 +22,7 @@ export default function MapAndSidebar() {
                 <Grid
                     item
                     xs={12}
-                    sm={9}
+                    sm={8}
                     style={{ position: 'relative' }}
                 >
                     <Route component={OARMap} />
