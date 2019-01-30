@@ -67,7 +67,7 @@ variable "deployment_minimum_healthy_percent" {
 }
 
 variable "deployment_maximum_percent" {
-  default = "150"
+  default = "200"
 }
 
 variable "rds_allocated_storage" {
