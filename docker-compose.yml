@@ -13,7 +13,7 @@ services:
       retries: 3
 
   django:
-    image: open-apparel-registry-api
+    image: openapparelregistry
     env_file: .env.backend
     environment:
         - POSTGRES_HOST=database

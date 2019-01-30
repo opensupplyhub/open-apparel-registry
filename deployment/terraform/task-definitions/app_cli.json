@@ -1,0 +1,28 @@
+[
+  {
+    "name": "django",
+    "image": "${image}",
+    "cpu": ${cpu},
+    "memory": ${memory},
+    "essential": true,
+    "entryPoint": ["./manage.py"],
+    "environment": [
+        { "name": "POSTGRES_HOST", "value": "${postgres_host}" },
+        { "name": "POSTGRES_PORT", "value": "${postgres_port}" },
+        { "name": "POSTGRES_USER", "value": "${postgres_user}" },
+        { "name": "POSTGRES_PASSWORD", "value": "${postgres_password}" },
+        { "name": "POSTGRES_DB", "value": "${postgres_db}" },
+        { "name": "DJANGO_ENV", "value": "${environment}" },
+        { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
+        { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" }
+    ],
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "log${environment}AppCLI",
+            "awslogs-region": "${aws_region}",
+            "awslogs-stream-prefix": "management"
+        }
+    }
+  }
+]

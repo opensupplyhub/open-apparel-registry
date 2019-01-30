@@ -1,4 +1,17 @@
 version: '2.3'
 services:
   django:
-    image: "open-apparel-registry-api:${GIT_COMMIT:-latest}"
+    image: "openapparelregistry:${GIT_COMMIT:-latest}"
+
+  terraform:
+    image: quay.io/azavea/terraform:0.11.11
+    volumes:
+      - ./:/usr/local/src
+      - $HOME/.aws:/root/.aws:ro
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
+      - GIT_COMMIT=${GIT_COMMIT:-latest}
+      - OAR_DEBUG=1
+      - OAR_SETTINGS_BUCKET=openapparelregistry-staging-config-us-east-1
+    working_dir: /usr/local/src
+    entrypoint: bash

@@ -7,8 +7,10 @@ node {
 			checkout scm 
 		}
 
-		env.AWS_PROFILE= 'open-apparel-registry'
-		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-development-config-us-east-1'
+		env.AWS_PROFILE = 'open-apparel-registry'
+		env.AWS_DEFAULT_REGION = 'us-east-1'
+
+		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-testing-config-us-east-1'
 
 	    // Execute `setup` wrapped within a plugin that translates
 	    // ANSI color codes to something that renders inside the Jenkins
@@ -23,6 +25,35 @@ node {
 		stage('cibuild') {
 			wrap([$class: 'AnsiColorBuildWrapper']) {
 				sh './scripts/cibuild'
+			}
+		}
+
+		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-staging-config-us-east-1'
+
+		if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('test/')) {
+			// Publish container images built and tested during `cibuild`
+			// to the private Amazon Container Registry tagged with the
+			// first seven characters of the revision SHA.
+			stage('cipublish') {
+				// Decode the ECR endpoint stored within Jenkins.
+				withCredentials([[$class: 'StringBinding',
+								credentialsId: 'OAR_AWS_ECR_ENDPOINT',
+								variable: 'OAR_AWS_ECR_ENDPOINT']]) {
+					wrap([$class: 'AnsiColorBuildWrapper']) {
+						sh './scripts/cipublish'
+					}
+				}
+			}
+
+			// Plan and apply the current state of the infrastructure as
+			// outlined by whatever branch of the `open-apparel-registry`
+			// repository passes the conditional above (`develop`, 
+			// `release/*`, `test/*`).
+			stage('infra') {
+				wrap([$class: 'AnsiColorBuildWrapper']) {
+					sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra plan'
+					sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply'
+				}
 			}
 		}
 	} catch (err) {

@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import requests
+
+from django.core.exceptions import ImproperlyConfigured
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -39,8 +42,32 @@ DEBUG = (ENVIRONMENT == 'Development')
 
 ALLOWED_HOSTS = [
     'localhost',
-    'django'
+    'django',
+    '.openapparel.org'
 ]
+
+if ENVIRONMENT in ['Production', 'Staging']:
+    # Within EC2, the Elastic Load Balancer HTTP health check will use the
+    # target instance's private IP address for the Host header.
+    #
+    # The following steps lookup the current instance's private IP address
+    # (via the EC2 instance metadata URL) and add it to the Django
+    # ALLOWED_HOSTS configuration so that health checks pass.
+    #
+    # Beginning with version 1.17.0 of the Amazon ECS container agent,
+    # tasks that use the awsvpc network mode will have to use the
+    # ECS Task Metadata endpoint.
+
+    response = requests.get('http://169.254.170.2/v2/metadata')
+    if response.ok:
+        response = response.json()
+
+        for container in response['Containers']:
+          for network in container['Networks']:
+            for addr in network['IPv4Addresses']:
+              ALLOWED_HOSTS.append(addr)
+    else:
+        raise ImproperlyConfigured('Unable to fetch instance metadata')
 
 # Application definition
 
