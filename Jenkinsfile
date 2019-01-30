@@ -50,6 +50,10 @@ node {
 			// repository passes the conditional above (`develop`, 
 			// `release/*`, `test/*`).
 			stage('infra') {
+				// Use `git` to get the primary repository's current commmit SHA and
+		        // set it as the value of the `GIT_COMMIT` environment variable.
+		        env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+
 				wrap([$class: 'AnsiColorBuildWrapper']) {
 					sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra plan'
 					sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply'
