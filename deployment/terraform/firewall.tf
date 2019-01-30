@@ -9,6 +9,28 @@ resource "aws_security_group_rule" "bastion_ingress_ssh" {
   security_group_id = "${module.vpc.bastion_security_group_id}"
 }
 
+# allow all outbound traffic from the bastion to the rds instance
+resource "aws_security_group_rule" "bastion_egress_rds" {
+  type      = "egress"
+  from_port = "${module.database.port}"
+  to_port   = "${module.database.port}"
+  protocol  = "tcp"
+
+  security_group_id        = "${module.vpc.bastion_security_group_id}"
+  source_security_group_id = "${module.database.database_security_group_id}"
+}
+
+# allow all inbound traffic from the bastion to the rds instance
+resource "aws_security_group_rule" "rds_bastion_ingress" {
+  type      = "ingress"
+  from_port = "${module.database.port}"
+  to_port   = "${module.database.port}"
+  protocol  = "tcp"
+
+  security_group_id        = "${module.database.database_security_group_id}"
+  source_security_group_id = "${module.vpc.bastion_security_group_id}"
+}
+
 # allow all inbound traffic to the load balancer on port 443
 resource "aws_security_group_rule" "app_alb_ingress_https" {
   type             = "ingress"
