@@ -34,7 +34,7 @@ resource "aws_lb" "app" {
   subnets         = ["${module.vpc.public_subnet_ids}"]
 
   tags {
-    Name        = "alb${var.environment}"
+    Name        = "alb${var.environment}App"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -60,7 +60,7 @@ resource "aws_lb_target_group" "app" {
   target_type = "ip"
 
   tags {
-    Name        = "tg${var.environment}"
+    Name        = "tg${var.environment}App"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }

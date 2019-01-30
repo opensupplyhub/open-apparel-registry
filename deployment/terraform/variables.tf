@@ -59,7 +59,7 @@ variable "google_geocoding_api_key" {}
 variable "django_secret_key" {}
 
 variable "app_count" {
-  default = "2"
+  default = "1"
 }
 
 variable "deployment_minimum_healthy_percent" {

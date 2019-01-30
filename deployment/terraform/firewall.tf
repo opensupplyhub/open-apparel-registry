@@ -1,3 +1,14 @@
+# allow all inbound traffic to the bastion on port 22
+resource "aws_security_group_rule" "bastion_ingress_ssh" {
+  type        = "ingress"
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["${var.external_access_cidr_block}"]
+
+  security_group_id = "${module.vpc.bastion_security_group_id}"
+}
+
 # allow all inbound traffic to the load balancer on port 443
 resource "aws_security_group_rule" "app_alb_ingress_https" {
   type             = "ingress"
