@@ -1,9 +1,10 @@
 import React from 'react';
-import { func, string } from 'prop-types';
+import { bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSelect from 'react-select';
 
 import {
@@ -13,6 +14,8 @@ import {
     updateCountryFilter,
     resetAllFilters,
 } from '../actions/filters';
+
+import { fetchFacilities } from '../actions/facilities';
 
 import {
     contributorOptionsPropType,
@@ -54,6 +57,8 @@ function FilterSidebarSearchTab({
     updateContributorType,
     countries,
     updateCountry,
+    fetchingFacilities,
+    searchForFacilities,
 }) {
     return (
         <div className="control-panel__content">
@@ -148,16 +153,26 @@ function FilterSidebarSearchTab({
                         >
                             Reset
                         </Button>
-                        <Button
-                            variant="contained"
-                            size="small"
-                            type="submit"
-                            color="primary"
-                            className="margin-left-16 blue-background"
-                            style={{ boxShadow: 'none' }}
-                        >
-                            Search
-                        </Button>
+                        {
+                            fetchingFacilities
+                                ? (
+                                    <CircularProgress
+                                        size={30}
+                                        className="margin-left-16"
+                                    />)
+                                : (
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        type="submit"
+                                        color="primary"
+                                        className="margin-left-16 blue-background"
+                                        style={{ boxShadow: 'none' }}
+                                        onClick={searchForFacilities}
+                                    >
+                                        Search
+                                    </Button>)
+                        }
                     </div>
                 </div>
             </div>
@@ -178,6 +193,8 @@ FilterSidebarSearchTab.propTypes = {
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
+    fetchingFacilities: bool.isRequired,
+    searchForFacilities: func.isRequired,
 };
 
 function mapStateToProps({
@@ -198,6 +215,9 @@ function mapStateToProps({
         contributorTypes,
         countries,
     },
+    facilities: {
+        fetching: fetchingFacilities,
+    },
 }) {
     return {
         contributorOptions,
@@ -207,6 +227,7 @@ function mapStateToProps({
         contributors,
         contributorTypes,
         countries,
+        fetchingFacilities,
     };
 }
 
@@ -217,6 +238,7 @@ function mapDispatchToProps(dispatch) {
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
         resetFilters: () => dispatch(resetAllFilters()),
+        searchForFacilities: () => dispatch(fetchFacilities()),
     };
 }
 

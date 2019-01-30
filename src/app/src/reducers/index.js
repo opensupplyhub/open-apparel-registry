@@ -14,6 +14,7 @@ import FacilityListsReducer from './FacilityListsReducer';
 import FilterOptionsReducer from './FilterOptionsReducer';
 import FiltersReducer from './FiltersReducer';
 import UIReducer from './UIReducer';
+import FacilitiesReducer from './FacilitiesReducer';
 
 export default combineReducers({
     map: MapReducer,
@@ -24,4 +25,5 @@ export default combineReducers({
     filterOptions: FilterOptionsReducer,
     filters: FiltersReducer,
     ui: UIReducer,
+    facilities: FacilitiesReducer,
 });
