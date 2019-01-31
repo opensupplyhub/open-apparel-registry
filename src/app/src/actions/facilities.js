@@ -5,7 +5,9 @@ import csrfRequest from '../util/csrfRequest';
 import {
     logErrorAndDispatchFailure,
     makeGetFacilitiesURLWithQueryString,
+    makeGetFacilityByOARIdURL,
     createQueryStringFromSearchFilters,
+    getFeaturesFromFeatureCollection,
 } from '../util/util';
 
 export const startFetchFacilities = createAction('START_FETCH_FACILITIES');
@@ -30,7 +32,8 @@ export function fetchFacilities() {
 
         return csrfRequest
             .get(makeGetFacilitiesURLWithQueryString(qs))
-            .then(({ data }) => dispatch(completeFetchFacilities(data)))
+            .then(({ data }) => getFeaturesFromFeatureCollection(data))
+            .then(data => dispatch(completeFetchFacilities(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching facilities',
@@ -39,11 +42,11 @@ export function fetchFacilities() {
     };
 }
 
-export function fetchSingleFacility(oarId = null) {
+export function fetchSingleFacility(oarID = null) {
     return (dispatch, getState) => {
         dispatch(startFetchSingleFacility());
 
-        if (!oarId) {
+        if (!oarID) {
             return dispatch(logErrorAndDispatchFailure(
                 null,
                 'No OAR ID was provided',
@@ -60,14 +63,15 @@ export function fetchSingleFacility(oarId = null) {
         } = getState();
 
         const facilityFromExistingData = facilitiesData
-            .find(({ id }) => id === oarId);
+            .find(({ id }) => id === oarID);
 
         if (facilityFromExistingData) {
-            return dispatch(completeFetchSingleFacility(Object.freeze(facilityFromExistingData)));
+            const singleFacility = Object.assign({}, facilityFromExistingData);
+            return dispatch(completeFetchSingleFacility(singleFacility));
         }
 
-        return Promise
-            .resolve({ data: {} })
+        return csrfRequest
+            .get(makeGetFacilityByOARIdURL(oarID))
             .then(({ data }) => dispatch(completeFetchSingleFacility(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,

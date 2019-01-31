@@ -172,25 +172,34 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         name = request.query_params.get(FacilitiesQueryParams.NAME,
                                         None)
         contributors = request.query_params \
-                              .get(FacilitiesQueryParams.CONTRIBUTORS,
-                                   None)
+                              .getlist(FacilitiesQueryParams.CONTRIBUTORS)
         contributor_types = request \
             .query_params \
-            .get(FacilitiesQueryParams.CONTRIBUTOR_TYPES, None)
-        countries = request.query_params.get(FacilitiesQueryParams.COUNTRIES,
-                                             None)
+            .getlist(FacilitiesQueryParams.CONTRIBUTOR_TYPES)
+        countries = request.query_params \
+                           .getlist(FacilitiesQueryParams.COUNTRIES)
 
-        print(name)
+        queryset = Facility.objects.all()
+
+        if name is not None:
+            queryset = queryset.filter(name__icontains=name)
+
+        # TODO: Filter queryset by these values if they're non-empty
         print(contributors)
         print(contributor_types)
-        print(countries)
 
-        return Response([])
+        if countries is not None and len(countries):
+            queryset = queryset.filter(country_code__in=countries)
+
+        response_data = FacilitySerializer(queryset, many=True).data
+
+        return Response(response_data)
 
     def retrieve(self, request, pk=None):
         try:
             queryset = Facility.objects.get(pk=pk)
-            return Response(self.serializer(queryset))
+            response_data = FacilitySerializer(queryset).data
+            return Response(response_data)
         except Facility.DoesNotExist:
             raise NotFound()
 

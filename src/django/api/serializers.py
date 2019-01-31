@@ -1,4 +1,5 @@
 from rest_framework.serializers import (CharField, ModelSerializer)
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from api.models import FacilityList, Facility, User
 
 
@@ -23,7 +24,8 @@ class FacilityListSerializer(ModelSerializer):
                   'is_public')
 
 
-class FacilitySerializer(ModelSerializer):
+class FacilitySerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Facility
-        fields = ('id', 'name', 'address', 'country_code', 'location')
+        exclude = ('created_from', 'created_at', 'updated_at')
+        geo_field = 'location'

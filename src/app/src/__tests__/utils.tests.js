@@ -15,6 +15,7 @@ const {
     makeGetFacilitiesURLWithQueryString,
     getValueFromObject,
     createQueryStringFromSearchFilters,
+    getFeaturesFromFeatureCollection,
     getValueFromEvent,
     getCheckedFromEvent,
     getFileFromInputRef,
@@ -124,6 +125,16 @@ it('creates a querystring from a set of filter selection', () => {
 
     expect(createQueryStringFromSearchFilters(allFilters))
         .toEqual(expectedAllFiltersMatch);
+});
+
+it('gets a list of features from a feature collection', () => {
+    const featureCollection = { features: ['feature'] };
+    const expectedMatch = ['feature'];
+
+    expect(isEqual(
+        getFeaturesFromFeatureCollection(featureCollection),
+        expectedMatch,
+    )).toBe(true);
 });
 
 it('gets the value from an event on a DOM input', () => {

@@ -68,6 +68,8 @@ export const createQueryStringFromSearchFilters = ({
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
 };
 
+export const getFeaturesFromFeatureCollection = ({ features }) => features;
+
 export const createErrorListFromResponseObject = data => flatten(Object
     .entries(data)
     .map(([field, errors]) => {

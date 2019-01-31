@@ -1,4 +1,4 @@
-import { arrayOf, bool, func, number, shape, string } from 'prop-types';
+import { arrayOf, bool, func, number, oneOf, shape, string } from 'prop-types';
 
 import {
     registrationFieldsEnum,
@@ -66,3 +66,26 @@ export const countryOptionsPropType = arrayOf(shape({
     value: string.isRequired,
     label: string.isRequired,
 }));
+
+const FEATURE = 'Feature';
+const POINT = 'Point';
+const FEATURE_COLLECTION = 'FEATURE_COLLECTION';
+
+export const facilityPropType = shape({
+    id: string.isRequired,
+    type: oneOf([FEATURE]).isRequired,
+    geometry: shape({
+        type: oneOf([POINT]).isRequired,
+        coordinates: arrayOf(number.isRequired).isRequired,
+    }).isRequired,
+    properties: shape({
+        name: string.isRequired,
+        address: string.isRequired,
+        country_code: string.isRequired,
+    }).isRequired,
+});
+
+export const facilityCollectionPropType = shape({
+    type: oneOf([FEATURE_COLLECTION]).isRequired,
+    features: arrayOf(facilityPropType).isRequired,
+});

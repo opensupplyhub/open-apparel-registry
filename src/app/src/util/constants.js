@@ -166,6 +166,7 @@ export const authRegisterFormRoute = '/auth/register';
 export const contributeRoute = '/contribute';
 export const listsRoute = '/lists';
 export const facilitiesRoute = '/facilities';
+export const facilityDetailsRoute = '/facilities/:oarID';
 export const profileRoute = '/profile/:id';
 
 export const contributeCSVTemplate =
