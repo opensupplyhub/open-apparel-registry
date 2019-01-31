@@ -23,6 +23,7 @@ from api.constants import CsvHeaderField, FacilitiesQueryParams
 from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
+                        FacilityMatch,
                         Organization,
                         User)
 from api.processing import parse_csv_line
@@ -184,12 +185,36 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         if name is not None:
             queryset = queryset.filter(name__icontains=name)
 
-        # TODO: Filter queryset by these values if they're non-empty
-        print(contributors)
-        print(contributor_types)
-
         if countries is not None and len(countries):
             queryset = queryset.filter(country_code__in=countries)
+
+        if len(contributor_types):
+            type_match_facility_ids = [
+                int(match['facility__id'])
+                for match
+                in FacilityMatch
+                .objects
+                .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                    FacilityMatch.CONFIRMED])
+                .filter(facility_list_item__facility_list__organization__org_type__in=contributor_types) # NOQA
+                .values('facility__id')
+            ]
+
+            queryset = queryset.filter(id__in=type_match_facility_ids)
+
+        if len(contributors):
+            name_match_facility_ids = [
+                int(match['facility__id'])
+                for match
+                in FacilityMatch
+                .objects
+                .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                    FacilityMatch.CONFIRMED])
+                .filter(facility_list_item__facility_list__organization__id__in=contributors) # NOQA
+                .values('facility__id')
+            ]
+
+            queryset = queryset.filter(id__in=name_match_facility_ids)
 
         response_data = FacilitySerializer(queryset, many=True).data
 

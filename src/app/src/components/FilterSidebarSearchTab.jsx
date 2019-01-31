@@ -21,6 +21,7 @@ import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
     countryOptionsPropType,
+    facilityCollectionPropType,
 } from '../util/propTypes';
 
 import { getValueFromEvent } from '../util/util';
@@ -59,7 +60,30 @@ function FilterSidebarSearchTab({
     updateCountry,
     fetchingFacilities,
     searchForFacilities,
+    facilities,
 }) {
+    const noFacilitiesFoundMessage = (() => {
+        if (fetchingFacilities) {
+            return null;
+        }
+
+        if (!facilities) {
+            return null;
+        }
+
+        if (facilities.features.length) {
+            return null;
+        }
+
+        return (
+            <div className="form__field">
+                <p style={{ color: 'red' }}>
+                    No facilities were found for that search
+                </p>
+            </div>
+        );
+    })();
+
     return (
         <div className="control-panel__content">
             <div>
@@ -175,10 +199,15 @@ function FilterSidebarSearchTab({
                         }
                     </div>
                 </div>
+                {noFacilitiesFoundMessage}
             </div>
         </div>
     );
 }
+
+FilterSidebarSearchTab.defaultProps = {
+    facilities: null,
+};
 
 FilterSidebarSearchTab.propTypes = {
     contributorOptions: contributorOptionsPropType.isRequired,
@@ -195,6 +224,7 @@ FilterSidebarSearchTab.propTypes = {
     countries: countryOptionsPropType.isRequired,
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
+    facilities: facilityCollectionPropType,
 };
 
 function mapStateToProps({
@@ -217,6 +247,7 @@ function mapStateToProps({
     },
     facilities: {
         facilities: {
+            data: facilities,
             fetching: fetchingFacilities,
         },
     },
@@ -230,6 +261,7 @@ function mapStateToProps({
         contributorTypes,
         countries,
         fetchingFacilities,
+        facilities,
     };
 }
 

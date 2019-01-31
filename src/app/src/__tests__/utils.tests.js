@@ -2,6 +2,7 @@
 
 const mapValues = require('lodash/mapValues');
 const isEqual = require('lodash/isEqual');
+const turf = require('@turf/turf');
 
 const {
     makeFacilityListsURL,
@@ -25,6 +26,8 @@ const {
     createErrorListFromResponseObject,
     mapDjangoChoiceTuplesToSelectOptions,
     allListsAreEmpty,
+    makeFacilityDetailLink,
+    getBBoxForArrayOfGeoJSONPoints,
 } = require('../util/util');
 
 const {
@@ -135,6 +138,13 @@ it('gets a list of features from a feature collection', () => {
         getFeaturesFromFeatureCollection(featureCollection),
         expectedMatch,
     )).toBe(true);
+});
+
+it('creates a facility detail link', () => {
+    const expectedMatch = '/facilities/hello';
+    const link = makeFacilityDetailLink('hello');
+
+    expect(link).toEqual(expectedMatch);
 });
 
 it('gets the value from an event on a DOM input', () => {
@@ -297,4 +307,20 @@ it('correctly checks whether an array of arrays contains only empty arrays', () 
     expect(allListsAreEmpty(...oneNonEmptyList)).toBe(false);
     expect(allListsAreEmpty(...threeEmptyListsOneNonEmptyList)).toBe(false);
     expect(allListsAreEmpty(...sixNonEmptyLists)).toBe(false);
+});
+
+it('creates a bounding box for an array of GeoJSON points', () => {
+    const inputData = [
+        turf.point([0, 1]),
+        turf.point([1, 0]),
+    ];
+
+    const expectedResult = [
+        0,
+        0,
+        1,
+        1,
+    ];
+
+    expect(getBBoxForArrayOfGeoJSONPoints(inputData)).toEqual(expectedResult);
 });

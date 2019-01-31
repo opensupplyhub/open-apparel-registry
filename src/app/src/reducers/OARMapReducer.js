@@ -6,12 +6,10 @@ import {
     resetOARMapViewport,
 } from '../actions/oarMap';
 
+import { initialViewport } from '../util/constants.oarmap';
+
 const initialState = Object.freeze({
-    viewport: Object.freeze({
-        lat: 34,
-        lng: 5,
-        zoom: 1.5,
-    }),
+    viewport: initialViewport,
 });
 
 export default createReducer({

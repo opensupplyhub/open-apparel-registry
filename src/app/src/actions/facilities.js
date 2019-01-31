@@ -32,8 +32,7 @@ export function fetchFacilities() {
 
         return csrfRequest
             .get(makeGetFacilitiesURLWithQueryString(qs))
-            .then(({ data }) => getFeaturesFromFeatureCollection(data))
-            .then(data => dispatch(completeFetchFacilities(data)))
+            .then(({ data }) => dispatch(completeFetchFacilities(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching facilities',
@@ -63,7 +62,8 @@ export function fetchSingleFacility(oarID = null) {
         } = getState();
 
         const facilityFromExistingData = facilitiesData
-            .find(({ id }) => id === oarID);
+            ? getFeaturesFromFeatureCollection(facilitiesData).find(({ id }) => id === oarID)
+            : null;
 
         if (facilityFromExistingData) {
             const singleFacility = Object.assign({}, facilityFromExistingData);

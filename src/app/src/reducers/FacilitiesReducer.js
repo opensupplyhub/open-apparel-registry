@@ -14,7 +14,7 @@ import {
 
 const initialState = Object.freeze({
     facilities: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
@@ -50,6 +50,7 @@ export default createReducer({
     }),
     [startFetchSingleFacility]: state => update(state, {
         singleFacility: {
+            data: { $set: null },
             fetching: { $set: true },
             error: { $set: null },
         },

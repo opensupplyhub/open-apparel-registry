@@ -15,6 +15,26 @@ class FacilityDetailSidebar extends Component {
         return this.props.fetchFacility();
     }
 
+    componentDidUpdate({
+        match: {
+            params: {
+                oarID: prevOARID,
+            },
+        },
+    }) {
+        const {
+            match: {
+                params: {
+                    oarID,
+                },
+            },
+        } = this.props;
+
+        return oarID !== prevOARID
+            ? this.props.fetchFacility()
+            : null;
+    }
+
     componentWillUnmount() {
         return this.props.clearFacility();
     }

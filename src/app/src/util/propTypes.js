@@ -69,7 +69,7 @@ export const countryOptionsPropType = arrayOf(shape({
 
 const FEATURE = 'Feature';
 const POINT = 'Point';
-const FEATURE_COLLECTION = 'FEATURE_COLLECTION';
+const FEATURE_COLLECTION = 'FeatureCollection';
 
 export const facilityPropType = shape({
     id: string.isRequired,

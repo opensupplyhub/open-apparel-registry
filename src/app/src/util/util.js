@@ -9,11 +9,14 @@ import size from 'lodash/size';
 import negate from 'lodash/negate';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
+import flow from 'lodash/flow';
+import { featureCollection, bbox } from '@turf/turf';
 
 import {
     inputTypesEnum,
     registrationFormFields,
     contributeCSVTemplate,
+    facilitiesRoute,
 } from './constants';
 
 export function DownloadCSV(data, fileName) {
@@ -167,3 +170,10 @@ export const mapDjangoChoiceTuplesToSelectOptions = data =>
     Object.freeze(data.map(mapSingleChoiceToSelectOption));
 
 export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
+
+export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
+
+export const getBBoxForArrayOfGeoJSONPoints = flow(
+    featureCollection,
+    bbox,
+);
