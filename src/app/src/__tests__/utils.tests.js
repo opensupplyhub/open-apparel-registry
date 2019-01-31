@@ -10,8 +10,11 @@ const {
     makeGetContributorsURL,
     makeGetContributorTypesURL,
     makeGetCountriesURL,
-    makeTotalFacilityURL,
-    makeSearchFacilityByNameAndCountryURL,
+    makeGetFacilitiesURL,
+    makeGetFacilityByOARIdURL,
+    makeGetFacilitiesURLWithQueryString,
+    getValueFromObject,
+    createQueryStringFromSearchFilters,
     getValueFromEvent,
     getCheckedFromEvent,
     getFileFromInputRef,
@@ -52,26 +55,75 @@ it('creates API URLs for getting contributor, contributor type, and country opti
 });
 
 it('creates an API URL for getting all facilities', () => {
-    const expectedMatch = '/totalFactories/';
-    expect(makeTotalFacilityURL()).toEqual(expectedMatch);
+    const expectedMatch = '/api/facilities/';
+    expect(makeGetFacilitiesURL()).toEqual(expectedMatch);
 });
 
-it('creates an API URL for searching facilities by name, country, and optional contributor', () => {
-    const name = 'name';
-    const country = 'country';
-    const contributor = 'contributor';
+it('creates an API URL for getting a single facility by OAR ID', () => {
+    const expectedMatch = '/api/facilities/12345/';
+    expect(makeGetFacilityByOARIdURL(12345)).toEqual(expectedMatch);
+});
 
-    const expectedMatchWithoutContributor =
-        '/searchFactoryNameCountry/?name=name&country=country&contributor=';
+it('creates an API URL for getting facilities with a query string', () => {
+    const qs = 'hello=world';
+    const expectedMatch = '/api/facilities/?hello=world';
+    expect(makeGetFacilitiesURLWithQueryString(qs)).toEqual(expectedMatch);
+});
 
-    expect(makeSearchFacilityByNameAndCountryURL(name, country))
-        .toEqual(expectedMatchWithoutContributor);
+it('gets the value from a React Select option object', () => {
+    const reactSelectOption = { value: 'value' };
+    const expectedMatch = 'value';
+    expect(getValueFromObject(reactSelectOption)).toEqual(expectedMatch);
+});
 
-    const expectedMatchWithContributor =
-        '/searchFactoryNameCountry/?name=name&country=country&contributor=contributor';
+it('creates a querystring from a set of filter selection', () => {
+    const emptyFilterSelections = {
+        facilityName: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+    };
+    const expectedEmptySelectionQSMatch = '';
+    expect(createQueryStringFromSearchFilters(emptyFilterSelections))
+        .toEqual(expectedEmptySelectionQSMatch);
 
-    expect(makeSearchFacilityByNameAndCountryURL(name, country, contributor))
-        .toEqual(expectedMatchWithContributor);
+    const multipleFilterSelections = {
+        facilityName: '',
+        contributors: [
+            { value: 'foo' },
+            { value: 'bar' },
+            { value: 'baz' },
+        ],
+        contributorTypes: [],
+        countries: [
+            { value: 'country' },
+        ],
+    };
+    const expectedMultipleFilterSelectionsMatch =
+        'contributors=foo&contributors=bar&contributors=baz&countries=country';
+    expect(createQueryStringFromSearchFilters(multipleFilterSelections))
+        .toEqual(expectedMultipleFilterSelectionsMatch);
+
+    const allFilters = {
+        facilityName: 'hello',
+        contributors: [
+            { value: 'hello' },
+            { value: 'world' },
+        ],
+        contributorTypes: [
+            { value: 'foo' },
+        ],
+        countries: [
+            { value: 'bar' },
+        ],
+    };
+
+    const expectedAllFiltersMatch =
+        'name=hello&contributors=hello&contributors=world'
+            .concat('&contributor_types=foo&countries=bar');
+
+    expect(createQueryStringFromSearchFilters(allFilters))
+        .toEqual(expectedAllFiltersMatch);
 });
 
 it('gets the value from an event on a DOM input', () => {

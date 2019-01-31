@@ -14,17 +14,21 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_auth.views import LoginView, LogoutView
 
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES
 
-from api.constants import CsvHeaderField
+from api.constants import CsvHeaderField, FacilitiesQueryParams
 from api.models import (FacilityList,
                         FacilityListItem,
+                        Facility,
                         Organization,
                         User)
 from api.processing import parse_csv_line
-from api.serializers import FacilityListSerializer, UserSerializer
+from api.serializers import (FacilityListSerializer,
+                             FacilitySerializer,
+                             UserSerializer)
 from api.countries import COUNTRY_CHOICES
 
 
@@ -159,6 +163,38 @@ def all_countries(request):
     return Response(COUNTRY_CHOICES)
 
 
+class FacilitiesViewSet(ReadOnlyModelViewSet):
+    queryset = Facility.objects.all()
+    serializer_class = FacilitySerializer
+    permission_classes = (AllowAny,)
+
+    def list(self, request):
+        name = request.query_params.get(FacilitiesQueryParams.NAME,
+                                        None)
+        contributors = request.query_params \
+                              .get(FacilitiesQueryParams.CONTRIBUTORS,
+                                   None)
+        contributor_types = request \
+            .query_params \
+            .get(FacilitiesQueryParams.CONTRIBUTOR_TYPES, None)
+        countries = request.query_params.get(FacilitiesQueryParams.COUNTRIES,
+                                             None)
+
+        print(name)
+        print(contributors)
+        print(contributor_types)
+        print(countries)
+
+        return Response([])
+
+    def retrieve(self, request, pk=None):
+        try:
+            queryset = Facility.objects.get(pk=pk)
+            return Response(self.serializer(queryset))
+        except Facility.DoesNotExist:
+            raise NotFound()
+
+
 # TODO: Remove the following URLS once Django versions have been
 # implemented. These are here as imitations of the URLS available via
 # the legacy Restify API.
@@ -184,18 +220,6 @@ def confirm_temp(request):
 @permission_classes((AllowAny,))
 def update_source_name(request):
     return Response({"source": None})
-
-
-@api_view(['GET'])
-@permission_classes((AllowAny,))
-def total_factories(request):
-    return Response({"total": 0})
-
-
-@api_view(['GET'])
-@permission_classes((AllowAny,))
-def search_factories(request):
-    return Response([])
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):

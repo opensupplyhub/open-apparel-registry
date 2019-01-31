@@ -216,7 +216,9 @@ function mapStateToProps({
         countries,
     },
     facilities: {
-        fetching: fetchingFacilities,
+        facilities: {
+            fetching: fetchingFacilities,
+        },
     },
 }) {
     return {

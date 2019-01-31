@@ -1,5 +1,5 @@
 from rest_framework.serializers import (CharField, ModelSerializer)
-from api.models import FacilityList, User
+from api.models import FacilityList, Facility, User
 
 
 class UserSerializer(ModelSerializer):
@@ -21,3 +21,9 @@ class FacilityListSerializer(ModelSerializer):
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
                   'is_public')
+
+
+class FacilitySerializer(ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = ('id', 'name', 'address', 'country_code', 'location')

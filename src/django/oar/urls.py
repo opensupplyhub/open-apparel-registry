@@ -27,6 +27,7 @@ from oar import settings
 
 router = routers.DefaultRouter()
 router.register('facility-lists', views.FacilityListViewSet, 'facility-list')
+router.register('facilities', views.FacilitiesViewSet, 'facility')
 
 
 urlpatterns = [
@@ -54,12 +55,8 @@ urlpatterns = [
     # TODO: Remove the following URLs once the Django versions have been
     # implemented. These are here as imitations of the URLs available via
     # the legacy Restify API:
-    url(r'getLists/', views.get_lists, name='get_lists'),
     url(r'getList/', views.get_list, name='get_list'),
     url(r'confirmTemp/', views.confirm_temp, name='confirm_temp'),
     url(r'updateSourceName/', views.update_source_name,
         name='update_source_name'),
-    url(r'totalFactories/', views.total_factories, name='total_factories'),
-    url(r'searchFactoryNameCountry/', views.search_factories,
-        name='search_factories'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
