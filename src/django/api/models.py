@@ -250,10 +250,20 @@ class FacilityListItem(models.Model):
         (ERROR, ERROR),
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['facility_list', 'row_index'],
+                         name='api_fli_facility_list_row_idx'),
+        ]
+
     facility_list = models.ForeignKey(
         'FacilityList',
         on_delete=models.CASCADE,
         help_text='The list that this line item is a part of.')
+    row_index = models.IntegerField(
+        null=False,
+        editable=False,
+        help_text='Index of this line in the CSV file.')
     raw_data = models.TextField(
         null=False,
         blank=False,
