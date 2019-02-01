@@ -169,13 +169,14 @@ def make_facility_lists(max_id=14):
     return [make_facility_list(pk) for pk in range(2, max_id+1)]
 
 
-def make_facility_list_item(list_pk, item_pk, raw_data):
+def make_facility_list_item(list_pk, item_pk, row_index, raw_data):
     (created_at, updated_at) = make_created_updated()
     return {
         'model': 'api.facilitylistitem',
         'pk': item_pk,
         'fields': {
             'facility_list': list_pk,
+            'row_index': row_index,
             'raw_data': raw_data,
             'status': 'UPLOADED',
             'processing_results': {},
@@ -195,9 +196,10 @@ def make_facility_list_items(max_list_pk=14):
                                'facility_lists',
                                filename), 'r') as f:
             f.readline()  # discard header
-            for line in f:
+            for row_index, line in enumerate(f):
                 items.append(make_facility_list_item(list_pk,
                                                      item_pk,
+                                                     row_index,
                                                      line.rstrip()))
                 item_pk += 1
     return items
