@@ -275,8 +275,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             replaces.is_active = False
             replaces.save()
 
-        for line in csv_file:
+        for idx, line in enumerate(csv_file):
             new_item = FacilityListItem(
+                row_index=idx,
                 facility_list=new_list,
                 raw_data=line.decode().rstrip()
             )
