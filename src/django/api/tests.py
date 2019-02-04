@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from api.constants import ProcessingResultSection
+from api.constants import ProcessingAction
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityMatch, Organization, User)
 from api.processing import (parse_facility_list_item,
@@ -255,9 +255,9 @@ class FacilityListCreateTest(APITestCase):
 class FacilityListItemParseTest(TestCase):
     def assert_successful_parse_results(self, item):
         self.assertEqual(FacilityListItem.PARSED, item.status)
-        self.assertTrue(ProcessingResultSection.PARSING
+        self.assertTrue(ProcessingAction.PARSE
                         in item.processing_results)
-        results = item.processing_results[ProcessingResultSection.PARSING]
+        results = item.processing_results[ProcessingAction.PARSE]
         self.assertTrue('error' in results)
         self.assertFalse(results['error'])
         self.assertTrue('started_at' in results)
@@ -266,9 +266,9 @@ class FacilityListItemParseTest(TestCase):
 
     def assert_failed_parse_results(self, item, message=None):
         self.assertEqual(FacilityListItem.ERROR, item.status)
-        self.assertTrue(ProcessingResultSection.PARSING
+        self.assertTrue(ProcessingAction.PARSE
                         in item.processing_results)
-        results = item.processing_results[ProcessingResultSection.PARSING]
+        results = item.processing_results[ProcessingAction.PARSE]
         self.assertTrue('error' in results)
         self.assertTrue(results['error'])
         self.assertTrue('message' in results)
@@ -417,7 +417,7 @@ class FacilityListItemGeocodingTest(TestCase):
         self.assertEqual(item.status, FacilityListItem.GEOCODED)
         self.assertIn(
             'results',
-            item.processing_results[ProcessingResultSection.GEOCODING]['data'],
+            item.processing_results[ProcessingAction.GEOCODE]['data'],
         )
 
     def test_failed_geocoded_item_has_error_results(self):
@@ -435,7 +435,7 @@ class FacilityListItemGeocodingTest(TestCase):
         self.assertIsNone(item.geocoded_point)
         self.assertIn(
             'error',
-            item.processing_results[ProcessingResultSection.GEOCODING],
+            item.processing_results[ProcessingAction.GEOCODE],
         )
 
 
