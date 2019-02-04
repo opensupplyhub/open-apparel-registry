@@ -18,7 +18,6 @@ node {
 		stage('setup') {
 			wrap([$class: 'AnsiColorBuildWrapper']) {
 				sh './scripts/bootstrap'
-				sh './scripts/update'
 			}
 		}
 

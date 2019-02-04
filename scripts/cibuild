@@ -23,6 +23,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
+        # Install frontend NPM modules
+        docker-compose \
+            run --rm --no-deps app \
+            yarn install
+
+        # Make sure the database is up for Django tests
+        docker-compose up -d database
+
         ./scripts/test
 
         # Build static asset bundle for React frontend
