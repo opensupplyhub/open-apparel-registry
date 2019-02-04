@@ -7,22 +7,6 @@ from django.db import models
 
 from api.countries import COUNTRY_CHOICES
 
-# These choices must be kept in sync with the identical list kept in the
-# React client's constants file
-ORG_TYPE_CHOICES = (
-    ('Auditor', 'Auditor'),
-    ('Brand/Retailer', 'Brand/Retailer'),
-    ('Civil Society Organization', 'Civil Society Organization'),
-    ('Factory / Facility', 'Factory / Facility'),
-    ('Manufacturing Group / Supplier / Vendor',
-     'Manufacturing Group / Supplier / Vendor'),
-    ('Multi Stakeholder Initiative', 'Multi Stakeholder Initiative'),
-    ('Researcher / Academic', 'Researcher / Academic'),
-    ('Service Provider', 'Service Provider'),
-    ('Union', 'Union'),
-    ('Other', 'Other'),
-)
-
 
 class EmailAsUsernameUserManager(BaseUserManager):
     """
@@ -54,6 +38,58 @@ class EmailAsUsernameUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self._create_user(email, password, **extra_fields)
+
+
+class Organization(models.Model):
+    """
+    A participant in or observer of the supply chain that will
+    upload facility lists to the registry.
+    """
+    # These choices must be kept in sync with the identical list kept in the
+    # React client's constants file
+    ORG_TYPE_CHOICES = (
+        ('Auditor', 'Auditor'),
+        ('Brand/Retailer', 'Brand/Retailer'),
+        ('Civil Society Organization', 'Civil Society Organization'),
+        ('Factory / Facility', 'Factory / Facility'),
+        ('Manufacturing Group / Supplier / Vendor',
+         'Manufacturing Group / Supplier / Vendor'),
+        ('Multi Stakeholder Initiative', 'Multi Stakeholder Initiative'),
+        ('Researcher / Academic', 'Researcher / Academic'),
+        ('Service Provider', 'Service Provider'),
+        ('Union', 'Union'),
+        ('Other', 'Other'),
+    )
+
+    admin = models.OneToOneField(
+        'User',
+        on_delete=models.PROTECT,
+        help_text=('The user account responsible for uploading and '
+                   'maintaining facility lists for the organization'))
+    name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The full name of the organization.')
+    description = models.TextField(
+        null=False,
+        blank=True,
+        help_text='A detailed description of the organization.')
+    website = models.URLField(
+        null=False,
+        blank=True,
+        help_text='A URL linking to a web site for the organization.')
+    org_type = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=ORG_TYPE_CHOICES,
+        help_text='The category to which this organization belongs.')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{name} ({id})'.format(**self.__dict__)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -102,7 +138,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=200,
         null=False,
         blank=False,
-        choices=ORG_TYPE_CHOICES,
+        choices=Organization.ORG_TYPE_CHOICES,
         help_text='A user\'s contributor type'
     )
     other_contributor_type = models.CharField(
@@ -135,56 +171,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def last_name(self):
         pass
-
-
-class Organization(models.Model):
-    """
-    A participant in or observer of the supply chain that will
-    upload facility lists to the registry.
-    """
-    ORG_TYPE_CHOICES = (
-        ('Auditor', 'Auditor'),
-        ('Brand/Retailer', 'Brand/Retailer'),
-        ('Civil Society Organization', 'Civil Society Organization'),
-        ('Factory / Facility', 'Factory / Facility'),
-        ('Manufacturing Group / Supplier / Vendor',
-         'Manufacturing Group / Supplier / Vendor'),
-        ('Multi Stakeholder Initiative', 'Multi Stakeholder Initiative'),
-        ('Researcher / Academic', 'Researcher / Academic'),
-        ('Service Provider', 'Service Provider'),
-        ('Union', 'Union'),
-        ('Other', 'Other'),
-    )
-
-    admin = models.OneToOneField(
-        'User',
-        on_delete=models.PROTECT,
-        help_text=('The user account responsible for uploading and '
-                   'maintaining facility lists for the organization'))
-    name = models.CharField(
-        max_length=200,
-        null=False,
-        blank=False,
-        help_text='The full name of the organization.')
-    description = models.TextField(
-        null=False,
-        blank=True,
-        help_text='A detailed description of the organization.')
-    website = models.URLField(
-        null=False,
-        blank=True,
-        help_text='A URL linking to a web site for the organization.')
-    org_type = models.CharField(
-        max_length=200,
-        null=False,
-        blank=False,
-        choices=ORG_TYPE_CHOICES,
-        help_text='The category to which this organization belongs.')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return '{name} ({id})'.format(**self.__dict__)
 
 
 class FacilityList(models.Model):
@@ -264,10 +250,20 @@ class FacilityListItem(models.Model):
         (ERROR, ERROR),
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['facility_list', 'row_index'],
+                         name='api_fli_facility_list_row_idx'),
+        ]
+
     facility_list = models.ForeignKey(
         'FacilityList',
         on_delete=models.CASCADE,
         help_text='The list that this line item is a part of.')
+    row_index = models.IntegerField(
+        null=False,
+        editable=False,
+        help_text='Index of this line in the CSV file.')
     raw_data = models.TextField(
         null=False,
         blank=False,

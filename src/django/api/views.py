@@ -22,8 +22,7 @@ from api.constants import CsvHeaderField
 from api.models import (FacilityList,
                         FacilityListItem,
                         Organization,
-                        User,
-                        ORG_TYPE_CHOICES)
+                        User)
 from api.processing import parse_csv_line
 from api.serializers import FacilityListSerializer, UserSerializer
 from api.countries import COUNTRY_CHOICES
@@ -151,7 +150,7 @@ def all_contributors(request):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def all_contributor_types(request):
-    return Response(ORG_TYPE_CHOICES)
+    return Response(Organization.ORG_TYPE_CHOICES)
 
 
 @api_view(['GET'])
@@ -276,8 +275,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             replaces.is_active = False
             replaces.save()
 
-        for line in csv_file:
+        for idx, line in enumerate(csv_file):
             new_item = FacilityListItem(
+                row_index=idx,
                 facility_list=new_list,
                 raw_data=line.decode().rstrip()
             )
