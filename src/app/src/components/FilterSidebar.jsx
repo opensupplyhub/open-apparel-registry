@@ -78,7 +78,7 @@ class FilterSidebar extends Component {
                     Open Apparel Registry
                 </h3>
                 <p className="panel-header__subheading">
-                    The open map of global apparel factories.
+                    The open map of global apparel facilities.
                 </p>
             </div>);
 

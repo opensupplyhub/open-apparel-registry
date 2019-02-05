@@ -1,10 +1,15 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 
 import LandingAlert from './LandingAlert';
 import FilterSidebar from './FilterSidebar';
-import OARMap from './Map';
+import FacilityDetailsSidebar from './FacilityDetailSidebar';
+import OARMap from './OARMap';
+
+import '../styles/css/Map.css';
+
+import { facilityDetailsRoute } from '../util/constants';
 
 export default function MapAndSidebar() {
     return (
@@ -17,7 +22,13 @@ export default function MapAndSidebar() {
                     sm={4}
                     id="panel-container"
                 >
-                    <FilterSidebar />
+                    <Switch>
+                        <Route
+                            path={facilityDetailsRoute}
+                            component={FacilityDetailsSidebar}
+                        />
+                        <Route component={FilterSidebar} />
+                    </Switch>
                 </Grid>
                 <Grid
                     item

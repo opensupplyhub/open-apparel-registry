@@ -1,3 +1,4 @@
+import querystring from 'querystring';
 import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isObject from 'lodash/isObject';
@@ -6,11 +7,16 @@ import identity from 'lodash/identity';
 import some from 'lodash/some';
 import size from 'lodash/size';
 import negate from 'lodash/negate';
+import omitBy from 'lodash/omitBy';
+import isEmpty from 'lodash/isEmpty';
+import flow from 'lodash/flow';
+import { featureCollection, bbox } from '@turf/turf';
 
 import {
     inputTypesEnum,
     registrationFormFields,
     contributeCSVTemplate,
+    facilitiesRoute,
 } from './constants';
 
 export function DownloadCSV(data, fileName) {
@@ -43,15 +49,29 @@ export const makeGetContributorsURL = () => '/api/contributors/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
 
-export const makeTotalFacilityURL = () => '/totalFactories/';
+export const makeGetFacilitiesURL = () => '/api/facilities/';
+export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
+export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
 
-export const makeSearchFacilityByNameAndCountryURL = (name, country, contributor = null) => {
-    const baseURL = `/searchFactoryNameCountry/?name=${name}&country=${country}&contributor=`;
+export const getValueFromObject = ({ value }) => value;
 
-    return contributor
-        ? baseURL.concat(contributor)
-        : baseURL;
+export const createQueryStringFromSearchFilters = ({
+    facilityName = '',
+    contributors = [],
+    contributorTypes = [],
+    countries = [],
+}) => {
+    const inputForQueryString = Object.freeze({
+        name: facilityName,
+        contributors: contributors.map(getValueFromObject),
+        contributor_types: contributorTypes.map(getValueFromObject),
+        countries: countries.map(getValueFromObject),
+    });
+
+    return querystring.stringify(omitBy(inputForQueryString, isEmpty));
 };
+
+export const getFeaturesFromFeatureCollection = ({ features }) => features;
 
 export const createErrorListFromResponseObject = data => flatten(Object
     .entries(data)
@@ -150,3 +170,10 @@ export const mapDjangoChoiceTuplesToSelectOptions = data =>
     Object.freeze(data.map(mapSingleChoiceToSelectOption));
 
 export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
+
+export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
+
+export const getBBoxForArrayOfGeoJSONPoints = flow(
+    featureCollection,
+    bbox,
+);

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import { func } from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, Slide } from 'react-toastify';
-import { func } from 'prop-types';
 import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
 
 import history from './util/history';
@@ -21,7 +21,15 @@ import './App.css';
 
 import { sessionLogin } from './actions/auth';
 
-import { userPropType } from './util/propTypes';
+import {
+    mainRoute,
+    authLoginFormRoute,
+    authRegisterFormRoute,
+    contributeRoute,
+    listsRoute,
+    facilitiesRoute,
+    profileRoute,
+} from './util/constants';
 
 const styles = {
     root: {
@@ -35,78 +43,59 @@ class App extends Component {
     }
 
     render() {
-        const { user } = this.props;
-
         return (
             <ErrorBoundary>
-                <div>
-                    <div>
-                        <Router history={history}>
-                            <div className="App">
-                                <Navbar user={user} />
-                                <div>
-                                    <Switch>
-                                        <Route
-                                            exact
-                                            path="/"
-                                            component={MapAndSidebar}
-                                        />
-                                        <Route
-                                            path="/auth/register"
-                                            component={RegisterForm}
-                                        />
-                                        <Route
-                                            path="/auth/login"
-                                            component={LoginForm}
-                                        />
-                                        <Route
-                                            path="/profile/:id"
-                                            component={UserProfile}
-                                        />
-                                        <Route
-                                            path="/contribute"
-                                            component={Contribute}
-                                        />
-                                        <Route
-                                            path="/lists"
-                                            component={FacilityLists}
-                                        />
-                                    </Switch>
-                                </div>
-                                <Footer />
-                                <ToastContainer
-                                    position="bottom-center"
-                                    transition={Slide}
+                <Router history={history}>
+                    <div className="App">
+                        <Navbar />
+                        <div>
+                            <Switch>
+                                <Route
+                                    exact
+                                    path={mainRoute}
+                                    component={MapAndSidebar}
                                 />
-                            </div>
-                        </Router>
+                                <Route
+                                    path={facilitiesRoute}
+                                    component={MapAndSidebar}
+                                />
+                                <Route
+                                    path={authRegisterFormRoute}
+                                    component={RegisterForm}
+                                />
+                                <Route
+                                    path={authLoginFormRoute}
+                                    component={LoginForm}
+                                />
+                                <Route
+                                    path={profileRoute}
+                                    component={UserProfile}
+                                />
+                                <Route
+                                    path={contributeRoute}
+                                    component={Contribute}
+                                />
+                                <Route
+                                    path={listsRoute}
+                                    component={FacilityLists}
+                                />
+                            </Switch>
+                        </div>
+                        <Footer />
+                        <ToastContainer
+                            position="bottom-center"
+                            transition={Slide}
+                        />
                     </div>
-                </div>
+                </Router>
             </ErrorBoundary>
         );
     }
 }
 
-App.defaultProps = {
-    user: null,
-};
-
 App.propTypes = {
-    user: userPropType,
     logIn: func.isRequired,
 };
-
-function mapStateToProps({
-    auth: {
-        user: {
-            user,
-        },
-    },
-}) {
-    return {
-        user,
-    };
-}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -114,4 +103,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App));
+export default connect(() => ({}), mapDispatchToProps)(withStyles(styles)(App));
