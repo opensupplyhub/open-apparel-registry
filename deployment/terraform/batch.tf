@@ -24,7 +24,7 @@ resource "aws_batch_compute_environment" "default" {
     ]
 
     security_group_ids = [
-      "${aws_security_group.container_instance.id}",
+      "${aws_security_group.batch.id}",
     ]
 
     subnets = [
