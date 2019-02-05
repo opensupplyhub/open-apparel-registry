@@ -2,11 +2,16 @@ from rest_framework.serializers import (CharField,
                                         ModelSerializer,
                                         SerializerMethodField)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from api.models import FacilityList, Facility, User
+from api.models import FacilityList, Facility, User, Organization
 
 
 class UserSerializer(ModelSerializer):
     password = CharField(write_only=True)
+    name = SerializerMethodField()
+    description = SerializerMethodField()
+    website = SerializerMethodField()
+    contributor_type = SerializerMethodField()
+    other_contributor_type = SerializerMethodField()
 
     class Meta:
         model = User
@@ -17,6 +22,41 @@ class UserSerializer(ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+    def get_name(self, user):
+        try:
+            user_organization = Organization.objects.get(admin=user)
+            return user_organization.name
+        except Organization.DoesNotExist:
+            return None
+
+    def get_description(self, user):
+        try:
+            user_organization = Organization.objects.get(admin=user)
+            return user_organization.description
+        except Organization.DoesNotExist:
+            return None
+
+    def get_website(self, user):
+        try:
+            user_organization = Organization.objects.get(admin=user)
+            return user_organization.website
+        except Organization.DoesNotExist:
+            return None
+
+    def get_contributor_type(self, user):
+        try:
+            user_organization = Organization.objects.get(admin=user)
+            return user_organization.org_type
+        except Organization.DoesNotExist:
+            return None
+
+    def get_other_contributor_type(self, user):
+        try:
+            user_organization = Organization.objects.get(admin=user)
+            return user_organization.other_org_type
+        except Organization.DoesNotExist:
+            return None
 
 
 class FacilityListSerializer(ModelSerializer):

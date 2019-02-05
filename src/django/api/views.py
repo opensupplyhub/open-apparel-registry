@@ -46,10 +46,35 @@ class SubmitNewUserForm(CreateAPIView):
             pk = serializer.data['id']
             user = User.objects.get(pk=pk)
 
+            name = request.data.get('name', None)
+            description = request.data.get('description', None)
+            website = request.data.get('website', None)
+            org_type = request.data.get('contributor_type', None)
+            other_org_type = request.data.get('other_contributor_type', None)
+
+            if name is None:
+                raise ValidationError('name cannot be blank')
+
+            if description is None:
+                raise ValidationError('description cannot be blank')
+
+            if org_type is None:
+                raise ValidationError('contributor type cannot be blank')
+
+            if org_type == Organization.OTHER_ORG_TYPE:
+                if other_org_type is None or len(other_org_type) == 0:
+                    raise ValidationError(
+                        'contributor type description required for Contributor'
+                        ' Type \'Other\''
+                    )
+
             Organization.objects.create(
                 admin=user,
-                name=user.name,
-                org_type=user.contributor_type,
+                name=name,
+                description=description,
+                website=website,
+                org_type=org_type,
+                other_org_type=other_org_type,
             )
 
             return Response(UserSerializer(user).data)

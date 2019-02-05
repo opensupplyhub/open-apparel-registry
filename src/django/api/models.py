@@ -47,6 +47,8 @@ class Organization(models.Model):
     """
     # These choices must be kept in sync with the identical list kept in the
     # React client's constants file
+    OTHER_ORG_TYPE = 'Other'
+
     ORG_TYPE_CHOICES = (
         ('Auditor', 'Auditor'),
         ('Brand/Retailer', 'Brand/Retailer'),
@@ -58,7 +60,7 @@ class Organization(models.Model):
         ('Researcher / Academic', 'Researcher / Academic'),
         ('Service Provider', 'Service Provider'),
         ('Union', 'Union'),
-        ('Other', 'Other'),
+        (OTHER_ORG_TYPE, OTHER_ORG_TYPE),
     )
 
     admin = models.OneToOneField(
@@ -85,6 +87,12 @@ class Organization(models.Model):
         blank=False,
         choices=ORG_TYPE_CHOICES,
         help_text='The category to which this organization belongs.')
+    other_org_type = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='Free text field if selected contributor type is other'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -117,35 +125,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text='Unique email address used as a username'
     )
     username = models.CharField(max_length=20, null=True, blank=True)
-    name = models.CharField(
-        max_length=200,
-        null=False,
-        blank=False,
-        help_text='Display name for the user account'
-    )
-    description = models.CharField(
-        max_length=200,
-        null=False,
-        blank=False,
-        help_text='Description displayed for the user account'
-    )
-    website = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text='Website for the user account'
-    )
-    contributor_type = models.CharField(
-        max_length=200,
-        null=False,
-        blank=False,
-        choices=Organization.ORG_TYPE_CHOICES,
-        help_text='A user\'s contributor type'
-    )
-    other_contributor_type = models.CharField(
-        max_length=200,
-        blank=True,
-        help_text='Free text field if selected contributor type is other'
-    )
     should_receive_newsletter = models.BooleanField(
         default=False,
         help_text='User has asked to receive the newsletter'
