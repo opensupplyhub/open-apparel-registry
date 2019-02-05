@@ -25,6 +25,26 @@ resource "aws_security_group" "app" {
   }
 }
 
+resource "aws_security_group" "container_instance" {
+  vpc_id = "${module.vpc.id}"
+
+  tags {
+    Name        = "sgContainerInstance"
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
+  }
+}
+
+resource "aws_security_group_rule" "container_instance" {
+  type        = "egress"
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.container_instance.id}"
+}
+
 #
 # ALB Resources
 #

@@ -189,3 +189,54 @@ variable "rds_free_memory_threshold_bytes" {
 variable "rds_cpu_credit_balance_threshold" {
   default = "30"
 }
+
+variable "ec2_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+variable "batch_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+}
+
+variable "spot_fleet_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole"
+}
+
+variable "batch_default_ce_spot_fleet_bid_percentage" {
+  default = "40"
+}
+
+variable "batch_ami_id" {
+  # Latest ECS-optimized Amazon Linux AMI in us-east-1
+  # See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
+  default = "ami-0bf2fb355727b7faf"
+}
+
+variable "batch_default_ce_min_vcpus" {
+  default = "0"
+}
+
+variable "batch_default_ce_desired_vcpus" {
+  default = "0"
+}
+
+variable "batch_default_ce_max_vcpus" {
+  default = "16"
+}
+
+variable "batch_default_ce_instance_types" {
+  type = "list"
+
+  default = [
+    "c5",
+    "m5",
+  ]
+}
+
+variable "batch_default_jd_vcpus" {
+  default = 2
+}
+
+variable "batch_default_jd_memory" {
+  default = 4096
+}
