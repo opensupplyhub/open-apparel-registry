@@ -58,6 +58,8 @@ variable "google_geocoding_api_key" {}
 
 variable "django_secret_key" {}
 
+variable "default_from_email" {}
+
 variable "app_count" {
   default = "1"
 }

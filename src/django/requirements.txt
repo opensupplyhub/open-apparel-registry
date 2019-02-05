@@ -12,3 +12,4 @@ pycodestyle==2.4.0
 pyflakes==2.0.0
 pytz==2018.7
 requests==2.21.0
+django-amazon-ses==2.0.0

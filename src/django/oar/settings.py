@@ -192,6 +192,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Email
+# https://docs.djangoproject.com/en/2.0/topics/email
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django_amazon_ses.EmailBackend'
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@staging.openapparel.org')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

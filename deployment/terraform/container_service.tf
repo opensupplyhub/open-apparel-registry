@@ -114,6 +114,8 @@ data "template_file" "app" {
 
     django_secret_key = "${var.django_secret_key}"
 
+    default_from_email = "${var.default_from_email}"
+
     app_port = "${var.app_port}"
 
     aws_region = "${var.aws_region}"
@@ -153,6 +155,8 @@ data "template_file" "app_cli" {
     google_geocoding_api_key = "${var.google_geocoding_api_key}"
 
     django_secret_key = "${var.django_secret_key}"
+
+    default_from_email = "${var.default_from_email}"
 
     app_port = "${var.app_port}"
 
