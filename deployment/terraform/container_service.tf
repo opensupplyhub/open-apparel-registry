@@ -130,6 +130,7 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = "${var.fargate_cpu}"
   memory                   = "${var.fargate_memory}"
 
+  task_role_arn      = "${aws_iam_role.ecs_task_role.arn}"
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
 
   container_definitions = "${data.template_file.app.rendered}"
@@ -169,6 +170,7 @@ resource "aws_ecs_task_definition" "app_cli" {
   cpu                      = "${var.fargate_cpu}"
   memory                   = "${var.fargate_memory}"
 
+  task_role_arn      = "${aws_iam_role.ecs_task_role.arn}"
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
 
   container_definitions = "${data.template_file.app_cli.rendered}"
