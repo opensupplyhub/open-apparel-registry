@@ -121,7 +121,7 @@ const accountConfirmPasswordField = Object.freeze({
 const accountNewsletterField = Object.freeze({
     id: registrationFieldsEnum.newsletter,
     label: 'Sign up for OAR newsletter',
-    modelFieldName: 'newsletter',
+    modelFieldName: 'should_receive_newsletter',
     type: inputTypesEnum.checkbox,
 });
 
@@ -133,7 +133,7 @@ const accountTOSField = Object.freeze({
         url: 'https://info.openapparel.org/tos/',
     }),
     required: true,
-    modelFieldName: 'tos',
+    modelFieldName: 'has_agreed_to_terms_of_service',
     type: inputTypesEnum.checkbox,
 });
 
