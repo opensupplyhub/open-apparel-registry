@@ -1,4 +1,4 @@
-import { arrayOf, bool, func, number, oneOf, shape, string } from 'prop-types';
+import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
 
 import {
     registrationFieldsEnum,
@@ -53,7 +53,7 @@ export const facilityListPropType = shape({
 });
 
 export const contributorOptionsPropType = arrayOf(shape({
-    value: number.isRequired,
+    value: oneOfType([number, string]).isRequired,
     label: string.isRequired,
 }));
 
@@ -88,4 +88,16 @@ export const facilityPropType = shape({
 export const facilityCollectionPropType = shape({
     type: oneOf([FEATURE_COLLECTION]).isRequired,
     features: arrayOf(facilityPropType).isRequired,
+});
+
+export const reactSelectOptionPropType = shape({
+    value: oneOfType([number, string]).isRequired,
+    label: string.isRequired,
+});
+
+export const filtersPropType = shape({
+    facilityName: string.isRequired,
+    contributors: arrayOf(reactSelectOptionPropType).isRequired,
+    contributorTypes: arrayOf(reactSelectOptionPropType).isRequired,
+    countries: arrayOf(reactSelectOptionPropType).isRequired,
 });

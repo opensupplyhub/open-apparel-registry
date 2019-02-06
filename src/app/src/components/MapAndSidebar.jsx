@@ -9,9 +9,11 @@ import OARMap from './OARMap';
 
 import '../styles/css/Map.css';
 
+import withQueryStringSync from '../util/withQueryStringSync';
+
 import { facilityDetailsRoute } from '../util/constants';
 
-export default function MapAndSidebar() {
+function MapAndSidebar() {
     return (
         <div>
             <LandingAlert />
@@ -42,3 +44,5 @@ export default function MapAndSidebar() {
         </div>
     );
 }
+
+export default withQueryStringSync(MapAndSidebar);

@@ -61,7 +61,16 @@ function FilterSidebarSearchTab({
     fetchingFacilities,
     searchForFacilities,
     facilities,
+    fetchingOptions,
 }) {
+    if (fetchingOptions) {
+        return (
+            <div className="control-panel__content">
+                <CircularProgress />
+            </div>
+        );
+    }
+
     const noFacilitiesFoundMessage = (() => {
         if (fetchingFacilities) {
             return null;
@@ -119,6 +128,7 @@ function FilterSidebarSearchTab({
                         options={contributorOptions}
                         value={contributors}
                         onChange={updateContributor}
+                        disabled={fetchingOptions || fetchingFacilities}
                     />
                 </div>
                 <div className="form__field">
@@ -138,6 +148,7 @@ function FilterSidebarSearchTab({
                         options={contributorTypeOptions}
                         value={contributorTypes}
                         onChange={updateContributorType}
+                        disabled={fetchingOptions || fetchingFacilities}
                     />
                 </div>
                 <div className="form__field">
@@ -157,6 +168,7 @@ function FilterSidebarSearchTab({
                         options={countryOptions}
                         value={countries}
                         onChange={updateCountry}
+                        disabled={fetchingOptions || fetchingFacilities}
                     />
                 </div>
                 <div className="form__action">
@@ -174,6 +186,7 @@ function FilterSidebarSearchTab({
                             disableRipple
                             color="primary"
                             className="outlined-button"
+                            disabled={fetchingOptions}
                         >
                             Reset
                         </Button>
@@ -193,6 +206,7 @@ function FilterSidebarSearchTab({
                                         className="margin-left-16 blue-background"
                                         style={{ boxShadow: 'none' }}
                                         onClick={searchForFacilities}
+                                        disabled={fetchingOptions}
                                     >
                                         Search
                                     </Button>)
@@ -225,18 +239,22 @@ FilterSidebarSearchTab.propTypes = {
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
     facilities: facilityCollectionPropType,
+    fetchingOptions: bool.isRequired,
 };
 
 function mapStateToProps({
     filterOptions: {
         contributors: {
             data: contributorOptions,
+            fetching: fetchingContributors,
         },
         contributorTypes: {
             data: contributorTypeOptions,
+            fetching: fetchingContributorTypes,
         },
         countries: {
             data: countryOptions,
+            fetching: fetchingCountries,
         },
     },
     filters: {
@@ -262,6 +280,9 @@ function mapStateToProps({
         countries,
         fetchingFacilities,
         facilities,
+        fetchingOptions: fetchingContributors
+            || fetchingContributorTypes
+            || fetchingCountries,
     };
 }
 
