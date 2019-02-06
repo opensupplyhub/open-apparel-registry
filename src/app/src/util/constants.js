@@ -97,7 +97,7 @@ const accountOtherContributorTypeField = Object.freeze({
     id: registrationFieldsEnum.otherContributorType,
     label: 'Other Contributor Type',
     type: inputTypesEnum.text,
-    required: false,
+    required: true,
     hint: 'Please specify',
     modelFieldName: 'other_contributor_type',
 });
