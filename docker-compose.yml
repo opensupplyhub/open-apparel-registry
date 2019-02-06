@@ -6,6 +6,8 @@ services:
       - POSTGRES_USER=openapparelregistry
       - POSTGRES_PASSWORD=openapparelregistry
       - POSTGRES_DB=openapparelregistry
+    ports:
+      - '5432:5432'
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "openapparelregistry"]
       interval: 3s

@@ -17,6 +17,9 @@ Vagrant.configure("2") do |config|
     vb.memory = 4096 # React ran out of memory at 1024
   end
 
+  # Postgres Database
+    config.vm.network :forwarded_port, guest: 5432, host: 5432
+
   # React development server
   config.vm.network :forwarded_port, guest: 6543, host: 6543
 
