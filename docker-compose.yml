@@ -1,7 +1,7 @@
 version: '2.3'
 services:
   database:
-    image: quay.io/azavea/postgis:2.4-postgres10.3-slim
+    image: quay.io/azavea/postgis:2.4-postgres10.6-slim
     environment:
       - POSTGRES_USER=openapparelregistry
       - POSTGRES_PASSWORD=openapparelregistry
