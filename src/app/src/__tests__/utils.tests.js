@@ -31,6 +31,7 @@ const {
 } = require('../util/util');
 
 const {
+    OTHER,
     registrationFieldsEnum,
     registrationFormFields,
 } = require('../util/constants');
@@ -214,6 +215,7 @@ it('creates a list of error messages if any required signup fields are missing',
 
     const expectedErrorMessageCount = registrationFormFields
         .filter(({ required }) => required)
+        .filter(({ id }) => id !== registrationFieldsEnum.otherContributorType)
         .length;
 
     expect(createSignupErrorMessages(incompleteForm).length)
@@ -222,6 +224,26 @@ it('creates a list of error messages if any required signup fields are missing',
 
 it('creates zero error messages if all required signup fields are present', () => {
     const completeForm = registrationFieldsEnum;
+
+    expect(createSignupErrorMessages(completeForm).length)
+        .toEqual(0);
+});
+
+it('creates an error message for missing otherContributorType field when it is required', () => {
+    const completeForm = Object.assign({}, registrationFieldsEnum, {
+        [registrationFieldsEnum.contributorType]: OTHER,
+        [registrationFieldsEnum.otherContributorType]: '',
+    });
+
+    expect(createSignupErrorMessages(completeForm).length)
+        .toEqual(1);
+});
+
+it('creates no error message for missing otherContributorType field when present', () => {
+    const completeForm = Object.assign({}, registrationFieldsEnum, {
+        [registrationFieldsEnum.contributorType]: OTHER,
+        [registrationFieldsEnum.otherContributorType]: 'other contributor type',
+    });
 
     expect(createSignupErrorMessages(completeForm).length)
         .toEqual(0);

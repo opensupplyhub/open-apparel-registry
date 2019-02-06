@@ -81,11 +81,6 @@ def make_bool(override=None):
         return random.randint(0, 1) == 1
 
 
-def make_org_type():
-    random_index = random.randint(0, len(Organization.ORG_TYPE_CHOICES)-1)
-    return Organization.ORG_TYPE_CHOICES[random_index][0]
-
-
 def make_user(pk, email=None, is_superuser=None, is_staff=None):
     password = ('pbkdf2_sha256$100000$AhShrfanKLuW$EQ7qM7QxlaMPBperDoFgESqm4h'
                 'Q5EdwigJ9ks5HWD3o=')
@@ -100,7 +95,6 @@ def make_user(pk, email=None, is_superuser=None, is_staff=None):
             'password': password,
             'last_login': updated_at,
             'is_superuser': make_bool(is_superuser),
-            'name': profile['name'],
             'email': profile['mail'],
             'is_staff': make_bool(is_staff),
             'is_active': True,
@@ -117,12 +111,28 @@ def make_users(count=100):
     return admins + users
 
 
+def make_org_type():
+    random_index = random.randint(0, len(Organization.ORG_TYPE_CHOICES)-1)
+    return Organization.ORG_TYPE_CHOICES[random_index][0]
+
+
+def make_other_org_type():
+    return fake.company_suffix()
+
+
 def make_organization(pk, admin_pk=None):
     (created_at, updated_at) = make_created_updated()
     if admin_pk is not None:
         admin = admin_pk
     else:
         admin = pk
+        org_type = make_org_type()
+
+        if org_type == Organization.OTHER_ORG_TYPE:
+            other_org_type = make_other_org_type()
+        else:
+            other_org_type = None
+
     return {
         'model': 'api.organization',
         'pk': pk,
@@ -131,7 +141,8 @@ def make_organization(pk, admin_pk=None):
             'name': fake.company(),
             'description': fake.text(),
             'website': fake.url(),
-            'org_type': make_org_type(),
+            'org_type': org_type,
+            'other_org_type': other_org_type,
             'created_at': created_at,
             'updated_at': updated_at,
         }

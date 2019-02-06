@@ -28,7 +28,7 @@ class FacilityListCreateTest(APITestCase):
         self.email = 'test@example.com'
         self.password = 'password'
         self.name = 'Test User'
-        self.user = User(name=self.name, email=self.email)
+        self.user = User(email=self.email)
         self.user.set_password(self.password)
         self.user.save()
 

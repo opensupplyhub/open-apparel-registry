@@ -13,7 +13,9 @@ import flow from 'lodash/flow';
 import { featureCollection, bbox } from '@turf/turf';
 
 import {
+    OTHER,
     inputTypesEnum,
+    registrationFieldsEnum,
     registrationFormFields,
     contributeCSVTemplate,
     facilitiesRoute,
@@ -146,7 +148,15 @@ export const createSignupErrorMessages = form => registrationFormFields
             return acc;
         }
 
-        return acc.concat(`Missing required field ${label}`);
+        const missingFieldMessage = `Missing required field ${label}`;
+
+        if (id === registrationFieldsEnum.otherContributorType) {
+            return form[registrationFieldsEnum.contributorType] === OTHER
+                ? acc.concat(missingFieldMessage)
+                : acc;
+        }
+
+        return acc.concat(missingFieldMessage);
     }, []);
 
 export const createSignupRequestData = form => registrationFormFields
