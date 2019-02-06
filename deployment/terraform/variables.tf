@@ -56,6 +56,8 @@ variable "app_port" {
 
 variable "google_geocoding_api_key" {}
 
+variable "rollbar_server_side_access_token" {}
+
 variable "django_secret_key" {}
 
 variable "default_from_email" {}
