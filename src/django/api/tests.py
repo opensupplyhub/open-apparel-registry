@@ -498,6 +498,7 @@ class FacilityListItemMatchingTest(TestCase):
         item_1.save()
         facility_1, match_1 = match_facility_list_item(item_1)
         facility_1.save()
+        match_1.facility = facility_1
         match_1.save()
         item_2 = FacilityListItem(row_index=1,
                                   address='1234 Main St', country_code='US',

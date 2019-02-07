@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.contrib.auth.models import (AbstractBaseUser,
                                         BaseUserManager,
                                         PermissionsMixin)
@@ -369,8 +371,23 @@ class Facility(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @classmethod
+    def make_oar_id(cls):
+        # TODO implement a better OAR ID.
+        new_id = None
+        while new_id is None:
+            new_id = uuid4().hex[:8]
+            if Facility.objects.filter(id=new_id).exists():
+                new_id = None
+        return new_id
+
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)
+
+    def save(self, *args, **kwargs):
+        if self.id == '':
+            self.id = Facility.make_oar_id()
+        super(Facility, self).save(*args, **kwargs)
 
 
 class FacilityMatch(models.Model):
