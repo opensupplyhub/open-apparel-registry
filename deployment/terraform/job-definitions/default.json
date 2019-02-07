@@ -1,7 +1,7 @@
 {
   "image": "${image_url}",
-  "vcpus": ${default_vcpus},
-  "memory": ${default_memory},
+  "vcpus": 2,
+  "memory": 4096,
   "command": ["--version"],
   "environment": [
       { "name": "POSTGRES_HOST", "value": "${postgres_host}" },

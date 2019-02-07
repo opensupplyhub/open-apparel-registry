@@ -232,11 +232,3 @@ variable "batch_default_ce_instance_types" {
     "m5",
   ]
 }
-
-variable "batch_default_jd_vcpus" {
-  default = 2
-}
-
-variable "batch_default_jd_memory" {
-  default = 4096
-}

@@ -51,9 +51,7 @@ data "template_file" "default_job_definition" {
   template = "${file("job-definitions/default.json")}"
 
   vars {
-    image_url      = "${module.ecr_repository.repository_url}:${var.image_tag}"
-    default_vcpus  = "${var.batch_default_jd_vcpus}"
-    default_memory = "${var.batch_default_jd_memory}"
+    image_url = "${module.ecr_repository.repository_url}:${var.image_tag}"
 
     postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database.port}"
