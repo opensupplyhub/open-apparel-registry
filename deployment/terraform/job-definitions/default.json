@@ -1,0 +1,16 @@
+{
+  "image": "${image_url}",
+  "vcpus": 2,
+  "memory": 4096,
+  "command": ["--version"],
+  "environment": [
+      { "name": "POSTGRES_HOST", "value": "${postgres_host}" },
+      { "name": "POSTGRES_PORT", "value": "${postgres_port}" },
+      { "name": "POSTGRES_USER", "value": "${postgres_user}" },
+      { "name": "POSTGRES_PASSWORD", "value": "${postgres_password}" },
+      { "name": "POSTGRES_DB", "value": "${postgres_db}" },
+      { "name": "DJANGO_ENV", "value": "${environment}" },
+      { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
+      { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" }
+  ]
+}

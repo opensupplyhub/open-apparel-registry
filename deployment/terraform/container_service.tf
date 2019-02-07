@@ -25,6 +25,16 @@ resource "aws_security_group" "app" {
   }
 }
 
+resource "aws_security_group" "batch" {
+  vpc_id = "${module.vpc.id}"
+
+  tags {
+    Name        = "sgBatchContainerInstance"
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
+  }
+}
+
 #
 # ALB Resources
 #
