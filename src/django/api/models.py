@@ -139,13 +139,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.email
 
     def get_full_name(self):
-        return self.name
+        return self.email
 
     def get_short_name(self):
-        return self.name
+        return self.email
 
     def first_name(self):
         pass
