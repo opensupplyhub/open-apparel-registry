@@ -105,7 +105,7 @@ function NavbarLoginButtonGroup({
             >
                 <Translate />
                 <NavbarDropdown
-                    title={user.email.toUpperCase()}
+                    title={user.name}
                     links={createUserDropdownLinks(user, logout)}
                 />
             </span>

@@ -10,7 +10,9 @@ import negate from 'lodash/negate';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import flow from 'lodash/flow';
+import noop from 'lodash/noop';
 import { featureCollection, bbox } from '@turf/turf';
+import { saveAs } from 'file-saver';
 
 import {
     OTHER,
@@ -22,21 +24,16 @@ import {
 } from './constants';
 
 export function DownloadCSV(data, fileName) {
-    const csvData = new Blob([data], { type: 'text/csv;charset=utf-8;' });
-    if (window.navigator.msSaveOrOpenBlob) {
-        // IE hack; see http://msdn.microsoft.com/en-us/library/ie/hh779016.aspx
-        window.navigator.msSaveBlob(csvData, fileName);
-    } else {
-        const csvURL = window.URL.createObjectURL(csvData);
-        const tempLink = document.createElement('a');
-        tempLink.href = csvURL;
-        tempLink.setAttribute('download', fileName);
-        tempLink.click();
-    }
+    saveAs(
+        new Blob([data], { type: 'text/csv;charset=utf-8;' }),
+        fileName,
+    );
+
+    return noop();
 }
 
 export const downloadContributorTemplate = () =>
-    DownloadCSV(contributeCSVTemplate, 'OAR_Contributor_Template');
+    DownloadCSV(contributeCSVTemplate, 'OAR_Contributor_Template.csv');
 
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
