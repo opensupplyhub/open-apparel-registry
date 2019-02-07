@@ -133,3 +133,4 @@ def match_facility_list_item(item):
             'trace': traceback.format_exc(),
             'finished_at': str(datetime.utcnow()),
         }
+        return None, None
