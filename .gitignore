@@ -36,3 +36,8 @@ yarn-error.log
 factories.csv
 *_factories.csv
 src/django/static
+research/dedupe/dedupe/facilities_learned_settings
+research/dedupe/dedupe/facilities_output.csv
+research/dedupe/dedupe/facility_list_items.csv
+research/dedupe/dedupe/facilities_training.json
+research/dedupe/dedupe/facilities_deduped.csv
