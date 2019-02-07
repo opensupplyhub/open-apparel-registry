@@ -4,10 +4,10 @@ class CsvHeaderField:
     ADDRESS = 'address'
 
 
-class ProcessingResultSection:
-    PARSING = 'parsing'
-    GEOCODING = 'geocoding'
-    MATCHING = 'matching'
+class ProcessingAction:
+    PARSE = 'parse'
+    GEOCODE = 'geocode'
+    MATCH = 'match'
 
 
 class FacilitiesQueryParams:

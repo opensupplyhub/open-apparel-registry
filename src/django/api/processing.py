@@ -5,7 +5,7 @@ from datetime import datetime
 
 from django.contrib.gis.geos import Point
 
-from api.constants import CsvHeaderField, ProcessingResultSection
+from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
@@ -44,14 +44,14 @@ def parse_facility_list_item(item):
         if CsvHeaderField.ADDRESS in fields:
             item.address = values[fields.index(CsvHeaderField.ADDRESS)]
         item.status = FacilityListItem.PARSED
-        item.processing_results[ProcessingResultSection.PARSING] = {
+        item.processing_results[ProcessingAction.PARSE] = {
             'started_at': started,
             'error': False,
             'finished_at': str(datetime.utcnow()),
         }
     except Exception as e:
         item.status = FacilityListItem.ERROR
-        item.processing_results[ProcessingResultSection.PARSING] = {
+        item.processing_results[ProcessingAction.PARSE] = {
             'started_at': started,
             'error': True,
             'message': str(e),
@@ -74,7 +74,7 @@ def geocode_facility_list_item(item):
             data["geocoded_point"]["lat"]
         )
         item.geocoded_address = data["geocoded_address"]
-        item.processing_results[ProcessingResultSection.GEOCODING] = {
+        item.processing_results[ProcessingAction.GEOCODE] = {
             'started_at': started,
             'error': False,
             'data': data["full_response"],
@@ -83,7 +83,7 @@ def geocode_facility_list_item(item):
         }
     except Exception as e:
         item.status = FacilityListItem.ERROR
-        item.processing_results[ProcessingResultSection.GEOCODING] = {
+        item.processing_results[ProcessingAction.GEOCODE] = {
             'started_at': started,
             'error': True,
             'message': str(e),
@@ -118,7 +118,7 @@ def match_facility_list_item(item):
                               status=FacilityMatch.AUTOMATIC)
 
         item.status = FacilityListItem.MATCHED
-        item.processing_results[ProcessingResultSection.MATCHING] = {
+        item.processing_results[ProcessingAction.MATCH] = {
             'started_at': started,
             'error': False,
             'finished_at': str(datetime.utcnow()),
@@ -126,10 +126,11 @@ def match_facility_list_item(item):
         return facility, match
     except Exception as e:
         item.status = FacilityListItem.ERROR
-        item.processing_results[ProcessingResultSection.MATCHING] = {
+        item.processing_results[ProcessingAction.MATCH] = {
             'started_at': started,
             'error': True,
             'message': str(e),
             'trace': traceback.format_exc(),
             'finished_at': str(datetime.utcnow()),
         }
+        return None, None
