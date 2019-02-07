@@ -35,14 +35,14 @@ data "aws_iam_policy_document" "ses_send_email" {
   }
 }
 
-resource "aws_iam_role" "ecs_task_role" {
+resource "aws_iam_role" "app_task_role" {
   name               = "ecs${var.environment}TaskRole"
   assume_role_policy = "${data.aws_iam_policy_document.ecs_assume_role.json}"
 }
 
 resource "aws_iam_role_policy" "ses_send_email" {
   name   = "SESSendEmail"
-  role   = "${aws_iam_role.ecs_task_role.name}"
+  role   = "${aws_iam_role.app_task_role.name}"
   policy = "${data.aws_iam_policy_document.ses_send_email.json}"
 }
 
