@@ -78,7 +78,6 @@ def geocode_facility_list_item(item):
             'started_at': started,
             'error': False,
             'data': data["full_response"],
-            'trace': traceback.format_exc(),
             'finished_at': str(datetime.utcnow()),
         }
     except Exception as e:
