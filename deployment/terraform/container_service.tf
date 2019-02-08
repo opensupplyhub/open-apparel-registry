@@ -114,6 +114,8 @@ data "template_file" "app" {
 
     django_secret_key = "${var.django_secret_key}"
 
+    default_from_email = "${var.default_from_email}"
+
     app_port = "${var.app_port}"
 
     aws_region = "${var.aws_region}"
@@ -130,6 +132,7 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = "${var.fargate_cpu}"
   memory                   = "${var.fargate_memory}"
 
+  task_role_arn      = "${aws_iam_role.app_task_role.arn}"
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
 
   container_definitions = "${data.template_file.app.rendered}"
@@ -153,6 +156,8 @@ data "template_file" "app_cli" {
 
     django_secret_key = "${var.django_secret_key}"
 
+    default_from_email = "${var.default_from_email}"
+
     app_port = "${var.app_port}"
 
     aws_region = "${var.aws_region}"
@@ -169,6 +174,7 @@ resource "aws_ecs_task_definition" "app_cli" {
   cpu                      = "${var.fargate_cpu}"
   memory                   = "${var.fargate_memory}"
 
+  task_role_arn      = "${aws_iam_role.app_task_role.arn}"
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
 
   container_definitions = "${data.template_file.app_cli.rendered}"
