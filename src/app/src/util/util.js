@@ -20,6 +20,7 @@ import { saveAs } from 'file-saver';
 
 import {
     OTHER,
+    FEATURE_COLLECTION,
     inputTypesEnum,
     registrationFieldsEnum,
     registrationFormFields,
@@ -286,3 +287,13 @@ export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) => Objec
     page * rowsPerPage,
     (page + 1) * rowsPerPage,
 ]);
+
+export const makeReportADataIssueEmailLink = oarId =>
+    `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${oarId}`;
+
+export const makeFeatureCollectionFromSingleFeature = feature => Object.freeze({
+    type: FEATURE_COLLECTION,
+    features: Object.freeze([
+        feature,
+    ]),
+});

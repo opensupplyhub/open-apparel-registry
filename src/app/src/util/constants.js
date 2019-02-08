@@ -240,3 +240,7 @@ export const rowsPerPageOptions = Object.freeze([
     50,
     100,
 ]);
+
+export const FEATURE = 'Feature';
+export const POINT = 'Point';
+export const FEATURE_COLLECTION = 'FeatureCollection';

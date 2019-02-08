@@ -370,6 +370,72 @@ class Facility(models.Model):
             self.id = Facility.make_oar_id()
         super(Facility, self).save(*args, **kwargs)
 
+    def other_names(self):
+        facility_list_item_matches = [
+            FacilityListItem.objects.get(pk=pk)
+            for (pk,)
+            in self
+            .facilitymatch_set
+            .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                FacilityMatch.CONFIRMED])
+            .values_list('facility_list_item')
+        ]
+
+        return {
+            match.name
+            for match
+            in facility_list_item_matches
+            if len(match.name) != 0
+            and match.name is not None
+            and match.name != self.name
+            and match.facility_list.is_active
+            and match.facility_list.is_public
+        }
+
+    def other_addresses(self):
+        facility_list_item_matches = [
+            FacilityListItem.objects.get(pk=pk)
+            for (pk,)
+            in self
+            .facilitymatch_set
+            .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                FacilityMatch.CONFIRMED])
+            .values_list('facility_list_item')
+        ]
+
+        return {
+            match.address
+            for match
+            in facility_list_item_matches
+            if len(match.address) != 0
+            and match.address is not None
+            and match.address != self.address
+            and match.facility_list.is_active
+            and match.facility_list.is_public
+        }
+
+    def contributors(self):
+        facility_list_item_matches = [
+            FacilityListItem.objects.get(pk=pk)
+            for (pk,)
+            in self
+            .facilitymatch_set
+            .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                FacilityMatch.CONFIRMED])
+            .values_list('facility_list_item')
+        ]
+
+        return {
+            "{} ({})".format(
+                match.facility_list.organization.name,
+                match.facility_list.name,
+            )
+            for match
+            in facility_list_item_matches
+            if match.facility_list.is_active
+            and match.facility_list.is_public
+        }
+
 
 class FacilityMatch(models.Model):
     """
