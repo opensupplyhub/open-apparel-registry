@@ -252,12 +252,20 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, 400)
 
 
-class FacilityListItemParseTest(TestCase):
+class ProcessingTestCase(TestCase):
+    def get_first_status(self, item, action):
+        return next(
+            r for r in item.processing_results if r['action'] == action)
+
+    def assert_status(self, item, action):
+        self.assertIsNotNone(self.get_first_status(item, action))
+
+
+class FacilityListItemParseTest(ProcessingTestCase):
     def assert_successful_parse_results(self, item):
         self.assertEqual(FacilityListItem.PARSED, item.status)
-        self.assertTrue(ProcessingAction.PARSE
-                        in item.processing_results)
-        results = item.processing_results[ProcessingAction.PARSE]
+        self.assert_status(item, ProcessingAction.PARSE)
+        results = self.get_first_status(item, ProcessingAction.PARSE)
         self.assertTrue('error' in results)
         self.assertFalse(results['error'])
         self.assertTrue('started_at' in results)
@@ -266,9 +274,8 @@ class FacilityListItemParseTest(TestCase):
 
     def assert_failed_parse_results(self, item, message=None):
         self.assertEqual(FacilityListItem.ERROR, item.status)
-        self.assertTrue(ProcessingAction.PARSE
-                        in item.processing_results)
-        results = item.processing_results[ProcessingAction.PARSE]
+        self.assert_status(item, ProcessingAction.PARSE)
+        results = self.get_first_status(item, ProcessingAction.PARSE)
         self.assertTrue('error' in results)
         self.assertTrue(results['error'])
         self.assertTrue('message' in results)
@@ -375,7 +382,7 @@ class GeocodingTest(TestCase):
         self.assertEqual(cm.exception.args, ('No results were found',))
 
 
-class FacilityListItemGeocodingTest(TestCase):
+class FacilityListItemGeocodingTest(ProcessingTestCase):
     def test_invalid_argument_raises_error(self):
         with self.assertRaises(ValueError) as cm:
             geocode_facility_list_item("hello")
@@ -417,7 +424,7 @@ class FacilityListItemGeocodingTest(TestCase):
         self.assertEqual(item.status, FacilityListItem.GEOCODED)
         self.assertIn(
             'results',
-            item.processing_results[ProcessingAction.GEOCODE]['data'],
+            self.get_first_status(item, ProcessingAction.GEOCODE)['data']
         )
 
     def test_failed_geocoded_item_has_error_results(self):
@@ -435,7 +442,7 @@ class FacilityListItemGeocodingTest(TestCase):
         self.assertIsNone(item.geocoded_point)
         self.assertIn(
             'error',
-            item.processing_results[ProcessingAction.GEOCODE],
+            self.get_first_status(item, ProcessingAction.GEOCODE)
         )
 
 

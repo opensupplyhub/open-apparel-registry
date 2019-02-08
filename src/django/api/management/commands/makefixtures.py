@@ -190,7 +190,7 @@ def make_facility_list_item(list_pk, item_pk, row_index, raw_data):
             'row_index': row_index,
             'raw_data': raw_data,
             'status': 'UPLOADED',
-            'processing_results': {},
+            'processing_results': [],
             'created_at': created_at,
             'updated_at': updated_at,
         }
