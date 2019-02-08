@@ -1,5 +1,17 @@
 version: '2.3'
 services:
+  database:
+    image: quay.io/azavea/postgis:2.4-postgres10.3-slim
+    environment:
+      - POSTGRES_USER=openapparelregistry
+      - POSTGRES_PASSWORD=openapparelregistry
+      - POSTGRES_DB=openapparelregistry
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "openapparelregistry"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+
   django:
     image: "openapparelregistry:${GIT_COMMIT:-latest}"
 
