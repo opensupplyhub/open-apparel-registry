@@ -9,8 +9,11 @@ import size from 'lodash/size';
 import negate from 'lodash/negate';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
+import values from 'lodash/values';
 import flow from 'lodash/flow';
 import noop from 'lodash/noop';
+import compact from 'lodash/compact';
+import startsWith from 'lodash/startsWith';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -62,13 +65,69 @@ export const createQueryStringFromSearchFilters = ({
 }) => {
     const inputForQueryString = Object.freeze({
         name: facilityName,
-        contributors: contributors.map(getValueFromObject),
-        contributor_types: contributorTypes.map(getValueFromObject),
-        countries: countries.map(getValueFromObject),
+        contributors: compact(contributors.map(getValueFromObject)),
+        contributor_types: compact(contributorTypes.map(getValueFromObject)),
+        countries: compact(countries.map(getValueFromObject)),
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
 };
+
+export const mapParamToReactSelectOption = (param) => {
+    if (isEmpty(param)) {
+        return null;
+    }
+
+    if (Number(param)) {
+        return Object.freeze({
+            value: Number(param),
+            label: param,
+        });
+    }
+
+    return Object.freeze({
+        value: param,
+        label: param,
+    });
+};
+
+export const createSelectOptionsFromParams = (params) => {
+    const paramsInArray = !isArray(params)
+        ? [params]
+        : params;
+
+    // compact to remove empty values from querystring params like 'countries='
+    return compact(Object.freeze(paramsInArray.map(mapParamToReactSelectOption)));
+};
+
+export const createFiltersFromQueryString = (qs) => {
+    const qsToParse = startsWith(qs, '?')
+        ? qs.slice(1)
+        : qs;
+
+    const {
+        name = '',
+        contributors = [],
+        contributor_types: contributorTypes = [],
+        countries = [],
+    } = querystring.parse(qsToParse);
+
+    return Object.freeze({
+        facilityName: name,
+        contributors: createSelectOptionsFromParams(contributors),
+        contributorTypes: createSelectOptionsFromParams(contributorTypes),
+        countries: createSelectOptionsFromParams(countries),
+    });
+};
+
+export const allFiltersAreEmpty = filters => values(filters)
+    .reduce((acc, next) => {
+        if (!isEmpty(next)) {
+            return false;
+        }
+
+        return acc;
+    }, true);
 
 export const getFeaturesFromFeatureCollection = ({ features }) => features;
 

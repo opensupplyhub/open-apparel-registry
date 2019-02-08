@@ -16,6 +16,8 @@ const {
     makeGetFacilitiesURLWithQueryString,
     getValueFromObject,
     createQueryStringFromSearchFilters,
+    allFiltersAreEmpty,
+    createFiltersFromQueryString,
     getFeaturesFromFeatureCollection,
     getValueFromEvent,
     getCheckedFromEvent,
@@ -88,6 +90,7 @@ it('creates a querystring from a set of filter selection', () => {
         contributorTypes: [],
         countries: [],
     };
+
     const expectedEmptySelectionQSMatch = '';
     expect(createQueryStringFromSearchFilters(emptyFilterSelections))
         .toEqual(expectedEmptySelectionQSMatch);
@@ -95,15 +98,16 @@ it('creates a querystring from a set of filter selection', () => {
     const multipleFilterSelections = {
         facilityName: '',
         contributors: [
-            { value: 'foo' },
-            { value: 'bar' },
-            { value: 'baz' },
+            { value: 'foo', label: 'foo' },
+            { value: 'bar', label: 'bar' },
+            { value: 'baz', label: 'bar' },
         ],
         contributorTypes: [],
         countries: [
-            { value: 'country' },
+            { value: 'country', label: 'country' },
         ],
     };
+
     const expectedMultipleFilterSelectionsMatch =
         'contributors=foo&contributors=bar&contributors=baz&countries=country';
     expect(createQueryStringFromSearchFilters(multipleFilterSelections))
@@ -112,23 +116,48 @@ it('creates a querystring from a set of filter selection', () => {
     const allFilters = {
         facilityName: 'hello',
         contributors: [
-            { value: 'hello' },
-            { value: 'world' },
+            { value: 'hello', label: 'hello' },
+            { value: 'world', label: 'hello' },
         ],
         contributorTypes: [
-            { value: 'foo' },
+            { value: 'foo', label: 'foo' },
         ],
         countries: [
-            { value: 'bar' },
+            { value: 'bar', label: 'bar' },
         ],
     };
 
     const expectedAllFiltersMatch =
         'name=hello&contributors=hello&contributors=world'
             .concat('&contributor_types=foo&countries=bar');
-
     expect(createQueryStringFromSearchFilters(allFilters))
         .toEqual(expectedAllFiltersMatch);
+});
+
+it('checks whether the filters object has only empty values', () => {
+    const emptyFilters = {
+        hello: '',
+        world: [],
+        foo: {},
+        bar: null,
+    };
+
+    expect(allFiltersAreEmpty(emptyFilters)).toBe(true);
+
+    const nonEmptyFilters = {
+        foo: '',
+        bar: [],
+        baz: [1],
+    };
+
+    expect(allFiltersAreEmpty(nonEmptyFilters)).toBe(false);
+
+    const nonEmptyStringFilter = {
+        hello: 'hello',
+        world: [],
+    };
+
+    expect(allFiltersAreEmpty(nonEmptyStringFilter)).toBe(false);
 });
 
 it('gets a list of features from a feature collection', () => {
@@ -138,6 +167,92 @@ it('gets a list of features from a feature collection', () => {
     expect(isEqual(
         getFeaturesFromFeatureCollection(featureCollection),
         expectedMatch,
+    )).toBe(true);
+});
+
+it('creates a set of filters from a querystring', () => {
+    const contributorsString = '?contributors=1&contributors=2';
+    const expectedContributorsMatch = {
+        facilityName: '',
+        contributors: [
+            {
+                value: 1,
+                label: '1',
+            },
+            {
+                value: 2,
+                label: '2',
+            },
+        ],
+        contributorTypes: [],
+        countries: [],
+    };
+
+    expect(isEqual(
+        createFiltersFromQueryString(contributorsString),
+        expectedContributorsMatch,
+    )).toBe(true);
+
+    const typesString = '?contributor_types=Union&contributor_types=Service Provider';
+    const expectedTypesMatch = {
+        facilityName: '',
+        contributors: [],
+        contributorTypes: [
+            {
+                value: 'Union',
+                label: 'Union',
+            },
+            {
+                value: 'Service Provider',
+                label: 'Service Provider',
+            },
+        ],
+        countries: [],
+    };
+
+    expect(isEqual(
+        createFiltersFromQueryString(typesString),
+        expectedTypesMatch,
+    )).toBe(true);
+
+    const countriesString = '?countries=US&countries=CN';
+    const expectedCountriesMatch = {
+        facilityName: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [
+            {
+                value: 'US',
+                label: 'US',
+            },
+            {
+                value: 'CN',
+                label: 'CN',
+            },
+        ],
+    };
+
+    expect(isEqual(
+        createFiltersFromQueryString(countriesString),
+        expectedCountriesMatch,
+    )).toBe(true);
+
+    const stringWithCountriesMissing = '?contributor_types=Union&countries=';
+    const expectedMissingCountriesMatch = {
+        facilityName: '',
+        contributors: [],
+        contributorTypes: [
+            {
+                value: 'Union',
+                label: 'Union',
+            },
+        ],
+        countries: [],
+    };
+
+    expect(isEqual(
+        createFiltersFromQueryString(stringWithCountriesMissing),
+        expectedMissingCountriesMatch,
     )).toBe(true);
 });
 

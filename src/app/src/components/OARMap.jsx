@@ -37,6 +37,7 @@ const OARMapStyles = Object.freeze({
     }),
 });
 
+const loadEvent = 'load';
 const moveEvent = 'move';
 const clickEvent = 'click';
 const mouseEnterEvent = 'mouseenter';
@@ -66,6 +67,7 @@ class OARMap extends Component {
                 lng,
                 zoom,
             },
+            data,
         } = this.props;
 
         this.oarMap = new mapboxgl.Map({
@@ -91,6 +93,19 @@ class OARMap extends Component {
 
         this.oarMap.on(moveEvent, this.handleMapMove);
         this.oarMap.on(clickEvent, this.handleMapClick);
+
+        this.oarMap.on(loadEvent, () => {
+            if (data) {
+                this.oarMap.addSource(
+                    FACILITIES_SOURCE,
+                    createSourceFromData(data),
+                );
+
+                oarMapLayers.forEach((layer) => { this.oarMap.addLayer(layer); });
+                this.oarMap.on(mouseEnterEvent, oarMapLayerIDEnum.points, this.makePointerCursor);
+                this.oarMap.on(mouseLeaveEvent, oarMapLayerIDEnum.points, this.makePanCursor);
+            }
+        });
     }
 
     componentDidUpdate({ fetching: wasFetching }) {
