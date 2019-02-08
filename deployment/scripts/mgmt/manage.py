@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import argparse
 
 import boto3
@@ -6,10 +5,8 @@ import boto3
 
 class TaskRunner(object):
     def __init__(self, env):
-        # Arguments parsed from the command line.
         self.env = env
 
-        # Boto clients.
         self.ecs_client = boto3.client('ecs')
         self.ec2_client = boto3.client('ec2')
 
@@ -19,7 +16,7 @@ class TaskRunner(object):
         in error handling such that if the lookup fails the response body
         will get propagated to the end user.
         """
-        if not response.get(key, False):
+        if not response.get(key):
             msg = f'Unexpected response from ECS API: {response}'
             raise KeyError(msg)
         else:
@@ -27,14 +24,14 @@ class TaskRunner(object):
                 try:
                     return response[key][0]
                 except (IndexError, TypeError):
-                    msg = f"Unexpected value for '{key}'' in response: {response}"
+                    msg = f"Unexpected value for '{key}' in response: {response}"
                     raise IndexError(msg)
             else:
                 return response[key]
 
     def get_task_def(self):
         """
-        Get the ARN of the latest task definition for the app CLI.
+        Get the ARN of the latest ECS task definition for the app CLI.
         """
         task_def_response = self.ecs_client.list_task_definitions(
             familyPrefix=f'{self.env}AppCLI',
@@ -72,7 +69,7 @@ class TaskRunner(object):
 
     def get_subnet(self):
         """
-        Get a subnet group name to use for the app CLI.
+        Get a subnet ID to use for the app CLI.
         """
         filters = [
             {
@@ -98,7 +95,8 @@ class TaskRunner(object):
 
     def run_task(self, task_def_arn, security_group_id, subnet_id, cmd):
         """
-        Run a task for a given task definition ARN and return the task ID.
+        Run a task for a given task definition ARN using the given security
+        group and subnets, and return the task ID.
         """
         overrides = {
             'containerOverrides': [
@@ -133,7 +131,8 @@ class TaskRunner(object):
 
     def run(self, cmd):
         """
-        Run the latest task definition and print out a URL to view the status.
+        Run the given command on the latest app CLI task definition and print
+        out a URL to view the status.
         """
         task_def_arn = self.get_task_def()
         security_group_id = self.get_security_group()

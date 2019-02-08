@@ -7,7 +7,7 @@ if [[ -n "${OAR_DEBUG}" ]]; then
 fi
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
-    # The mgmt/manage.py script implements a CLI interface, so pass all
+    # The mgmt/manage.py script implements a CLI, so pass all
     # arguments to that script naively.
     docker-compose -f ./deployment/docker-compose.yml run --rm manage "$@"
 fi
