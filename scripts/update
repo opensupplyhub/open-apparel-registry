@@ -17,9 +17,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
-        # Ensure container images are current
-        docker-compose build
-
         # Install frontend NPM modules
         docker-compose \
             run --rm --no-deps app \
