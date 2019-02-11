@@ -28,6 +28,7 @@ from api.models import (FacilityList,
                         User)
 from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
+                             FacilityListItemSerializer,
                              FacilitySerializer,
                              UserSerializer)
 from api.countries import COUNTRY_CHOICES
@@ -377,3 +378,25 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             return Response(response_data)
         except Organization.DoesNotExist:
             raise ValidationError('User organization cannot be None')
+
+    def retrieve(self, request, pk):
+        try:
+            user_organization = request.user.organization
+            facility_list = FacilityList \
+                .objects \
+                .filter(organization=user_organization) \
+                .get(pk=pk)
+            queryset = FacilityListItem \
+                .objects \
+                .filter(facility_list=facility_list) \
+                .order_by('row_index')
+
+            response_data = self.serializer_class(facility_list).data
+
+            response_data.update({
+                "items": FacilityListItemSerializer(queryset, many=True).data,
+            })
+
+            return Response(response_data)
+        except FacilityList.DoesNotExist:
+            raise NotFound()

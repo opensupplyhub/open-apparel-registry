@@ -3,6 +3,7 @@ import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'pr
 import {
     registrationFieldsEnum,
     profileFieldsEnum,
+    facilityListItemStatusChoicesEnum,
 } from './constants';
 
 export const registrationFormValuesPropType = shape({
@@ -43,6 +44,23 @@ export const tokenPropType = shape({
     created: string.isRequired,
 });
 
+export const facilityListItemPropType = shape({
+    id: number.isRequired,
+    row_index: number.isRequired,
+    raw_data: string.isRequired,
+    status: oneOf(Object.values(facilityListItemStatusChoicesEnum)).isRequired,
+    processing_started_at: string,
+    processing_completed_at: string,
+    processing_results: arrayOf(shape({})),
+    name: string.isRequired,
+    address: string.isRequired,
+    country_code: string.isRequired,
+    geocoded_point: string,
+    geocoded_address: string,
+    facility_list: number.isRequired,
+    facility: string,
+});
+
 export const facilityListPropType = shape({
     id: number.isRequired,
     name: string,
@@ -50,6 +68,7 @@ export const facilityListPropType = shape({
     file_name: string.isRequired,
     is_active: bool.isRequired,
     is_public: bool.isRequired,
+    items: arrayOf(facilityListItemPropType),
 });
 
 export const contributorOptionsPropType = arrayOf(shape({

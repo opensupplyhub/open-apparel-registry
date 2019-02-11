@@ -30,13 +30,35 @@ const {
     allListsAreEmpty,
     makeFacilityDetailLink,
     getBBoxForArrayOfGeoJSONPoints,
+    makeFacilityListItemsDetailLink,
+    makePaginatedFacilityListItemsDetailLinkWithRowCount,
+    makeSliceArgumentsForTablePagination,
+    getNumberFromParsedQueryStringParamOrUseDefault,
+    createPaginationOptionsFromQueryString,
 } = require('../util/util');
 
 const {
     OTHER,
     registrationFieldsEnum,
     registrationFormFields,
+    DEFAULT_PAGE,
+    DEFAULT_ROWS_PER_PAGE,
 } = require('../util/constants');
+
+it('creates a route for checking facility list items', () => {
+    const listID = 'hello';
+    const expectedRoute = '/lists/hello';
+    expect(makeFacilityListItemsDetailLink(listID)).toBe(expectedRoute);
+});
+
+it('creates a paginated facility list items route with the row count', () => {
+    const listID = 'foo';
+    const page = 'bar';
+    const rowCount = 'baz';
+    const expectedRoute = '/lists/foo?page=bar&rowsPerPage=baz';
+    expect(makePaginatedFacilityListItemsDetailLinkWithRowCount(listID, page, rowCount))
+        .toBe(expectedRoute);
+});
 
 it('creates API URLs for a user\'s facility lists viewset', () => {
     const facilityListsURL = '/api/facility-lists/';
@@ -460,4 +482,128 @@ it('creates a bounding box for an array of GeoJSON points', () => {
     ];
 
     expect(getBBoxForArrayOfGeoJSONPoints(inputData)).toEqual(expectedResult);
+});
+
+it('creates arguments for slicing a list of items for paginating', () => {
+    const pageZero = 0;
+    const pageOne = 1;
+    const pageSeven = 7;
+    const twentyRows = 20;
+    const twentyFiveRows = 25;
+
+    const expectedPageZeroTwentyRowsMatch = [
+        0,
+        20,
+    ];
+
+    expect(isEqual(
+        makeSliceArgumentsForTablePagination(pageZero, twentyRows),
+        expectedPageZeroTwentyRowsMatch,
+    )).toBe(true);
+
+    const expectedPageOneTwentyRowsMatch = [
+        20,
+        40,
+    ];
+
+    expect(isEqual(
+        makeSliceArgumentsForTablePagination(pageOne, twentyRows),
+        expectedPageOneTwentyRowsMatch,
+    )).toBe(true);
+
+    const expectedPageOneTwentyFiveRowsMatch = [
+        25,
+        50,
+    ];
+
+    expect(isEqual(
+        makeSliceArgumentsForTablePagination(pageOne, twentyFiveRows),
+        expectedPageOneTwentyFiveRowsMatch,
+    )).toBe(true);
+
+    const expectedPageSevenTwentyFiveRowsMatch = [
+        175,
+        200,
+    ];
+
+    expect(isEqual(
+        makeSliceArgumentsForTablePagination(pageSeven, twentyFiveRows),
+        expectedPageSevenTwentyFiveRowsMatch,
+    )).toBe(true);
+});
+
+it('gets a number from a parsed querystring param or uses the default', () => {
+    const defaultValue = 12345;
+    const arrayOfStrings = [
+        'hello',
+        'world',
+    ];
+
+    expect(getNumberFromParsedQueryStringParamOrUseDefault(arrayOfStrings, defaultValue))
+        .toBe(defaultValue);
+
+    const firstNumber = 5;
+    const arrayOfNumbers = [
+        firstNumber,
+        10,
+        20,
+    ];
+
+    expect(getNumberFromParsedQueryStringParamOrUseDefault(arrayOfNumbers, defaultValue))
+        .toBe(firstNumber);
+
+    const fiveString = '5';
+
+    expect(getNumberFromParsedQueryStringParamOrUseDefault(fiveString, defaultValue))
+        .toBe(firstNumber);
+
+    const stringValue = 'hello';
+    expect(getNumberFromParsedQueryStringParamOrUseDefault(stringValue, defaultValue))
+        .toBe(defaultValue);
+});
+
+it('creates a set of pagination options from a querystring', () => {
+    const emptyQueryString = '';
+    const expectedPaginationValuesForEmptyQueryString = {
+        page: DEFAULT_PAGE,
+        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
+    };
+
+    expect(isEqual(
+        createPaginationOptionsFromQueryString(emptyQueryString),
+        expectedPaginationValuesForEmptyQueryString,
+    )).toBe(true);
+
+    const pageOnlyQueryString = '?page=1000';
+    const expectedValuesForPageOnlyQueryString = {
+        page: 1000,
+        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
+    };
+
+    expect(isEqual(
+        createPaginationOptionsFromQueryString(pageOnlyQueryString),
+        expectedValuesForPageOnlyQueryString,
+    )).toBe(true);
+
+    const pageRowQueryString = '?page=500&rowsPerPage=12345';
+    const expectedPageRowValues = {
+        page: 500,
+        rowsPerPage: 12345,
+    };
+
+    expect(isEqual(
+        createPaginationOptionsFromQueryString(pageRowQueryString),
+        expectedPageRowValues,
+    )).toBe(true);
+
+    const complexQueryString = '?page=hello&page=world&rowsPerPage=hello';
+    const expectedComplexQueryStringValues = {
+        page: DEFAULT_PAGE,
+        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
+    };
+
+    expect(isEqual(
+        createPaginationOptionsFromQueryString(complexQueryString),
+        expectedComplexQueryStringValues,
+    )).toBe(true);
 });

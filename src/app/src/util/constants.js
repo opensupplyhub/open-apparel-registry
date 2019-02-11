@@ -165,6 +165,7 @@ export const authLoginFormRoute = '/auth/login';
 export const authRegisterFormRoute = '/auth/register';
 export const contributeRoute = '/contribute';
 export const listsRoute = '/lists';
+export const facilityListItemsRoute = '/lists/:listID';
 export const facilitiesRoute = '/facilities';
 export const facilityDetailsRoute = '/facilities/:oarID';
 export const profileRoute = '/profile/:id';
@@ -216,4 +217,26 @@ export const filterSidebarTabs = Object.freeze([
         tab: filterSidebarTabsEnum.search,
         label: 'Search',
     }),
+]);
+
+// These values must be kept in sync with the tuple of STATUS_CHOICES
+// declared on the API's FacilityListItem model. See:
+// https://github.com/open-apparel-registry/open-apparel-registry/blob/a6e68960d3e1c547c7c2c1935fd28fde6108e3c6/src/django/api/models.py#L224
+
+export const facilityListItemStatusChoicesEnum = Object.freeze({
+    UPLOADED: 'UPLOADED',
+    PARSED: 'PARSED',
+    GEOCODED: 'GEOCODED',
+    MATCHED: 'MATCHED',
+    POTENTIAL_MATCH: 'POTENTIAL_MATCH',
+    CONFIRMED_MATCH: 'CONFIRMED_MATCH',
+    ERROR: 'ERROR',
+});
+
+export const DEFAULT_PAGE = 1;
+export const DEFAULT_ROWS_PER_PAGE = 20;
+export const rowsPerPageOptions = Object.freeze([
+    DEFAULT_ROWS_PER_PAGE,
+    50,
+    100,
 ]);

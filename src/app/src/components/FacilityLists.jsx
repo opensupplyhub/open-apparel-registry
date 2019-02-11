@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import AppGrid from './AppGrid';
@@ -75,14 +74,7 @@ class FacilityLists extends Component {
 
             return (
                 <AppGrid title="My Lists">
-                    <Grid
-                        container
-                        className="margin-bottom-16"
-                    >
-                        <Grid item xs={12}>
-                            {insetComponent}
-                        </Grid>
-                    </Grid>
+                    {insetComponent}
                 </AppGrid>
             );
         }
@@ -93,12 +85,7 @@ class FacilityLists extends Component {
 
         return (
             <AppGrid title="My Lists">
-                <Grid
-                    container
-                    className="margin-bottom-16"
-                >
-                    {tableComponent}
-                </Grid>
+                {tableComponent}
             </AppGrid>
         );
     }
