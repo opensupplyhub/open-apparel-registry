@@ -23,6 +23,14 @@ function test_django() {
         manage.py test --noinput
 }
 
+function test_django_ci() {
+    GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.ci.yml \
+        run --rm --entrypoint python django \
+        manage.py test --noinput
+}
+
 function test_app() {
     docker-compose \
         run --rm --no-deps app \
@@ -38,6 +46,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         test_app
     elif [ "${1:-}" = "--django" ]; then
         test_django
+    elif [ "${1:-}" = "--ci" ]; then
+        lint
+        test_app
+        test_django_ci
     else
         lint
         test_app
