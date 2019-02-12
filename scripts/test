@@ -24,11 +24,16 @@ function test_django() {
 }
 
 function test_django_ci() {
-    GIT_COMMIT="${GIT_COMMIT}" docker-compose \
-        -f docker-compose.yml \
-        -f docker-compose.ci.yml \
-        run --rm --entrypoint python django \
-        manage.py test --noinput
+    if [[ -n "${GIT_COMMIT}" ]]; then
+        GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.ci.yml \
+            run --rm --entrypoint python django \
+            manage.py test --noinput
+    else
+        echo "ERROR: No GIT_COMMIT variable defined."
+        exit 1
+    fi
 }
 
 function test_app() {
