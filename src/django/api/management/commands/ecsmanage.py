@@ -41,16 +41,17 @@ class Command(BaseCommand):
                                 subnet_id,
                                 cmd)
 
-        url = 'https://console.aws.amazon.com/ecs/home?region=us-east-1#'
-        url += f'/clusters/ecs{self.env}Cluster/tasks/{task_id}/details'
+        url = (
+            f'https://console.aws.amazon.com/ecs/home?region=us-east-1#'
+            f'/clusters/ecs{self.env}Cluster/tasks/{task_id}/details'
+        )
 
-        print('Task started! View status here:')
-        print()
-        print(url)
+        self.stdout.write(self.style.SUCCESS('Task started! View here:\n'))
+        self.stdout.write(self.style.SUCCESS(url))
 
     def parse_response(self, response, key, idx=None):
         """
-        Perform a key-value lookup on a response from the AWS CLI, wrapping it
+        Perform a key-value lookup on a response from the AWS API, wrapping it
         in error handling such that if the lookup fails the response body
         will get propagated to the end user.
         """
@@ -62,8 +63,10 @@ class Command(BaseCommand):
                 try:
                     return response[key][0]
                 except (IndexError, TypeError):
-                    msg = f"Unexpected value for '{key}' in response: "
-                    msg += f"{response}"
+                    msg = (
+                        f"Unexpected value for '{key}' in response: "
+                        f'{response}'
+                    )
                     raise IndexError(msg)
             else:
                 return response[key]
