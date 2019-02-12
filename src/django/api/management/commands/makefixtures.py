@@ -1,7 +1,7 @@
 from django.core.management.base import (BaseCommand,
                                          CommandError)
 
-from api.models import Organization, FacilityMatch
+from api.models import Organization, FacilityMatch, FacilityListItem
 
 import csv
 import json
@@ -239,6 +239,7 @@ def make_facility(facility_item):
 
 def make_match(item, facility):
     (created_at, updated_at) = make_created_updated()
+    item['fields']['status'] = FacilityListItem.MATCHED
     return {
         'model': 'api.facilitymatch',
         'pk': item['pk'],
@@ -261,11 +262,10 @@ def make_facilities_and_matches(list_items):
     facilities = []
     matches = []
     for item in list_items:
-        if random.randint(1, 10) < 3 and len(facilities) > 0:
-            matches.append(make_match(
-                item, facilities[random.randint(0, len(facilities)-1)]))
-        else:
-            facilities.append(make_facility(item))
+        if random.randint(1, 10) < 6:
+            facility = make_facility(item)
+            facilities.append(facility)
+            matches.append(make_match(item, facility))
     return facilities, matches
 
 
