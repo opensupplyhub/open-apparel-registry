@@ -24,6 +24,7 @@ services:
         - DJANGO_ENV=Development
         - DJANGO_SECRET_KEY=secret
         - DJANGO_LOG_LEVEL=INFO
+        - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
     build:
       context: ./src/django
       dockerfile: Dockerfile
