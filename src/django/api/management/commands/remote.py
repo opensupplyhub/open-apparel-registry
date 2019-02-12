@@ -1,14 +1,52 @@
-import argparse
-
 import boto3
+from django.core.management.base import BaseCommand
 
 
-class TaskRunner(object):
-    def __init__(self, env):
-        self.env = env
+class Command(BaseCommand):
+    help = 'Run a one-off management command on an ECS cluster.'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-e', '--env',
+            type=str,
+            choices=['staging', 'production'],
+            default='staging',
+            help="Environment to run the task in (staging or production)"
+        )
+
+        parser.add_argument(
+            'cmd',
+            type=str,
+            nargs='+',
+            help="Command override for the ECS container (e.g. 'migrate')"
+        )
+
+    def handle(self, *args, **options):
+        """
+        Run the given command on the latest app CLI task definition and print
+        out a URL to view the status.
+        """
+        self.env = options['env'].title()
+        cmd = options['cmd']
 
         self.ecs_client = boto3.client('ecs')
         self.ec2_client = boto3.client('ec2')
+
+        task_def_arn = self.get_task_def()
+        security_group_id = self.get_security_group()
+        subnet_id = self.get_subnet()
+
+        task_id = self.run_task(task_def_arn,
+                                security_group_id,
+                                subnet_id,
+                                cmd)
+
+        url = 'https://console.aws.amazon.com/ecs/home?region=us-east-1#'
+        url += f'/clusters/ecs{self.env}Cluster/tasks/{task_id}/details'
+
+        print('Task started! View status here:')
+        print()
+        print(url)
 
     def parse_response(self, response, key, idx=None):
         """
@@ -24,7 +62,8 @@ class TaskRunner(object):
                 try:
                     return response[key][0]
                 except (IndexError, TypeError):
-                    msg = f"Unexpected value for '{key}' in response: {response}"
+                    msg = f"Unexpected value for '{key}' in response: "
+                    msg += f"{response}"
                     raise IndexError(msg)
             else:
                 return response[key]
@@ -125,51 +164,7 @@ class TaskRunner(object):
 
         task = self.parse_response(task_response, 'tasks', 0)
 
-        # Task ARNS use the format arn:aws:ecs:<region>:<aws_account_id>:task/<id>
+        # Parse the ask ARN, since ECS doesn't return the task ID.
+        # Task ARNS look like: arn:aws:ecs:<region>:<aws_account_id>:task/<id>
         task_id = task['taskArn'].split('/')[1]
         return task_id
-
-    def run(self, cmd):
-        """
-        Run the given command on the latest app CLI task definition and print
-        out a URL to view the status.
-        """
-        task_def_arn = self.get_task_def()
-        security_group_id = self.get_security_group()
-        subnet_id = self.get_subnet()
-
-        task_id = self.run_task(task_def_arn, security_group_id, subnet_id, cmd)
-
-        url = 'https://console.aws.amazon.com/ecs/home?region=us-east-1#/clusters/'
-        url += f'ecs{self.env}Cluster/tasks/{task_id}/details'
-
-        print('Task started! View status here:')
-        print()
-        print(url)
-
-
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(
-        description="Run a one-off app command as an ECS task."
-    )
-
-    parser.add_argument(
-        '-e', '--env',
-        type=str,
-        choices=['staging', 'production'],
-        default='staging',
-        help="Environment to run the task in (staging or production)"
-    )
-
-    parser.add_argument(
-        'cmd',
-        type=str,
-        nargs='+',
-        help="Command override for the ECS container (e.g. 'migrate')"
-    )
-
-    args = parser.parse_args()
-
-    task_runner = TaskRunner(args.env.title())
-    task_runner.run(args.cmd)

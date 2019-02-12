@@ -14,3 +14,4 @@ pytz==2018.7
 requests==2.21.0
 django-amazon-ses==2.0.0
 rollbar==0.14.6
+boto3==1.9.92
