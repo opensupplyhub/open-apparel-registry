@@ -112,6 +112,8 @@ data "template_file" "app" {
 
     google_geocoding_api_key = "${var.google_geocoding_api_key}"
 
+    rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
+
     django_secret_key = "${var.django_secret_key}"
 
     default_from_email = "${var.default_from_email}"
@@ -153,6 +155,8 @@ data "template_file" "app_cli" {
     postgres_db       = "${var.rds_database_name}"
 
     google_geocoding_api_key = "${var.google_geocoding_api_key}"
+
+    rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
 
     django_secret_key = "${var.django_secret_key}"
 

@@ -102,6 +102,7 @@ REST_AUTH_SERIALIZERS = {
 }
 
 REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'rollbar.contrib.django_rest_framework.post_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -118,6 +119,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'spa.middleware.SPAMiddleware',
+    'rollbar.contrib.django.middleware.RollbarNotifierMiddlewareExcluding404',
 ]
 
 ROOT_URLCONF = 'oar.urls'
@@ -223,3 +225,12 @@ GOOGLE_GEOCODING_API_KEY = os.getenv('GOOGLE_GEOCODING_API_KEY')
 if GOOGLE_GEOCODING_API_KEY is None:
     raise ImproperlyConfigured(
         'Invalid GOOGLE_GEOCODING_API_KEY provided, must be set')
+
+if not DEBUG:
+    ROLLBAR = {
+        'access_token': os.getenv('ROLLBAR_SERVER_SIDE_ACCESS_TOKEN'),
+        'environment': ENVIRONMENT.lower(),
+        'root': BASE_DIR,
+    }
+    import rollbar
+    rollbar.init(**ROLLBAR)

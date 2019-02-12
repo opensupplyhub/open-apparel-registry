@@ -13,5 +13,7 @@ services:
       - GIT_COMMIT=${GIT_COMMIT:-latest}
       - OAR_DEBUG=1
       - OAR_SETTINGS_BUCKET=openapparelregistry-staging-config-us-east-1
+      - OAR_ROLLBAR_ACCESS_TOKEN
+      - OAR_DEPLOYMENT_ENVIRONMENT=${OAR_DEPLOYMENT_ENVIRONMENT:-staging}
     working_dir: /usr/local/src
     entrypoint: bash
