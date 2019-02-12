@@ -26,9 +26,18 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             run --rm --no-deps app \
             yarn lint
 
-        # Lint Django app
-        docker-compose \
-            run --rm --no-deps --entrypoint flake8 django \
-            --exclude settings.py,manage.py,*.pyc,api/migrations/*
+        if [ "${1:-}" = "--ci" ]; then
+            # Lint Django app
+            GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+                -f docker-compose.yml \
+                -f docker-compose.ci.yml \
+                run --rm --no-deps --entrypoint flake8 django \
+                --exclude settings.py,manage.py,*.pyc,api/migrations/*
+        else
+            # Lint Django app
+            docker-compose \
+                run --rm --no-deps --entrypoint flake8 django \
+                --exclude settings.py,manage.py,*.pyc,api/migrations/*
+        fi
     fi
 fi

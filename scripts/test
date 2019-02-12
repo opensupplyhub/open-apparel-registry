@@ -17,6 +17,16 @@ function lint() {
     ./scripts/lint
 }
 
+function lint_ci() {
+    if [[ -n "${GIT_COMMIT}" ]]; then
+        GIT_COMMIT="${GIT_COMMIT}" \
+            ./scripts/lint --ci
+    else
+        echo "ERROR: No GIT_COMMIT variable defined."
+        exit 1
+    fi
+}
+
 function test_django() {
     docker-compose \
         run --rm --entrypoint python django \
@@ -24,11 +34,16 @@ function test_django() {
 }
 
 function test_django_ci() {
-    GIT_COMMIT="${GIT_COMMIT}" docker-compose \
-        -f docker-compose.yml \
-        -f docker-compose.ci.yml \
-        run --rm --entrypoint python django \
-        manage.py test --noinput
+    if [[ -n "${GIT_COMMIT}" ]]; then
+        GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.ci.yml \
+            run --rm --entrypoint python django \
+            manage.py test --noinput
+    else
+        echo "ERROR: No GIT_COMMIT variable defined."
+        exit 1
+    fi
 }
 
 function test_app() {
@@ -47,7 +62,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     elif [ "${1:-}" = "--django" ]; then
         test_django
     elif [ "${1:-}" = "--ci" ]; then
-        lint
+        lint_ci
         test_app
         test_django_ci
     else
