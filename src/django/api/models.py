@@ -265,7 +265,7 @@ class FacilityListItem(models.Model):
         help_text=('When background processing of this item finished. '
                    'Items awaiting or in process will have a null value.'))
     processing_results = postgres.JSONField(
-        default=dict,
+        default=list,
         help_text=('Diagnostic details logged by background processing '
                    'including details returned from the geocoder.'))
     name = models.CharField(
