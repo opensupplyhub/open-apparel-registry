@@ -72,6 +72,7 @@ if ENVIRONMENT in ['Production', 'Staging']:
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,7 +119,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'spa.middleware.SPAMiddleware',
     'rollbar.contrib.django.middleware.RollbarNotifierMiddlewareExcluding404',
 ]
 
@@ -210,7 +210,11 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@staging.openappare
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_STORAGE = 'spa.storage.SPAStaticFilesStorage'
+# WhiteNoise settings
+# http://whitenoise.evans.io/en/stable/django.html#available-settings
+
+WHITENOISE_INDEX_FILE = True
+WHITENOISE_STATIC_PREFIX = '/'
 
 # Watchman
 WATCHMAN_ERROR_CODE = 503
