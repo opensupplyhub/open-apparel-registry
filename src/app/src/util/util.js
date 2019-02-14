@@ -14,6 +14,7 @@ import flow from 'lodash/flow';
 import noop from 'lodash/noop';
 import compact from 'lodash/compact';
 import startsWith from 'lodash/startsWith';
+import head from 'lodash/head';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -24,6 +25,8 @@ import {
     registrationFormFields,
     contributeCSVTemplate,
     facilitiesRoute,
+    DEFAULT_PAGE,
+    DEFAULT_ROWS_PER_PAGE,
 } from './constants';
 
 export function DownloadCSV(data, fileName) {
@@ -117,6 +120,37 @@ export const createFiltersFromQueryString = (qs) => {
         contributors: createSelectOptionsFromParams(contributors),
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),
+    });
+};
+
+export const getNumberFromParsedQueryStringParamOrUseDefault = (inputValue, defaultValue) => {
+    if (!inputValue) {
+        return defaultValue;
+    }
+
+    const nonArrayValue = isArray(inputValue)
+        ? head(inputValue)
+        : inputValue;
+
+    return Number(nonArrayValue) || defaultValue;
+};
+
+export const createPaginationOptionsFromQueryString = (qs) => {
+    const qsToParse = startsWith(qs, '?')
+        ? qs.slice(1)
+        : qs;
+
+    const {
+        page,
+        rowsPerPage,
+    } = querystring.parse(qsToParse);
+
+    return Object.freeze({
+        page: getNumberFromParsedQueryStringParamOrUseDefault(page, DEFAULT_PAGE),
+        rowsPerPage: getNumberFromParsedQueryStringParamOrUseDefault(
+            rowsPerPage,
+            DEFAULT_ROWS_PER_PAGE,
+        ),
     });
 };
 
@@ -243,3 +277,12 @@ export const getBBoxForArrayOfGeoJSONPoints = flow(
     featureCollection,
     bbox,
 );
+
+export const makeFacilityListItemsDetailLink = id => `/lists/${id}`;
+export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (id, page, rowsPerPage) =>
+    `/lists/${id}?page=${page}&rowsPerPage=${rowsPerPage}`;
+
+export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) => Object.freeze([
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage,
+]);

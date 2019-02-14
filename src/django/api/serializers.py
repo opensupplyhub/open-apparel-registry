@@ -2,7 +2,11 @@ from rest_framework.serializers import (CharField,
                                         ModelSerializer,
                                         SerializerMethodField)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from api.models import FacilityList, Facility, User, Organization
+from api.models import (FacilityList,
+                        FacilityListItem,
+                        Facility,
+                        User,
+                        Organization)
 
 
 class UserSerializer(ModelSerializer):
@@ -78,3 +82,10 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     # Added to ensure including the OAR ID in the geojson properties map
     def get_oar_id(self, facility):
         return facility.id
+
+
+class FacilityListItemSerializer(ModelSerializer):
+    class Meta:
+        model = FacilityListItem
+        exclude = ('created_at', 'updated_at', 'geocoded_point',
+                   'geocoded_address')

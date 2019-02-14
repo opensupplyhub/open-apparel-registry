@@ -221,6 +221,8 @@ class FacilityListItem(models.Model):
     CONFIRMED_MATCH = 'CONFIRMED_MATCH'
     ERROR = 'ERROR'
 
+    # These status choices must be kept in sync with the client's
+    # `facilityListItmeStatusChoicesEnum`.
     STATUS_CHOICES = (
         (UPLOADED, UPLOADED),
         (PARSED, PARSED),

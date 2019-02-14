@@ -15,6 +15,7 @@ import UserProfile from './components/UserProfile';
 import Contribute from './components/Contribute';
 import MapAndSidebar from './components/MapAndSidebar';
 import FacilityLists from './components/FacilityLists';
+import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
 
 import './App.css';
@@ -27,6 +28,7 @@ import {
     authRegisterFormRoute,
     contributeRoute,
     listsRoute,
+    facilityListItemsRoute,
     facilitiesRoute,
     profileRoute,
 } from './util/constants';
@@ -74,6 +76,10 @@ class App extends Component {
                                 <Route
                                     path={contributeRoute}
                                     component={Contribute}
+                                />
+                                <Route
+                                    path={facilityListItemsRoute}
+                                    component={FacilityListItems}
                                 />
                                 <Route
                                     path={listsRoute}
