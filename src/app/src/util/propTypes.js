@@ -4,6 +4,9 @@ import {
     registrationFieldsEnum,
     profileFieldsEnum,
     facilityListItemStatusChoicesEnum,
+    FEATURE,
+    FEATURE_COLLECTION,
+    POINT,
 } from './constants';
 
 export const registrationFormValuesPropType = shape({
@@ -86,10 +89,6 @@ export const countryOptionsPropType = arrayOf(shape({
     label: string.isRequired,
 }));
 
-const FEATURE = 'Feature';
-const POINT = 'Point';
-const FEATURE_COLLECTION = 'FeatureCollection';
-
 export const facilityPropType = shape({
     id: string.isRequired,
     type: oneOf([FEATURE]).isRequired,
@@ -101,6 +100,9 @@ export const facilityPropType = shape({
         name: string.isRequired,
         address: string.isRequired,
         country_code: string.isRequired,
+        other_names: arrayOf(string).isRequired,
+        other_addresses: arrayOf(string).isRequired,
+        contributors: arrayOf(string).isRequired,
     }).isRequired,
 });
 

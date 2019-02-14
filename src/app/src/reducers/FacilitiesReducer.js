@@ -1,5 +1,8 @@
 import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
+import isNull from 'lodash/isNull';
+import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 
 import {
     startFetchFacilities,
@@ -11,6 +14,8 @@ import {
     completeFetchSingleFacility,
     resetSingleFacility,
 } from '../actions/facilities';
+
+import { makeFeatureCollectionFromSingleFeature } from '../util/util';
 
 const initialState = Object.freeze({
     facilities: Object.freeze({
@@ -24,6 +29,40 @@ const initialState = Object.freeze({
         error: null,
     }),
 });
+
+const handleFetchSingleFacility = (state, payload) => {
+    // Check whether retrieving the single facility should also
+    // replace the facilities feature collection in cases when
+    //
+    // - facilities data is null or empty
+    // - facilities data has only one feature that is not the single facility
+    const shouldReplaceAllFacilities = isNull(state.facilities.data)
+        || isEmpty(state.facilities.data)
+        || (state.facilities.data.features.length === 1
+        && get(state, 'facilities.data.features[0].properties.oar_id', null)
+        !== payload.properties.oar_id);
+
+    if (shouldReplaceAllFacilities) {
+        return update(state, {
+            facilities: {
+                data: { $set: makeFeatureCollectionFromSingleFeature(payload) },
+            },
+            singleFacility: {
+                fetching: { $set: false },
+                error: { $set: null },
+                data: { $set: payload },
+            },
+        });
+    }
+
+    return update(state, {
+        singleFacility: {
+            fetching: { $set: false },
+            error: { $set: null },
+            data: { $set: payload },
+        },
+    });
+};
 
 export default createReducer({
     [startFetchFacilities]: state => update(state, {
@@ -61,13 +100,7 @@ export default createReducer({
             error: { $set: payload },
         },
     }),
-    [completeFetchSingleFacility]: (state, payload) => update(state, {
-        singleFacility: {
-            fetching: { $set: false },
-            error: { $set: null },
-            data: { $set: payload },
-        },
-    }),
+    [completeFetchSingleFacility]: handleFetchSingleFacility,
     [resetSingleFacility]: state => update(state, {
         singleFacility: { $set: initialState.singleFacility },
     }),

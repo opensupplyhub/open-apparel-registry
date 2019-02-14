@@ -10,7 +10,10 @@ import Button from './Button';
 
 import { setOARMapViewport } from '../actions/oarMap';
 
-import { facilityCollectionPropType } from '../util/propTypes';
+import {
+    facilityPropType,
+    facilityCollectionPropType,
+} from '../util/propTypes';
 
 import {
     makeFacilityDetailLink,
@@ -113,6 +116,7 @@ class OARMap extends Component {
             fetching,
             error,
             data,
+            singleFacilityData,
         } = this.props;
 
         if (fetching) {
@@ -123,7 +127,7 @@ class OARMap extends Component {
             return null;
         }
 
-        if (!wasFetching) {
+        if (!wasFetching && !singleFacilityData) {
             return null;
         }
 
@@ -133,6 +137,7 @@ class OARMap extends Component {
 
         if (this.oarMap.getSource(FACILITIES_SOURCE)) {
             this.oarMap.getSource(FACILITIES_SOURCE).setData(data);
+            this.toggleHighlightedPoint();
         } else {
             this.oarMap.addSource(
                 FACILITIES_SOURCE,
@@ -142,6 +147,7 @@ class OARMap extends Component {
             oarMapLayers.forEach((layer) => { this.oarMap.addLayer(layer); });
             this.oarMap.on(mouseEnterEvent, oarMapLayerIDEnum.points, this.makePointerCursor);
             this.oarMap.on(mouseLeaveEvent, oarMapLayerIDEnum.points, this.makePanCursor);
+            this.toggleHighlightedPoint();
         }
 
         return null;
@@ -222,6 +228,28 @@ class OARMap extends Component {
             : null;
     };
 
+    toggleHighlightedPoint = () => {
+        const {
+            match: {
+                params: {
+                    oarID,
+                },
+            },
+        } = this.props;
+
+        if (!this.oarMap) {
+            return null;
+        }
+
+        return this
+            .oarMap
+            .setFilter(oarMapLayerIDEnum.highlightedPoint, Object.freeze([
+                '==',
+                'oar_id',
+                (oarID || ''),
+            ]));
+    };
+
     makePointerCursor = () => {
         this.oarMap.getCanvas().style.cursor = pointerCursor;
     };
@@ -255,6 +283,12 @@ class OARMap extends Component {
 OARMap.defaultProps = {
     data: null,
     error: null,
+    match: Object.freeze({
+        params: Object.freeze({
+            oarID: null,
+        }),
+    }),
+    singleFacilityData: null,
 };
 
 OARMap.propTypes = {
@@ -268,6 +302,12 @@ OARMap.propTypes = {
     data: facilityCollectionPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
+    match: shape({
+        params: shape({
+            oarID: string,
+        }),
+    }),
+    singleFacilityData: facilityPropType,
 };
 
 function mapStateToProps({
@@ -280,6 +320,9 @@ function mapStateToProps({
             fetching,
             error,
         },
+        singleFacility: {
+            data: singleFacilityData,
+        },
     },
 }) {
     return {
@@ -287,6 +330,7 @@ function mapStateToProps({
         data,
         fetching,
         error,
+        singleFacilityData,
     };
 }
 

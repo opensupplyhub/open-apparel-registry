@@ -38,7 +38,13 @@ function MapAndSidebar() {
                     sm={8}
                     style={{ position: 'relative' }}
                 >
-                    <Route component={OARMap} />
+                    <Switch>
+                        <Route
+                            path={facilityDetailsRoute}
+                            component={OARMap}
+                        />
+                        <Route component={OARMap} />
+                    </Switch>
                 </Grid>
             </Grid>
         </div>

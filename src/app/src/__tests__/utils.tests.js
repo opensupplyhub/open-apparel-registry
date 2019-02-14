@@ -35,6 +35,8 @@ const {
     makeSliceArgumentsForTablePagination,
     getNumberFromParsedQueryStringParamOrUseDefault,
     createPaginationOptionsFromQueryString,
+    makeReportADataIssueEmailLink,
+    makeFeatureCollectionFromSingleFeature,
 } = require('../util/util');
 
 const {
@@ -605,5 +607,42 @@ it('creates a set of pagination options from a querystring', () => {
     expect(isEqual(
         createPaginationOptionsFromQueryString(complexQueryString),
         expectedComplexQueryStringValues,
+    )).toBe(true);
+});
+
+it('creates an email link for reporting a data issue for a facility with a given OAR ID', () => {
+    const oarID = 'oarID';
+    const expectedMatch = 'mailto:info@openapparel.org?subject=Reporting a data issue on ID oarID';
+
+    expect(makeReportADataIssueEmailLink(oarID)).toBe(expectedMatch);
+});
+
+it('creates a geojson FeatureCollection from a single geojson Feature', () => {
+    const feature = {
+        id: 1,
+        type: 'Feature',
+        geometry: 'geometry',
+        properties: {
+            hello: 'world',
+        },
+    };
+
+    const expectedFeatureCollection = {
+        type: 'FeatureCollection',
+        features: [
+            {
+                id: 1,
+                type: 'Feature',
+                geometry: 'geometry',
+                properties: {
+                    hello: 'world',
+                },
+            },
+        ],
+    };
+
+    expect(isEqual(
+        makeFeatureCollectionFromSingleFeature(feature),
+        expectedFeatureCollection,
     )).toBe(true);
 });

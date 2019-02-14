@@ -1,49 +1,71 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-const MAP_COLOR = process.env.REACT_APP_MAP_COLOR;
+import {
+    CIRCLE_COLOR,
+    CIRCLE_TEXT_COLOR,
+    MAPBOX_TOKEN,
+} from '../util/constants.oarmap';
+
+const staticMapStyles = Object.freeze({
+    canvasStyle: Object.freeze({
+        width: '100%',
+    }),
+    imgStyle: Object.freeze({
+        display: 'none',
+    }),
+    stripeStyle: Object.freeze({
+        background: CIRCLE_COLOR,
+    }),
+});
+
+const createMapLink = ({ lng, lat }) =>
+    `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},14,0,0/320x180@2x?access_token=${MAPBOX_TOKEN}`;
+
 
 export default class StaticMap extends PureComponent {
+    constructor(props) {
+        super(props);
+        this.imgRef = React.createRef();
+        this.canvasRef = React.createRef();
+    }
+
     componentDidMount() {
-        const ctx = this.canvas.getContext('2d');
-        this.img.onload = () => {
-            ctx.drawImage(this.img, 0, 0, 320, 180);
+        const ctx = this.canvasRef.current.getContext('2d');
+        this.imgRef.current.onload = () => {
+            ctx.drawImage(this.imgRef.current, 0, 0, 320, 180);
             ctx.beginPath();
             ctx.arc(160, 90, 10, 0, 2 * Math.PI, false);
             ctx.lineWidth = 2;
-            ctx.fillStyle = MAP_COLOR;
+            ctx.fillStyle = CIRCLE_COLOR;
             ctx.fill();
-            ctx.strokeStyle = '#fff';
+            ctx.strokeStyle = CIRCLE_TEXT_COLOR;
             ctx.lineWidth = 2;
             ctx.stroke();
         };
     }
 
     render() {
-        const { lat, lon } = this.props;
-        const maplink = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lon},${lat},14,0,0/320x180@2x?access_token=${
-            process.env.REACT_APP_MAPBOX_TOKEN
-        }`;
+        const {
+            lat,
+            lng,
+        } = this.props;
 
         return (
             <div className="no-lineheight">
                 <canvas
-                    ref={(c) => {
-                        this.canvas = c;
-                    }}
+                    ref={this.canvasRef}
                     width={320}
                     height={180}
-                    style={{ width: '100%' }}
+                    style={staticMapStyles.canvasStyle}
                 />
                 <img
-                    ref={(c) => {
-                        this.img = c;
-                    }}
-                    style={{ display: 'none' }}
+                    ref={this.imgRef}
+                    style={staticMapStyles.imgStyle}
                     alt="static-map"
-                    src={maplink}
+                    src={createMapLink({ lat, lng })}
                 />
-                <div className="stripe" style={{ background: MAP_COLOR }} />
+                <div className="stripe" style={staticMapStyles.stripeStyle} />
             </div>
         );
     }
@@ -51,5 +73,5 @@ export default class StaticMap extends PureComponent {
 
 StaticMap.propTypes = {
     lat: PropTypes.number.isRequired,
-    lon: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired,
 };

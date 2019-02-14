@@ -168,8 +168,8 @@ def make_facility_list(pk, organization_pk=None):
             'name': name,
             'file_name': name + '.csv',
             'header': 'country,name,address',
-            'is_active': make_bool(),
-            'is_public': make_bool(),
+            'is_active': make_bool(pk % 2 == 0),
+            'is_public': make_bool(pk % 2 == 0),
             'created_at': created_at,
             'updated_at': updated_at,
         }
@@ -182,6 +182,7 @@ def make_facility_lists(max_id=14):
 
 def make_facility_list_item(list_pk, item_pk, row_index, raw_data):
     (created_at, updated_at) = make_created_updated()
+
     return {
         'model': 'api.facilitylistitem',
         'pk': item_pk,
@@ -240,6 +241,26 @@ def make_facility(facility_item):
 def make_match(item, facility):
     (created_at, updated_at) = make_created_updated()
     item['fields']['status'] = FacilityListItem.MATCHED
+
+    status = FacilityMatch.PENDING
+    if item['pk'] % 3 == 0:
+        item['fields']['status'] = FacilityListItem.CONFIRMED_MATCH
+        item['fields']['address'] = "{} {}".format(fake.hexify(text="^^^^",
+                                                               upper=False),
+                                                   fake.street_name())
+        item['fields']['name'] = "{} {}".format(fake.company(),
+                                                fake.company_suffix())
+        status = FacilityMatch.AUTOMATIC
+
+    elif item['pk'] % 5 == 0:
+        item['fields']['status'] = FacilityListItem.CONFIRMED_MATCH
+        item['fields']['address'] = "{} {}".format(fake.hexify(text="^^^^",
+                                                               upper=False),
+                                                   fake.street_name())
+        item['fields']['name'] = "{} {}".format(fake.company(),
+                                                fake.company_suffix())
+        status = FacilityMatch.CONFIRMED
+
     return {
         'model': 'api.facilitymatch',
         'pk': item['pk'],
@@ -251,7 +272,7 @@ def make_match(item, facility):
                 'match_method': 'random',
             },
             'confidence': 0.1,
-            'status': FacilityMatch.PENDING,
+            'status': status,
             'created_at': created_at,
             'updated_at': updated_at,
         }
@@ -261,8 +282,14 @@ def make_match(item, facility):
 def make_facilities_and_matches(list_items):
     facilities = []
     matches = []
+
     for item in list_items:
-        if random.randint(1, 10) < 6:
+        random_number = random.randint(1, 100)
+
+        if random_number < 80 and random_number % 2 == 0 and len(facilities):
+            facility_to_update = facilities[-1]
+            matches.append(make_match(item, facility_to_update))
+        elif random_number < 60:
             facility = make_facility(item)
             facilities.append(facility)
             matches.append(make_match(item, facility))
