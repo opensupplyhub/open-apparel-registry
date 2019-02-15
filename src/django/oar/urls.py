@@ -19,6 +19,7 @@ from django.urls import path, re_path, include
 from django.conf.urls import url
 
 from api import views
+from web.views import environment
 
 
 from rest_framework import routers
@@ -31,6 +32,7 @@ router.register('facilities', views.FacilitiesViewSet, 'facility')
 
 
 urlpatterns = [
+    url(r'^web/environment\.js', environment, name='environment'),
     url(r'^api/', include(router.urls)),
     path('admin/', admin.site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
