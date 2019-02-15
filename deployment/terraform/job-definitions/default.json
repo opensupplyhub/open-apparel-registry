@@ -11,6 +11,7 @@
       { "name": "POSTGRES_DB", "value": "${postgres_db}" },
       { "name": "DJANGO_ENV", "value": "${environment}" },
       { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
-      { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" }
+      { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" },
+      { "name": "REACT_APP_ROLLBAR_POST_CLIENT_ITEM_ACCESS_TOKEN", "value": "${react_app_rollbar_post_client_item_access_token}" }
   ]
 }

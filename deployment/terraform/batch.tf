@@ -62,6 +62,8 @@ data "template_file" "default_job_definition" {
     environment              = "${var.environment}"
     django_secret_key        = "${var.django_secret_key}"
     google_geocoding_api_key = "${var.google_geocoding_api_key}"
+
+    react_app_rollbar_post_client_item_access_token = "${var.react_app_rollbar_post_client_item_access_token}"
   }
 }
 

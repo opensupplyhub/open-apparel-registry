@@ -16,7 +16,8 @@
         { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
         { "name": "DEFAULT_FROM_EMAIL", "value": "${default_from_email}" },
         { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" },
-        { "name": "ROLLBAR_SERVER_SIDE_ACCESS_TOKEN", "value": "${rollbar_server_side_access_token}" }
+        { "name": "ROLLBAR_SERVER_SIDE_ACCESS_TOKEN", "value": "${rollbar_server_side_access_token}" },
+        { "name": "REACT_APP_ROLLBAR_POST_CLIENT_ITEM_ACCESS_TOKEN", "value": "${react_app_rollbar_post_client_item_access_token}" }
     ],
     "logConfiguration": {
         "logDriver": "awslogs",

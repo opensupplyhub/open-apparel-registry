@@ -69,6 +69,8 @@ rds_database_name = "openapparelregistry"
 rds_database_username = "openapparelregistry"
 rds_database_password = "password"
 
+react_app_rollbar_post_client_item_access_token = ""
+
 ```
 
 This file lives at `s3://openapparelregistry-staging-config-us-east-1/terraform/terraform.tfvars`.
