@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'watchman',
     'api',
+    'web',
 ]
 
 # For allauth
@@ -127,7 +128,9 @@ ROOT_URLCONF = 'oar.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'static'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -213,7 +216,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # WhiteNoise settings
 # http://whitenoise.evans.io/en/stable/django.html#available-settings
 
-WHITENOISE_INDEX_FILE = True
 WHITENOISE_STATIC_PREFIX = '/'
 
 # Watchman

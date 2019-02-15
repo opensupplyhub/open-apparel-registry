@@ -19,6 +19,7 @@ from django.urls import path, re_path, include
 from django.conf.urls import url
 
 from api import views
+from web.views import index
 
 
 from rest_framework import routers
@@ -29,8 +30,11 @@ router = routers.DefaultRouter()
 router.register('facility-lists', views.FacilityListViewSet, 'facility-list')
 router.register('facilities', views.FacilitiesViewSet, 'facility')
 
+handler404 = 'web.views.handler404'
+
 
 urlpatterns = [
+    url(r'^$', index),
     url(r'^api/', include(router.urls)),
     path('admin/', admin.site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
