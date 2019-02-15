@@ -113,6 +113,7 @@ data "template_file" "app" {
     google_geocoding_api_key = "${var.google_geocoding_api_key}"
 
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
+    rollbar_client_side_access_token = "${var.rollbar_client_side_access_token}"
 
     django_secret_key = "${var.django_secret_key}"
 
@@ -157,6 +158,7 @@ data "template_file" "app_cli" {
     google_geocoding_api_key = "${var.google_geocoding_api_key}"
 
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
+    rollbar_client_side_access_token = "${var.rollbar_client_side_access_token}"
 
     django_secret_key = "${var.django_secret_key}"
 
