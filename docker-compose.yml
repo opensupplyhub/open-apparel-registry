@@ -54,6 +54,7 @@ services:
       - $HOME/.aws:/root/.aws:ro
     env_file: .env.frontend
     environment:
+      - REACT_APP_GIT_COMMIT=${REACT_APP_GIT_COMMIT:-latest}
       - REACT_APP_API_URL=http://localhost:8081
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=2000
