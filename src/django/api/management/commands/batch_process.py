@@ -79,10 +79,21 @@ class Command(BaseCommand):
                         facility, match = process(item)
                         item.save()
                         facility.save()
+
                         # Assign facility to match after it has been
                         # saved and assigned an ID
                         match.facility = facility
                         match.save()
+
+                        # Assign facility to item if match confidence is
+                        # 100% or if facility was created from the item
+                        if facility.created_from == item:
+                            item.facility = facility
+                            item.save()
+                        elif match.confidnce == 1.0:
+                            item.facility = facility
+                            item.save()
+
                     else:
                         process(item)
                         item.save()
