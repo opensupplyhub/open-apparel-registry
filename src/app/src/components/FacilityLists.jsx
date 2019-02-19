@@ -7,6 +7,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AppGrid from './AppGrid';
 import FacilityListsEmpty from './FacilityListsEmpty';
 import FacilityListsTable from './FacilityListsTable';
+import ShowOnly from './ShowOnly';
 
 import {
     fetchUserFacilityLists,
@@ -14,7 +15,7 @@ import {
 } from '../actions/facilityLists';
 
 import { authLoginFormRoute } from '../util/constants';
-
+import { makeMyFacilitiesRoute } from '../util/util';
 import { facilityListPropType } from '../util/propTypes';
 
 class FacilityLists extends Component {
@@ -33,6 +34,7 @@ class FacilityLists extends Component {
             error,
             userHasSignedIn,
             fetchingSessionSignIn,
+            myFacilitiesRoute,
         } = this.props;
 
         if (fetching || fetchingSessionSignIn || error || !userHasSignedIn) {
@@ -85,6 +87,15 @@ class FacilityLists extends Component {
 
         return (
             <AppGrid title="My Lists">
+                <ShowOnly when={!!myFacilitiesRoute}>
+                    <Link
+                        to={myFacilitiesRoute}
+                        href={myFacilitiesRoute}
+                        style={{ paddingBottom: '20px' }}
+                    >
+                        View my facilities
+                    </Link>
+                </ShowOnly>
                 {tableComponent}
             </AppGrid>
         );
@@ -93,6 +104,7 @@ class FacilityLists extends Component {
 
 FacilityLists.defaultProps = {
     error: null,
+    myFacilitiesRoute: null,
 };
 
 FacilityLists.propTypes = {
@@ -103,6 +115,7 @@ FacilityLists.propTypes = {
     resetLists: func.isRequired,
     userHasSignedIn: bool.isRequired,
     fetchingSessionSignIn: bool.isRequired,
+    myFacilitiesRoute: string,
 };
 
 function mapStateToProps({
@@ -125,6 +138,9 @@ function mapStateToProps({
         fetching,
         error,
         userHasSignedIn: !!user,
+        myFacilitiesRoute: (user && user.organization_id)
+            ? makeMyFacilitiesRoute(user.organization_id)
+            : null,
         fetchingSessionSignIn,
     };
 }

@@ -1,16 +1,22 @@
 import React from 'react';
-import { arrayOf, func, shape, string } from 'prop-types';
+import { arrayOf, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+
+import FacilityListItemsTableRow from './FacilityListItemsTableRow';
+import FacilityListItemsConfirmationTableRow from './FacilityListItemsConfirmationTableRow';
+import FacilityListItemsErrorTableRow from './FacilityListItemsErrorTableRow';
+import FacilityListItemsMatchTableRow from './FacilityListItemsMatchTableRow';
 
 import { facilityListItemPropType } from '../util/propTypes';
+
+import { setSelectedFacilityListItemsRowIndex } from '../actions/facilityListDetails';
 
 import {
     makePaginatedFacilityListItemsDetailLinkWithRowCount,
@@ -19,7 +25,10 @@ import {
     createPaginationOptionsFromQueryString,
 } from '../util/util';
 
-import { rowsPerPageOptions } from '../util/constants';
+import {
+    rowsPerPageOptions,
+    facilityListItemStatusChoicesEnum,
+} from '../util/constants';
 
 const facilityListItemsTableStyles = Object.freeze({
     containerStyles: Object.freeze({
@@ -33,6 +42,8 @@ const facilityListItemsTableStyles = Object.freeze({
 
 function FacilityListItemsTable({
     items,
+    selectedFacilityListItemsRowIndex,
+    makeSelectListItemTableRowFunction,
     match: {
         params: {
             listID,
@@ -80,55 +91,97 @@ function FacilityListItemsTable({
         </TableRow>
     );
 
+    const tableRows = paginatedItems
+        .map((item) => {
+            const handleSelectRow = makeSelectListItemTableRowFunction(item.row_index);
+
+            if (item.status === facilityListItemStatusChoicesEnum.POTENTIAL_MATCH) {
+                return (
+                    <FacilityListItemsConfirmationTableRow
+                        key={item.row_index}
+                        item={item}
+                        listID={listID}
+                    />
+                );
+            }
+
+            if (item.row_index !== selectedFacilityListItemsRowIndex) {
+                return (
+                    <FacilityListItemsTableRow
+                        key={item.row_index}
+                        rowIndex={item.row_index}
+                        countryCode={item.country_code}
+                        name={item.name}
+                        address={item.address}
+                        status={item.status}
+                        handleSelectRow={handleSelectRow}
+                        hover
+                    />
+                );
+            }
+
+            if (item.status === facilityListItemStatusChoicesEnum.ERROR) {
+                return (
+                    <FacilityListItemsErrorTableRow
+                        key={item.row_index}
+                        rowIndex={item.row_index}
+                        countryCode={item.country_code}
+                        name={item.name}
+                        address={item.address}
+                        status={item.status}
+                        errors={item.processing_errors}
+                        handleSelectRow={handleSelectRow}
+                    />
+                );
+            }
+
+            if (item.status === facilityListItemStatusChoicesEnum.MATCHED
+                || item.status === facilityListItemStatusChoicesEnum.CONFIRMED_MATCH) {
+                return (
+                    <FacilityListItemsMatchTableRow
+                        key={item.row_index}
+                        rowIndex={item.row_index}
+                        countryCode={item.country_code}
+                        name={item.name}
+                        address={item.address}
+                        status={item.status}
+                        matchedFacility={item.matched_facility}
+                        handleSelectRow={handleSelectRow}
+                    />
+                );
+            }
+
+            return (
+                <FacilityListItemsTableRow
+                    key={item.row_index}
+                    rowIndex={item.row_index}
+                    countryCode={item.country_code}
+                    name={item.name}
+                    address={item.address}
+                    status={item.status}
+                    handleSelectRow={handleSelectRow}
+                    hover
+                />
+            );
+        });
+
     return (
         <Paper style={facilityListItemsTableStyles.containerStyles}>
             <div style={facilityListItemsTableStyles.tableWrapperStyles}>
                 <Table>
                     <TableHead>
                         {paginationControlsRow}
-                        <TableRow>
-                            <TableCell>
-                                CSV Row Index
-                            </TableCell>
-                            <TableCell>
-                                Country
-                            </TableCell>
-                            <TableCell>
-                                Name
-                            </TableCell>
-                            <TableCell>
-                                Address
-                            </TableCell>
-                            <TableCell>
-                                Status
-                            </TableCell>
-                        </TableRow>
+                        <FacilityListItemsTableRow
+                            rowIndex="CSV Row Index"
+                            countryCode="Country Code"
+                            name="Name"
+                            address="Address"
+                            status="Status"
+                            hover={false}
+                        />
                     </TableHead>
                     <TableBody>
-                        {
-                            paginatedItems
-                                .map(item => (
-                                    <TableRow
-                                        key={item.row_index}
-                                        hover
-                                    >
-                                        <TableCell>
-                                            {item.row_index}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.country_code}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.address}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.status}
-                                        </TableCell>
-                                    </TableRow>))
-                        }
+                        {tableRows}
                     </TableBody>
                     <TableFooter>
                         {paginationControlsRow}
@@ -149,6 +202,8 @@ FacilityListItemsTable.propTypes = {
     history: shape({
         push: func.isRequired,
     }).isRequired,
+    selectedFacilityListItemsRowIndex: number.isRequired,
+    makeSelectListItemTableRowFunction: func.isRequired,
 };
 
 function mapStateToProps({
@@ -156,11 +211,20 @@ function mapStateToProps({
         data: {
             items,
         },
+        selectedFacilityListItemsRowIndex,
     },
 }) {
     return {
         items,
+        selectedFacilityListItemsRowIndex,
     };
 }
 
-export default connect(mapStateToProps)(FacilityListItemsTable);
+function mapDispatchToProps(dispatch) {
+    return {
+        makeSelectListItemTableRowFunction: rowIndex =>
+            () => dispatch(setSelectedFacilityListItemsRowIndex(rowIndex)),
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FacilityListItemsTable);

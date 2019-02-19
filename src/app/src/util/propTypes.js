@@ -7,6 +7,7 @@ import {
     FEATURE,
     FEATURE_COLLECTION,
     POINT,
+    facilityMatchStatusChoicesEnum,
 } from './constants';
 
 export const registrationFormValuesPropType = shape({
@@ -30,6 +31,7 @@ export const registrationFormInputHandlersPropType = shape(Object
 export const userPropType = shape({
     email: string.isRequired,
     id: number.isRequired,
+    organization_id: number,
 });
 
 export const profileFormValuesPropType = shape(Object
@@ -47,6 +49,19 @@ export const tokenPropType = shape({
     created: string.isRequired,
 });
 
+export const facilityMatchPropType = shape({
+    id: number.isRequired,
+    status: oneOf(Object.values(facilityMatchStatusChoicesEnum)).isRquired,
+    confidence: number.isRequired,
+    oar_id: string.isRequired,
+    name: string.isRequired,
+    address: string.isRequired,
+    results: arrayOf(shape({
+        version: number.isRequired,
+        match_type: string.isRequired,
+    })),
+});
+
 export const facilityListItemPropType = shape({
     id: number.isRequired,
     row_index: number.isRequired,
@@ -54,14 +69,24 @@ export const facilityListItemPropType = shape({
     status: oneOf(Object.values(facilityListItemStatusChoicesEnum)).isRequired,
     processing_started_at: string,
     processing_completed_at: string,
-    processing_results: arrayOf(shape({})),
     name: string.isRequired,
     address: string.isRequired,
     country_code: string.isRequired,
     geocoded_point: string,
     geocoded_address: string,
     facility_list: number.isRequired,
-    facility: string,
+    processing_errors: arrayOf(string.isRequired),
+    matched_facility: shape({
+        oar_id: string.isRequired,
+        address: string.isRequired,
+        name: string.isRequired,
+    }),
+    matches: arrayOf(shape({
+        id: number.isRequired,
+        oar_id: string.isRequired,
+        address: string.isRequired,
+        name: string.isRequired,
+    }).isRequired),
 });
 
 export const facilityListPropType = shape({
@@ -122,3 +147,6 @@ export const filtersPropType = shape({
     contributorTypes: arrayOf(reactSelectOptionPropType).isRequired,
     countries: arrayOf(reactSelectOptionPropType).isRequired,
 });
+
+export const facilityListItemStatusPropType =
+    oneOf(Object.values(facilityListItemStatusChoicesEnum).concat('Status'));

@@ -218,7 +218,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 
         if len(contributor_types):
             type_match_facility_ids = [
-                int(match['facility__id'])
+                match['facility__id']
                 for match
                 in FacilityMatch
                 .objects
@@ -232,7 +232,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 
         if len(contributors):
             name_match_facility_ids = [
-                int(match['facility__id'])
+                match['facility__id']
                 for match
                 in FacilityMatch
                 .objects
