@@ -1,4 +1,4 @@
 ARG GIT_COMMIT=latest
-FROM openapparelregistry:${GIT_COMMIT}
+FROM openapparelregistry-app:${GIT_COMMIT}
 
 ENTRYPOINT []

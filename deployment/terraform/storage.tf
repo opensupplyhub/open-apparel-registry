@@ -9,10 +9,18 @@ resource "aws_s3_bucket" "logs" {
   }
 }
 
-module "ecr_repository" {
+module "ecr_repository_app" {
   source = "github.com/azavea/terraform-aws-ecr-repository?ref=0.1.0"
 
-  repository_name = "${lower(replace(var.project, " ", ""))}"
+  repository_name = "${lower(replace(var.project, " ", ""))}-app"
+
+  attach_lifecycle_policy = true
+}
+
+module "ecr_repository_batch" {
+  source = "github.com/azavea/terraform-aws-ecr-repository?ref=0.1.0"
+
+  repository_name = "${lower(replace(var.project, " ", ""))}-batch"
 
   attach_lifecycle_policy = true
 }

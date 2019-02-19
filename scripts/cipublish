@@ -28,9 +28,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             # is a docker login command with temporarily ECR credentials.
             eval "$(aws ecr get-login --no-include-email)"
 
-            docker tag "openapparelregistry:${GIT_COMMIT}" \
-                   "${OAR_AWS_ECR_ENDPOINT}/openapparelregistry:${GIT_COMMIT}"
-            docker push "${OAR_AWS_ECR_ENDPOINT}/openapparelregistry:${GIT_COMMIT}"
+            docker tag "openapparelregistry-app:${GIT_COMMIT}" \
+                   "${OAR_AWS_ECR_ENDPOINT}/openapparelregistry-app:${GIT_COMMIT}"
+            docker push "${OAR_AWS_ECR_ENDPOINT}/openapparelregistry-app:${GIT_COMMIT}"
+
+            docker tag "openapparelregistry-batch:${GIT_COMMIT}" \
+                   "${OAR_AWS_ECR_ENDPOINT}/openapparelregistry-batch:${GIT_COMMIT}"
+            docker push "${OAR_AWS_ECR_ENDPOINT}/openapparelregistry-batch:${GIT_COMMIT}"
         else
             echo "ERROR: No OAR_AWS_ECR_ENDPOINT variable defined."
             exit 1

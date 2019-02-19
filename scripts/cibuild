@@ -36,8 +36,9 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         # Build tagged container images
         GIT_COMMIT="${GIT_COMMIT}" docker-compose \
             -f docker-compose.yml \
+            -f docker-compose.batch.yml \
             -f docker-compose.ci.yml \
-            build django
+            build django batch
 
         # Make sure the database is up for Django tests
         docker-compose up -d database
