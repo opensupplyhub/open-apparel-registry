@@ -7,3 +7,5 @@ services:
     build:
       context: ./src/batch
       dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: "${GIT_COMMIT:-latest}"

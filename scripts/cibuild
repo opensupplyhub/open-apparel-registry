@@ -39,6 +39,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             -f docker-compose.ci.yml \
             build django
 
+        GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+            -f docker-compose.batch.yml \
+            build batch
+
         # Make sure the database is up for Django tests
         docker-compose up -d database
 
