@@ -449,6 +449,8 @@ class FacilityMatch(models.Model):
     CONFIRMED = 'CONFIRMED'
     REJECTED = 'REJECTED'
 
+    # These values must stay in sync with the `facilityMatchStatusChoicesEnum`
+    # in the client's constants.js file.
     STATUS_CHOICES = (
         (PENDING, PENDING),
         (AUTOMATIC, AUTOMATIC),
