@@ -8,6 +8,7 @@ class ProcessingAction:
     PARSE = 'parse'
     GEOCODE = 'geocode'
     MATCH = 'match'
+    SUBMIT_JOB = 'submitjob'
 
 
 class FacilitiesQueryParams:
