@@ -1,6 +1,4 @@
-import env from './env';
-
-export const MAPBOX_TOKEN = env('REACT_APP_MAPBOX_TOKEN');
+export const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 export const CIRCLE_COLOR = '#1A237E';
 export const CIRCLE_TEXT_COLOR = '#fff';
