@@ -5,6 +5,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
+                        FacilityMatch,
                         User,
                         Organization)
 
@@ -16,6 +17,7 @@ class UserSerializer(ModelSerializer):
     website = SerializerMethodField()
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
+    organization_id = SerializerMethodField()
 
     class Meta:
         model = User
@@ -62,6 +64,13 @@ class UserSerializer(ModelSerializer):
         except Organization.DoesNotExist:
             return None
 
+    def get_organization_id(self, user):
+        try:
+            user_organization = Organization.objects.get(admin=user)
+            return user_organization.id
+        except Organization.DoesNotExist:
+            return None
+
 
 class FacilityListSerializer(ModelSerializer):
     class Meta:
@@ -97,8 +106,63 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         return facility.contributors()
 
 
+class FacilityMatchSerializer(ModelSerializer):
+    oar_id = SerializerMethodField()
+    name = SerializerMethodField()
+    address = SerializerMethodField()
+
+    class Meta:
+        model = FacilityMatch
+        fields = ('id', 'status', 'confidence', 'results',
+                  'oar_id', 'name', 'address')
+
+    def get_oar_id(self, match):
+        return match.facility.id
+
+    def get_name(self, match):
+        return match.facility.name
+
+    def get_address(self, match):
+        return match.facility.address
+
+
 class FacilityListItemSerializer(ModelSerializer):
+    matches = SerializerMethodField()
+    processing_errors = SerializerMethodField()
+    matched_facility = SerializerMethodField()
+
     class Meta:
         model = FacilityListItem
         exclude = ('created_at', 'updated_at', 'geocoded_point',
-                   'geocoded_address')
+                   'geocoded_address', 'processing_results', 'facility')
+
+    def get_matches(self, facility_list_item):
+        return FacilityMatchSerializer(
+            facility_list_item.facilitymatch_set.order_by('id'),
+            many=True,
+        ).data
+
+    def get_processing_errors(self, facility_list_item):
+        if facility_list_item.status != FacilityListItem.ERROR:
+            return None
+
+        return [
+            processing_result['message']
+            for processing_result
+            in facility_list_item.processing_results
+            if processing_result['error']
+        ]
+
+    def get_matched_facility(self, facility_list_item):
+        # Currently this will return None for automatic matches because the
+        # matching method here
+        # https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/src/django/api/processing.py#L104
+        # doesn't set the facility for automatic matches
+        if facility_list_item.facility is None:
+            return None
+
+        return {
+            "oar_id": facility_list_item.facility.id,
+            "address": facility_list_item.facility.address,
+            "name": facility_list_item.facility.name,
+        }

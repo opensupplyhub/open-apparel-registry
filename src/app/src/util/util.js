@@ -297,3 +297,17 @@ export const makeFeatureCollectionFromSingleFeature = feature => Object.freeze({
         feature,
     ]),
 });
+
+export const createConfirmOrRejectMatchData = (listItemID, facilityMatchID) => Object.freeze({
+    list_item_id: listItemID,
+    facility_match_id: facilityMatchID,
+});
+
+export const createConfirmFacilityListItemMatchURL = listID =>
+    `/api/facility-lists/${listID}/confirm/`;
+
+export const createRejectFacilityListItemMatchURL = listID =>
+    `/api/facility-lists/${listID}/reject/`;
+
+export const makeMyFacilitiesRoute = organizationID =>
+    `/facilities/?contributors=${organizationID}`;

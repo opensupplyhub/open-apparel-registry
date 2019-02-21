@@ -181,7 +181,8 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content),
-            ['FacilityList 1 has already been replaced.'])
+            ['FacilityList {} has already been replaced.'
+                .format(response_json['id'])])
 
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 2)
@@ -465,64 +466,13 @@ class FacilityListItemMatchingTest(TestCase):
             ('Items to be matched must be in the GEOCODED status',)
         )
 
-    def test_creates_a_facility_and_match(self):
-        self.assertEqual(Facility.objects.all().count(), 0)
-        item = FacilityListItem(address='1234 Main St', country_code='US',
-                                name='Shirts!', geocoded_point=Point(0, 0),
-                                status=FacilityListItem.GEOCODED,
-                                geocoded_address='1234 Main St, Anytown USA')
-        facility, match = match_facility_list_item(item)
-        self.assertEqual(FacilityListItem.MATCHED, item.status)
-
-        self.assertIsNotNone(facility)
-        self.assertEqual('', facility.pk)
-        self.assertEqual(item, facility.created_from)
-        self.assertEqual(item.geocoded_address, facility.address)
-        self.assertEqual(item.country_code, facility.country_code)
-        self.assertEqual(item.name, facility.name)
-
-        self.assertIsNotNone(match)
-        self.assertIsNone(match.pk)
-        self.assertEqual(match.facility_list_item, item)
-        self.assertEqual(match.facility, facility)
-        self.assertEqual(FacilityMatch.AUTOMATIC, match.status)
-        self.assertEqual(1.0, match.confidence)
+    def test_creates_a_list_of_matches(self):
+        # TODO: restore this test as we build the new matching algorithm
+        pass
 
     def test_matches_existing_facility(self):
-        self.assertEqual(Facility.objects.all().count(), 0)
-        user = User.objects.create(email='foo@bar.com')
-        user.save()
-        org = Organization(name='Foo', admin=user)
-        org.save()
-        list_1 = FacilityList(header='', organization=org)
-        list_1.save()
-        item_1 = FacilityListItem(raw_data='', row_index=0,
-                                  address='1234 Main St', country_code='US',
-                                  name='Shirts!', geocoded_point=Point(0, 0),
-                                  status=FacilityListItem.GEOCODED,
-                                  geocoded_address='1234 Main St, Anytown USA',
-                                  facility_list=list_1)
-        item_1.save()
-        facility_1, match_1 = match_facility_list_item(item_1)
-        facility_1.save()
-        match_1.facility = facility_1
-        match_1.save()
-        item_2 = FacilityListItem(row_index=1,
-                                  address='1234 Main St', country_code='US',
-                                  name='Shirts!', geocoded_point=Point(0, 0),
-                                  status=FacilityListItem.GEOCODED,
-                                  geocoded_address='1234 Main St, Anytown USA')
-        facility_2, match_2 = match_facility_list_item(item_2)
-
-        self.assertIsNotNone(facility_2)
-        self.assertEqual(facility_2.pk, facility_1.pk)
-        self.assertEqual(item_1.pk, facility_2.created_from.pk)
-
-        self.assertIsNotNone(match_2)
-        self.assertEqual(match_2.facility_list_item, item_2)
-        self.assertEqual(match_2.facility, facility_1)
-        self.assertEqual(FacilityMatch.AUTOMATIC, match_2.status)
-        self.assertEqual(1.0, match_2.confidence)
+        # TODO: restore this test as we build the new matching algorithm
+        pass
 
 
 class FacilityNamesAddressesAndContributorsTest(TestCase):
@@ -706,3 +656,268 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.assertIn(contributor_one, contributors)
         self.assertNotIn(contributor_two, contributors)
         self.assertEqual(len(contributors), 1)
+
+
+class ConfirmAndRejectFacilityMatchTest(TestCase):
+    def setUp(self):
+        self.country_code = 'US'
+
+        self.prior_user_name = 'prior_user_name'
+        self.prior_user_email = 'prioruser@example.com'
+        self.prior_org_name = 'prior_org_name'
+        self.prior_list_name = 'prior_list_name'
+        self.prior_user = User.objects.create(email=self.prior_user_email)
+        self.prior_address_one = 'prior_address_one'
+        self.prior_address_two = 'prior_address_two'
+        self.prior_name_one = 'prior_name_one'
+        self.prior_name_two = 'prior_name_two'
+
+        self.prior_org = Organization \
+            .objects \
+            .create(admin=self.prior_user,
+                    name=self.prior_org_name,
+                    org_type=Organization.OTHER_ORG_TYPE)
+
+        self.prior_list = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name=self.prior_list_name,
+                    is_active=True,
+                    is_public=True,
+                    organization=self.prior_org)
+
+        self.prior_list_item_one = FacilityListItem \
+            .objects \
+            .create(name=self.prior_name_one,
+                    address=self.prior_address_one,
+                    country_code=self.country_code,
+                    facility_list=self.prior_list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.prior_facility_one = Facility \
+            .objects \
+            .create(name=self.prior_list_item_one.name,
+                    address=self.prior_list_item_one.address,
+                    country_code=self.country_code,
+                    location=Point(0, 0),
+                    created_from=self.prior_list_item_one)
+
+        self.prior_facility_match_one = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.prior_facility_one,
+                    results="",
+                    facility_list_item=self.prior_list_item_one)
+
+        self.prior_list_item_two = FacilityListItem \
+            .objects \
+            .create(name=self.prior_name_two,
+                    address=self.prior_address_two,
+                    country_code=self.country_code,
+                    facility_list=self.prior_list,
+                    row_index=2,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.prior_facility_two = Facility \
+            .objects \
+            .create(name=self.prior_list_item_two.name,
+                    address=self.prior_list_item_two.address,
+                    country_code=self.country_code,
+                    location=Point(0, 0),
+                    created_from=self.prior_list_item_two)
+
+        self.prior_facility_match_one = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.prior_facility_two,
+                    results="",
+                    facility_list_item=self.prior_list_item_one)
+
+        self.current_user_name = 'current_user_name'
+        self.current_user_email = 'currentuser@example.com'
+        self.current_org_name = 'current_org_name'
+        self.current_list_name = 'current_list_name'
+        self.current_user = User.objects.create(email=self.current_user_email)
+        self.current_user_password = "password123"
+        self.current_user.set_password(self.current_user_password)
+        self.current_user.save()
+
+        self.current_address = 'current_address'
+        self.current_name = 'current_name'
+
+        self.current_org = Organization \
+            .objects \
+            .create(admin=self.current_user,
+                    name=self.current_org_name,
+                    org_type=Organization.OTHER_ORG_TYPE)
+
+        self.current_list = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name=self.current_list_name,
+                    is_active=True,
+                    is_public=True,
+                    organization=self.current_org)
+
+        self.current_list_item = FacilityListItem \
+            .objects \
+            .create(name=self.current_name,
+                    address=self.current_address,
+                    country_code=self.country_code,
+                    facility_list=self.current_list,
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.POTENTIAL_MATCH)
+
+        self.potential_facility_match_one = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.PENDING,
+                    facility=self.prior_facility_one,
+                    results="",
+                    facility_list_item=self.current_list_item)
+
+        self.potential_facility_match_two = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.PENDING,
+                    facility=self.prior_facility_two,
+                    results="",
+                    facility_list_item=self.current_list_item)
+
+        self.client.login(email=self.current_user_email,
+                          password=self.current_user_password)
+
+        self.confirm_url = '/api/facility-lists/{}/confirm/' \
+            .format(self.current_list.id)
+
+        self.reject_url = '/api/facility-lists/{}/reject/' \
+            .format(self.current_list.id)
+
+    def test_confirming_match_rejects_other_potential_matches(self):
+        confirm_response = self.client.post(
+            self.confirm_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        rejected_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_two.id)
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(confirmed_match.status, FacilityMatch.CONFIRMED)
+        self.assertEqual(rejected_match.status, FacilityMatch.REJECTED)
+
+    def test_confirming_match_changes_list_item_status(self):
+        confirm_response = self.client.post(
+            self.confirm_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        updated_list_item = FacilityListItem \
+            .objects \
+            .get(pk=self.current_list_item.id)
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(updated_list_item.status,
+                         FacilityListItem.CONFIRMED_MATCH)
+
+    def test_confirming_match_doesnt_create_new_facility(self):
+        confirm_response = self.client.post(
+            self.confirm_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        facilities = Facility.objects.all()
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(facilities.count(), 2)
+
+    def test_rejecting_last_potential_match_changes_list_item_status(self):
+        reject_response_one = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        reject_response_two = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_two.id},
+        )
+
+        self.assertEqual(reject_response_one.status_code, 200)
+        self.assertEqual(reject_response_two.status_code, 200)
+
+        updated_list_item = FacilityListItem \
+            .objects \
+            .get(pk=self.current_list_item.id)
+
+        self.assertEqual(updated_list_item.status,
+                         FacilityListItem.CONFIRMED_MATCH)
+
+    def test_rejecting_one_of_several_matches_changes_match_to_rejected(self):
+        reject_response_one = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        self.assertEqual(reject_response_one.status_code, 200)
+
+        updated_potential_match_one = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        self.assertEqual(updated_potential_match_one.status,
+                         FacilityMatch.REJECTED)
+
+        updated_potential_match_two = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_two.id)
+
+        self.assertEqual(updated_potential_match_two.status,
+                         FacilityMatch.PENDING)
+
+    def test_rejecting_one_of_several_matches_doesnt_change_item_status(self):
+        reject_response_one = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        self.assertEqual(reject_response_one.status_code, 200)
+
+        updated_list_item = FacilityListItem \
+            .objects \
+            .get(pk=self.current_list_item.id)
+
+        self.assertEqual(updated_list_item.status,
+                         FacilityListItem.POTENTIAL_MATCH)
+
+    def test_rejecting_last_potential_match_creates_new_facility(self):
+        reject_response_one = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        reject_response_two = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_two.id},
+        )
+
+        self.assertEqual(reject_response_one.status_code, 200)
+        self.assertEqual(reject_response_two.status_code, 200)
+
+        facilities = Facility.objects.all()
+        self.assertEqual(facilities.count(), 3)

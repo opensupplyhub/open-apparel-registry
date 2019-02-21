@@ -244,3 +244,12 @@ export const rowsPerPageOptions = Object.freeze([
 export const FEATURE = 'Feature';
 export const POINT = 'Point';
 export const FEATURE_COLLECTION = 'FeatureCollection';
+
+// These values must be kept in sync with the tuple of STATUS_CHOICES
+// declared on the API's FacilityMatch model.
+export const facilityMatchStatusChoicesEnum = Object.freeze({
+    PENDING: 'PENDING',
+    AUTOMATIC: 'AUTOMATIC',
+    CONFIRMED: 'CONFIRMED',
+    REJECTED: 'REJECTED',
+});

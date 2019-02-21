@@ -17,6 +17,8 @@ import {
     authRegisterFormRoute,
 } from '../util/constants';
 
+import { makeMyFacilitiesRoute } from '../util/util';
+
 const componentStyles = Object.freeze({
     containerStyle: Object.freeze({
         display: 'flex',
@@ -59,6 +61,13 @@ const createUserDropdownLinks = (user, logoutAction) => Object.freeze([
     Object.freeze({
         text: 'My Lists',
         url: '/lists',
+        type: 'link',
+    }),
+    Object.freeze({
+        text: 'My Facilities',
+        url: user.organization_id
+            ? makeMyFacilitiesRoute(user.organization_id)
+            : '/facilities',
         type: 'link',
     }),
     Object.freeze({

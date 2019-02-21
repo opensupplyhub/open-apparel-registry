@@ -11,7 +11,9 @@ from rest_framework.exceptions import (ValidationError,
                                        NotFound,
                                        AuthenticationFailed)
 from rest_framework.generics import CreateAPIView
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (api_view,
+                                       permission_classes,
+                                       action)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -216,7 +218,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 
         if len(contributor_types):
             type_match_facility_ids = [
-                int(match['facility__id'])
+                match['facility__id']
                 for match
                 in FacilityMatch
                 .objects
@@ -230,7 +232,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 
         if len(contributors):
             name_match_facility_ids = [
-                int(match['facility__id'])
+                match['facility__id']
                 for match
                 in FacilityMatch
                 .objects
@@ -399,4 +401,130 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
             return Response(response_data)
         except FacilityList.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='confirm')
+    def confirm_match(self, request, pk=None):
+        try:
+            list_item_id = request.data.get('list_item_id', None)
+            facility_match_id = request.data.get('facility_match_id', None)
+
+            if list_item_id is None:
+                raise ValidationError('missing required list_item_id')
+
+            if facility_match_id is None:
+                raise ValidationError('missing required facility_match_id')
+
+            user_organization = request.user.organization
+            facility_list = FacilityList \
+                .objects \
+                .filter(organization=user_organization) \
+                .get(pk=pk)
+            facility_list_item = FacilityListItem \
+                .objects \
+                .filter(facility_list=facility_list) \
+                .get(pk=list_item_id)
+            facility_match = FacilityMatch \
+                .objects \
+                .filter(facility_list_item=facility_list_item) \
+                .get(pk=facility_match_id)
+
+            if facility_list_item.status != FacilityListItem.POTENTIAL_MATCH:
+                raise ValidationError(
+                    'facility list item status must be POTENTIAL_MATCH')
+
+            if facility_match.status != FacilityMatch.PENDING:
+                raise ValidationError('facility match status must be PENDING')
+
+            facility_match.status = FacilityMatch.CONFIRMED
+            facility_match.save()
+
+            FacilityMatch \
+                .objects \
+                .filter(facility_list_item=facility_list_item) \
+                .exclude(pk=facility_match_id) \
+                .update(status=FacilityMatch.REJECTED)
+
+            facility_list_item.status = FacilityListItem.CONFIRMED_MATCH
+            facility_list_item.facility = facility_match.facility
+            facility_list_item.save()
+
+            response_data = FacilityListItemSerializer(facility_list_item).data
+            return Response(response_data)
+        except FacilityList.DoesNotExist:
+            raise NotFound()
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='reject')
+    def reject_match(self, request, pk=None):
+        try:
+            list_item_id = request.data.get('list_item_id', None)
+            facility_match_id = request.data.get('facility_match_id', None)
+
+            if list_item_id is None:
+                raise ValidationError('missing required list_item_id')
+
+            if facility_match_id is None:
+                raise ValidationError('missing required facility_match_id')
+
+            user_organization = request.user.organization
+            facility_list = FacilityList \
+                .objects \
+                .filter(organization=user_organization) \
+                .get(pk=pk)
+            facility_list_item = FacilityListItem \
+                .objects \
+                .filter(facility_list=facility_list) \
+                .get(pk=list_item_id)
+            facility_match = FacilityMatch \
+                .objects \
+                .filter(facility_list_item=facility_list_item) \
+                .get(pk=facility_match_id)
+
+            if facility_list_item.status != FacilityListItem.POTENTIAL_MATCH:
+                raise ValidationError(
+                    'facility list item status must be POTENTIAL_MATCH')
+
+            if facility_match.status != FacilityMatch.PENDING:
+                raise ValidationError('facility match status must be PENDING')
+
+            facility_match.status = FacilityMatch.REJECTED
+            facility_match.save()
+
+            remaining_potential_matches = FacilityMatch \
+                .objects \
+                .filter(facility_list_item=facility_list_item) \
+                .filter(status=FacilityMatch.PENDING)
+
+            # Create a new facility if no potential matches remain
+            if remaining_potential_matches.count() == 0:
+                new_facility = Facility \
+                    .objects \
+                    .create(name=facility_list_item.name,
+                            address=facility_list_item.address,
+                            country_code=facility_list_item.country_code,
+                            location=facility_list_item.geocoded_point,
+                            created_from=facility_list_item)
+
+                facility_list_item.facility = new_facility
+
+                facility_list_item.status = FacilityListItem.CONFIRMED_MATCH
+                facility_list_item.save()
+
+            response_data = FacilityListItemSerializer(facility_list_item).data
+            return Response(response_data)
+        except FacilityList.DoesNotExist:
+            raise NotFound()
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
             raise NotFound()

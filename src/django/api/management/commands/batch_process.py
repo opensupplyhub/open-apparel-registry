@@ -76,13 +76,18 @@ class Command(BaseCommand):
             try:
                 with transaction.atomic():
                     if action == ProcessingAction.MATCH:
-                        facility, match = process(item)
+                        matches = process(item)
                         item.save()
-                        facility.save()
-                        # Assign facility to match after it has been
-                        # saved and assigned an ID
-                        match.facility = facility
-                        match.save()
+
+                        if len(matches) == 1:
+                            [match] = matches
+
+                            if match.facility.created_from == item:
+                                item.facility = match.facility
+                                item.save()
+                            elif match.confidence == 1.0:
+                                item.facility = match.facility
+                                item.save()
                     else:
                         process(item)
                         item.save()

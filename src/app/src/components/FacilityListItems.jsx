@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link, Switch, Route } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
 import AppGrid from './AppGrid';
 import FacilityListItemsEmpty from './FacilityListItemsEmpty';
@@ -22,14 +23,23 @@ import {
 import { facilityListPropType } from '../util/propTypes';
 
 const facilityListItemsStyles = Object.freeze({
-    subheaderStyles: Object.freeze({
+    headerStyles: Object.freeze({
         display: 'flex',
         justifyContent: 'space-between',
-        width: '100%',
         padding: '0.5rem',
         marginBottom: '0.5rem',
+        marginTop: '60px',
         alignContent: 'center',
         alignItems: 'center',
+    }),
+    tableStyles: Object.freeze({
+        minWidth: '85%',
+        width: '90%',
+    }),
+    tableTitleStyles: Object.freeze({
+        fontFamily: 'Roboto',
+        fontWeight: 'normal',
+        fontSize: '32px',
     }),
     descriptionStyles: Object.freeze({
         marginBottm: '30px',
@@ -85,33 +95,44 @@ class FacilityListItems extends Component {
         }
 
         return (
-            <AppGrid title={data.name || data.id}>
-                <div style={facilityListItemsStyles.subheaderStyles}>
-                    <Typography
-                        variant="subheading"
-                        style={facilityListItemsStyles.descriptionStyles}
-                    >
-                        {data.description || ''}
-                    </Typography>
-                    <Link
-                        to={listsRoute}
-                        href={listsRoute}
-                    >
-                        Back to lists
-                    </Link>
-                </div>
-                {
-                    data.items.length
-                        ? (
-                            <Switch>
-                                <Route
-                                    path={facilityListItemsRoute}
-                                    component={FacilityListItemsTable}
-                                />
-                            </Switch>)
-                        : <FacilityListItemsEmpty />
-                }
-            </AppGrid>
+            <Grid
+                container
+                justify="center"
+            >
+                <Grid
+                    item
+                    style={facilityListItemsStyles.tableStyles}
+                >
+                    <div style={facilityListItemsStyles.headerStyles}>
+                        <h2 style={facilityListItemsStyles.titleStyles}>
+                            {data.name || data.id}
+                        </h2>
+                        <Typography
+                            variant="subheading"
+                            style={facilityListItemsStyles.descriptionStyles}
+                        >
+                            {data.description || ''}
+                        </Typography>
+                        <Link
+                            to={listsRoute}
+                            href={listsRoute}
+                        >
+                            Back to lists
+                        </Link>
+                    </div>
+                    {
+                        data.items.length
+                            ? (
+                                <Switch>
+                                    <Route
+                                        path={facilityListItemsRoute}
+                                        component={FacilityListItemsTable}
+                                    />
+                                </Switch>)
+                            : <FacilityListItemsEmpty />
+                    }
+                </Grid>
+            </Grid>
         );
     }
 }

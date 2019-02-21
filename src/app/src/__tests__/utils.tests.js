@@ -37,6 +37,10 @@ const {
     createPaginationOptionsFromQueryString,
     makeReportADataIssueEmailLink,
     makeFeatureCollectionFromSingleFeature,
+    createConfirmOrRejectMatchData,
+    createConfirmFacilityListItemMatchURL,
+    createRejectFacilityListItemMatchURL,
+    makeMyFacilitiesRoute,
 } = require('../util/util');
 
 const {
@@ -645,4 +649,35 @@ it('creates a geojson FeatureCollection from a single geojson Feature', () => {
         makeFeatureCollectionFromSingleFeature(feature),
         expectedFeatureCollection,
     )).toBe(true);
+});
+
+it('creates POST data for confirming or rejecting a facility list item match', () => {
+    const listItem = 'listItem';
+    const facilityMatch = 'facilityMatch';
+
+    const expectedMatch = {
+        list_item_id: listItem,
+        facility_match_id: facilityMatch,
+    };
+
+    expect(isEqual(
+        createConfirmOrRejectMatchData(listItem, facilityMatch),
+        expectedMatch,
+    )).toBe(true);
+});
+
+it('creates URLs for confirming or rejecting a facility list item match', () => {
+    const list = 'list';
+    const expectedConfirmURL = '/api/facility-lists/list/confirm/';
+    const expectedRejectURL = '/api/facility-lists/list/reject/';
+
+    expect(createConfirmFacilityListItemMatchURL(list)).toBe(expectedConfirmURL);
+    expect(createRejectFacilityListItemMatchURL(list)).toBe(expectedRejectURL);
+});
+
+it('creates a link to see facilities for a contributor ID', () => {
+    const contributor = 'contributor';
+    const expectedFacilitiesRoute = '/facilities/?contributors=contributor';
+
+    expect(makeMyFacilitiesRoute(contributor)).toBe(expectedFacilitiesRoute);
 });
