@@ -46,6 +46,28 @@ resource "aws_iam_role_policy" "ses_send_email" {
   policy = "${data.aws_iam_policy_document.ses_send_email.json}"
 }
 
+data "aws_iam_policy_document" "batch_describe_and_submit" {
+  statement {
+    effect = "Allow"
+
+    resources = ["*"]
+    actions = [
+      "batch:DescribeJobQueues",
+      "batch:DescribeJobs",
+      "batch:DescribeJobDefinitions",
+      "batch:DescribeComputeEnvironments",
+      "batch:SubmitJob"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "batch_describe_and_submit" {
+  name   = "BatchDescribeAndSubmit"
+  role   = "${aws_iam_role.app_task_role.name}"
+  policy = "${data.aws_iam_policy_document.batch_describe_and_submit.json}"
+}
+
+
 #
 # EC2 IAM resources
 #
