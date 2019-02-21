@@ -36,7 +36,8 @@
     -->
     <script>
       if (window.ENVIRONMENT &&
-          window.ENVIRONMENT.REACT_APP_ROLLBAR_CLIENT_SIDE_ACCESS_TOKEN) {
+          window.ENVIRONMENT.REACT_APP_ROLLBAR_CLIENT_SIDE_ACCESS_TOKEN &&
+          window.ENVIRONMENT.ENVIRONMENT !== 'development') {
         var _rollbarConfig = {
           accessToken: window.ENVIRONMENT.REACT_APP_ROLLBAR_CLIENT_SIDE_ACCESS_TOKEN,
           captureUncaught: true,
