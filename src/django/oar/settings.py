@@ -35,6 +35,10 @@ if ENVIRONMENT not in VALID_ENVIRONMENTS:
         'Invalid ENVIRONMENT provided, must be one of {}'
         .format(VALID_ENVIRONMENTS))
 
+# A non-empty value of BATCH_MODE signals that we will only be running batch
+# processing management commands
+BATCH_MODE = os.getenv('BATCH_MODE', '')
+
 LOGLEVEL = os.getenv('DJANGO_LOG_LEVEL', 'INFO')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -46,7 +50,7 @@ ALLOWED_HOSTS = [
     '.openapparel.org'
 ]
 
-if ENVIRONMENT in ['Production', 'Staging']:
+if ENVIRONMENT in ['Production', 'Staging'] and BATCH_MODE == '':
     # Within EC2, the Elastic Load Balancer HTTP health check will use the
     # target instance's private IP address for the Host header.
     #

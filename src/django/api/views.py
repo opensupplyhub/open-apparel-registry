@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_auth.views import LoginView, LogoutView
 
-from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES
+from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import CsvHeaderField, FacilitiesQueryParams
 from api.models import (FacilityList,
@@ -34,6 +34,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilitySerializer,
                              UserSerializer)
 from api.countries import COUNTRY_CHOICES
+from api.aws_batch import submit_jobs
 
 
 @permission_classes((AllowAny,))
@@ -368,6 +369,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 raw_data=line.decode().rstrip()
             )
             new_item.save()
+
+        if ENVIRONMENT in ('Staging', 'Production'):
+            submit_jobs(ENVIRONMENT, new_list)
 
         serializer = self.get_serializer(new_list)
         return Response(serializer.data)
