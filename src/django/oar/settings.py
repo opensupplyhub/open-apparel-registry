@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'watchman',
     'api',
+    'web',
 ]
 
 # For allauth

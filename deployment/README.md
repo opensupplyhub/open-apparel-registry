@@ -62,13 +62,15 @@ bastion_instance_type = "t3.nano"
 
 google_geocoding_api_key = ""
 
+rollbar_server_side_access_token = ""
+rollbar_client_side_access_token = ""
+
 django_secret_key = "secret"
 
 rds_database_identifier = "openapparelregistry"
 rds_database_name = "openapparelregistry"
 rds_database_username = "openapparelregistry"
 rds_database_password = "password"
-
 ```
 
 This file lives at `s3://openapparelregistry-staging-config-us-east-1/terraform/terraform.tfvars`.

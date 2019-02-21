@@ -24,6 +24,11 @@ class ErrorBoundary extends Component {
 
     componentDidCatch(error) {
         this.setState({ error });
+
+        // Report error to Rollbar
+        if (window.Rollbar) {
+            window.Rollbar.error(error);
+        }
     }
 
     // To decode this later, just run "atob(hashedStringHere)"

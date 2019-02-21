@@ -29,7 +29,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             yarn install
 
         # Build static asset bundle for React frontend
-        docker-compose \
+        REACT_APP_GIT_COMMIT="${GIT_COMMIT}" docker-compose \
             run --rm --no-deps app \
             yarn run build
 
