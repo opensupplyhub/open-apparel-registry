@@ -2,6 +2,7 @@ import csv
 import traceback
 
 from datetime import datetime
+from random import sample
 
 from django.contrib.gis.geos import Point
 
@@ -102,23 +103,98 @@ def match_facility_list_item(item):
     if item.status != FacilityListItem.GEOCODED:
         raise ValueError('Items to be matched must be in the GEOCODED status')
     try:
-        matches = Facility.objects.filter(
-            country_code=item.country_code, name__iexact=item.name,
-            address__iexact=item.geocoded_address)
-        if matches.count() == 0:
+        facilities_queryset = Facility.objects.all()
+
+        if facilities_queryset.count() == 0:
             facility = Facility(name=item.name, address=item.geocoded_address,
                                 country_code=item.country_code,
                                 location=item.geocoded_point,
                                 created_from=item)
+
+            facility.save()
+
+            match = FacilityMatch(facility_list_item=item,
+                                  facility=facility,
+                                  results={
+                                     'version': '0', 'match_type': 'exact'
+                                  },
+                                  confidence=1.0,
+                                  status=FacilityMatch.AUTOMATIC)
+
+            match.save()
+
+            item.status = FacilityListItem.MATCHED
+
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': started,
+                'error': False,
+                'finished_at': str(datetime.utcnow()),
+            })
+
+            return [match]
+        elif item.id % 4 == 0:
+            facility_ids = [
+                f.id
+                for f
+                in Facility.objects.all()
+            ]
+
+            number_of_matches = min(4, len(facility_ids))
+            facility_ids_to_match = sample(facility_ids, number_of_matches)
+
+            facilities_queryset = Facility \
+                .objects \
+                .filter(id__in=facility_ids_to_match)
+
+            matches = []
+            for f in facilities_queryset:
+                match = FacilityMatch \
+                    .objects \
+                    .create(facility_list_item=item,
+                            facility=f,
+                            results={
+                                'version': '0',
+                                'match_type': 'random',
+                            },
+                            confidence=0.1,
+                            status=FacilityMatch.PENDING)
+                match.save()
+                matches.append(match)
+
+            item.status = FacilityListItem.POTENTIAL_MATCH
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': started,
+                'error': False,
+                'finished_at': str(datetime.utcnow()),
+            })
+
+            return matches
+
+        matches = Facility.objects.filter(
+            country_code=item.country_code, name__iexact=item.name,
+            address__iexact=item.geocoded_address)
+
+        if matches.count() == 0:
+            facility = Facility(name=item.name,
+                                address=item.geocoded_address,
+                                country_code=item.country_code,
+                                location=item.geocoded_point,
+                                created_from=item)
+            facility.save()
         else:
             facility = matches[0]
 
-        match = FacilityMatch(facility_list_item=item, facility=facility,
+        match = FacilityMatch(facility_list_item=item,
+                              facility=facility,
                               results={
                                   'version': '0', 'match_type': 'exact'
                               },
                               confidence=1.0,
                               status=FacilityMatch.AUTOMATIC)
+
+        match.save()
 
         item.status = FacilityListItem.MATCHED
         item.processing_results.append({
@@ -127,7 +203,8 @@ def match_facility_list_item(item):
             'error': False,
             'finished_at': str(datetime.utcnow()),
         })
-        return facility, match
+
+        return [match]
     except Exception as e:
         item.status = FacilityListItem.ERROR
         item.processing_results.append({
