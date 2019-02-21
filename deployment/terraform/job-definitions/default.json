@@ -12,7 +12,6 @@
       { "name": "DJANGO_ENV", "value": "${environment}" },
       { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
       { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" },
-      { "name": "REACT_APP_ROLLBAR_CLIENT_SIDE_ACCESS_TOKEN", "value": "${rollbar_client_side_access_token}" },
       { "name": "BATCH_MODE", "value": "True" }
   ]
 }
