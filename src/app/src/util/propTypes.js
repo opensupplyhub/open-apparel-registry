@@ -72,6 +72,7 @@ export const facilityListItemPropType = shape({
     name: string.isRequired,
     address: string.isRequired,
     country_code: string.isRequired,
+    country_name: string.isRequired,
     geocoded_point: string,
     geocoded_address: string,
     facility_list: number.isRequired,

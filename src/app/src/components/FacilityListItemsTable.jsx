@@ -110,7 +110,7 @@ function FacilityListItemsTable({
                     <FacilityListItemsTableRow
                         key={item.row_index}
                         rowIndex={item.row_index}
-                        countryCode={item.country_code}
+                        countryName={item.country_name}
                         name={item.name}
                         address={item.address}
                         status={item.status}
@@ -125,7 +125,7 @@ function FacilityListItemsTable({
                     <FacilityListItemsErrorTableRow
                         key={item.row_index}
                         rowIndex={item.row_index}
-                        countryCode={item.country_code}
+                        countryName={item.country_name}
                         name={item.name}
                         address={item.address}
                         status={item.status}
@@ -141,7 +141,7 @@ function FacilityListItemsTable({
                     <FacilityListItemsMatchTableRow
                         key={item.row_index}
                         rowIndex={item.row_index}
-                        countryCode={item.country_code}
+                        countryName={item.country_name}
                         name={item.name}
                         address={item.address}
                         status={item.status}
@@ -155,7 +155,7 @@ function FacilityListItemsTable({
                 <FacilityListItemsTableRow
                     key={item.row_index}
                     rowIndex={item.row_index}
-                    countryCode={item.country_code}
+                    countryName={item.country_name}
                     name={item.name}
                     address={item.address}
                     status={item.status}
@@ -173,7 +173,7 @@ function FacilityListItemsTable({
                         {paginationControlsRow}
                         <FacilityListItemsTableRow
                             rowIndex="CSV Row Index"
-                            countryCode="Country Code"
+                            countryName="Country Name"
                             name="Name"
                             address="Address"
                             status="Status"

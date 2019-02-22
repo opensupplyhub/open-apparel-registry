@@ -18,7 +18,7 @@ const propsAreEqual = (prevProps, nextProps) =>
 
 const FacilityListItemsTableRow = memo(({
     rowIndex,
-    countryCode,
+    countryName,
     name,
     address,
     status,
@@ -44,9 +44,9 @@ const FacilityListItemsTableRow = memo(({
         <TableCell
             align="center"
             padding="dense"
-            style={listTableCellStyles.countryCodeStyles}
+            style={listTableCellStyles.countryNameStyles}
         >
-            {countryCode}
+            {countryName}
         </TableCell>
         <TableCell
             padding="none"
@@ -76,7 +76,7 @@ FacilityListItemsTableRow.defaultProps = {
 
 FacilityListItemsTableRow.propTypes = {
     rowIndex: oneOfType([number, string]).isRequired,
-    countryCode: string.isRequired,
+    countryName: string.isRequired,
     name: string.isRequired,
     status: facilityListItemStatusPropType.isRequired,
     hover: bool,
