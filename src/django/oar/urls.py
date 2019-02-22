@@ -32,6 +32,7 @@ router.register('facilities', views.FacilitiesViewSet, 'facility')
 
 
 urlpatterns = [
+    url(r'^', include('django.contrib.auth.urls')),
     url(r'^web/environment\.js', environment, name='environment'),
     url(r'^api/', include(router.urls)),
     path('admin/', admin.site.urls),
@@ -54,11 +55,4 @@ urlpatterns = [
     url(r'^api/contributor-types/', views.all_contributor_types,
         name='all_contributor_types'),
     url(r'^api/countries/', views.all_countries, name='all_countries'),
-    # TODO: Remove the following URLs once the Django versions have been
-    # implemented. These are here as imitations of the URLs available via
-    # the legacy Restify API:
-    url(r'getList/', views.get_list, name='get_list'),
-    url(r'confirmTemp/', views.confirm_temp, name='confirm_temp'),
-    url(r'updateSourceName/', views.update_source_name,
-        name='update_source_name'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -104,6 +104,8 @@ AUTH_USER_MODEL = 'api.User'
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'api.serializers.UserSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'api.serializers.UserPasswordResetSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'api.serializers.UserPasswordResetConfirmSerializer',
 }
 
 REST_FRAMEWORK = {

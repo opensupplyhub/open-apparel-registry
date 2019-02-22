@@ -11,9 +11,9 @@ import {
     startSessionLogin,
     failSessionLogin,
     completeSessionLogin,
-    startSubmitForgotPassword,
-    failSubmitForgotPassword,
-    completeSubmitForgotPassword,
+    startRequestForgotPasswordEmail,
+    failRequestForgotPasswordEmail,
+    completeRequestForgotPasswordEmail,
     startSubmitLogOut,
     failSubmitLogOut,
     completeSubmitLogOut,
@@ -25,6 +25,14 @@ import {
     updateForgotPasswordEmailAddress,
     resetAuthFormState,
     resetAuthState,
+    updateResetPasswordFormUID,
+    updateResetPasswordFormToken,
+    updateResetPasswordFormPassword,
+    updateResetPasswordFormPasswordConfirmation,
+    startSubmitResetPasswordForm,
+    failSubmitResetPasswordForm,
+    completeSubmitResetPasswordForm,
+    resetResetPasswordFormState,
 } from '../actions/auth';
 
 import { registrationFieldsEnum } from '../util/constants';
@@ -55,6 +63,17 @@ const initialState = Object.freeze({
             email: '',
         }),
         dialogIsOpen: false,
+        error: null,
+        fetching: false,
+    }),
+    resetPassword: Object.freeze({
+        uid: null,
+        token: null,
+        newPassword: '',
+        newPasswordConfirmation: '',
+        fetching: false,
+        error: null,
+        confirmationResponse: false,
     }),
     user: Object.freeze({
         user: null,
@@ -104,21 +123,31 @@ export default createReducer({
         },
     }),
     [updateForgotPasswordEmailAddress]: (state, payload) => update(state, {
-        error: { $set: null },
         forgotPassword: {
             form: {
                 email: { $set: payload },
             },
+            error: { $set: null },
         },
     }),
     [startSubmitSignUpForm]: startFetching,
     [startSubmitLoginForm]: startFetching,
     [startSubmitLogOut]: startFetching,
-    [startSubmitForgotPassword]: startFetching,
+    [startRequestForgotPasswordEmail]: state => update(state, {
+        forgotPassword: {
+            fetching: { $set: true },
+            error: { $set: null },
+        },
+    }),
     [failSubmitSignUpForm]: failFetching,
     [failSubmitLoginForm]: failFetching,
     [failSubmitLogOut]: failFetching,
-    [failSubmitForgotPassword]: failFetching,
+    [failRequestForgotPasswordEmail]: (state, payload) => update(state, {
+        forgotPassword: {
+            fetching: { $set: false },
+            error: { $set: payload },
+        },
+    }),
     [completeSubmitSignUpForm]: state => update(state, {
         fetching: { $set: false },
         error: { $set: null },
@@ -154,9 +183,7 @@ export default createReducer({
             fetching: { $set: false },
         },
     }),
-    [completeSubmitForgotPassword]: state => update(state, {
-        fetching: { $set: false },
-        error: { $set: null },
+    [completeRequestForgotPasswordEmail]: state => update(state, {
         forgotPassword: { $set: initialState.forgotPassword },
     }),
     [completeSubmitLogOut]: () => initialState,
@@ -174,6 +201,52 @@ export default createReducer({
         forgotPassword: { $set: initialState.forgotPassword },
         fetching: { $set: false },
         error: { $set: null },
+    }),
+    [updateResetPasswordFormUID]: (state, payload) => update(state, {
+        resetPassword: {
+            uid: { $set: payload },
+        },
+    }),
+    [updateResetPasswordFormToken]: (state, payload) => update(state, {
+        resetPassword: {
+            token: { $set: payload },
+        },
+    }),
+    [updateResetPasswordFormPassword]: (state, payload) => update(state, {
+        resetPassword: {
+            newPassword: { $set: payload },
+        },
+    }),
+    [updateResetPasswordFormPasswordConfirmation]: (state, payload) => update(state, {
+        resetPassword: {
+            newPasswordConfirmation: { $set: payload },
+        },
+    }),
+    [startSubmitResetPasswordForm]: state => update(state, {
+        resetPassword: {
+            fetching: { $set: true },
+            error: { $set: null },
+        },
+    }),
+    [failSubmitResetPasswordForm]: (state, payload) => update(state, {
+        resetPassword: {
+            fetching: { $set: false },
+            error: { $set: payload },
+        },
+    }),
+    [completeSubmitResetPasswordForm]: state => update(state, {
+        resetPassword: {
+            fetching: { $set: false },
+            error: { $set: null },
+            newPassword: { $set: '' },
+            newPasswordConfirmation: { $set: '' },
+            confirmationResponse: { $set: true },
+        },
+    }),
+    [resetResetPasswordFormState]: state => update(state, {
+        resetPassword: {
+            $set: initialState.resetPassword,
+        },
     }),
     [resetAuthState]: () => initialState,
 }, initialState);

@@ -15,6 +15,8 @@ import {
     setSelectedFacilityListItemsRowIndex,
 } from '../actions/facilityListDetails';
 
+import { completeSubmitLogOut } from '../actions/auth';
+
 import { facilityListItemStatusChoicesEnum } from '../util/constants';
 
 const initialState = Object.freeze({
@@ -109,4 +111,5 @@ export default createReducer({
     [completeConfirmFacilityListItemPotentialMatch]: completeConfirmMatch,
     [completeRejectFacilityListItemPotentialMatch]: completeConfirmMatch,
     [setSelectedFacilityListItemsRowIndex]: toggleSelectedRowIndex,
+    [completeSubmitLogOut]: () => initialState,
 }, initialState);

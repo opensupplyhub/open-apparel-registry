@@ -8,6 +8,8 @@ import {
     resetUserFacilityLists,
 } from '../actions/facilityLists';
 
+import { completeSubmitLogOut } from '../actions/auth';
+
 const initialState = Object.freeze({
     facilityLists: Object.freeze([]),
     fetching: false,
@@ -29,4 +31,5 @@ export default createReducer({
         facilityLists: { $set: payload },
     }),
     [resetUserFacilityLists]: () => initialState,
+    [completeSubmitLogOut]: () => initialState,
 }, initialState);

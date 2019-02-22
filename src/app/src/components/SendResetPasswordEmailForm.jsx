@@ -12,7 +12,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {
     updateForgotPasswordEmailAddress,
-    submitForgotPassword,
+    requestForgotPasswordEmail,
     openForgotPasswordDialog,
     closeForgotPasswordDialog,
 } from '../actions/auth';
@@ -113,13 +113,13 @@ SendResetPasswordEmailForm.propTypes = {
 
 function mapStateToProps({
     auth: {
-        fetching,
-        error,
         forgotPassword: {
             form: {
                 email,
             },
             dialogIsOpen,
+            fetching,
+            error,
         },
     },
 }) {
@@ -134,7 +134,7 @@ function mapStateToProps({
 function mapDispatchToProps(dispatch) {
     return {
         updateEmail: e => dispatch(updateForgotPasswordEmailAddress(getValueFromEvent(e))),
-        submitForm: () => dispatch(submitForgotPassword()),
+        submitForm: () => dispatch(requestForgotPasswordEmail()),
         handleOpen: () => dispatch(openForgotPasswordDialog()),
         handleClose: () => dispatch(closeForgotPasswordDialog()),
     };

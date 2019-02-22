@@ -31,6 +31,7 @@
         "redux-persist": "5.10.0",
         "redux-thunk": "2.3.0",
         "supercluster": "2.3.0",
+        "validator": "10.11.0",
         "viewport-mercator-project": "5.1.0"
     },
     "scripts": {
