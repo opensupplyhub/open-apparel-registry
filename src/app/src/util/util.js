@@ -155,6 +155,20 @@ export const createPaginationOptionsFromQueryString = (qs) => {
     });
 };
 
+export const getTokenFromQueryString = (qs) => {
+    const qsToParse = startsWith(qs, '?')
+        ? qs.slice(1)
+        : qs;
+
+    const {
+        token = '',
+    } = querystring.parse(qsToParse);
+
+    return isArray(token)
+        ? head(token)
+        : token;
+};
+
 export const allFiltersAreEmpty = filters => values(filters)
     .reduce((acc, next) => {
         if (!isEmpty(next)) {
@@ -311,3 +325,9 @@ export const createRejectFacilityListItemMatchURL = listID =>
 
 export const makeMyFacilitiesRoute = organizationID =>
     `/facilities/?contributors=${organizationID}`;
+
+export const makeResetPasswordEmailURL = () =>
+    '/rest-auth/password/reset/';
+
+export const makeResetPasswordConfirmURL = () =>
+    '/rest-auth/password/reset/confirm/';

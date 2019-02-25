@@ -10,6 +10,7 @@ import history from './util/history';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import RegisterForm from './components/RegisterForm';
+import ResetPasswordForm from './components/ResetPasswordForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
 import Contribute from './components/Contribute';
@@ -26,6 +27,7 @@ import {
     mainRoute,
     authLoginFormRoute,
     authRegisterFormRoute,
+    authResetPasswordFormRoute,
     contributeRoute,
     listsRoute,
     facilityListItemsRoute,
@@ -68,6 +70,10 @@ class App extends Component {
                                 <Route
                                     path={authLoginFormRoute}
                                     component={LoginForm}
+                                />
+                                <Route
+                                    path={authResetPasswordFormRoute}
+                                    component={ResetPasswordForm}
                                 />
                                 <Route
                                     path={profileRoute}

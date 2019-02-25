@@ -1,7 +1,14 @@
+from django.conf import settings
+from django.db import transaction
+from django.contrib.auth.forms import PasswordResetForm
 from rest_framework.serializers import (CharField,
+                                        EmailField,
                                         ModelSerializer,
-                                        SerializerMethodField)
+                                        SerializerMethodField,
+                                        ValidationError)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_auth.serializers import (PasswordResetSerializer,
+                                   PasswordResetConfirmSerializer)
 from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
@@ -171,3 +178,51 @@ class FacilityListItemSerializer(ModelSerializer):
             "address": facility_list_item.facility.address,
             "name": facility_list_item.facility.name,
         }
+
+
+class UserPasswordResetSerializer(PasswordResetSerializer):
+    email = EmailField()
+    password_reset_form_class = PasswordResetForm
+
+    def validate_email(self, user_email):
+        data = self.initial_data
+        self.reset_form = self.password_reset_form_class(data=data)
+        if not self.reset_form.is_valid():
+            raise ValidationError("Error")
+
+        if not User.objects.filter(email=user_email).exists():
+            raise ValidationError("Error")
+
+        return user_email
+
+    def save(self):
+        request = self.context.get('request')
+        # Set some values to trigger the send_email method.
+
+        if settings.ENVIRONMENT == 'Development':
+            domain_override = 'localhost:6543'
+        else:
+            domain_override = request.get_host()
+
+        opts = {
+            'use_https': request.is_secure(),
+            'domain_override': domain_override,
+            'from_email': getattr(settings, 'DEFAULT_FROM_EMAIL'),
+            'request': request,
+            'subject_template_name':
+                'mail/reset_user_password_subject.txt',
+            'email_template_name':
+                'mail/reset_user_password_body.txt',
+            'html_email_template_name':
+                'mail/reset_user_password_body.html',
+        }
+
+        self.reset_form.save(**opts)
+
+
+class UserPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
+    @transaction.atomic
+    def save(self):
+        self.user.save()
+
+        return self.set_password_form.save()

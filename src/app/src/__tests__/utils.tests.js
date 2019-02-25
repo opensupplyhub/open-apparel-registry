@@ -41,6 +41,9 @@ const {
     createConfirmFacilityListItemMatchURL,
     createRejectFacilityListItemMatchURL,
     makeMyFacilitiesRoute,
+    makeResetPasswordEmailURL,
+    getTokenFromQueryString,
+    makeResetPasswordConfirmURL,
 } = require('../util/util');
 
 const {
@@ -680,4 +683,36 @@ it('creates a link to see facilities for a contributor ID', () => {
     const expectedFacilitiesRoute = '/facilities/?contributors=contributor';
 
     expect(makeMyFacilitiesRoute(contributor)).toBe(expectedFacilitiesRoute);
+});
+
+it('creates a URL for requesting a password reset', () => {
+    const expectedURL = '/rest-auth/password/reset/';
+    expect(makeResetPasswordEmailURL()).toBe(expectedURL);
+});
+
+it('creates a URL for confirming a password reset', () => {
+    const expectedURL = '/rest-auth/password/reset/confirm/';
+    expect(makeResetPasswordConfirmURL()).toBe(expectedURL);
+});
+
+it('gets a `token` from a querystring', () => {
+    const simpleToken = '?token=helloworld';
+    const expectedSimpleTokenMatch = 'helloworld';
+
+    expect(getTokenFromQueryString(simpleToken)).toBe(expectedSimpleTokenMatch);
+
+    const missingToken = '?hello=world';
+    const expectedMissingTokenMatch = '';
+
+    expect(getTokenFromQueryString(missingToken)).toBe(expectedMissingTokenMatch);
+
+    const listOfTokens = '?token=foo&token=bar&token=baz';
+    const expectedListOfTokensMatch = 'foo';
+
+    expect(getTokenFromQueryString(listOfTokens)).toBe(expectedListOfTokensMatch);
+
+    const missingQueryString = '';
+    const expectedMissingQueryStringMatch = '';
+
+    expect(getTokenFromQueryString(missingQueryString)).toBe(expectedMissingQueryStringMatch);
 });
