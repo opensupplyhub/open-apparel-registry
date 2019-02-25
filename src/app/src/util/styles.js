@@ -11,7 +11,7 @@ export const listTableCellStyles = Object.freeze({
         flex: '1',
         fontSize: '16px',
     }),
-    countryCodeStyles: Object.freeze({
+    countryNameStyles: Object.freeze({
         flex: '1',
         fontSize: '16px',
     }),

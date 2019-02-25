@@ -251,7 +251,7 @@ COUNTRY_CHOICES = [
     ('ZW', 'Zimbabwe'),
 ]
 
-COUNTRY_NAMES = {code: name for (code, name) in COUNTRY_CHOICES}
+COUNTRY_NAMES = dict(COUNTRY_CHOICES)
 
 COUNTRY_CODES = {
     'afghanistan': 'AF',

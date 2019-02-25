@@ -8,6 +8,7 @@ from api.models import (FacilityList,
                         FacilityMatch,
                         User,
                         Organization)
+from api.countries import COUNTRY_NAMES
 
 
 class UserSerializer(ModelSerializer):
@@ -128,6 +129,7 @@ class FacilityMatchSerializer(ModelSerializer):
 
 class FacilityListItemSerializer(ModelSerializer):
     matches = SerializerMethodField()
+    country_name = SerializerMethodField()
     processing_errors = SerializerMethodField()
     matched_facility = SerializerMethodField()
 
@@ -141,6 +143,9 @@ class FacilityListItemSerializer(ModelSerializer):
             facility_list_item.facilitymatch_set.order_by('id'),
             many=True,
         ).data
+
+    def get_country_name(self, facility_list_item):
+        return COUNTRY_NAMES.get(facility_list_item.country_code, '')
 
     def get_processing_errors(self, facility_list_item):
         if facility_list_item.status != FacilityListItem.ERROR:

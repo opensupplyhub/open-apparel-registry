@@ -82,10 +82,10 @@ function FacilityListItemsConfirmationTableRow({
             <TableCell
                 align="center"
                 padding="dense"
-                style={listTableCellStyles.countryCodeStyles}
+                style={listTableCellStyles.countryNameStyles}
             >
                 <FacilityListItemsDetailedTableRowCell
-                    title={item.country_code || ' '}
+                    title={item.country_name || ' '}
                     subtitle=" "
                     hrIsHidden
                     stringIsHidden

@@ -18,7 +18,7 @@ const propsAreEqual = (prevProps, nextProps) =>
 
 const FacilityListItemsMatchTableRow = memo(({
     rowIndex,
-    countryCode,
+    countryName,
     name,
     address,
     status,
@@ -47,10 +47,10 @@ const FacilityListItemsMatchTableRow = memo(({
         <TableCell
             align="center"
             padding="dense"
-            style={listTableCellStyles.countryCodeStyles}
+            style={listTableCellStyles.countryNameStyles}
         >
             <FacilityListItemsDetailedTableRowCell
-                title={countryCode || ' '}
+                title={countryName || ' '}
                 subtitle=" "
                 hrIsHidden
                 stringIsHidden
@@ -106,7 +106,7 @@ FacilityListItemsMatchTableRow.defaultProps = {
 
 FacilityListItemsMatchTableRow.propTypes = {
     rowIndex: oneOfType([number, string]).isRequired,
-    countryCode: string.isRequired,
+    countryName: string.isRequired,
     name: string.isRequired,
     status: facilityListItemStatusPropType.isRequired,
     hover: bool,
