@@ -205,7 +205,7 @@ class UserPasswordResetSerializer(PasswordResetSerializer):
             domain_override = request.get_host()
 
         opts = {
-            'use_https': request.is_secure(),
+            'use_https': settings.ENVIRONMENT != 'Development',
             'domain_override': domain_override,
             'from_email': getattr(settings, 'DEFAULT_FROM_EMAIL'),
             'request': request,
