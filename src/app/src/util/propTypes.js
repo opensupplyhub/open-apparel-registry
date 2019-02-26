@@ -82,12 +82,20 @@ export const facilityListItemPropType = shape({
         address: string.isRequired,
         name: string.isRequired,
         created_from_id: number.isRequired,
+        location: shape({
+            lng: number.isRequired,
+            lat: number.isRequired,
+        }).isRequired,
     }),
     matches: arrayOf(shape({
         id: number.isRequired,
         oar_id: string.isRequired,
         address: string.isRequired,
         name: string.isRequired,
+        location: shape({
+            lng: number.isRequired,
+            lat: number.isRequired,
+        }).isRequired,
     }).isRequired),
 });
 

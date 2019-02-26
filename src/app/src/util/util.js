@@ -30,6 +30,8 @@ import {
     DEFAULT_ROWS_PER_PAGE,
 } from './constants';
 
+import { createListItemCSV } from './util.listItemCSV';
+
 export function DownloadCSV(data, fileName) {
     saveAs(
         new Blob([data], { type: 'text/csv;charset=utf-8;' }),
@@ -41,6 +43,12 @@ export function DownloadCSV(data, fileName) {
 
 export const downloadContributorTemplate = () =>
     DownloadCSV(contributeCSVTemplate, 'OAR_Contributor_Template.csv');
+
+export const downloadListItemCSV = list =>
+    DownloadCSV(
+        createListItemCSV(list.items),
+        `${list.id}_${list.name}_${(new Date()).toLocaleDateString()}.csv`,
+    );
 
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';

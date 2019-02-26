@@ -118,11 +118,12 @@ class FacilityMatchSerializer(ModelSerializer):
     oar_id = SerializerMethodField()
     name = SerializerMethodField()
     address = SerializerMethodField()
+    location = SerializerMethodField()
 
     class Meta:
         model = FacilityMatch
         fields = ('id', 'status', 'confidence', 'results',
-                  'oar_id', 'name', 'address')
+                  'oar_id', 'name', 'address', 'location')
 
     def get_oar_id(self, match):
         return match.facility.id
@@ -132,6 +133,14 @@ class FacilityMatchSerializer(ModelSerializer):
 
     def get_address(self, match):
         return match.facility.address
+
+    def get_location(self, match):
+        [lng, lat] = match.facility.location
+
+        return {
+            "lat": lat,
+            "lng": lng,
+        }
 
 
 class FacilityListItemSerializer(ModelSerializer):
@@ -173,11 +182,17 @@ class FacilityListItemSerializer(ModelSerializer):
         if facility_list_item.facility is None:
             return None
 
+        [lng, lat] = facility_list_item.facility.location
+
         return {
             "oar_id": facility_list_item.facility.id,
             "address": facility_list_item.facility.address,
             "name": facility_list_item.facility.name,
             "created_from_id": facility_list_item.facility.created_from.id,
+            "location": {
+                "lat": lat,
+                "lng": lng,
+            },
         }
 
 

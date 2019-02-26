@@ -5,6 +5,7 @@ import { Link, Switch, Route } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 
 import AppGrid from './AppGrid';
 import FacilityListItemsEmpty from './FacilityListItemsEmpty';
@@ -21,6 +22,8 @@ import {
 } from '../util/constants';
 
 import { facilityListPropType } from '../util/propTypes';
+
+import { downloadListItemCSV } from '../util/util';
 
 const facilityListItemsStyles = Object.freeze({
     headerStyles: Object.freeze({
@@ -43,6 +46,9 @@ const facilityListItemsStyles = Object.freeze({
     }),
     descriptionStyles: Object.freeze({
         marginBottm: '30px',
+    }),
+    buttonStyles: Object.freeze({
+        marginLeft: '20px',
     }),
 });
 
@@ -104,21 +110,36 @@ class FacilityListItems extends Component {
                     style={facilityListItemsStyles.tableStyles}
                 >
                     <div style={facilityListItemsStyles.headerStyles}>
-                        <h2 style={facilityListItemsStyles.titleStyles}>
-                            {data.name || data.id}
-                        </h2>
-                        <Typography
-                            variant="subheading"
-                            style={facilityListItemsStyles.descriptionStyles}
-                        >
-                            {data.description || ''}
-                        </Typography>
-                        <Link
-                            to={listsRoute}
-                            href={listsRoute}
-                        >
-                            Back to lists
-                        </Link>
+                        <div>
+                            <h2 style={facilityListItemsStyles.titleStyles}>
+                                {data.name || data.id}
+                            </h2>
+                            <Typography
+                                variant="subheading"
+                                style={facilityListItemsStyles.descriptionStyles}
+                            >
+                                {data.description || ''}
+                            </Typography>
+                        </div>
+                        <div>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                style={facilityListItemsStyles.buttonStyles}
+                                onClick={() => downloadListItemCSV(data)}
+                            >
+                                Download CSV
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                component={Link}
+                                to={listsRoute}
+                                href={listsRoute}
+                                style={facilityListItemsStyles.buttonStyles}
+                            >
+                                Back to lists
+                            </Button>
+                        </div>
                     </div>
                     {
                         data.items.length
