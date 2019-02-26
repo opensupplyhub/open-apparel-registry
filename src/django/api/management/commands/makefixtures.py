@@ -68,7 +68,10 @@ def make_created_updated():
     return (created, updated)
 
 
-def make_point():
+def make_point(fixed=False):
+    if fixed:
+        return 'SRID=4326;POINT (0 0)'
+
     lat = -1 * float(random.randrange(75010000, 75019000))/1000000
     lng = float(random.randrange(40000000, 40000900))/1000000
     return 'SRID=4326;POINT (%f %f)' % (lat, lng)
@@ -223,15 +226,19 @@ def make_facility(facility_item):
     # A workaround to have the CSV parser work on a single row
     for row in csv.reader([fields['raw_data']]):
         parsed = row
+
+    pk = facility_item['pk']
+    point_is_fixed = pk % 65 == 0
+
     return {
         'model': 'api.facility',
-        'pk': facility_item['pk'],
+        'pk': pk,
         'fields': {
             'name': parsed[1],
             'address': parsed[2],
             'country_code': COUNTRY_CODES[parsed[0].upper()],
-            'location': make_point(),
-            'created_from': facility_item['pk'],
+            'location': make_point(point_is_fixed),
+            'created_from': pk,
             'created_at': created_at,
             'updated_at': updated_at,
         }

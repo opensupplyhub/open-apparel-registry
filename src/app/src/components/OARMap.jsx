@@ -7,6 +7,8 @@ import noop from 'lodash/noop';
 import mapboxgl from 'mapbox-gl';
 
 import Button from './Button';
+import OARMapPopup from './OARMapPopup';
+import ShowOnly from './ShowOnly';
 
 import { setOARMapViewport } from '../actions/oarMap';
 
@@ -47,6 +49,7 @@ const mouseEnterEvent = 'mouseenter';
 const mouseLeaveEvent = 'mouseleave';
 const pointerCursor = 'pointer';
 const panCursor = '';
+const popupCloseEvent = 'close';
 
 const createSourceFromData = data => Object.freeze({
     type: 'geojson',
@@ -56,11 +59,19 @@ const createSourceFromData = data => Object.freeze({
     clusterRadius: CLUSTER_RADIUS,
 });
 
+const disambiguationMarkerPopupID = 'disambiguation-marker';
+const disambiguationMarkerPopupContent = 'disambiguation-marker-popup-content';
+
 class OARMap extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            facilitiesForDisambiguation: null,
+            disambiguationPopupIsOpen: false,
+        };
         this.mapContainer = React.createRef();
         this.oarMap = null;
+        this.disambiguationPopup = null;
     }
 
     componentDidMount() {
@@ -109,6 +120,18 @@ class OARMap extends Component {
                 this.oarMap.on(mouseLeaveEvent, oarMapLayerIDEnum.points, this.makePanCursor);
             }
         });
+
+        this.disambiguationPopup = new mapboxgl
+            .Popup({
+                closeOnClick: true,
+                closeButton: false,
+            })
+            .setHTML(`<div id=${disambiguationMarkerPopupID}></div>`);
+
+        this.disambiguationPopup.on(
+            popupCloseEvent,
+            this.handleDisambiguationPopupClose,
+        );
     }
 
     componentDidUpdate({ fetching: wasFetching }) {
@@ -173,7 +196,13 @@ class OARMap extends Component {
         return this.props.updateViewport(updatedViewport);
     };
 
-    handleMapClick = ({ point }) => {
+    handleDisambiguationPopupClose = () =>
+        this.setState(state => Object.assign({}, state, {
+            facilitiesForDisambiguation: null,
+            dismabiguationPopupIsOpen: false,
+        }));
+
+    handleMapClick = ({ point, lngLat }) => {
         if (!this.oarMap.getLayer(oarMapLayerIDEnum.points)) {
             return null;
         }
@@ -189,8 +218,17 @@ class OARMap extends Component {
                 ],
             });
 
-        if (!feature || rest.length) {
+        if (!feature) {
             return null;
+        }
+
+        if (rest.length) {
+            this.disambiguationPopup.setLngLat(lngLat).addTo(this.oarMap);
+
+            return this.setState(state => Object.assign({}, state, {
+                facilitiesForDisambiguation: [feature].concat(rest),
+                disambiguationPopupIsOpen: true,
+            }));
         }
 
         if (feature.properties.point_count && feature.properties.point_count > 1) {
@@ -275,6 +313,14 @@ class OARMap extends Component {
                         style={OARMapStyles.copySearchButtonStyle}
                     />
                 </CopyToClipboard>
+                <ShowOnly when={this.state.disambiguationPopupIsOpen}>
+                    <OARMapPopup
+                        facilities={this.state.facilitiesForDisambiguation}
+                        domNodeID={disambiguationMarkerPopupID}
+                        popupContentElementID={disambiguationMarkerPopupContent}
+                        selectedFacilityID={this.props.match.params.oarID}
+                    />
+                </ShowOnly>
             </Fragment>
         );
     }
