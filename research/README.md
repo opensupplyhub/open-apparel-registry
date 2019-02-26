@@ -44,3 +44,8 @@ combination of tasks we perform, when, and with what tools.
 
 The [dedupe](dedupe/README.md) directory contains examples of using the dedupe
 library to find duplicates in and match facility address csv files.
+
+### rubota
+
+The [rubota](rubota/README.md) directory contains a script for fetching supplier
+data from suppliers.rubota.com.
