@@ -10,7 +10,7 @@ These examples are based on the
 ## Setup
 
 - `cd {PROJECT-ROOT}/research/dedupe`
-- `pip install -r requirements.txt`
+- `AWS_PROFILE=open-apparel-registry ./bootstrap`
 
 ## dedupe
 
