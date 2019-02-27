@@ -42,3 +42,9 @@ research/dedupe/dedupe/facility_list_items.csv
 research/dedupe/dedupe/facilities_training.json
 research/dedupe/dedupe/facilities_deduped.csv
 research/rubota/rubota_facilities.csv
+research/dedupe/gazetteer/gazetteer_learned_settings
+research/dedupe/gazetteer/gazetteer_messy.csv
+research/dedupe/gazetteer/gazetteer_messy_pass_2.csv
+research/dedupe/gazetteer/gazetteer_output.csv
+research/dedupe/gazetteer/gazetteer_pass_2_output.csv
+research/dedupe/gazetteer/gazetteer_training.json

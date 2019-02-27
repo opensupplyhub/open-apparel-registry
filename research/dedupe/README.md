@@ -36,3 +36,31 @@ an interactive training session and produces the following outputs:
   - facilities_learned_settings - The trained data model
   - facilities_deduped.csv - Deduplicated output where a winner is chosen from
     each cluster where the match confidence exceeds a threshold.
+
+## gazetteer
+
+### Scripts
+
+#### oar_gazetteer_example.py
+
+Usage: `python oar_gazetteer_example.py`
+
+Reads `../dedupe/facilities_deduped.csv` as a canonical list of facilities and
+`gazeteer_messy.csv` as a list to be matched with the canonical list. Runs
+through an interactive training session and produces the following outputs:
+
+  - gazetteer_output.csv - The output of the matching process.
+  - gazetteer_training.json - The results of the interactive training session.
+  - gazetteer_learned_settings - The trained data model
+
+
+#### oar_gazetteer_example_pass_2.py
+
+Usage: `python oar_gazetteer_example_pass_2.py`
+
+Reads `../dedupe/facilities_deduped.csv` as a canonical list of facilities,
+`gazeteer_messy_pass_2.csv` as a list to be matched with the canonical list, and
+`gazatteer_learned_settings`, the model trained by a previous run of
+`oar_gazetteer_example.py`. Produces the following outputs:
+
+  - gazetteer_pass_2_output.csv - The output of the matching process.
