@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { bool, func, number, oneOfType, string } from 'prop-types';
+import { Link } from 'react-router-dom';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import isEqual from 'lodash/isEqual';
@@ -8,13 +9,17 @@ import { facilityListItemStatusPropType } from '../util/propTypes';
 
 import { listTableCellStyles } from '../util/styles';
 
+import { makeFacilityDetailLink } from '../util/util';
+
 const propsAreEqual = (prevProps, nextProps) =>
     isEqual(prevProps.rowIndex, nextProps.rowIndex)
     && isEqual(prevProps.countryCode, nextProps.countryCode)
     && isEqual(prevProps.name, nextProps.name)
     && isEqual(prevProps.address, nextProps.address)
     && isEqual(prevProps.status, nextProps.status)
-    && isEqual(prevProps.hover, nextProps.hover);
+    && isEqual(prevProps.hover, nextProps.hover)
+    && isEqual(prevProps.newFacility, nextProps.newFacility)
+    && isEqual(prevProps.oarID, nextProps.oarID);
 
 const FacilityListItemsTableRow = memo(({
     rowIndex,
@@ -24,6 +29,8 @@ const FacilityListItemsTableRow = memo(({
     status,
     hover,
     handleSelectRow,
+    newFacility,
+    oarID,
 }) => (
     <TableRow
         hover={hover}
@@ -52,7 +59,17 @@ const FacilityListItemsTableRow = memo(({
             padding="none"
             style={listTableCellStyles.nameCellStyles}
         >
-            {name}
+            {
+                (newFacility && oarID)
+                    ? (
+                        <Link
+                            to={makeFacilityDetailLink(oarID)}
+                            href={makeFacilityDetailLink(oarID)}
+                        >
+                            {name}
+                        </Link>)
+                    : name
+            }
         </TableCell>
         <TableCell
             padding="none"
@@ -64,7 +81,11 @@ const FacilityListItemsTableRow = memo(({
             padding="none"
             style={listTableCellStyles.statusCellStyles}
         >
-            {status}
+            {
+                newFacility
+                    ? 'NEW_FACILITY'
+                    : status
+            }
         </TableCell>
     </TableRow>
 ), propsAreEqual);
@@ -72,6 +93,8 @@ const FacilityListItemsTableRow = memo(({
 FacilityListItemsTableRow.defaultProps = {
     hover: false,
     handleSelectRow: null,
+    newFacility: false,
+    oarID: null,
 };
 
 FacilityListItemsTableRow.propTypes = {
@@ -81,6 +104,8 @@ FacilityListItemsTableRow.propTypes = {
     status: facilityListItemStatusPropType.isRequired,
     hover: bool,
     handleSelectRow: func,
+    newFacility: bool,
+    oarID: string,
 };
 
 export default FacilityListItemsTableRow;

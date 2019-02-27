@@ -105,6 +105,24 @@ function FacilityListItemsTable({
                 );
             }
 
+            if (item.status === facilityListItemStatusChoicesEnum.MATCHED
+                && item.id === item.matched_facility.created_from_id) {
+                return (
+                    <FacilityListItemsTableRow
+                        key={item.row_index}
+                        rowIndex={item.row_index}
+                        countryName={item.country_name}
+                        name={item.name}
+                        address={item.address}
+                        status={item.status}
+                        handleSelectRow={handleSelectRow}
+                        hover={false}
+                        newFacility
+                        oarID={item.matched_facility.oar_id}
+                    />
+                );
+            }
+
             if (item.row_index !== selectedFacilityListItemsRowIndex) {
                 return (
                     <FacilityListItemsTableRow
