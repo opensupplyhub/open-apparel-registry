@@ -177,6 +177,7 @@ class FacilityListItemSerializer(ModelSerializer):
             "oar_id": facility_list_item.facility.id,
             "address": facility_list_item.facility.address,
             "name": facility_list_item.facility.name,
+            "created_from_id": facility_list_item.facility.created_from.id,
         }
 
 

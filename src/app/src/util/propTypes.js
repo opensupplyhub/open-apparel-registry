@@ -81,6 +81,7 @@ export const facilityListItemPropType = shape({
         oar_id: string.isRequired,
         address: string.isRequired,
         name: string.isRequired,
+        created_from_id: number.isRequired,
     }),
     matches: arrayOf(shape({
         id: number.isRequired,
