@@ -176,7 +176,7 @@ def all_contributors(request):
     response_data = [
         (contributor.id, contributor.name)
         for contributor
-        in Contributor.objects.all()
+        in Contributor.objects.all().order_by('name')
     ]
     return Response(response_data)
 
