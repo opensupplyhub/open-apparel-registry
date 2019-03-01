@@ -336,12 +336,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             replaces.save()
 
         for idx, line in enumerate(csv_file):
-            new_item = FacilityListItem(
-                row_index=idx,
-                facility_list=new_list,
-                raw_data=line.decode().rstrip()
-            )
-            new_item.save()
+            if idx > 0:
+                new_item = FacilityListItem(
+                    row_index=(idx - 1),
+                    facility_list=new_list,
+                    raw_data=line.decode().rstrip()
+                )
+                new_item.save()
 
         if ENVIRONMENT in ('Staging', 'Production'):
             submit_jobs(ENVIRONMENT, new_list)

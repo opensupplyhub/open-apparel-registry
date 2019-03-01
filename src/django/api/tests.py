@@ -69,9 +69,9 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
-                         previous_item_count + len(self.test_csv_rows))
+                         previous_item_count + len(self.test_csv_rows) - 1)
         items = list(FacilityListItem.objects.all())
-        self.assertEqual(items[1].raw_data, self.test_csv_rows[1])
+        self.assertEqual(items[0].raw_data, self.test_csv_rows[1])
 
     def test_file_required(self):
         response = self.client.post(reverse('facility-list-list'))
