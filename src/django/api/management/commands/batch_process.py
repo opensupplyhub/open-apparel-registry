@@ -39,6 +39,17 @@ class Command(BaseCommand):
         action = options['action']
         list_id = options['list_id']
 
+        if action == 'test':
+            from api.processing import match_facility_list_items
+            result = match_facility_list_items(
+                FacilityList.objects.get(id=list_id))
+            from pprint import pprint
+            pprint(result)
+            from api.processing import save_match_details
+            with transaction.atomic():
+                save_match_details(result)
+            sys.exit(0)
+
         # Crash if invalid action specified
         if action not in ACTIONS.keys():
             self.stderr.write('Validation Error: Invalid action "{}". '

@@ -16,3 +16,4 @@ pyflakes==2.0.0
 pytz==2018.7
 requests==2.21.0
 rollbar==0.14.6
+Unidecode==1.0.23
