@@ -1,7 +1,5 @@
 #!/bin/bash
 
-pip install -r requirements.txt
-
 mkdir -p data
 aws s3 sync \
     s3://openapparelregistry-development-data-us-east-1/clean-supplier-lists-2019-01-08 \

@@ -5,12 +5,17 @@ These examples are based on the
 
 ## Requirements
 
-- python 3.4+
+- docker
+- docker-compose
 
 ## Setup
 
+NOTE: To avoid a bug in dedupe, the host on which the Docker container is run
+must have 2 or more CPU cores available.
+
 - `cd {PROJECT-ROOT}/research/dedupe`
 - `AWS_PROFILE=open-apparel-registry ./bootstrap`
+- `docker-compose run --rm research`
 
 ## dedupe
 
