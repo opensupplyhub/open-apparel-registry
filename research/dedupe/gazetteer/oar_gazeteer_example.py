@@ -100,7 +100,7 @@ if os.path.exists(settings_file):
 else:
     # Define the fields the gazetteer will pay attention to
     fields = [
-        {'field': 'country', 'type': 'String'},
+        {'field': 'country', 'type': 'Exact'},
         {'field': 'name', 'type': 'String'},
         {'field': 'address', 'type': 'String'},
     ]
