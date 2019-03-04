@@ -138,8 +138,8 @@ function mapStateToProps({
         fetching,
         error,
         userHasSignedIn: !!user,
-        myFacilitiesRoute: (user && user.organization_id)
-            ? makeMyFacilitiesRoute(user.organization_id)
+        myFacilitiesRoute: (user && user.contributor_id)
+            ? makeMyFacilitiesRoute(user.contributor_id)
             : null,
         fetchingSessionSignIn,
     };

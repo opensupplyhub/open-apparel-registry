@@ -331,8 +331,8 @@ export const createConfirmFacilityListItemMatchURL = listID =>
 export const createRejectFacilityListItemMatchURL = listID =>
     `/api/facility-lists/${listID}/reject/`;
 
-export const makeMyFacilitiesRoute = organizationID =>
-    `/facilities/?contributors=${organizationID}`;
+export const makeMyFacilitiesRoute = contributorID =>
+    `/facilities/?contributors=${contributorID}`;
 
 export const makeResetPasswordEmailURL = () =>
     '/rest-auth/password/reset/';

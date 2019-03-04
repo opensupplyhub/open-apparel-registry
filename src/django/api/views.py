@@ -26,7 +26,7 @@ from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
                         FacilityMatch,
-                        Organization,
+                        Contributor,
                         User)
 from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
@@ -53,8 +53,8 @@ class SubmitNewUserForm(CreateAPIView):
             name = request.data.get('name')
             description = request.data.get('description')
             website = request.data.get('website')
-            org_type = request.data.get('contributor_type')
-            other_org_type = request.data.get('other_contributor_type')
+            contrib_type = request.data.get('contributor_type')
+            other_contrib_type = request.data.get('other_contributor_type')
 
             if name is None:
                 raise ValidationError('name cannot be blank')
@@ -62,23 +62,23 @@ class SubmitNewUserForm(CreateAPIView):
             if description is None:
                 raise ValidationError('description cannot be blank')
 
-            if org_type is None:
+            if contrib_type is None:
                 raise ValidationError('contributor type cannot be blank')
 
-            if org_type == Organization.OTHER_ORG_TYPE:
-                if other_org_type is None or len(other_org_type) == 0:
+            if contrib_type == Contributor.OTHER_CONTRIB_TYPE:
+                if other_contrib_type is None or len(other_contrib_type) == 0:
                     raise ValidationError(
                         'contributor type description required for Contributor'
                         ' Type \'Other\''
                     )
 
-            Organization.objects.create(
+            Contributor.objects.create(
                 admin=user,
                 name=name,
                 description=description,
                 website=website,
-                org_type=org_type,
-                other_org_type=other_org_type,
+                contrib_type=contrib_type,
+                other_contrib_type=other_contrib_type,
             )
 
             return Response(UserSerializer(user).data)
@@ -174,9 +174,9 @@ def token_auth_example(request):
 @permission_classes((AllowAny,))
 def all_contributors(request):
     response_data = [
-        (organization.id, organization.name)
-        for organization
-        in Organization.objects.all()
+        (contributor.id, contributor.name)
+        for contributor
+        in Contributor.objects.all()
     ]
     return Response(response_data)
 
@@ -184,7 +184,7 @@ def all_contributors(request):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def all_contributor_types(request):
-    return Response(Organization.ORG_TYPE_CHOICES)
+    return Response(Contributor.CONTRIB_TYPE_CHOICES)
 
 
 @api_view(['GET'])
@@ -225,7 +225,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .objects
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
-                .filter(facility_list_item__facility_list__organization__org_type__in=contributor_types) # NOQA
+                .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
                 .values('facility__id')
             ]
 
@@ -239,7 +239,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .objects
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
-                .filter(facility_list_item__facility_list__organization__id__in=contributors) # NOQA
+                .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
                 .values('facility__id')
             ]
 
@@ -291,9 +291,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         self._validate_header(header)
 
         try:
-            organization = request.user.organization
-        except Organization.DoesNotExist:
-            raise ValidationError('User organization cannot be None')
+            contributor = request.user.contributor
+        except Contributor.DoesNotExist:
+            raise ValidationError('User contributor cannot be None')
 
         if 'name' in request.data:
             name = request.data['name']
@@ -312,7 +312,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             except ValueError:
                 raise ValidationError('"replaces" must be an integer ID.')
             old_list_qs = FacilityList.objects.filter(
-                organization=organization, pk=replaces)
+                contributor=contributor, pk=replaces)
             if old_list_qs.count() == 0:
                 raise ValidationError(
                     '{0} is not a valid FacilityList ID.'.format(replaces))
@@ -323,7 +323,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         replaces.pk))
 
         new_list = FacilityList(
-            organization=organization,
+            contributor=contributor,
             name=name,
             description=description,
             file_name=csv_file.name,
@@ -352,19 +352,19 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         try:
-            organization = request.user.organization
-            queryset = FacilityList.objects.filter(organization=organization)
+            contributor = request.user.contributor
+            queryset = FacilityList.objects.filter(contributor=contributor)
             response_data = self.serializer_class(queryset, many=True).data
             return Response(response_data)
-        except Organization.DoesNotExist:
-            raise ValidationError('User organization cannot be None')
+        except Contributor.DoesNotExist:
+            raise ValidationError('User contributor cannot be None')
 
     def retrieve(self, request, pk):
         try:
-            user_organization = request.user.organization
+            user_contributor = request.user.contributor
             facility_list = FacilityList \
                 .objects \
-                .filter(organization=user_organization) \
+                .filter(contributor=user_contributor) \
                 .get(pk=pk)
             queryset = FacilityListItem \
                 .objects \
@@ -396,10 +396,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             if facility_match_id is None:
                 raise ValidationError('missing required facility_match_id')
 
-            user_organization = request.user.organization
+            user_contributor = request.user.contributor
             facility_list = FacilityList \
                 .objects \
-                .filter(organization=user_organization) \
+                .filter(contributor=user_contributor) \
                 .get(pk=pk)
             facility_list_item = FacilityListItem \
                 .objects \
@@ -454,10 +454,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             if facility_match_id is None:
                 raise ValidationError('missing required facility_match_id')
 
-            user_organization = request.user.organization
+            user_contributor = request.user.contributor
             facility_list = FacilityList \
                 .objects \
-                .filter(organization=user_organization) \
+                .filter(contributor=user_contributor) \
                 .get(pk=pk)
             facility_list_item = FacilityListItem \
                 .objects \

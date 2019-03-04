@@ -31,7 +31,7 @@ export const registrationFormInputHandlersPropType = shape(Object
 export const userPropType = shape({
     email: string.isRequired,
     id: number.isRequired,
-    organization_id: number,
+    contributor_id: number,
 });
 
 export const profileFormValuesPropType = shape(Object

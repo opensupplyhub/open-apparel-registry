@@ -14,7 +14,7 @@ class OarUserAdmin(UserAdmin):
 
 
 admin.site.register(models.User, OarUserAdmin)
-admin.site.register(models.Organization)
+admin.site.register(models.Contributor)
 admin.site.register(models.FacilityList)
 admin.site.register(models.FacilityListItem)
 admin.site.register(models.Facility)

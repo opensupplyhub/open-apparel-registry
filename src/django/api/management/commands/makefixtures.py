@@ -1,7 +1,7 @@
 from django.core.management.base import (BaseCommand,
                                          CommandError)
 
-from api.models import Organization, FacilityMatch, FacilityListItem
+from api.models import Contributor, FacilityMatch, FacilityListItem
 
 import csv
 import json
@@ -114,60 +114,60 @@ def make_users(count=100):
     return admins + users
 
 
-def make_org_type():
-    random_index = random.randint(0, len(Organization.ORG_TYPE_CHOICES)-1)
-    return Organization.ORG_TYPE_CHOICES[random_index][0]
+def make_contrib_type():
+    random_index = random.randint(0, len(Contributor.CONTRIB_TYPE_CHOICES)-1)
+    return Contributor.CONTRIB_TYPE_CHOICES[random_index][0]
 
 
-def make_other_org_type():
+def make_other_contrib_type():
     return fake.company_suffix()
 
 
-def make_organization(pk, admin_pk=None):
+def make_contributor(pk, admin_pk=None):
     (created_at, updated_at) = make_created_updated()
     if admin_pk is not None:
         admin = admin_pk
     else:
         admin = pk
-        org_type = make_org_type()
+        contrib_type = make_contrib_type()
 
-        if org_type == Organization.OTHER_ORG_TYPE:
-            other_org_type = make_other_org_type()
+        if contrib_type == Contributor.OTHER_CONTRIB_TYPE:
+            other_contrib_type = make_other_contrib_type()
         else:
-            other_org_type = None
+            other_contrib_type = None
 
     return {
-        'model': 'api.organization',
+        'model': 'api.contributor',
         'pk': pk,
         'fields': {
             'admin': admin,
             'name': fake.company(),
             'description': fake.text(),
             'website': fake.url(),
-            'org_type': org_type,
-            'other_org_type': other_org_type,
+            'contrib_type': contrib_type,
+            'other_contrib_type': other_contrib_type,
             'created_at': created_at,
             'updated_at': updated_at,
         }
     }
 
 
-def make_organizations(max_id=99):
-    return [make_organization(pk) for pk in range(2, max_id+1)]
+def make_contributors(max_id=99):
+    return [make_contributor(pk) for pk in range(2, max_id+1)]
 
 
-def make_facility_list(pk, organization_pk=None):
+def make_facility_list(pk, contributor_pk=None):
     (created_at, updated_at) = make_created_updated()
-    if organization_pk is not None:
-        organization = organization_pk
+    if contributor_pk is not None:
+        contributor = contributor_pk
     else:
-        organization = pk
+        contributor = pk
     name = fake.name()
     return {
         'model': 'api.facilitylist',
         'pk': pk,
         'fields': {
-            'organization': organization,
+            'contributor': contributor,
             'name': name,
             'file_name': name + '.csv',
             'header': 'country,name,address',
@@ -313,9 +313,9 @@ class Command(BaseCommand):
             with open('/usr/local/src/api/fixtures/users.json', 'w') as f:
                 json.dump(make_users(), f, separators=(',', ': '),
                           indent=4)
-            with open('/usr/local/src/api/fixtures/organizations.json',
+            with open('/usr/local/src/api/fixtures/contributors.json',
                       'w') as f:
-                json.dump(make_organizations(), f, separators=(',', ': '),
+                json.dump(make_contributors(), f, separators=(',', ': '),
                           indent=4)
             with open('/usr/local/src/api/fixtures/facility_lists.json',
                       'w') as f:

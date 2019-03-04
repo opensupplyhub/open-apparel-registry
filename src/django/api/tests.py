@@ -13,7 +13,7 @@ from rest_framework.test import APITestCase
 
 from api.constants import ProcessingAction
 from api.models import (Facility, FacilityList, FacilityListItem,
-                        FacilityMatch, Organization, User)
+                        FacilityMatch, Contributor, User)
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             match_facility_list_item)
@@ -37,8 +37,8 @@ class FacilityListCreateTest(APITestCase):
                           "password": self.password},
                          format="json")
 
-        self.organization = Organization(name=self.name, admin=self.user)
-        self.organization.save()
+        self.contributor = Contributor(name=self.name, admin=self.user)
+        self.contributor.save()
         self.test_csv_rows = [
             'country,name,address',
             'US,Somewhere,999 Park St',
@@ -236,8 +236,8 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
-    def test_upload_by_user_with_no_organization_returns_400(self):
-        Organization.objects.all().delete()
+    def test_upload_by_user_with_no_contributor_returns_400(self):
+        Contributor.objects.all().delete()
         token = Token.objects.create(user=self.user)
         self.client.post('/user-logout/')
         header = {'HTTP_AUTHORIZATION': "Token {0}".format(token)}
@@ -247,8 +247,8 @@ class FacilityListCreateTest(APITestCase):
                                     **header)
         self.assertEqual(response.status_code, 400)
 
-    def test_list_request_by_user_with_no_organization_returns_400(self):
-        Organization.objects.all().delete()
+    def test_list_request_by_user_with_no_contributor_returns_400(self):
+        Contributor.objects.all().delete()
         response = self.client.get(reverse('facility-list-list'))
         self.assertEqual(response.status_code, 400)
 
@@ -483,25 +483,25 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.address_two = 'address_two'
         self.email_one = 'one@example.com'
         self.email_two = 'two@example.com'
-        self.org_one_name = 'organization one'
-        self.org_two_name = 'organization two'
+        self.contrib_one_name = 'contributor one'
+        self.contrib_two_name = 'contributor two'
         self.country_code = 'US'
         self.list_one_name = 'one'
         self.list_two_name = 'two'
         self.user_one = User.objects.create(email=self.email_one)
         self.user_two = User.objects.create(email=self.email_two)
 
-        self.org_one = Organization \
+        self.contrib_one = Contributor \
             .objects \
             .create(admin=self.user_one,
-                    name=self.org_one_name,
-                    org_type=Organization.OTHER_ORG_TYPE)
+                    name=self.contrib_one_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
-        self.org_two = Organization \
+        self.contrib_two = Contributor \
             .objects \
             .create(admin=self.user_two,
-                    name=self.org_two_name,
-                    org_type=Organization.OTHER_ORG_TYPE)
+                    name=self.contrib_two_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.list_one = FacilityList \
             .objects \
@@ -510,7 +510,7 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     name=self.list_one_name,
                     is_active=True,
                     is_public=True,
-                    organization=self.org_one)
+                    contributor=self.contrib_one)
 
         self.list_item_one = FacilityListItem \
             .objects \
@@ -528,7 +528,7 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     name=self.list_two_name,
                     is_active=True,
                     is_public=True,
-                    organization=self.org_two)
+                    contributor=self.contrib_two)
 
         self.list_item_two = FacilityListItem \
             .objects \
@@ -563,9 +563,9 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
 
     def test_returns_contributors(self):
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.org_one_name,
+        contributor_one = "{} ({})".format(self.contrib_one_name,
                                            self.list_one_name)
-        contributor_two = "{} ({})".format(self.org_two_name,
+        contributor_two = "{} ({})".format(self.contrib_two_name,
                                            self.list_two_name)
         self.assertIn(contributor_one, contributors)
         self.assertIn(contributor_two, contributors)
@@ -599,9 +599,9 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.list_two.is_active = False
         self.list_two.save()
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.org_one_name,
+        contributor_one = "{} ({})".format(self.contrib_one_name,
                                            self.list_one_name)
-        contributor_two = "{} ({})".format(self.org_two_name,
+        contributor_two = "{} ({})".format(self.contrib_two_name,
                                            self.list_two_name)
         self.assertIn(contributor_one, contributors)
         self.assertNotIn(contributor_two, contributors)
@@ -624,9 +624,9 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.list_two.is_public = False
         self.list_two.save()
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.org_one_name,
+        contributor_one = "{} ({})".format(self.contrib_one_name,
                                            self.list_one_name)
-        contributor_two = "{} ({})".format(self.org_two_name,
+        contributor_two = "{} ({})".format(self.contrib_two_name,
                                            self.list_two_name)
         self.assertIn(contributor_one, contributors)
         self.assertNotIn(contributor_two, contributors)
@@ -649,9 +649,9 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.facility_match_two.status = FacilityMatch.REJECTED
         self.facility_match_two.save()
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.org_one_name,
+        contributor_one = "{} ({})".format(self.contrib_one_name,
                                            self.list_one_name)
-        contributor_two = "{} ({})".format(self.org_two_name,
+        contributor_two = "{} ({})".format(self.contrib_two_name,
                                            self.list_two_name)
         self.assertIn(contributor_one, contributors)
         self.assertNotIn(contributor_two, contributors)
@@ -664,7 +664,7 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
 
         self.prior_user_name = 'prior_user_name'
         self.prior_user_email = 'prioruser@example.com'
-        self.prior_org_name = 'prior_org_name'
+        self.prior_contrib_name = 'prior_contrib_name'
         self.prior_list_name = 'prior_list_name'
         self.prior_user = User.objects.create(email=self.prior_user_email)
         self.prior_address_one = 'prior_address_one'
@@ -672,11 +672,11 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
         self.prior_name_one = 'prior_name_one'
         self.prior_name_two = 'prior_name_two'
 
-        self.prior_org = Organization \
+        self.prior_contrib = Contributor \
             .objects \
             .create(admin=self.prior_user,
-                    name=self.prior_org_name,
-                    org_type=Organization.OTHER_ORG_TYPE)
+                    name=self.prior_contrib_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.prior_list = FacilityList \
             .objects \
@@ -685,7 +685,7 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
                     name=self.prior_list_name,
                     is_active=True,
                     is_public=True,
-                    organization=self.prior_org)
+                    contributor=self.prior_contrib)
 
         self.prior_list_item_one = FacilityListItem \
             .objects \
@@ -737,7 +737,7 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
 
         self.current_user_name = 'current_user_name'
         self.current_user_email = 'currentuser@example.com'
-        self.current_org_name = 'current_org_name'
+        self.current_contrib_name = 'current_contrib_name'
         self.current_list_name = 'current_list_name'
         self.current_user = User.objects.create(email=self.current_user_email)
         self.current_user_password = "password123"
@@ -747,11 +747,11 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
         self.current_address = 'current_address'
         self.current_name = 'current_name'
 
-        self.current_org = Organization \
+        self.current_contrib = Contributor \
             .objects \
             .create(admin=self.current_user,
-                    name=self.current_org_name,
-                    org_type=Organization.OTHER_ORG_TYPE)
+                    name=self.current_contrib_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.current_list = FacilityList \
             .objects \
@@ -760,7 +760,7 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
                     name=self.current_list_name,
                     is_active=True,
                     is_public=True,
-                    organization=self.current_org)
+                    contributor=self.current_contrib)
 
         self.current_list_item = FacilityListItem \
             .objects \
