@@ -540,6 +540,7 @@ COUNTRY_CODES = {
     'turkmenistan': 'TM',
     'turks and caicos islands': 'TC',
     'tuvalu': 'TV',
+    'uae': 'AE',
     'uganda': 'UG',
     'ukraine': 'UA',
     'ungheria': 'HU',
