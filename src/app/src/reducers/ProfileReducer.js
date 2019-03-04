@@ -13,16 +13,22 @@ import {
     failCreateAPIToken,
     completeCreateAPIToken,
     updateProfileFormInput,
+    startFetchUserProfile,
+    failFetchUserProfile,
+    completeFetchUserProfile,
+    completeFetchUserProfileWithEmail,
+    resetUserProfile,
 } from '../actions/profile';
 
 import {
-    completeSessionLogin,
     completeSubmitLoginForm,
+    completeSessionLogin,
     completeSubmitLogOut,
 } from '../actions/auth';
 
 const initialState = Object.freeze({
     profile: Object.freeze({
+        id: null,
         email: '',
         name: '',
         description: '',
@@ -36,7 +42,6 @@ const initialState = Object.freeze({
         fetching: false,
         error: null,
     }),
-    isEditable: false,
     fetching: false,
     error: null,
 });
@@ -63,16 +68,17 @@ const completeGettingAPIToken = (state, payload) => update(state, {
     },
 });
 
-const setProfileOnLogin = (state, payload) => update(state, {
-    profile: {
-        email: { $set: payload.email || '' },
-        name: { $set: payload.name || '' },
-        description: { $set: payload.description || '' },
-        website: { $set: payload.website || '' },
-        contributorType: { $set: payload.contributor_type || '' },
-        otherContributorType: { $set: payload.other_contributor_type || '' },
-    },
-});
+const handleLogin = (state, { id, email }) => {
+    if (id !== state.profile.id) {
+        return state;
+    }
+
+    return update(state, {
+        profile: {
+            email: { $set: email },
+        },
+    });
+};
 
 export default createReducer({
     [startFetchAPIToken]: startFetchingToken,
@@ -87,7 +93,46 @@ export default createReducer({
     [completeCreateAPIToken]: completeGettingAPIToken,
     [completeFetchAPIToken]: completeGettingAPIToken,
     [updateProfileFormInput]: identity,
-    [completeSessionLogin]: setProfileOnLogin,
-    [completeSubmitLoginForm]: setProfileOnLogin,
-    [completeSubmitLogOut]: () => initialState,
+    [completeSessionLogin]: handleLogin,
+    [completeSubmitLoginForm]: handleLogin,
+    [completeSubmitLogOut]: state => update(state, {
+        profile: {
+            email: { $set: initialState.profile.email },
+            password: { $set: initialState.profile.password },
+        },
+    }),
+    [startFetchUserProfile]: state => update(state, {
+        fetching: { $set: true },
+        error: { $set: null },
+    }),
+    [failFetchUserProfile]: (state, payload) => update(state, {
+        fetching: { $set: false },
+        error: { $set: payload },
+    }),
+    [completeFetchUserProfile]: (state, payload) => update(state, {
+        profile: {
+            id: { $set: payload.id },
+            name: { $set: payload.name || '' },
+            description: { $set: payload.description || '' },
+            website: { $set: payload.website || '' },
+            contributorType: { $set: payload.contributor_type || '' },
+            otherContributorType: { $set: payload.other_contributor_type || '' },
+        },
+        fetching: { $set: false },
+        error: { $set: null },
+    }),
+    [completeFetchUserProfileWithEmail]: (state, payload) => update(state, {
+        profile: {
+            id: { $set: payload.id },
+            email: { $set: payload.email || '' },
+            name: { $set: payload.name || '' },
+            description: { $set: payload.description || '' },
+            website: { $set: payload.website || '' },
+            contributorType: { $set: payload.contributor_type || '' },
+            otherContributorType: { $set: payload.other_contributor_type || '' },
+        },
+        fetching: { $set: false },
+        error: { $set: null },
+    }),
+    [resetUserProfile]: () => initialState,
 }, initialState);

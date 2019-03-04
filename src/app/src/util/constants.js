@@ -52,6 +52,7 @@ const accountEmailField = Object.freeze({
     required: true,
     hint: null,
     modelFieldName: 'email',
+    hideOnViewOnlyProfile: true,
 });
 
 const accountNameField = Object.freeze({
@@ -108,6 +109,7 @@ const accountPasswordField = Object.freeze({
     type: inputTypesEnum.password,
     required: true,
     modelFieldName: 'password',
+    hideOnViewOnlyProfile: true,
 });
 
 const accountConfirmPasswordField = Object.freeze({

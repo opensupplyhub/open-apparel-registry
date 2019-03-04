@@ -45,6 +45,7 @@ const {
     makeResetPasswordEmailURL,
     getTokenFromQueryString,
     makeResetPasswordConfirmURL,
+    makeUserProfileURL,
     joinDataIntoCSVString,
     caseInsensitiveIncludes,
     sortFacilitiesAlphabeticallyByName,
@@ -697,6 +698,12 @@ it('creates a URL for requesting a password reset', () => {
 it('creates a URL for confirming a password reset', () => {
     const expectedURL = '/rest-auth/password/reset/confirm/';
     expect(makeResetPasswordConfirmURL()).toBe(expectedURL);
+});
+
+it('creates a URL for retrieving a user profile', () => {
+    const userID = 'userID';
+    const expectedURL = '/user-profile/userID/';
+    expect(makeUserProfileURL(userID)).toBe(expectedURL);
 });
 
 it('gets a `token` from a querystring', () => {

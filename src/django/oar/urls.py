@@ -46,6 +46,8 @@ urlpatterns = [
         name='logout_of_oar_client'),
     url(r'^user-signup/', views.SubmitNewUserForm.as_view(),
         name='submit_new_user_form'),
+    url(r'^user-profile/(?P<pk>\d+)/$', views.UserProfile.as_view(),
+        name='get_and_update_user_profile'),
     url(r'^api-token-auth/', views.APIAuthToken.as_view(),
         name='api_token_auth'),
     url(r'^token-auth-example/', views.token_auth_example,

@@ -10,6 +10,13 @@ import {
     contributorTypeOptions,
 } from '../util/constants';
 
+const userProfileFieldStyles = Object.freeze({
+    viewOnlyStyles: Object.freeze({
+        padding: '1rem 0',
+        fontSize: '20px',
+    }),
+});
+
 export default function UserProfileField({
     id,
     type,
@@ -20,6 +27,8 @@ export default function UserProfileField({
     disabled,
     required,
     isHidden,
+    isEditableProfile,
+    hideOnViewOnlyProfile,
 }) {
     if (type === inputTypesEnum.checkbox) {
         window.console.warn(`checkbox not yet implemented for ${id}`);
@@ -27,6 +36,35 @@ export default function UserProfileField({
 
     if (isHidden) {
         return null;
+    }
+
+    if (hideOnViewOnlyProfile && !isEditableProfile) {
+        return null;
+    }
+
+    if (!isEditableProfile) {
+        return (
+            <div className="control-panel__group">
+                <div className="form__field">
+                    <label
+                        htmlFor={id}
+                        className="form__label"
+                    >
+                        {label}
+                    </label>
+                    <div style={userProfileFieldStyles.viewOnlyStyles}>
+                        {
+                            id === profileFieldsEnum.website
+                                ? (
+                                    <a href={value}>
+                                        {value}
+                                    </a>)
+                                : value
+                        }
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     const requiredIndicator = required
@@ -52,6 +90,7 @@ export default function UserProfileField({
                         handleChange={handleChange}
                         options={options}
                         value={value}
+                        disabled={disabled}
                     />
                 </div>
             </div>
@@ -82,6 +121,8 @@ export default function UserProfileField({
 
 UserProfileField.defaultProps = {
     options: null,
+    isEditableProfile: false,
+    hideOnViewOnlyProfile: false,
 };
 
 UserProfileField.propTypes = {
@@ -94,4 +135,6 @@ UserProfileField.propTypes = {
     required: bool.isRequired,
     disabled: bool.isRequired,
     isHidden: bool.isRequired,
+    isEditableProfile: bool,
+    hideOnViewOnlyProfile: bool,
 };

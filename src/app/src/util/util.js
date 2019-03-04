@@ -350,6 +350,8 @@ export const makeResetPasswordEmailURL = () =>
 export const makeResetPasswordConfirmURL = () =>
     '/rest-auth/password/reset/confirm/';
 
+export const makeUserProfileURL = userID => `/user-profile/${userID}/`;
+
 export const joinDataIntoCSVString = data => data
     .reduce((csvAccumulator, nextRow) => {
         const joinedColumns = nextRow

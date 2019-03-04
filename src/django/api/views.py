@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
                                        NotFound,
                                        AuthenticationFailed)
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        action)
@@ -32,7 +32,8 @@ from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilitySerializer,
-                             UserSerializer)
+                             UserSerializer,
+                             UserProfileSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 
@@ -118,6 +119,21 @@ class LogoutOfOARClient(LogoutView):
         logout(request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserProfile(RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+
+    def get(self, request, pk=None, *args, **kwargs):
+        try:
+            user = User.objects.get(pk=pk)
+            response_data = UserProfileSerializer(user).data
+            return Response(response_data)
+        except User.DoesNotExist:
+            raise NotFound()
+
+    def put(self, request, pk, *args, **kwargs):
+        return Response(pk)
 
 
 class APIAuthToken(ObtainAuthToken):
