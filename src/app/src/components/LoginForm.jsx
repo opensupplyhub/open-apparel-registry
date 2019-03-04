@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid';
 
 import ControlledTextInput from './ControlledTextInput';
 import AppGrid from './AppGrid';
+import AppOverflow from './AppOverflow';
 import Button from './Button';
 import ShowOnly from './ShowOnly';
 import SendResetPasswordEmailForm from './SendResetPasswordEmailForm';
@@ -61,70 +62,72 @@ class LoginForm extends Component {
         }
 
         return (
-            <AppGrid title="Log In">
-                <Grid item xs={12} sm={7}>
-                    <p>
-                        You must be a registered user to contribute to the Open
-                        Apparel Registry.
-                        <br />
-                        Don&apos;t have an account?{' '}
-                        <Link
-                            to={authRegisterFormRoute}
-                            href={authRegisterFormRoute}
-                            className="link-underline"
-                        >
-                            Register
-                        </Link>
-                        .
-                    </p>
-                    <div className="form__field">
-                        <label
-                            className="form__label"
-                            htmlFor={LOGIN_EMAIL}
-                        >
-                            Email Address
-                        </label>
-                        <ControlledTextInput
-                            id={LOGIN_EMAIL}
-                            type="email"
-                            value={email}
-                            onChange={updateEmail}
+            <AppOverflow>
+                <AppGrid title="Log In">
+                    <Grid item xs={12} sm={7}>
+                        <p>
+                            You must be a registered user to contribute to the Open
+                            Apparel Registry.
+                            <br />
+                            Don&apos;t have an account?{' '}
+                            <Link
+                                to={authRegisterFormRoute}
+                                href={authRegisterFormRoute}
+                                className="link-underline"
+                            >
+                                Register
+                            </Link>
+                            .
+                        </p>
+                        <div className="form__field">
+                            <label
+                                className="form__label"
+                                htmlFor={LOGIN_EMAIL}
+                            >
+                                Email Address
+                            </label>
+                            <ControlledTextInput
+                                id={LOGIN_EMAIL}
+                                type="email"
+                                value={email}
+                                onChange={updateEmail}
+                            />
+                        </div>
+                        <div className="form__field">
+                            <label
+                                className="form__label"
+                                htmlFor={LOGIN_PASSWORD}
+                            >
+                                Password
+                            </label>
+                            <ControlledTextInput
+                                id={LOGIN_PASSWORD}
+                                type="password"
+                                value={password}
+                                onChange={updatePassword}
+                            />
+                        </div>
+                        <SendResetPasswordEmailForm />
+                        <ShowOnly when={!!(error && error.length)}>
+                            <ul style={formValidationErrorMessageStyle}>
+                                {
+                                    error && error.length
+                                        ? error.map(err => (
+                                            <li key={err}>
+                                                {err}
+                                            </li>))
+                                        : null
+                                }
+                            </ul>
+                        </ShowOnly>
+                        <Button
+                            text="Log In"
+                            onClick={submitForm}
+                            disabled={fetching}
                         />
-                    </div>
-                    <div className="form__field">
-                        <label
-                            className="form__label"
-                            htmlFor={LOGIN_PASSWORD}
-                        >
-                            Password
-                        </label>
-                        <ControlledTextInput
-                            id={LOGIN_PASSWORD}
-                            type="password"
-                            value={password}
-                            onChange={updatePassword}
-                        />
-                    </div>
-                    <SendResetPasswordEmailForm />
-                    <ShowOnly when={!!(error && error.length)}>
-                        <ul style={formValidationErrorMessageStyle}>
-                            {
-                                error && error.length
-                                    ? error.map(err => (
-                                        <li key={err}>
-                                            {err}
-                                        </li>))
-                                    : null
-                            }
-                        </ul>
-                    </ShowOnly>
-                    <Button
-                        text="Log In"
-                        onClick={submitForm}
-                        disabled={fetching}
-                    />
-                </Grid>
-            </AppGrid>
+                    </Grid>
+                </AppGrid>
+            </AppOverflow>
         );
     }
 }

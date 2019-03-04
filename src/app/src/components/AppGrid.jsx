@@ -16,7 +16,6 @@ export default function AppGrid({
                 style={{
                     marginLeft: 'auto',
                     marginRight: 'auto',
-                    marginTop: '64px',
                 }}
             >
                 <Grid container style={style}>

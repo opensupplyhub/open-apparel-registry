@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import memoize from 'lodash/memoize';
 
 import AppGrid from './AppGrid';
+import AppOverflow from './AppOverflow';
 import ShowOnly from './ShowOnly';
 import Button from './Button';
 import RegisterFormField from './RegisterFormField';
@@ -93,47 +94,49 @@ class RegisterForm extends Component {
                 />));
 
         return (
-            <AppGrid title="Register">
-                <p>
-                    Already have an account?{' '}
-                    <Link
-                        to={authLoginFormRoute}
-                        href={authLoginFormRoute}
-                        className="link-underline"
-                    >
-                        Log In
-                    </Link>
-                    .
-                </p>
-                <Grid container className="margin-bottom-100">
-                    <Grid item xs={12} sm={8}>
-                        <p>
-                            Thank you for contributing to the OAR. Every
-                            contribution further improves the accuracy of the
-                            database. Create an account to begin:
-                        </p>
-                        {formInputs}
-                        <ShowOnly when={!!(error && error.length)}>
-                            <ul style={formValidationErrorMessageStyle}>
-                                {
-                                    error && error.length
-                                        ? error.map(err => (
-                                            <li key={err}>
-                                                {err}
-                                            </li>
-                                        ))
-                                        : null
-                                }
-                            </ul>
-                        </ShowOnly>
-                        <Button
-                            text="Register"
-                            onClick={submitForm}
-                            disabled={fetching}
-                        />
+            <AppOverflow>
+                <AppGrid title="Register">
+                    <p>
+                        Already have an account?{' '}
+                        <Link
+                            to={authLoginFormRoute}
+                            href={authLoginFormRoute}
+                            className="link-underline"
+                        >
+                            Log In
+                        </Link>
+                        .
+                    </p>
+                    <Grid container className="margin-bottom-100">
+                        <Grid item xs={12} sm={8}>
+                            <p>
+                                Thank you for contributing to the OAR. Every
+                                contribution further improves the accuracy of the
+                                database. Create an account to begin:
+                            </p>
+                            {formInputs}
+                            <ShowOnly when={!!(error && error.length)}>
+                                <ul style={formValidationErrorMessageStyle}>
+                                    {
+                                        error && error.length
+                                            ? error.map(err => (
+                                                <li key={err}>
+                                                    {err}
+                                                </li>
+                                            ))
+                                            : null
+                                    }
+                                </ul>
+                            </ShowOnly>
+                            <Button
+                                text="Register"
+                                onClick={submitForm}
+                                disabled={fetching}
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </AppGrid>
+                </AppGrid>
+            </AppOverflow>
         );
     }
 }

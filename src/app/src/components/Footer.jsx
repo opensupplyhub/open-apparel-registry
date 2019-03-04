@@ -25,7 +25,7 @@ const links = [
 ];
 
 export default () => (
-    <div className="footerContainer" xs={12}>
+    <footer className="footerContainer" xs={12}>
         <div className="links">
             {links.map((l) => {
                 if (l.external && 'prefix' in l) {
@@ -73,5 +73,5 @@ export default () => (
                 alt="Creative Commons Attribution"
             />
         </a>
-    </div>
+    </footer>
 );

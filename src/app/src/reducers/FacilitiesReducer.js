@@ -15,6 +15,15 @@ import {
     resetSingleFacility,
 } from '../actions/facilities';
 
+import {
+    updateFacilityNameFilter,
+    updateContributorFilter,
+    updateContributorTypeFilter,
+    updateCountryFilter,
+    resetAllFilters,
+    updateAllFilters,
+} from '../actions/filters';
+
 import { makeFeatureCollectionFromSingleFeature } from '../util/util';
 
 const initialState = Object.freeze({
@@ -64,11 +73,18 @@ const handleFetchSingleFacility = (state, payload) => {
     });
 };
 
+const clearFacilitiesDataOnFilterChange = state => update(state, {
+    facilities: {
+        data: { $set: null },
+    },
+});
+
 export default createReducer({
     [startFetchFacilities]: state => update(state, {
         facilities: {
             fetching: { $set: true },
             error: { $set: null },
+            data: { $set: null },
         },
     }),
     [failFetchFacilities]: (state, payload) => update(state, {
@@ -104,4 +120,10 @@ export default createReducer({
     [resetSingleFacility]: state => update(state, {
         singleFacility: { $set: initialState.singleFacility },
     }),
+    [updateFacilityNameFilter]: clearFacilitiesDataOnFilterChange,
+    [updateContributorFilter]: clearFacilitiesDataOnFilterChange,
+    [updateContributorTypeFilter]: clearFacilitiesDataOnFilterChange,
+    [updateCountryFilter]: clearFacilitiesDataOnFilterChange,
+    [resetAllFilters]: clearFacilitiesDataOnFilterChange,
+    [updateAllFilters]: clearFacilitiesDataOnFilterChange,
 }, initialState);

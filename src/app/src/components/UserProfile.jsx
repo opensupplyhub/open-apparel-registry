@@ -6,6 +6,7 @@ import memoize from 'lodash/memoize';
 import noop from 'lodash/noop';
 
 import AppGrid from './AppGrid';
+import AppOverflow from './AppOverflow';
 import Button from './Button';
 import UserProfileField from './UserProfileField';
 import UserAPITokens from './UserAPITokens';
@@ -112,27 +113,29 @@ function UserProfile({
             />));
 
     return (
-        <AppGrid
-            title="My Profile"
-            style={profileStyles.appGridContainer}
-        >
-            <Grid item xs={12} sm={7}>
-                {profileInputs}
-                <div style={profileStyles.submitButton}>
-                    <Button
-                        text="Save Changes"
-                        onClick={submitForm}
-                        disabled={!isEditable && fetching}
-                        color="primary"
-                        variant="contained"
-                        disableRipple
-                    >
-                        Save Changes
-                    </Button>
-                </div>
-                <UserAPITokens />
-            </Grid>
-        </AppGrid>
+        <AppOverflow>
+            <AppGrid
+                title="My Profile"
+                style={profileStyles.appGridContainer}
+            >
+                <Grid item xs={12} sm={7}>
+                    {profileInputs}
+                    <div style={profileStyles.submitButton}>
+                        <Button
+                            text="Save Changes"
+                            onClick={submitForm}
+                            disabled={!isEditable && fetching}
+                            color="primary"
+                            variant="contained"
+                            disableRipple
+                        >
+                            Save Changes
+                        </Button>
+                    </div>
+                    <UserAPITokens />
+                </Grid>
+            </AppGrid>
+        </AppOverflow>
     );
 }
 

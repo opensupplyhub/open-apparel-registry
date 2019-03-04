@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 
@@ -15,7 +15,7 @@ import { facilityDetailsRoute } from '../util/constants';
 
 function MapAndSidebar() {
     return (
-        <div>
+        <Fragment>
             <LandingAlert />
             <Grid container>
                 <Grid
@@ -47,7 +47,7 @@ function MapAndSidebar() {
                     </Switch>
                 </Grid>
             </Grid>
-        </div>
+        </Fragment>
     );
 }
 

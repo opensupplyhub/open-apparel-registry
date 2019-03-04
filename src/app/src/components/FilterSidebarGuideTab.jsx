@@ -1,7 +1,12 @@
 import React, { memo } from 'react';
 
+import { filterSidebarStyles } from '../util/styles';
+
 const FilterSidebarGuideTab = memo(() => (
-    <div className="control-panel__content">
+    <div
+        className="control-panel__content"
+        style={filterSidebarStyles.controlPanelContentStyles}
+    >
         <p className="control-panel__body">
             The Open Apparel Registry (OAR) is a tool to
             identify every apparel facility worldwide.

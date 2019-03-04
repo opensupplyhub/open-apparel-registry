@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 
 import AppGrid from './AppGrid';
+import AppOverflow from './AppOverflow';
 import FacilityListItemsEmpty from './FacilityListItemsEmpty';
 import FacilityListItemsTable from './FacilityListItemsTable';
 
@@ -101,59 +102,61 @@ class FacilityListItems extends Component {
         }
 
         return (
-            <Grid
-                container
-                justify="center"
-            >
+            <AppOverflow>
                 <Grid
-                    item
-                    style={facilityListItemsStyles.tableStyles}
+                    container
+                    justify="center"
                 >
-                    <div style={facilityListItemsStyles.headerStyles}>
-                        <div>
-                            <h2 style={facilityListItemsStyles.titleStyles}>
-                                {data.name || data.id}
-                            </h2>
-                            <Typography
-                                variant="subheading"
-                                style={facilityListItemsStyles.descriptionStyles}
-                            >
-                                {data.description || ''}
-                            </Typography>
+                    <Grid
+                        item
+                        style={facilityListItemsStyles.tableStyles}
+                    >
+                        <div style={facilityListItemsStyles.headerStyles}>
+                            <div>
+                                <h2 style={facilityListItemsStyles.titleStyles}>
+                                    {data.name || data.id}
+                                </h2>
+                                <Typography
+                                    variant="subheading"
+                                    style={facilityListItemsStyles.descriptionStyles}
+                                >
+                                    {data.description || ''}
+                                </Typography>
+                            </div>
+                            <div>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    style={facilityListItemsStyles.buttonStyles}
+                                    onClick={() => downloadListItemCSV(data)}
+                                >
+                                    Download CSV
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    component={Link}
+                                    to={listsRoute}
+                                    href={listsRoute}
+                                    style={facilityListItemsStyles.buttonStyles}
+                                >
+                                    Back to lists
+                                </Button>
+                            </div>
                         </div>
-                        <div>
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                style={facilityListItemsStyles.buttonStyles}
-                                onClick={() => downloadListItemCSV(data)}
-                            >
-                                Download CSV
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                component={Link}
-                                to={listsRoute}
-                                href={listsRoute}
-                                style={facilityListItemsStyles.buttonStyles}
-                            >
-                                Back to lists
-                            </Button>
-                        </div>
-                    </div>
-                    {
-                        data.items.length
-                            ? (
-                                <Switch>
-                                    <Route
-                                        path={facilityListItemsRoute}
-                                        component={FacilityListItemsTable}
-                                    />
-                                </Switch>)
-                            : <FacilityListItemsEmpty />
-                    }
+                        {
+                            data.items.length
+                                ? (
+                                    <Switch>
+                                        <Route
+                                            path={facilityListItemsRoute}
+                                            component={FacilityListItemsTable}
+                                        />
+                                    </Switch>)
+                                : <FacilityListItemsEmpty />
+                        }
+                    </Grid>
                 </Grid>
-            </Grid>
+            </AppOverflow>
         );
     }
 }

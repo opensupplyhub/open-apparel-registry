@@ -24,6 +24,8 @@ import {
     facilityCollectionPropType,
 } from '../util/propTypes';
 
+import { filterSidebarStyles } from '../util/styles';
+
 import { getValueFromEvent } from '../util/util';
 
 const filterSidebarSearchTabStyles = Object.freeze({
@@ -94,7 +96,10 @@ function FilterSidebarSearchTab({
     })();
 
     return (
-        <div className="control-panel__content">
+        <div
+            className="control-panel__content"
+            style={filterSidebarStyles.controlPanelContentStyles}
+        >
             <div>
                 <div className="form__field">
                     <InputLabel

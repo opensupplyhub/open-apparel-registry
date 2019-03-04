@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import AppGrid from './AppGrid';
+import AppOverflow from './AppOverflow';
 import ContributeHeader from './ContributeHeader';
 import ContributeForm from './ContributeForm';
 import ContributeTroubleshooting from './ContributeTroubleshooting';
@@ -49,31 +50,33 @@ function ContributeList({
     }
 
     return (
-        <AppGrid title="Contribute">
-            <Grid container className="margin-bottom-64">
-                <Grid item xs={12}>
-                    <ContributeHeader />
-                    <ContributeForm />
-                    <div className="form__field">
-                        <p className="form__label">
-                            Once the list has been successfully
-                            uploaded, view your list and confirm or deny
-                            matches.
-                        </p>
-                    </div>
-                    <div className="form__field">
-                        <Link
-                            to={listsRoute}
-                            href={listsRoute}
-                            className="outlined-button outlined-button--link margin-top-16"
-                        >
-                            View My Lists
-                        </Link>
-                    </div>
+        <AppOverflow>
+            <AppGrid title="Contribute">
+                <Grid container className="margin-bottom-64">
+                    <Grid item xs={12}>
+                        <ContributeHeader />
+                        <ContributeForm />
+                        <div className="form__field">
+                            <p className="form__label">
+                                Once the list has been successfully
+                                uploaded, view your list and confirm or deny
+                                matches.
+                            </p>
+                        </div>
+                        <div className="form__field">
+                            <Link
+                                to={listsRoute}
+                                href={listsRoute}
+                                className="outlined-button outlined-button--link margin-top-16"
+                            >
+                                View My Lists
+                            </Link>
+                        </div>
+                    </Grid>
+                    <ContributeTroubleshooting />
                 </Grid>
-                <ContributeTroubleshooting />
-            </Grid>
-        </AppGrid>
+            </AppGrid>
+        </AppOverflow>
     );
 }
 

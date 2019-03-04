@@ -35,11 +35,18 @@ import {
     profileRoute,
 } from './util/constants';
 
-const styles = {
-    root: {
+const appStyles = Object.freeze({
+    root: Object.freeze({
         flexGrow: 1,
-    },
-};
+    }),
+    mainPanelStyle: Object.freeze({
+        top: '64px',
+        right: '0',
+        left: '0',
+        position: 'fixed',
+        bottom: '47px',
+    }),
+});
 
 class App extends Component {
     componentDidMount() {
@@ -52,7 +59,7 @@ class App extends Component {
                 <Router history={history}>
                     <div className="App">
                         <Navbar />
-                        <div>
+                        <main style={appStyles.mainPanelStyle}>
                             <Switch>
                                 <Route
                                     exact
@@ -92,7 +99,7 @@ class App extends Component {
                                     component={FacilityLists}
                                 />
                             </Switch>
-                        </div>
+                        </main>
                         <Footer />
                         <ToastContainer
                             position="bottom-center"
@@ -115,4 +122,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(() => ({}), mapDispatchToProps)(withStyles(styles)(App));
+export default connect(() => ({}), mapDispatchToProps)(withStyles(appStyles)(App));

@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 
 import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
+import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
 
 import {
     filterSidebarTabsEnum,
@@ -17,6 +17,7 @@ import {
 import {
     makeSidebarGuideTabActive,
     makeSidebarSearchTabActive,
+    makeSidebarFacilitiesTabActive,
 } from '../actions/ui';
 
 import {
@@ -33,6 +34,13 @@ import {
 } from '../util/propTypes';
 
 import { allListsAreEmpty } from '../util/util';
+
+const filterSidebarStyles = Object.freeze({
+    controlPanelStyles: Object.freeze({
+        height: 'inherit',
+        width: 'inherit',
+    }),
+});
 
 class FilterSidebar extends Component {
     componentDidMount() {
@@ -70,6 +78,7 @@ class FilterSidebar extends Component {
             activeFilterSidebarTab,
             makeGuideTabActive,
             makeSearchTabActive,
+            makeFacilitiesTabActive,
         } = this.props;
 
         const header = (
@@ -85,9 +94,15 @@ class FilterSidebar extends Component {
         const activeTabIndex = filterSidebarTabs
             .findIndex(({ tab }) => tab === activeFilterSidebarTab);
 
-        const handleTabChange = activeFilterSidebarTab === filterSidebarTabsEnum.guide
-            ? makeSearchTabActive
-            : makeGuideTabActive;
+        const handleTabChange = (_, value) => {
+            const changeTab = [
+                makeGuideTabActive,
+                makeSearchTabActive,
+                makeFacilitiesTabActive,
+            ][value];
+
+            return changeTab();
+        };
 
         const tabBar = (
             <AppBar position="static">
@@ -111,17 +126,28 @@ class FilterSidebar extends Component {
                 </Tabs>
             </AppBar>);
 
-        const insetComponent = activeFilterSidebarTab === filterSidebarTabsEnum.guide
-            ? <FilterSidebarGuideTab />
-            : <FilterSidebarSearchTab />;
+        const insetComponent = (() => {
+            switch (activeFilterSidebarTab) {
+                case filterSidebarTabsEnum.guide:
+                    return <FilterSidebarGuideTab />;
+                case filterSidebarTabsEnum.search:
+                    return <FilterSidebarSearchTab />;
+                case filterSidebarTabsEnum.facilities:
+                    return <FilterSidebarFacilitiesTab />;
+                default:
+                    window.console.warn('invalid tab selection', activeFilterSidebarTab);
+                    return null;
+            }
+        })();
 
         return (
-            <div className="control-panel">
+            <div
+                className="control-panel"
+                style={filterSidebarStyles.controlPanelStyles}
+            >
                 {header}
                 {tabBar}
-                <Typography component="div">
-                    {insetComponent}
-                </Typography>
+                {insetComponent}
             </div>
         );
     }
@@ -131,6 +157,7 @@ FilterSidebar.propTypes = {
     activeFilterSidebarTab: oneOf(Object.values(filterSidebarTabsEnum)).isRequired,
     makeGuideTabActive: func.isRequired,
     makeSearchTabActive: func.isRequired,
+    makeFacilitiesTabActive: func.isRequired,
     fetchFilterOptions: func.isRequired,
     fetchContributors: func.isRequired,
     fetchContributorTypes: func.isRequired,
@@ -168,6 +195,7 @@ function mapDispatchToProps(dispatch) {
     return {
         makeGuideTabActive: () => dispatch(makeSidebarGuideTabActive()),
         makeSearchTabActive: () => dispatch(makeSidebarSearchTabActive()),
+        makeFacilitiesTabActive: () => dispatch(makeSidebarFacilitiesTabActive()),
         fetchFilterOptions: () => dispatch(fetchAllFilterOptions()),
         fetchContributors: () => dispatch(fetchContributorOptions()),
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
