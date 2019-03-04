@@ -50,11 +50,11 @@ class SubmitNewUserForm(CreateAPIView):
             pk = serializer.data['id']
             user = User.objects.get(pk=pk)
 
-            name = request.data.get('name', None)
-            description = request.data.get('description', None)
-            website = request.data.get('website', None)
-            org_type = request.data.get('contributor_type', None)
-            other_org_type = request.data.get('other_contributor_type', None)
+            name = request.data.get('name')
+            description = request.data.get('description')
+            website = request.data.get('website')
+            org_type = request.data.get('contributor_type')
+            other_org_type = request.data.get('other_contributor_type')
 
             if name is None:
                 raise ValidationError('name cannot be blank')
@@ -88,8 +88,8 @@ class LoginToOARClient(LoginView):
     serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email', None)
-        password = request.data.get('password', None)
+        email = request.data.get('email')
+        password = request.data.get('password')
 
         if email is None or password is None:
             raise AuthenticationFailed('Email and password are required')
@@ -387,8 +387,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             url_path='confirm')
     def confirm_match(self, request, pk=None):
         try:
-            list_item_id = request.data.get('list_item_id', None)
-            facility_match_id = request.data.get('facility_match_id', None)
+            list_item_id = request.data.get('list_item_id')
+            facility_match_id = request.data.get('facility_match_id')
 
             if list_item_id is None:
                 raise ValidationError('missing required list_item_id')
@@ -445,8 +445,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             url_path='reject')
     def reject_match(self, request, pk=None):
         try:
-            list_item_id = request.data.get('list_item_id', None)
-            facility_match_id = request.data.get('facility_match_id', None)
+            list_item_id = request.data.get('list_item_id')
+            facility_match_id = request.data.get('facility_match_id')
 
             if list_item_id is None:
                 raise ValidationError('missing required list_item_id')
