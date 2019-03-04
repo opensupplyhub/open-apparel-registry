@@ -9,12 +9,17 @@ import size from 'lodash/size';
 import negate from 'lodash/negate';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
+import isNumber from 'lodash/isNumber';
 import values from 'lodash/values';
 import flow from 'lodash/flow';
 import noop from 'lodash/noop';
 import compact from 'lodash/compact';
 import startsWith from 'lodash/startsWith';
 import head from 'lodash/head';
+import replace from 'lodash/replace';
+import trimEnd from 'lodash/trimEnd';
+import includes from 'lodash/includes';
+import lowerCase from 'lodash/lowerCase';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -31,6 +36,8 @@ import {
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
+
+import { createFacilitiesCSV } from './util.facilitiesCSV';
 
 export function DownloadCSV(data, fileName) {
     saveAs(
@@ -49,6 +56,9 @@ export const downloadListItemCSV = list =>
         createListItemCSV(list.items),
         `${list.id}_${list.name}_${(new Date()).toLocaleDateString()}.csv`,
     );
+
+export const downloadFacilitiesCSV = facilities =>
+    DownloadCSV(createFacilitiesCSV(facilities), 'facilities.csv');
 
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
@@ -339,3 +349,50 @@ export const makeResetPasswordEmailURL = () =>
 
 export const makeResetPasswordConfirmURL = () =>
     '/rest-auth/password/reset/confirm/';
+
+export const joinDataIntoCSVString = data => data
+    .reduce((csvAccumulator, nextRow) => {
+        const joinedColumns = nextRow
+            .reduce((rowAccumulator, nextColumn) => {
+                if (isNumber(nextColumn)) {
+                    return rowAccumulator.concat(nextColumn, ',');
+                }
+
+                return rowAccumulator.concat(
+                    '' + '"' + replace(nextColumn, '"', '\"') + '"', // eslint-disable-line
+                    ',',
+                );
+            }, '');
+
+        return csvAccumulator.concat(
+            trimEnd(joinedColumns, ','),
+            '\n',
+        );
+    }, '');
+
+export const caseInsensitiveIncludes = (target, test) =>
+    includes(lowerCase(target), lowerCase(test));
+
+export const sortFacilitiesAlphabeticallyByName = data => data
+    .slice()
+    .sort((
+        {
+            properties: {
+                name: firstFacilityName,
+            },
+        },
+        {
+            properties: {
+                name: secondFacilityName,
+            },
+        },
+    ) => {
+        const a = lowerCase(firstFacilityName);
+        const b = lowerCase(secondFacilityName);
+
+        if (a === b) {
+            return 0;
+        }
+
+        return (a < b) ? -1 : 1;
+    });
