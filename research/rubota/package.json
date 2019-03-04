@@ -1,0 +1,15 @@
+{
+  "name": "fetch_rubota_facilities",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fetch_rubota_facilities.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "fast-csv": "^2.4.1"
+  }
+}
