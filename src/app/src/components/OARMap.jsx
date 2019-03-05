@@ -44,7 +44,7 @@ const OARMapStyles = Object.freeze({
     }),
 });
 
-const loadEvent = 'load';
+const styleLoadEvent = 'style.load';
 const moveEvent = 'move';
 const clickEvent = 'click';
 const mouseEnterEvent = 'mouseenter';
@@ -110,7 +110,7 @@ class OARMap extends Component {
         this.oarMap.on(moveEvent, this.handleMapMove);
         this.oarMap.on(clickEvent, this.handleMapClick);
 
-        this.oarMap.on(loadEvent, () => {
+        this.oarMap.on(styleLoadEvent, () => {
             if (data) {
                 this.oarMap.addSource(
                     FACILITIES_SOURCE,
@@ -173,7 +173,7 @@ class OARMap extends Component {
         if (this.oarMap.getSource(FACILITIES_SOURCE)) {
             this.oarMap.getSource(FACILITIES_SOURCE).setData(data);
             this.toggleHighlightedPoint();
-        } else {
+        } else if (this.oarMap) {
             this.oarMap.addSource(
                 FACILITIES_SOURCE,
                 createSourceFromData(data),
