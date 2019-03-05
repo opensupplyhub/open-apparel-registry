@@ -26,6 +26,8 @@ const {
     getFileNameFromInputRef,
     createSignupErrorMessages,
     createSignupRequestData,
+    createProfileUpdateErrorMessages,
+    createProfileUpdateRequestData,
     createErrorListFromResponseObject,
     mapDjangoChoiceTuplesToSelectOptions,
     allListsAreEmpty,
@@ -56,6 +58,8 @@ const {
     OTHER,
     registrationFieldsEnum,
     registrationFormFields,
+    profileFieldsEnum,
+    profileFormFields,
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
 } = require('../util/constants');
@@ -362,42 +366,73 @@ it('gets an empty string for the filename from an empty file input ref', () => {
         .toEqual('');
 });
 
-it('creates a list of error messages if any required signup fields are missing', () => {
-    const incompleteForm = mapValues(registrationFieldsEnum, '');
+it('creates a list of error messages if any required signup or profile update fields are missing', () => {
+    const incompleteSignupForm = mapValues(registrationFieldsEnum, '');
 
-    const expectedErrorMessageCount = registrationFormFields
+    const expectedSignupErrorMessageCount = registrationFormFields
         .filter(({ required }) => required)
         .filter(({ id }) => id !== registrationFieldsEnum.otherContributorType)
         .length;
 
-    expect(createSignupErrorMessages(incompleteForm).length)
-        .toEqual(expectedErrorMessageCount);
+    expect(createSignupErrorMessages(incompleteSignupForm).length)
+        .toEqual(expectedSignupErrorMessageCount);
+
+    const incompleteProfileForm = mapValues(profileFieldsEnum, '');
+
+    const expectedProfileErrorMessageCount = profileFormFields
+        .filter(({ required }) => required)
+        .filter(({ id }) => id !== registrationFieldsEnum.otherContributorType)
+        .length;
+
+    expect(createProfileUpdateErrorMessages(incompleteProfileForm).length)
+        .toEqual(expectedProfileErrorMessageCount);
 });
 
-it('creates zero error messages if all required signup fields are present', () => {
-    const completeForm = registrationFieldsEnum;
+it('creates zero error messages if all required signup or profile update fields are present', () => {
+    const completeSignupForm = registrationFieldsEnum;
 
-    expect(createSignupErrorMessages(completeForm).length)
+    expect(createSignupErrorMessages(completeSignupForm).length)
+        .toEqual(0);
+
+    const completeProfileForm = profileFieldsEnum;
+
+    expect(createProfileUpdateErrorMessages(completeProfileForm).length)
         .toEqual(0);
 });
 
 it('creates an error message for missing otherContributorType field when it is required', () => {
-    const completeForm = Object.assign({}, registrationFieldsEnum, {
+    const completeSignupForm = Object.assign({}, registrationFieldsEnum, {
         [registrationFieldsEnum.contributorType]: OTHER,
         [registrationFieldsEnum.otherContributorType]: '',
     });
 
-    expect(createSignupErrorMessages(completeForm).length)
+    expect(createSignupErrorMessages(completeSignupForm).length)
+        .toEqual(1);
+
+    const completeProfileForm = Object.assign({}, profileFieldsEnum, {
+        [registrationFieldsEnum.contributorType]: OTHER,
+        [registrationFieldsEnum.otherContributorType]: '',
+    });
+
+    expect(createProfileUpdateErrorMessages(completeProfileForm).length)
         .toEqual(1);
 });
 
 it('creates no error message for missing otherContributorType field when present', () => {
-    const completeForm = Object.assign({}, registrationFieldsEnum, {
+    const completeSignupForm = Object.assign({}, registrationFieldsEnum, {
         [registrationFieldsEnum.contributorType]: OTHER,
         [registrationFieldsEnum.otherContributorType]: 'other contributor type',
     });
 
-    expect(createSignupErrorMessages(completeForm).length)
+    expect(createSignupErrorMessages(completeSignupForm).length)
+        .toEqual(0);
+
+    const completeProfileForm = Object.assign({}, profileFieldsEnum, {
+        [registrationFieldsEnum.contributorType]: OTHER,
+        [registrationFieldsEnum.otherContributorType]: 'other contributor type',
+    });
+
+    expect(createProfileUpdateErrorMessages(completeProfileForm).length)
         .toEqual(0);
 });
 
@@ -408,10 +443,15 @@ it('correctly reformats data to send to Django from the signup form state', () =
         ...completeForm
     } = registrationFieldsEnum;
 
-    const requestData = createSignupRequestData(completeForm);
+    const signupRequestData = createSignupRequestData(completeForm);
 
     registrationFormFields.forEach(({ id, modelFieldName }) =>
-        expect(requestData[modelFieldName]).toEqual(completeForm[id]));
+        expect(signupRequestData[modelFieldName]).toEqual(completeForm[id]));
+
+    const profileRequestData = createProfileUpdateRequestData(profileFieldsEnum);
+
+    profileFormFields.forEach(({ id, modelFieldName }) =>
+        expect(profileRequestData[modelFieldName]).toEqual(profileFieldsEnum[id]));
 });
 
 it('creates a list of field errors from a Django error object', () => {

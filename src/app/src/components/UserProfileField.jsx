@@ -43,7 +43,11 @@ export default function UserProfileField({
         return null;
     }
 
-    if (!isEditableProfile) {
+    if (!isEditableProfile && id === registrationFieldsEnum.website && !value) {
+        return null;
+    }
+
+    if (!isEditableProfile || id === registrationFieldsEnum.email) {
         return (
             <div className="control-panel__group">
                 <div className="form__field">

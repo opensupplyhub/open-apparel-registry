@@ -29,6 +29,7 @@ import {
     inputTypesEnum,
     registrationFieldsEnum,
     registrationFormFields,
+    profileFormFields,
     contributeCSVTemplate,
     facilitiesRoute,
     DEFAULT_PAGE,
@@ -261,7 +262,7 @@ export const getFileFromInputRef = inputRef =>
 export const getFileNameFromInputRef = inputRef =>
     get(inputRef, 'current.files[0].name', '');
 
-export const createSignupErrorMessages = form => registrationFormFields
+const makeCreateFormErrorMessagesFn = fields => form => fields
     .reduce((acc, { id, label, required }) => {
         if (!required) {
             return acc;
@@ -282,10 +283,16 @@ export const createSignupErrorMessages = form => registrationFormFields
         return acc.concat(missingFieldMessage);
     }, []);
 
-export const createSignupRequestData = form => registrationFormFields
+export const createSignupErrorMessages = makeCreateFormErrorMessagesFn(registrationFormFields);
+export const createProfileUpdateErrorMessages = makeCreateFormErrorMessagesFn(profileFormFields);
+
+const makeCreateFormRequestDataFn = fields => form => fields
     .reduce((acc, { id, modelFieldName }) => Object.assign({}, acc, {
         [modelFieldName]: form[id],
     }), {});
+
+export const createSignupRequestData = makeCreateFormRequestDataFn(registrationFormFields);
+export const createProfileUpdateRequestData = makeCreateFormRequestDataFn(profileFormFields);
 
 export const getStateFromEventForEventType = Object.freeze({
     [inputTypesEnum.checkbox]: getCheckedFromEvent,

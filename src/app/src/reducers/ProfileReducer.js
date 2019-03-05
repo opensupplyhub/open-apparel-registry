@@ -1,6 +1,5 @@
 import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
-import identity from 'lodash/identity';
 
 import {
     startFetchAPIToken,
@@ -18,6 +17,9 @@ import {
     completeFetchUserProfile,
     completeFetchUserProfileWithEmail,
     resetUserProfile,
+    startUpdateUserProfile,
+    failUpdateUserProfile,
+    completeUpdateUserProfile,
 } from '../actions/profile';
 
 import {
@@ -26,17 +28,23 @@ import {
     completeSubmitLogOut,
 } from '../actions/auth';
 
+import { registrationFieldsEnum } from '../util/constants';
+
 const initialState = Object.freeze({
     profile: Object.freeze({
         id: null,
-        email: '',
-        name: '',
-        description: '',
-        website: '',
-        contributorType: '',
-        otherContributorType: '',
-        password: '',
+        [registrationFieldsEnum.email]: '',
+        [registrationFieldsEnum.name]: '',
+        [registrationFieldsEnum.description]: '',
+        [registrationFieldsEnum.website]: '',
+        [registrationFieldsEnum.contributorType]: '',
+        [registrationFieldsEnum.otherContributorType]: '',
+        [registrationFieldsEnum.password]: '',
     }),
+    formSubmission: {
+        fetching: false,
+        error: null,
+    },
     tokens: Object.freeze({
         tokens: Object.freeze([]),
         fetching: false,
@@ -92,7 +100,12 @@ export default createReducer({
     }),
     [completeCreateAPIToken]: completeGettingAPIToken,
     [completeFetchAPIToken]: completeGettingAPIToken,
-    [updateProfileFormInput]: identity,
+    [updateProfileFormInput]: (state, { value, field }) => update(state, {
+        profile: {
+            [field]: { $set: value },
+        },
+        error: { $set: null },
+    }),
     [completeSessionLogin]: handleLogin,
     [completeSubmitLoginForm]: handleLogin,
     [completeSubmitLogOut]: state => update(state, {
@@ -133,6 +146,32 @@ export default createReducer({
         },
         fetching: { $set: false },
         error: { $set: null },
+    }),
+    [startUpdateUserProfile]: state => update(state, {
+        formSubmission: {
+            fetching: { $set: true },
+            error: { $set: null },
+        },
+    }),
+    [failUpdateUserProfile]: (state, payload) => update(state, {
+        formSubmission: {
+            fetching: { $set: false },
+            error: { $set: payload },
+        },
+    }),
+    [completeUpdateUserProfile]: (state, payload) => update(state, {
+        formSubmission: {
+            fetching: { $set: false },
+            error: { $set: null },
+        },
+        profile: {
+            [registrationFieldsEnum.name]: { $set: payload.name },
+            [registrationFieldsEnum.description]: { $set: payload.description },
+            [registrationFieldsEnum.website]: { $set: payload.website },
+            [registrationFieldsEnum.contributorType]: { $set: payload.contributor_type },
+            [registrationFieldsEnum.otherContributorType]: { $set: payload.other_contributor_type },
+            [registrationFieldsEnum.password]: { $set: initialState.profile.password },
+        },
     }),
     [resetUserProfile]: () => initialState,
 }, initialState);
