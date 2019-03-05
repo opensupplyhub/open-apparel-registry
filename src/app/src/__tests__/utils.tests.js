@@ -1,4 +1,5 @@
 /* eslint-env jest */
+/* eslint-disable no-useless-escape */
 
 const mapValues = require('lodash/mapValues');
 const isEqual = require('lodash/isEqual');
@@ -44,6 +45,9 @@ const {
     makeResetPasswordEmailURL,
     getTokenFromQueryString,
     makeResetPasswordConfirmURL,
+    joinDataIntoCSVString,
+    caseInsensitiveIncludes,
+    sortFacilitiesAlphabeticallyByName,
 } = require('../util/util');
 
 const {
@@ -305,7 +309,7 @@ it('gets the value from an event on a DOM input', () => {
     expect(getValueFromEvent(mockEvent)).toEqual(value);
 });
 
-it('gets the checked state from an even on a DOM checkbox input', () => {
+it('gets the checked state from an event on a DOM checkbox input', () => {
     const checked = true;
     const mockEvent = {
         target: {
@@ -715,4 +719,136 @@ it('gets a `token` from a querystring', () => {
     const expectedMissingQueryStringMatch = '';
 
     expect(getTokenFromQueryString(missingQueryString)).toBe(expectedMissingQueryStringMatch);
+});
+
+it('joins a 2-d array into a correctly escaped CSV string', () => {
+    const numericArray = [
+        [
+            1,
+            2,
+        ],
+        [
+            3,
+            4,
+        ],
+    ];
+    const expectedNumericArrayMatch = '1,2\n3,4\n';
+    expect(joinDataIntoCSVString(numericArray)).toBe(expectedNumericArrayMatch);
+
+    const stringArray = [
+        [
+            'hello',
+            'world',
+        ],
+        [
+            'foo',
+            '13e65088',
+        ],
+    ];
+    const expectedStringArrayMatch = '"hello","world"\n"foo","13e65088"\n';
+    expect(joinDataIntoCSVString(stringArray)).toBe(expectedStringArrayMatch);
+
+    const mixedArray = [
+        [
+            1,
+            'hello',
+        ],
+        [
+            2,
+            'world',
+        ],
+    ];
+    const expectedMixedArrayMatch = '1,"hello"\n2,"world"\n';
+    expect(joinDataIntoCSVString(mixedArray)).toBe(expectedMixedArrayMatch);
+
+    const escapedArray = [
+        [
+            'foo, bar, baz',
+            'hello "world"',
+        ],
+        [
+            'foo, "bar", baz',
+            'hello, world',
+        ],
+    ];
+    const expectedEscapedArrayMatch =
+        '"foo, bar, baz","hello \"world\""\n"foo, \"bar\", baz","hello, world"\n';
+    expect(joinDataIntoCSVString(escapedArray)).toBe(expectedEscapedArrayMatch);
+});
+
+it('checks whether one string includes another regardless of char case', () => {
+    const uppercaseTarget = 'HELLOWORLD';
+    const lowercaseTest = 'world';
+    const lowercaseTarget = 'helloworld';
+    const uppercaseTest = 'WORLD';
+    const uppercaseNonMatchTest = 'FOO';
+    const lowercaseNonMatchTest = 'foo';
+
+    expect(caseInsensitiveIncludes(uppercaseTarget, lowercaseTest)).toBe(true);
+    expect(caseInsensitiveIncludes(lowercaseTarget, uppercaseTest)).toBe(true);
+    expect(caseInsensitiveIncludes(lowercaseTarget, lowercaseTest)).toBe(true);
+    expect(caseInsensitiveIncludes(uppercaseTarget, uppercaseTest)).toBe(true);
+
+    expect(caseInsensitiveIncludes(uppercaseTarget, lowercaseNonMatchTest)).toBe(false);
+    expect(caseInsensitiveIncludes(lowercaseTarget, uppercaseNonMatchTest)).toBe(false);
+    expect(caseInsensitiveIncludes(lowercaseTarget, lowercaseNonMatchTest)).toBe(false);
+    expect(caseInsensitiveIncludes(uppercaseTarget, uppercaseNonMatchTest)).toBe(false);
+});
+
+it('sorts an array of facilities alphabetically by name without mutating the input', () => {
+    const inputData = [
+        {
+            properties: {
+                name: 'hello World',
+            },
+        },
+        {
+            properties: {
+                name: 'FOO',
+            },
+        },
+        {
+            properties: {
+                name: 'Bar',
+            },
+        },
+        {
+            properties: {
+                name: 'baz',
+            },
+        },
+    ];
+
+    const expectedSortedData = [
+        {
+            properties: {
+                name: 'Bar',
+            },
+        },
+        {
+            properties: {
+                name: 'baz',
+            },
+        },
+        {
+            properties: {
+                name: 'FOO',
+            },
+        },
+        {
+            properties: {
+                name: 'hello World',
+            },
+        },
+    ];
+
+    expect(isEqual(
+        sortFacilitiesAlphabeticallyByName(inputData),
+        expectedSortedData,
+    )).toBe(true);
+
+    expect(isEqual(
+        inputData,
+        expectedSortedData,
+    )).toBe(false);
 });

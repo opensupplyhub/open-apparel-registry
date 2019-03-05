@@ -1,5 +1,5 @@
 {
-    "name": "redpanda",
+    "name": "open-apparel-registry",
     "version": "0.1.0",
     "license": "MIT",
     "private": true,
@@ -10,11 +10,9 @@
         "axios": "0.18.0",
         "core-js": "2.6.4",
         "file-saver": "2.0.0",
-        "json2csv": "4.1.6",
         "immutability-helper": "2.9.0",
         "lodash": "4.17.11",
         "mapbox-gl": "0.52.0",
-        "papaparse": "4.6.3",
         "prop-types": "15.6.2",
         "react": "16.7.0",
         "react-copy-to-clipboard": "5.0.1",
@@ -40,8 +38,7 @@
         "build": "react-scripts build",
         "test": "CI=1 react-scripts test",
         "lint": "eslint src/ --ext .js --ext .jsx",
-        "eject": "react-scripts eject",
-        "deploy": "npm run build && firebase deploy"
+        "eject": "react-scripts eject"
     },
     "devDependencies": {
         "@babel/cli": "7.0.0-beta.49",

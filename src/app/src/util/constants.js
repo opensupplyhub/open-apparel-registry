@@ -207,6 +207,7 @@ export const contributeReplacesNoneSelectionID = -1;
 export const filterSidebarTabsEnum = Object.freeze({
     guide: 'guide',
     search: 'search',
+    facilities: 'facilities',
 });
 
 export const filterSidebarTabs = Object.freeze([
@@ -217,6 +218,10 @@ export const filterSidebarTabs = Object.freeze([
     Object.freeze({
         tab: filterSidebarTabsEnum.search,
         label: 'Search',
+    }),
+    Object.freeze({
+        tab: filterSidebarTabsEnum.facilities,
+        label: 'Facilities',
     }),
 ]);
 
@@ -253,4 +258,9 @@ export const facilityMatchStatusChoicesEnum = Object.freeze({
     AUTOMATIC: 'AUTOMATIC',
     CONFIRMED: 'CONFIRMED',
     REJECTED: 'REJECTED',
+});
+
+export const emptyFeatureCollection = Object.freeze({
+    type: FEATURE_COLLECTION,
+    features: Object.freeze([]),
 });

@@ -9,6 +9,7 @@ export default function ControlledTextInput({
     hint,
     value,
     onChange,
+    placeholder,
 }) {
     return (
         <Fragment>
@@ -21,6 +22,7 @@ export default function ControlledTextInput({
                 className="noFocus form__text-input"
                 value={value}
                 onChange={onChange}
+                placeholder={placeholder}
             />
         </Fragment>
     );
@@ -29,6 +31,7 @@ export default function ControlledTextInput({
 ControlledTextInput.defaultProps = {
     type: 'text',
     hint: '',
+    placeholder: '',
 };
 
 ControlledTextInput.propTypes = {
@@ -37,4 +40,5 @@ ControlledTextInput.propTypes = {
     type: string,
     hint: string,
     onChange: func.isRequired,
+    placeholder: string,
 };

@@ -3,7 +3,8 @@ import get from 'lodash/get';
 import fill from 'lodash/fill';
 import isEmpty from 'lodash/isEmpty';
 import flow from 'lodash/flow';
-import { unparse } from 'papaparse';
+
+import { joinDataIntoCSVString } from './util';
 
 import { facilityMatchStatusChoicesEnum } from './constants';
 
@@ -96,4 +97,4 @@ export const listItemReducer = (acc, next) => {
 
 export const formatDataForCSV = listItems => listItems.reduce(listItemReducer, [csvHeaders]);
 
-export const createListItemCSV = flow(formatDataForCSV, unparse);
+export const createListItemCSV = flow(formatDataForCSV, data => joinDataIntoCSVString(data));

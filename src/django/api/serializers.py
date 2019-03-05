@@ -92,12 +92,13 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     other_names = SerializerMethodField()
     other_addresses = SerializerMethodField()
     contributors = SerializerMethodField()
+    country_name = SerializerMethodField()
 
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'created_at', 'updated_at', 'oar_id', 'other_names',
-                  'other_addresses', 'contributors')
+                  'other_addresses', 'contributors', 'country_name')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -112,6 +113,9 @@ class FacilitySerializer(GeoFeatureModelSerializer):
 
     def get_contributors(self, facility):
         return facility.contributors()
+
+    def get_country_name(self, facility):
+        return COUNTRY_NAMES.get(facility.country_code, '')
 
 
 class FacilityMatchSerializer(ModelSerializer):

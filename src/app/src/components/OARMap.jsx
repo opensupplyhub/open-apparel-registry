@@ -31,13 +31,15 @@ import {
     oarMapLayerIDEnum,
 } from '../util/constants.oarmap';
 
+import { emptyFeatureCollection } from '../util/constants';
+
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
 const OARMapStyles = Object.freeze({
     copySearchButtonStyle: Object.freeze({
         position: 'absolute',
         right: '84px',
-        top: '84px',
+        top: '20px',
         fontSize: '12px',
     }),
 });
@@ -134,7 +136,10 @@ class OARMap extends Component {
         );
     }
 
-    componentDidUpdate({ fetching: wasFetching }) {
+    componentDidUpdate({
+        fetching: wasFetching,
+        data: hadData,
+    }) {
         const {
             fetching,
             error,
@@ -148,6 +153,13 @@ class OARMap extends Component {
 
         if (error) {
             return null;
+        }
+
+        if (!data && hadData) {
+            // Clear markers from layer if data has been cleared
+            return this.oarMap.getSource(FACILITIES_SOURCE)
+                ? this.oarMap.getSource(FACILITIES_SOURCE).setData(emptyFeatureCollection)
+                : null;
         }
 
         if (!wasFetching && !singleFacilityData) {

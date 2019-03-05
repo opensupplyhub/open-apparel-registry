@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import AppGrid from './AppGrid';
+import AppOverflow from './AppOverflow';
 import FacilityListsEmpty from './FacilityListsEmpty';
 import FacilityListsTable from './FacilityListsTable';
 import ShowOnly from './ShowOnly';
@@ -86,18 +87,20 @@ class FacilityLists extends Component {
             : <FacilityListsEmpty />;
 
         return (
-            <AppGrid title="My Lists">
-                <ShowOnly when={!!myFacilitiesRoute}>
-                    <Link
-                        to={myFacilitiesRoute}
-                        href={myFacilitiesRoute}
-                        style={{ paddingBottom: '20px' }}
-                    >
-                        View my facilities
-                    </Link>
-                </ShowOnly>
-                {tableComponent}
-            </AppGrid>
+            <AppOverflow>
+                <AppGrid title="My Lists">
+                    <ShowOnly when={!!myFacilitiesRoute}>
+                        <Link
+                            to={myFacilitiesRoute}
+                            href={myFacilitiesRoute}
+                            style={{ paddingBottom: '20px' }}
+                        >
+                            View my facilities
+                        </Link>
+                    </ShowOnly>
+                    {tableComponent}
+                </AppGrid>
+            </AppOverflow>
         );
     }
 }

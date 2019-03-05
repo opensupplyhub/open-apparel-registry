@@ -63,3 +63,10 @@ export const confirmRejectMatchRowStyles = Object.freeze({
         justifyContent: 'space-between',
     }),
 });
+
+export const filterSidebarStyles = Object.freeze({
+    controlPanelContentStyles: Object.freeze({
+        height: 'inherit',
+        overflow: 'auto',
+    }),
+});
