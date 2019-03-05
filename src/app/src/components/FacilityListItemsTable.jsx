@@ -105,7 +105,8 @@ function FacilityListItemsTable({
                 );
             }
 
-            if (item.status === facilityListItemStatusChoicesEnum.MATCHED
+            if ((item.status === facilityListItemStatusChoicesEnum.MATCHED
+                 || item.status === facilityListItemStatusChoicesEnum.CONFIRMED_MATCH)
                 && item.id === item.matched_facility.created_from_id) {
                 return (
                     <FacilityListItemsTableRow
