@@ -10,7 +10,7 @@ class Command(BaseCommand):
         try:
             call_command('loaddata',
                          'users.json',
-                         'organizations.json',
+                         'contributors.json',
                          'facility_lists.json',
                          'facility_list_items.json',
                          'facilities.json',

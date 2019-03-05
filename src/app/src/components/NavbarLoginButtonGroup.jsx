@@ -65,8 +65,8 @@ const createUserDropdownLinks = (user, logoutAction) => Object.freeze([
     }),
     Object.freeze({
         text: 'My Facilities',
-        url: user.organization_id
-            ? makeMyFacilitiesRoute(user.organization_id)
+        url: user.contributor_id
+            ? makeMyFacilitiesRoute(user.contributor_id)
             : '/facilities',
         type: 'link',
     }),

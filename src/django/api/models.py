@@ -42,16 +42,16 @@ class EmailAsUsernameUserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class Organization(models.Model):
+class Contributor(models.Model):
     """
     A participant in or observer of the supply chain that will
     upload facility lists to the registry.
     """
     # These choices must be kept in sync with the identical list kept in the
     # React client's constants file
-    OTHER_ORG_TYPE = 'Other'
+    OTHER_CONTRIB_TYPE = 'Other'
 
-    ORG_TYPE_CHOICES = (
+    CONTRIB_TYPE_CHOICES = (
         ('Auditor', 'Auditor'),
         ('Brand/Retailer', 'Brand/Retailer'),
         ('Civil Society Organization', 'Civil Society Organization'),
@@ -62,34 +62,34 @@ class Organization(models.Model):
         ('Researcher / Academic', 'Researcher / Academic'),
         ('Service Provider', 'Service Provider'),
         ('Union', 'Union'),
-        (OTHER_ORG_TYPE, OTHER_ORG_TYPE),
+        (OTHER_CONTRIB_TYPE, OTHER_CONTRIB_TYPE),
     )
 
     admin = models.OneToOneField(
         'User',
         on_delete=models.PROTECT,
         help_text=('The user account responsible for uploading and '
-                   'maintaining facility lists for the organization'))
+                   'maintaining facility lists for the contributor'))
     name = models.CharField(
         max_length=200,
         null=False,
         blank=False,
-        help_text='The full name of the organization.')
+        help_text='The full name of the contributor.')
     description = models.TextField(
         null=False,
         blank=True,
-        help_text='A detailed description of the organization.')
+        help_text='A detailed description of the contributor.')
     website = models.URLField(
         null=False,
         blank=True,
-        help_text='A URL linking to a web site for the organization.')
-    org_type = models.CharField(
+        help_text='A URL linking to a web site for the contributor.')
+    contrib_type = models.CharField(
         max_length=200,
         null=False,
         blank=False,
-        choices=ORG_TYPE_CHOICES,
-        help_text='The category to which this organization belongs.')
-    other_org_type = models.CharField(
+        choices=CONTRIB_TYPE_CHOICES,
+        help_text='The category to which this contributor belongs.')
+    other_contrib_type = models.CharField(
         max_length=200,
         null=True,
         blank=True,
@@ -158,10 +158,10 @@ class FacilityList(models.Model):
     """
     Metadata for an uploaded list of facilities.
     """
-    organization = models.ForeignKey(
-        'Organization',
+    contributor = models.ForeignKey(
+        'Contributor',
         on_delete=models.PROTECT,
-        help_text='The organization that uploaded this list.')
+        help_text='The contributor that uploaded this list.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -191,7 +191,7 @@ class FacilityList(models.Model):
         null=False,
         default=True,
         help_text=('True if the public can see factories from this list '
-                   'are associated with the organization.'))
+                   'are associated with the contributor.'))
     replaces = models.OneToOneField(
         'self',
         null=True,
@@ -205,7 +205,7 @@ class FacilityList(models.Model):
 
     def __str__(self):
         return '{0} - {1} ({2})'.format(
-            self.organization.name, self.name, self.id)
+            self.contributor.name, self.name, self.id)
 
 
 class FacilityListItem(models.Model):
@@ -427,7 +427,7 @@ class Facility(models.Model):
 
         return {
             "{} ({})".format(
-                match.facility_list.organization.name,
+                match.facility_list.contributor.name,
                 match.facility_list.name,
             )
             for match
@@ -484,7 +484,7 @@ class FacilityMatch(models.Model):
         default=PENDING,
         help_text=('The current status of the match. AUTOMATIC if the '
                    'application made a match with high confidence. PENDING '
-                   'if confirmation from the organization admin is required. '
+                   'if confirmation from the contributor admin is required. '
                    'CONFIRMED if the admin approves the match. REJECTED if '
                    'the admin rejects the match. Only one row for a given '
                    'and facility list item pair should have either AUTOMATIC '

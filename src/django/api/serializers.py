@@ -14,7 +14,7 @@ from api.models import (FacilityList,
                         Facility,
                         FacilityMatch,
                         User,
-                        Organization)
+                        Contributor)
 from api.countries import COUNTRY_NAMES
 
 
@@ -25,7 +25,7 @@ class UserSerializer(ModelSerializer):
     website = SerializerMethodField()
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
-    organization_id = SerializerMethodField()
+    contributor_id = SerializerMethodField()
 
     class Meta:
         model = User
@@ -39,44 +39,44 @@ class UserSerializer(ModelSerializer):
 
     def get_name(self, user):
         try:
-            user_organization = Organization.objects.get(admin=user)
-            return user_organization.name
-        except Organization.DoesNotExist:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.name
+        except Contributor.DoesNotExist:
             return None
 
     def get_description(self, user):
         try:
-            user_organization = Organization.objects.get(admin=user)
-            return user_organization.description
-        except Organization.DoesNotExist:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.description
+        except Contributor.DoesNotExist:
             return None
 
     def get_website(self, user):
         try:
-            user_organization = Organization.objects.get(admin=user)
-            return user_organization.website
-        except Organization.DoesNotExist:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.website
+        except Contributor.DoesNotExist:
             return None
 
     def get_contributor_type(self, user):
         try:
-            user_organization = Organization.objects.get(admin=user)
-            return user_organization.org_type
-        except Organization.DoesNotExist:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.contrib_type
+        except Contributor.DoesNotExist:
             return None
 
     def get_other_contributor_type(self, user):
         try:
-            user_organization = Organization.objects.get(admin=user)
-            return user_organization.other_org_type
-        except Organization.DoesNotExist:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.other_contrib_type
+        except Contributor.DoesNotExist:
             return None
 
-    def get_organization_id(self, user):
+    def get_contributor_id(self, user):
         try:
-            user_organization = Organization.objects.get(admin=user)
-            return user_organization.id
-        except Organization.DoesNotExist:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.id
+        except Contributor.DoesNotExist:
             return None
 
 

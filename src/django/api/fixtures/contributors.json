@@ -1,1372 +1,1372 @@
 [
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 2,
         "fields": {
             "admin": 2,
             "name": "Bryan, Bradshaw and Johnson",
             "description": "Firm yard image training. Deep see cover television sell personal staff. Lead billion black small fact no ground.",
             "website": "http://www.burns.org/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-19T16:40:52+00:00",
             "updated_at": "2019-02-26T19:29:20.303477+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 3,
         "fields": {
             "admin": 3,
             "name": "Santos, Rogers and Barnes",
             "description": "Himself senior design story power. History ten garden enter western class.\nAgainst space security star field later. Mr everybody water firm challenge dark.",
             "website": "http://www.hall-velez.com/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T12:11:09+00:00",
             "updated_at": "2019-02-26T19:29:20.870490+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 4,
         "fields": {
             "admin": 4,
             "name": "Shannon, Hall and Garcia",
             "description": "Measure production step head save large tonight become. Suggest dog food rest effort computer by less. Role lot evidence both whole water.",
             "website": "https://www.taylor.com/",
-            "org_type": "Other",
-            "other_org_type": "and Sons",
+            "contrib_type": "Other",
+            "other_contrib_type": "and Sons",
             "created_at": "2019-02-23T23:24:15+00:00",
             "updated_at": "2019-02-26T19:29:20.803663+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 5,
         "fields": {
             "admin": 5,
             "name": "Johnson, Pennington and Long",
             "description": "Popular win time care able positive any interest. Listen than management.\nSell cell similar husband. Industry artist wrong rest. Read baby girl sign.",
             "website": "http://www.hughes.com/",
-            "org_type": "Other",
-            "other_org_type": "Inc",
+            "contrib_type": "Other",
+            "other_contrib_type": "Inc",
             "created_at": "2019-02-21T19:41:31+00:00",
             "updated_at": "2019-02-26T19:29:20.330248+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 6,
         "fields": {
             "admin": 6,
             "name": "Navarro LLC",
             "description": "This specific capital argue stand. View part wear central. Most near decade various me.\nJob only include write imagine sit officer fire. Professor company can go.",
             "website": "http://www.vasquez.com/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T05:57:53+00:00",
             "updated_at": "2019-02-26T19:29:20.428768+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 7,
         "fields": {
             "admin": 7,
             "name": "Esparza, Sanchez and Espinoza",
             "description": "Could hospital bad run. Stay hand side. Treatment smile painting choice body green tend air. Line through so friend skill argue always.",
             "website": "http://www.bell.org/",
-            "org_type": "Other",
-            "other_org_type": "LLC",
+            "contrib_type": "Other",
+            "other_contrib_type": "LLC",
             "created_at": "2019-02-18T07:10:14+00:00",
             "updated_at": "2019-02-26T19:29:20.257211+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 8,
         "fields": {
             "admin": 8,
             "name": "Graham Inc",
             "description": "Note expect event people air soon race. Election couple alone culture administration agreement.",
             "website": "http://brown.info/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-20T20:31:44+00:00",
             "updated_at": "2019-02-26T19:29:20.366610+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 9,
         "fields": {
             "admin": 9,
             "name": "Cook-Reynolds",
             "description": "Size today ready carry. Suddenly share act approach deep. Yard Mrs range learn research whatever.",
             "website": "https://murphy.com/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T03:10:44+00:00",
             "updated_at": "2019-02-26T19:29:20.316593+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 10,
         "fields": {
             "admin": 10,
             "name": "Howard Inc",
             "description": "Fund financial let particular plan something. Whose wish off write home public. Professional president current.",
             "website": "http://www.holt.biz/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T05:14:03+00:00",
             "updated_at": "2019-02-26T19:29:20.645488+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 11,
         "fields": {
             "admin": 11,
             "name": "Taylor-Marks",
             "description": "Understand party Mrs military music hour. Suffer notice Republican health.\nBreak score participant look meet student. With civil standard. Interview play question nation compare.",
             "website": "http://morales-hernandez.org/",
-            "org_type": "Other",
-            "other_org_type": "Inc",
+            "contrib_type": "Other",
+            "other_contrib_type": "Inc",
             "created_at": "2019-02-21T21:25:15+00:00",
             "updated_at": "2019-02-26T19:29:20.771052+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 12,
         "fields": {
             "admin": 12,
             "name": "Owen, Lee and Lee",
             "description": "Attorney happen factor detail trouble. Sport top stand since environment itself back defense. Kind every seven black chair artist.",
             "website": "http://powell.com/",
-            "org_type": "Service Provider",
-            "other_org_type": null,
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T19:52:55+00:00",
             "updated_at": "2019-02-26T19:29:20.089217+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 13,
         "fields": {
             "admin": 13,
             "name": "Davis, Mann and Smith",
             "description": "Dog around market force. Total fish prove feel.\nA meet short structure. Information long since defense.\nType management write herself. Debate few image action bed.",
             "website": "https://www.santos.com/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T15:43:45+00:00",
             "updated_at": "2019-02-26T19:29:20.348015+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 14,
         "fields": {
             "admin": 14,
             "name": "Arnold-Adams",
             "description": "Top garden lot simply report democratic. Quickly common scientist husband. Radio some history program tax.\nSit race life officer. Account career these professor military economic audience his.",
             "website": "http://www.mitchell-walsh.info/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T00:00:11+00:00",
             "updated_at": "2019-02-26T19:29:20.231811+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 15,
         "fields": {
             "admin": 15,
             "name": "Herring Group",
             "description": "Big gun tell sound. Reduce Democrat live song rather despite. Law low method soldier type side our. Life she represent activity believe however cell.",
             "website": "http://www.ashley-landry.info/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-19T07:51:56+00:00",
             "updated_at": "2019-02-26T19:29:20.399343+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 16,
         "fields": {
             "admin": 16,
             "name": "Jones LLC",
             "description": "Then score today hard. Floor brother prepare consumer high people history. Away structure maybe describe industry vote live.",
             "website": "http://www.hoffman-lewis.com/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T10:38:19+00:00",
             "updated_at": "2019-02-26T19:29:20.638164+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 17,
         "fields": {
             "admin": 17,
             "name": "Smith Inc",
             "description": "Today throughout interview particular sound. Coach relate anything. Still hold situation moment single.",
             "website": "http://www.sanchez-oconnor.biz/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T03:11:28+00:00",
             "updated_at": "2019-02-26T19:29:20.756411+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 18,
         "fields": {
             "admin": 18,
             "name": "Harris-Bowman",
             "description": "Feeling officer radio you beyond game small production. Race spring week.\nUnder near at catch difficult range term. In role teach ok discover central. Hour summer base place traditional.",
             "website": "https://www.george.biz/",
-            "org_type": "Other",
-            "other_org_type": "LLC",
+            "contrib_type": "Other",
+            "other_contrib_type": "LLC",
             "created_at": "2019-02-20T22:34:18+00:00",
             "updated_at": "2019-02-26T19:29:20.800277+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 19,
         "fields": {
             "admin": 19,
             "name": "Shaw-Dunlap",
             "description": "Line military memory easy sit cut style message. Model agree stock technology north. Traditional tax star want project section mouth consider.",
             "website": "https://www.lawson.net/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T07:49:58+00:00",
             "updated_at": "2019-02-26T19:29:20.965841+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 20,
         "fields": {
             "admin": 20,
             "name": "Porter Inc",
             "description": "Various worker production trial feel task.\nServe he place. Baby author fly prevent. Stage single positive eat south trial police develop. Sing win carry involve present dinner TV.",
             "website": "http://www.young.com/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T20:16:36+00:00",
             "updated_at": "2019-02-26T19:29:20.328997+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 21,
         "fields": {
             "admin": 21,
             "name": "Fox-Medina",
-            "description": "Join truth lay carry. Within play account question individual onto. Must say institution time organization east.\nSomebody despite question early. Great amount morning both television.",
+            "description": "Join truth lay carry. Within play account question individual onto. Must say institution time contributor east.\nSomebody despite question early. Great amount morning both television.",
             "website": "https://www.torres.net/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T00:04:23+00:00",
             "updated_at": "2019-02-26T19:29:20.112598+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 22,
         "fields": {
             "admin": 22,
             "name": "Jenkins, Davidson and Mason",
             "description": "Tonight factor production get. Public election by various thought Republican. Meet democratic job last certainly.\nPoint recently there wrong word always. Much win firm.",
             "website": "https://khan.net/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T08:15:44+00:00",
             "updated_at": "2019-02-26T19:29:20.778045+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 23,
         "fields": {
             "admin": 23,
             "name": "Butler-Lawson",
             "description": "Senior wind central surface. Personal remember ever like.",
             "website": "http://www.collins.com/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T07:51:13+00:00",
             "updated_at": "2019-02-26T19:29:20.685903+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 24,
         "fields": {
             "admin": 24,
             "name": "Nelson PLC",
             "description": "Race interesting between ever tonight. Meet probably else artist piece.\nYour total little air billion among. Structure upon but military cover door theory. Course drop together.",
             "website": "https://allen.com/",
-            "org_type": "Factory / Facility",
-            "other_org_type": null,
+            "contrib_type": "Factory / Facility",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T21:11:48+00:00",
             "updated_at": "2019-02-26T19:29:20.127558+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 25,
         "fields": {
             "admin": 25,
             "name": "Brown-Harrison",
             "description": "Share pull call offer. Record again tonight operation.\nAt floor when people.\nAgree collection TV way admit front. Interesting few old. Protect religious challenge boy region yard.",
             "website": "https://young.com/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T13:54:21+00:00",
             "updated_at": "2019-02-26T19:29:20.409377+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 26,
         "fields": {
             "admin": 26,
             "name": "Dougherty-Richmond",
             "description": "State describe country various from wear. People describe force enter.\nArticle writer activity example. Military meeting region pull instead reality real. Science east guess.",
             "website": "http://wong.net/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-20T16:20:16+00:00",
             "updated_at": "2019-02-26T19:29:20.468456+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 27,
         "fields": {
             "admin": 27,
             "name": "Lin Inc",
             "description": "Relationship ground truth capital democratic. Piece even method much ready. Feel must share manage. Represent benefit parent capital season play.",
             "website": "https://www.johnson-freeman.com/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T05:59:18+00:00",
             "updated_at": "2019-02-26T19:29:20.073654+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 28,
         "fields": {
             "admin": 28,
             "name": "Bell-Smith",
             "description": "Several director dream hot rock why ahead expect. Court claim sign choose likely not.\nLetter loss today my usually increase exactly.",
             "website": "https://barron.info/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T23:18:23+00:00",
             "updated_at": "2019-02-26T19:29:20.471470+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 29,
         "fields": {
             "admin": 29,
             "name": "Hart, Montoya and Henry",
             "description": "Throw region recognize treat not boy former may. Prepare into space center much we. Soldier air property parent reflect land.",
             "website": "http://weaver-adams.com/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T23:08:25+00:00",
             "updated_at": "2019-02-26T19:29:20.266001+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 30,
         "fields": {
             "admin": 30,
             "name": "Rivera LLC",
             "description": "Doctor challenge both act manage two. Across protect collection with case little remain. Term statement study eat clearly hair where market.",
             "website": "http://stout.org/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T01:35:44+00:00",
             "updated_at": "2019-02-26T19:29:20.896552+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 31,
         "fields": {
             "admin": 31,
             "name": "Fowler, Carroll and Ramirez",
             "description": "Especially work hope for. Bed relationship fast red guess poor democratic.\nEver man board seven professional off conference. His else view. Along college sort though trade well someone.",
             "website": "http://miller.com/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T21:26:16+00:00",
             "updated_at": "2019-02-26T19:29:20.804500+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 32,
         "fields": {
             "admin": 32,
             "name": "Munoz, Hinton and Hughes",
             "description": "Congress relationship positive state should take eight.\nDemocratic wait thought usually card carry. Beat song sit let property begin price.",
             "website": "https://johnson.net/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T06:06:25+00:00",
             "updated_at": "2019-02-26T19:29:20.305536+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 33,
         "fields": {
             "admin": 33,
             "name": "Quinn LLC",
             "description": "Partner try financial three pressure stock should. Understand population cover save.\nBig around movement three thousand. Late benefit wear career event former.",
             "website": "http://www.carpenter.com/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T20:36:11+00:00",
             "updated_at": "2019-02-26T19:29:20.588950+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 34,
         "fields": {
             "admin": 34,
             "name": "Leonard-Orozco",
             "description": "Budget understand type herself. Tell several necessary in toward something. Skill positive or.",
             "website": "https://www.hardin-page.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T02:54:17+00:00",
             "updated_at": "2019-02-26T19:29:20.907655+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 35,
         "fields": {
             "admin": 35,
             "name": "Norman, Ramirez and Harrison",
             "description": "Free usually hair last throw cup. Member appear major later itself science TV.\nPrevent whom start ball peace arrive. Five black oil available set. However city thought area everything car deep.",
             "website": "http://russell.com/",
-            "org_type": "Other",
-            "other_org_type": "PLC",
+            "contrib_type": "Other",
+            "other_contrib_type": "PLC",
             "created_at": "2019-02-20T09:01:18+00:00",
             "updated_at": "2019-02-26T19:29:20.640468+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 36,
         "fields": {
             "admin": 36,
             "name": "Rogers-Vasquez",
             "description": "Because trouble whole space. Away today leader finally.\nOthers those carry entire statement film available. Ball similar hundred.",
             "website": "http://shields.com/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-17T20:46:45+00:00",
             "updated_at": "2019-02-26T19:29:20.533777+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 37,
         "fields": {
             "admin": 37,
             "name": "Hernandez-Gomez",
             "description": "Discuss art system trouble. Check imagine activity miss about important.\nOccur wish key choice might of street. Save image hour according challenge.\nProduction represent factor. Make job keep box.",
             "website": "http://www.watson.com/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T10:09:54+00:00",
             "updated_at": "2019-02-26T19:29:20.464196+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 38,
         "fields": {
             "admin": 38,
             "name": "Elliott-Romero",
             "description": "General country production in. Arm site agent method choose but camera picture. Address by knowledge success better move yourself. Majority despite professional west.",
             "website": "http://www.phelps-johnson.biz/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T04:05:53+00:00",
             "updated_at": "2019-02-26T19:29:20.268389+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 39,
         "fields": {
             "admin": 39,
             "name": "Barnes and Sons",
             "description": "Air role man choose doctor beat accept. Coach degree paper human want nice indicate.",
             "website": "http://www.lewis.com/",
-            "org_type": "Other",
-            "other_org_type": "Inc",
+            "contrib_type": "Other",
+            "other_contrib_type": "Inc",
             "created_at": "2019-02-17T20:33:12+00:00",
             "updated_at": "2019-02-26T19:29:20.883273+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 40,
         "fields": {
             "admin": 40,
             "name": "Arnold Inc",
             "description": "Ok position full. Old vote provide source. Act necessary lose popular least true fly.\nCitizen reality protect imagine actually race. Force admit individual. Role floor sometimes stop fire time.",
             "website": "http://johnson.net/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-20T23:12:21+00:00",
             "updated_at": "2019-02-26T19:29:20.577082+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 41,
         "fields": {
             "admin": 41,
             "name": "Higgins, Saunders and Cruz",
             "description": "Window especially just sport research loss window. Officer above personal or common.\nWorry rich than single simply news book. Sign activity the establish.\nWith expert face. Figure physical time mean.",
             "website": "https://hall-grant.biz/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T04:14:14+00:00",
             "updated_at": "2019-02-26T19:29:20.548783+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 42,
         "fields": {
             "admin": 42,
             "name": "Watson Ltd",
             "description": "Per hard maybe any. Factor present education number standard.\nComputer hold always official how series animal. Fact case nearly speak. Also up trip different week institution.",
             "website": "https://www.park-martinez.org/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T11:13:02+00:00",
             "updated_at": "2019-02-26T19:29:20.377980+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 43,
         "fields": {
             "admin": 43,
             "name": "Thomas Group",
             "description": "Even fire girl structure guy never eye quickly.\nHard executive political couple health including environment.",
             "website": "http://branch.com/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T13:21:26+00:00",
             "updated_at": "2019-02-26T19:29:20.754419+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 44,
         "fields": {
             "admin": 44,
             "name": "Baldwin Inc",
             "description": "Hotel financial purpose television someone study. Watch serious interview really clear.",
             "website": "https://juarez-gould.biz/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-17T20:38:46+00:00",
             "updated_at": "2019-02-26T19:29:20.912790+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 45,
         "fields": {
             "admin": 45,
             "name": "Kim, Stone and Joseph",
             "description": "None concern teach month. Guy professor town wish may have color. His two statement not production PM firm.\nOften arm news official. Instead garden financial employee peace.",
             "website": "https://smith-young.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T14:25:39+00:00",
             "updated_at": "2019-02-26T19:29:20.569896+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 46,
         "fields": {
             "admin": 46,
             "name": "Thompson Inc",
             "description": "Whole TV end maintain you film two. Light reality say how short least. Summer water bad method manager blood.",
             "website": "http://torres.com/",
-            "org_type": "Service Provider",
-            "other_org_type": null,
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T01:01:11+00:00",
             "updated_at": "2019-02-26T19:29:20.444175+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 47,
         "fields": {
             "admin": 47,
             "name": "Bailey-Hill",
             "description": "Natural throw light someone go. Seem poor practice particularly act foreign a.\nDemocratic assume trouble town. Myself manage run family or such trial later. Before necessary service blood.",
             "website": "https://www.jackson-mcmahon.net/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T12:29:44+00:00",
             "updated_at": "2019-02-26T19:29:20.340126+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 48,
         "fields": {
             "admin": 48,
             "name": "Keller, Roberts and West",
             "description": "Action why election team. Compare across stage. Region to true less.\nWhole under parent understand leader meeting like. Player thank mention agree interesting.",
             "website": "https://www.lopez.com/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T17:29:16+00:00",
             "updated_at": "2019-02-26T19:29:20.947580+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 49,
         "fields": {
             "admin": 49,
             "name": "Brewer Ltd",
             "description": "Executive environmental Mrs finally American. Their later down national one.\nHit compare notice world use collection quite. Again color pay war beyond. Serve through Mrs.",
             "website": "https://miller-willis.biz/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T00:29:28+00:00",
             "updated_at": "2019-02-26T19:29:20.207326+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 50,
         "fields": {
             "admin": 50,
             "name": "Bolton, Arnold and Gill",
             "description": "Begin approach home meet somebody here relationship set. Whom probably trouble message detail. Worry energy born economy strong lay.\nPrevent understand reach station television street.",
             "website": "http://estrada.biz/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T08:29:44+00:00",
             "updated_at": "2019-02-26T19:29:20.114486+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 51,
         "fields": {
             "admin": 51,
             "name": "Quinn, Reed and Gonzalez",
             "description": "Tv time media similar avoid environment. School hotel collection by.\nDemocratic ago rise stuff open shake. Around pretty cup wonder leg bank.",
             "website": "https://howell-branch.com/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T14:39:50+00:00",
             "updated_at": "2019-02-26T19:29:20.271284+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 52,
         "fields": {
             "admin": 52,
             "name": "Dixon Inc",
             "description": "Something wonder result on modern.\nHowever growth production score open laugh. Staff find know fast billion million new develop. Fund always account product.",
             "website": "https://cantrell.com/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T15:21:25+00:00",
             "updated_at": "2019-02-26T19:29:20.187309+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 53,
         "fields": {
             "admin": 53,
             "name": "Smith LLC",
             "description": "Them easy simple time. Leave Mr ball sit teacher head son these.\nIt hundred dinner summer institution court woman. Yes write pull phone question behavior. Type night better.",
             "website": "https://www.nelson.com/",
-            "org_type": "Manufacturing Group / Supplier / Vendor",
-            "other_org_type": null,
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T12:02:34+00:00",
             "updated_at": "2019-02-26T19:29:20.430408+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 54,
         "fields": {
             "admin": 54,
             "name": "Lyons, Davidson and Burns",
             "description": "Industry cover idea push rate. Court where common subject indicate. Necessary serve change move.\nOf each nature film people. Choice measure next prove phone into. Former create traditional career.",
             "website": "http://www.burton-jones.com/",
-            "org_type": "Factory / Facility",
-            "other_org_type": null,
+            "contrib_type": "Factory / Facility",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T07:04:29+00:00",
             "updated_at": "2019-02-26T19:29:20.596767+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 55,
         "fields": {
             "admin": 55,
             "name": "Roberts Group",
             "description": "Different former which mind feel. Adult laugh key present. Clear national including we share certainly building to.",
             "website": "http://www.brown.com/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T22:20:28+00:00",
             "updated_at": "2019-02-26T19:29:20.634669+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 56,
         "fields": {
             "admin": 56,
             "name": "Hicks, Huerta and Olson",
             "description": "College hit move somebody view rate back. Everyone old ball. Option role matter hot remember trouble likely. Fire peace kitchen skin weight difficult.",
             "website": "http://murray.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-19T12:59:00+00:00",
             "updated_at": "2019-02-26T19:29:20.882457+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 57,
         "fields": {
             "admin": 57,
             "name": "Alvarez PLC",
             "description": "Administration end five rather voice tough. First available generation. Seven mother very garden large interest wish.",
             "website": "https://www.brown.com/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T03:01:02+00:00",
             "updated_at": "2019-02-26T19:29:20.363449+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 58,
         "fields": {
             "admin": 58,
             "name": "Hughes, Fisher and Mcdonald",
             "description": "Feel take many reason huge military area. Success pick use standard safe. Environmental heavy word common people rock.",
             "website": "http://www.butler.org/",
-            "org_type": "Service Provider",
-            "other_org_type": null,
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T08:59:00+00:00",
             "updated_at": "2019-02-26T19:29:20.025733+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 59,
         "fields": {
             "admin": 59,
             "name": "Carpenter, Carpenter and Arroyo",
             "description": "Test technology minute heart. Happy remain build small current interesting.\nAllow make prepare popular bank account. Seven pattern long condition century indicate role far.",
             "website": "http://www.williams-williams.biz/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T14:46:13+00:00",
             "updated_at": "2019-02-26T19:29:20.295376+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 60,
         "fields": {
             "admin": 60,
             "name": "Oliver LLC",
             "description": "Result fast at message.\nArt yourself article feel various. Fish ago night well. Which thing answer have station use. Sit tough activity attorney.",
             "website": "https://www.anderson.com/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T15:20:05+00:00",
             "updated_at": "2019-02-26T19:29:20.497110+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 61,
         "fields": {
             "admin": 61,
             "name": "Nichols-Smith",
             "description": "Usually court teacher season matter quite. Reduce compare for enough own benefit.",
             "website": "https://ritter.com/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T14:08:05+00:00",
             "updated_at": "2019-02-26T19:29:20.254955+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 62,
         "fields": {
             "admin": 62,
             "name": "Quinn Ltd",
             "description": "She enough new standard entire support forget city. New despite Mr score morning. Here stay start between fast who offer.",
             "website": "http://cox.com/",
-            "org_type": "Service Provider",
-            "other_org_type": null,
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T17:17:43+00:00",
             "updated_at": "2019-02-26T19:29:20.126368+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 63,
         "fields": {
             "admin": 63,
             "name": "Miller-Keith",
             "description": "Over even production certainly teacher history cause.\nMaterial think series action small community. Large by source dog task. Western health if name expect care carry treat.",
             "website": "http://www.roberts.info/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T05:38:12+00:00",
             "updated_at": "2019-02-26T19:29:20.397582+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 64,
         "fields": {
             "admin": 64,
             "name": "Hess PLC",
             "description": "Stock president ball billion baby star. Matter both down class family believe natural already. Actually network throw mission system.",
             "website": "https://smith.info/",
-            "org_type": "Factory / Facility",
-            "other_org_type": null,
+            "contrib_type": "Factory / Facility",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T02:37:36+00:00",
             "updated_at": "2019-02-26T19:29:20.007500+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 65,
         "fields": {
             "admin": 65,
             "name": "Barker, Madden and Alvarez",
             "description": "Them young event public threat.\nSure plan whether than western goal partner. Whatever watch grow tax across middle. Decide then country help.",
             "website": "http://vance.com/",
-            "org_type": "Brand/Retailer",
-            "other_org_type": null,
+            "contrib_type": "Brand/Retailer",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T06:44:41+00:00",
             "updated_at": "2019-02-26T19:29:20.472824+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 66,
         "fields": {
             "admin": 66,
             "name": "Velazquez PLC",
             "description": "Opportunity the leg good necessary soldier. Western he art writer hear carry act. Even field whose capital happen window property.",
             "website": "http://www.robertson-drake.com/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-19T19:35:48+00:00",
             "updated_at": "2019-02-26T19:29:20.780486+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 67,
         "fields": {
             "admin": 67,
             "name": "Aguilar, Stanley and Lewis",
             "description": "Month media approach structure husband either need. Dinner know son eye material later democratic. No attorney miss level ten institution.",
             "website": "http://www.jones-terrell.com/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T08:33:12+00:00",
             "updated_at": "2019-02-26T19:29:20.638884+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 68,
         "fields": {
             "admin": 68,
             "name": "Wilson-James",
             "description": "Range partner carry would question like.",
             "website": "https://berg.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T08:53:51+00:00",
             "updated_at": "2019-02-26T19:29:20.483751+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 69,
         "fields": {
             "admin": 69,
             "name": "Kelly Ltd",
             "description": "Art question low score. Away camera design television. Wrong know finally size. Good growth west real.",
             "website": "https://hunt.biz/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T13:03:45+00:00",
             "updated_at": "2019-02-26T19:29:20.461661+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 70,
         "fields": {
             "admin": 70,
             "name": "Villa Inc",
             "description": "Student authority rather not people tree. Program who nice between director push.\nDifficult image safe. Movement in friend people what.",
             "website": "https://www.greene.com/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-19T09:41:32+00:00",
             "updated_at": "2019-02-26T19:29:20.272950+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 71,
         "fields": {
             "admin": 71,
             "name": "Richardson, Fields and Jackson",
             "description": "Among write money blood where. Girl quality use attack about. Stay notice office raise ball.\nVarious agent choice. Skin Mrs field bill. Different treat training though although actually look.",
             "website": "https://miller.info/",
-            "org_type": "Other",
-            "other_org_type": "and Sons",
+            "contrib_type": "Other",
+            "other_contrib_type": "and Sons",
             "created_at": "2019-02-20T13:07:07+00:00",
             "updated_at": "2019-02-26T19:29:20.365222+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 72,
         "fields": {
             "admin": 72,
             "name": "Stewart, Hendricks and Jordan",
             "description": "Turn this decade include research view. Move participant nation however message number. Thought coach recognize discussion.",
             "website": "http://alexander.org/",
-            "org_type": "Service Provider",
-            "other_org_type": null,
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T15:36:17+00:00",
             "updated_at": "2019-02-26T19:29:20.005350+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 73,
         "fields": {
             "admin": 73,
             "name": "Hancock-Gillespie",
             "description": "Relationship over challenge interest. Different court music financial speech end standard.",
             "website": "https://joyce.net/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-20T19:04:40+00:00",
             "updated_at": "2019-02-26T19:29:20.211585+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 74,
         "fields": {
             "admin": 74,
             "name": "Gibson-Stout",
             "description": "Nothing reduce general trial. Billion citizen decade south wrong lay. Nature our summer something serious.\nInvestment smile old candidate phone. Whom result ever audience base teacher.",
             "website": "https://hunt.info/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-19T01:15:29+00:00",
             "updated_at": "2019-02-26T19:29:20.851990+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 75,
         "fields": {
             "admin": 75,
             "name": "Cortez Ltd",
-            "description": "Move fear when know charge color organization goal. Beat believe sense hospital full. Heavy stop me benefit knowledge car.\nAuthor road message thing those few.",
+            "description": "Move fear when know charge color contributor goal. Beat believe sense hospital full. Heavy stop me benefit knowledge car.\nAuthor road message thing those few.",
             "website": "https://www.figueroa.biz/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T09:10:47+00:00",
             "updated_at": "2019-02-26T19:29:20.376133+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 76,
         "fields": {
             "admin": 76,
             "name": "Lopez-Brown",
             "description": "Side enjoy gun doctor answer social central. Per wonder way drop learn Mr life.\nDoor soldier indeed. Full answer citizen. Determine scientist generation former ok scientist.",
             "website": "https://www.johnson-boyd.com/",
-            "org_type": "Factory / Facility",
-            "other_org_type": null,
+            "contrib_type": "Factory / Facility",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T06:26:21+00:00",
             "updated_at": "2019-02-26T19:29:20.649471+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 77,
         "fields": {
             "admin": 77,
             "name": "Hall, Brown and Anderson",
             "description": "Education left yes with. Assume fall total anyone learn face girl national. Parent serve wish they effort.",
             "website": "https://www.newton.info/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T18:24:45+00:00",
             "updated_at": "2019-02-26T19:29:20.596274+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 78,
         "fields": {
             "admin": 78,
             "name": "Wheeler Group",
             "description": "One important majority fund. Record our product whatever fear ahead.\nSense need leave bad large good stay. Tend start today near program.",
             "website": "http://hatfield-lloyd.com/",
-            "org_type": "Service Provider",
-            "other_org_type": null,
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T14:29:44+00:00",
             "updated_at": "2019-02-26T19:29:20.655952+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 79,
         "fields": {
             "admin": 79,
             "name": "Hayes-Morales",
             "description": "True continue college story condition. Most public perhaps trip. Southern whole safe affect couple.\nSon their far measure we story always employee. Church idea member improve interview.",
             "website": "http://farley.info/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T02:21:37+00:00",
             "updated_at": "2019-02-26T19:29:20.820055+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 80,
         "fields": {
             "admin": 80,
             "name": "White PLC",
             "description": "Turn rich recognize skill. Somebody service hotel kid enter condition.\nAffect create stay too southern speech student. Purpose white finish right entire out result song. Structure rock down own.",
             "website": "http://calderon.com/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T02:01:43+00:00",
             "updated_at": "2019-02-26T19:29:20.694164+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 81,
         "fields": {
             "admin": 81,
             "name": "Johnson, Taylor and Gill",
             "description": "Security you section together audience up person peace. Edge no know task level statement.\nNear stop can thought couple the pretty. Bank hundred perform situation.",
             "website": "https://smith.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-24T06:49:27+00:00",
             "updated_at": "2019-02-26T19:29:20.753046+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 82,
         "fields": {
             "admin": 82,
             "name": "Murphy Ltd",
             "description": "Action civil among improve sound just across.\nTurn billion true we dark growth.\nPart door group. Suffer reach traditional win first.",
             "website": "https://www.bradley-escobar.org/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T18:15:10+00:00",
             "updated_at": "2019-02-26T19:29:20.986901+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 83,
         "fields": {
             "admin": 83,
             "name": "Hill-Haynes",
             "description": "Full hour positive some. What onto reason suggest fear. Others state what pick.\nCongress mouth tough. Official all south with machine. Involve tend true trip power.",
             "website": "https://www.ayala.com/",
-            "org_type": "Other",
-            "other_org_type": "Group",
+            "contrib_type": "Other",
+            "other_contrib_type": "Group",
             "created_at": "2019-02-25T19:48:19+00:00",
             "updated_at": "2019-02-26T19:29:20.377274+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 84,
         "fields": {
             "admin": 84,
             "name": "Wright-Perkins",
             "description": "Computer move capital cold nature alone fine. Company discover call air person system thought. Win where lose professor change machine.",
             "website": "http://livingston.com/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T21:26:33+00:00",
             "updated_at": "2019-02-26T19:29:20.759604+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 85,
         "fields": {
             "admin": 85,
             "name": "Sanchez-Taylor",
             "description": "Tonight area use between down movement treatment. Field card Democrat at create suffer. Talk computer tend point. Fish newspaper form tough affect important truth.",
             "website": "http://alexander.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T04:51:39+00:00",
             "updated_at": "2019-02-26T19:29:20.394134+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 86,
         "fields": {
             "admin": 86,
             "name": "Johnson-Aguilar",
             "description": "Choice everything network everybody response.\nPut tax resource one still eat. Thank watch sister soldier item read. Listen continue spend seem just have parent want.",
             "website": "https://mendez.com/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T17:11:40+00:00",
             "updated_at": "2019-02-26T19:29:20.106660+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 87,
         "fields": {
             "admin": 87,
             "name": "Palmer-Lewis",
             "description": "Blue forget lose likely. Do back seat them blue people explain. Seem dog measure protect tell.\nAnswer career upon cup physical beyond. Ten weight speak require part.",
             "website": "https://www.king.biz/",
-            "org_type": "Factory / Facility",
-            "other_org_type": null,
+            "contrib_type": "Factory / Facility",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T20:40:39+00:00",
             "updated_at": "2019-02-26T19:29:20.143715+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 88,
         "fields": {
             "admin": 88,
             "name": "Jones, Howard and Smith",
             "description": "Raise understand door wish itself themselves he.\nForm blue rock issue site center or. Majority father yeah decide better through soon.",
             "website": "https://williams.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T10:39:10+00:00",
             "updated_at": "2019-02-26T19:29:20.006004+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 89,
         "fields": {
             "admin": 89,
             "name": "Hall, Guerrero and Weiss",
             "description": "Address knowledge specific program face discussion. Listen we than opportunity.\nKeep drive laugh represent. Admit front already wear next heart pull. Interest other fight accept law some popular.",
             "website": "http://www.gomez.com/",
-            "org_type": "Researcher / Academic",
-            "other_org_type": null,
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T04:57:36+00:00",
             "updated_at": "2019-02-26T19:29:20.164922+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 90,
         "fields": {
             "admin": 90,
             "name": "Hernandez, Sanchez and Sharp",
             "description": "Onto huge place interest resource air. Focus inside beat around.\nGirl focus film attack involve. Realize able store begin hear air detail.\nOf way sell tough. Green hope system day.",
             "website": "http://carter-washington.net/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-23T13:30:33+00:00",
             "updated_at": "2019-02-26T19:29:20.811397+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 91,
         "fields": {
             "admin": 91,
             "name": "Arnold PLC",
             "description": "Store conference color soon. Table success stand candidate. Shake society job rock.\nWife vote real even quickly. Whole house official lead former outside major.",
             "website": "http://www.davis.org/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-26T06:25:59+00:00",
             "updated_at": "2019-02-26T19:29:20.126763+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 92,
         "fields": {
             "admin": 92,
             "name": "Shepard, Hopkins and Sanchez",
             "description": "Minute soon action beautiful glass. Center budget despite nature building.\nAir language free think stock. Beat resource so raise.",
             "website": "http://www.cox-hooper.com/",
-            "org_type": "Other",
-            "other_org_type": "PLC",
+            "contrib_type": "Other",
+            "other_contrib_type": "PLC",
             "created_at": "2019-02-18T11:31:32+00:00",
             "updated_at": "2019-02-26T19:29:20.149206+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 93,
         "fields": {
             "admin": 93,
             "name": "Carroll and Sons",
             "description": "Story four sport able. Idea six certainly money one leg five between.\nRemember international affect report. Forget action that final pick end suffer. Audience event voice development business.",
             "website": "http://hardin.info/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-18T12:31:56+00:00",
             "updated_at": "2019-02-26T19:29:20.229812+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 94,
         "fields": {
             "admin": 94,
             "name": "Ramirez, Lewis and Owens",
             "description": "Board blood yet last. View prove former think wall reality direction.\nRange necessary lead third same. What something government. Level threat perhaps.",
             "website": "http://www.mitchell.com/",
-            "org_type": "Union",
-            "other_org_type": null,
+            "contrib_type": "Union",
+            "other_contrib_type": null,
             "created_at": "2019-02-19T01:20:20+00:00",
             "updated_at": "2019-02-26T19:29:20.785909+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 95,
         "fields": {
             "admin": 95,
             "name": "Ward Group",
             "description": "System drop theory most. Truth yard too.\nMajority might reduce law affect. Exist low four kitchen front miss here.\nAction interesting effect about. Box despite must design raise.",
             "website": "https://davidson-shaw.biz/",
-            "org_type": "Multi Stakeholder Initiative",
-            "other_org_type": null,
+            "contrib_type": "Multi Stakeholder Initiative",
+            "other_contrib_type": null,
             "created_at": "2019-02-21T20:54:08+00:00",
             "updated_at": "2019-02-26T19:29:20.577892+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 96,
         "fields": {
             "admin": 96,
             "name": "Spencer-Scott",
             "description": "Look technology report dark environment six. Kid light discover. Course across college box responsibility anyone that.",
             "website": "https://harrison-sandoval.net/",
-            "org_type": "Civil Society Organization",
-            "other_org_type": null,
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T21:04:49+00:00",
             "updated_at": "2019-02-26T19:29:20.847738+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 97,
         "fields": {
             "admin": 97,
             "name": "Compton and Sons",
             "description": "Majority food beyond must serve accept wait. Which generation still time sense hold figure race. So whom black wear involve.\nPrice way institution fill. Medical through painting question.",
             "website": "http://www.woodward.com/",
-            "org_type": "Factory / Facility",
-            "other_org_type": null,
+            "contrib_type": "Factory / Facility",
+            "other_contrib_type": null,
             "created_at": "2019-02-25T23:15:44+00:00",
             "updated_at": "2019-02-26T19:29:20.364307+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 98,
         "fields": {
             "admin": 98,
             "name": "Levy-Miller",
             "description": "Head note catch environmental. According shoulder while bring.\nUse make image just. Do sometimes point board themselves think bank. Ability remain treatment trade important student future.",
             "website": "https://www.marquez-roberts.com/",
-            "org_type": "Factory / Facility",
-            "other_org_type": null,
+            "contrib_type": "Factory / Facility",
+            "other_contrib_type": null,
             "created_at": "2019-02-17T21:57:56+00:00",
             "updated_at": "2019-02-26T19:29:20.168179+00:00"
         }
     },
     {
-        "model": "api.organization",
+        "model": "api.contributor",
         "pk": 99,
         "fields": {
             "admin": 99,
             "name": "Wilson, Butler and Short",
             "description": "Deal work white inside need. Picture me green anything activity either. Person believe no participant.",
             "website": "https://www.cole.org/",
-            "org_type": "Auditor",
-            "other_org_type": null,
+            "contrib_type": "Auditor",
+            "other_contrib_type": null,
             "created_at": "2019-02-22T07:15:13+00:00",
             "updated_at": "2019-02-26T19:29:20.754881+00:00"
         }

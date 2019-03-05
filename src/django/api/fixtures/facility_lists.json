@@ -3,7 +3,7 @@
         "model": "api.facilitylist",
         "pk": 2,
         "fields": {
-            "organization": 2,
+            "contributor": 2,
             "name": "Sean Price",
             "file_name": "Sean Price.csv",
             "header": "country,name,address",
@@ -17,7 +17,7 @@
         "model": "api.facilitylist",
         "pk": 3,
         "fields": {
-            "organization": 3,
+            "contributor": 3,
             "name": "Alexis Williams",
             "file_name": "Alexis Williams.csv",
             "header": "country,name,address",
@@ -31,7 +31,7 @@
         "model": "api.facilitylist",
         "pk": 4,
         "fields": {
-            "organization": 4,
+            "contributor": 4,
             "name": "Lisa Thomas",
             "file_name": "Lisa Thomas.csv",
             "header": "country,name,address",
@@ -45,7 +45,7 @@
         "model": "api.facilitylist",
         "pk": 5,
         "fields": {
-            "organization": 5,
+            "contributor": 5,
             "name": "Rachel Phillips",
             "file_name": "Rachel Phillips.csv",
             "header": "country,name,address",
@@ -59,7 +59,7 @@
         "model": "api.facilitylist",
         "pk": 6,
         "fields": {
-            "organization": 6,
+            "contributor": 6,
             "name": "Michelle Wiley",
             "file_name": "Michelle Wiley.csv",
             "header": "country,name,address",
@@ -73,7 +73,7 @@
         "model": "api.facilitylist",
         "pk": 7,
         "fields": {
-            "organization": 7,
+            "contributor": 7,
             "name": "Danielle Lowery",
             "file_name": "Danielle Lowery.csv",
             "header": "country,name,address",
@@ -87,7 +87,7 @@
         "model": "api.facilitylist",
         "pk": 8,
         "fields": {
-            "organization": 8,
+            "contributor": 8,
             "name": "Cindy Bell",
             "file_name": "Cindy Bell.csv",
             "header": "country,name,address",
@@ -101,7 +101,7 @@
         "model": "api.facilitylist",
         "pk": 9,
         "fields": {
-            "organization": 9,
+            "contributor": 9,
             "name": "Lisa Stewart",
             "file_name": "Lisa Stewart.csv",
             "header": "country,name,address",
@@ -115,7 +115,7 @@
         "model": "api.facilitylist",
         "pk": 10,
         "fields": {
-            "organization": 10,
+            "contributor": 10,
             "name": "James Spencer",
             "file_name": "James Spencer.csv",
             "header": "country,name,address",
@@ -129,7 +129,7 @@
         "model": "api.facilitylist",
         "pk": 11,
         "fields": {
-            "organization": 11,
+            "contributor": 11,
             "name": "Lisa Barton",
             "file_name": "Lisa Barton.csv",
             "header": "country,name,address",
@@ -143,7 +143,7 @@
         "model": "api.facilitylist",
         "pk": 12,
         "fields": {
-            "organization": 12,
+            "contributor": 12,
             "name": "Alicia Frederick",
             "file_name": "Alicia Frederick.csv",
             "header": "country,name,address",
@@ -157,7 +157,7 @@
         "model": "api.facilitylist",
         "pk": 13,
         "fields": {
-            "organization": 13,
+            "contributor": 13,
             "name": "Penny Russell",
             "file_name": "Penny Russell.csv",
             "header": "country,name,address",
@@ -171,7 +171,7 @@
         "model": "api.facilitylist",
         "pk": 14,
         "fields": {
-            "organization": 14,
+            "contributor": 14,
             "name": "Tami Jimenez",
             "file_name": "Tami Jimenez.csv",
             "header": "country,name,address",
