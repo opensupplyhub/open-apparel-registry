@@ -402,6 +402,7 @@ def save_match_details(match_results):
         if len(matches) == 1:
             if matches[0].confidence >= automatic_threshold:
                 matches[0].status = FacilityMatch.AUTOMATIC
+                matches[0].results['match_type'] = 'single_gazetteer_match'
                 item.status = FacilityListItem.MATCHED
                 item.facility = matches[0].facility
         else:
@@ -409,6 +410,8 @@ def save_match_details(match_results):
                                if m.confidence > automatic_threshold]
             if len(quality_matches) == 1:
                 matches[0].status = FacilityMatch.AUTOMATIC
+                matches[0].results['match_type'] = \
+                    'one_gazetteer_match_greater_than_threshold'
                 item.status = FacilityListItem.MATCHED
                 item.facility = matches[0].facility
 
@@ -435,7 +438,7 @@ def save_match_details(match_results):
         facility.save()
 
         match = make_pending_match(item.id, facility.id, 1.0)
-        match.results['no_gazetteer_match'] = True
+        match.results['match_type'] = 'no_gazetteer_match'
         match.status = FacilityMatch.AUTOMATIC
         match.save()
 
