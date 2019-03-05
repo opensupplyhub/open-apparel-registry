@@ -493,6 +493,17 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                             location=facility_list_item.geocoded_point,
                             created_from=facility_list_item)
 
+                # also create a new facility match
+                FacilityMatch \
+                    .objects \
+                    .create(facility_list_item=facility_list_item,
+                            facility=new_facility,
+                            confidence=1.0,
+                            status=FacilityMatch.CONFIRMED,
+                            results={
+                                "match_type": "all_potential_matches_rejected",
+                            })
+
                 facility_list_item.facility = new_facility
 
                 facility_list_item.status = FacilityListItem.CONFIRMED_MATCH

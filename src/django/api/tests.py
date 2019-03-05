@@ -921,3 +921,30 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
 
         facilities = Facility.objects.all()
         self.assertEqual(facilities.count(), 3)
+
+    def test_rejecting_last_potential_match_creates_a_new_facility_match(self):
+        initial_facility_matches_count = FacilityMatch.objects.all().count()
+
+        reject_response_one = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        reject_response_two = self.client.post(
+            self.reject_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_two.id},
+        )
+
+        self.assertEqual(reject_response_one.status_code, 200)
+        self.assertEqual(reject_response_two.status_code, 200)
+
+        facilities = Facility.objects.all()
+        self.assertEqual(facilities.count(), 3)
+
+        new_facility_matches_count = FacilityMatch.objects.all().count()
+        self.assertEqual(
+            initial_facility_matches_count + 1,
+            new_facility_matches_count,
+        )
