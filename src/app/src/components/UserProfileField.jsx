@@ -7,6 +7,7 @@ import ControlledSelectInput from './ControlledSelectInput';
 import {
     inputTypesEnum,
     profileFieldsEnum,
+    registrationFieldsEnum,
     contributorTypeOptions,
 } from '../util/constants';
 
@@ -54,9 +55,13 @@ export default function UserProfileField({
                     </label>
                     <div style={userProfileFieldStyles.viewOnlyStyles}>
                         {
-                            id === profileFieldsEnum.website
+                            id === registrationFieldsEnum.website
                                 ? (
-                                    <a href={value}>
+                                    <a
+                                        href={value}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         {value}
                                     </a>)
                                 : value

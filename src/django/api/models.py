@@ -429,7 +429,7 @@ class Facility(models.Model):
             "{} ({})".format(
                 match.facility_list.contributor.name,
                 match.facility_list.name,
-            )
+            ): match.facility_list.contributor.admin.id
             for match
             in facility_list_item_matches
             if match.facility_list.is_active

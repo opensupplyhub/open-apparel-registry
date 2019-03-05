@@ -1,8 +1,11 @@
 import React, { memo } from 'react';
-import { arrayOf, string } from 'prop-types';
+import { Link } from 'react-router-dom';
+import { arrayOf, bool, number, oneOfType, string } from 'prop-types';
 import isEqual from 'lodash/isEqual';
 
 import ShowOnly from './ShowOnly';
+
+import { makeProfileRouteLink } from '../util/util';
 
 const propsAreEqual = (prevProps, nextProps) =>
     isEqual(prevProps.label, nextProps.label)
@@ -11,29 +14,59 @@ const propsAreEqual = (prevProps, nextProps) =>
 const FacilityDetailSidebarInfo = memo(({
     data,
     label,
-}) => (
-    <ShowOnly when={!!data.length}>
-        <div className="control-panel__group">
-            <h1 className="control-panel__heading">
-                {label}
-            </h1>
-            <div className="control-panel__body">
-                <ul>
-                    {
-                        data.map(item => (
-                            <li key={item}>
-                                {item}
-                            </li>))
-                    }
-                </ul>
+    isContributorsList,
+}) => {
+    const makeContributorListItem =
+        ([id, displayLabel]) => (
+            <li key={id}>
+                <Link
+                    to={makeProfileRouteLink(id)}
+                    href={makeProfileRouteLink(id)}
+                >
+                    {displayLabel}
+                </Link>
+            </li>
+        );
+
+    const makeStringListItem = item => (
+        <li key={item}>
+            {item}
+        </li>);
+
+    const createListItem = isContributorsList
+        ? makeContributorListItem
+        : makeStringListItem;
+
+    return (
+        <ShowOnly when={!!data.length}>
+            <div className="control-panel__group">
+                <h1 className="control-panel__heading">
+                    {label}
+                </h1>
+                <div className="control-panel__body">
+                    <ul>
+                        {data.map(createListItem)}
+                    </ul>
+                </div>
             </div>
-        </div>
-    </ShowOnly>
-), propsAreEqual);
+        </ShowOnly>
+    );
+}, propsAreEqual);
+
+FacilityDetailSidebarInfo.defaultProps = {
+    isContributorsList: false,
+};
 
 FacilityDetailSidebarInfo.propTypes = {
-    data: arrayOf(string).isRequired,
+    data: arrayOf(oneOfType([
+        arrayOf(oneOfType([
+            number,
+            string,
+        ])),
+        string,
+    ])).isRequired,
     label: string.isRequired,
+    isContributorsList: bool,
 };
 
 export default FacilityDetailSidebarInfo;

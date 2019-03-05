@@ -167,7 +167,11 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         return facility.other_addresses()
 
     def get_contributors(self, facility):
-        return facility.contributors()
+        return [
+            (id, display_name)
+            for (display_name, id)
+            in facility.contributors().items()
+        ]
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')

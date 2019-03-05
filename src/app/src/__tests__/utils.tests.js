@@ -46,6 +46,7 @@ const {
     getTokenFromQueryString,
     makeResetPasswordConfirmURL,
     makeUserProfileURL,
+    makeProfileRouteLink,
     joinDataIntoCSVString,
     caseInsensitiveIncludes,
     sortFacilitiesAlphabeticallyByName,
@@ -704,6 +705,12 @@ it('creates a URL for retrieving a user profile', () => {
     const userID = 'userID';
     const expectedURL = '/user-profile/userID/';
     expect(makeUserProfileURL(userID)).toBe(expectedURL);
+});
+
+it('creates a route link for viewing a user profile', () => {
+    const userID = 'userID';
+    const expectedRoute = '/profile/userID';
+    expect(makeProfileRouteLink(userID)).toBe(expectedRoute);
 });
 
 it('gets a `token` from a querystring', () => {

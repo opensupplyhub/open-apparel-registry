@@ -17,7 +17,10 @@ import {
     authRegisterFormRoute,
 } from '../util/constants';
 
-import { makeMyFacilitiesRoute } from '../util/util';
+import {
+    makeMyFacilitiesRoute,
+    makeProfileRouteLink,
+} from '../util/util';
 
 const componentStyles = Object.freeze({
     containerStyle: Object.freeze({
@@ -55,7 +58,7 @@ const componentStyles = Object.freeze({
 const createUserDropdownLinks = (user, logoutAction) => Object.freeze([
     Object.freeze({
         text: 'My Profile',
-        url: `/profile/${user.id}`,
+        url: makeProfileRouteLink(user.id),
         type: 'link',
     }),
     Object.freeze({
