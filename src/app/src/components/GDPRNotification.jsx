@@ -4,23 +4,6 @@ import Button from './Button';
 import ShowOnly from './ShowOnly';
 import COLOURS from '../util/COLOURS';
 
-const GDPRActions = (
-    <div>
-        <Button
-            text="Reject"
-            style={{
-                background: COLOURS.LIGHT_BLUE,
-                marginRight: '10px',
-            }}
-            onClick={this.dismissGDPRAlert}
-        />
-        <Button text="Accept" onClick={this.dismissGDPRAlert} />
-    </div>
-);
-
-const GDPRMessage =
-    'We use cookies to collect and analyze information on site performance and usage, and to enhance content. By clicking Accept, you agree to allow cookies to be placed. To find out more, visit our terms of service and our privacy policy.';
-
 class GDPRNotification extends PureComponent {
     state = { open: true };
 
@@ -37,6 +20,28 @@ class GDPRNotification extends PureComponent {
     };
 
     render() {
+        const GDPRActions = (
+            <div>
+                <Button
+                    text="Reject"
+                    style={{
+                        background: COLOURS.LIGHT_BLUE,
+                        marginRight: '10px',
+                    }}
+                    onClick={this.dismissGDPRAlert}
+                />
+                <Button text="Accept" onClick={this.dismissGDPRAlert} />
+            </div>
+        );
+
+        const GDPRMessage =
+            `We use cookies to collect and analyze
+            information on site performance and usage,
+            and to enhance content. By clicking Accept,
+            you agree to allow cookies to be placed.
+            To find out more, visit our terms of service
+            and our privacy policy.`;
+
         return (
             <ShowOnly when={this.state.open}>
                 <Snackbar
