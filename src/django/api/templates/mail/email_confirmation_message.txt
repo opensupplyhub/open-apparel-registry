@@ -1,0 +1,11 @@
+{% block content %}
+Hi,
+
+You're receiving this message because you registered for an Open Apparel Registry Account.
+
+To activate your account, visit {{ activate_url }}
+
+Sincerely,
+
+{% include "mail/signature_block.txt" %}
+{% endblock content %}

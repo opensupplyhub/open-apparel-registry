@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { arrayOf, bool, func, shape, string } from 'prop-types';
+import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
@@ -34,11 +34,14 @@ import { getStateFromEventForEventType } from '../util/util';
 import { formValidationErrorMessageStyle } from '../util/styles';
 
 class RegisterForm extends Component {
+    state = {
+        formSubmitted: false,
+    };
+
     componentDidUpdate({ fetching: wasFetching }) {
         const {
             fetching,
             error,
-            history,
         } = this.props;
 
         if (error) {
@@ -53,12 +56,16 @@ class RegisterForm extends Component {
             return null;
         }
 
-        return history.push('/auth/login');
+        return this.setFormSubmitted();
     }
 
     componentWillUnmount() {
         return this.props.clearForm();
     }
+
+    setFormSubmitted = () => this.setState(state => Object.assign({}, state, {
+        formSubmitted: true,
+    }));
 
     render() {
         const {
@@ -72,6 +79,18 @@ class RegisterForm extends Component {
 
         if (sessionFetching) {
             return null;
+        }
+
+        if (this.state.formSubmitted) {
+            return (
+                <AppOverflow>
+                    <AppGrid title="Registration was successful!">
+                        <p>
+                            Check your email for instructions about how to verify your account.
+                        </p>
+                    </AppGrid>
+                </AppOverflow>
+            );
         }
 
         const formInputs = registrationFormFields
@@ -153,9 +172,6 @@ RegisterForm.propTypes = {
     inputUpdates: registrationFormInputHandlersPropType.isRequired,
     submitForm: func.isRequired,
     sessionFetching: bool.isRequired,
-    history: shape({
-        push: func.isRequired,
-    }).isRequired,
 };
 
 function mapStateToProps({

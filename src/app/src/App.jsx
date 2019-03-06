@@ -19,6 +19,7 @@ import FacilityLists from './components/FacilityLists';
 import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
 import GDPRNotification from './components/GDPRNotification';
+import ConfirmRegistration from './components/ConfirmRegistration';
 
 import './App.css';
 
@@ -29,6 +30,7 @@ import {
     authLoginFormRoute,
     authRegisterFormRoute,
     authResetPasswordFormRoute,
+    authConfirmRegistrationRoute,
     contributeRoute,
     listsRoute,
     facilityListItemsRoute,
@@ -82,6 +84,10 @@ class App extends Component {
                                 <Route
                                     path={authResetPasswordFormRoute}
                                     component={ResetPasswordForm}
+                                />
+                                <Route
+                                    path={authConfirmRegistrationRoute}
+                                    component={ConfirmRegistration}
                                 />
                                 <Route
                                     path={profileRoute}
