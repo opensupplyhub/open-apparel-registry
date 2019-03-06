@@ -64,16 +64,15 @@ function FacilityListItemsConfirmationTableRow({
     );
 
     return (
-        <TableRow hover={false}>
+        <TableRow hover={false} style={{ background: '#e0e0e0', verticalAlign: 'top' }}>
             <TableCell
                 align="center"
-                padding="dense"
+                padding="default"
                 style={listTableCellStyles.rowIndexStyles}
             >
                 <FacilityListItemsDetailedTableRowCell
                     title={item.row_index}
                     subtitle=" "
-                    hrIsHidden
                     stringIsHidden
                     data={matchIDs}
                     hasActions={false}
@@ -81,26 +80,24 @@ function FacilityListItemsConfirmationTableRow({
             </TableCell>
             <TableCell
                 align="center"
-                padding="dense"
+                padding="default"
                 style={listTableCellStyles.countryNameStyles}
             >
                 <FacilityListItemsDetailedTableRowCell
                     title={item.country_name || ' '}
                     subtitle=" "
-                    hrIsHidden
                     stringIsHidden
                     data={matchIDs}
                     hasActions={false}
                 />
             </TableCell>
             <TableCell
-                padding="none"
+                padding="default"
                 style={listTableCellStyles.nameCellStyles}
             >
                 <FacilityListItemsDetailedTableRowCell
                     title={item.name || ' '}
                     subtitle="Matched Name"
-                    hrIsHidden={false}
                     stringisHidden={false}
                     data={matchNames}
                     hasActions={false}
@@ -108,26 +105,24 @@ function FacilityListItemsConfirmationTableRow({
                 />
             </TableCell>
             <TableCell
-                padding="none"
+                padding="default"
                 style={listTableCellStyles.addressCellStyles}
             >
                 <FacilityListItemsDetailedTableRowCell
                     title={item.address || ' '}
                     subtitle="Matched Address"
-                    hrIsHidden={false}
                     stringIsHidden={false}
                     data={matchAddresses}
                     hasActions={false}
                 />
             </TableCell>
             <TableCell
-                padding="none"
+                padding="default"
                 style={listTableCellStyles.statusCellStyles}
             >
                 <FacilityListItemsDetailedTableRowCell
                     title={item.status}
                     subtitle="Actions"
-                    hrIsHidden={false}
                     stringIsHidden={false}
                     data={matchConfirmOrRejectFunctions}
                     hasActions

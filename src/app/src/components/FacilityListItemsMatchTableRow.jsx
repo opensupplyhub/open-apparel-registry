@@ -29,10 +29,11 @@ const FacilityListItemsMatchTableRow = memo(({
     <TableRow
         hover={hover}
         onClick={handleSelectRow}
+        style={{ verticalAlign: 'top' }}
     >
         <TableCell
             align="center"
-            padding="dense"
+            padding="default"
             style={listTableCellStyles.rowIndexStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -46,7 +47,7 @@ const FacilityListItemsMatchTableRow = memo(({
         </TableCell>
         <TableCell
             align="center"
-            padding="dense"
+            padding="default"
             style={listTableCellStyles.countryNameStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -59,7 +60,7 @@ const FacilityListItemsMatchTableRow = memo(({
             />
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.nameCellStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -73,7 +74,7 @@ const FacilityListItemsMatchTableRow = memo(({
             />
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.addressCellStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -86,7 +87,7 @@ const FacilityListItemsMatchTableRow = memo(({
             />
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.statusCellStyles}
         >
             <FacilityListItemsDetailedTableRowCell
