@@ -18,6 +18,7 @@ import MapAndSidebar from './components/MapAndSidebar';
 import FacilityLists from './components/FacilityLists';
 import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
+import GDPRNotification from './components/GDPRNotification';
 
 import './App.css';
 
@@ -105,6 +106,7 @@ class App extends Component {
                             position="bottom-center"
                             transition={Slide}
                         />
+                        <GDPRNotification />
                     </div>
                 </Router>
             </ErrorBoundary>
