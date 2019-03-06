@@ -35,6 +35,8 @@ import {
     resetResetPasswordFormState,
 } from '../actions/auth';
 
+import { completeUpdateUserProfile } from '../actions/profile';
+
 import { registrationFieldsEnum } from '../util/constants';
 
 const initialState = Object.freeze({
@@ -249,4 +251,11 @@ export default createReducer({
         },
     }),
     [resetAuthState]: () => initialState,
+    [completeUpdateUserProfile]: (state, payload) => update(state, {
+        user: {
+            user: {
+                name: { $set: payload.name },
+            },
+        },
+    }),
 }, initialState);

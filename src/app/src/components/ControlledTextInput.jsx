@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { func, string } from 'prop-types';
+import { bool, func, string } from 'prop-types';
 
 import '../styles/css/specialStates.css';
 
@@ -10,6 +10,7 @@ export default function ControlledTextInput({
     value,
     onChange,
     placeholder,
+    disabled,
 }) {
     return (
         <Fragment>
@@ -23,6 +24,7 @@ export default function ControlledTextInput({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
+                disabled={disabled}
             />
         </Fragment>
     );
@@ -32,6 +34,7 @@ ControlledTextInput.defaultProps = {
     type: 'text',
     hint: '',
     placeholder: '',
+    disabled: false,
 };
 
 ControlledTextInput.propTypes = {
@@ -41,4 +44,5 @@ ControlledTextInput.propTypes = {
     hint: string,
     onChange: func.isRequired,
     placeholder: string,
+    disabled: bool,
 };

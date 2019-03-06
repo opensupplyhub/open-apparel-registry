@@ -170,6 +170,7 @@ class FacilityDetailSidebar extends Component {
                     <FacilityDetailSidebarInfo
                         data={data.properties.contributors}
                         label="Contributors:"
+                        isContributorsList
                     />
                     <div className="control-panel__group">
                         <a

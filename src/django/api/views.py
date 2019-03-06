@@ -4,13 +4,14 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth import (authenticate, login, logout)
+from django.contrib.auth.hashers import check_password
 from rest_framework import viewsets, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
                                        NotFound,
                                        AuthenticationFailed)
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        action)
@@ -32,7 +33,8 @@ from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilitySerializer,
-                             UserSerializer)
+                             UserSerializer,
+                             UserProfileSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 
@@ -118,6 +120,75 @@ class LogoutOfOARClient(LogoutView):
         logout(request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserProfile(RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+
+    def get(self, request, pk=None, *args, **kwargs):
+        try:
+            user = User.objects.get(pk=pk)
+            response_data = UserProfileSerializer(user).data
+            return Response(response_data)
+        except User.DoesNotExist:
+            raise NotFound()
+
+    def patch(self, request, pk, *args, **kwargs):
+        pass
+
+    @transaction.atomic
+    def put(self, request, pk, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        try:
+            user_for_update = User.objects.get(pk=pk)
+
+            if request.user != user_for_update:
+                raise PermissionDenied
+
+            password = request.data.get('password')
+
+            if not check_password(password, user_for_update.password):
+                raise PermissionDenied
+
+            name = request.data.get('name')
+            description = request.data.get('description')
+            website = request.data.get('website')
+            contrib_type = request.data.get('contributor_type')
+            other_contrib_type = request.data.get('other_contributor_type')
+
+            if name is None:
+                raise ValidationError('name cannot be blank')
+
+            if description is None:
+                raise ValidationError('description cannot be blank')
+
+            if contrib_type is None:
+                raise ValidationError('contributor type cannot be blank')
+
+            if contrib_type == Contributor.OTHER_CONTRIB_TYPE:
+                if other_contrib_type is None or len(other_contrib_type) == 0:
+                    raise ValidationError(
+                        'contributor type description required for Contributor'
+                        ' Type \'Other\''
+                    )
+
+            user_contributor = request.user.contributor
+            user_contributor.name = name
+            user_contributor.description = description
+            user_contributor.website = website
+            user_contributor.contrib_type = contrib_type
+            user_contributor.other_contrib_type = other_contrib_type
+            user_contributor.save()
+            user_for_update.save()
+
+            response_data = UserProfileSerializer(user_for_update).data
+            return Response(response_data)
+        except User.DoesNotExist:
+            raise NotFound()
+        except Contributor.DoesNotExist:
+            raise NotFound()
 
 
 class APIAuthToken(ObtainAuthToken):

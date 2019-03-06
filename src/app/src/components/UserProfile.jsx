@@ -1,9 +1,9 @@
-import React from 'react';
-import { bool, func, shape, string } from 'prop-types';
+import React, { Component } from 'react';
+import { arrayOf, bool, func, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
-import memoize from 'lodash/memoize';
-import noop from 'lodash/noop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { toast } from 'react-toastify';
 
 import AppGrid from './AppGrid';
 import AppOverflow from './AppOverflow';
@@ -27,7 +27,12 @@ import {
 
 import { getStateFromEventForEventType } from '../util/util';
 
-import { updateProfileFormInput } from '../actions/profile';
+import {
+    updateProfileFormInput,
+    fetchUserProfile,
+    resetUserProfile,
+    updateUserProfile,
+} from '../actions/profile';
 
 const profileStyles = Object.freeze({
     image: Object.freeze({
@@ -51,96 +56,155 @@ const profileStyles = Object.freeze({
         justifyContent: 'space-between',
         marginBottom: '35px',
     }),
+    errorMessagesStyles: Object.freeze({
+        color: 'red',
+        padding: '1rem',
+    }),
 });
 
-function TempNotCurrentUser({
-    text,
-}) {
-    return (
-        <div style={profileStyles.tempStyle}>
-            <h1>
-                {text}
-            </h1>
-        </div>
-    );
-}
+class UserProfile extends Component {
+    componentDidMount() {
+        return this.props.fetchProfile();
+    }
 
-TempNotCurrentUser.propTypes = {
-    text: string.isRequired,
-};
+    componentDidUpdate(prevProps) {
+        const {
+            match: {
+                params: {
+                    id,
+                },
+            },
+            fetchProfile,
+            resetProfile,
+            updatingProfile,
+            errorsUpdatingProfile,
+        } = this.props;
 
-function UserProfile({
-    user,
-    fetching,
-    profile,
-    isEditable,
-    inputUpdates,
-    submitForm,
-    match: {
-        params: {
-            id,
-        },
-    },
-}) {
-    if (fetching) {
+        if (prevProps.match.params.id !== id) {
+            resetProfile();
+            return fetchProfile();
+        }
+
+        if (errorsUpdatingProfile) {
+            return null;
+        }
+
+        if (!updatingProfile && prevProps.updatingProfile) {
+            return toast('Updated profile!');
+        }
+
         return null;
     }
 
-    if (!user) {
-        return <TempNotCurrentUser text="Not logged in" />;
+    componentWillUnmount() {
+        return this.props.resetProfile();
     }
 
-    if (user.id !== Number(id)) {
-        return <TempNotCurrentUser text="Not current user" />;
+    render() {
+        const {
+            user,
+            fetching,
+            profile,
+            inputUpdates,
+            updateProfile,
+            updatingProfile,
+            errorsUpdatingProfile,
+            match: {
+                params: {
+                    id,
+                },
+            },
+        } = this.props;
+
+        if (fetching) {
+            return <CircularProgress />;
+        }
+
+        const isEditableProfile =
+            (user && [profile.id, Number(id)].every(val => val === user.id));
+
+        const profileInputs = profileFormFields
+            .map(field => (
+                <UserProfileField
+                    key={field.id}
+                    id={field.id}
+                    label={field.label}
+                    type={field.type}
+                    options={field.options}
+                    value={profile[field.id]}
+                    handleChange={inputUpdates[field.id]}
+                    isHidden={
+                        profile.contributorType !== OTHER &&
+                        field.id === profileFieldsEnum.otherContributorType
+                    }
+                    disabled={fetching}
+                    required={field.required}
+                    hideOnViewOnlyProfile={field.hideOnViewOnlyProfile}
+                    isEditableProfile={isEditableProfile}
+                />));
+
+        const title = isEditableProfile
+            ? 'My Profile'
+            : 'Profile';
+
+        const showErrorMessages = isEditableProfile
+            && errorsUpdatingProfile
+            && errorsUpdatingProfile.length;
+
+        const errorMessages = showErrorMessages
+            ? (
+                <ul style={profileStyles.errorMessagesStyles}>
+                    {
+                        errorsUpdatingProfile
+                            .map(error => (
+                                <li key={error}>
+                                    {error}
+                                </li>))
+                    }
+                </ul>)
+            : null;
+
+        const submitButton = isEditableProfile
+            ? (
+                <div style={profileStyles.submitButton}>
+                    <Button
+                        text="Save Changes"
+                        onClick={updateProfile}
+                        disabled={(!isEditableProfile && fetching) || updatingProfile}
+                        color="primary"
+                        variant="contained"
+                        disableRipple
+                    >
+                        Save Changes
+                    </Button>
+                </div>)
+            : null;
+
+        const apiTokensSection = isEditableProfile
+            ? <UserAPITokens />
+            : null;
+
+        return (
+            <AppOverflow>
+                <AppGrid
+                    title={title}
+                    style={profileStyles.appGridContainer}
+                >
+                    <Grid item xs={12} sm={7}>
+                        {profileInputs}
+                        {errorMessages}
+                        {submitButton}
+                        {apiTokensSection}
+                    </Grid>
+                </AppGrid>
+            </AppOverflow>
+        );
     }
-
-    const profileInputs = profileFormFields
-        .map(field => (
-            <UserProfileField
-                key={field.id}
-                id={field.id}
-                label={field.label}
-                type={field.type}
-                options={field.options}
-                value={profile[field.id]}
-                handleChange={inputUpdates[field.id]}
-                isHidden={
-                    profile.contributorType !== OTHER &&
-                    field.id === profileFieldsEnum.otherContributorType
-                }
-                disabled={!isEditable}
-                required={field.required}
-            />));
-
-    return (
-        <AppOverflow>
-            <AppGrid
-                title="My Profile"
-                style={profileStyles.appGridContainer}
-            >
-                <Grid item xs={12} sm={7}>
-                    {profileInputs}
-                    <div style={profileStyles.submitButton}>
-                        <Button
-                            text="Save Changes"
-                            onClick={submitForm}
-                            disabled={!isEditable && fetching}
-                            color="primary"
-                            variant="contained"
-                            disableRipple
-                        >
-                            Save Changes
-                        </Button>
-                    </div>
-                    <UserAPITokens />
-                </Grid>
-            </AppGrid>
-        </AppOverflow>
-    );
 }
 
 UserProfile.defaultProps = {
     user: null,
+    errorsUpdatingProfile: null,
 };
 
 UserProfile.propTypes = {
@@ -153,8 +217,11 @@ UserProfile.propTypes = {
     fetching: bool.isRequired,
     profile: profileFormValuesPropType.isRequired,
     inputUpdates: profileFormInputHandlersPropType.isRequired,
-    submitForm: func.isRequired,
-    isEditable: bool.isRequired,
+    fetchProfile: func.isRequired,
+    resetProfile: func.isRequired,
+    updateProfile: func.isRequired,
+    updatingProfile: bool.isRequired,
+    errorsUpdatingProfile: arrayOf(string),
 };
 
 function mapStateToProps({
@@ -163,23 +230,34 @@ function mapStateToProps({
             user,
         },
         session: {
-            fetching,
+            fetching: sessionFetching,
         },
     },
     profile: {
         profile,
-        isEditable,
+        fetching,
+        formSubmission: {
+            fetching: updatingProfile,
+            error: errorsUpdatingProfile,
+        },
     },
 }) {
     return {
         user,
-        fetching,
+        fetching: fetching || sessionFetching,
         profile,
-        isEditable,
+        updatingProfile,
+        errorsUpdatingProfile,
     };
 }
 
-const mapDispatchToProps = memoize((dispatch) => {
+const mapDispatchToProps = (dispatch, {
+    match: {
+        params: {
+            id: profileID,
+        },
+    },
+}) => {
     const makeInputChangeHandler = (field, getStateFromEvent) => e =>
         dispatch(updateProfileFormInput({
             value: getStateFromEvent(e),
@@ -199,8 +277,10 @@ const mapDispatchToProps = memoize((dispatch) => {
 
     return {
         inputUpdates,
-        submitForm: noop,
+        fetchProfile: () => dispatch(fetchUserProfile(Number(profileID))),
+        resetProfile: () => dispatch(resetUserProfile()),
+        updateProfile: () => dispatch(updateUserProfile(Number(profileID))),
     };
-});
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

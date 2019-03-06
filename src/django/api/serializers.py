@@ -80,6 +80,61 @@ class UserSerializer(ModelSerializer):
             return None
 
 
+class UserProfileSerializer(ModelSerializer):
+    name = SerializerMethodField()
+    description = SerializerMethodField()
+    website = SerializerMethodField()
+    contributor_type = SerializerMethodField()
+    other_contributor_type = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'name', 'description', 'website', 'contributor_type',
+                  'other_contributor_type')
+
+    def get_name(self, user):
+        try:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.name
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_description(self, user):
+        try:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.description
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_website(self, user):
+        try:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.website
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_contributor_type(self, user):
+        try:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.contrib_type
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_other_contributor_type(self, user):
+        try:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.other_contrib_type
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_contributor_id(self, user):
+        try:
+            user_contributor = Contributor.objects.get(admin=user)
+            return user_contributor.id
+        except Contributor.DoesNotExist:
+            return None
+
+
 class FacilityListSerializer(ModelSerializer):
     class Meta:
         model = FacilityList
@@ -112,7 +167,11 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         return facility.other_addresses()
 
     def get_contributors(self, facility):
-        return facility.contributors()
+        return [
+            (id, display_name)
+            for (display_name, id)
+            in facility.contributors().items()
+        ]
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')

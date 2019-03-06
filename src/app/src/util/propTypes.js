@@ -138,7 +138,10 @@ export const facilityPropType = shape({
         country_name: string.isRequired,
         other_names: arrayOf(string).isRequired,
         other_addresses: arrayOf(string).isRequired,
-        contributors: arrayOf(string).isRequired,
+        contributors: arrayOf(arrayOf(oneOfType([
+            string,
+            number,
+        ]).isRequired).isRequired).isRequired,
     }).isRequired,
 });
 
