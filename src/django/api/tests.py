@@ -447,34 +447,6 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         )
 
 
-class FacilityListItemMatchingTest(TestCase):
-    def test_invalid_argument_raises_error(self):
-        with self.assertRaises(ValueError) as ve:
-            match_facility_list_item("hello")
-
-        self.assertEqual(
-            ve.exception.args,
-            ('Argument must be a FacilityListItem',)
-        )
-
-    def test_item_must_be_geocoded(self):
-        with self.assertRaises(ValueError) as ve:
-            match_facility_list_item(FacilityListItem())
-
-        self.assertEqual(
-            ve.exception.args,
-            ('Items to be matched must be in the GEOCODED status',)
-        )
-
-    def test_creates_a_list_of_matches(self):
-        # TODO: restore this test as we build the new matching algorithm
-        pass
-
-    def test_matches_existing_facility(self):
-        # TODO: restore this test as we build the new matching algorithm
-        pass
-
-
 class FacilityNamesAddressesAndContributorsTest(TestCase):
     def setUp(self):
         self.name_one = 'name_one'
