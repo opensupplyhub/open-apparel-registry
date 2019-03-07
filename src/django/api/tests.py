@@ -16,7 +16,7 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityMatch, Contributor, User)
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
-                            match_facility_list_item)
+                            match_facility_list_items)
 from api.geocoding import (create_geocoding_api_url,
                            format_geocoded_address_data,
                            geocode_address)
@@ -445,34 +445,6 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
             'error',
             self.get_first_status(item, ProcessingAction.GEOCODE)
         )
-
-
-class FacilityListItemMatchingTest(TestCase):
-    def test_invalid_argument_raises_error(self):
-        with self.assertRaises(ValueError) as ve:
-            match_facility_list_item("hello")
-
-        self.assertEqual(
-            ve.exception.args,
-            ('Argument must be a FacilityListItem',)
-        )
-
-    def test_item_must_be_geocoded(self):
-        with self.assertRaises(ValueError) as ve:
-            match_facility_list_item(FacilityListItem())
-
-        self.assertEqual(
-            ve.exception.args,
-            ('Items to be matched must be in the GEOCODED status',)
-        )
-
-    def test_creates_a_list_of_matches(self):
-        # TODO: restore this test as we build the new matching algorithm
-        pass
-
-    def test_matches_existing_facility(self):
-        # TODO: restore this test as we build the new matching algorithm
-        pass
 
 
 class FacilityNamesAddressesAndContributorsTest(TestCase):
@@ -948,3 +920,56 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
             initial_facility_matches_count + 1,
             new_facility_matches_count,
         )
+
+
+def interspace(string):
+    half = int(len(string) / 2)
+    return ' '.join(string[:half]) + string[half:]
+
+
+def junk_chars(string):
+    return string + 'YY'
+
+
+class DedupeMatchingTests(TestCase):
+    fixtures = ['users', 'contributors', 'facility_lists',
+                'facility_list_items', 'facilities', 'facility_matches']
+
+    def setUp(self):
+        self.contributor = Contributor.objects.first()
+
+    def create_list(self, items):
+        facility_list = FacilityList(
+            contributor=self.contributor, name='test', description='',
+            file_name='test.csv', header='country,name,address')
+        facility_list.save()
+        for index, item in enumerate(items):
+            country_code, name, address = item
+            list_item = FacilityListItem(
+                facility_list=facility_list, row_index=index, raw_data='',
+                status=FacilityListItem.GEOCODED, name=name, address=address,
+                country_code=country_code, geocoded_address='')
+            list_item.save()
+        return facility_list
+
+    def test_matches(self):
+        facility = Facility.objects.last()
+        facility_list = self.create_list([
+            (facility.country_code, interspace(facility.name),
+             junk_chars(facility.address.upper()))])
+        result = match_facility_list_items(facility_list)
+        matches = result['item_matches']
+        item_id = str(facility_list.facilitylistitem_set.all()[0].id)
+        self.assertIn(item_id, matches)
+        self.assertEqual(1, len(matches[item_id]))
+        self.assertEqual(str(facility.id), matches[item_id][0][0])
+        self.assertEqual(0.5, result['results']['gazetteer_threshold'])
+        self.assertFalse(result['results']['no_gazetteer_matches'])
+
+    def test_does_not_match(self):
+        facility_list = self.create_list([
+            ('US', 'Azavea', '990 Spring Garden St.')])
+        result = match_facility_list_items(facility_list)
+        matches = result['item_matches']
+        self.assertEqual(0, len(matches))
+        self.assertTrue(result['results']['no_gazetteer_matches'])

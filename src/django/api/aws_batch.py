@@ -123,9 +123,7 @@ def submit_jobs(environment, facility_list):
     # MATCH
     started = str(datetime.utcnow())
     match_job_id = submit_job('match',
-                              depends_on=[{'jobId': geocode_job_id,
-                                           'type': 'N_TO_N'}],
-                              is_array=True)
+                              depends_on=[{'jobId': geocode_job_id}])
     finished = str(datetime.utcnow())
     facility_list.refresh_from_db()
     with transaction.atomic():
@@ -133,7 +131,7 @@ def submit_jobs(environment, facility_list):
             item.processing_results.append({
                 'action': ProcessingAction.SUBMIT_JOB,
                 'type': 'match',
-                'job_id': '{0}:{1}'.format(match_job_id, item.row_index),
+                'job_id': '{0}'.format(match_job_id),
                 'error': False,
                 'started_at': started,
                 'finished_at': finished,

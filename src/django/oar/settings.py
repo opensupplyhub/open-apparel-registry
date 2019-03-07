@@ -41,6 +41,8 @@ BATCH_MODE = os.getenv('BATCH_MODE', '')
 
 LOGLEVEL = os.getenv('DJANGO_LOG_LEVEL', 'INFO')
 
+GIT_COMMIT = os.getenv('GIT_COMMIT', 'UNKNOWN')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (ENVIRONMENT == 'Development')
 

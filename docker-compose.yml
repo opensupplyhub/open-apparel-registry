@@ -44,6 +44,7 @@ services:
         - 'oar.wsgi'
     ports:
         - '8081:8081'
+    cpus: 2
 
   app:
     image: node:10-slim
