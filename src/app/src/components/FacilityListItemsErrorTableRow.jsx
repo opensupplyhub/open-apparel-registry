@@ -27,10 +27,11 @@ const FacilityListItemsErrorTableRow = memo(({
     <TableRow
         hover={hover}
         onClick={handleSelectRow}
+        style={{ verticalAlign: 'top' }}
     >
         <TableCell
             align="center"
-            padding="dense"
+            padding="default"
             style={listTableCellStyles.rowIndexStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -43,7 +44,7 @@ const FacilityListItemsErrorTableRow = memo(({
         </TableCell>
         <TableCell
             align="center"
-            padding="dense"
+            padding="default"
             style={listTableCellStyles.countryNameStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -55,7 +56,7 @@ const FacilityListItemsErrorTableRow = memo(({
             />
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.nameCellStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -69,7 +70,7 @@ const FacilityListItemsErrorTableRow = memo(({
             />
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.addressCellStyles}
         >
             <FacilityListItemsDetailedTableRowCell
@@ -81,7 +82,7 @@ const FacilityListItemsErrorTableRow = memo(({
             />
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.statusCellStyles}
         >
             <FacilityListItemsDetailedTableRowCell

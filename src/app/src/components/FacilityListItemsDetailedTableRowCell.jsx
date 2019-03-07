@@ -12,7 +12,6 @@ import { confirmRejectMatchRowStyles } from '../util/styles';
 export default function FacilityListItemsDetailedTableRowCell({
     title,
     subtitle,
-    hrIsHidden,
     stringIsHidden,
     data,
     hasActions,
@@ -22,32 +21,17 @@ export default function FacilityListItemsDetailedTableRowCell({
 }) {
     return (
         <div style={confirmRejectMatchRowStyles.cellStyles}>
-            <div style={confirmRejectMatchRowStyles.cellRowStyles}>
+            <div style={confirmRejectMatchRowStyles.cellTitleStyles}>
                 {title}
             </div>
-            <hr
-                style={
-                    hrIsHidden
-                        ? confirmRejectMatchRowStyles.cellHiddenHRStyles
-                        : confirmRejectMatchRowStyles.cellHRStyles
-                }
-            />
-            <div style={confirmRejectMatchRowStyles.cellRowStyles}>
-                <Typography variant="title">
+            <div style={confirmRejectMatchRowStyles.cellSubtitleStyles}>
+                <Typography variant="body2">
                     {subtitle}
                 </Typography>
             </div>
             {
                 data.map((item, index) => (
                     <Fragment key={hasActions ? item.id : item}>
-                        <hr
-                            style={
-                                hrIsHidden
-                                    ? confirmRejectMatchRowStyles.cellHiddenHRStyles
-                                    : confirmRejectMatchRowStyles.cellHRStyles
-
-                            }
-                        />
                         <CellElement
                             item={item}
                             fetching={fetching}
@@ -63,7 +47,6 @@ export default function FacilityListItemsDetailedTableRowCell({
 }
 
 FacilityListItemsDetailedTableRowCell.defaultProps = {
-    hrIsHidden: false,
     stringIsHidden: false,
     hasActions: false,
     fetching: false,
@@ -75,7 +58,6 @@ FacilityListItemsDetailedTableRowCell.defaultProps = {
 FacilityListItemsDetailedTableRowCell.propTypes = {
     title: oneOfType([number, string]).isRequired,
     subtitle: string,
-    hrIsHidden: bool,
     stringIsHidden: bool,
     data: oneOfType([
         arrayOf(number.isRequired),

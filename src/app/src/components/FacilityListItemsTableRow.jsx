@@ -43,20 +43,20 @@ const FacilityListItemsTableRow = memo(({
     >
         <TableCell
             align="center"
-            padding="dense"
+            padding="default"
             style={listTableCellStyles.rowIndexStyles}
         >
             {rowIndex}
         </TableCell>
         <TableCell
             align="center"
-            padding="dense"
+            padding="default"
             style={listTableCellStyles.countryNameStyles}
         >
             {countryName}
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.nameCellStyles}
         >
             {
@@ -72,13 +72,13 @@ const FacilityListItemsTableRow = memo(({
             }
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.addressCellStyles}
         >
             {address}
         </TableCell>
         <TableCell
-            padding="none"
+            padding="default"
             style={listTableCellStyles.statusCellStyles}
         >
             {

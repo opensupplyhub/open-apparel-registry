@@ -10,23 +10,33 @@ export const listTableCellStyles = Object.freeze({
     rowIndexStyles: Object.freeze({
         flex: '1',
         fontSize: '16px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
     }),
     countryNameStyles: Object.freeze({
         flex: '1',
         fontSize: '16px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
     }),
     nameCellStyles: Object.freeze({
         flex: '2',
         fontSize: '16px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
     }),
     addressCellStyles: Object.freeze({
         flex: '2',
         fontSize: '16px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
     }),
     statusCellStyles: Object.freeze({
         flex: '2',
         fontSize: '16px',
         paddingRight: '30px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
     }),
 });
 
@@ -34,12 +44,26 @@ export const confirmRejectMatchRowStyles = Object.freeze({
     cellStyles: Object.freeze({
         marginTop: '3px',
         marginBottom: '3px',
+        display: 'flex',
+        flexDirection: 'column',
     }),
     cellRowStyles: Object.freeze({
+        height: '55px',
+        minHeight: '55px',
+        display: 'flex',
+        alignItems: 'top',
+        maxWidth: '400px',
+    }),
+    cellSubtitleStyles: Object.freeze({
+        display: 'flex',
+        alignItems: 'center',
+        maxWidth: '400px',
+    }),
+    cellTitleStyles: Object.freeze({
         height: '75px',
         minHeight: '75px',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'top',
         maxWidth: '400px',
     }),
     errorCellRowStyles: Object.freeze({

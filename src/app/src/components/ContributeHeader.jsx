@@ -5,10 +5,6 @@ import { downloadContributorTemplate } from '../util/util';
 
 const ContributeHeader = memo(() => (
     <Fragment>
-        <p>
-            To contribute your supplier list to the OAR, please
-            complete the following steps:
-        </p>
         <div className="control-panel__group">
             <div className="form__field">
                 <p className="form__label">
