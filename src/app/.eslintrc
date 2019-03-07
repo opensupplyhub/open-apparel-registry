@@ -20,6 +20,18 @@
       "required": {
          "every": ["id"]
       }
-    }]
+    }],
+    "implicit-arrow-linebreak": "off",
+    "object-curly-newline": "off",
+    "operator-linebreak": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "import/no-useless-path-segments": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "react/destructuring-assignment": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-wrap-multilines": "off",
+    "react/prop-types": "off",
+    "react/sort-comp": "off"
   }
 }

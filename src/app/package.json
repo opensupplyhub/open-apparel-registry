@@ -21,7 +21,7 @@
         "react-redux": "5.1.0",
         "react-router": "4.3.1",
         "react-router-dom": "4.3.1",
-        "react-scripts": "1.1.4",
+        "react-scripts": "2.1.3",
         "react-select": "2.3.0",
         "react-toastify": "4.1.0",
         "redux": "4.0.0",
@@ -36,7 +36,7 @@
     "scripts": {
         "start": "PORT=6543 react-scripts start",
         "build": "react-scripts build",
-        "test": "CI=1 react-scripts test",
+        "test": "CI=1 react-scripts test --env=node",
         "lint": "eslint src/ --ext .js --ext .jsx",
         "eject": "react-scripts eject"
     },
@@ -45,12 +45,18 @@
         "@babel/core": "7.0.0-beta.49",
         "@babel/preset-env": "7.0.0-beta.49",
         "babel-plugin-lodash": "3.3.3",
-        "eslint": "4.19.1",
-        "eslint-config-airbnb": "16.1.0",
-        "eslint-plugin-import": "2.13.0",
+        "eslint": "5.6.0",
+        "eslint-config-airbnb": "17.1.0",
+        "eslint-plugin-import": "2.14.0",
         "eslint-plugin-jest": "21.27.2",
-        "eslint-plugin-jsx-a11y": "6.1.1",
-        "eslint-plugin-react": "7.10.0"
+        "eslint-plugin-jsx-a11y": "6.1.2",
+        "eslint-plugin-react": "7.11.1"
     },
-    "proxy": "http://django:8081"
+    "proxy": "http://django:8081",
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ]
 }
