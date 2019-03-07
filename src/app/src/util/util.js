@@ -407,3 +407,23 @@ export const sortFacilitiesAlphabeticallyByName = data => data
 
         return (a < b) ? -1 : 1;
     });
+
+// Given a list where each item is like { label: 'ABCD', value: 123 }, and
+// a payload which is a list of items like { label: '123', value: 123 },
+// returns a list of items from the payload with their labels replaced with
+// matching items found in the list.
+export const updateListWithLabels = (list, payload) => list
+    .reduce((accumulator, { value }) => {
+        const validOption = payload
+            .find(({ value: otherValue }) => value === otherValue);
+
+        if (!validOption) {
+            return accumulator;
+        }
+
+        return accumulator
+            .concat(Object.freeze({
+                value,
+                label: validOption.label,
+            }));
+    }, []);
