@@ -501,6 +501,17 @@ hr {
   right: 32px;
 }
 
+.gdpr-notification {
+  right: 0 !important;
+  bottom: 0 !important;
+}
+
+.gdpr-notification > div {
+  background: white;
+  color: black;
+  border-radius: 0;
+}
+
 
 
 /* @keyframes App-logo-spin {
