@@ -279,7 +279,7 @@ def train_gazetteer(messy, canonical):
 
 
 def match_facility_list_items(facility_list, automatic_threshold=0.8,
-                              recall_weight=1.0):
+                              gazetteer_threshold=0.5, recall_weight=1.0):
     """
     Attempt to match all the items in the specified FacilityList that are in
     the GEOCODED status with existing facilities.
@@ -338,10 +338,14 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
              for i in facility_list_item_set}
 
     gazetteer = train_gazetteer(messy, canonical)
-    threshold = gazetteer.threshold(messy, recall_weight=recall_weight)
-
-    results = gazetteer.match(messy, threshold=threshold, n_matches=None,
-                              generator=True)
+    try:
+        gazetteer.threshold(messy, recall_weight=recall_weight)
+        results = gazetteer.match(messy, threshold=gazetteer_threshold,
+                                  n_matches=None, generator=True)
+        no_gazetteer_matches = False
+    except dedupe.core.BlockingError:
+        results = []
+        no_gazetteer_matches = True
 
     finished = str(datetime.utcnow())
 
@@ -354,7 +358,8 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
         'processed_list_item_ids': list(messy.keys()),
         'item_matches': item_matches,
         'results': {
-            'gazetteer_threshold': threshold.item(),
+            'no_gazetteer_matches': no_gazetteer_matches,
+            'gazetteer_threshold': gazetteer_threshold,
             'automatic_threshold': automatic_threshold,
             'recall_weight': recall_weight,
             'code_version': settings.GIT_COMMIT
