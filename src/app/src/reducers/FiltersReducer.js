@@ -16,6 +16,10 @@ import {
     completeFetchCountryOptions,
 } from '../actions/filterOptions';
 
+import {
+    updateListWithLabels,
+} from '../util/util';
+
 const initialState = Object.freeze({
     facilityName: '',
     contributors: Object.freeze([]),
@@ -23,90 +27,17 @@ const initialState = Object.freeze({
     countries: Object.freeze([]),
 });
 
-const maybeSetContributorOptionsFromQueryString = (state, payload) => {
-    if (!state.contributors.length) {
+export const maybeSetFromQueryString = field => (state, payload) => {
+    if (!state[field].length) {
         return state;
     }
 
     // filter out any options set from the querystring which turn out
     // not to be valid according to the API's response
-    const updatedContributors = state
-        .contributors
-        .reduce((accumulator, { value }) => {
-            const validOption = payload
-                .find(({ value: otherValue }) => value === otherValue);
-
-            if (!validOption) {
-                return accumulator;
-            }
-
-            return accumulator
-                .concat(Object.freeze({
-                    value,
-                    label: validOption.label,
-                }));
-        }, []);
+    const updatedField = updateListWithLabels(state[field], payload);
 
     return update(state, {
-        contributors: { $set: updatedContributors },
-    });
-};
-
-const maybeSetContributorTypeOptionsFromQueryString = (state, payload) => {
-    if (!state.contributorTypes.length) {
-        return state;
-    }
-
-    // filter out any options set from the querystring which turn out
-    // not to be valid according to the API's response
-    const updatedContributorTypes = state
-        .contributorTypes
-        .reduce((accumulator, { value }) => {
-            const validOption = payload
-                .find(({ value: otherValue }) => value === otherValue);
-
-            if (!validOption) {
-                return accumulator;
-            }
-
-            return accumulator
-                .concat(Object.freeze({
-                    value,
-                    label: validOption.label,
-                }));
-        }, []);
-
-    return update(state, {
-        contributorTypes: { $set: updatedContributorTypes },
-    });
-};
-
-const maybeSetCountryOptionsFromQueryString = (state, payload) => {
-    if (!state.countries.length) {
-        return state;
-    }
-
-    // filter out any options set from the querystring which turn out
-    // not to be valid according to the API's response
-    const updatedCountries = state
-        .countries
-        .reduce((accumulator, { value }) => {
-            const validOption = payload
-                .find(({ value: otherValue }) => value === otherValue);
-
-            if (!validOption) {
-                return accumulator;
-            }
-
-            return accumulator
-                .concat(Object.freeze({
-                    value,
-                    label: validOption.label,
-                }));
-        }, []);
-
-    return update(state, {
-        countries: { $set: updatedCountries },
+        [field]: { $set: updatedField },
     });
 };
 
@@ -125,7 +56,7 @@ export default createReducer({
     }),
     [resetAllFilters]: () => initialState,
     [updateAllFilters]: (_state, payload) => payload,
-    [completeFetchContributorOptions]: maybeSetContributorOptionsFromQueryString,
-    [completeFetchContributorTypeOptions]: maybeSetContributorTypeOptionsFromQueryString,
-    [completeFetchCountryOptions]: maybeSetCountryOptionsFromQueryString,
+    [completeFetchContributorOptions]: maybeSetFromQueryString('contributors'),
+    [completeFetchContributorTypeOptions]: maybeSetFromQueryString('contributorTypes'),
+    [completeFetchCountryOptions]: maybeSetFromQueryString('countries'),
 }, initialState);

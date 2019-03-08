@@ -52,6 +52,7 @@ const {
     joinDataIntoCSVString,
     caseInsensitiveIncludes,
     sortFacilitiesAlphabeticallyByName,
+    updateListWithLabels,
 } = require('../util/util');
 
 const {
@@ -905,4 +906,51 @@ it('sorts an array of facilities alphabetically by name without mutating the inp
         inputData,
         expectedSortedData,
     )).toBe(false);
+});
+
+it('updates a list of unlabeled values with the correct labels from a given source', () => {
+    const source = [
+        {
+            value: 67,
+            label: 'Aguilar, Stanley and Lewis',
+        },
+        {
+            value: 57,
+            label: 'Alvarez PLC',
+        },
+        {
+            value: 14,
+            label: 'Arnold-Adams',
+        },
+    ];
+    const unlabeled = [
+        {
+            value: 57,
+            label: '57', // Unlabeled, should be corrected
+        },
+        {
+            value: 14,
+            label: 'XYZ', // Mislabaled, should be corrected
+        },
+        {
+            value: 89,
+            label: 'ABC', // Does not exist in source, should be dropped
+        },
+    ];
+
+    const corrected = [
+        {
+            value: 57,
+            label: 'Alvarez PLC',
+        },
+        {
+            value: 14,
+            label: 'Arnold-Adams',
+        },
+    ];
+
+    expect(isEqual(
+        updateListWithLabels(unlabeled, source),
+        corrected,
+    )).toBe(true);
 });
