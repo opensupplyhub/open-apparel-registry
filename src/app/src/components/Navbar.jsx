@@ -3,7 +3,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
 
-import logo from '../styles/images/OAR_Logo.png';
+import logo from '../styles/images/OpenApparelRegistry_logo.png';
 import NavbarDropdown from './NavbarDropdown';
 import NavbarLoginButtonGroup from './NavbarLoginButtonGroup';
 
@@ -26,11 +26,20 @@ export default function Navbar() {
     return (
         <AppBar position="static" className="App-header">
             <Toolbar style={{ padding: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'middle' }}>
+                    <Link
+                        to="/"
+                        href="/"
+                        style={{ display: 'inline-flex' }}
+                    >
+                        <img src={logo} className="App-logo" alt="logo" />
+                    </Link>
+                </div>
                 <div
                     style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        marginRight: 'auto',
+                        marginLeft: 'auto',
                     }}
                 >
                     <Link
@@ -66,15 +75,6 @@ export default function Navbar() {
                             CONTRIBUTE
                         </Link>
                     </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'middle' }}>
-                    <Link
-                        to="/"
-                        href="/"
-                        style={{ display: 'inline-flex' }}
-                    >
-                        <img src={logo} className="App-logo" alt="logo" />
-                    </Link>
                 </div>
                 <NavbarLoginButtonGroup />
             </Toolbar>

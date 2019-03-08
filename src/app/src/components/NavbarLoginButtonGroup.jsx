@@ -25,7 +25,6 @@ import {
 const componentStyles = Object.freeze({
     containerStyle: Object.freeze({
         display: 'flex',
-        marginLeft: 'auto',
         overflow: 'auto',
     }),
     logoContainer: Object.freeze({
