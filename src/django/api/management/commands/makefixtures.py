@@ -2,6 +2,7 @@ from django.core.management.base import (BaseCommand,
                                          CommandError)
 
 from api.models import Contributor, FacilityMatch, FacilityListItem
+from api.oar_id import make_oar_id
 
 import csv
 import json
@@ -21,7 +22,7 @@ COUNTRY_CODES = {
     'CANADA': 'CA',
     'COLOMBIA': 'CO',
     'CHINA': 'CN',
-    'DOMINICAN REPUBLIC': '',
+    'DOMINICAN REPUBLIC': 'DO',
     'EL SALVADOR': 'SV',
     'FRANCE': 'FR',
     'GERMANY': 'DE',
@@ -227,8 +228,9 @@ def make_facility(facility_item):
     for row in csv.reader([fields['raw_data']]):
         parsed = row
 
-    pk = facility_item['pk']
-    point_is_fixed = pk % 65 == 0
+    country_code = COUNTRY_CODES[parsed[0].upper()]
+    pk = make_oar_id(country_code)
+    point_is_fixed = facility_item['pk'] % 65 == 0
 
     return {
         'model': 'api.facility',
@@ -236,9 +238,9 @@ def make_facility(facility_item):
         'fields': {
             'name': parsed[1],
             'address': parsed[2],
-            'country_code': COUNTRY_CODES[parsed[0].upper()],
+            'country_code': country_code,
             'location': make_point(point_is_fixed),
-            'created_from': pk,
+            'created_from': facility_item['pk'],
             'created_at': created_at,
             'updated_at': updated_at,
         }
