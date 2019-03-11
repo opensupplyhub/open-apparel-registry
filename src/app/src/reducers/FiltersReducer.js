@@ -16,6 +16,8 @@ import {
     completeFetchCountryOptions,
 } from '../actions/filterOptions';
 
+import { completeSubmitLogOut } from '../actions/auth';
+
 import {
     updateListWithLabels,
 } from '../util/util';
@@ -59,4 +61,5 @@ export default createReducer({
     [completeFetchContributorOptions]: maybeSetFromQueryString('contributors'),
     [completeFetchContributorTypeOptions]: maybeSetFromQueryString('contributorTypes'),
     [completeFetchCountryOptions]: maybeSetFromQueryString('countries'),
+    [completeSubmitLogOut]: () => initialState,
 }, initialState);

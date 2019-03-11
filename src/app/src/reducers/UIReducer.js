@@ -11,6 +11,8 @@ import {
 
 import { completeFetchFacilities } from '../actions/facilities';
 
+import { completeSubmitLogOut } from '../actions/auth';
+
 import { filterSidebarTabsEnum } from '../util/constants';
 
 const initialState = Object.freeze({
@@ -65,4 +67,5 @@ export default createReducer({
             },
         },
     }),
+    [completeSubmitLogOut]: () => initialState,
 }, initialState);
