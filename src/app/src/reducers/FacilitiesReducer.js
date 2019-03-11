@@ -26,6 +26,8 @@ import {
 
 import { makeFeatureCollectionFromSingleFeature } from '../util/util';
 
+import { completeSubmitLogOut } from '../actions/auth';
+
 const initialState = Object.freeze({
     facilities: Object.freeze({
         data: null,
@@ -126,4 +128,5 @@ export default createReducer({
     [updateCountryFilter]: clearFacilitiesDataOnFilterChange,
     [resetAllFilters]: clearFacilitiesDataOnFilterChange,
     [updateAllFilters]: clearFacilitiesDataOnFilterChange,
+    [completeSubmitLogOut]: clearFacilitiesDataOnFilterChange,
 }, initialState);
