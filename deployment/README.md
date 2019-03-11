@@ -12,7 +12,7 @@ Using the AWS CLI, create an AWS profile named `open-apparel-registry`:
 $ aws configure --profile open-apparel-registry
 AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
 AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-Default region name [None]: us-east-1
+Default region name [None]: eu-west-1
 Default output format [None]:
 ```
 
@@ -29,7 +29,7 @@ To do this, we can use the `cibuild` and `cipublish` scripts:
 
 ```bash
 $ vagrant ssh
-vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=123456789012.dkr.ecr.us-east-1.amazonaws.com
+vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=123456789012.dkr.ecr.eu-west-1.amazonaws.com
 vagrant@vagrant:/vagrant$ ./scripts/cibuild
 ...
 Successfully built 20dcf93f6907
@@ -73,7 +73,7 @@ rds_database_username = "openapparelregistry"
 rds_database_password = "password"
 ```
 
-This file lives at `s3://openapparelregistry-staging-config-us-east-1/terraform/terraform.tfvars`.
+This file lives at `s3://openapparelregistry-staging-config-eu-west-1/terraform/terraform.tfvars`.
 
 To deploy this project's core infrastructure, use the `infra` wrapper script to lookup the remote state of the infrastructure and assemble a plan for work to be done:
 

@@ -2,8 +2,8 @@
 
 mkdir -p data
 aws s3 sync \
-    s3://openapparelregistry-development-data-us-east-1/clean-supplier-lists-2019-01-08 \
+    s3://openapparelregistry-development-data-eu-west-1/clean-supplier-lists-2019-01-08 \
     data/supplier-lists
 aws s3 cp \
-    s3://openapparelregistry-development-data-us-east-1/rubota_facilities_2018-02-26.csv \
+    s3://openapparelregistry-development-data-eu-west-1/rubota_facilities_2018-02-26.csv \
     data/rubota_facilities.csv

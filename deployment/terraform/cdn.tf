@@ -73,7 +73,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = "${module.cert.arn}"
+    acm_certificate_arn      = "${module.cert_cdn.arn}"
     minimum_protocol_version = "TLSv1.2_2018"
     ssl_support_method       = "sni-only"
   }

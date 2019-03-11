@@ -80,7 +80,7 @@ resource "aws_lb_listener" "app" {
   load_balancer_arn = "${aws_lb.app.id}"
   port              = "443"
   protocol          = "HTTPS"
-  certificate_arn   = "${module.cert.arn}"
+  certificate_arn   = "${module.cert_lb.arn}"
 
   default_action {
     target_group_arn = "${aws_lb_target_group.app.id}"
