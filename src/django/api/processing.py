@@ -11,6 +11,7 @@ from unidecode import unidecode
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 
 from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityList, FacilityListItem
@@ -77,17 +78,20 @@ def geocode_facility_list_item(item):
         raise ValueError('Items to be geocoded must be in the PARSED status')
     try:
         data = geocode_address(item.address, item.country_code)
-        item.status = FacilityListItem.GEOCODED
-        item.geocoded_point = Point(
-            data["geocoded_point"]["lng"],
-            data["geocoded_point"]["lat"]
-        )
-        item.geocoded_address = data["geocoded_address"]
+        if data['result_count'] > 0:
+            item.status = FacilityListItem.GEOCODED
+            item.geocoded_point = Point(
+                data["geocoded_point"]["lng"],
+                data["geocoded_point"]["lat"]
+            )
+            item.geocoded_address = data["geocoded_address"]
+        else:
+            item.status = FacilityListItem.GEOCODED_NO_RESULTS
         item.processing_results.append({
             'action': ProcessingAction.GEOCODE,
             'started_at': started,
             'error': False,
-            'data': data["full_response"],
+            'data': data['full_response'],
             'finished_at': str(datetime.utcnow()),
         })
     except Exception as e:
@@ -207,7 +211,8 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
                  for i in facility_set}
 
     facility_list_item_set = facility_list.facilitylistitem_set.filter(
-        status=FacilityListItem.GEOCODED).extra(
+        Q(status=FacilityListItem.GEOCODED)
+        | Q(status=FacilityListItem.GEOCODED_NO_RESULTS)).extra(
             select={'country': 'country_code'}).values(
                 'id', 'country', 'name', 'address')
     messy = {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
@@ -311,24 +316,35 @@ def save_match_details(match_results):
                  .filter(id__in=processed_list_item_ids)
                  .exclude(id__in=item_matches.keys()))
     for item in unmatched:
-        facility = Facility(name=item.name,
-                            address=item.address,
-                            country_code=item.country_code,
-                            location=item.geocoded_point,
-                            created_from=item)
-        facility.save()
+        if item.status == FacilityListItem.GEOCODED_NO_RESULTS:
+            item.status = FacilityListItem.ERROR_MATCHING
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': started,
+                'error': True,
+                'message': ('No match to an existing facility and cannot '
+                            'create a new facility without a geocode result'),
+                'finished_at': finished
+            })
+        else:
+            facility = Facility(name=item.name,
+                                address=item.address,
+                                country_code=item.country_code,
+                                location=item.geocoded_point,
+                                created_from=item)
+            facility.save()
 
-        match = make_pending_match(item.id, facility.id, 1.0)
-        match.results['match_type'] = 'no_gazetteer_match'
-        match.status = FacilityMatch.AUTOMATIC
-        match.save()
+            match = make_pending_match(item.id, facility.id, 1.0)
+            match.results['match_type'] = 'no_gazetteer_match'
+            match.status = FacilityMatch.AUTOMATIC
+            match.save()
 
-        item.facility = facility
-        item.status = FacilityListItem.MATCHED
-        item.processing_results.append({
-            'action': ProcessingAction.MATCH,
-            'started_at': started,
-            'error': False,
-            'finished_at': finished
-        })
+            item.facility = facility
+            item.status = FacilityListItem.MATCHED
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': started,
+                'error': False,
+                'finished_at': finished
+            })
         item.save()
