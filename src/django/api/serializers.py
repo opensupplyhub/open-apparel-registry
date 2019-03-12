@@ -1,6 +1,8 @@
 from django.conf import settings
+from django.core import exceptions
 from django.db import transaction
 from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth import password_validation
 from rest_framework.serializers import (CharField,
                                         EmailField,
                                         ModelSerializer,
@@ -30,6 +32,16 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         exclude = ()
+
+    def validate(self, data):
+        user = User(**data)
+        password = data.get('password')
+
+        try:
+            password_validation.validate_password(password=password, user=user)
+            return super(UserSerializer, self).validate(data)
+        except exceptions.ValidationError as e:
+            raise ValidationError({"password": list(e.messages)})
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
