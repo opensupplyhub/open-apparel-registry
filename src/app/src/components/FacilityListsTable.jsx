@@ -34,9 +34,6 @@ function FacilityListsTable({
                         <TableCell>
                             Active
                         </TableCell>
-                        <TableCell>
-                            Public
-                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -59,9 +56,6 @@ function FacilityListsTable({
                                     </TableCell>
                                     <TableCell>
                                         {list.is_active ? 'True' : 'False'}
-                                    </TableCell>
-                                    <TableCell>
-                                        {list.is_public ? 'True' : 'False'}
                                     </TableCell>
                                 </TableRow>))
                     }
