@@ -58,7 +58,7 @@ def parse_facility_list_item(item):
             'finished_at': str(datetime.utcnow()),
         })
     except Exception as e:
-        item.status = FacilityListItem.ERROR
+        item.status = FacilityListItem.ERROR_PARSING
         item.processing_results.append({
             'action': ProcessingAction.PARSE,
             'started_at': started,
@@ -91,7 +91,7 @@ def geocode_facility_list_item(item):
             'finished_at': str(datetime.utcnow()),
         })
     except Exception as e:
-        item.status = FacilityListItem.ERROR
+        item.status = FacilityListItem.ERROR_GEOCODING
         item.processing_results.append({
             'action': ProcessingAction.GEOCODE,
             'started_at': started,

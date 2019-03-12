@@ -239,7 +239,17 @@ export const facilityListItemStatusChoicesEnum = Object.freeze({
     POTENTIAL_MATCH: 'POTENTIAL_MATCH',
     CONFIRMED_MATCH: 'CONFIRMED_MATCH',
     ERROR: 'ERROR',
+    ERROR_PARSING: 'ERROR_PARSING',
+    ERROR_GEOCODING: 'ERROR_GEOCODING',
+    ERROR_MATCHING: 'ERROR_MATCHING',
 });
+
+export const facilityListItemErrorStatuses = Object.freeze([
+    facilityListItemStatusChoicesEnum.ERROR,
+    facilityListItemStatusChoicesEnum.ERROR_PARSING,
+    facilityListItemStatusChoicesEnum.ERROR_GEOCODING,
+    facilityListItemStatusChoicesEnum.ERROR_MATCHING,
+]);
 
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_ROWS_PER_PAGE = 20;

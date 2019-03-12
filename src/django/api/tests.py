@@ -274,7 +274,7 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assertTrue(results['finished_at'] > results['started_at'])
 
     def assert_failed_parse_results(self, item, message=None):
-        self.assertEqual(FacilityListItem.ERROR, item.status)
+        self.assertEqual(FacilityListItem.ERROR_PARSING, item.status)
         self.assert_status(item, ProcessingAction.PARSE)
         results = self.get_first_status(item, ProcessingAction.PARSE)
         self.assertTrue('error' in results)
@@ -438,7 +438,7 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         item.country_code = "$%"
         geocode_facility_list_item(item)
 
-        self.assertEqual(item.status, FacilityListItem.ERROR)
+        self.assertEqual(item.status, FacilityListItem.ERROR_GEOCODING)
         self.assertIsNone(item.geocoded_address)
         self.assertIsNone(item.geocoded_point)
         self.assertIn(

@@ -28,6 +28,7 @@ import {
 import {
     rowsPerPageOptions,
     facilityListItemStatusChoicesEnum,
+    facilityListItemErrorStatuses,
 } from '../util/constants';
 
 const facilityListItemsTableStyles = Object.freeze({
@@ -139,7 +140,7 @@ function FacilityListItemsTable({
                 );
             }
 
-            if (item.status === facilityListItemStatusChoicesEnum.ERROR) {
+            if (facilityListItemErrorStatuses.includes(item.status)) {
                 return (
                     <FacilityListItemsErrorTableRow
                         key={item.row_index}

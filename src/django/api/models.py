@@ -220,6 +220,9 @@ class FacilityListItem(models.Model):
     POTENTIAL_MATCH = 'POTENTIAL_MATCH'
     CONFIRMED_MATCH = 'CONFIRMED_MATCH'
     ERROR = 'ERROR'
+    ERROR_PARSING = 'ERROR_PARSING'
+    ERROR_GEOCODING = 'ERROR_GEOCODING'
+    ERROR_MATCHING = 'ERROR_MATCHING'
 
     # These status choices must be kept in sync with the client's
     # `facilityListItmeStatusChoicesEnum`.
@@ -231,7 +234,12 @@ class FacilityListItem(models.Model):
         (POTENTIAL_MATCH, POTENTIAL_MATCH),
         (CONFIRMED_MATCH, CONFIRMED_MATCH),
         (ERROR, ERROR),
+        (ERROR_PARSING, ERROR_PARSING),
+        (ERROR_GEOCODING, ERROR_GEOCODING),
+        (ERROR_MATCHING, ERROR_MATCHING),
     )
+
+    ERROR_STATUSES = [ERROR, ERROR_PARSING, ERROR_GEOCODING, ERROR_MATCHING]
 
     class Meta:
         indexes = [
