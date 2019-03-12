@@ -149,7 +149,6 @@ class FacilitiesMap extends Component {
                 gridSize: 50,
                 maxZoom: 20,
                 // these images are in the /public/images dir
-                // and are from https://github.com/googlemaps/v3-utility-library/tree/master/markerclusterer
                 imagePath: '/images/m',
             },
         );
