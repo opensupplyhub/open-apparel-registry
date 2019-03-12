@@ -8,9 +8,9 @@ node {
 		}
 
 		env.AWS_PROFILE = 'open-apparel-registry'
-		env.AWS_DEFAULT_REGION = 'us-east-1'
+		env.AWS_DEFAULT_REGION = 'eu-west-1'
 
-		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-testing-config-us-east-1'
+		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-testing-config-eu-west-1'
 
 	    // Execute `setup` wrapped within a plugin that translates
 	    // ANSI color codes to something that renders inside the Jenkins
@@ -27,7 +27,7 @@ node {
 			}
 		}
 
-		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-staging-config-us-east-1'
+		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-staging-config-eu-west-1'
 
 		if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('test/')) {
 			// Publish container images built and tested during `cibuild`

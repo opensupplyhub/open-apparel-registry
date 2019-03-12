@@ -42,7 +42,7 @@ class Command(BaseCommand):
                                 cmd)
 
         url = (
-            f'https://console.aws.amazon.com/ecs/home?region=us-east-1#'
+            f'https://console.aws.amazon.com/ecs/home?region=eu-west-1#'
             f'/clusters/ecs{self.env}Cluster/tasks/{task_id}/details'
         )
 

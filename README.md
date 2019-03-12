@@ -25,7 +25,7 @@ First, configure a local AWS profile with access to an S3 bucket with files cont
 $ aws configure --profile open-apparel-registry
 AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
 AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-Default region name [None]: us-east-1
+Default region name [None]: eu-west-1
 Default output format [None]:
 ```
 
@@ -67,7 +67,7 @@ To start this version of OAR, first, bootstrap the database:
 $ vagrant ssh
 
 # Import database dumps from Sourcemap and run ElasticSearch indexing
-vagrant@vagrant:/vagrant$ export OAR_SETTINGS_BUCKET=openapparelregistry-development-config-us-east-1
+vagrant@vagrant:/vagrant$ export OAR_SETTINGS_BUCKET=openapparelregistry-development-config-eu-west-1
 vagrant@vagrant:/vagrant$ ./scripts/bootstrap --restify
 ```
 

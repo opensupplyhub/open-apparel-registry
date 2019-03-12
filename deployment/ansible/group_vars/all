@@ -2,7 +2,7 @@
 aws_cli_version: "1.16.*"
 aws_profile: "open-apparel-registry"
 
-oar_settings_bucket: "openapparelregistry-development-config-us-east-1"
+oar_settings_bucket: "openapparelregistry-development-config-eu-west-1"
 
 docker_version: "18.*"
 docker_compose_version: "1.21.*"

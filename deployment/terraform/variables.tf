@@ -7,11 +7,11 @@ variable "environment" {
 }
 
 variable "aws_region" {
-  default = "us-east-1"
+  default = "eu-west-1"
 }
 
 variable "aws_availability_zones" {
-  default = ["us-east-1a", "us-east-1b"]
+  default = ["eu-west-1a", "eu-west-1b"]
 }
 
 variable "aws_key_name" {}
@@ -89,7 +89,7 @@ variable "rds_parameter_group_family" {
 }
 
 variable "rds_instance_type" {
-  default = "db.t2.micro"
+  default = "db.t3.micro"
 }
 
 variable "rds_storage_type" {
@@ -213,9 +213,9 @@ variable "batch_default_ce_spot_fleet_bid_percentage" {
 }
 
 variable "batch_ami_id" {
-  # Latest ECS-optimized Amazon Linux AMI in us-east-1
+  # Latest ECS-optimized Amazon Linux AMI in eu-west-1
   # See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
-  default = "ami-0bf2fb355727b7faf"
+  default = "ami-00921cd1ce43d567a"
 }
 
 variable "batch_default_ce_min_vcpus" {
