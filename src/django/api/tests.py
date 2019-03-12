@@ -14,6 +14,7 @@ from rest_framework.test import APITestCase
 from api.constants import ProcessingAction
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityMatch, Contributor, User)
+from api.oar_id import make_oar_id, validate_oar_id
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             match_facility_list_items)
@@ -973,3 +974,20 @@ class DedupeMatchingTests(TestCase):
         matches = result['item_matches']
         self.assertEqual(0, len(matches))
         self.assertTrue(result['results']['no_gazetteer_matches'])
+
+
+class OarIdTests(TestCase):
+
+    def test_make_and_validate_oar_id(self):
+        id = make_oar_id('US')
+        validate_oar_id(id)
+        self.assertEqual(id[:2], 'US')
+
+    def test_id_too_long(self):
+        self.assertRaises(ValueError, validate_oar_id, 'US2019070KTWK4x')
+
+    def test_invalid_checksum(self):
+        self.assertRaises(ValueError, validate_oar_id, 'USX019070KTWK4')
+
+    def test_invalid_country(self):
+        self.assertRaises(ValueError, make_oar_id, '99')
