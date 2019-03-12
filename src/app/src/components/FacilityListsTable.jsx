@@ -11,6 +11,19 @@ import TableCell from '@material-ui/core/TableCell';
 import { facilityListPropType } from '../util/propTypes';
 import { makeFacilityListItemsDetailLink } from '../util/util';
 
+const facilityListsTableStyles = Object.freeze({
+    inactiveListStyles: Object.freeze({
+        cursor: 'pointer',
+    }),
+    activeListStyles: Object.freeze({
+        backgroundColor: '#f3fafe',
+        outlineWidth: '0.75px',
+        outlineStyle: 'solid',
+        outlineColor: '#1a9fe3',
+        cursor: 'pointer',
+    }),
+});
+
 function FacilityListsTable({
     facilityLists,
     history: {
@@ -34,9 +47,6 @@ function FacilityListsTable({
                         <TableCell>
                             Active
                         </TableCell>
-                        <TableCell>
-                            Public
-                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -47,6 +57,11 @@ function FacilityListsTable({
                                     key={list.id}
                                     hover
                                     onClick={() => push(makeFacilityListItemsDetailLink(list.id))}
+                                    style={
+                                        list.is_active
+                                            ? facilityListsTableStyles.activeListStyles
+                                            : facilityListsTableStyles.inactiveListStyles
+                                    }
                                 >
                                     <TableCell>
                                         {list.name}
@@ -59,9 +74,6 @@ function FacilityListsTable({
                                     </TableCell>
                                     <TableCell>
                                         {list.is_active ? 'True' : 'False'}
-                                    </TableCell>
-                                    <TableCell>
-                                        {list.is_public ? 'True' : 'False'}
                                     </TableCell>
                                 </TableRow>))
                     }
