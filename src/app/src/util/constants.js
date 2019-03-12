@@ -278,3 +278,5 @@ export const emptyFeatureCollection = Object.freeze({
     type: FEATURE_COLLECTION,
     features: Object.freeze([]),
 });
+
+export const ENTER_KEY = 'Enter';

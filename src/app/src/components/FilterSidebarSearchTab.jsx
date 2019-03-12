@@ -26,7 +26,10 @@ import {
 
 import { filterSidebarStyles } from '../util/styles';
 
-import { getValueFromEvent } from '../util/util';
+import {
+    getValueFromEvent,
+    makeSubmitFormOnEnterKeyPressFunction,
+} from '../util/util';
 
 const filterSidebarSearchTabStyles = Object.freeze({
     formStyle: Object.freeze({
@@ -64,6 +67,7 @@ function FilterSidebarSearchTab({
     searchForFacilities,
     facilities,
     fetchingOptions,
+    submitFormOnEnterKeyPress,
 }) {
     if (fetchingOptions) {
         return (
@@ -114,6 +118,7 @@ function FilterSidebarSearchTab({
                         className="full-width margin-bottom-16 form__text-input"
                         value={facilityName}
                         onChange={updateFacilityName}
+                        onKeyPress={submitFormOnEnterKeyPress}
                     />
                 </div>
                 <div className="form__field">
@@ -299,6 +304,9 @@ function mapDispatchToProps(dispatch) {
         updateCountry: v => dispatch(updateCountryFilter(v)),
         resetFilters: () => dispatch(resetAllFilters()),
         searchForFacilities: () => dispatch(fetchFacilities()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
+            () => dispatch(fetchFacilities()),
+        ),
     };
 }
 

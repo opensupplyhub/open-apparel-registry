@@ -25,7 +25,10 @@ import {
     profileFormInputHandlersPropType,
 } from '../util/propTypes';
 
-import { getStateFromEventForEventType } from '../util/util';
+import {
+    getStateFromEventForEventType,
+    makeSubmitFormOnEnterKeyPressFunction,
+} from '../util/util';
 
 import {
     updateProfileFormInput,
@@ -109,6 +112,7 @@ class UserProfile extends Component {
             updateProfile,
             updatingProfile,
             errorsUpdatingProfile,
+            submitFormOnEnterKeyPress,
             match: {
                 params: {
                     id,
@@ -141,6 +145,7 @@ class UserProfile extends Component {
                     required={field.required}
                     hideOnViewOnlyProfile={field.hideOnViewOnlyProfile}
                     isEditableProfile={isEditableProfile}
+                    submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                 />));
 
         const title = isEditableProfile
@@ -222,6 +227,7 @@ UserProfile.propTypes = {
     updateProfile: func.isRequired,
     updatingProfile: bool.isRequired,
     errorsUpdatingProfile: arrayOf(string),
+    submitFormOnEnterKeyPress: func.isRequired,
 };
 
 function mapStateToProps({
@@ -280,6 +286,9 @@ const mapDispatchToProps = (dispatch, {
         fetchProfile: () => dispatch(fetchUserProfile(Number(profileID))),
         resetProfile: () => dispatch(resetUserProfile()),
         updateProfile: () => dispatch(updateUserProfile(Number(profileID))),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
+            () => dispatch(updateUserProfile(Number(profileID))),
+        ),
     };
 };
 

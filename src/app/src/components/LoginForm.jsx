@@ -18,7 +18,10 @@ import {
     resetAuthFormState,
 } from '../actions/auth';
 
-import { getValueFromEvent } from '../util/util';
+import {
+    getValueFromEvent,
+    makeSubmitFormOnEnterKeyPressFunction,
+} from '../util/util';
 
 import { userPropType } from '../util/propTypes';
 
@@ -54,6 +57,7 @@ class LoginForm extends Component {
             updateEmail,
             updatePassword,
             submitForm,
+            submitFormOnEnterKeyPress,
             sessionFetching,
         } = this.props;
 
@@ -91,6 +95,7 @@ class LoginForm extends Component {
                                 type="email"
                                 value={email}
                                 onChange={updateEmail}
+                                submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                             />
                         </div>
                         <div className="form__field">
@@ -105,6 +110,7 @@ class LoginForm extends Component {
                                 type="password"
                                 value={password}
                                 onChange={updatePassword}
+                                submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                             />
                         </div>
                         <SendResetPasswordEmailForm />
@@ -145,6 +151,7 @@ LoginForm.propTypes = {
     updateEmail: func.isRequired,
     updatePassword: func.isRequired,
     submitForm: func.isRequired,
+    submitFormOnEnterKeyPress: func.isRequired,
     clearForm: func.isRequired,
     user: userPropType,
     history: shape({
@@ -187,6 +194,9 @@ function mapDispatchToProps(dispatch) {
         updatePassword: e => dispatch(updateLoginFormPassword(getValueFromEvent(e))),
         submitForm: () => dispatch(submitLoginForm()),
         clearForm: () => dispatch(resetAuthFormState()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
+            () => dispatch(submitLoginForm()),
+        ),
     };
 }
 

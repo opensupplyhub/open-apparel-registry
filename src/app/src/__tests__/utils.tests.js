@@ -52,6 +52,7 @@ const {
     caseInsensitiveIncludes,
     sortFacilitiesAlphabeticallyByName,
     updateListWithLabels,
+    makeSubmitFormOnEnterKeyPressFunction,
 } = require('../util/util');
 
 const {
@@ -62,6 +63,7 @@ const {
     profileFormFields,
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
+    ENTER_KEY,
 } = require('../util/constants');
 
 it('creates a route for checking facility list items', () => {
@@ -942,4 +944,30 @@ it('updates a list of unlabeled values with the correct labels from a given sour
         updateListWithLabels(unlabeled, source),
         corrected,
     )).toBe(true);
+});
+
+it('calls a given function when the enter key has been pressed in a form input', () => {
+    const dispatchSubmitForm = jest.fn();
+
+    const enterKeyPressHandler = makeSubmitFormOnEnterKeyPressFunction(dispatchSubmitForm);
+
+    const keyPressEvent = {
+        key: ENTER_KEY,
+    };
+
+    enterKeyPressHandler(keyPressEvent);
+    expect(dispatchSubmitForm).toHaveBeenCalled();
+});
+
+it('does not call a given function when a non-enter key has been pressed in a form input', () => {
+    const dispatchSubmitForm = jest.fn();
+
+    const enterKeyPressHandler = makeSubmitFormOnEnterKeyPressFunction(dispatchSubmitForm);
+
+    const keyPressEvent = {
+        key: 'a',
+    };
+
+    enterKeyPressHandler(keyPressEvent);
+    expect(dispatchSubmitForm).not.toHaveBeenCalled();
 });

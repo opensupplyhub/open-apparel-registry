@@ -22,6 +22,7 @@ export default function RegisterFormField({
     value,
     handleChange,
     isHidden,
+    submitFormOnEnterKeyPress,
 }) {
     if (isHidden) {
         return null;
@@ -83,6 +84,7 @@ export default function RegisterFormField({
                 id={id}
                 hint={hint}
                 type={type}
+                submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
             />
         </div>
     );
@@ -110,4 +112,5 @@ RegisterFormField.propTypes = {
         prefixText: string,
         url: string.isRequired,
     }),
+    submitFormOnEnterKeyPress: func.isRequired,
 };

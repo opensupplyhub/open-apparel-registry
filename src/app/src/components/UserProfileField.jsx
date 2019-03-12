@@ -30,6 +30,7 @@ export default function UserProfileField({
     isHidden,
     isEditableProfile,
     hideOnViewOnlyProfile,
+    submitFormOnEnterKeyPress,
 }) {
     if (type === inputTypesEnum.checkbox) {
         window.console.warn(`checkbox not yet implemented for ${id}`);
@@ -122,6 +123,7 @@ export default function UserProfileField({
                     onChange={handleChange}
                     disabled={disabled}
                     type={type}
+                    submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                 />
             </div>
         </div>
@@ -146,4 +148,5 @@ UserProfileField.propTypes = {
     isHidden: bool.isRequired,
     isEditableProfile: bool,
     hideOnViewOnlyProfile: bool,
+    submitFormOnEnterKeyPress: func.isRequired,
 };
