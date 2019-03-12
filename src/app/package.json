@@ -15,7 +15,6 @@
         "google-map-react": "1.1.2",
         "immutability-helper": "2.9.0",
         "lodash": "4.17.11",
-        "mapbox-gl": "0.52.0",
         "prop-types": "15.6.2",
         "react": "16.7.0",
         "react-copy-to-clipboard": "5.0.1",
@@ -32,7 +31,6 @@
         "redux-logger": "3.0.6",
         "redux-persist": "5.10.0",
         "redux-thunk": "2.3.0",
-        "supercluster": "2.3.0",
         "validator": "10.11.0",
         "viewport-mercator-project": "5.1.0"
     },

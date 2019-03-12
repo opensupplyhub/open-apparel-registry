@@ -35,6 +35,10 @@
   width: 100%;
 }
 
+.gm-style-iw-c {
+    border-radius: 0 !important;
+}
+
 .popup-container {
   max-height: 235px;
   max-width: 235px;

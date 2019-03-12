@@ -235,6 +235,8 @@ if GOOGLE_GEOCODING_API_KEY is None:
     raise ImproperlyConfigured(
         'Invalid GOOGLE_GEOCODING_API_KEY provided, must be set')
 
+GOOGLE_MAPS_KEY = os.getenv('GOOGLE_GEOCODING_API_KEY')
+
 if not DEBUG:
     ROLLBAR = {
         'access_token': os.getenv('ROLLBAR_SERVER_SIDE_ACCESS_TOKEN'),

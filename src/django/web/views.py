@@ -12,6 +12,9 @@ environment = {k: v
 # One of `development`, `testing`, `staging`, `production`
 environment['ENVIRONMENT'] = settings.ENVIRONMENT.lower()
 
+# Add the Google Maps key
+environment['REACT_APP_GOOGLE_MAPS_KEY'] = settings.GOOGLE_MAPS_KEY
+
 context = {'environment': environment}
 
 
