@@ -54,7 +54,9 @@ variable "app_port" {
   default = "8080"
 }
 
-variable "google_geocoding_api_key" {}
+variable "google_server_side_api_key" {}
+
+variable "google_client_side_api_key" {}
 
 variable "rollbar_server_side_access_token" {}
 

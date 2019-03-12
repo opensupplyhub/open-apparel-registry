@@ -12,7 +12,7 @@ def create_geocoding_api_url(address, country_code):
         "?components=country:{0}"
         "&address={1}"
         "&key={2}"
-    ).format(country_code, address, settings.GOOGLE_GEOCODING_API_KEY)
+    ).format(country_code, address, settings.GOOGLE_SERVER_SIDE_API_KEY)
 
 
 def format_geocoded_address_data(data):

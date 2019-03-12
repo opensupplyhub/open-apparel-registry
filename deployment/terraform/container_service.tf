@@ -110,7 +110,8 @@ data "template_file" "app" {
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
 
-    google_geocoding_api_key = "${var.google_geocoding_api_key}"
+    google_server_side_api_key = "${var.google_server_side_api_key}"
+    google_client_side_api_key = "${var.google_client_side_api_key}"
 
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
     rollbar_client_side_access_token = "${var.rollbar_client_side_access_token}"
@@ -155,7 +156,8 @@ data "template_file" "app_cli" {
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
 
-    google_geocoding_api_key = "${var.google_geocoding_api_key}"
+    google_server_side_api_key = "${var.google_server_side_api_key}"
+    google_client_side_api_key = "${var.google_client_side_api_key}"
 
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
     rollbar_client_side_access_token = "${var.rollbar_client_side_access_token}"

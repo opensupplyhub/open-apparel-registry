@@ -16,7 +16,7 @@ import FacilitiesMapPopup from './FacilitiesMapPopup';
 import {
     initialCenter,
     initialZoom,
-    GOOGLE_MAPS_API_KEY,
+    GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
 
 import { makeFacilityDetailLink } from '../util/util';
@@ -235,7 +235,7 @@ class FacilitiesMap extends Component {
                         onGoogleApiLoaded={this.handleAPILoaded}
                         bootstrapURLKeys={{
                             region: 'IE',
-                            key: GOOGLE_MAPS_API_KEY,
+                            key: GOOGLE_CLIENT_SIDE_API_KEY,
                         }}
                         options={this.createMapOptions}
                     />

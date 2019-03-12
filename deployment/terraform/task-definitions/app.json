@@ -13,7 +13,8 @@
         { "name": "DJANGO_ENV", "value": "${environment}" },
         { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
         { "name": "DEFAULT_FROM_EMAIL", "value": "${default_from_email}" },
-        { "name": "GOOGLE_GEOCODING_API_KEY", "value": "${google_geocoding_api_key}" },
+        { "name": "GOOGLE_SERVER_SIDE_API_KEY", "value": "${google_server_side_api_key}" },
+        { "name": "REACT_APP_GOOGLE_CLIENT_SIDE_API_KEY", "value": "${google_client_side_api_key}" },
         { "name": "ROLLBAR_SERVER_SIDE_ACCESS_TOKEN", "value": "${rollbar_server_side_access_token}" },
         { "name": "REACT_APP_ROLLBAR_CLIENT_SIDE_ACCESS_TOKEN", "value": "${rollbar_client_side_access_token}" }
     ],

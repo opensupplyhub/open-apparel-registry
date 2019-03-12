@@ -14,7 +14,7 @@ RUN set -ex \
 
 COPY . /usr/local/src
 
-RUN GOOGLE_GEOCODING_API_KEY="" \
+RUN GOOGLE_SERVER_SIDE_API_KEY="" \
     python manage.py collectstatic --no-input
 
 CMD ["-b :8080", \
