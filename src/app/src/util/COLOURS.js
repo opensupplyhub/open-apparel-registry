@@ -1,5 +1,5 @@
 export default {
-    NAVY_BLUE: '#3d2f8c',
+    NAVY_BLUE: '#0427a4',
     GREY: '#D2D2D2',
     WHITE: '#fff',
     LIGHT_BLUE: '#009ee6',

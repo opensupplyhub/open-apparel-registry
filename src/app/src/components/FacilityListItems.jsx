@@ -41,7 +41,7 @@ const facilityListItemsStyles = Object.freeze({
         width: '90%',
     }),
     tableTitleStyles: Object.freeze({
-        fontFamily: 'Roboto',
+        fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
         fontWeight: 'normal',
         fontSize: '32px',
     }),

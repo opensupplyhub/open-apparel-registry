@@ -2,7 +2,7 @@ import env from './env';
 
 export const MAPBOX_TOKEN = env('REACT_APP_MAPBOX_TOKEN');
 
-export const CIRCLE_COLOR = '#3d2f8c';
+export const CIRCLE_COLOR = '#0427a4';
 export const CIRCLE_TEXT_COLOR = '#fff';
 export const CIRCLE_COLOR_SHADOW = 'rgba(61, 50, 138, 0.5)';
 

@@ -22,7 +22,7 @@ export default function AppGrid({
                     <Grid item xs={12}>
                         <h2
                             style={{
-                                fontFamily: 'Roboto',
+                                fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
                                 fontWeight: 'normal',
                                 fontSize: '32px',
                             }}
