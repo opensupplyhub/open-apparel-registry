@@ -5,6 +5,7 @@
     "cpu": ${cpu},
     "memory": ${memory},
     "environment": [
+        { "name": "AWS_DEFAULT_REGION", "value": "${aws_region}" },
         { "name": "POSTGRES_HOST", "value": "${postgres_host}" },
         { "name": "POSTGRES_PORT", "value": "${postgres_port}" },
         { "name": "POSTGRES_USER", "value": "${postgres_user}" },

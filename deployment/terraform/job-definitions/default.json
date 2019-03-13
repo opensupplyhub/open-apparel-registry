@@ -4,6 +4,7 @@
   "memory": 4096,
   "command": ["./manage.py", "batch_process", "--list-id" , "Ref::listid", "--action", "Ref::action"],
   "environment": [
+      { "name": "AWS_DEFAULT_REGION", "value": "${aws_region}" },
       { "name": "POSTGRES_HOST", "value": "${postgres_host}" },
       { "name": "POSTGRES_PORT", "value": "${postgres_port}" },
       { "name": "POSTGRES_USER", "value": "${postgres_user}" },
