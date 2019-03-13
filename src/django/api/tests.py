@@ -275,7 +275,7 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assertTrue(results['finished_at'] > results['started_at'])
 
     def assert_failed_parse_results(self, item, message=None):
-        self.assertEqual(FacilityListItem.ERROR, item.status)
+        self.assertEqual(FacilityListItem.ERROR_PARSING, item.status)
         self.assert_status(item, ProcessingAction.PARSE)
         results = self.get_first_status(item, ProcessingAction.PARSE)
         self.assertTrue('error' in results)
@@ -377,11 +377,9 @@ class GeocodingTest(TestCase):
         geocoded_data = geocode_address('990 Spring Garden St, Philly', 'US')
         self.assertDictEqual(geocoded_data, azavea_office_data)
 
-    def test_ungeocodable_address_returns_value_error(self):
-        with self.assertRaises(ValueError) as cm:
-            geocode_address('hello world', '$#')
-
-        self.assertEqual(cm.exception.args, ('No results were found',))
+    def test_ungeocodable_address_returns_zero_resusts(self):
+        results = geocode_address('hello world', '$#')
+        self.assertEqual(0, results['result_count'])
 
 
 class FacilityListItemGeocodingTest(ProcessingTestCase):
@@ -429,7 +427,7 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
             self.get_first_status(item, ProcessingAction.GEOCODE)['data']
         )
 
-    def test_failed_geocoded_item_has_error_results(self):
+    def test_failed_geocoded_item_has_no_resuts_status(self):
         facility_list = FacilityList(header='address,country,name')
         item = FacilityListItem(
             raw_data='"hello, world, foo, bar, baz",us,Shirts!',
@@ -439,13 +437,9 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         item.country_code = "$%"
         geocode_facility_list_item(item)
 
-        self.assertEqual(item.status, FacilityListItem.ERROR)
+        self.assertEqual(item.status, FacilityListItem.GEOCODED_NO_RESULTS)
         self.assertIsNone(item.geocoded_address)
         self.assertIsNone(item.geocoded_point)
-        self.assertIn(
-            'error',
-            self.get_first_status(item, ProcessingAction.GEOCODE)
-        )
 
 
 class FacilityNamesAddressesAndContributorsTest(TestCase):

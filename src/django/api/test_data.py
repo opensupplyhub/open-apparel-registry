@@ -111,7 +111,8 @@ azavea_office_data = {
     'geocoded_point': {
         'lat': 39.9614572,
         'lng': -75.1541475
-    }
+    },
+    'result_count': 1,
 }
 
 parsed_city_hall_data = {
@@ -193,4 +194,5 @@ parsed_city_hall_data = {
         ],
         'status': 'OK',
     },
+    'result_count': 1,
 }

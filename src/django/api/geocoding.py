@@ -22,13 +22,24 @@ def format_geocoded_address_data(data):
     geocoded_address = first_result["formatted_address"]
 
     return {
+        "result_count": len(data["results"]),
         "geocoded_point": geocoded_point,
         "geocoded_address": geocoded_address,
         "full_response": data,
     }
 
 
+def format_no_geocode_results(data):
+    return {
+        'result_count': 0,
+        'geocoded_point': None,
+        'geocoded_address': None,
+        'full_response': data,
+    }
+
+
 def geocode_address(address, country_code):
+
     request_url = create_geocoding_api_url(address, country_code)
     r = requests.get(request_url)
 
@@ -39,6 +50,6 @@ def geocode_address(address, country_code):
     data = r.json()
 
     if data["status"] == ZERO_RESULTS or len(data["results"]) == 0:
-        raise ValueError("No results were found")
+        return format_no_geocode_results(data)
 
     return format_geocoded_address_data(data)

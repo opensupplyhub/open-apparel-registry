@@ -230,22 +230,32 @@ class FacilityListItem(models.Model):
     UPLOADED = 'UPLOADED'
     PARSED = 'PARSED'
     GEOCODED = 'GEOCODED'
+    GEOCODED_NO_RESULTS = 'GEOCODED_NO_RESULTS'
     MATCHED = 'MATCHED'
     POTENTIAL_MATCH = 'POTENTIAL_MATCH'
     CONFIRMED_MATCH = 'CONFIRMED_MATCH'
     ERROR = 'ERROR'
+    ERROR_PARSING = 'ERROR_PARSING'
+    ERROR_GEOCODING = 'ERROR_GEOCODING'
+    ERROR_MATCHING = 'ERROR_MATCHING'
 
     # These status choices must be kept in sync with the client's
-    # `facilityListItmeStatusChoicesEnum`.
+    # `facilityListItemStatusChoicesEnum`.
     STATUS_CHOICES = (
         (UPLOADED, UPLOADED),
         (PARSED, PARSED),
         (GEOCODED, GEOCODED),
+        (GEOCODED_NO_RESULTS, GEOCODED_NO_RESULTS),
         (MATCHED, MATCHED),
         (POTENTIAL_MATCH, POTENTIAL_MATCH),
         (CONFIRMED_MATCH, CONFIRMED_MATCH),
         (ERROR, ERROR),
+        (ERROR_PARSING, ERROR_PARSING),
+        (ERROR_GEOCODING, ERROR_GEOCODING),
+        (ERROR_MATCHING, ERROR_MATCHING),
     )
+
+    ERROR_STATUSES = [ERROR, ERROR_PARSING, ERROR_GEOCODING, ERROR_MATCHING]
 
     class Meta:
         indexes = [

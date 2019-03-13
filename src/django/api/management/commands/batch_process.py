@@ -122,7 +122,7 @@ class Command(BaseCommand):
                         process(item)
                         item.save()
 
-                if item.status == FacilityListItem.ERROR:
+                if item.status in FacilityListItem.ERROR_STATUSES:
                     result['failure'] += 1
                 else:
                     result['success'] += 1

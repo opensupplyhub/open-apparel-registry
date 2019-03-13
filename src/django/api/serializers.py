@@ -246,7 +246,7 @@ class FacilityListItemSerializer(ModelSerializer):
         return COUNTRY_NAMES.get(facility_list_item.country_code, '')
 
     def get_processing_errors(self, facility_list_item):
-        if facility_list_item.status != FacilityListItem.ERROR:
+        if facility_list_item.status not in FacilityListItem.ERROR_STATUSES:
             return None
 
         return [
