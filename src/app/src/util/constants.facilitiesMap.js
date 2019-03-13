@@ -7,4 +7,4 @@ export const initialCenter = Object.freeze({
     lng: 5,
 });
 
-export const initialZoom = 1.5;
+export const initialZoom = 1;
