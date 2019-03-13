@@ -60,7 +60,8 @@ external_access_cidr_block = ""
 bastion_ami = "ami-0ff8a91507f77f867"
 bastion_instance_type = "t3.nano"
 
-google_geocoding_api_key = ""
+google_server_side_api_key = ""
+google_client_side_api_key = ""
 
 rollbar_server_side_access_token = ""
 rollbar_client_side_access_token = ""

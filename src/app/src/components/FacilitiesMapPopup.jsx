@@ -12,7 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { makeFacilityDetailLink } from '../util/util';
 import COLOURS from '../util/COLOURS';
 
-const OARMapPopupStyles = Object.freeze({
+const PopupStyles = Object.freeze({
     selectedListItemStyles: Object.freeze({
         backgroundColor: COLOURS.NAVY_BLUE,
         maxWidth: '500px',
@@ -34,7 +34,7 @@ const OARMapPopupStyles = Object.freeze({
     unselectedItemTextStyles: Object.freeze({}),
 });
 
-export default function OARMapPopup({
+export default function FacilitiesMapPopup({
     facilities,
     domNodeID,
     popupContentElementID,
@@ -68,20 +68,20 @@ export default function OARMapPopup({
                                     key={oarID}
                                     style={
                                         (oarID === selectedFacilityID)
-                                            ? OARMapPopupStyles.selectedListItemStyles
-                                            : OARMapPopupStyles.unselectedListItemStyles
+                                            ? PopupStyles.selectedListItemStyles
+                                            : PopupStyles.unselectedListItemStyles
                                     }
                                 >
                                     <Link
                                         to={makeFacilityDetailLink(oarID)}
                                         href={makeFacilityDetailLink(oarID)}
-                                        style={OARMapPopupStyles.linkStyles}
+                                        style={PopupStyles.linkStyles}
                                     >
                                         <ListItemIcon
                                             style={
                                                 (oarID === selectedFacilityID)
-                                                    ? OARMapPopupStyles.selectedItemTextStyles
-                                                    : OARMapPopupStyles.unselectedItemTextStyles
+                                                    ? PopupStyles.selectedItemTextStyles
+                                                    : PopupStyles.unselectedItemTextStyles
                                             }
                                         >
                                             <LinkIcon />
@@ -91,13 +91,13 @@ export default function OARMapPopup({
                                             secondary={address}
                                             primaryTypographyProps={{
                                                 style: (oarID === selectedFacilityID)
-                                                    ? OARMapPopupStyles.selectedItemTextStyles
-                                                    : OARMapPopupStyles.unselectedItemTextStyles,
+                                                    ? PopupStyles.selectedItemTextStyles
+                                                    : PopupStyles.unselectedItemTextStyles,
                                             }}
                                             secondaryTypographyProps={{
                                                 style: (oarID === selectedFacilityID)
-                                                    ? OARMapPopupStyles.selectedItemTextStyles
-                                                    : OARMapPopupStyles.unselectedItemTextStyles,
+                                                    ? PopupStyles.selectedItemTextStyles
+                                                    : PopupStyles.unselectedItemTextStyles,
                                             }}
                                         />
                                     </Link>
@@ -110,12 +110,12 @@ export default function OARMapPopup({
     );
 }
 
-OARMapPopup.defaultProps = {
+FacilitiesMapPopup.defaultProps = {
     facilities: null,
     selectedFacilityID: null,
 };
 
-OARMapPopup.propTypes = {
+FacilitiesMapPopup.propTypes = {
     facilities: arrayOf(shape({
         properties: shape({
             address: string.isRequired,

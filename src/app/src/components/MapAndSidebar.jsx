@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import LandingAlert from './LandingAlert';
 import FilterSidebar from './FilterSidebar';
 import FacilityDetailsSidebar from './FacilityDetailSidebar';
-import OARMap from './OARMap';
+import FacilitiesMap from './FacilitiesMap';
 
 import '../styles/css/Map.css';
 
@@ -41,9 +41,9 @@ function MapAndSidebar() {
                     <Switch>
                         <Route
                             path={facilityDetailsRoute}
-                            component={OARMap}
+                            component={FacilitiesMap}
                         />
-                        <Route component={OARMap} />
+                        <Route component={FacilitiesMap} />
                     </Switch>
                 </Grid>
             </Grid>

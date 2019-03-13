@@ -7,7 +7,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import head from 'lodash/head';
 import last from 'lodash/last';
 
-import StaticMap from './StaticMap';
+import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
 
 import {
@@ -138,10 +138,7 @@ class FacilityDetailSidebar extends Component {
                         </p>
                     </div>
                 </div>
-                <StaticMap
-                    lat={facilityLat}
-                    lng={facilityLng}
-                />
+                <FacilityDetailsStaticMap data={data} />
                 <div className="control-panel__content">
                     <div className="control-panel__group">
                         <h1 className="control-panel__heading">

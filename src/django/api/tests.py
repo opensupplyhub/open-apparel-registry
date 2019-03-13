@@ -355,7 +355,7 @@ class UserTokenGenerationTest(TestCase):
 
 class GeocodingUtilsTest(TestCase):
     def setUp(self):
-        settings.GOOGLE_GEOCODING_API_KEY = "world"
+        settings.GOOGLE_SERVER_SIDE_API_KEY = "world"
 
     def test_geocoding_api_url_is_created_correctly(self):
         self.assertEqual(

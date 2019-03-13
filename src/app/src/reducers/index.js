@@ -15,7 +15,6 @@ import FilterOptionsReducer from './FilterOptionsReducer';
 import FiltersReducer from './FiltersReducer';
 import UIReducer from './UIReducer';
 import FacilitiesReducer from './FacilitiesReducer';
-import OARMapReducer from './OARMapReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -27,5 +26,4 @@ export default combineReducers({
     filters: FiltersReducer,
     ui: UIReducer,
     facilities: FacilitiesReducer,
-    oarMap: OARMapReducer,
 });

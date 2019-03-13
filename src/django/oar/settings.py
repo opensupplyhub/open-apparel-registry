@@ -238,10 +238,10 @@ WATCHMAN_CHECKS = (
 # Application settings
 MAX_UPLOADED_FILE_SIZE_IN_BYTES = 5242880
 
-GOOGLE_GEOCODING_API_KEY = os.getenv('GOOGLE_GEOCODING_API_KEY')
-if GOOGLE_GEOCODING_API_KEY is None:
+GOOGLE_SERVER_SIDE_API_KEY = os.getenv('GOOGLE_SERVER_SIDE_API_KEY')
+if GOOGLE_SERVER_SIDE_API_KEY is None:
     raise ImproperlyConfigured(
-        'Invalid GOOGLE_GEOCODING_API_KEY provided, must be set')
+        'Invalid GOOGLE_SERVER_SIDE_API_KEY provided, must be set')
 
 if not DEBUG:
     ROLLBAR = {
