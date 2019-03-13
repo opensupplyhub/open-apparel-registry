@@ -210,6 +210,7 @@ def make_facility_list_items(max_list_pk=14):
         directory = os.path.dirname(os.path.realpath(__file__))
         with open(os.path.join(directory,
                                'facility_lists',
+                               'geocoded',
                                filename), 'r') as f:
             f.readline()  # discard header
             for row_index, line in enumerate(f):
@@ -221,6 +222,10 @@ def make_facility_list_items(max_list_pk=14):
     return items
 
 
+def point_wkt(lat, lng):
+    return 'SRID=4326;POINT (%s %s)' % (lat, lng)
+
+
 def make_facility(facility_item):
     (created_at, updated_at) = make_created_updated()
     fields = facility_item['fields']
@@ -230,7 +235,6 @@ def make_facility(facility_item):
 
     country_code = COUNTRY_CODES[parsed[0].upper()]
     pk = make_oar_id(country_code)
-    point_is_fixed = facility_item['pk'] % 65 == 0
 
     return {
         'model': 'api.facility',
@@ -239,7 +243,7 @@ def make_facility(facility_item):
             'name': parsed[1],
             'address': parsed[2],
             'country_code': country_code,
-            'location': make_point(point_is_fixed),
+            'location': point_wkt(parsed[4], parsed[3]),
             'created_from': facility_item['pk'],
             'created_at': created_at,
             'updated_at': updated_at,
