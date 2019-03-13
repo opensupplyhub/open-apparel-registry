@@ -50,8 +50,6 @@ urlpatterns = [
         name='get_and_update_user_profile'),
     url(r'^api-token-auth/', views.APIAuthToken.as_view(),
         name='api_token_auth'),
-    url(r'^token-auth-example/', views.token_auth_example,
-        name='token_auth_example'),
     url(r'^api/contributors/', views.all_contributors,
         name='all_contributors'),
     url(r'^api/contributor-types/', views.all_contributor_types,

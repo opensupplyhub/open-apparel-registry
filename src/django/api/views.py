@@ -15,10 +15,11 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        action)
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_auth.views import LoginView, LogoutView
+from allauth.account.utils import complete_signup
 
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
@@ -37,6 +38,7 @@ from api.serializers import (FacilityListSerializer,
                              UserProfileSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
+from api.permissions import IsRegisteredAndConfirmed
 
 
 @permission_classes((AllowAny,))
@@ -48,7 +50,7 @@ class SubmitNewUserForm(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(request)
             pk = serializer.data['id']
             user = User.objects.get(pk=pk)
 
@@ -83,11 +85,14 @@ class SubmitNewUserForm(CreateAPIView):
                 other_contrib_type=other_contrib_type,
             )
 
-            return Response(UserSerializer(user).data)
+            complete_signup(self.request._request, user, 'optional', None)
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class LoginToOARClient(LoginView):
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
@@ -104,11 +109,19 @@ class LoginToOARClient(LoginView):
 
         login(request, user)
 
+        if not request.user.did_register_and_confirm_email:
+            raise AuthenticationFailed(
+                'Account is not verified. '
+                'Check your email for a confirmation link.'
+            )
+
         return Response(UserSerializer(user).data)
 
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            raise PermissionDenied
+        if not request.user.is_active:
+            raise AuthenticationFailed('Unable to sign in')
+        if not request.user.did_register_and_confirm_email:
+            raise AuthenticationFailed('Unable to sign in')
 
         return Response(UserSerializer(request.user).data)
 
@@ -136,9 +149,12 @@ class UserProfile(RetrieveUpdateAPIView):
     def patch(self, request, pk, *args, **kwargs):
         pass
 
-    @transaction.atomic
+    @permission_classes((IsRegisteredAndConfirmed,))
     def put(self, request, pk, *args, **kwargs):
         if not request.user.is_authenticated:
+            raise PermissionDenied
+
+        if not request.user.did_register_and_confirm_email:
             raise PermissionDenied
 
         try:
@@ -192,10 +208,9 @@ class UserProfile(RetrieveUpdateAPIView):
 
 
 class APIAuthToken(ObtainAuthToken):
-    def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            raise PermissionDenied
+    permission_classes = (IsRegisteredAndConfirmed,)
 
+    def get(self, request, *args, **kwargs):
         try:
             token = Token.objects.get(user=request.user)
 
@@ -209,9 +224,6 @@ class APIAuthToken(ObtainAuthToken):
             raise NotFound()
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            raise PermissionDenied
-
         token, _ = Token.objects.get_or_create(user=request.user)
 
         token_data = {
@@ -222,9 +234,6 @@ class APIAuthToken(ObtainAuthToken):
         return Response(token_data)
 
     def delete(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            raise PermissionDenied
-
         try:
             token = Token.objects.get(user=request.user)
             token.delete()
@@ -232,13 +241,6 @@ class APIAuthToken(ObtainAuthToken):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Token.DoesNotExist:
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@api_view(['GET'])
-@permission_classes((IsAuthenticated,))
-def token_auth_example(request):
-    name = request.user.name
-    return Response({'name': name})
 
 
 @api_view(['GET'])
@@ -332,7 +334,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 class FacilityListViewSet(viewsets.ModelViewSet):
     queryset = FacilityList.objects.all()
     serializer_class = FacilityListSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsRegisteredAndConfirmed]
 
     def _validate_header(self, header):
         if header is None or header == '':

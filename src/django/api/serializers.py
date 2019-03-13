@@ -11,6 +11,8 @@ from rest_framework.serializers import (CharField,
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_auth.serializers import (PasswordResetSerializer,
                                    PasswordResetConfirmSerializer)
+from allauth.account.utils import setup_user_email
+
 from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
@@ -47,6 +49,11 @@ class UserSerializer(ModelSerializer):
         user = super(UserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()
+        return user
+
+    def save(self, request, **kwargs):
+        user = super(UserSerializer, self).save()
+        setup_user_email(request, user, [])
         return user
 
     def get_name(self, user):

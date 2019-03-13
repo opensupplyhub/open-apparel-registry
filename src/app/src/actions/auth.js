@@ -9,6 +9,7 @@ import {
     makeUserLoginURL,
     makeUserLogoutURL,
     makeUserSignupURL,
+    makeUserConfirmEmailURL,
     makeResetPasswordEmailURL,
     makeResetPasswordConfirmURL,
     createSignupErrorMessages,
@@ -60,6 +61,11 @@ export const startSubmitResetPasswordForm = createAction('START_SUBMIT_RESET_PAS
 export const failSubmitResetPasswordForm = createAction('FAIL_SUBMIT_RESET_PASSWORD_FORM');
 export const completeSubmitResetPasswordForm = createAction('COMPLETE_SUBMIT_RESET_PASSWORD_FORM');
 export const resetResetPasswordFormState = createAction('RESET_RESET_PASSWORD_FORM_STATE');
+
+export const startConfirmAccountRegistration = createAction('START_CONFIRM_ACCOUNT_REGISTRATION');
+export const failConfirmAccountRegistration = createAction('FAIL_CONFIRM_ACCOUNT_REGISTRATION');
+export const completeConfirmAccountRegistration = createAction('COMPLETE_CONFIRM_ACCOUNT_REGISTRATION');
+export const resetConfirmAccountRegistration = createAction('RESET_CONFIRM_ACCOUNT_REGISTRATION');
 
 export function submitSignUpForm() {
     return (dispatch, getState) => {
@@ -263,6 +269,29 @@ export function submitResetPassword() {
                 e,
                 'An error prevented resetting your password',
                 failSubmitResetPasswordForm,
+            )));
+    };
+}
+
+export function confirmAccountRegistration(key) {
+    return (dispatch) => {
+        dispatch(startConfirmAccountRegistration(key));
+
+        if (!key) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'An error prevented confirming the account',
+                failConfirmAccountRegistration,
+            ));
+        }
+
+        return csrfRequest
+            .post(makeUserConfirmEmailURL(), { key })
+            .then(() => dispatch(completeConfirmAccountRegistration()))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented confirming the account',
+                failConfirmAccountRegistration,
             )));
     };
 }

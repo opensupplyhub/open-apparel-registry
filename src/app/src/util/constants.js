@@ -166,6 +166,7 @@ export const mainRoute = '/';
 export const authLoginFormRoute = '/auth/login';
 export const authRegisterFormRoute = '/auth/register';
 export const authResetPasswordFormRoute = '/auth/resetpassword/:uid';
+export const authConfirmRegistrationRoute = '/auth/confirm/:uid';
 export const contributeRoute = '/contribute';
 export const listsRoute = '/lists';
 export const facilityListItemsRoute = '/lists/:listID';

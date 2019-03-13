@@ -64,6 +64,7 @@ export const downloadFacilitiesCSV = facilities =>
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
 export const makeUserSignupURL = () => '/user-signup/';
+export const makeUserConfirmEmailURL = () => '/rest-auth/registration/verify-email/';
 
 export const makeFacilityListsURL = () => '/api/facility-lists/';
 export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;

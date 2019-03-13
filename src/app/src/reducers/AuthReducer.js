@@ -33,6 +33,10 @@ import {
     failSubmitResetPasswordForm,
     completeSubmitResetPasswordForm,
     resetResetPasswordFormState,
+    startConfirmAccountRegistration,
+    failConfirmAccountRegistration,
+    completeConfirmAccountRegistration,
+    resetConfirmAccountRegistration,
 } from '../actions/auth';
 
 import { completeUpdateUserProfile } from '../actions/profile';
@@ -85,6 +89,11 @@ const initialState = Object.freeze({
     }),
     fetching: false,
     error: null,
+    confirmRegistration: Object.freeze({
+        fetching: false,
+        error: null,
+        key: '',
+    }),
 });
 
 const startFetching = state => update(state, {
@@ -256,6 +265,29 @@ export default createReducer({
             user: {
                 name: { $set: payload.name },
             },
+        },
+    }),
+    [startConfirmAccountRegistration]: (state, payload) => update(state, {
+        confirmRegistration: {
+            error: { $set: null },
+            fetching: { $set: true },
+            key: { $set: payload },
+        },
+    }),
+    [failConfirmAccountRegistration]: (state, payload) => update(state, {
+        confirmRegistration: {
+            error: { $set: payload },
+            fetching: { $set: false },
+        },
+    }),
+    [completeConfirmAccountRegistration]: state => update(state, {
+        confirmRegistration: {
+            $set: initialState.confirmRegistration,
+        },
+    }),
+    [resetConfirmAccountRegistration]: state => update(state, {
+        confirmRegistration: {
+            $set: initialState.confirmRegistration,
         },
     }),
 }, initialState);

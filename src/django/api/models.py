@@ -4,6 +4,7 @@ from django.contrib.auth.models import (AbstractBaseUser,
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
+from allauth.account.models import EmailAddress
 
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
@@ -151,6 +152,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def last_name(self):
         pass
+
+    @property
+    def did_register_and_confirm_email(self):
+        try:
+            email_address = EmailAddress.objects.get_primary(self.id)
+
+            if email_address:
+                return email_address.verified
+
+        # if no EmailAddress record exists, the User was created through the
+        # Django admin rather than the UI. Treat this User as verified.
+            return True
+        except EmailAddress.DoesNotExist:
+            return True
 
 
 class FacilityList(models.Model):

@@ -89,7 +89,7 @@ class FacilityLists extends Component {
         return (
             <AppOverflow>
                 <AppGrid title="My Lists">
-                    <ShowOnly when={!!myFacilitiesRoute}>
+                    <ShowOnly when={!!myFacilitiesRoute && !!facilityLists.length}>
                         <Link
                             to={myFacilitiesRoute}
                             href={myFacilitiesRoute}
