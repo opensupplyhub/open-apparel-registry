@@ -206,6 +206,8 @@ USE_TZ = True
 # Email
 # https://docs.djangoproject.com/en/2.0/topics/email
 
+AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION', 'eu-west-1')
+
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
