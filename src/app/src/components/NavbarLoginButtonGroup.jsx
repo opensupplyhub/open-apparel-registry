@@ -110,11 +110,11 @@ function NavbarLoginButtonGroup({
 
     return (
         <div style={componentStyles.containerStyle}>
-                <Translate />
-                <NavbarDropdown
-                    title={user.name}
-                    links={createUserDropdownLinks(user, logout)}
-                />
+            <Translate />
+            <NavbarDropdown
+                title={user.name}
+                links={createUserDropdownLinks(user, logout)}
+            />
         </div>
     );
 }
