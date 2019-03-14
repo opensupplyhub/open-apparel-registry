@@ -354,10 +354,20 @@ def make_facilities_and_matches(list_items):
 class Command(BaseCommand):
     help = 'Create random but reasonable data fixtures'
 
+    def add_arguments(self, parser):
+        parser.add_argument('-m', '--match', action='store_true',
+                            help='Create facilities and matches')
+
     def handle(self, *args, **options):
+        match = options['match']
+
         try:
             list_items = make_facility_list_items()
-            facilities, matches = make_facilities_and_matches(list_items)
+            if match:
+                facilities, matches = make_facilities_and_matches(list_items)
+            else:
+                self.stderr.write("Skipped making facilities and matches")
+
             with open('/usr/local/src/api/fixtures/users.json', 'w') as f:
                 json.dump(make_users(), f, separators=(',', ': '),
                           indent=4)
@@ -372,12 +382,14 @@ class Command(BaseCommand):
             with open('/usr/local/src/api/fixtures/facility_list_items.json',
                       'w') as f:
                 json.dump(list_items, f, separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/facilities.json',
-                      'w') as f:
-                json.dump(facilities, f, separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/facility_matches.json',
-                      'w') as f:
-                json.dump(matches, f, separators=(',', ': '), indent=4)
+
+            if match:
+                with open('/usr/local/src/api/fixtures/facilities.json',
+                          'w') as f:
+                    json.dump(facilities, f, separators=(',', ': '), indent=4)
+                with open('/usr/local/src/api/fixtures/facility_matches.json',
+                          'w') as f:
+                    json.dump(matches, f, separators=(',', ': '), indent=4)
 
         except CommandError as e:
             self.stderr.write("Error creating fixtures: {}".format(e))
