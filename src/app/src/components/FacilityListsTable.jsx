@@ -73,7 +73,7 @@ function FacilityListsTable({
                                         {list.file_name}
                                     </TableCell>
                                     <TableCell>
-                                        {list.is_active ? 'True' : 'False'}
+                                        {list.is_active ? 'Active' : 'Inactive'}
                                     </TableCell>
                                 </TableRow>))
                     }
