@@ -19,7 +19,6 @@ const {
     createQueryStringFromSearchFilters,
     allFiltersAreEmpty,
     createFiltersFromQueryString,
-    getFeaturesFromFeatureCollection,
     getValueFromEvent,
     getCheckedFromEvent,
     getFileFromInputRef,
@@ -200,16 +199,6 @@ it('checks whether the filters object has only empty values', () => {
     };
 
     expect(allFiltersAreEmpty(nonEmptyStringFilter)).toBe(false);
-});
-
-it('gets a list of features from a feature collection', () => {
-    const featureCollection = { features: ['feature'] };
-    const expectedMatch = ['feature'];
-
-    expect(isEqual(
-        getFeaturesFromFeatureCollection(featureCollection),
-        expectedMatch,
-    )).toBe(true);
 });
 
 it('creates a set of filters from a querystring', () => {

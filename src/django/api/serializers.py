@@ -163,6 +163,24 @@ class FacilityListSerializer(ModelSerializer):
 
 class FacilitySerializer(GeoFeatureModelSerializer):
     oar_id = SerializerMethodField()
+    country_name = SerializerMethodField()
+
+    class Meta:
+        model = Facility
+        fields = ('id', 'name', 'address', 'country_code', 'location',
+                  'created_at', 'updated_at', 'oar_id', 'country_name')
+        geo_field = 'location'
+
+    # Added to ensure including the OAR ID in the geojson properties map
+    def get_oar_id(self, facility):
+        return facility.id
+
+    def get_country_name(self, facility):
+        return COUNTRY_NAMES.get(facility.country_code, '')
+
+
+class FacilityDetailsSerializer(GeoFeatureModelSerializer):
+    oar_id = SerializerMethodField()
     other_names = SerializerMethodField()
     other_addresses = SerializerMethodField()
     contributors = SerializerMethodField()

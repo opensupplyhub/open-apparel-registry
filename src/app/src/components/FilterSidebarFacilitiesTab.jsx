@@ -181,7 +181,7 @@ function FilterSidebarFacilitiesTab({
     const listHeaderInsetComponent = (
         <div style={facilitiesTabStyles.listHeaderStyles}>
             <Typography
-                variant="subtitle"
+                variant="subheading"
                 align="center"
             >
                 <div

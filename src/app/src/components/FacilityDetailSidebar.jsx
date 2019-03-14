@@ -15,7 +15,7 @@ import {
     resetSingleFacility,
 } from '../actions/facilities';
 
-import { facilityPropType } from '../util/propTypes';
+import { facilityDetailsPropType } from '../util/propTypes';
 
 import { makeReportADataIssueEmailLink } from '../util/util';
 
@@ -192,7 +192,7 @@ FacilityDetailSidebar.defaultProps = {
 };
 
 FacilityDetailSidebar.propTypes = {
-    data: facilityPropType,
+    data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
     match: shape({
