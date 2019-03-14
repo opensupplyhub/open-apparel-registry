@@ -124,6 +124,48 @@ def make_other_contrib_type():
     return fake.company_suffix()
 
 
+def base_10_to_alphabet(number):
+    """
+    Convert a decimal number to its base alphabet representation
+    Based on
+    https://codereview.stackexchange.com/questions/182733/base-26-letters-and-base-10-using-recursion
+    """
+    a_uppercase = ord('A')
+    alphabet_size = 26
+
+    def _decompose(number):
+        while number:
+            number, remainder = divmod(number - 1, alphabet_size)
+            yield remainder
+
+    return ''.join(
+            chr(a_uppercase + part)
+            for part in _decompose(number)
+    )[::-1]
+
+
+contributor_numbers = {c: 1 for c, _ in Contributor.CONTRIB_TYPE_CHOICES}
+
+
+def make_contributor_name(contrib_type):
+    num = contributor_numbers[contrib_type]
+    base = contrib_type.split('/')[0].rstrip()
+    name = '{0} {1}'.format(base, base_10_to_alphabet(num))
+    contributor_numbers[contrib_type] = num + 1
+    return name
+
+
+def make_contributor_description(contrib_type):
+    name = make_contributor_name(contrib_type)
+    if name[0].lower() == 'a':
+        prefix = 'An'
+    else:
+        prefix = 'A'
+    title = '{0} {1}'.format(prefix, contrib_type.lower())
+    return '{0} dedicated to transparency in apparel supply chains'.format(
+       title)
+
+
 def make_contributor(pk, admin_pk=None):
     (created_at, updated_at) = make_created_updated()
     if admin_pk is not None:
@@ -142,9 +184,9 @@ def make_contributor(pk, admin_pk=None):
         'pk': pk,
         'fields': {
             'admin': admin,
-            'name': fake.company(),
-            'description': fake.text(),
-            'website': fake.url(),
+            'name': make_contributor_name(contrib_type),
+            'description': make_contributor_description(contrib_type),
+            'website': 'https://info.openapparel.org',
             'contrib_type': contrib_type,
             'other_contrib_type': other_contrib_type,
             'created_at': created_at,
