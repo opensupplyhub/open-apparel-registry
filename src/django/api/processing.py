@@ -238,13 +238,17 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
     messy = {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
              for i in facility_list_item_set}
 
-    gazetteer = train_gazetteer(messy, canonical)
-    try:
-        gazetteer.threshold(messy, recall_weight=recall_weight)
-        results = gazetteer.match(messy, threshold=gazetteer_threshold,
-                                  n_matches=None, generator=True)
-        no_gazetteer_matches = False
-    except dedupe.core.BlockingError:
+    if len(canonical.keys()) > 0:
+        gazetteer = train_gazetteer(messy, canonical)
+        try:
+            gazetteer.threshold(messy, recall_weight=recall_weight)
+            results = gazetteer.match(messy, threshold=gazetteer_threshold,
+                                      n_matches=None, generator=True)
+            no_gazetteer_matches = False
+        except dedupe.core.BlockingError:
+            results = []
+            no_gazetteer_matches = True
+    else:
         results = []
         no_gazetteer_matches = True
 
