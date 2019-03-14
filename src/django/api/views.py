@@ -34,6 +34,7 @@ from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilitySerializer,
+                             FacilityDetailsSerializer,
                              UserSerializer,
                              UserProfileSerializer)
 from api.countries import COUNTRY_CHOICES
@@ -325,7 +326,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
     def retrieve(self, request, pk=None):
         try:
             queryset = Facility.objects.get(pk=pk)
-            response_data = FacilitySerializer(queryset).data
+            response_data = FacilityDetailsSerializer(queryset).data
             return Response(response_data)
         except Facility.DoesNotExist:
             raise NotFound()

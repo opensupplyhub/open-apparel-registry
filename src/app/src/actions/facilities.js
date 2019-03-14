@@ -7,7 +7,6 @@ import {
     makeGetFacilitiesURLWithQueryString,
     makeGetFacilityByOARIdURL,
     createQueryStringFromSearchFilters,
-    getFeaturesFromFeatureCollection,
 } from '../util/util';
 
 export const startFetchFacilities = createAction('START_FETCH_FACILITIES');
@@ -42,7 +41,7 @@ export function fetchFacilities() {
 }
 
 export function fetchSingleFacility(oarID = null) {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         dispatch(startFetchSingleFacility());
 
         if (!oarID) {
@@ -51,23 +50,6 @@ export function fetchSingleFacility(oarID = null) {
                 'No OAR ID was provided',
                 failFetchSingleFacility,
             ));
-        }
-
-        const {
-            facilities: {
-                facilities: {
-                    data: facilitiesData,
-                },
-            },
-        } = getState();
-
-        const facilityFromExistingData = facilitiesData
-            ? getFeaturesFromFeatureCollection(facilitiesData).find(({ id }) => id === oarID)
-            : null;
-
-        if (facilityFromExistingData) {
-            const singleFacility = Object.assign({}, facilityFromExistingData);
-            return dispatch(completeFetchSingleFacility(singleFacility));
         }
 
         return csrfRequest

@@ -136,12 +136,27 @@ export const facilityPropType = shape({
         address: string.isRequired,
         country_code: string.isRequired,
         country_name: string.isRequired,
-        other_names: arrayOf(string).isRequired,
-        other_addresses: arrayOf(string).isRequired,
+    }).isRequired,
+});
+
+export const facilityDetailsPropType = shape({
+    id: string.isRequired,
+    type: oneOf([FEATURE]).isRequired,
+    geometry: shape({
+        type: oneOf([POINT]).isRequired,
+        coordinates: arrayOf(number.isRequired).isRequired,
+    }).isRequired,
+    properties: shape({
+        name: string.isRequired,
+        address: string.isRequired,
+        country_code: string.isRequired,
+        country_name: string.isRequired,
+        other_names: arrayOf(string),
+        other_addresses: arrayOf(string),
         contributors: arrayOf(arrayOf(oneOfType([
             string,
             number,
-        ]).isRequired).isRequired).isRequired,
+        ]).isRequired).isRequired),
     }).isRequired,
 });
 
