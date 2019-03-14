@@ -182,7 +182,6 @@ class FacilitiesMap extends Component {
                     lng,
                 ),
                 icon: {
-                    anchor: new this.mapMethods.Point(lat, lng),
                     url: '/images/marker.png',
                     scaledSize: new this.mapMethods.Size(30, 40),
                 },
