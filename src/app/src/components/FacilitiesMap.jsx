@@ -7,6 +7,8 @@ import isEqual from 'lodash/isEqual';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import noop from 'lodash/noop';
+import last from 'lodash/last';
+import head from 'lodash/head';
 import distance from '@turf/distance';
 
 import Button from './Button';
@@ -16,12 +18,19 @@ import FacilitiesMapPopup from './FacilitiesMapPopup';
 import {
     initialCenter,
     initialZoom,
+    detailsZoomLevel,
     GOOGLE_CLIENT_SIDE_API_KEY,
+    clusterMarkerStyles,
 } from '../util/constants.facilitiesMap';
 
 import { makeFacilityDetailLink } from '../util/util';
 
-import { facilityCollectionPropType } from '../util/propTypes';
+import {
+    facilityPropType,
+    facilityCollectionPropType,
+} from '../util/propTypes';
+
+import COLOURS from '../util/COLOURS';
 
 const CLICK_EVENT = 'click';
 const CLOSE_EVENT = 'closeclick';
@@ -42,10 +51,20 @@ const facilitiesMapStyles = Object.freeze({
     }),
 });
 
+const clusterMarkerStyleOptions = clusterMarkerStyles
+    .map(({ image, size }) => ({
+        textColor: COLOURS.WHITE,
+        // these images are in `/public/images`
+        url: `/images/${image}.png`,
+        height: size,
+        width: size,
+    }));
+
 class FacilitiesMap extends Component {
     state = {
         disambiguationPopupIsOpen: false,
         facilitiesForDisambiguation: null,
+        markerWasClicked: false,
     };
 
     googleMapElement = null;
@@ -66,6 +85,7 @@ class FacilitiesMap extends Component {
                     oarID,
                 },
             },
+            facilityDetailsData,
         } = this.props;
 
         if (!this.googleMapElement) {
@@ -80,6 +100,19 @@ class FacilitiesMap extends Component {
             this.googleMapElement.data.revertStyle();
         }
 
+        if (facilityDetailsData && !isEqual(facilityDetailsData, prevProps.facilityDetailsData)) {
+            if (!this.state.markerWasClicked) {
+                this.googleMapElement.setCenter({
+                    lat: last(facilityDetailsData.geometry.coordinates),
+                    lng: head(facilityDetailsData.geometry.coordinates),
+                });
+
+                this.googleMapElement.setZoom(detailsZoomLevel);
+            }
+
+            this.resetMarkerClickedState();
+        }
+
         if (isEqual(data, prevProps.data)) {
             return null;
         }
@@ -91,13 +124,29 @@ class FacilitiesMap extends Component {
         return this.createFeatureMarkers();
     }
 
+    resetMarkerClickedState = () => this.setState(state => Object.assign({}, state, {
+        markerWasClicked: false,
+    }));
+
     handleAPILoaded = ({ map, maps }) => {
-        const { data } = this.props;
+        const {
+            data,
+            facilityDetailsData,
+        } = this.props;
 
         this.googleMapElement = map;
         this.mapMethods = maps;
 
         if (data) {
+            if (facilityDetailsData) {
+                this.googleMapElement.setCenter({
+                    lat: last(facilityDetailsData.geometry.coordinates),
+                    lng: head(facilityDetailsData.geometry.coordinates),
+                });
+
+                this.googleMapElement.setZoom(detailsZoomLevel);
+            }
+
             return this.createFeatureMarkers();
         }
 
@@ -132,6 +181,11 @@ class FacilitiesMap extends Component {
                     lat,
                     lng,
                 ),
+                icon: {
+                    anchor: new this.mapMethods.Point(lat, lng),
+                    url: '/images/marker.png',
+                    scaledSize: new this.mapMethods.Size(30, 40),
+                },
             });
 
             marker.addListener(
@@ -148,8 +202,7 @@ class FacilitiesMap extends Component {
             {
                 gridSize: 50,
                 maxZoom: 20,
-                // these images are in the /public/images dir
-                imagePath: '/images/m',
+                styles: clusterMarkerStyleOptions,
             },
         );
 
@@ -177,7 +230,6 @@ class FacilitiesMap extends Component {
     handleMarkerClick = (marker, feature) => {
         const {
             data,
-            navigateToFacilityDetails,
         } = this.props;
 
         const facilitiesAtPoint = data
@@ -191,7 +243,7 @@ class FacilitiesMap extends Component {
             }, []);
 
         if (facilitiesAtPoint.length === 1) {
-            return navigateToFacilityDetails(feature.properties.oar_id);
+            return this.selectFacilityOnClick(feature.properties.oar_id);
         }
 
         this.popupElement = new this.mapMethods.InfoWindow({
@@ -216,6 +268,13 @@ class FacilitiesMap extends Component {
 
         return null;
     };
+
+    selectFacilityOnClick = oarID => this.setState(
+        state => Object.assign({}, state, {
+            markerWasClicked: true,
+        }),
+        () => this.props.navigateToFacilityDetails(oarID),
+    );
 
     handleDisambiguationPopupClose = () =>
         this.setState(state => Object.assign({}, state, {
@@ -255,6 +314,7 @@ class FacilitiesMap extends Component {
                         domNodeID={disambiguationMarkerPopupID}
                         popupContentElementID={disambiguationMarkerPopupContent}
                         selectedFacilityID={this.props.match.params.oarID}
+                        selectFacilityOnClick={this.selectFacilityOnClick}
                     />
                 </ShowOnly>
             </Fragment>
@@ -264,11 +324,13 @@ class FacilitiesMap extends Component {
 
 FacilitiesMap.defaultProps = {
     data: null,
+    facilityDetailsData: null,
 };
 
 FacilitiesMap.propTypes = {
     data: facilityCollectionPropType,
     navigateToFacilityDetails: func.isRequired,
+    facilityDetailsData: facilityPropType,
 };
 
 function mapStateToProps({
@@ -276,10 +338,14 @@ function mapStateToProps({
         facilities: {
             data,
         },
+        singleFacility: {
+            data: facilityDetailsData,
+        },
     },
 }) {
     return {
         data,
+        facilityDetailsData,
     };
 }
 
