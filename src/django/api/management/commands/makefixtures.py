@@ -199,13 +199,22 @@ def make_contributors(max_id=99):
     return [make_contributor(pk) for pk in range(2, max_id+1)]
 
 
+def make_facility_list_name():
+    seasons = ('Spring', 'Summer', 'Fall', 'Winter')
+    years = ('2017', '2018', '2019')
+    options = ('Apparel', 'Affiliate', 'Compliance')
+    return '{0} {1} {2} List'.format(random.choice(seasons),
+                                     random.choice(years),
+                                     random.choice(options))
+
+
 def make_facility_list(pk, contributor_pk=None):
     (created_at, updated_at) = make_created_updated()
     if contributor_pk is not None:
         contributor = contributor_pk
     else:
         contributor = pk
-    name = fake.name()
+    name = make_facility_list_name()
     return {
         'model': 'api.facilitylist',
         'pk': pk,
