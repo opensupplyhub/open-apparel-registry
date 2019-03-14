@@ -99,7 +99,7 @@ def make_user(pk, email=None, is_superuser=None, is_staff=None):
             'password': password,
             'last_login': updated_at,
             'is_superuser': make_bool(is_superuser),
-            'email': profile['mail'],
+            'email': 'c{0}@example.com'.format(pk),
             'is_staff': make_bool(is_staff),
             'is_active': True,
             'created_at': created_at,
