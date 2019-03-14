@@ -40,7 +40,7 @@ const disambiguationMarkerPopupContent = 'disambiguation-marker-popup-content';
 
 const facilitiesMapStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
-        height: '100%',
+        height: '99.75%',
         width: '100%',
     }),
     copySearchButtonStyle: Object.freeze({
