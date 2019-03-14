@@ -30,9 +30,9 @@ export default class Translate extends PureComponent {
         const { open } = this.state;
 
         return (
-            <div>
+            <>
                 <Button
-                    className="btn-text"
+                    className="btn-text navButton"
                     disableRipple
                     onClick={this.handleClickOpen}
                 >
@@ -68,7 +68,7 @@ export default class Translate extends PureComponent {
                         </List>
                     </div>
                 </Dialog>
-            </div>
+            </>
         );
     }
 }

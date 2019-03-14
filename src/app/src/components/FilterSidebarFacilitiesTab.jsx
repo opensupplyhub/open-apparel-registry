@@ -51,12 +51,12 @@ const facilitiesTabStyles = Object.freeze({
         maxHeight: '130px',
     }),
     listStyles: Object.freeze({
-        overflowY: 'scroll',
+        /* overflowY: 'scroll',
         position: 'fixed',
         // sum heights of navbar, tab bar, panel header, and free text search control
         top: 'calc(64px + 48px + 130px + 110px)',
         bottom: '47px',
-        width: '33%',
+        width: '33%', */
     }),
     listBottomPaddingStyles: Object.freeze({
         height: '200px',
@@ -65,10 +65,10 @@ const facilitiesTabStyles = Object.freeze({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '1rem',
+        padding: '6px 1rem',
     }),
     listHeaderTextSearchStyles: Object.freeze({
-        padding: '1rem',
+        padding: '6px 1rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -181,7 +181,7 @@ function FilterSidebarFacilitiesTab({
     const listHeaderInsetComponent = (
         <div style={facilitiesTabStyles.listHeaderStyles}>
             <Typography
-                variant="title"
+                variant="subtitle"
                 align="center"
             >
                 <div
@@ -248,7 +248,6 @@ function FilterSidebarFacilitiesTab({
                                     </ListItem>
                                 </Fragment>))
                     }
-                    <ListItem style={facilitiesTabStyles.listBottomPaddingStyles} />
                 </List>
             </div>
         </Fragment>

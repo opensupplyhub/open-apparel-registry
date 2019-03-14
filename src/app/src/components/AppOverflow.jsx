@@ -5,7 +5,7 @@ export default function AppOverflow({
     children,
 }) {
     return (
-        <div style={{ height: '100%', overflow: 'auto' }}>
+        <div style={{ height: '100%', overflow: 'auto', transform: 'translate3d(0, 0, 0)' }}>
             {children}
         </div>
     );

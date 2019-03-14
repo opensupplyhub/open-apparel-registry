@@ -118,7 +118,7 @@ class FacilityDetailSidebar extends Component {
         const facilityLng = head(data.geometry.coordinates);
 
         return (
-            <div className="control-panel">
+            <div className="control-panel facility-detail">
                 <div className="panel-header display-flex">
                     <IconButton
                         aria-label="ArrowBack"
@@ -138,45 +138,47 @@ class FacilityDetailSidebar extends Component {
                         </p>
                     </div>
                 </div>
-                <FacilityDetailsStaticMap data={data} />
-                <div className="control-panel__content">
-                    <div className="control-panel__group">
-                        <h1 className="control-panel__heading">
-                            OAR ID: &nbsp;
-                        </h1>
-                        <p className="control-panel__body">
-                            {data.properties.oar_id}
-                        </p>
-                    </div>
-                    <div className="control-panel__group">
-                        <h1 className="control-panel__heading">
-                            GPS Coordinates:
-                        </h1>
-                        <p className="control-panel__body">
-                            {facilityLat}, {facilityLng}
-                        </p>
-                    </div>
-                    <FacilityDetailSidebarInfo
-                        data={data.properties.other_names}
-                        label="Also known as:"
-                    />
-                    <FacilityDetailSidebarInfo
-                        data={data.properties.other_addresses}
-                        label="Other addresses:"
-                    />
-                    <FacilityDetailSidebarInfo
-                        data={data.properties.contributors}
-                        label="Contributors:"
-                        isContributorsList
-                    />
-                    <div className="control-panel__group">
-                        <a
-                            className="link-underline small"
-                            href={makeReportADataIssueEmailLink(data.properties.oar_id)}
-                            style={detailsSidebarStyles.emailLinkStyle}
-                        >
-                            REPORT A DATA ISSUE
-                        </a>
+                <div className="facility-detail_data">
+                    <FacilityDetailsStaticMap data={data} />
+                    <div className="control-panel__content">
+                        <div className="control-panel__group">
+                            <h1 className="control-panel__heading">
+                                OAR ID: &nbsp;
+                            </h1>
+                            <p className="control-panel__body">
+                                {data.properties.oar_id}
+                            </p>
+                        </div>
+                        <div className="control-panel__group">
+                            <h1 className="control-panel__heading">
+                                GPS Coordinates:
+                            </h1>
+                            <p className="control-panel__body">
+                                {facilityLat}, {facilityLng}
+                            </p>
+                        </div>
+                        <FacilityDetailSidebarInfo
+                            data={data.properties.other_names}
+                            label="Also known as:"
+                        />
+                        <FacilityDetailSidebarInfo
+                            data={data.properties.other_addresses}
+                            label="Other addresses:"
+                        />
+                        <FacilityDetailSidebarInfo
+                            data={data.properties.contributors}
+                            label="Contributors:"
+                            isContributorsList
+                        />
+                        <div className="control-panel__group">
+                            <a
+                                className="link-underline small"
+                                href={makeReportADataIssueEmailLink(data.properties.oar_id)}
+                                style={detailsSidebarStyles.emailLinkStyle}
+                            >
+                                REPORT A DATA ISSUE
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

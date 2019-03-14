@@ -25,7 +25,6 @@ import {
 const componentStyles = Object.freeze({
     containerStyle: Object.freeze({
         display: 'flex',
-        marginLeft: 'auto',
         overflow: 'auto',
     }),
     logoContainer: Object.freeze({
@@ -111,16 +110,11 @@ function NavbarLoginButtonGroup({
 
     return (
         <div style={componentStyles.containerStyle}>
-            <span
-                style={{ display: 'inline-flex', justifyContent: 'middle' }}
-                className="line-height"
-            >
-                <Translate />
-                <NavbarDropdown
-                    title={user.name}
-                    links={createUserDropdownLinks(user, logout)}
-                />
-            </span>
+            <Translate />
+            <NavbarDropdown
+                title={user.name}
+                links={createUserDropdownLinks(user, logout)}
+            />
         </div>
     );
 }
