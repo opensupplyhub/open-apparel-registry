@@ -222,7 +222,7 @@ def make_facility_list(pk, contributor_pk=None):
     }
 
 
-def make_facility_lists(max_id=14):
+def make_facility_lists(max_id=15):
     return [make_facility_list(pk) for pk in range(2, max_id+1)]
 
 
@@ -244,7 +244,7 @@ def make_facility_list_item(list_pk, item_pk, row_index, raw_data):
     }
 
 
-def make_facility_list_items(max_list_pk=14):
+def make_facility_list_items(max_list_pk=15):
     item_pk = 1
     items = []
     for list_pk in range(2, max_list_pk+1):
