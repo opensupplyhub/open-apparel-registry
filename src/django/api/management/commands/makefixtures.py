@@ -223,8 +223,8 @@ def make_facility_list(pk, contributor_pk=None):
             'name': name,
             'file_name': name + '.csv',
             'header': 'country,name,address,lat,lng',
-            'is_active': make_bool(pk % 2 == 0),
-            'is_public': make_bool(pk % 2 == 0),
+            'is_active': True,
+            'is_public': True,
             'created_at': created_at,
             'updated_at': updated_at,
         }
