@@ -58,15 +58,15 @@ class NavbarDropdown extends Component {
 
         const DropdownItems = ({ items, onClick }) =>
             items.map(item => (
-                <MenuItem key={`li-${item.text}`} onClick={onClick}>
+                <MenuItem className="dropdown-list-item" key={`li-${item.text}`} onClick={onClick}>
                     {itemMap(item)}
                 </MenuItem>
             ));
 
         return (
-            <div>
+            <>
                 <Button
-                    className="btn-text"
+                    className="btn-text navButton"
                     disableRipple
                     buttonRef={(node) => {
                         this.anchorEl = node;
@@ -110,7 +110,7 @@ class NavbarDropdown extends Component {
                         </Grow>
                     )}
                 </Popper>
-            </div>
+            </>
         );
     }
 }

@@ -66,15 +66,13 @@ export default function Navbar() {
                     >
                         API
                     </a>
-                    <span>
-                        <Link
-                            className="navButton"
-                            to={contributeRoute}
-                            href={contributeRoute}
-                        >
-                            CONTRIBUTE
-                        </Link>
-                    </span>
+                    <Link
+                        className="navButton"
+                        to={contributeRoute}
+                        href={contributeRoute}
+                    >
+                        CONTRIBUTE
+                    </Link>
                 </div>
                 <NavbarLoginButtonGroup />
             </Toolbar>

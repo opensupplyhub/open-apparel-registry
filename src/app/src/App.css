@@ -27,7 +27,41 @@
 }
 
 .navButton:hover {
-  text-decoration: underline;
+  text-decoration: underline !important;
+  background: none !important;
+}
+
+li.dropdown-list-item {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  cursor: inital;
+}
+
+li.dropdown-list-item:hover {
+  background: none !important;
+}
+
+li.dropdown-list-item a,
+li.dropdown-list-item button {
+  justify-self: center;
+  padding: 13px 25px !important;
+  font-weight: 400;
+  text-decoration: none !important;
+  font-size: 16px;
+  text-transform: none;
+}
+
+li.dropdown-list-item a:hover,
+li.dropdown-list-item button:hover {
+  background: none !important;
+  text-decoration: underline !important;
+} 
+
+li.dropdown-list-item button {
+  border-top: 1px solid;
 }
 
 .control-panel {
