@@ -1,7 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { arrayOf, shape, string } from 'prop-types';
-import { Link } from 'react-router-dom';
+import { arrayOf, func, shape, string } from 'prop-types';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListSubheader from '@material-ui/core/ListSubheader';
@@ -9,7 +8,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import LinkIcon from '@material-ui/icons/Link';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import { makeFacilityDetailLink } from '../util/util';
 import COLOURS from '../util/COLOURS';
 
 const PopupStyles = Object.freeze({
@@ -23,15 +21,40 @@ const PopupStyles = Object.freeze({
     linkStyles: Object.freeze({
         textDecoration: 'none',
         display: 'flex',
+        alignItems: 'center',
+        background: 'none',
+        color: 'inherit',
+        border: 'none',
+        padding: '0',
+        font: 'inherit',
+        cursor: 'pointer',
+        outline: 'inherit',
     }),
     unselectedLinkStyles: Object.freeze({
         textDecoration: 'none',
-        display: 'flex',
     }),
     selectedItemTextStyles: Object.freeze({
         color: COLOURS.WHITE,
     }),
-    unselectedItemTextStyles: Object.freeze({}),
+    unselectedItemTextStyles: Object.freeze({
+        display: 'flex',
+    }),
+    selectedPrimaryTextStyles: Object.freeze({
+        color: COLOURS.WHITE,
+        display: 'flex',
+        alignSelf: 'flex-start',
+    }),
+    unselectedPrimaryTextStyles: Object.freeze({
+        display: 'flex',
+        alignSelf: 'flex-start',
+    }),
+    selectedSecondaryTextStyles: Object.freeze({
+        color: COLOURS.WHITE,
+        textAlign: 'left',
+    }),
+    unselectedSecondaryTextStyles: Object.freeze({
+        textAlign: 'left',
+    }),
 });
 
 export default function FacilitiesMapPopup({
@@ -39,6 +62,7 @@ export default function FacilitiesMapPopup({
     domNodeID,
     popupContentElementID,
     selectedFacilityID,
+    selectFacilityOnClick,
 }) {
     if (!facilities || !facilities.length || !domNodeID || !popupContentElementID) {
         return null;
@@ -72,9 +96,9 @@ export default function FacilitiesMapPopup({
                                             : PopupStyles.unselectedListItemStyles
                                     }
                                 >
-                                    <Link
-                                        to={makeFacilityDetailLink(oarID)}
-                                        href={makeFacilityDetailLink(oarID)}
+                                    <button
+                                        type="button"
+                                        onClick={() => selectFacilityOnClick(oarID)}
                                         style={PopupStyles.linkStyles}
                                     >
                                         <ListItemIcon
@@ -91,16 +115,16 @@ export default function FacilitiesMapPopup({
                                             secondary={address}
                                             primaryTypographyProps={{
                                                 style: (oarID === selectedFacilityID)
-                                                    ? PopupStyles.selectedItemTextStyles
-                                                    : PopupStyles.unselectedItemTextStyles,
+                                                    ? PopupStyles.selectedPrimaryTextStyles
+                                                    : PopupStyles.unselectedPrimaryTextStyles,
                                             }}
                                             secondaryTypographyProps={{
                                                 style: (oarID === selectedFacilityID)
-                                                    ? PopupStyles.selectedItemTextStyles
-                                                    : PopupStyles.unselectedItemTextStyles,
+                                                    ? PopupStyles.selectedSecondaryTextStyles
+                                                    : PopupStyles.unselectedSecondaryTextStyles,
                                             }}
                                         />
-                                    </Link>
+                                    </button>
                                 </ListItem>))
                     }
                 </List>
@@ -125,4 +149,5 @@ FacilitiesMapPopup.propTypes = {
     domNodeID: string.isRequired,
     popupContentElementID: string.isRequired,
     selectedFacilityID: string,
+    selectFacilityOnClick: func.isRequired,
 };
