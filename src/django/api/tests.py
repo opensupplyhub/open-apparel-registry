@@ -950,7 +950,7 @@ class DedupeMatchingTests(TestCase):
         return facility_list
 
     def test_matches(self):
-        facility = Facility.objects.last()
+        facility = Facility.objects.first()
         facility_list = self.create_list([
             (facility.country_code, interspace(facility.name),
              junk_chars(facility.address.upper()))])
