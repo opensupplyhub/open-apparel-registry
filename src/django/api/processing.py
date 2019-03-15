@@ -42,6 +42,7 @@ def parse_facility_list_item(item):
     if item.status != FacilityListItem.UPLOADED:
         raise ValueError('Items to be parsed must be in the UPLOADED status')
     try:
+        is_geocoded = False
         fields = [f.lower() for f in parse_csv_line(item.facility_list.header)]
         values = parse_csv_line(item.raw_data)
         if CsvHeaderField.COUNTRY in fields:
@@ -51,12 +52,18 @@ def parse_facility_list_item(item):
             item.name = values[fields.index(CsvHeaderField.NAME)]
         if CsvHeaderField.ADDRESS in fields:
             item.address = values[fields.index(CsvHeaderField.ADDRESS)]
+        if CsvHeaderField.LAT in fields and CsvHeaderField.LNG in fields:
+            lat = float(values[fields.index(CsvHeaderField.LAT)])
+            lng = float(values[fields.index(CsvHeaderField.LNG)])
+            item.geocoded_point = Point(lng, lat)
+            is_geocoded = True
         item.status = FacilityListItem.PARSED
         item.processing_results.append({
             'action': ProcessingAction.PARSE,
             'started_at': started,
             'error': False,
             'finished_at': str(datetime.utcnow()),
+            'is_geocoded': is_geocoded,
         })
     except Exception as e:
         item.status = FacilityListItem.ERROR_PARSING
@@ -77,23 +84,36 @@ def geocode_facility_list_item(item):
     if item.status != FacilityListItem.PARSED:
         raise ValueError('Items to be geocoded must be in the PARSED status')
     try:
-        data = geocode_address(item.address, item.country_code)
-        if data['result_count'] > 0:
-            item.status = FacilityListItem.GEOCODED
-            item.geocoded_point = Point(
-                data["geocoded_point"]["lng"],
-                data["geocoded_point"]["lat"]
-            )
-            item.geocoded_address = data["geocoded_address"]
+        if item.geocoded_point is None:
+            data = geocode_address(item.address, item.country_code)
+            if data['result_count'] > 0:
+                item.status = FacilityListItem.GEOCODED
+                item.geocoded_point = Point(
+                    data["geocoded_point"]["lng"],
+                    data["geocoded_point"]["lat"]
+                )
+                item.geocoded_address = data["geocoded_address"]
+            else:
+                item.status = FacilityListItem.GEOCODED_NO_RESULTS
+            item.processing_results.append({
+                'action': ProcessingAction.GEOCODE,
+                'started_at': started,
+                'error': False,
+                'skipped_geocoder': False,
+                'data': data['full_response'],
+                'finished_at': str(datetime.utcnow()),
+               })
         else:
-            item.status = FacilityListItem.GEOCODED_NO_RESULTS
-        item.processing_results.append({
-            'action': ProcessingAction.GEOCODE,
-            'started_at': started,
-            'error': False,
-            'data': data['full_response'],
-            'finished_at': str(datetime.utcnow()),
-        })
+            item.status = FacilityListItem.GEOCODED
+            item.geocoded_address = item.address
+            item.processing_results.append({
+                'action': ProcessingAction.GEOCODE,
+                'started_at': started,
+                'error': False,
+                'skipped_geocoder': True,
+                'finished_at': str(datetime.utcnow()),
+            })
+
     except Exception as e:
         item.status = FacilityListItem.ERROR_GEOCODING
         item.processing_results.append({
@@ -218,13 +238,17 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
     messy = {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
              for i in facility_list_item_set}
 
-    gazetteer = train_gazetteer(messy, canonical)
-    try:
-        gazetteer.threshold(messy, recall_weight=recall_weight)
-        results = gazetteer.match(messy, threshold=gazetteer_threshold,
-                                  n_matches=None, generator=True)
-        no_gazetteer_matches = False
-    except dedupe.core.BlockingError:
+    if len(canonical.keys()) > 0:
+        gazetteer = train_gazetteer(messy, canonical)
+        try:
+            gazetteer.threshold(messy, recall_weight=recall_weight)
+            results = gazetteer.match(messy, threshold=gazetteer_threshold,
+                                      n_matches=None, generator=True)
+            no_gazetteer_matches = False
+        except dedupe.core.BlockingError:
+            results = []
+            no_gazetteer_matches = True
+    else:
         results = []
         no_gazetteer_matches = True
 

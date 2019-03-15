@@ -99,7 +99,7 @@ def make_user(pk, email=None, is_superuser=None, is_staff=None):
             'password': password,
             'last_login': updated_at,
             'is_superuser': make_bool(is_superuser),
-            'email': profile['mail'],
+            'email': 'c{0}@example.com'.format(pk),
             'is_staff': make_bool(is_staff),
             'is_active': True,
             'created_at': created_at,
@@ -124,6 +124,48 @@ def make_other_contrib_type():
     return fake.company_suffix()
 
 
+def base_10_to_alphabet(number):
+    """
+    Convert a decimal number to its base alphabet representation
+    Based on
+    https://codereview.stackexchange.com/questions/182733/base-26-letters-and-base-10-using-recursion
+    """
+    a_uppercase = ord('A')
+    alphabet_size = 26
+
+    def _decompose(number):
+        while number:
+            number, remainder = divmod(number - 1, alphabet_size)
+            yield remainder
+
+    return ''.join(
+            chr(a_uppercase + part)
+            for part in _decompose(number)
+    )[::-1]
+
+
+contributor_numbers = {c: 1 for c, _ in Contributor.CONTRIB_TYPE_CHOICES}
+
+
+def make_contributor_name(contrib_type):
+    num = contributor_numbers[contrib_type]
+    base = contrib_type.split('/')[0].rstrip()
+    name = '{0} {1}'.format(base, base_10_to_alphabet(num))
+    contributor_numbers[contrib_type] = num + 1
+    return name
+
+
+def make_contributor_description(contrib_type):
+    name = make_contributor_name(contrib_type)
+    if name[0].lower() == 'a':
+        prefix = 'An'
+    else:
+        prefix = 'A'
+    title = '{0} {1}'.format(prefix, contrib_type.lower())
+    return '{0} dedicated to transparency in apparel supply chains'.format(
+       title)
+
+
 def make_contributor(pk, admin_pk=None):
     (created_at, updated_at) = make_created_updated()
     if admin_pk is not None:
@@ -142,9 +184,9 @@ def make_contributor(pk, admin_pk=None):
         'pk': pk,
         'fields': {
             'admin': admin,
-            'name': fake.company(),
-            'description': fake.text(),
-            'website': fake.url(),
+            'name': make_contributor_name(contrib_type),
+            'description': make_contributor_description(contrib_type),
+            'website': 'https://info.openapparel.org',
             'contrib_type': contrib_type,
             'other_contrib_type': other_contrib_type,
             'created_at': created_at,
@@ -157,13 +199,22 @@ def make_contributors(max_id=99):
     return [make_contributor(pk) for pk in range(2, max_id+1)]
 
 
+def make_facility_list_name():
+    seasons = ('Spring', 'Summer', 'Fall', 'Winter')
+    years = ('2017', '2018', '2019')
+    options = ('Apparel', 'Affiliate', 'Compliance')
+    return '{0} {1} {2} List'.format(random.choice(seasons),
+                                     random.choice(years),
+                                     random.choice(options))
+
+
 def make_facility_list(pk, contributor_pk=None):
     (created_at, updated_at) = make_created_updated()
     if contributor_pk is not None:
         contributor = contributor_pk
     else:
         contributor = pk
-    name = fake.name()
+    name = make_facility_list_name()
     return {
         'model': 'api.facilitylist',
         'pk': pk,
@@ -171,16 +222,16 @@ def make_facility_list(pk, contributor_pk=None):
             'contributor': contributor,
             'name': name,
             'file_name': name + '.csv',
-            'header': 'country,name,address',
-            'is_active': make_bool(pk % 2 == 0),
-            'is_public': make_bool(pk % 2 == 0),
+            'header': 'country,name,address,lat,lng',
+            'is_active': True,
+            'is_public': True,
             'created_at': created_at,
             'updated_at': updated_at,
         }
     }
 
 
-def make_facility_lists(max_id=14):
+def make_facility_lists(max_id=15):
     return [make_facility_list(pk) for pk in range(2, max_id+1)]
 
 
@@ -202,7 +253,7 @@ def make_facility_list_item(list_pk, item_pk, row_index, raw_data):
     }
 
 
-def make_facility_list_items(max_list_pk=14):
+def make_facility_list_items(max_list_pk=15):
     item_pk = 1
     items = []
     for list_pk in range(2, max_list_pk+1):
@@ -210,6 +261,7 @@ def make_facility_list_items(max_list_pk=14):
         directory = os.path.dirname(os.path.realpath(__file__))
         with open(os.path.join(directory,
                                'facility_lists',
+                               'geocoded',
                                filename), 'r') as f:
             f.readline()  # discard header
             for row_index, line in enumerate(f):
@@ -221,6 +273,10 @@ def make_facility_list_items(max_list_pk=14):
     return items
 
 
+def point_wkt(lat, lng):
+    return 'SRID=4326;POINT (%s %s)' % (lat, lng)
+
+
 def make_facility(facility_item):
     (created_at, updated_at) = make_created_updated()
     fields = facility_item['fields']
@@ -230,7 +286,6 @@ def make_facility(facility_item):
 
     country_code = COUNTRY_CODES[parsed[0].upper()]
     pk = make_oar_id(country_code)
-    point_is_fixed = facility_item['pk'] % 65 == 0
 
     return {
         'model': 'api.facility',
@@ -239,7 +294,7 @@ def make_facility(facility_item):
             'name': parsed[1],
             'address': parsed[2],
             'country_code': country_code,
-            'location': make_point(point_is_fixed),
+            'location': point_wkt(parsed[4], parsed[3]),
             'created_from': facility_item['pk'],
             'created_at': created_at,
             'updated_at': updated_at,
@@ -308,10 +363,20 @@ def make_facilities_and_matches(list_items):
 class Command(BaseCommand):
     help = 'Create random but reasonable data fixtures'
 
+    def add_arguments(self, parser):
+        parser.add_argument('-m', '--match', action='store_true',
+                            help='Create facilities and matches')
+
     def handle(self, *args, **options):
+        match = options['match']
+
         try:
             list_items = make_facility_list_items()
-            facilities, matches = make_facilities_and_matches(list_items)
+            if match:
+                facilities, matches = make_facilities_and_matches(list_items)
+            else:
+                self.stderr.write("Skipped making facilities and matches")
+
             with open('/usr/local/src/api/fixtures/users.json', 'w') as f:
                 json.dump(make_users(), f, separators=(',', ': '),
                           indent=4)
@@ -326,12 +391,14 @@ class Command(BaseCommand):
             with open('/usr/local/src/api/fixtures/facility_list_items.json',
                       'w') as f:
                 json.dump(list_items, f, separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/facilities.json',
-                      'w') as f:
-                json.dump(facilities, f, separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/facility_matches.json',
-                      'w') as f:
-                json.dump(matches, f, separators=(',', ': '), indent=4)
+
+            if match:
+                with open('/usr/local/src/api/fixtures/facilities.json',
+                          'w') as f:
+                    json.dump(facilities, f, separators=(',', ': '), indent=4)
+                with open('/usr/local/src/api/fixtures/facility_matches.json',
+                          'w') as f:
+                    json.dump(matches, f, separators=(',', ': '), indent=4)
 
         except CommandError as e:
             self.stderr.write("Error creating fixtures: {}".format(e))

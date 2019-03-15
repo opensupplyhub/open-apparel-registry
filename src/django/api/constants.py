@@ -2,6 +2,8 @@ class CsvHeaderField:
     COUNTRY = 'country'
     NAME = 'name'
     ADDRESS = 'address'
+    LAT = 'lat'
+    LNG = 'lng'
 
 
 class ProcessingAction:

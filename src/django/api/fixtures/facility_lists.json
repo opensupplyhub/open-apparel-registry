@@ -4,13 +4,13 @@
         "pk": 2,
         "fields": {
             "contributor": 2,
-            "name": "Sean Price",
-            "file_name": "Sean Price.csv",
-            "header": "country,name,address",
+            "name": "Winter 2019 Compliance List",
+            "file_name": "Winter 2019 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-02-20T00:56:56+00:00",
-            "updated_at": "2019-02-26T19:29:20.177786+00:00"
+            "created_at": "2019-03-12T01:24:11+00:00",
+            "updated_at": "2019-03-14T21:59:08.605650+00:00"
         }
     },
     {
@@ -18,13 +18,13 @@
         "pk": 3,
         "fields": {
             "contributor": 3,
-            "name": "Alexis Williams",
-            "file_name": "Alexis Williams.csv",
-            "header": "country,name,address",
-            "is_active": false,
-            "is_public": false,
-            "created_at": "2019-02-24T04:08:06+00:00",
-            "updated_at": "2019-02-26T19:29:20.361139+00:00"
+            "name": "Winter 2017 Affiliate List",
+            "file_name": "Winter 2017 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-09T19:32:04+00:00",
+            "updated_at": "2019-03-14T21:59:08.305503+00:00"
         }
     },
     {
@@ -32,13 +32,13 @@
         "pk": 4,
         "fields": {
             "contributor": 4,
-            "name": "Lisa Thomas",
-            "file_name": "Lisa Thomas.csv",
-            "header": "country,name,address",
+            "name": "Spring 2019 Apparel List",
+            "file_name": "Spring 2019 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-02-20T23:13:31+00:00",
-            "updated_at": "2019-02-26T19:29:20.625927+00:00"
+            "created_at": "2019-03-14T18:13:24+00:00",
+            "updated_at": "2019-03-14T21:59:08.168094+00:00"
         }
     },
     {
@@ -46,13 +46,13 @@
         "pk": 5,
         "fields": {
             "contributor": 5,
-            "name": "Rachel Phillips",
-            "file_name": "Rachel Phillips.csv",
-            "header": "country,name,address",
-            "is_active": false,
-            "is_public": false,
-            "created_at": "2019-02-19T06:14:29+00:00",
-            "updated_at": "2019-02-26T19:29:20.192592+00:00"
+            "name": "Winter 2019 Apparel List",
+            "file_name": "Winter 2019 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-13T09:44:23+00:00",
+            "updated_at": "2019-03-14T21:59:08.996885+00:00"
         }
     },
     {
@@ -60,13 +60,13 @@
         "pk": 6,
         "fields": {
             "contributor": 6,
-            "name": "Michelle Wiley",
-            "file_name": "Michelle Wiley.csv",
-            "header": "country,name,address",
+            "name": "Fall 2019 Affiliate List",
+            "file_name": "Fall 2019 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-02-20T02:48:56+00:00",
-            "updated_at": "2019-02-26T19:29:20.364639+00:00"
+            "created_at": "2019-03-12T08:20:34+00:00",
+            "updated_at": "2019-03-14T21:59:08.854117+00:00"
         }
     },
     {
@@ -74,13 +74,13 @@
         "pk": 7,
         "fields": {
             "contributor": 7,
-            "name": "Danielle Lowery",
-            "file_name": "Danielle Lowery.csv",
-            "header": "country,name,address",
-            "is_active": false,
-            "is_public": false,
-            "created_at": "2019-02-24T23:04:18+00:00",
-            "updated_at": "2019-02-26T19:29:20.207379+00:00"
+            "name": "Winter 2019 Affiliate List",
+            "file_name": "Winter 2019 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-13T20:00:54+00:00",
+            "updated_at": "2019-03-14T21:59:08.043911+00:00"
         }
     },
     {
@@ -88,13 +88,13 @@
         "pk": 8,
         "fields": {
             "contributor": 8,
-            "name": "Cindy Bell",
-            "file_name": "Cindy Bell.csv",
-            "header": "country,name,address",
+            "name": "Fall 2018 Affiliate List",
+            "file_name": "Fall 2018 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-02-18T20:27:55+00:00",
-            "updated_at": "2019-02-26T19:29:20.132904+00:00"
+            "created_at": "2019-03-13T03:12:46+00:00",
+            "updated_at": "2019-03-14T21:59:08.849912+00:00"
         }
     },
     {
@@ -102,13 +102,13 @@
         "pk": 9,
         "fields": {
             "contributor": 9,
-            "name": "Lisa Stewart",
-            "file_name": "Lisa Stewart.csv",
-            "header": "country,name,address",
-            "is_active": false,
-            "is_public": false,
-            "created_at": "2019-02-23T23:21:11+00:00",
-            "updated_at": "2019-02-26T19:29:20.266718+00:00"
+            "name": "Summer 2017 Apparel List",
+            "file_name": "Summer 2017 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-13T04:46:47+00:00",
+            "updated_at": "2019-03-14T21:59:08.391597+00:00"
         }
     },
     {
@@ -116,13 +116,13 @@
         "pk": 10,
         "fields": {
             "contributor": 10,
-            "name": "James Spencer",
-            "file_name": "James Spencer.csv",
-            "header": "country,name,address",
+            "name": "Summer 2018 Apparel List",
+            "file_name": "Summer 2018 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-02-19T03:40:04+00:00",
-            "updated_at": "2019-02-26T19:29:20.558396+00:00"
+            "created_at": "2019-03-14T07:36:44+00:00",
+            "updated_at": "2019-03-14T21:59:08.969163+00:00"
         }
     },
     {
@@ -130,13 +130,13 @@
         "pk": 11,
         "fields": {
             "contributor": 11,
-            "name": "Lisa Barton",
-            "file_name": "Lisa Barton.csv",
-            "header": "country,name,address",
-            "is_active": false,
-            "is_public": false,
-            "created_at": "2019-02-17T21:58:01+00:00",
-            "updated_at": "2019-02-26T19:29:20.589510+00:00"
+            "name": "Winter 2018 Compliance List",
+            "file_name": "Winter 2018 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-07T22:46:45+00:00",
+            "updated_at": "2019-03-14T21:59:08.910720+00:00"
         }
     },
     {
@@ -144,13 +144,13 @@
         "pk": 12,
         "fields": {
             "contributor": 12,
-            "name": "Alicia Frederick",
-            "file_name": "Alicia Frederick.csv",
-            "header": "country,name,address",
+            "name": "Summer 2019 Compliance List",
+            "file_name": "Summer 2019 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-02-21T00:38:36+00:00",
-            "updated_at": "2019-02-26T19:29:20.726876+00:00"
+            "created_at": "2019-03-12T12:29:55+00:00",
+            "updated_at": "2019-03-14T21:59:08.637881+00:00"
         }
     },
     {
@@ -158,13 +158,13 @@
         "pk": 13,
         "fields": {
             "contributor": 13,
-            "name": "Penny Russell",
-            "file_name": "Penny Russell.csv",
-            "header": "country,name,address",
-            "is_active": false,
-            "is_public": false,
-            "created_at": "2019-02-26T04:08:39+00:00",
-            "updated_at": "2019-02-26T19:29:20.867181+00:00"
+            "name": "Summer 2018 Apparel List",
+            "file_name": "Summer 2018 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-06T22:11:40+00:00",
+            "updated_at": "2019-03-14T21:59:08.156573+00:00"
         }
     },
     {
@@ -172,13 +172,27 @@
         "pk": 14,
         "fields": {
             "contributor": 14,
-            "name": "Tami Jimenez",
-            "file_name": "Tami Jimenez.csv",
-            "header": "country,name,address",
+            "name": "Winter 2018 Affiliate List",
+            "file_name": "Winter 2018 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-02-18T14:36:20+00:00",
-            "updated_at": "2019-02-26T19:29:20.012107+00:00"
+            "created_at": "2019-03-10T05:05:59+00:00",
+            "updated_at": "2019-03-14T21:59:08.137936+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 15,
+        "fields": {
+            "contributor": 15,
+            "name": "Fall 2018 Compliance List",
+            "file_name": "Fall 2018 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-12T11:21:04+00:00",
+            "updated_at": "2019-03-14T21:59:08.428458+00:00"
         }
     }
 ]
