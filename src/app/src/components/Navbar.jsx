@@ -74,6 +74,7 @@ export default function Navbar() {
                         CONTRIBUTE
                     </Link>
                 </div>
+                <div id="google_translate_element" />
                 <NavbarLoginButtonGroup />
             </Toolbar>
         </AppBar>

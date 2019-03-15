@@ -45,6 +45,28 @@
     border-radius: 0 !important;
 }
 
+.goog-te-gadget-icon {
+    display: none;
+}
+
+.goog-te-gadget-simple {
+    font-size: 12px;
+    color: #0427a4;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: ff-tisa-sans-web-pro, sans-serif;
+    font-weight: 500;
+    padding: 0 16px;
+    border: none;
+    text-transform: uppercase;
+    vertical-align: super;
+    display: flex;
+}
+
+.goog-te-menu-value {
+    color: #0427a4 !important;
+}
+
 .popup-container {
   max-height: 235px;
   max-width: 235px;
