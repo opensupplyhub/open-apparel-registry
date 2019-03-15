@@ -8,3 +8,6 @@ export const updateSidebarFacilitiesTabTextFilter =
     createAction('UPDATE_SIDEBAR_FACILITIES_TAB_TEXT_FILTER');
 export const resetSidebarFacilitiesTabTextFilter =
     createAction('RESET_SIDEBAR_FACILITIES_TAB_TEXT_FILTER');
+
+export const recordSearchTabResetButtonClick =
+    createAction('RECORD_SEARCH_TAB_RESET_BUTTON_CLICK');
