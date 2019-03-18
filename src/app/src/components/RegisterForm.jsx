@@ -29,7 +29,10 @@ import {
     registrationFormInputHandlersPropType,
 } from '../util/propTypes';
 
-import { getStateFromEventForEventType } from '../util/util';
+import {
+    getStateFromEventForEventType,
+    makeSubmitFormOnEnterKeyPressFunction,
+} from '../util/util';
 
 import { formValidationErrorMessageStyle } from '../util/styles';
 
@@ -74,6 +77,7 @@ class RegisterForm extends Component {
             form,
             inputUpdates,
             submitForm,
+            submitFormOnEnterKeyPress,
             sessionFetching,
         } = this.props;
 
@@ -110,6 +114,7 @@ class RegisterForm extends Component {
                         form.contributorType !== OTHER &&
                         field.id === registrationFieldsEnum.otherContributorType
                     }
+                    submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                 />));
 
         return (
@@ -171,6 +176,7 @@ RegisterForm.propTypes = {
     form: registrationFormValuesPropType.isRequired,
     inputUpdates: registrationFormInputHandlersPropType.isRequired,
     submitForm: func.isRequired,
+    submitFormOnEnterKeyPress: func.isRequired,
     sessionFetching: bool.isRequired,
 };
 
@@ -216,6 +222,9 @@ const mapDispatchToProps = memoize((dispatch) => {
         inputUpdates,
         submitForm: () => dispatch(submitSignUpForm()),
         clearForm: () => dispatch(resetAuthFormState()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
+            () => dispatch(submitSignUpForm()),
+        ),
     };
 });
 

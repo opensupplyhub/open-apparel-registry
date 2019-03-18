@@ -34,6 +34,7 @@ import {
     facilitiesRoute,
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
+    ENTER_KEY,
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
@@ -428,3 +429,11 @@ export const updateListWithLabels = (list, payload) => list
                 label: validOption.label,
             }));
     }, []);
+
+export const makeSubmitFormOnEnterKeyPressFunction = fn => ({ key }) => {
+    if (key === ENTER_KEY) {
+        return fn();
+    }
+
+    return noop();
+};

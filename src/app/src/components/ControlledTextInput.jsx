@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { bool, func, string } from 'prop-types';
+import noop from 'lodash/noop';
 
 import '../styles/css/specialStates.css';
 
@@ -11,6 +12,7 @@ export default function ControlledTextInput({
     onChange,
     placeholder,
     disabled,
+    submitFormOnEnterKeyPress,
 }) {
     return (
         <Fragment>
@@ -25,6 +27,7 @@ export default function ControlledTextInput({
                 onChange={onChange}
                 placeholder={placeholder}
                 disabled={disabled}
+                onKeyPress={submitFormOnEnterKeyPress}
             />
         </Fragment>
     );
@@ -35,6 +38,7 @@ ControlledTextInput.defaultProps = {
     hint: '',
     placeholder: '',
     disabled: false,
+    submitFormOnEnterKeyPress: noop,
 };
 
 ControlledTextInput.propTypes = {
@@ -45,4 +49,5 @@ ControlledTextInput.propTypes = {
     onChange: func.isRequired,
     placeholder: string,
     disabled: bool,
+    submitFormOnEnterKeyPress: func,
 };

@@ -17,7 +17,10 @@ import {
     closeForgotPasswordDialog,
 } from '../actions/auth';
 
-import { getValueFromEvent } from '../util/util';
+import {
+    getValueFromEvent,
+    makeSubmitFormOnEnterKeyPressFunction,
+} from '../util/util';
 
 function SendResetPasswordEmailForm({
     dialogIsOpen,
@@ -28,6 +31,7 @@ function SendResetPasswordEmailForm({
     email,
     updateEmail,
     submitForm,
+    submitFormOnEnterKeyPress,
 }) {
     const errorMessages = error && error.length
         ? (
@@ -73,6 +77,7 @@ function SendResetPasswordEmailForm({
                         fullWidth
                         value={email}
                         onChange={updateEmail}
+                        onKeyPress={submitFormOnEnterKeyPress}
                     />
                     {errorMessages}
                 </DialogContent>
@@ -108,6 +113,7 @@ SendResetPasswordEmailForm.propTypes = {
     fetching: bool.isRequired,
     updateEmail: func.isRequired,
     submitForm: func.isRequired,
+    submitFormOnEnterKeyPress: func.isRequired,
     email: string.isRequired,
 };
 
@@ -137,6 +143,9 @@ function mapDispatchToProps(dispatch) {
         submitForm: () => dispatch(requestForgotPasswordEmail()),
         handleOpen: () => dispatch(openForgotPasswordDialog()),
         handleClose: () => dispatch(closeForgotPasswordDialog()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
+            () => dispatch(requestForgotPasswordEmail()),
+        ),
     };
 }
 

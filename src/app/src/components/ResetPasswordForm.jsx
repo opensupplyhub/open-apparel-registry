@@ -23,6 +23,7 @@ import { formValidationErrorMessageStyle } from '../util/styles';
 import {
     getValueFromEvent,
     getTokenFromQueryString,
+    makeSubmitFormOnEnterKeyPressFunction,
 } from '../util/util';
 
 import { authLoginFormRoute } from '../util/constants';
@@ -50,6 +51,7 @@ class ResetPasswordForm extends Component {
             updatePassword,
             updateConfirmPassword,
             submitForm,
+            submitFormOnEnterKeyPress,
         } = this.props;
 
         if (confirmationResponse) {
@@ -87,6 +89,7 @@ class ResetPasswordForm extends Component {
                             type="password"
                             value={newPassword}
                             onChange={updatePassword}
+                            submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                         />
                     </div>
                     <div className="form__field">
@@ -101,6 +104,7 @@ class ResetPasswordForm extends Component {
                             type="password"
                             value={newPasswordConfirmation}
                             onChange={updateConfirmPassword}
+                            submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                         />
                     </div>
                     <ShowOnly when={!!(error && error.length)}>
@@ -185,6 +189,9 @@ function mapDispatchToProps(dispatch, {
         updateConfirmPassword: e =>
             dispatch(updateResetPasswordFormPasswordConfirmation(getValueFromEvent(e))),
         submitForm: () => dispatch(submitResetPassword()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
+            () => dispatch(submitResetPassword()),
+        ),
         resetForm: () => dispatch(resetResetPasswordFormState()),
     };
 }
