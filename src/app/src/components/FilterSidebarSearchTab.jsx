@@ -17,6 +17,8 @@ import {
 
 import { fetchFacilities } from '../actions/facilities';
 
+import { recordSearchTabResetButtonClick } from '../actions/ui';
+
 import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
@@ -302,7 +304,10 @@ function mapDispatchToProps(dispatch) {
         updateContributor: v => dispatch(updateContributorFilter(v)),
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
-        resetFilters: () => dispatch(resetAllFilters()),
+        resetFilters: () => {
+            dispatch(recordSearchTabResetButtonClick());
+            return dispatch(resetAllFilters());
+        },
         searchForFacilities: () => dispatch(fetchFacilities()),
         submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
             () => dispatch(fetchFacilities()),

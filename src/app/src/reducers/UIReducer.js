@@ -7,11 +7,10 @@ import {
     makeSidebarFacilitiesTabActive,
     updateSidebarFacilitiesTabTextFilter,
     resetSidebarFacilitiesTabTextFilter,
+    recordSearchTabResetButtonClick,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
-
-import { completeSubmitLogOut } from '../actions/auth';
 
 import { filterSidebarTabsEnum } from '../util/constants';
 
@@ -19,10 +18,18 @@ const initialState = Object.freeze({
     activeFilterSidebarTab: filterSidebarTabsEnum.search,
     facilitiesSidebarTabSearch: Object.freeze({
         filterText: '',
+        resetButtonClickCount: 0,
     }),
 });
 
 export default createReducer({
+    [recordSearchTabResetButtonClick]: state => update(state, {
+        facilitiesSidebarTabSearch: {
+            resetButtonClickCount: {
+                $set: (state.facilitiesSidebarTabSearch.resetButtonClickCount + 1),
+            },
+        },
+    }),
     [makeSidebarGuideTabActive]: state => update(state, {
         activeFilterSidebarTab: {
             $set: filterSidebarTabsEnum.guide,
@@ -67,5 +74,4 @@ export default createReducer({
             },
         },
     }),
-    [completeSubmitLogOut]: () => initialState,
 }, initialState);

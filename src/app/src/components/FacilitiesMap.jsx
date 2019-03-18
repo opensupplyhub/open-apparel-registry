@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { func } from 'prop-types';
+import { func, number } from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import MarkerClusterer from '@google/markerclusterer';
 import isEqual from 'lodash/isEqual';
@@ -86,13 +86,18 @@ class FacilitiesMap extends Component {
                 },
             },
             facilityDetailsData,
+            resetButtonClickCount,
         } = this.props;
 
         if (!this.googleMapElement) {
             return null;
         }
 
-        if (!data && this.googleMapElement.data) {
+        if (resetButtonClickCount > prevProps.resetButtonClickCount) {
+            this.resetMapZoom();
+        }
+
+        if (!data && prevProps.data) {
             return this.removeFeatureMarkers();
         }
 
@@ -156,6 +161,17 @@ class FacilitiesMap extends Component {
     createMapOptions = () => ({
         fullscreenControl: false,
     });
+
+    resetMapZoom = () => {
+        if (!this.googleMapElement) {
+            return null;
+        }
+
+        this.googleMapElement.setCenter(initialCenter);
+        this.googleMapElement.setZoom(initialZoom);
+
+        return null;
+    };
 
     createFeatureMarkers = () => {
         const { data } = this.props;
@@ -330,6 +346,7 @@ FacilitiesMap.propTypes = {
     data: facilityCollectionPropType,
     navigateToFacilityDetails: func.isRequired,
     facilityDetailsData: facilityPropType,
+    resetButtonClickCount: number.isRequired,
 };
 
 function mapStateToProps({
@@ -341,10 +358,16 @@ function mapStateToProps({
             data: facilityDetailsData,
         },
     },
+    ui: {
+        facilitiesSidebarTabSearch: {
+            resetButtonClickCount,
+        },
+    },
 }) {
     return {
         data,
         facilityDetailsData,
+        resetButtonClickCount,
     };
 }
 
