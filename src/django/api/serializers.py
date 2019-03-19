@@ -179,7 +179,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
-                  'created_at', 'updated_at', 'oar_id', 'country_name')
+                  'oar_id', 'country_name')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -200,8 +200,8 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
-                  'created_at', 'updated_at', 'oar_id', 'other_names',
-                  'other_addresses', 'contributors', 'country_name')
+                  'oar_id', 'other_names', 'other_addresses', 'contributors',
+                  'country_name')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map

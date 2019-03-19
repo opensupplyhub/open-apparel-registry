@@ -9,6 +9,10 @@ import NavbarLoginButtonGroup from './NavbarLoginButtonGroup';
 
 import { contributeRoute } from '../util/constants';
 
+const apiDocumentationURL = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8081/api/docs/'
+    : '/api/docs/';
+
 export default function Navbar() {
     const aboutLinks = [
         {
@@ -62,7 +66,7 @@ export default function Navbar() {
                         target="_blank"
                         className="navButton"
                         rel="noopener noreferrer"
-                        href="https://info.openapparel.org/apiinstructions"
+                        href={apiDocumentationURL}
                     >
                         API
                     </a>
