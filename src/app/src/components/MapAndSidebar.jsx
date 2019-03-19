@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 
-import LandingAlert from './LandingAlert';
 import FilterSidebar from './FilterSidebar';
 import FacilityDetailsSidebar from './FacilityDetailSidebar';
 import FacilitiesMap from './FacilitiesMap';
@@ -16,7 +15,6 @@ import { facilityDetailsRoute } from '../util/constants';
 function MapAndSidebar() {
     return (
         <Fragment>
-            <LandingAlert />
             <Grid container>
                 <Grid
                     item

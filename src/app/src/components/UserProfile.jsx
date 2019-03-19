@@ -124,6 +124,10 @@ class UserProfile extends Component {
             return <CircularProgress />;
         }
 
+        if (!profile) {
+            return null;
+        }
+
         const isEditableProfile =
             (user && [profile.id, Number(id)].every(val => val === user.id));
 
@@ -238,6 +242,7 @@ function mapStateToProps({
         session: {
             fetching: sessionFetching,
         },
+        fetching: authFetching,
     },
     profile: {
         profile,
@@ -250,7 +255,7 @@ function mapStateToProps({
 }) {
     return {
         user,
-        fetching: fetching || sessionFetching,
+        fetching: fetching || sessionFetching || authFetching,
         profile,
         updatingProfile,
         errorsUpdatingProfile,

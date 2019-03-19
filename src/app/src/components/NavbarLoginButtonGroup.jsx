@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 import COLOURS from '../util/COLOURS';
 
-import Translate from './Translate';
 import NavbarDropdown from './NavbarDropdown';
 
 import { submitLogOut } from '../actions/auth';
@@ -87,7 +86,6 @@ function NavbarLoginButtonGroup({
     if (!user || sessionFetching) {
         return (
             <div style={componentStyles.containerStyle}>
-                <Translate />
                 <Link
                     to={authRegisterFormRoute}
                     href={authRegisterFormRoute}
@@ -110,7 +108,6 @@ function NavbarLoginButtonGroup({
 
     return (
         <div style={componentStyles.containerStyle}>
-            <Translate />
             <NavbarDropdown
                 title={user.name}
                 links={createUserDropdownLinks(user, logout)}
