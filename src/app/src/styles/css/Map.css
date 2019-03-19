@@ -50,17 +50,16 @@
 }
 
 .goog-te-gadget-simple {
-    font-size: 12px;
+    font-size: 12px !important;
     color: #0427a4;
-    cursor: pointer;
     text-decoration: none;
-    font-family: ff-tisa-sans-web-pro, sans-serif;
+    font-family: ff-tisa-sans-web-pro,sans-serif;
     font-weight: 500;
-    padding: 0 16px;
-    border: none;
+    padding: 0 16px !important;
+    border: none !important;
     text-transform: uppercase;
-    vertical-align: super;
-    display: flex;
+    background-color: unset !important;
+    vertical-align: middle !important;
 }
 
 .goog-te-menu-value {
