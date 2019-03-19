@@ -59,7 +59,7 @@ node {
 					withCredentials([[$class: 'StringBinding',
 									credentialsId: 'OAR_ROLLBAR_ACCESS_TOKEN',
 									variable: 'OAR_ROLLBAR_ACCESS_TOKEN']]) {
-						sh 'docker-compose -f docker-compose.yml -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply'
+						sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply'
 					}
 				}
 			}
