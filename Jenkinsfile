@@ -12,9 +12,6 @@ node {
 
 		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-testing-config-eu-west-1'
 
-	    // Execute `setup` wrapped within a plugin that translates
-	    // ANSI color codes to something that renders inside the Jenkins
-	    // console.
 		stage('setup') {
 			wrap([$class: 'AnsiColorBuildWrapper']) {
 				sh './scripts/bootstrap'
@@ -29,7 +26,7 @@ node {
 
 		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-staging-config-eu-west-1'
 
-		if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('test/')) {
+		if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('test/') || env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('hotfix/')) {
 			// Publish container images built and tested during `cibuild`
 			// to the private Amazon Container Registry tagged with the
 			// first seven characters of the revision SHA.
@@ -44,10 +41,10 @@ node {
 				}
 			}
 
-			// Plan and apply the current state of the infrastructure as
-			// outlined by whatever branch of the `open-apparel-registry`
+			// Plan and apply the current state of the staging infrastructure
+			// as outlined by whatever branch of the `open-apparel-registry`
 			// repository passes the conditional above (`develop`, 
-			// `release/*`, `test/*`).
+			// `test/*`, `release/*`, `hotfix/*`).
 			stage('infra') {
 				// Use `git` to get the primary repository's current commmit SHA and
 		        // set it as the value of the `GIT_COMMIT` environment variable.
