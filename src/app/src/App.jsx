@@ -20,6 +20,7 @@ import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
 import GDPRNotification from './components/GDPRNotification';
 import ConfirmRegistration from './components/ConfirmRegistration';
+import AboutProcessing from './components/AboutProcessing';
 
 import './App.css';
 
@@ -36,6 +37,7 @@ import {
     facilityListItemsRoute,
     facilitiesRoute,
     profileRoute,
+    aboutProcessingRoute,
 } from './util/constants';
 
 const appStyles = Object.freeze({
@@ -104,6 +106,10 @@ class App extends Component {
                                 <Route
                                     path={listsRoute}
                                     component={FacilityLists}
+                                />
+                                <Route
+                                    path={aboutProcessingRoute}
+                                    component={AboutProcessing}
                                 />
                             </Switch>
                         </main>

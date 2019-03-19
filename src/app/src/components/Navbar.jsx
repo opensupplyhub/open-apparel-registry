@@ -21,6 +21,11 @@ export default function Navbar() {
             url: 'https://info.openapparel.org/board',
             type: 'external',
         },
+        {
+            text: 'Processing',
+            url: '/about/processing',
+            type: 'link',
+        },
     ];
 
     return (
