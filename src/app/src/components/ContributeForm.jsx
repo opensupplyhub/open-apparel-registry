@@ -81,6 +81,7 @@ class ContributeForm extends Component {
         }
 
         this.props.fetchLists();
+        this.fileInput.current.value = null;
         return toast('Your facility list has been uploaded successfully!');
     }
 
