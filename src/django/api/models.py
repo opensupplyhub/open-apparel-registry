@@ -174,7 +174,8 @@ class FacilityList(models.Model):
     """
     contributor = models.ForeignKey(
         'Contributor',
-        on_delete=models.PROTECT,
+        null=True,
+        on_delete=models.SET_NULL,
         help_text='The contributor that uploaded this list.')
     name = models.CharField(
         max_length=200,
@@ -453,6 +454,7 @@ class Facility(models.Model):
             in facility_list_item_matches
             if match.facility_list.is_active
             and match.facility_list.is_public
+            and match.facility_list.contributor is not None
         }
 
 
