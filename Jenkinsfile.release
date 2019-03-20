@@ -12,6 +12,13 @@ node {
         ])
     ])
 
+    // Notify Slack that we're starting a production deploy.
+    def startedMessage =
+        ":jenkins: deploying revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to *production*"
+    startedMessage += "\n<${env.BUILD_URL}|View Build>"
+
+    slackSend channel: '#testingslackapps', color: 'warning', message: startedMessage
+
     try {
         // Checkout the proper revision into the workspace.
         stage('checkout') {
@@ -50,10 +57,11 @@ node {
 
             wrap([$class: 'AnsiColorBuildWrapper']) {
                 sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra plan'
+
                 withCredentials([[$class: 'StringBinding',
                                 credentialsId: 'OAR_ROLLBAR_ACCESS_TOKEN',
                                 variable: 'OAR_ROLLBAR_ACCESS_TOKEN']]) {
-                    sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply'
+                    //sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply'
                 }
             }
         }
@@ -64,13 +72,15 @@ node {
                 sh './scripts/manage ecsmanage -e production showmigrations'
             }
         }
+
     } catch (err) {
         // Some exception was raised in the `try` block above. Assemble
         // an appropirate error message for Slack.
-        def slackMessage = ":jenkins-angry: *Open Apparel Registry (Release Pipeline) (${params.GIT_COMMIT}) #${env.BUILD_NUMBER}*"
+        def failedMessage =
+            ":jenkins-angry: failed to deploy revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to *production*"
+        failedMessage += "\n<${env.BUILD_URL}|View Build>"
 
-        slackMessage += "\n<${env.BUILD_URL}|View Build>"
-        //slackSend channel: '#oar', color: 'danger', message: slackMessage
+        slackSend channel: '#testingslackapps', color: 'danger', message: failedMessage
 
         // Re-raise the exception so that the failure is propagated to
         // Jenkins.
