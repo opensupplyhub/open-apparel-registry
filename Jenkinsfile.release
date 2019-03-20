@@ -17,7 +17,7 @@ node {
         ":jenkins: deploying revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to *production*"
     startedMessage += "\n<${env.BUILD_URL}|View Build>"
 
-    slackSend channel: '#testingslackapps', color: 'warning', message: startedMessage
+    slackSend channel: '#oar', color: 'warning', message: startedMessage
 
     try {
         // Checkout the proper revision into the workspace.
@@ -80,7 +80,7 @@ node {
             ":jenkins-angry: failed to deploy revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to *production*"
         failedMessage += "\n<${env.BUILD_URL}|View Build>"
 
-        slackSend channel: '#testingslackapps', color: 'danger', message: failedMessage
+        slackSend channel: '#oar', color: 'danger', message: failedMessage
 
         // Re-raise the exception so that the failure is propagated to
         // Jenkins.
