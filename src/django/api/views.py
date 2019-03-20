@@ -440,18 +440,33 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .objects \
                 .filter(contributor=user_contributor) \
                 .get(pk=pk)
+            response_data = self.serializer_class(facility_list).data
+
+            return Response(response_data)
+        except FacilityList.DoesNotExist:
+            raise NotFound()
+
+    @action(detail=True, methods=['get'])
+    def items(self, request, pk):
+        try:
+            user_contributor = request.user.contributor
+            facility_list = FacilityList \
+                .objects \
+                .filter(contributor=user_contributor) \
+                .get(pk=pk)
             queryset = FacilityListItem \
                 .objects \
                 .filter(facility_list=facility_list) \
                 .order_by('row_index')
 
-            response_data = self.serializer_class(facility_list).data
+            page_queryset = self.paginate_queryset(queryset)
+            if page_queryset is not None:
+                serializer = FacilityListItemSerializer(page_queryset,
+                                                        many=True)
+                return self.get_paginated_response(serializer.data)
 
-            response_data.update({
-                "items": FacilityListItemSerializer(queryset, many=True).data,
-            })
-
-            return Response(response_data)
+            serializer = FacilityListItemSerializer(queryset, many=True)
+            return Response(serializer.data)
         except FacilityList.DoesNotExist:
             raise NotFound()
 

@@ -13,6 +13,7 @@ import FacilityListItemsEmpty from './FacilityListItemsEmpty';
 import FacilityListItemsTable from './FacilityListItemsTable';
 
 import {
+    fetchFacilityList,
     fetchFacilityListItems,
     resetFacilityListItems,
 } from '../actions/facilityListDetails';
@@ -22,9 +23,12 @@ import {
     facilityListItemsRoute,
 } from '../util/constants';
 
-import { facilityListPropType } from '../util/propTypes';
+import { facilityListPropType, facilityListItemPropType } from '../util/propTypes';
 
-import { downloadListItemCSV } from '../util/util';
+import {
+    downloadListItemCSV,
+    createPaginationOptionsFromQueryString,
+} from '../util/util';
 
 const facilityListItemsStyles = Object.freeze({
     headerStyles: Object.freeze({
@@ -55,7 +59,8 @@ const facilityListItemsStyles = Object.freeze({
 
 class FacilityListItems extends Component {
     componentDidMount() {
-        return this.props.fetchListItems();
+        this.props.fetchList();
+        this.props.fetchListItems();
     }
 
     componentWillUnmount() {
@@ -64,12 +69,13 @@ class FacilityListItems extends Component {
 
     render() {
         const {
-            data,
-            fetching,
+            list,
+            items,
+            fetchingList,
             error,
         } = this.props;
 
-        if (fetching) {
+        if (fetchingList) {
             return (
                 <AppGrid title="">
                     <CircularProgress />
@@ -93,7 +99,7 @@ class FacilityListItems extends Component {
             );
         }
 
-        if (!data) {
+        if (!list) {
             return (
                 <AppGrid title="No list was found for that ID">
                     <div />
@@ -114,13 +120,13 @@ class FacilityListItems extends Component {
                         <div style={facilityListItemsStyles.headerStyles}>
                             <div>
                                 <h2 style={facilityListItemsStyles.titleStyles}>
-                                    {data.name || data.id}
+                                    {list.name || list.id}
                                 </h2>
                                 <Typography
                                     variant="subheading"
                                     style={facilityListItemsStyles.descriptionStyles}
                                 >
-                                    {data.description || ''}
+                                    {list.description || ''}
                                 </Typography>
                             </div>
                             <div>
@@ -128,7 +134,7 @@ class FacilityListItems extends Component {
                                     variant="outlined"
                                     color="primary"
                                     style={facilityListItemsStyles.buttonStyles}
-                                    onClick={() => downloadListItemCSV(data)}
+                                    onClick={() => downloadListItemCSV(list, items)}
                                 >
                                     Download CSV
                                 </Button>
@@ -144,7 +150,7 @@ class FacilityListItems extends Component {
                             </div>
                         </div>
                         {
-                            data.items.length
+                            list.item_count
                                 ? (
                                     <Switch>
                                         <Route
@@ -162,29 +168,39 @@ class FacilityListItems extends Component {
 }
 
 FacilityListItems.defaultProps = {
-    data: null,
+    list: null,
+    items: null,
     error: null,
 };
 
 FacilityListItems.propTypes = {
-    data: facilityListPropType,
-    fetching: bool.isRequired,
+    list: facilityListPropType,
+    items: arrayOf(facilityListItemPropType),
+    fetchingList: bool.isRequired,
     error: arrayOf(string),
+    fetchList: func.isRequired,
     fetchListItems: func.isRequired,
     clearListItems: func.isRequired,
 };
 
 function mapStateToProps({
     facilityListDetails: {
-        data,
-        fetching,
-        error,
+        list: {
+            data: list,
+            fetching: fetchingList,
+            error: listError,
+        },
+        items: {
+            data: items,
+            error: itemsError,
+        },
     },
 }) {
     return {
-        data,
-        fetching,
-        error,
+        list,
+        items,
+        fetchingList,
+        error: listError || itemsError,
     };
 }
 
@@ -194,9 +210,20 @@ function mapDispatchToProps(dispatch, {
             listID,
         },
     },
+    history: {
+        location: {
+            search,
+        },
+    },
 }) {
+    const {
+        page,
+        rowsPerPage,
+    } = createPaginationOptionsFromQueryString(search);
+
     return {
-        fetchListItems: () => dispatch(fetchFacilityListItems(listID)),
+        fetchList: () => dispatch(fetchFacilityList(listID)),
+        fetchListItems: () => dispatch(fetchFacilityListItems(listID, page, rowsPerPage)),
         clearListItems: () => dispatch(resetFacilityListItems()),
     };
 }

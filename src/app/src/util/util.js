@@ -53,9 +53,9 @@ export function DownloadCSV(data, fileName) {
 export const downloadContributorTemplate = () =>
     DownloadCSV(contributeCSVTemplate, 'OAR_Contributor_Template.csv');
 
-export const downloadListItemCSV = list =>
+export const downloadListItemCSV = (list, items) =>
     DownloadCSV(
-        createListItemCSV(list.items),
+        createListItemCSV(items),
         `${list.id}_${list.name}_${(new Date()).toLocaleDateString()}.csv`,
     );
 
@@ -69,6 +69,7 @@ export const makeUserConfirmEmailURL = () => '/rest-auth/registration/verify-ema
 
 export const makeFacilityListsURL = () => '/api/facility-lists/';
 export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
+export const makeSingleFacilityListItemsURL = id => `/api/facility-lists/${id}/items/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 
