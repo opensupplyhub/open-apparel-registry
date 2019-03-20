@@ -178,6 +178,12 @@ function FilterSidebarFacilitiesTab({
     const orderedFacilities =
         sortFacilitiesAlphabeticallyByName(filteredFacilities);
 
+    const facilitiesCount = get(data, 'count', null);
+
+    const headerDisplayString = facilitiesCount && (facilitiesCount !== filteredFacilities.length)
+        ? `Displaying ${filteredFacilities.length} facilities of ${facilitiesCount} results`
+        : `Displaying ${filteredFacilities.length} facilities`;
+
     const listHeaderInsetComponent = (
         <div style={facilitiesTabStyles.listHeaderStyles}>
             <Typography
@@ -187,7 +193,7 @@ function FilterSidebarFacilitiesTab({
                 <div
                     style={facilitiesTabStyles.titleRowStyles}
                 >
-                    {`Displaying ${filteredFacilities.length} facilities`}
+                    {headerDisplayString}
                     <Button
                         variant="outlined"
                         color="primary"

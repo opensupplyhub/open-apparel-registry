@@ -40,6 +40,7 @@ from api.serializers import (FacilityListSerializer,
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
+from api.pagination import FacilitiesGeoJSONPagination
 
 
 @permission_classes((AllowAny,))
@@ -271,6 +272,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
     permission_classes = (AllowAny,)
+    pagination_class = FacilitiesGeoJSONPagination
 
     def list(self, request):
         name = request.query_params.get(FacilitiesQueryParams.NAME,
@@ -319,8 +321,13 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 
             queryset = queryset.filter(id__in=name_match_facility_ids)
 
-        response_data = FacilitySerializer(queryset, many=True).data
+        page_queryset = self.paginate_queryset(queryset)
 
+        if page_queryset is not None:
+            serializer = FacilitySerializer(page_queryset, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        response_data = FacilitySerializer(queryset, many=True).data
         return Response(response_data)
 
     def retrieve(self, request, pk=None):
