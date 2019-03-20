@@ -3,12 +3,14 @@
 node {
     properties([
         parameters([
-            string(
+            [
+                $class: 'ValidatingStringParameterDefinition',
                 defaultValue: '',
-                description: 'SHA of an existing container image. Usually what\'s currently on staging.', 
+                description: 'First 7 characters of the SHA for the commit you wish to deploy.',
+                failedValidationMessage: 'Invalid SHA.',
                 name: 'GIT_COMMIT',
-                trim: false
-            )
+                regex: /^[a-z0-9]{7}$/
+            ]
         ])
     ])
 
