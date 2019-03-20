@@ -20,8 +20,10 @@ from rest_framework.decorators import (api_view,
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.filters import BaseFilterBackend
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.utils import complete_signup
+import coreapi
 
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
@@ -305,6 +307,43 @@ def all_countries(request):
     return Response(COUNTRY_CHOICES)
 
 
+class FacilitiesAPIFilterBackend(BaseFilterBackend):
+    def get_schema_fields(self, view):
+        if view.action == 'list':
+            return [
+                coreapi.Field(
+                    name='name',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Facility Name',
+                ),
+                coreapi.Field(
+                    name='contributors',
+                    location='query',
+                    type='integer',
+                    required=False,
+                    description='Contributor ID',
+                ),
+                coreapi.Field(
+                    name='contributor_types',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Contributor Type',
+                ),
+                coreapi.Field(
+                    name='countries',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Country Code',
+                ),
+            ]
+
+        return []
+
+
 class FacilitiesViewSet(ReadOnlyModelViewSet):
     """
     Get facilities in GeoJSON format.
@@ -313,6 +352,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
     serializer_class = FacilitySerializer
     permission_classes = (AllowAny,)
     pagination_class = FacilitiesGeoJSONPagination
+    filter_backends = (FacilitiesAPIFilterBackend,)
 
     def list(self, request):
         """
@@ -467,6 +507,32 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     def create(self, request):
         """
         Upload a new Facility List.
+
+        ## Request Body
+
+        *Required*
+
+        `file` (`file`): CSV file to upload.
+
+        *Optional*
+
+        `name` (`string`): Name of the uploaded file.
+
+        `description` (`string`): Description of the uploaded file.
+
+        `replaces` (`number`): An optional ID for an existing list to replace
+                   with the new list
+
+        ### Sample Response
+
+            {
+                "id": 1,
+                "name": "list name",
+                "description": "list description",
+                "file_name": "list-1.csv",
+                "is_active": true,
+                "is_public": true
+            }
         """
         if 'file' not in request.data:
             raise ValidationError('No file specified.')
@@ -602,7 +668,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk):
         """
-        Returns a single Facility List for an authenticated Contributor.
+        Returns data describing a single Facility List.
 
         ## Sample Response
             {
@@ -612,22 +678,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 "file_name": "11.csv",
                 "is_active": true,
                 "is_public": true,
-                "items": [
-                    "id": 1,
-                    "matches": [],
-                    "country_name": "United States",
-                    "processing_errors": null,
-                    "matched_facility": null,
-                    "row_index": 1,
-                    "raw_data": "List item 1, List item address 1",
-                    "status": "GEOCODED",
-                    "processing_started_at": null,
-                    "processing_completed_at": null,
-                    "name": "List item 1",
-                    "address": "List item address 1",
-                    "country_code": "US",
-                    "facility_list": 16
-                ]
+                "item_count": 100,
+                "item_url": "/api/facility-lists/16/items/"
             }
         """
         try:
@@ -644,6 +696,33 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def items(self, request, pk):
+        """
+        Returns data about a single page of Facility List Items.
+
+        ## Sample Response
+            {
+                "count": 25,
+                "next": "/api/facility-lists/16/items/?page=2&pageSize=20",
+                "previous": null,
+                "results": [
+                    "id": 1,
+                    "matches": [],
+                    "country_name": "United States",
+                    "processing_errors": null,
+                    "matched_facility": null,
+                    "row_index": 1,
+                    "raw_data": "List item 1, List item address 1",
+                    "status": "GEOCODED",
+                    "processing_started_at": null,
+                    "processing_completed_at": null,
+                    "name": "List item 1",
+                    "address": "List item address 1",
+                    "country_code": "US",
+                    "facility_list": 16
+                ],
+                ...
+            }
+        """
         try:
             user_contributor = request.user.contributor
             facility_list = FacilityList \
