@@ -8,7 +8,7 @@ class GDPRNotification extends PureComponent {
     state = { open: true };
 
     componentDidMount() {
-        const dismissed = sessionStorage.getItem('dismissedGDPRAlert');
+        const dismissed = localStorage.getItem('dismissedGDPRAlert');
         if (dismissed) {
             this.setState({ open: false }); // eslint-disable-line react/no-did-mount-set-state
         }
@@ -16,7 +16,7 @@ class GDPRNotification extends PureComponent {
 
     dismissGDPRAlert = () => {
         this.setState({ open: false });
-        sessionStorage.setItem('dismissedGDPRAlert', true);
+        localStorage.setItem('dismissedGDPRAlert', true);
     };
 
     render() {
