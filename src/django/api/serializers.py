@@ -3,6 +3,7 @@ from django.core import exceptions
 from django.db import transaction
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import password_validation
+from django.urls import reverse
 from rest_framework.serializers import (CharField,
                                         EmailField,
                                         ModelSerializer,
@@ -155,10 +156,20 @@ class UserProfileSerializer(ModelSerializer):
 
 
 class FacilityListSerializer(ModelSerializer):
+    item_count = SerializerMethodField()
+    items_url = SerializerMethodField()
+
     class Meta:
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
-                  'is_public')
+                  'is_public', 'item_count', 'items_url')
+
+    def get_item_count(self, facility_list):
+        return facility_list.facilitylistitem_set.count()
+
+    def get_items_url(self, facility_list):
+        return reverse('facility-list-items',
+                       kwargs={'pk': facility_list.pk})
 
 
 class FacilitySerializer(GeoFeatureModelSerializer):

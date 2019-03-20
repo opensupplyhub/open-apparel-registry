@@ -16,12 +16,14 @@ import FacilityListItemsMatchTableRow from './FacilityListItemsMatchTableRow';
 
 import { facilityListItemPropType } from '../util/propTypes';
 
-import { setSelectedFacilityListItemsRowIndex } from '../actions/facilityListDetails';
+import {
+    setSelectedFacilityListItemsRowIndex,
+    fetchFacilityListItems,
+} from '../actions/facilityListDetails';
 
 import {
     makePaginatedFacilityListItemsDetailLinkWithRowCount,
     getValueFromEvent,
-    makeSliceArgumentsForTablePagination,
     createPaginationOptionsFromQueryString,
 } from '../util/util';
 
@@ -42,9 +44,12 @@ const facilityListItemsTableStyles = Object.freeze({
 });
 
 function FacilityListItemsTable({
+    list,
     items,
+    fetchingItems,
     selectedFacilityListItemsRowIndex,
     makeSelectListItemTableRowFunction,
+    fetchListItems,
     match: {
         params: {
             listID,
@@ -62,27 +67,28 @@ function FacilityListItemsTable({
         rowsPerPage,
     } = createPaginationOptionsFromQueryString(search);
 
-    const handleChangePage = (_, newPage) =>
+    const handleChangePage = (_, newPage) => {
         push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
             (newPage + 1),
             rowsPerPage,
         ));
+        fetchListItems(listID, newPage + 1, rowsPerPage);
+    };
 
-    const handleChangeRowsPerPage = e =>
+    const handleChangeRowsPerPage = (e) => {
         push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
             page,
             getValueFromEvent(e),
         ));
-
-    const paginatedItems = items
-        .slice(...makeSliceArgumentsForTablePagination(page - 1, rowsPerPage));
+        fetchListItems(listID, page, getValueFromEvent(e));
+    };
 
     const paginationControlsRow = (
         <TableRow>
             <TablePagination
-                count={items.length}
+                count={list.item_count}
                 rowsPerPage={Number(rowsPerPage)}
                 rowsPerPageOptions={rowsPerPageOptions}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
@@ -92,7 +98,7 @@ function FacilityListItemsTable({
         </TableRow>
     );
 
-    const tableRows = paginatedItems
+    const tableRows = fetchingItems ? [] : items
         .map((item) => {
             const handleSelectRow = makeSelectListItemTableRowFunction(item.row_index);
 
@@ -212,8 +218,12 @@ function FacilityListItemsTable({
     );
 }
 
+FacilityListItemsTable.defaultProps = {
+    items: null,
+};
+
 FacilityListItemsTable.propTypes = {
-    items: arrayOf(facilityListItemPropType).isRequired,
+    items: arrayOf(facilityListItemPropType),
     match: shape({
         params: shape({
             listID: string.isRequired,
@@ -228,14 +238,21 @@ FacilityListItemsTable.propTypes = {
 
 function mapStateToProps({
     facilityListDetails: {
-        data: {
-            items,
+        items: {
+            data: items,
+            fetching: fetchingItems,
+        },
+        list: {
+            data: list,
         },
         selectedFacilityListItemsRowIndex,
     },
+
 }) {
     return {
+        list,
         items,
+        fetchingItems,
         selectedFacilityListItemsRowIndex,
     };
 }
@@ -244,6 +261,8 @@ function mapDispatchToProps(dispatch) {
     return {
         makeSelectListItemTableRowFunction: rowIndex =>
             () => dispatch(setSelectedFacilityListItemsRowIndex(rowIndex)),
+        fetchListItems: (listID, page, rowsPerPage) =>
+            dispatch(fetchFacilityListItems(listID, page, rowsPerPage)),
     };
 }
 

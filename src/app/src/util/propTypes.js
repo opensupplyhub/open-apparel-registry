@@ -106,7 +106,7 @@ export const facilityListPropType = shape({
     file_name: string.isRequired,
     is_active: bool.isRequired,
     is_public: bool.isRequired,
-    items: arrayOf(facilityListItemPropType),
+    item_count: number.isRequired,
 });
 
 export const contributorOptionsPropType = arrayOf(shape({

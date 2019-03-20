@@ -2,6 +2,9 @@ import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
 
 import {
+    startFetchFacilityList,
+    failFetchFacilityList,
+    completeFetchFacilityList,
     startFetchFacilityListItems,
     failFetchFacilityListItems,
     completeFetchFacilityListItems,
@@ -20,9 +23,16 @@ import { completeSubmitLogOut } from '../actions/auth';
 import { facilityListItemStatusChoicesEnum } from '../util/constants';
 
 const initialState = Object.freeze({
-    data: null,
-    fetching: false,
-    error: null,
+    list: {
+        data: null,
+        fetching: false,
+        error: null,
+    },
+    items: {
+        data: null,
+        fetching: false,
+        error: null,
+    },
     confirmOrRejectMatch: Object.freeze({
         fetching: false,
         error: null,
@@ -58,14 +68,14 @@ const toggleSelectedRowIndex = (state, payload) => {
 
 const completeConfirmMatch = (state, payload) => {
     const indexForListItemToUpdate = state
-        .data
         .items
+        .data
         .findIndex(({ id }) => id === payload.id);
 
     const updatedItems = [
-        ...state.data.items.slice(0, indexForListItemToUpdate),
+        ...state.items.data.slice(0, indexForListItemToUpdate),
         payload,
-        ...state.data.items.slice(indexForListItemToUpdate + 1),
+        ...state.items.data.slice(indexForListItemToUpdate + 1),
     ];
 
     const updatedSelectedRowIndex =
@@ -78,8 +88,8 @@ const completeConfirmMatch = (state, payload) => {
             fetching: { $set: false },
             error: { $set: null },
         },
-        data: {
-            items: {
+        items: {
+            data: {
                 $set: updatedItems,
             },
         },
@@ -90,18 +100,59 @@ const completeConfirmMatch = (state, payload) => {
 };
 
 export default createReducer({
+    [startFetchFacilityList]: state => update(state, {
+        list: {
+            $merge: {
+                data: null,
+                fetching: true,
+                error: null,
+            },
+        },
+    }),
+    [failFetchFacilityList]: (state, payload) => update(state, {
+        list: {
+            $merge: {
+                data: null,
+                fetching: false,
+                error: payload,
+            },
+        },
+    }),
+    [completeFetchFacilityList]: (state, payload) => update(state, {
+        list: {
+            $merge: {
+                data: payload,
+                fetching: false,
+                error: null,
+            },
+        },
+    }),
     [startFetchFacilityListItems]: state => update(state, {
-        fetching: { $set: true },
-        error: { $set: null },
+        items: {
+            $merge: {
+                data: null,
+                fetching: true,
+                error: null,
+            },
+        },
     }),
     [failFetchFacilityListItems]: (state, payload) => update(state, {
-        fetching: { $set: false },
-        error: { $set: payload },
+        items: {
+            $merge: {
+                data: null,
+                fetching: false,
+                error: payload,
+            },
+        },
     }),
     [completeFetchFacilityListItems]: (state, payload) => update(state, {
-        data: { $set: payload },
-        fetching: { $set: false },
-        error: { $set: null },
+        items: {
+            $merge: {
+                data: payload,
+                fetching: false,
+                error: null,
+            },
+        },
     }),
     [resetFacilityListItems]: () => initialState,
     [startConfirmFacilityListItemPotentialMatch]: startConfirmOrRejectMatch,
