@@ -52,13 +52,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 terraform apply "${OAR_SETTINGS_BUCKET}.tfplan"
 
                 # Notify Rollbar of the deploy when running on Jenkins
-                if [[ -n "${OAR_ROLLBAR_ACCESS_TOKEN}" && -n "${OAR_DEPLOYMENT_ENVIRONMENT}" && -n "${BUILD_URL}" ]]; then
+                if [[ -n "${OAR_ROLLBAR_ACCESS_TOKEN}" && -n "${OAR_DEPLOYMENT_ENVIRONMENT}" ]]; then
                     curl -s https://api.rollbar.com/api/1/deploy/ \
                         -F "access_token=${OAR_ROLLBAR_ACCESS_TOKEN}" \
                         -F "environment=${OAR_DEPLOYMENT_ENVIRONMENT}" \
                         -F "revision=${GIT_COMMIT}" \
-                        -F "local_username=jenkins" \
-                        -F "comment=<${BUILD_URL}|View Build>"
+                        -F "local_username=jenkins"
                 fi
                 ;;
             *)
