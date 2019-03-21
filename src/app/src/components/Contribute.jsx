@@ -15,6 +15,7 @@ import ContributeTroubleshooting from './ContributeTroubleshooting';
 import {
     listsRoute,
     authLoginFormRoute,
+    aboutProcessingRoute,
 } from '../util/constants';
 
 function ContributeList({
@@ -55,6 +56,12 @@ function ContributeList({
             <AppGrid title="Contribute">
                 <Grid container className="margin-bottom-64">
                     <Grid item xs={12}>
+                        <p>
+                            Read about how your facility lists are processed and
+                            matched in this&nbsp;
+                            <Link to={aboutProcessingRoute} href={aboutProcessingRoute}>guide</Link>
+                        </p>
+
                         <p>
                             To contribute your supplier list to the OAR,
                             please complete the following steps:

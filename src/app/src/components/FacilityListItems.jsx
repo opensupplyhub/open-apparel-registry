@@ -21,6 +21,7 @@ import {
 import {
     listsRoute,
     facilityListItemsRoute,
+    aboutProcessingRoute,
 } from '../util/constants';
 
 import { facilityListPropType, facilityListItemPropType } from '../util/propTypes';
@@ -39,6 +40,10 @@ const facilityListItemsStyles = Object.freeze({
         marginTop: '60px',
         alignContent: 'center',
         alignItems: 'center',
+    }),
+    subheadStyles: Object.freeze({
+        padding: '0.5rem',
+        'text-align': 'right',
     }),
     tableStyles: Object.freeze({
         minWidth: '85%',
@@ -148,6 +153,11 @@ class FacilityListItems extends Component {
                                     Back to lists
                                 </Button>
                             </div>
+                        </div>
+                        <div style={facilityListItemsStyles.subheadStyles}>
+                            Read about how your facility lists are processed and
+                            matched in this&nbsp;
+                            <Link to={aboutProcessingRoute} href={aboutProcessingRoute}>guide</Link>
                         </div>
                         {
                             list.item_count
