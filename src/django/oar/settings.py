@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_gis',
+    'rest_framework_swagger',
     'rest_auth',
     'allauth',
     'allauth.account',
@@ -127,6 +128,24 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.PageAndSizePagination',
     'PAGE_SIZE': 20,
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+        },
+    },
+    'doc_expansion': 'list',
+    'info': {
+        'description': 'Open Apparel Registry API',
+        'license': 'MIT',
+        'licenseUrl': 'https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/LICENSE', # noqa
+        'title': 'Open Apparel Registry API',
+    },
+    'USE_SESSION_AUTH': False,
 }
 
 MIDDLEWARE = [

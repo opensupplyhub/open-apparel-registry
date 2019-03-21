@@ -20,8 +20,10 @@ from rest_framework.decorators import (api_view,
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.filters import BaseFilterBackend
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.utils import complete_signup
+import coreapi
 
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
@@ -250,6 +252,16 @@ class APIAuthToken(ObtainAuthToken):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def all_contributors(request):
+    """
+    Returns a list of contributors as tuples of contributor IDs and names.
+
+    ## Sample Response
+
+        [
+            [1, "Contributor One"]
+            [2, "Contributor Two"]
+        ]
+    """
     response_data = [
         (contributor.id, contributor.name)
         for contributor
@@ -261,22 +273,128 @@ def all_contributors(request):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def all_contributor_types(request):
+    """
+    Returns a list of contributor type choices as tuples of values and display
+    names.
+
+    ## Sample Response
+
+        [
+            ["Auditor", "Auditor"],
+            ["Brand/Retailer", "Brand/Retailer"],
+            ["Civil Society Organization", "Civil Society Organization"],
+            ["Factory / Facility", "Factory / Facility"]
+        ]
+    """
     return Response(Contributor.CONTRIB_TYPE_CHOICES)
 
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def all_countries(request):
+    """
+    Returns a list of country choices as tuples of country codes and names.
+
+    ## Sample Response
+
+        [
+            ["AF", "Afghanistan"],
+            ["AX", "Åland Islands"]
+            ["AL", "Albania"]
+        ]
+
+    """
     return Response(COUNTRY_CHOICES)
 
 
+class FacilitiesAPIFilterBackend(BaseFilterBackend):
+    def get_schema_fields(self, view):
+        if view.action == 'list':
+            return [
+                coreapi.Field(
+                    name='name',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Facility Name',
+                ),
+                coreapi.Field(
+                    name='contributors',
+                    location='query',
+                    type='integer',
+                    required=False,
+                    description='Contributor ID',
+                ),
+                coreapi.Field(
+                    name='contributor_types',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Contributor Type',
+                ),
+                coreapi.Field(
+                    name='countries',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Country Code',
+                ),
+            ]
+
+        return []
+
+
 class FacilitiesViewSet(ReadOnlyModelViewSet):
+    """
+    Get facilities in GeoJSON format.
+    """
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
     permission_classes = (AllowAny,)
     pagination_class = FacilitiesGeoJSONPagination
+    filter_backends = (FacilitiesAPIFilterBackend,)
 
     def list(self, request):
+        """
+        Returns a list of facilities in GeoJSON format for a given query.
+
+        ### Sample Response
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "OAR_ID_1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [1, 1]
+                        },
+                        "properties": {
+                            "name": "facility_name_1",
+                            "address" "facility address_1",
+                            "country_code": "US",
+                            "country_name": "United States",
+                            "oar_id": "OAR_ID_1"
+                        }
+                    },
+                    {
+                        "id": "OAR_ID_2",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [2, 2]
+                        },
+                        "properties": {
+                            "name": "facility_name_2",
+                            "address" "facility address_2",
+                            "country_code": "US",
+                            "country_name": "United States",
+                            "oar_id": "OAR_ID_2"
+                        }
+                    }
+                ]
+            }
+        """
         name = request.query_params.get(FacilitiesQueryParams.NAME,
                                         None)
         contributors = request.query_params \
@@ -333,6 +451,29 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         return Response(response_data)
 
     def retrieve(self, request, pk=None):
+        """
+        Returns the facility specified by a given OAR ID in GeoJSON format.
+
+        ### Sample Response
+            {
+                "id": "OAR_ID",
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [1, 1]
+                },
+                "properties": {
+                    "name": "facility_name",
+                    "address" "facility address",
+                    "country_code": "US",
+                    "country_name": "United States",
+                    "oar_id": "OAR_ID",
+                    "other_names": [],
+                    "other_addresses": [],
+                    "contributors": [[1, "Contributor One"]]
+                }
+            }
+        """
         try:
             queryset = Facility.objects.get(pk=pk)
             response_data = FacilityDetailsSerializer(queryset).data
@@ -342,9 +483,13 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):
+    """
+    Upload and update facility lists for an authenticated Contributor.
+    """
     queryset = FacilityList.objects.all()
     serializer_class = FacilityListSerializer
     permission_classes = [IsRegisteredAndConfirmed]
+    http_method_names = ['get', 'post', 'head', 'options', 'trace']
 
     def _validate_header(self, header):
         if header is None or header == '':
@@ -360,6 +505,35 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request):
+        """
+        Upload a new Facility List.
+
+        ## Request Body
+
+        *Required*
+
+        `file` (`file`): CSV file to upload.
+
+        *Optional*
+
+        `name` (`string`): Name of the uploaded file.
+
+        `description` (`string`): Description of the uploaded file.
+
+        `replaces` (`number`): An optional ID for an existing list to replace
+                   with the new list
+
+        ### Sample Response
+
+            {
+                "id": 1,
+                "name": "list name",
+                "description": "list description",
+                "file_name": "list-1.csv",
+                "is_active": true,
+                "is_public": true
+            }
+        """
         if 'file' not in request.data:
             raise ValidationError('No file specified.')
         csv_file = request.data['file']
@@ -461,6 +635,29 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def list(self, request):
+        """
+        Returns Facility Lists for an authenticated Contributor.
+
+        ## Sample Response
+            [
+                {
+                    "id":16,
+                    "name":"11",
+                    "description":"list 11",
+                    "file_name":"11.csv",
+                    "is_active":true,
+                    "is_public":true
+                },
+                {
+                    "id":15,
+                    "name":"old list 11",
+                    "description":"old list 11",
+                    "file_name":"11.csv",
+                    "is_active":false,
+                    "is_public":true
+                }
+            ]
+        """
         try:
             contributor = request.user.contributor
             queryset = FacilityList.objects.filter(contributor=contributor)
@@ -470,6 +667,21 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             raise ValidationError('User contributor cannot be None')
 
     def retrieve(self, request, pk):
+        """
+        Returns data describing a single Facility List.
+
+        ## Sample Response
+            {
+                "id": 16,
+                "name": "list 11",
+                "description": "list 11 description",
+                "file_name": "11.csv",
+                "is_active": true,
+                "is_public": true,
+                "item_count": 100,
+                "item_url": "/api/facility-lists/16/items/"
+            }
+        """
         try:
             user_contributor = request.user.contributor
             facility_list = FacilityList \
@@ -484,6 +696,33 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def items(self, request, pk):
+        """
+        Returns data about a single page of Facility List Items.
+
+        ## Sample Response
+            {
+                "count": 25,
+                "next": "/api/facility-lists/16/items/?page=2&pageSize=20",
+                "previous": null,
+                "results": [
+                    "id": 1,
+                    "matches": [],
+                    "country_name": "United States",
+                    "processing_errors": null,
+                    "matched_facility": null,
+                    "row_index": 1,
+                    "raw_data": "List item 1, List item address 1",
+                    "status": "GEOCODED",
+                    "processing_started_at": null,
+                    "processing_completed_at": null,
+                    "name": "List item 1",
+                    "address": "List item address 1",
+                    "country_code": "US",
+                    "facility_list": 16
+                ],
+                ...
+            }
+        """
         try:
             user_contributor = request.user.contributor
             facility_list = FacilityList \
@@ -511,6 +750,101 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             methods=['post'],
             url_path='confirm')
     def confirm_match(self, request, pk=None):
+        """
+        Confirm a potential match between an existing Facility and a Facility
+        List Item from an authenticated Contributor's Facility List.
+
+        Returns an updated Facility List Item with the confirmed match's status
+        changed to `CONFIRMED` and the Facility List Item's status changed to
+        `CONFIRMED_MATCH`. On confirming a potential match, all other
+        potential matches will have their status changed to `REJECTED`.
+
+        ## Request Body
+
+        **Required**
+
+        `list_item_id` (`number`): ID for the Facility List Item rejecting a
+                       match with an existing Facility.
+
+        `facility_match_id` (`number`): ID for the potential Facility Match
+                            rejected as a match for the Facility List Item.
+
+        **Example**
+
+            {
+                "list_item_id": 1,
+                "facility_match_id": 1
+            }
+
+        ## Sample Response
+
+            {
+                "id": 1,
+                "matches": [
+                    {
+                        "id": 1,
+                        "status": "CONFIRMED",
+                        "confidence": 0.6,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "12asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_1",
+                        "name": "facility match name 1",
+                        "address": "facility match address 1",
+                        "location": {
+                            "lat": 1,
+                            "lng": 1
+                        }
+                    },
+                    {
+                        "id": 2,
+                        "status": "REJECTED",
+                        "confidence": 0.7,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "34asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_2",
+                        "name": "facility match name 2",
+                        "address": "facility match address 2",
+                        "location": {
+                            "lat": 2,
+                            "lng": 2
+                        }
+                    }
+                ],
+                "row_index": 1,
+                "address": "facility list item address",
+                "name": "facility list item name",
+                "raw_data": "facility liste item name, facility list item address", # noqa
+                "status": "CONFIRMED_MATCH",
+                "processing_started_at": null,
+                "processing_completed_at": null,
+                "country_code": "US",
+                "facility_list": 1,
+                "country_name": "United States",
+                "processing_errors": null,
+                "matched_facility": {
+                    "oar_id": "oar_id_1",
+                    "name": "facility match name 1",
+                    "address": "facility match address 1",
+                    "location": {
+                        "lat": 1,
+                        "lng": 1
+                    },
+                    "created_from_id": 12345
+                }
+            }
+        """
         try:
             list_item_id = request.data.get('list_item_id')
             facility_match_id = request.data.get('facility_match_id')
@@ -569,6 +903,94 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             methods=['post'],
             url_path='reject')
     def reject_match(self, request, pk=None):
+        """
+        Reject a potential match between an existing Facility and a Facility
+        List Item from an authenticated Contributor's Facility List.
+
+        Returns an updated Facility List Item with the potential match's status
+        changed to `REJECTED`.
+
+        If all potential matches have been rejected and the Facility List Item
+        has been successfully geocoded, creates a new Facility from the
+        Facility List Item.
+
+        ## Request Body
+
+        **Required**
+
+        `list_item_id` (`number`): ID for the Facility List Item rejecting a
+                       match with an existing Facility.
+
+        `facility_match_id` (`number`): ID for the potential Facility Match
+                            rejected as a match for the Facility List Item.
+
+        **Example**
+
+            {
+                "list_item_id": 1,
+                "facility_match_id": 2
+            }
+
+        ## Sample Response
+
+            {
+                "id": 1,
+                "matches": [
+                    {
+                        "id": 1,
+                        "status": "PENDING",
+                        "confidence": 0.6,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "12asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_1",
+                        "name": "facility match name 1",
+                        "address": "facility match address 1",
+                        "location": {
+                            "lat": 1,
+                            "lng": 1
+                        }
+                    },
+                    {
+                        "id": 2,
+                        "status": "REJECTED",
+                        "confidence": 0.7,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "34asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_2",
+                        "name": "facility match name 2",
+                        "address": "facility match address 2",
+                        "location": {
+                            "lat": 2,
+                            "lng": 2
+                        }
+                    }
+                ]
+                "row_index": 1,
+                "address": "facility list item address",
+                "name": "facility list item name",
+                "raw_data": "facility liste item name, facility list item address", # noqa
+                "status": "POTENTIAL_MATCH",
+                "processing_started_at": null,
+                "processing_completed_at": null,
+                "country_code": "US",
+                "country_name": "United States",
+                "matched_facility": null,
+                "processing_errors": null,
+                "facility_list": 1,
+            }
+        """
         try:
             list_item_id = request.data.get('list_item_id')
             facility_match_id = request.data.get('facility_match_id')

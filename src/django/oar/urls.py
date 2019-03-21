@@ -23,6 +23,7 @@ from web.views import environment
 
 
 from rest_framework import routers
+from rest_framework_swagger.views import get_swagger_view
 
 from oar import settings
 
@@ -31,10 +32,22 @@ router.register('facility-lists', views.FacilityListViewSet, 'facility-list')
 router.register('facilities', views.FacilitiesViewSet, 'facility')
 
 
-urlpatterns = [
+public_apis = [
+    url(r'^api/', include(router.urls)),
+    url(r'^api/contributors/', views.all_contributors,
+        name='all_contributors'),
+    url(r'^api/contributor-types/', views.all_contributor_types,
+        name='all_contributor_types'),
+    url(r'^api/countries/', views.all_countries, name='all_countries'),
+]
+
+schema_view = get_swagger_view(title='Open Apparel Registry API Documentation',
+                               patterns=public_apis)
+
+internal_apis = [
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^web/environment\.js', environment, name='environment'),
-    url(r'^api/', include(router.urls)),
+    url(r'^api/docs/', schema_view),
     path('admin/', admin.site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
@@ -50,9 +63,6 @@ urlpatterns = [
         name='get_and_update_user_profile'),
     url(r'^api-token-auth/', views.APIAuthToken.as_view(),
         name='api_token_auth'),
-    url(r'^api/contributors/', views.all_contributors,
-        name='all_contributors'),
-    url(r'^api/contributor-types/', views.all_contributor_types,
-        name='all_contributor_types'),
-    url(r'^api/countries/', views.all_countries, name='all_countries'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+urlpatterns = public_apis + internal_apis
