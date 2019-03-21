@@ -1,8 +1,10 @@
 import os
+import sys
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth.hashers import check_password
 from rest_framework import viewsets, status
@@ -361,7 +363,21 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             raise ValidationError(
                 'Uploaded file exceeds the maximum size of {:.1f}MB.'.format(
                     mb))
-        header = csv_file.readline().decode().rstrip()
+        try:
+            header = csv_file.readline().decode().rstrip()
+        except UnicodeDecodeError:
+            ROLLBAR = getattr(settings, 'ROLLBAR', {})
+            if ROLLBAR:
+                import rollbar
+                rollbar.report_exc_info(
+                    sys.exc_info(),
+                    extra_data={
+                        'user_id': request.user.id,
+                        'contributor_id': request.user.contributor.id,
+                        'file_name': csv_file.name})
+            raise ValidationError('Unsupported file encoding. Please '
+                                  'submit a UTF-8 CSV.')
+
         self._validate_header(header)
 
         try:
@@ -411,12 +427,25 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         for idx, line in enumerate(csv_file):
             if idx > 0:
-                new_item = FacilityListItem(
-                    row_index=(idx - 1),
-                    facility_list=new_list,
-                    raw_data=line.decode().rstrip()
-                )
-                new_item.save()
+                try:
+                    new_item = FacilityListItem(
+                        row_index=(idx - 1),
+                        facility_list=new_list,
+                        raw_data=line.decode().rstrip()
+                    )
+                    new_item.save()
+                except UnicodeDecodeError:
+                    ROLLBAR = getattr(settings, 'ROLLBAR', {})
+                    if ROLLBAR:
+                        import rollbar
+                        rollbar.report_exc_info(
+                            sys.exc_info(),
+                            extra_data={
+                                'user_id': request.user.id,
+                                'contributor_id': request.user.contributor.id,
+                                'file_name': csv_file.name})
+                    raise ValidationError('Unsupported file encoding. Please '
+                                          'submit a UTF-8 CSV.')
 
         if ENVIRONMENT in ('Staging', 'Production'):
             submit_jobs(ENVIRONMENT, new_list)
