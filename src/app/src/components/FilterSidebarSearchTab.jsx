@@ -7,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSelect from 'react-select';
 
+import FacilitySidebarSearchTabFacilitiesCount from './FacilitySidebarSearchTabFacilitiesCount';
+
 import {
     updateFacilityNameFilter,
     updateContributorFilter,
@@ -227,6 +229,7 @@ function FilterSidebarSearchTab({
                 </div>
                 {noFacilitiesFoundMessage}
             </div>
+            <FacilitySidebarSearchTabFacilitiesCount />
         </div>
     );
 }

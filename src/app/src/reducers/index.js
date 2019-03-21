@@ -15,6 +15,7 @@ import FilterOptionsReducer from './FilterOptionsReducer';
 import FiltersReducer from './FiltersReducer';
 import UIReducer from './UIReducer';
 import FacilitiesReducer from './FacilitiesReducer';
+import FacilityCountReducer from './FacilityCountReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -26,4 +27,5 @@ export default combineReducers({
     filters: FiltersReducer,
     ui: UIReducer,
     facilities: FacilitiesReducer,
+    facilityCount: FacilityCountReducer,
 });
