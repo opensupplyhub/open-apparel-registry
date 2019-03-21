@@ -318,7 +318,7 @@ class FacilityListItem(models.Model):
         help_text=('The geocoded location the facility address field taken '
                    'from the raw data.'))
     geocoded_address = models.CharField(
-        max_length=200,
+        max_length=1000,
         null=True,
         blank=True,
         help_text='The geocoded address of the facility.')
