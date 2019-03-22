@@ -59,8 +59,8 @@ data "template_file" "default_job_definition" {
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
 
-    environment              = "${var.environment}"
-    django_secret_key        = "${var.django_secret_key}"
+    environment                = "${var.environment}"
+    django_secret_key          = "${var.django_secret_key}"
     google_server_side_api_key = "${var.google_server_side_api_key}"
 
     aws_region = "${var.aws_region}"
