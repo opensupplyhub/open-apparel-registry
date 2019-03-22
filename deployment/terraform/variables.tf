@@ -185,7 +185,7 @@ variable "cli_fargate_cpu" {
 }
 
 variable "cli_fargate_memory" {
-  default = "512"
+  default = "1024"
 }
 
 variable "image_tag" {}
