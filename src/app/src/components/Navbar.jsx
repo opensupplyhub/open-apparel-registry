@@ -1,7 +1,7 @@
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 
 import logo from '../styles/images/OpenApparelRegistry_logo.png';
 import NavbarDropdown from './NavbarDropdown';
@@ -84,7 +84,7 @@ export default function Navbar() {
                     </Link>
                 </div>
                 <div id="google_translate_element" />
-                <NavbarLoginButtonGroup />
+                <Route component={NavbarLoginButtonGroup} />
             </Toolbar>
         </AppBar>
     );

@@ -2,6 +2,7 @@ import React from 'react';
 import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import noop from 'lodash/noop';
 
 import COLOURS from '../util/COLOURS';
 
@@ -9,17 +10,19 @@ import NavbarDropdown from './NavbarDropdown';
 
 import { submitLogOut } from '../actions/auth';
 
+import { setFiltersFromQueryString } from '../actions/filters';
+
+import { fetchFacilities } from '../actions/facilities';
+
 import { userPropType } from '../util/propTypes';
 
 import {
     authLoginFormRoute,
     authRegisterFormRoute,
+    facilitiesRoute,
 } from '../util/constants';
 
-import {
-    makeMyFacilitiesRoute,
-    makeProfileRouteLink,
-} from '../util/util';
+import { makeProfileRouteLink } from '../util/util';
 
 const componentStyles = Object.freeze({
     containerStyle: Object.freeze({
@@ -53,7 +56,7 @@ const componentStyles = Object.freeze({
     }),
 });
 
-const createUserDropdownLinks = (user, logoutAction) => Object.freeze([
+const createUserDropdownLinks = (user, logoutAction, myFacilitiesAction) => Object.freeze([
     Object.freeze({
         text: 'My Profile',
         url: makeProfileRouteLink(user.id),
@@ -66,10 +69,10 @@ const createUserDropdownLinks = (user, logoutAction) => Object.freeze([
     }),
     Object.freeze({
         text: 'My Facilities',
-        url: user.contributor_id
-            ? makeMyFacilitiesRoute(user.contributor_id)
-            : '/facilities',
-        type: 'link',
+        type: 'button',
+        action: user.contributor_id
+            ? () => myFacilitiesAction(user.contributor_id)
+            : noop,
     }),
     Object.freeze({
         text: 'Log Out',
@@ -82,6 +85,7 @@ function NavbarLoginButtonGroup({
     user,
     logout,
     sessionFetching,
+    navigateToMyFacilities,
 }) {
     if (!user || sessionFetching) {
         return (
@@ -110,7 +114,7 @@ function NavbarLoginButtonGroup({
         <div style={componentStyles.containerStyle}>
             <NavbarDropdown
                 title={user.name}
-                links={createUserDropdownLinks(user, logout)}
+                links={createUserDropdownLinks(user, logout, navigateToMyFacilities)}
             />
         </div>
     );
@@ -124,6 +128,7 @@ NavbarLoginButtonGroup.propTypes = {
     user: userPropType,
     logout: func.isRequired,
     sessionFetching: bool.isRequired,
+    navigateToMyFacilities: func.isRequired,
 };
 
 function mapStateToProps({
@@ -142,9 +147,24 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, {
+    history: {
+        push,
+        location: {
+            pathname,
+        },
+    },
+}) {
     return {
         logout: () => dispatch(submitLogOut()),
+        navigateToMyFacilities: (contributorID) => {
+            dispatch(setFiltersFromQueryString(`?contributors=${contributorID}`));
+            dispatch(fetchFacilities());
+
+            if (pathname !== facilitiesRoute) {
+                push(facilitiesRoute);
+            }
+        },
     };
 }
 

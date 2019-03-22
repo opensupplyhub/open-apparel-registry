@@ -11,10 +11,7 @@ import {
 
 import { filtersPropType } from '../util/propTypes';
 
-import {
-    createQueryStringFromSearchFilters,
-    allFiltersAreEmpty,
-} from '../util/util';
+import { createQueryStringFromSearchFilters } from '../util/util';
 
 export default function withQueryStringSync(WrappedComponent) {
     const componentWithWrapper = class extends Component {
@@ -30,7 +27,7 @@ export default function withQueryStringSync(WrappedComponent) {
                 hydrateFiltersFromQueryString,
             } = this.props;
 
-            return (search && allFiltersAreEmpty(filters))
+            return search
                 ? hydrateFiltersFromQueryString(search)
                 : replace(`?${createQueryStringFromSearchFilters(filters)}`);
         }

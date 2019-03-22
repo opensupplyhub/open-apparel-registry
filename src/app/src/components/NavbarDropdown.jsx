@@ -30,7 +30,7 @@ const itemMap = (item) => {
             );
         default:
             return (
-                <Button color="primary" onClick={item.action}>
+                <Button color="primary" onClick={item.action} style={{ border: 'none' }}>
                     {item.text}
                 </Button>
             );
