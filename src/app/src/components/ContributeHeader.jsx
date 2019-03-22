@@ -24,6 +24,11 @@ const ContributeHeader = memo(() => (
                         sew, RMG, embellishments and printing.
                     </li>
                     <li className="helper-list__item">
+                        All fields in your list must be in English but may
+                        include accented or other Unicode characters. Individual
+                        fields must separated with commas.
+                    </li>
+                    <li className="helper-list__item">
                         File size limit: 5MB
                     </li>
                     <li className="helper-list__item">
