@@ -37,6 +37,8 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         case "${1}" in
             plan)
+                DEFAULT_BATCH_CE_DESIRED_CPU=$(aws batch describe-compute-environments --output text --compute-environments "batch${OAR_DEPLOYMENT_ENVIRONMENT^}DefaultComputeEnvironment" --query "computeEnvironments[].computeResources.desiredvCpus")
+
                 # Clear stale modules & remote state, then re-initialize
                 rm -rf .terraform terraform.tfstate* 
                 terraform init \
@@ -45,6 +47,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
                 terraform plan \
                           -var="image_tag=\"${GIT_COMMIT}\"" \
+                          -var="batch_default_ce_desired_vcpus=${DEFAULT_BATCH_CE_DESIRED_CPU:-0}" \
                           -var-file="${OAR_SETTINGS_BUCKET}.tfvars" \
                           -out="${OAR_SETTINGS_BUCKET}.tfplan"
                 ;;
