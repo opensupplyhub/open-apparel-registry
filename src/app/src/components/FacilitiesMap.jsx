@@ -38,6 +38,9 @@ const DOMREADY_EVENT = 'domready';
 const disambiguationMarkerPopupID = 'disambiguation-marker';
 const disambiguationMarkerPopupContent = 'disambiguation-marker-popup-content';
 
+const selectedMarkerURL = '/images/selectedmarker.png';
+const unselectedMarkerURL = '/images/marker.png';
+
 const facilitiesMapStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
         height: '99.75%',
@@ -77,6 +80,12 @@ class FacilitiesMap extends Component {
 
     popupElement = null;
 
+    selectedMarker = null;
+
+    detailsSelectedMarker = null;
+
+    otherMarkersAtDetailMarkerPoint = null;
+
     componentDidUpdate(prevProps) {
         const {
             data,
@@ -98,11 +107,20 @@ class FacilitiesMap extends Component {
         }
 
         if (!data && prevProps.data) {
-            return this.removeFeatureMarkers();
+            this.removeFeatureMarkers();
         }
 
         if (!oarID && prevProps.match.params.oarID) {
             this.googleMapElement.data.revertStyle();
+        }
+
+        if (!oarID) {
+            this.resetSelectedMarker();
+        }
+
+        if (oarID && (oarID !== prevProps.oarID)) {
+            this.resetSelectedMarker();
+            this.displaySelectedMarker();
         }
 
         if (facilityDetailsData && !isEqual(facilityDetailsData, prevProps.facilityDetailsData)) {
@@ -116,6 +134,7 @@ class FacilitiesMap extends Component {
             }
 
             this.resetMarkerClickedState();
+            this.displaySelectedMarker();
         }
 
         if (isEqual(data, prevProps.data)) {
@@ -143,16 +162,20 @@ class FacilitiesMap extends Component {
         this.mapMethods = maps;
 
         if (data) {
-            if (facilityDetailsData) {
-                this.googleMapElement.setCenter({
-                    lat: last(facilityDetailsData.geometry.coordinates),
-                    lng: head(facilityDetailsData.geometry.coordinates),
-                });
+            this.createFeatureMarkers();
+        }
 
-                this.googleMapElement.setZoom(detailsZoomLevel);
-            }
+        if (facilityDetailsData) {
+            this.googleMapElement.setCenter({
+                lat: last(facilityDetailsData.geometry.coordinates),
+                lng: head(facilityDetailsData.geometry.coordinates),
+            });
 
-            return this.createFeatureMarkers();
+            this.googleMapElement.setZoom(detailsZoomLevel);
+
+            this.displaySelectedMarker();
+
+            return null;
         }
 
         return null;
@@ -183,7 +206,14 @@ class FacilitiesMap extends Component {
     };
 
     createFeatureMarkers = () => {
-        const { data } = this.props;
+        const {
+            data,
+            match: {
+                params: {
+                    oarID,
+                },
+            },
+        } = this.props;
 
         if (!data) {
             return null;
@@ -199,7 +229,14 @@ class FacilitiesMap extends Component {
                 geometry: {
                     coordinates: [lng, lat],
                 },
+                properties: {
+                    oar_id: id,
+                },
             } = feature;
+
+            const iconURL = oarID && (oarID === id)
+                ? selectedMarkerURL
+                : unselectedMarkerURL;
 
             const marker = new this.mapMethods.Marker({
                 position: new this.mapMethods.LatLng(
@@ -207,9 +244,11 @@ class FacilitiesMap extends Component {
                     lng,
                 ),
                 icon: {
-                    url: '/images/marker.png',
+                    url: iconURL,
                     scaledSize: new this.mapMethods.Size(30, 40),
                 },
+                oarID: id,
+                feature,
             });
 
             marker.addListener(
@@ -251,10 +290,118 @@ class FacilitiesMap extends Component {
         return null;
     };
 
+    displaySelectedMarker = () => {
+        const {
+            data,
+            match: {
+                params: {
+                    oarID,
+                },
+            },
+            facilityDetailsData,
+        } = this.props;
+
+        if (facilityDetailsData && (!this.markersLayer || !data)) {
+            const marker = new this.mapMethods.Marker({
+                position: new this.mapMethods.LatLng(
+                    last(facilityDetailsData.geometry.coordiantes),
+                    head(facilityDetailsData.geometry.coordinates),
+                ),
+                icon: {
+                    url: selectedMarkerURL,
+                    scaledSize: new this.mapMethods.Size(30, 40),
+                    zIndex: 1000,
+                },
+                oarID: facilityDetailsData.properties.id,
+                feature: facilityDetailsData,
+                map: this.googleMapElement,
+            });
+
+            this.detailsSelectedMarker = marker;
+        }
+
+        if (this.markersLayer && data) {
+            const markerForOARID = this.markersLayer
+                .find(marker => marker.get('oarID') === oarID);
+
+            if (markerForOARID) {
+                markerForOARID.setIcon({
+                    url: selectedMarkerURL,
+                    scaledSize: new this.mapMethods.Size(30, 40),
+                });
+
+                this.selectedMarker = markerForOARID;
+
+                const featureFromSelectedMarker = this.selectedMarker.get('feature');
+
+                const otherMarkersAtPoint = data
+                    .features
+                    .reduce((acc, nextFeature) => {
+                        if (markerForOARID === nextFeature.properties.oar_id) {
+                            return acc;
+                        }
+
+                        const pointsIntersect = !distance(nextFeature, featureFromSelectedMarker);
+
+                        if (!pointsIntersect) {
+                            return acc;
+                        }
+
+                        const otherMarkerAtPoint = this.markersLayer
+                            .find(marker => marker.get('oarID') === nextFeature.properties.oar_id);
+
+                        otherMarkerAtPoint.setIcon({
+                            url: selectedMarkerURL,
+                            scaledSize: new this.mapMethods.Size(30, 40),
+                        });
+
+                        return acc.concat(otherMarkerAtPoint);
+                    }, []);
+
+                if (otherMarkersAtPoint.length) {
+                    this.otherMarkersAtDetailMarkerPoint = otherMarkersAtPoint;
+                }
+            }
+
+            return null;
+        }
+
+        return null;
+    };
+
+    resetSelectedMarker = () => {
+        if (this.selectedMarker) {
+            this.selectedMarker.setIcon({
+                url: unselectedMarkerURL,
+                scaledSize: new this.mapMethods.Size(30, 40),
+            });
+
+            if (this.otherMarkersAtDetailMarkerPoint) {
+                this.otherMarkersAtDetailMarkerPoint.forEach((marker) => {
+                    marker.setIcon({
+                        url: unselectedMarkerURL,
+                        scaledSize: new this.mapMethods.Size(30, 40),
+                    });
+                });
+
+                this.otherMarkersAtDetailMarkerPoint = null;
+            }
+
+            this.selectedMarker = null;
+        }
+
+        if (this.detailsSelectedMarker) {
+            this.detailsSelectedMarker.setMap(null);
+            this.detailsSelectedMarker = null;
+        }
+    };
+
     handleMarkerClick = (marker, feature) => {
         const {
             data,
         } = this.props;
+
+        this.resetSelectedMarker();
 
         const facilitiesAtPoint = data
             .features
