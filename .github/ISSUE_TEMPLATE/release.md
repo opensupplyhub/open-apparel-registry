@@ -14,6 +14,7 @@ $ git flow release start X.Y.Z
 - [ ] Rotate `CHANGELOG.md` (following [Keep a Changelog](https://keepachangelog.com/) principles)
 - [ ] Ensure outstanding changes are committed:
 ```bash
+$ git status # Ensure we have a clean staging area
 $ git add CHANGELOG.md
 $ git commit -m "X.Y.Z"
 ```
