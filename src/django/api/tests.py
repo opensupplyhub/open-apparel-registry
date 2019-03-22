@@ -295,7 +295,8 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assertRaises(ValueError, parse_facility_list_item, item)
 
     def test_parses_using_header(self):
-        facility_list = FacilityList(header='address,country,name')
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
         item = FacilityListItem(raw_data='1234 main st,de,Shirts!',
                                 facility_list=facility_list)
         parse_facility_list_item(item)
@@ -305,7 +306,8 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assertEqual('1234 main st', item.address)
 
     def test_converts_country_name_to_code(self):
-        facility_list = FacilityList(header='address,country,name')
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
         item = FacilityListItem(raw_data='1234 main st,ChInA,Shirts!',
                                 facility_list=facility_list)
         parse_facility_list_item(item)
@@ -408,7 +410,8 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         )
 
     def test_successfully_geocoded_item_has_correct_results(self):
-        facility_list = FacilityList(header='address,country,name')
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
         item = FacilityListItem(
             raw_data='"City Hall, Philly, PA",us,Shirts!',
             facility_list=facility_list
@@ -426,7 +429,8 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         )
 
     def test_failed_geocoded_item_has_no_resuts_status(self):
-        facility_list = FacilityList(header='address,country,name')
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
         item = FacilityListItem(
             raw_data='"hello, world, foo, bar, baz",us,Shirts!',
             facility_list=facility_list

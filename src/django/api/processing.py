@@ -11,6 +11,7 @@ from unidecode import unidecode
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 
 from api.constants import CsvHeaderField, ProcessingAction
@@ -57,14 +58,38 @@ def parse_facility_list_item(item):
             lng = float(values[fields.index(CsvHeaderField.LNG)])
             item.geocoded_point = Point(lng, lat)
             is_geocoded = True
-        item.status = FacilityListItem.PARSED
-        item.processing_results.append({
-            'action': ProcessingAction.PARSE,
-            'started_at': started,
-            'error': False,
-            'finished_at': str(datetime.utcnow()),
-            'is_geocoded': is_geocoded,
-        })
+        try:
+            item.full_clean(exclude=('processing_started_at',
+                                     'processing_completed_at',
+                                     'processing_results', 'geocoded_point',
+                                     'facility'))
+            item.status = FacilityListItem.PARSED
+            item.processing_results.append({
+                'action': ProcessingAction.PARSE,
+                'started_at': started,
+                'error': False,
+                'finished_at': str(datetime.utcnow()),
+                'is_geocoded': is_geocoded,
+            })
+        except ValidationError as ve:
+            messages = []
+            for name, errors in ve.error_dict.items():
+                # We need to clear the invalid value so we can save the row
+                setattr(item, name, '')
+                error_str = ''.join(''.join(e.messages) for e in errors)
+                messages.append(
+                    'There is a problem with the {0}: {1}'.format(name,
+                                                                  error_str)
+                )
+            item.status = FacilityListItem.ERROR_PARSING
+            item.processing_results.append({
+                'action': ProcessingAction.PARSE,
+                'started_at': started,
+                'error': True,
+                'message': '\n'.join(messages),
+                'trace': traceback.format_exc(),
+                'finished_at': str(datetime.utcnow()),
+            })
     except Exception as e:
         item.status = FacilityListItem.ERROR_PARSING
         item.processing_results.append({
