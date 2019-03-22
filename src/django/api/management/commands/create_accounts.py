@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 )
 
                 contributor = Contributor(
-                    name=name,
+                    name='{} [Public List]'.format(name),
                     description='Public facility lists for {} '
                                 'managed by the OAR team'.format(name),
                     website='',
