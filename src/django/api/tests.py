@@ -407,27 +407,23 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
             ('Items to be geocoded must be in the PARSED status',),
         )
 
-    # TODO: re-enable this test
-    # https://github.com/open-apparel-registry/open-apparel-registry/issues/311
-    # def test_successfully_geocoded_item_has_correct_results(self):
-    #     facility_list = FacilityList(header='address,country,name')
-    #     item = FacilityListItem(
-    #         raw_data='"City Hall, Philly, PA",us,Shirts!',
-    #         facility_list=facility_list
-    #     )
-    #     parse_facility_list_item(item)
-    #     geocode_facility_list_item(item)
+    def test_successfully_geocoded_item_has_correct_results(self):
+        facility_list = FacilityList(header='address,country,name')
+        item = FacilityListItem(
+            raw_data='"City Hall, Philly, PA",us,Shirts!',
+            facility_list=facility_list
+        )
 
-    #     self.assertEqual(
-    #         item.geocoded_address,
-    #         "1400 John F Kennedy Blvd, Philadelphia, PA 19107, USA",
-    #     )
-    #     self.assertIsInstance(item.geocoded_point, Point)
-    #     self.assertEqual(item.status, FacilityListItem.GEOCODED)
-    #     self.assertIn(
-    #         'results',
-    #         self.get_first_status(item, ProcessingAction.GEOCODE)['data']
-    #     )
+        parse_facility_list_item(item)
+        geocode_facility_list_item(item)
+
+        self.assertIsNotNone(item.geocoded_address)
+        self.assertIsInstance(item.geocoded_point, Point)
+        self.assertEqual(item.status, FacilityListItem.GEOCODED)
+        self.assertIn(
+            'results',
+            self.get_first_status(item, ProcessingAction.GEOCODE)['data']
+        )
 
     def test_failed_geocoded_item_has_no_resuts_status(self):
         facility_list = FacilityList(header='address,country,name')
