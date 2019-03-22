@@ -481,6 +481,18 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         except Facility.DoesNotExist:
             raise NotFound()
 
+    @action(detail=False, methods=['get'])
+    def count(self, request):
+        """
+        Returns a count of total Facilities available in the Open Apparel
+        Registry.
+
+        ### Sample Response
+            { "count": 100000 }
+        """
+        count = Facility.objects.count()
+        return Response({"count": count})
+
 
 class FacilityListViewSet(viewsets.ModelViewSet):
     """

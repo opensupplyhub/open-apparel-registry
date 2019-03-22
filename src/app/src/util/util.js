@@ -81,6 +81,8 @@ export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
 export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
 
+export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
+
 export const getValueFromObject = ({ value }) => value;
 
 export const createQueryStringFromSearchFilters = ({
