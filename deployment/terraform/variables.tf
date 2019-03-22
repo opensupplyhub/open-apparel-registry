@@ -40,11 +40,19 @@ variable "bastion_ami" {}
 
 variable "bastion_instance_type" {}
 
-variable "fargate_cpu" {
+variable "fargate_app_cpu" {
   default = "256"
 }
 
-variable "fargate_memory" {
+variable "fargate_app_memory" {
+  default = "512"
+}
+
+variable "fargate_cli_cpu" {
+  default = "256"
+}
+
+variable "fargate_cli_memory" {
   default = "512"
 }
 
