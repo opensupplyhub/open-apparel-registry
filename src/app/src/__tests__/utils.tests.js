@@ -53,6 +53,8 @@ const {
     sortFacilitiesAlphabeticallyByName,
     updateListWithLabels,
     makeSubmitFormOnEnterKeyPressFunction,
+    makeFacilityListItemsRetrieveCSVItemsURL,
+    makeFacilityListDataURLs,
 } = require('../util/util');
 
 const {
@@ -970,4 +972,53 @@ it('does not call a given function when a non-enter key has been pressed in a fo
 
     enterKeyPressHandler(keyPressEvent);
     expect(dispatchSubmitForm).not.toHaveBeenCalled();
+});
+
+it('makes a link for retrieving a page of facility list items for downloading a CSV', () => {
+    const listID = 10;
+    const page = 5;
+
+    const expectedURL = '/api/facility-lists/10/items/?page=5&pageSize=100';
+
+    expect(makeFacilityListItemsRetrieveCSVItemsURL(listID, page))
+        .toBe(expectedURL);
+});
+
+it('creates a list of data URLs for retrieving facility list items data', () => {
+    const listID = 17;
+    const count = 1385;
+
+    const expectedURLs = [
+        '/api/facility-lists/17/items/?page=1&pageSize=100',
+        '/api/facility-lists/17/items/?page=2&pageSize=100',
+        '/api/facility-lists/17/items/?page=3&pageSize=100',
+        '/api/facility-lists/17/items/?page=4&pageSize=100',
+        '/api/facility-lists/17/items/?page=5&pageSize=100',
+        '/api/facility-lists/17/items/?page=6&pageSize=100',
+        '/api/facility-lists/17/items/?page=7&pageSize=100',
+        '/api/facility-lists/17/items/?page=8&pageSize=100',
+        '/api/facility-lists/17/items/?page=9&pageSize=100',
+        '/api/facility-lists/17/items/?page=10&pageSize=100',
+        '/api/facility-lists/17/items/?page=11&pageSize=100',
+        '/api/facility-lists/17/items/?page=12&pageSize=100',
+        '/api/facility-lists/17/items/?page=13&pageSize=100',
+        '/api/facility-lists/17/items/?page=14&pageSize=100',
+    ];
+
+    expect(isEqual(
+        makeFacilityListDataURLs(listID, count),
+        expectedURLs,
+    )).toBe(true);
+
+    const smallerListID = 14;
+    const smallerListCount = 25;
+
+    const smallerExpectedURLs = [
+        '/api/facility-lists/14/items/?page=1&pageSize=100',
+    ];
+
+    expect(isEqual(
+        makeFacilityListDataURLs(smallerListID, smallerListCount),
+        smallerExpectedURLs,
+    )).toBe(true);
 });

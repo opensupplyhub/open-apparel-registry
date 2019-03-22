@@ -16,6 +16,7 @@ import {
     fetchFacilityList,
     fetchFacilityListItems,
     resetFacilityListItems,
+    assembleAndDownloadFacilityListCSV,
 } from '../actions/facilityListDetails';
 
 import {
@@ -24,12 +25,9 @@ import {
     aboutProcessingRoute,
 } from '../util/constants';
 
-import { facilityListPropType, facilityListItemPropType } from '../util/propTypes';
+import { facilityListPropType } from '../util/propTypes';
 
-import {
-    downloadListItemCSV,
-    createPaginationOptionsFromQueryString,
-} from '../util/util';
+import { createPaginationOptionsFromQueryString } from '../util/util';
 
 const facilityListItemsStyles = Object.freeze({
     headerStyles: Object.freeze({
@@ -60,6 +58,11 @@ const facilityListItemsStyles = Object.freeze({
     buttonStyles: Object.freeze({
         marginLeft: '20px',
     }),
+    buttonGroupStyles: Object.freeze({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }),
 });
 
 class FacilityListItems extends Component {
@@ -75,9 +78,10 @@ class FacilityListItems extends Component {
     render() {
         const {
             list,
-            items,
             fetchingList,
             error,
+            downloadCSV,
+            downloadingCSV,
         } = this.props;
 
         if (fetchingList) {
@@ -112,6 +116,22 @@ class FacilityListItems extends Component {
             );
         }
 
+        const csvDownloadButton = downloadingCSV
+            ? (
+                <div>
+                    <CircularProgress size={25} />
+                </div>)
+            : (
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    style={facilityListItemsStyles.buttonStyles}
+                    onClick={downloadCSV}
+                    disabled={downloadingCSV}
+                >
+                    Download CSV
+                </Button>);
+
         return (
             <AppOverflow>
                 <Grid
@@ -134,15 +154,8 @@ class FacilityListItems extends Component {
                                     {list.description || ''}
                                 </Typography>
                             </div>
-                            <div>
-                                <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    style={facilityListItemsStyles.buttonStyles}
-                                    onClick={() => downloadListItemCSV(list, items)}
-                                >
-                                    Download CSV
-                                </Button>
+                            <div style={facilityListItemsStyles.buttonGroupStyles}>
+                                {csvDownloadButton}
                                 <Button
                                     variant="outlined"
                                     component={Link}
@@ -179,18 +192,18 @@ class FacilityListItems extends Component {
 
 FacilityListItems.defaultProps = {
     list: null,
-    items: null,
     error: null,
 };
 
 FacilityListItems.propTypes = {
     list: facilityListPropType,
-    items: arrayOf(facilityListItemPropType),
     fetchingList: bool.isRequired,
     error: arrayOf(string),
     fetchList: func.isRequired,
     fetchListItems: func.isRequired,
     clearListItems: func.isRequired,
+    downloadCSV: func.isRequired,
+    downloadingCSV: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -201,16 +214,18 @@ function mapStateToProps({
             error: listError,
         },
         items: {
-            data: items,
             error: itemsError,
+        },
+        downloadCSV: {
+            fetching: downloadingCSV,
         },
     },
 }) {
     return {
         list,
-        items,
         fetchingList,
         error: listError || itemsError,
+        downloadingCSV,
     };
 }
 
@@ -235,6 +250,7 @@ function mapDispatchToProps(dispatch, {
         fetchList: () => dispatch(fetchFacilityList(listID)),
         fetchListItems: () => dispatch(fetchFacilityListItems(listID, page, rowsPerPage)),
         clearListItems: () => dispatch(resetFacilityListItems()),
+        downloadCSV: () => dispatch(assembleAndDownloadFacilityListCSV()),
     };
 }
 

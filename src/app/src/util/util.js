@@ -20,6 +20,9 @@ import replace from 'lodash/replace';
 import trimEnd from 'lodash/trimEnd';
 import includes from 'lodash/includes';
 import lowerCase from 'lodash/lowerCase';
+import range from 'lodash/range';
+import ceil from 'lodash/ceil';
+import toInteger from 'lodash/toInteger';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -439,4 +442,14 @@ export const makeSubmitFormOnEnterKeyPressFunction = fn => ({ key }) => {
     }
 
     return noop();
+};
+
+export const makeFacilityListItemsRetrieveCSVItemsURL = (id, page) =>
+    `${makeSingleFacilityListItemsURL(id)}?page=${page}&pageSize=100`;
+
+export const makeFacilityListDataURLs = (id, count) => {
+    const maxCount = toInteger(ceil(count, -2) / 100);
+
+    return range(1, maxCount + 1)
+        .map(page => makeFacilityListItemsRetrieveCSVItemsURL(id, page));
 };
