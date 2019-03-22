@@ -17,7 +17,7 @@ const links = [
         newTab: true,
     },
     {
-        href: 'https://info.openapparel.org/contact/',
+        href: 'https://info.openapparel.org/contactus/',
         text: 'Support',
         external: true,
         newTab: true,

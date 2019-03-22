@@ -50,6 +50,10 @@ const contributeFormStyles = Object.freeze({
         display: 'none',
         visibility: 'hidden',
     }),
+    postErrorHelp: Object.freeze({
+        margin: '1.5rem 0',
+        fontWeight: 500,
+    }),
 });
 
 class ContributeForm extends Component {
@@ -113,18 +117,26 @@ class ContributeForm extends Component {
 
         const errorMessages = error && error.length
             ? (
-                <ul>
-                    {
-                        error
-                            .map(err => (
-                                <li
-                                    key={err}
-                                    style={{ color: 'red' }}
-                                >
-                                    {err}
-                                </li>))
-                    }
-                </ul>)
+                <React.Fragment>
+                    <ul>
+                        {
+                            error
+                                .map(err => (
+                                    <li
+                                        key={err}
+                                        style={{ color: 'red' }}
+                                    >
+                                        {err}
+                                    </li>))
+                        }
+                    </ul>
+                    <div style={contributeFormStyles.postErrorHelp}>
+                        If you continue to have trouble submitting your list, please check
+                        the <a href="#troubleshooting">troubleshooting</a> section
+                        on this page or email <a href="mailto:info@openapparel.org">info@openapparel.org</a>.
+                    </div>
+                </React.Fragment>
+            )
             : null;
 
         const formInputs = contributeFormFields

@@ -87,7 +87,7 @@ function ContributeList({
                             <div className="form__field">
                                 <p className="form__label">
                                     Once the list has been successfully
-                                    uploaded, view your list and confirm or deny
+                                    uploaded, view your list and confirm or reject
                                     matches.
                                 </p>
                             </div>
