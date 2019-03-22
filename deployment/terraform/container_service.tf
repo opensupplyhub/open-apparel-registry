@@ -100,9 +100,9 @@ data "template_file" "app" {
   template = "${file("task-definitions/app.json")}"
 
   vars = {
-    cpu    = "${var.fargate_app_cpu}"
+    cpu    = "${var.app_fargate_cpu}"
     image  = "${local.app_image}"
-    memory = "${var.fargate_app_memory}"
+    memory = "${var.app_fargate_memory}"
 
     postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database.port}"
@@ -133,8 +133,8 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "${var.environment}App"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "${var.fargate_app_cpu}"
-  memory                   = "${var.fargate_app_memory}"
+  cpu                      = "${var.app_fargate_cpu}"
+  memory                   = "${var.app_fargate_memory}"
 
   task_role_arn      = "${aws_iam_role.app_task_role.arn}"
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
@@ -146,9 +146,9 @@ data "template_file" "app_cli" {
   template = "${file("task-definitions/app_cli.json")}"
 
   vars = {
-    cpu    = "${var.fargate_cli_cpu}"
+    cpu    = "${var.cli_fargate_cpu}"
     image  = "${local.app_image}"
-    memory = "${var.fargate_cli_memory}"
+    memory = "${var.cli_fargate_memory}"
 
     postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database.port}"
@@ -179,8 +179,8 @@ resource "aws_ecs_task_definition" "app_cli" {
   family                   = "${var.environment}AppCLI"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "${var.fargate_cli_cpu}"
-  memory                   = "${var.fargate_cli_memory}"
+  cpu                      = "${var.cli_fargate_cpu}"
+  memory                   = "${var.cli_fargate_memory}"
 
   task_role_arn      = "${aws_iam_role.app_task_role.arn}"
   execution_role_arn = "${aws_iam_role.ecs_task_execution_role.arn}"
@@ -193,9 +193,9 @@ resource "aws_ecs_service" "app" {
   cluster         = "${aws_ecs_cluster.app.id}"
   task_definition = "${aws_ecs_task_definition.app.arn}"
 
-  desired_count                      = "${var.app_count}"
-  deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
-  deployment_maximum_percent         = "${var.deployment_maximum_percent}"
+  desired_count                      = "${var.app_ecs_desired_count}"
+  deployment_minimum_healthy_percent = "${var.app_ecs_deployment_min_percent}"
+  deployment_maximum_percent         = "${var.app_ecs_deployment_max_percent}"
 
   launch_type = "FARGATE"
 
