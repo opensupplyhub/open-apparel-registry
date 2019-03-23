@@ -65,7 +65,6 @@ class Command(BaseCommand):
                     is_superuser=False,
                     is_staff=False,
                     is_active=True,
-                    username=name,
                     should_receive_newsletter=False,
                     has_agreed_to_terms_of_service=True,
                 )
