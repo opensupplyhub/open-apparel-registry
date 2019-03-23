@@ -63,6 +63,12 @@ const facilityListItemsStyles = Object.freeze({
         justifyContent: 'center',
         alignItems: 'center',
     }),
+    buttonGroupWithErrorStyles: Object.freeze({
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignContent: 'center',
+    }),
 });
 
 class FacilityListItems extends Component {
@@ -82,6 +88,7 @@ class FacilityListItems extends Component {
             error,
             downloadCSV,
             downloadingCSV,
+            csvDownloadingError,
         } = this.props;
 
         if (fetchingList) {
@@ -115,6 +122,13 @@ class FacilityListItems extends Component {
                 </AppGrid>
             );
         }
+
+        const csvDownloadErrorMessage = (csvDownloadingError && csvDownloadingError.length)
+            ? (
+                <p style={{ color: 'red', textAlign: 'right' }}>
+                    An error prevented downloading the CSV.
+                </p>)
+            : null;
 
         const csvDownloadButton = downloadingCSV
             ? (
@@ -154,17 +168,21 @@ class FacilityListItems extends Component {
                                     {list.description || ''}
                                 </Typography>
                             </div>
-                            <div style={facilityListItemsStyles.buttonGroupStyles}>
-                                {csvDownloadButton}
-                                <Button
-                                    variant="outlined"
-                                    component={Link}
-                                    to={listsRoute}
-                                    href={listsRoute}
-                                    style={facilityListItemsStyles.buttonStyles}
-                                >
-                                    Back to lists
-                                </Button>
+                            <div style={facilityListItemsStyles.buttonGroupWithErrorStyles}>
+                                {csvDownloadErrorMessage}
+                                <div style={facilityListItemsStyles.buttonGroupStyles}>
+
+                                    {csvDownloadButton}
+                                    <Button
+                                        variant="outlined"
+                                        component={Link}
+                                        to={listsRoute}
+                                        href={listsRoute}
+                                        style={facilityListItemsStyles.buttonStyles}
+                                    >
+                                        Back to lists
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                         <div style={facilityListItemsStyles.subheadStyles}>
@@ -193,6 +211,7 @@ class FacilityListItems extends Component {
 FacilityListItems.defaultProps = {
     list: null,
     error: null,
+    csvDownloadingError: null,
 };
 
 FacilityListItems.propTypes = {
@@ -204,6 +223,7 @@ FacilityListItems.propTypes = {
     clearListItems: func.isRequired,
     downloadCSV: func.isRequired,
     downloadingCSV: bool.isRequired,
+    csvDownloadingError: arrayOf(string),
 };
 
 function mapStateToProps({
@@ -218,6 +238,7 @@ function mapStateToProps({
         },
         downloadCSV: {
             fetching: downloadingCSV,
+            error: csvDownloadingError,
         },
     },
 }) {
@@ -226,6 +247,7 @@ function mapStateToProps({
         fetchingList,
         error: listError || itemsError,
         downloadingCSV,
+        csvDownloadingError,
     };
 }
 
