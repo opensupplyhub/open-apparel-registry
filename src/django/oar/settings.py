@@ -66,11 +66,15 @@ if ENVIRONMENT in ['Production', 'Staging'] and BATCH_MODE == '':
         response = response.json()
 
         for container in response['Containers']:
-          for network in container['Networks']:
-            for addr in network['IPv4Addresses']:
-              ALLOWED_HOSTS.append(addr)
+            for network in container['Networks']:
+                for addr in network['IPv4Addresses']:
+                    ALLOWED_HOSTS.append(addr)
     else:
         raise ImproperlyConfigured('Unable to fetch instance metadata')
+
+    # Ensure Django knows to determine whether an inbound request was
+    # made over HTTPS by the ALBs HTTP_X_FORWARDED_PROTO header.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
