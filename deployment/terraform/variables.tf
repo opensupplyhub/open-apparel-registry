@@ -220,6 +220,8 @@ variable "batch_default_ce_min_vcpus" {
   default = "0"
 }
 
+variable "batch_default_ce_desired_vcpus" {}
+
 variable "batch_default_ce_max_vcpus" {
   default = "16"
 }
