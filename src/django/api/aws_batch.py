@@ -121,16 +121,18 @@ def submit_jobs(environment, facility_list):
 
     # GEOCODE
     started = str(datetime.utcnow())
+    row_count = facility_list.facilitylistitem_set.count()
+    is_array = row_count > 1
     geocode_job_id = submit_job('geocode',
                                 depends_on=[{'jobId': parse_job_id}],
-                                is_array=True)
+                                is_array=is_array)
     finished = str(datetime.utcnow())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
         'type': 'geocode',
         'job_id': geocode_job_id,
         'error': False,
-        'is_array': True,
+        'is_array': is_array,
         'started_at': started,
         'finished_at': finished,
     })
