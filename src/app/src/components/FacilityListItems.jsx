@@ -16,6 +16,7 @@ import {
     fetchFacilityList,
     fetchFacilityListItems,
     resetFacilityListItems,
+    assembleAndDownloadFacilityListCSV,
 } from '../actions/facilityListDetails';
 
 import {
@@ -24,12 +25,9 @@ import {
     aboutProcessingRoute,
 } from '../util/constants';
 
-import { facilityListPropType, facilityListItemPropType } from '../util/propTypes';
+import { facilityListPropType } from '../util/propTypes';
 
-import {
-    downloadListItemCSV,
-    createPaginationOptionsFromQueryString,
-} from '../util/util';
+import { createPaginationOptionsFromQueryString } from '../util/util';
 
 const facilityListItemsStyles = Object.freeze({
     headerStyles: Object.freeze({
@@ -60,6 +58,17 @@ const facilityListItemsStyles = Object.freeze({
     buttonStyles: Object.freeze({
         marginLeft: '20px',
     }),
+    buttonGroupStyles: Object.freeze({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }),
+    buttonGroupWithErrorStyles: Object.freeze({
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignContent: 'center',
+    }),
 });
 
 class FacilityListItems extends Component {
@@ -75,9 +84,11 @@ class FacilityListItems extends Component {
     render() {
         const {
             list,
-            items,
             fetchingList,
             error,
+            downloadCSV,
+            downloadingCSV,
+            csvDownloadingError,
         } = this.props;
 
         if (fetchingList) {
@@ -112,6 +123,29 @@ class FacilityListItems extends Component {
             );
         }
 
+        const csvDownloadErrorMessage = (csvDownloadingError && csvDownloadingError.length)
+            ? (
+                <p style={{ color: 'red', textAlign: 'right' }}>
+                    An error prevented downloading the CSV.
+                </p>)
+            : null;
+
+        const csvDownloadButton = downloadingCSV
+            ? (
+                <div>
+                    <CircularProgress size={25} />
+                </div>)
+            : (
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    style={facilityListItemsStyles.buttonStyles}
+                    onClick={downloadCSV}
+                    disabled={downloadingCSV}
+                >
+                    Download CSV
+                </Button>);
+
         return (
             <AppOverflow>
                 <Grid
@@ -134,24 +168,21 @@ class FacilityListItems extends Component {
                                     {list.description || ''}
                                 </Typography>
                             </div>
-                            <div>
-                                <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    style={facilityListItemsStyles.buttonStyles}
-                                    onClick={() => downloadListItemCSV(list, items)}
-                                >
-                                    Download CSV
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    component={Link}
-                                    to={listsRoute}
-                                    href={listsRoute}
-                                    style={facilityListItemsStyles.buttonStyles}
-                                >
-                                    Back to lists
-                                </Button>
+                            <div style={facilityListItemsStyles.buttonGroupWithErrorStyles}>
+                                {csvDownloadErrorMessage}
+                                <div style={facilityListItemsStyles.buttonGroupStyles}>
+
+                                    {csvDownloadButton}
+                                    <Button
+                                        variant="outlined"
+                                        component={Link}
+                                        to={listsRoute}
+                                        href={listsRoute}
+                                        style={facilityListItemsStyles.buttonStyles}
+                                    >
+                                        Back to lists
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                         <div style={facilityListItemsStyles.subheadStyles}>
@@ -179,18 +210,20 @@ class FacilityListItems extends Component {
 
 FacilityListItems.defaultProps = {
     list: null,
-    items: null,
     error: null,
+    csvDownloadingError: null,
 };
 
 FacilityListItems.propTypes = {
     list: facilityListPropType,
-    items: arrayOf(facilityListItemPropType),
     fetchingList: bool.isRequired,
     error: arrayOf(string),
     fetchList: func.isRequired,
     fetchListItems: func.isRequired,
     clearListItems: func.isRequired,
+    downloadCSV: func.isRequired,
+    downloadingCSV: bool.isRequired,
+    csvDownloadingError: arrayOf(string),
 };
 
 function mapStateToProps({
@@ -201,16 +234,20 @@ function mapStateToProps({
             error: listError,
         },
         items: {
-            data: items,
             error: itemsError,
+        },
+        downloadCSV: {
+            fetching: downloadingCSV,
+            error: csvDownloadingError,
         },
     },
 }) {
     return {
         list,
-        items,
         fetchingList,
         error: listError || itemsError,
+        downloadingCSV,
+        csvDownloadingError,
     };
 }
 
@@ -235,6 +272,7 @@ function mapDispatchToProps(dispatch, {
         fetchList: () => dispatch(fetchFacilityList(listID)),
         fetchListItems: () => dispatch(fetchFacilityListItems(listID, page, rowsPerPage)),
         clearListItems: () => dispatch(resetFacilityListItems()),
+        downloadCSV: () => dispatch(assembleAndDownloadFacilityListCSV()),
     };
 }
 

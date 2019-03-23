@@ -16,6 +16,9 @@ import {
     failRejectFacilityListItemPotentialMatch,
     completeRejectFacilityListItemPotentialMatch,
     setSelectedFacilityListItemsRowIndex,
+    startAssembleAndDownloadFacilityListCSV,
+    failAssembleAndDownloadFacilityListCSV,
+    completeAssembleAndDownloadFacilityListCSV,
 } from '../actions/facilityListDetails';
 
 import { completeSubmitLogOut } from '../actions/auth';
@@ -38,6 +41,11 @@ const initialState = Object.freeze({
         error: null,
     }),
     selectedFacilityListItemsRowIndex: -1,
+    downloadCSV: Object.freeze({
+        data: null,
+        fetching: false,
+        error: null,
+    }),
 });
 
 const startConfirmOrRejectMatch = state => update(state, {
@@ -152,6 +160,26 @@ export default createReducer({
                 fetching: false,
                 error: null,
             },
+        },
+    }),
+    [startAssembleAndDownloadFacilityListCSV]: state => update(state, {
+        downloadCSV: {
+            data: { $set: null },
+            fetching: { $set: true },
+            error: { $set: null },
+        },
+    }),
+    [failAssembleAndDownloadFacilityListCSV]: (state, payload) => update(state, {
+        downloadCSV: {
+            fetching: { $set: false },
+            error: { $set: payload },
+        },
+    }),
+    [completeAssembleAndDownloadFacilityListCSV]: (state, payload) => update(state, {
+        downloadCSV: {
+            data: { $set: payload },
+            fetching: { $set: false },
+            error: { $set: null },
         },
     }),
     [resetFacilityListItems]: () => initialState,

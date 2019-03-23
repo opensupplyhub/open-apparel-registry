@@ -10,6 +10,8 @@ import {
     createConfirmOrRejectMatchData,
     createConfirmFacilityListItemMatchURL,
     createRejectFacilityListItemMatchURL,
+    makeFacilityListDataURLs,
+    downloadListItemCSV,
 } from '../util/util';
 
 export const setSelectedFacilityListItemsRowIndex =
@@ -36,6 +38,13 @@ export const failRejectFacilityListItemPotentialMatch =
     createAction('FAIL_REJECT_FACILITY_LIST_ITEM_POTENTIAL_MATCH');
 export const completeRejectFacilityListItemPotentialMatch =
     createAction('COMPLETE_REJECT_FACILITY_LIST_ITEM_POTENTIAL_MATCH');
+
+export const startAssembleAndDownloadFacilityListCSV =
+    createAction('START_ASSEMBLE_AND_DOWNLOAD_FACILITY_LIST_CSV');
+export const failAssembleAndDownloadFacilityListCSV =
+    createAction('FAIL_ASSEMBLE_AND_DOWNLOAD_FACILITY_LIST_CSV');
+export const completeAssembleAndDownloadFacilityListCSV =
+    createAction('COMPLETE_ASSEMBLE_AND_DOWNLOAD_FACILITY_LIST_CSV');
 
 export function fetchFacilityList(listID = null) {
     return (dispatch) => {
@@ -136,5 +145,50 @@ export function rejectFacilityListItemMatch(facilityMatchID, listID, listItemID)
                 'An error prevented rejecting that match',
                 failRejectFacilityListItemPotentialMatch,
             )));
+    };
+}
+
+export function assembleAndDownloadFacilityListCSV() {
+    return async (dispatch, getState) => {
+        dispatch(startAssembleAndDownloadFacilityListCSV());
+
+        try {
+            const {
+                facilityListDetails: {
+                    list: {
+                        data,
+                    },
+                },
+            } = getState();
+
+            const {
+                id,
+                item_count: count,
+            } = data;
+
+            const dataURLs = makeFacilityListDataURLs(id, count);
+            const responseData = await Promise.all(
+                dataURLs.map(async (url) => {
+                    const {
+                        data: {
+                            results,
+                        },
+                    } = await csrfRequest.get(url);
+
+                    return results;
+                }),
+            );
+
+            const csvData = [].concat(...responseData);
+            downloadListItemCSV(data, csvData);
+
+            return dispatch(completeAssembleAndDownloadFacilityListCSV(csvData));
+        } catch (err) {
+            return dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented downloading the facilityList CSV',
+                failAssembleAndDownloadFacilityListCSV,
+            ));
+        }
     };
 }
