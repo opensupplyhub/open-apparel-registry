@@ -1,9 +1,11 @@
 import boto3
+import json
 
 from datetime import datetime
-from django.db import transaction
+from django.db import connection
 
 from api.constants import ProcessingAction
+from api.models import FacilityListItem
 
 
 def fetch_batch_queue_arn(client, environment):
@@ -55,6 +57,10 @@ def submit_jobs(environment, facility_list):
     job_time = (datetime.utcnow().isoformat()
                 .replace(':', '-').replace('.', '-').replace('T', '-'))
 
+    item_table = FacilityListItem.objects.model._meta.db_table
+    results_column = 'processing_results'
+    list_id_column = 'facility_list_id'
+
     def submit_job(action, is_array=False, depends_on=None):
         if depends_on is None:
             depends_on = []
@@ -82,6 +88,20 @@ def submit_jobs(environment, facility_list):
             raise RuntimeError(
                 'Failed to submit job {0}. Response {1}'.format(job_name, job))
 
+    def append_processing_result(result_dict):
+        query = ("UPDATE {item_table} "
+                 "SET {results_column} = {results_column} || '{dict_json}' "
+                 "WHERE {list_id_column} = {list_id}")
+        query = query.format(
+            item_table=item_table,
+            results_column=results_column,
+            dict_json=json.dumps(result_dict),
+            list_id_column=list_id_column,
+            list_id=facility_list.id
+        )
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+
     # PARSE
     started = str(datetime.utcnow())
     # The parse task is just quick string manipulation. We submit it as a
@@ -89,51 +109,45 @@ def submit_jobs(environment, facility_list):
     # slows things down.
     parse_job_id = submit_job('parse')
     finished = str(datetime.utcnow())
-    with transaction.atomic():
-        for item in facility_list.facilitylistitem_set.all():
-            item.processing_results.append({
-                'action': ProcessingAction.SUBMIT_JOB,
-                'type': 'parse',
-                'job_id': parse_job_id,
-                'error': False,
-                'started_at': started,
-                'finished_at': finished,
-            })
-            item.save()
+    append_processing_result({
+        'action': ProcessingAction.SUBMIT_JOB,
+        'type': 'parse',
+        'job_id': parse_job_id,
+        'error': False,
+        'is_array': False,
+        'started_at': started,
+        'finished_at': finished,
+    })
 
     # GEOCODE
     started = str(datetime.utcnow())
+    row_count = facility_list.facilitylistitem_set.count()
+    is_array = row_count > 1
     geocode_job_id = submit_job('geocode',
                                 depends_on=[{'jobId': parse_job_id}],
-                                is_array=True)
+                                is_array=is_array)
     finished = str(datetime.utcnow())
-    facility_list.refresh_from_db()
-    with transaction.atomic():
-        for item in facility_list.facilitylistitem_set.all():
-            item.processing_results.append({
-                'action': ProcessingAction.SUBMIT_JOB,
-                'type': 'geocode',
-                'job_id': '{0}:{1}'.format(geocode_job_id, item.row_index),
-                'error': False,
-                'started_at': started,
-                'finished_at': finished,
-            })
-            item.save()
+    append_processing_result({
+        'action': ProcessingAction.SUBMIT_JOB,
+        'type': 'geocode',
+        'job_id': geocode_job_id,
+        'error': False,
+        'is_array': is_array,
+        'started_at': started,
+        'finished_at': finished,
+    })
 
     # MATCH
     started = str(datetime.utcnow())
     match_job_id = submit_job('match',
                               depends_on=[{'jobId': geocode_job_id}])
     finished = str(datetime.utcnow())
-    facility_list.refresh_from_db()
-    with transaction.atomic():
-        for item in facility_list.facilitylistitem_set.all():
-            item.processing_results.append({
-                'action': ProcessingAction.SUBMIT_JOB,
-                'type': 'match',
-                'job_id': '{0}'.format(match_job_id),
-                'error': False,
-                'started_at': started,
-                'finished_at': finished,
-            })
-            item.save()
+    append_processing_result({
+        'action': ProcessingAction.SUBMIT_JOB,
+        'type': 'match',
+        'job_id': match_job_id,
+        'error': False,
+        'is_array': False,
+        'started_at': started,
+        'finished_at': finished,
+    })

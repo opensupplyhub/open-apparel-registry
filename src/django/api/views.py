@@ -618,15 +618,15 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             replaces.is_active = False
             replaces.save()
 
+        items = []
         for idx, line in enumerate(csv_file):
             if idx > 0:
                 try:
-                    new_item = FacilityListItem(
+                    items.append(FacilityListItem(
                         row_index=(idx - 1),
                         facility_list=new_list,
                         raw_data=line.decode().rstrip()
-                    )
-                    new_item.save()
+                    ))
                 except UnicodeDecodeError:
                     ROLLBAR = getattr(settings, 'ROLLBAR', {})
                     if ROLLBAR:
@@ -639,6 +639,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                                 'file_name': csv_file.name})
                     raise ValidationError('Unsupported file encoding. Please '
                                           'submit a UTF-8 CSV.')
+        FacilityListItem.objects.bulk_create(items)
 
         if ENVIRONMENT in ('Staging', 'Production'):
             submit_jobs(ENVIRONMENT, new_list)
