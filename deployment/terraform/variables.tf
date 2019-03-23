@@ -40,44 +40,6 @@ variable "bastion_ami" {}
 
 variable "bastion_instance_type" {}
 
-variable "fargate_cpu" {
-  default = "256"
-}
-
-variable "fargate_memory" {
-  default = "512"
-}
-
-variable "image_tag" {}
-
-variable "app_port" {
-  default = "8080"
-}
-
-variable "google_server_side_api_key" {}
-
-variable "google_client_side_api_key" {}
-
-variable "rollbar_server_side_access_token" {}
-
-variable "rollbar_client_side_access_token" {}
-
-variable "django_secret_key" {}
-
-variable "default_from_email" {}
-
-variable "app_count" {
-  default = "1"
-}
-
-variable "deployment_minimum_healthy_percent" {
-  default = "100"
-}
-
-variable "deployment_maximum_percent" {
-  default = "200"
-}
-
 variable "rds_allocated_storage" {
   default = "64"
 }
@@ -198,17 +160,51 @@ variable "rds_cpu_credit_balance_threshold" {
   default = "30"
 }
 
-variable "ec2_service_role_policy_arn" {
-  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+variable "app_ecs_desired_count" {
+  default = "1"
 }
 
-variable "batch_service_role_policy_arn" {
-  default = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+variable "app_ecs_deployment_min_percent" {
+  default = "100"
 }
 
-variable "spot_fleet_service_role_policy_arn" {
-  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole"
+variable "app_ecs_deployment_max_percent" {
+  default = "200"
 }
+
+variable "app_fargate_cpu" {
+  default = "256"
+}
+
+variable "app_fargate_memory" {
+  default = "512"
+}
+
+variable "cli_fargate_cpu" {
+  default = "256"
+}
+
+variable "cli_fargate_memory" {
+  default = "1024"
+}
+
+variable "image_tag" {}
+
+variable "app_port" {
+  default = "8080"
+}
+
+variable "google_server_side_api_key" {}
+
+variable "google_client_side_api_key" {}
+
+variable "rollbar_server_side_access_token" {}
+
+variable "rollbar_client_side_access_token" {}
+
+variable "django_secret_key" {}
+
+variable "default_from_email" {}
 
 variable "batch_default_ce_spot_fleet_bid_percentage" {
   default = "40"
@@ -239,4 +235,16 @@ variable "batch_default_ce_instance_types" {
     "c5",
     "m5",
   ]
+}
+
+variable "ec2_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+variable "batch_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+}
+
+variable "spot_fleet_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole"
 }
