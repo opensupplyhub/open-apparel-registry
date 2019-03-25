@@ -112,7 +112,7 @@ class App extends Component {
                                     path={aboutProcessingRoute}
                                     component={AboutProcessing}
                                 />
-                                <Route component={RouteNotFound} />
+                                <Route render={() => <RouteNotFound />} />
                             </Switch>
                         </main>
                         <Footer />
