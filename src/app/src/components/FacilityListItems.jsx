@@ -41,7 +41,7 @@ const facilityListItemsStyles = Object.freeze({
     }),
     subheadStyles: Object.freeze({
         padding: '0.5rem',
-        textAlign: 'right',
+        textAlign: 'left',
     }),
     tableStyles: Object.freeze({
         minWidth: '85%',
