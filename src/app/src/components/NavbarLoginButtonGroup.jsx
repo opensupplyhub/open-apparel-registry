@@ -3,6 +3,7 @@ import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import noop from 'lodash/noop';
+import startsWith from 'lodash/startsWith';
 
 import COLOURS from '../util/COLOURS';
 
@@ -19,6 +20,7 @@ import { userPropType } from '../util/propTypes';
 import {
     authLoginFormRoute,
     authRegisterFormRoute,
+    mainRoute,
     facilitiesRoute,
 } from '../util/constants';
 
@@ -156,7 +158,13 @@ function mapDispatchToProps(dispatch, {
     },
 }) {
     return {
-        logout: () => dispatch(submitLogOut()),
+        logout: () => {
+            dispatch(submitLogOut());
+
+            if (pathname !== mainRoute || !startsWith(pathname, facilitiesRoute)) {
+                push(facilitiesRoute);
+            }
+        },
         navigateToMyFacilities: (contributorID) => {
             dispatch(setFiltersFromQueryString(`?contributors=${contributorID}`));
             dispatch(fetchFacilities());
