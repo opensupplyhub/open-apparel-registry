@@ -94,6 +94,7 @@ class LoginForm extends Component {
                                 Email Address
                             </label>
                             <ControlledTextInput
+                                autoFocus
                                 id={LOGIN_EMAIL}
                                 type="email"
                                 value={email}

@@ -85,6 +85,7 @@ class ResetPasswordForm extends Component {
                             New password
                         </label>
                         <ControlledTextInput
+                            autoFocus
                             id={NEW_PASSWORD}
                             type="password"
                             value={newPassword}

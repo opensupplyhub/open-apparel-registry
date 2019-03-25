@@ -31,6 +31,7 @@ export default function UserProfileField({
     isEditableProfile,
     hideOnViewOnlyProfile,
     submitFormOnEnterKeyPress,
+    autoFocus,
 }) {
     if (type === inputTypesEnum.checkbox) {
         window.console.warn(`checkbox not yet implemented for ${id}`);
@@ -118,6 +119,7 @@ export default function UserProfileField({
                     {requiredIndicator}
                 </label>
                 <ControlledTextInput
+                    autoFocus={autoFocus}
                     id={id}
                     value={value}
                     onChange={handleChange}
@@ -134,6 +136,7 @@ UserProfileField.defaultProps = {
     options: null,
     isEditableProfile: false,
     hideOnViewOnlyProfile: false,
+    autoFocus: false,
 };
 
 UserProfileField.propTypes = {
@@ -149,4 +152,5 @@ UserProfileField.propTypes = {
     isEditableProfile: bool,
     hideOnViewOnlyProfile: bool,
     submitFormOnEnterKeyPress: func.isRequired,
+    autoFocus: bool,
 };

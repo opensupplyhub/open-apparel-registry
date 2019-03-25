@@ -98,8 +98,9 @@ class RegisterForm extends Component {
         }
 
         const formInputs = registrationFormFields
-            .map(field => (
+            .map((field, index) => (
                 <RegisterFormField
+                    autoFocus={index === 0}
                     key={field.id}
                     id={field.id}
                     label={field.label}

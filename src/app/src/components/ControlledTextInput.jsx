@@ -13,6 +13,7 @@ export default function ControlledTextInput({
     placeholder,
     disabled,
     submitFormOnEnterKeyPress,
+    autoFocus,
 }) {
     return (
         <Fragment>
@@ -20,6 +21,7 @@ export default function ControlledTextInput({
                 {hint}
             </p>
             <input
+                autoFocus={autoFocus} // eslint-disable-line jsx-a11y/no-autofocus
                 type={type}
                 id={id}
                 className="noFocus form__text-input"
@@ -39,6 +41,7 @@ ControlledTextInput.defaultProps = {
     placeholder: '',
     disabled: false,
     submitFormOnEnterKeyPress: noop,
+    autoFocus: false,
 };
 
 ControlledTextInput.propTypes = {
@@ -50,4 +53,5 @@ ControlledTextInput.propTypes = {
     placeholder: string,
     disabled: bool,
     submitFormOnEnterKeyPress: func,
+    autoFocus: bool,
 };
