@@ -158,8 +158,17 @@ class FacilitiesMap extends Component {
         return null;
     };
 
-    createMapOptions = () => ({
+    createMapOptions = () => Object.freeze({
         fullscreenControl: false,
+        restriction: Object.freeze({
+            strictBounds: true,
+            latLngBounds: Object.freeze({
+                north: 85,
+                south: -85,
+                west: -180,
+                east: 180,
+            }),
+        }),
     });
 
     resetMapZoom = () => {

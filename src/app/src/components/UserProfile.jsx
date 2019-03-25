@@ -132,8 +132,9 @@ class UserProfile extends Component {
             (user && [profile.id, Number(id)].every(val => val === user.id));
 
         const profileInputs = profileFormFields
-            .map(field => (
+            .map((field, index) => (
                 <UserProfileField
+                    autoFocus={index === 1} // the first field is email & isn't an input
                     key={field.id}
                     id={field.id}
                     label={field.label}

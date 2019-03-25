@@ -23,6 +23,7 @@ export default function RegisterFormField({
     handleChange,
     isHidden,
     submitFormOnEnterKeyPress,
+    autoFocus,
 }) {
     if (isHidden) {
         return null;
@@ -79,6 +80,7 @@ export default function RegisterFormField({
                 {requiredIndicator}
             </label>
             <ControlledTextInput
+                autoFocus={autoFocus}
                 value={value}
                 onChange={handleChange}
                 id={id}
@@ -96,6 +98,7 @@ RegisterFormField.defaultProps = {
     value: '',
     options: null,
     link: null,
+    autoFocus: false,
 };
 
 RegisterFormField.propTypes = {
@@ -113,4 +116,5 @@ RegisterFormField.propTypes = {
         url: string.isRequired,
     }),
     submitFormOnEnterKeyPress: func.isRequired,
+    autoFocus: bool,
 };

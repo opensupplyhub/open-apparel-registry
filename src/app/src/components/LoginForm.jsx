@@ -25,7 +25,10 @@ import {
 
 import { userPropType } from '../util/propTypes';
 
-import { authRegisterFormRoute } from '../util/constants';
+import {
+    authRegisterFormRoute,
+    facilitiesRoute,
+} from '../util/constants';
 
 import { formValidationErrorMessageStyle } from '../util/styles';
 
@@ -40,7 +43,7 @@ class LoginForm extends Component {
         } = this.props;
 
         return user
-            ? history.push(`/profile/${user.id}`)
+            ? history.push(facilitiesRoute)
             : null;
     }
 
@@ -91,6 +94,7 @@ class LoginForm extends Component {
                                 Email Address
                             </label>
                             <ControlledTextInput
+                                autoFocus
                                 id={LOGIN_EMAIL}
                                 type="email"
                                 value={email}

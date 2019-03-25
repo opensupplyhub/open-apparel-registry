@@ -23,6 +23,7 @@ import {
     listsRoute,
     facilityListItemsRoute,
     aboutProcessingRoute,
+    authLoginFormRoute,
 } from '../util/constants';
 
 import { facilityListPropType } from '../util/propTypes';
@@ -41,7 +42,7 @@ const facilityListItemsStyles = Object.freeze({
     }),
     subheadStyles: Object.freeze({
         padding: '0.5rem',
-        textAlign: 'right',
+        textAlign: 'left',
     }),
     tableStyles: Object.freeze({
         minWidth: '85%',
@@ -89,6 +90,7 @@ class FacilityListItems extends Component {
             downloadCSV,
             downloadingCSV,
             csvDownloadingError,
+            userHasSignedIn,
         } = this.props;
 
         if (fetchingList) {
@@ -100,6 +102,19 @@ class FacilityListItems extends Component {
         }
 
         if (error && error.length) {
+            if (!userHasSignedIn) {
+                return (
+                    <AppGrid title="Unable to retrieve that list">
+                        <Link
+                            to={authLoginFormRoute}
+                            href={authLoginFormRoute}
+                        >
+                            Sign in to view your Open Apparel Registry lists
+                        </Link>
+                    </AppGrid>
+                );
+            }
+
             return (
                 <AppGrid title="Unable to retrieve that list">
                     <ul>
@@ -224,6 +239,7 @@ FacilityListItems.propTypes = {
     downloadCSV: func.isRequired,
     downloadingCSV: bool.isRequired,
     csvDownloadingError: arrayOf(string),
+    userHasSignedIn: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -241,6 +257,11 @@ function mapStateToProps({
             error: csvDownloadingError,
         },
     },
+    auth: {
+        user: {
+            user,
+        },
+    },
 }) {
     return {
         list,
@@ -248,6 +269,7 @@ function mapStateToProps({
         error: listError || itemsError,
         downloadingCSV,
         csvDownloadingError,
+        userHasSignedIn: !!user,
     };
 }
 
