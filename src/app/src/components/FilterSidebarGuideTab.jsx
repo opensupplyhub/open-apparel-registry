@@ -8,25 +8,22 @@ const FilterSidebarGuideTab = memo(() => (
         style={filterSidebarStyles.controlPanelContentStyles}
     >
         <p className="control-panel__body">
-            The Open Apparel Registry (OAR) is a tool to
-            identify every apparel facility worldwide.
-            It is an open sourced, global database of
-            apparel (garments, footwear and accessories)
-            facility names and locations. The tool
-            normalizes uploaded data - specifically
-            facility names and addresses - submitted by
-            contributors such as brands, industry
-            associations and non-profits and assigns
-            each facility a unique OAR ID number. Each
-            contributor is listed next to every facility
-            it has submitted.
+            The Open Apparel Registry (OAR) is an open source tool which maps
+            garment facilities worldwide and assigns a unique ID number to each.
+            Its goal is to become the go-to source for identifying apparel
+            facilities and their affiliations by collating disparate supplier
+            lists from industry stakeholders into one central, open source map
+            and database.
         </p>
         <p className="control-panel__body">
-            To contribute to the database, users must
-            create an account. Anyone can sign up and
-            contribute. Users interested in browsing the
-            OAR are able to access it freely without
-            creating an account.
+            The collated database of facility names, addresses and affiliated
+            parties is powered by an advanced name and address-matching algorithm
+            and will be available for use by any organization, for free.
+        </p>
+        <p className="control-panel__body">
+            To contribute to the database, users must create a free account.
+            Anyone can sign up and contribute. Users interested in browsing the
+            OAR are able to access it without creating an account.
         </p>
         <a
             href="http://info.openapparel.org/about"
