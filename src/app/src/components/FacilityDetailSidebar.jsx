@@ -134,7 +134,7 @@ class FacilityDetailSidebar extends Component {
                             {data.properties.name}
                         </h3>
                         <p className="panel-header__subheading notranslate">
-                            {data.properties.address}
+                            {data.properties.address} - {data.properties.country_name}
                         </p>
                     </div>
                 </div>
