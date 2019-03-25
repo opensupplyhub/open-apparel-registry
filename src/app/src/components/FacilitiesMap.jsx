@@ -86,6 +86,8 @@ class FacilitiesMap extends Component {
 
     otherMarkersAtDetailMarkerPoint = null;
 
+    markerScaledSize = null;
+
     componentDidUpdate(prevProps) {
         const {
             data,
@@ -160,6 +162,7 @@ class FacilitiesMap extends Component {
 
         this.googleMapElement = map;
         this.mapMethods = maps;
+        this.markerScaledSize = new this.mapMethods.Size(30, 40);
 
         if (data) {
             this.createFeatureMarkers();
@@ -224,6 +227,10 @@ class FacilitiesMap extends Component {
             return null;
         }
 
+        if (!this.markerScaledSize) {
+            this.markerScaledSize = this.mapMethods.Size(30, 40);
+        }
+
         this.markersLayer = data.features.map((feature) => {
             const {
                 geometry: {
@@ -245,7 +252,7 @@ class FacilitiesMap extends Component {
                 ),
                 icon: {
                     url: iconURL,
-                    scaledSize: new this.mapMethods.Size(30, 40),
+                    scaledSize: this.markerScaledSize,
                 },
                 oarID: id,
                 feature,
@@ -280,6 +287,10 @@ class FacilitiesMap extends Component {
             return null;
         }
 
+        if (!this.markerScaledSize) {
+            this.markerScaledSize = this.mapMethods.Size(30, 40);
+        }
+
         this.markersLayer.forEach((marker) => {
             this.markerClusters.removeMarker(marker);
         });
@@ -301,6 +312,10 @@ class FacilitiesMap extends Component {
             facilityDetailsData,
         } = this.props;
 
+        if (!this.markerScaledSize) {
+            this.markerScaledSize = this.mapMethods.Size(30, 40);
+        }
+
         if (facilityDetailsData && (!this.markersLayer || !data)) {
             const marker = new this.mapMethods.Marker({
                 position: new this.mapMethods.LatLng(
@@ -309,7 +324,7 @@ class FacilitiesMap extends Component {
                 ),
                 icon: {
                     url: selectedMarkerURL,
-                    scaledSize: new this.mapMethods.Size(30, 40),
+                    scaledSize: this.markerScaledSize,
                     zIndex: 1000,
                 },
                 oarID: facilityDetailsData.properties.id,
@@ -352,7 +367,7 @@ class FacilitiesMap extends Component {
 
                         otherMarkerAtPoint.setIcon({
                             url: selectedMarkerURL,
-                            scaledSize: new this.mapMethods.Size(30, 40),
+                            scaledSize: this.markerScaledSize,
                         });
 
                         return acc.concat(otherMarkerAtPoint);
@@ -370,17 +385,21 @@ class FacilitiesMap extends Component {
     };
 
     resetSelectedMarker = () => {
+        if (!this.markerScaledSize) {
+            this.markerScaledSize = this.mapMethods.Size(30, 40);
+        }
+
         if (this.selectedMarker) {
             this.selectedMarker.setIcon({
                 url: unselectedMarkerURL,
-                scaledSize: new this.mapMethods.Size(30, 40),
+                scaledSize: this.markerScaledSize,
             });
 
             if (this.otherMarkersAtDetailMarkerPoint) {
                 this.otherMarkersAtDetailMarkerPoint.forEach((marker) => {
                     marker.setIcon({
                         url: unselectedMarkerURL,
-                        scaledSize: new this.mapMethods.Size(30, 40),
+                        scaledSize: this.markerScaledSize,
                     });
                 });
 
