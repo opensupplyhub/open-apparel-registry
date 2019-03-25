@@ -10,7 +10,7 @@ const staticParams =
 const apiKey = `key=${GOOGLE_CLIENT_SIDE_API_KEY}`;
 
 const makeGoogleMapsStaticMapURLFromLatLng = ({ lat, lng }) =>
-    `${baseURL}?center=${lat},${lng}&markers=icon:${window.location.origin}/images/static-marker.png%7C${lat},${lng}&${staticParams}&${apiKey}`;
+    `${baseURL}?center=${lat},${lng}&markers=icon:${window.location.origin}/images/static-selectedmarker.png%7C${lat},${lng}&${staticParams}&${apiKey}`;
 
 export default function FacilityDetailsStaticMap({
     data: {
