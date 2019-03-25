@@ -161,7 +161,7 @@ function mapDispatchToProps(dispatch, {
         logout: () => {
             dispatch(submitLogOut());
 
-            if (pathname !== mainRoute || !startsWith(pathname, facilitiesRoute)) {
+            if (pathname !== mainRoute && !startsWith(pathname, facilitiesRoute)) {
                 push(facilitiesRoute);
             }
         },
