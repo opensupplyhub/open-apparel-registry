@@ -21,6 +21,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import GDPRNotification from './components/GDPRNotification';
 import ConfirmRegistration from './components/ConfirmRegistration';
 import AboutProcessing from './components/AboutProcessing';
+import RouteNotFound from './components/RouteNotFound';
 
 import './App.css';
 
@@ -111,6 +112,7 @@ class App extends Component {
                                     path={aboutProcessingRoute}
                                     component={AboutProcessing}
                                 />
+                                <Route component={RouteNotFound} />
                             </Switch>
                         </main>
                         <Footer />
