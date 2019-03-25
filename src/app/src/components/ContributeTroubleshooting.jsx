@@ -10,7 +10,7 @@ const ContributeTroubleshooting = memo(() => (
                 </p>
                 <ul className="helper-list">
                     <li className="helper-list__item">
-                        Check that your CSV file uses commas to seprate the
+                        Check that your CSV file uses commas to separate the
                         individual fields, not semcolons, tabs, or other
                         characters.
                     </li>
