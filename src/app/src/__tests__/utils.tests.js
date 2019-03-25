@@ -55,6 +55,7 @@ const {
     makeSubmitFormOnEnterKeyPressFunction,
     makeFacilityListItemsRetrieveCSVItemsURL,
     makeFacilityListDataURLs,
+    makeFacilityListSummaryStatus,
 } = require('../util/util');
 
 const {
@@ -66,6 +67,8 @@ const {
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
     ENTER_KEY,
+    facilityListItemStatusChoicesEnum,
+    facilityListSummaryStatusMessages,
 } = require('../util/constants');
 
 it('creates a route for checking facility list items', () => {
@@ -1020,5 +1023,59 @@ it('creates a list of data URLs for retrieving facility list items data', () => 
     expect(isEqual(
         makeFacilityListDataURLs(smallerListID, smallerListCount),
         smallerExpectedURLs,
+    )).toBe(true);
+});
+
+it('creates a summary status message given a list of facility list item statuses', () => {
+    expect(isEqual(
+        makeFacilityListSummaryStatus([
+            facilityListItemStatusChoicesEnum.UPLOADED,
+            facilityListItemStatusChoicesEnum.GEOCODED,
+            facilityListItemStatusChoicesEnum.ERROR_GEOCODING,
+        ]),
+        `${facilityListSummaryStatusMessages.PROCESSING} ${facilityListSummaryStatusMessages.ERROR}`,
+    )).toBe(true);
+
+    expect(isEqual(
+        makeFacilityListSummaryStatus([
+            facilityListItemStatusChoicesEnum.UPLOADED,
+            facilityListItemStatusChoicesEnum.GEOCODED,
+        ]),
+        `${facilityListSummaryStatusMessages.PROCESSING}`,
+    )).toBe(true);
+
+    expect(isEqual(
+        makeFacilityListSummaryStatus([
+            facilityListItemStatusChoicesEnum.POTENTIAL_MATCH,
+            facilityListItemStatusChoicesEnum.ERROR_MATCHING,
+        ]),
+        `${facilityListSummaryStatusMessages.AWAITING} ${facilityListSummaryStatusMessages.ERROR}`,
+    )).toBe(true);
+
+    expect(isEqual(
+        makeFacilityListSummaryStatus([
+            facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
+            facilityListItemStatusChoicesEnum.MATCHED,
+        ]),
+        `${facilityListSummaryStatusMessages.COMPLETED}`,
+    )).toBe(true);
+
+    expect(isEqual(
+        makeFacilityListSummaryStatus([
+            facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
+            facilityListItemStatusChoicesEnum.MATCHED,
+            facilityListItemStatusChoicesEnum.ERROR,
+        ]),
+        `${facilityListSummaryStatusMessages.ERROR}`,
+    )).toBe(true);
+
+    expect(isEqual(
+        makeFacilityListSummaryStatus([
+            facilityListItemStatusChoicesEnum.POTENTIAL_MATCH,
+            facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
+            facilityListItemStatusChoicesEnum.MATCHED,
+            facilityListItemStatusChoicesEnum.ERROR,
+        ]),
+        `${facilityListSummaryStatusMessages.AWAITING} ${facilityListSummaryStatusMessages.ERROR}`,
     )).toBe(true);
 });

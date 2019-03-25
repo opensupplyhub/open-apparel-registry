@@ -38,6 +38,9 @@ import {
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
     ENTER_KEY,
+    facilityListItemStatusChoicesEnum,
+    facilityListItemErrorStatuses,
+    facilityListSummaryStatusMessages,
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
@@ -452,4 +455,30 @@ export const makeFacilityListDataURLs = (id, count) => {
 
     return range(1, maxCount + 1)
         .map(page => makeFacilityListItemsRetrieveCSVItemsURL(id, page));
+};
+
+export const makeFacilityListSummaryStatus = (statuses) => {
+    const errorMessage = facilityListItemErrorStatuses.some(s => statuses.includes(s)) ?
+        facilityListSummaryStatusMessages.ERROR : '';
+    const awaitingMessage = [
+        facilityListItemStatusChoicesEnum.POTENTIAL_MATCH,
+    ].some(s => statuses.includes(s)) ?
+        facilityListSummaryStatusMessages.AWAITING : '';
+    const processingMessage = statuses.some(s => [
+        facilityListItemStatusChoicesEnum.UPLOADED,
+        facilityListItemStatusChoicesEnum.PARSED,
+        facilityListItemStatusChoicesEnum.GEOCODED,
+        facilityListItemStatusChoicesEnum.GEOCODED_NO_RESULTS,
+    ].includes(s)) ?
+        facilityListSummaryStatusMessages.PROCESSING : '';
+    const completeMessage = statuses.every(s => [
+        facilityListItemStatusChoicesEnum.MATCHED,
+        facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
+    ].includes(s)) ?
+        facilityListSummaryStatusMessages.COMPLETED : '';
+
+    return `${completeMessage}
+            ${processingMessage}
+            ${awaitingMessage}
+            ${errorMessage}`.replace(/\s+/g, ' ').trim();
 };
