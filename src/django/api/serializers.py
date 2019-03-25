@@ -158,12 +158,12 @@ class UserProfileSerializer(ModelSerializer):
 class FacilityListSerializer(ModelSerializer):
     item_count = SerializerMethodField()
     items_url = SerializerMethodField()
-    status = SerializerMethodField()
+    statuses = SerializerMethodField()
 
     class Meta:
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
-                  'is_public', 'item_count', 'items_url', 'status')
+                  'is_public', 'item_count', 'items_url', 'statuses')
 
     def get_item_count(self, facility_list):
         return facility_list.facilitylistitem_set.count()
@@ -172,41 +172,10 @@ class FacilityListSerializer(ModelSerializer):
         return reverse('facility-list-items',
                        kwargs={'pk': facility_list.pk})
 
-    def get_status(self, facility_list):
-        ERROR_STATUSES = set(
-            FacilityListItem.ERROR_STATUSES
-        )
-        PROCESSING_STATUSES = set([
-            FacilityListItem.UPLOADED,
-            FacilityListItem.PARSED,
-            FacilityListItem.GEOCODED,
-            FacilityListItem.GEOCODED_NO_RESULTS,
-        ])
-        PENDING_STATUSES = set([
-            FacilityListItem.POTENTIAL_MATCH,
-        ])
-        COMPLETE_STATUSES = set([
-            FacilityListItem.MATCHED,
-            FacilityListItem.CONFIRMED_MATCH,
-        ])
-
-        item_statuses = set(
-            facility_list.facilitylistitem_set
-            .values_list('status', flat=True)
-            .distinct())
-
-        if (item_statuses.intersection(ERROR_STATUSES)):
-            status = 'ERROR'
-        elif (item_statuses.issubset(PROCESSING_STATUSES)):
-            status = 'PROCESSING'
-        elif (item_statuses.issuperset(PENDING_STATUSES)):
-            status = 'PENDING'
-        elif (item_statuses.issubset(COMPLETE_STATUSES)):
-            status = 'COMPLETE'
-        else:
-            status = 'UNKNOWN'
-
-        return status
+    def get_statuses(self, facility_list):
+        return (facility_list.facilitylistitem_set
+                .values_list('status', flat=True)
+                .distinct())
 
 
 class FacilitySerializer(GeoFeatureModelSerializer):
