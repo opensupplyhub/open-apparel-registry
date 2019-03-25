@@ -43,6 +43,10 @@ const facilityListItemsTableStyles = Object.freeze({
     tableWrapperStyles: Object.freeze({
         overflowX: 'auto',
     }),
+    summaryStatusStyles: Object.freeze({
+        fontSize: '1rem',
+        color: 'rgba(0, 0, 0, 0.87)',
+    }),
 });
 
 function FacilityListItemsTable({
@@ -89,7 +93,10 @@ function FacilityListItemsTable({
 
     const paginationControlsRow = (
         <TableRow>
-            <TableCell colSpan={3}>
+            <TableCell
+                colSpan={3}
+                style={facilityListItemsTableStyles.summaryStatusStyles}
+            >
                 {makeFacilityListSummaryStatus(list.statuses)}
             </TableCell>
             <TablePagination
