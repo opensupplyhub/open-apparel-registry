@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import BaseFilterBackend
 from rest_auth.views import LoginView, LogoutView
+from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
 import coreapi
 
@@ -116,6 +117,11 @@ class LoginToOARClient(LoginView):
         login(request, user)
 
         if not request.user.did_register_and_confirm_email:
+            # Mimic the behavior of django-allauth and resend the confirmation
+            # email if an unconfirmed user tries to log in.
+            email_address = EmailAddress.objects.get(email=email)
+            email_address.send_confirmation(request)
+
             raise AuthenticationFailed(
                 'Account is not verified. '
                 'Check your email for a confirmation link.'
