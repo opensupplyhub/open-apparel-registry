@@ -1,23 +1,37 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from './Button';
 import ShowOnly from './ShowOnly';
 import COLOURS from '../util/COLOURS';
 
-class GDPRNotification extends PureComponent {
-    state = { open: true };
+import {
+    userHasAcceptedOrRejectedGATracking,
+    acceptGATracking,
+    rejectGATracking,
+} from '../util/util.ga';
+
+export default class GDPRNotification extends Component {
+    state = { open: false };
 
     componentDidMount() {
-        const dismissed = localStorage.getItem('dismissedGDPRAlert');
-        if (dismissed) {
-            this.setState({ open: false }); // eslint-disable-line react/no-did-mount-set-state
+        if (userHasAcceptedOrRejectedGATracking()) {
+            return null;
         }
+
+        return this.setState(state => Object.assign({}, state, {
+            open: true,
+        }));
     }
 
-    dismissGDPRAlert = () => {
-        this.setState({ open: false });
-        localStorage.setItem('dismissedGDPRAlert', true);
-    };
+    acceptGDPRAlertAndDismissSnackbar = () => this.setState(
+        state => Object.assign({}, state, { open: false }),
+        acceptGATracking,
+    );
+
+    rejectGDPRAlertAndDismissSnackbar = () => this.setState(
+        state => Object.assign({}, state, { open: false }),
+        rejectGATracking,
+    );
 
     render() {
         const GDPRActions = (
@@ -28,9 +42,12 @@ class GDPRNotification extends PureComponent {
                         background: COLOURS.LIGHT_BLUE,
                         marginRight: '10px',
                     }}
-                    onClick={this.dismissGDPRAlert}
+                    onClick={this.rejectGDPRAlertAndDismissSnackbar}
                 />
-                <Button text="Accept" onClick={this.dismissGDPRAlert} />
+                <Button
+                    text="Accept"
+                    onClick={this.acceptGDPRAlertAndDismissSnackbar}
+                />
             </div>
         );
 
@@ -58,5 +75,3 @@ class GDPRNotification extends PureComponent {
         );
     }
 }
-
-export default GDPRNotification;
