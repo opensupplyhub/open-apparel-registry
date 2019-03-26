@@ -1,23 +1,43 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from './Button';
 import ShowOnly from './ShowOnly';
 import COLOURS from '../util/COLOURS';
 
-class GDPRNotification extends PureComponent {
-    state = { open: true };
+import {
+    userHasAcceptedOrRejectedGATracking,
+    userHasAcceptedGATracking,
+    acceptGATrackingAndStartTracking,
+    rejectGATracking,
+    startGATrackingIfUserHasAcceptedNotification,
+} from '../util/util.ga';
+
+export default class GDPRNotification extends Component {
+    state = { open: false };
 
     componentDidMount() {
-        const dismissed = localStorage.getItem('dismissedGDPRAlert');
-        if (dismissed) {
-            this.setState({ open: false }); // eslint-disable-line react/no-did-mount-set-state
+        if (userHasAcceptedOrRejectedGATracking()) {
+            if (userHasAcceptedGATracking()) {
+                startGATrackingIfUserHasAcceptedNotification();
+            }
+
+            return null;
         }
+
+        return this.setState(state => Object.assign({}, state, {
+            open: true,
+        }));
     }
 
-    dismissGDPRAlert = () => {
-        this.setState({ open: false });
-        localStorage.setItem('dismissedGDPRAlert', true);
-    };
+    acceptGDPRAlertAndDismissSnackbar = () => this.setState(
+        state => Object.assign({}, state, { open: false }),
+        acceptGATrackingAndStartTracking,
+    );
+
+    rejectGDPRAlertAndDismissSnackbar = () => this.setState(
+        state => Object.assign({}, state, { open: false }),
+        rejectGATracking,
+    );
 
     render() {
         const GDPRActions = (
@@ -28,19 +48,30 @@ class GDPRNotification extends PureComponent {
                         background: COLOURS.LIGHT_BLUE,
                         marginRight: '10px',
                     }}
-                    onClick={this.dismissGDPRAlert}
+                    onClick={this.rejectGDPRAlertAndDismissSnackbar}
                 />
-                <Button text="Accept" onClick={this.dismissGDPRAlert} />
+                <Button
+                    text="Accept"
+                    onClick={this.acceptGDPRAlertAndDismissSnackbar}
+                />
             </div>
         );
 
-        const GDPRMessage =
-            `We use cookies to collect and analyze
-            information on site performance and usage,
-            and to enhance content. By clicking Accept,
-            you agree to allow cookies to be placed.
-            To find out more, visit our terms of service
-            and our privacy policy.`;
+        const snackbarMessage = (
+            <div>
+                The Open Apparel Registry uses cookies to collect and analyze
+                site performance and usage. By clicking the Accept button, you
+                agree to allow us to place cookies and share information with
+                Google Analytics. For more information, please visit our{' '}
+                <a
+                    href="https://info.openapparel.org/tos/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Terms and Conditions of Use and Privacy Policy.
+                </a>
+            </div>
+        );
 
         return (
             <ShowOnly when={this.state.open}>
@@ -52,11 +83,9 @@ class GDPRNotification extends PureComponent {
                         horizontal: 'right',
                     }}
                     action={GDPRActions}
-                    message={GDPRMessage}
+                    message={snackbarMessage}
                 />
             </ShowOnly>
         );
     }
 }
-
-export default GDPRNotification;
