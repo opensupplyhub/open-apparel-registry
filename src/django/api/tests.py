@@ -18,7 +18,7 @@ from api.oar_id import make_oar_id, validate_oar_id
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             match_facility_list_items)
-from api.geocoding import (create_geocoding_api_url,
+from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
 from api.test_data import azavea_office_data, parsed_city_hall_data
@@ -359,13 +359,14 @@ class GeocodingUtilsTest(TestCase):
     def setUp(self):
         settings.GOOGLE_SERVER_SIDE_API_KEY = "world"
 
-    def test_geocoding_api_url_is_created_correctly(self):
+    def test_geocoding_params_are_created_correctly(self):
         self.assertEqual(
-            create_geocoding_api_url("hello", "US"),
-            (
-                "https://maps.googleapis.com/maps/api/geocode/json"
-                "?components=country:US&address=hello&key=world"
-            )
+            create_geocoding_params("hello", "US"),
+            {
+                'components': 'country:US',
+                'address': 'hello',
+                'key': 'world',
+            }
         )
 
     def test_geocoded_address_data_is_formatted_correctly(self):
@@ -380,7 +381,9 @@ class GeocodingTest(TestCase):
         self.assertDictEqual(geocoded_data, azavea_office_data)
 
     def test_ungeocodable_address_returns_zero_resusts(self):
-        results = geocode_address('hello world', '$#')
+        results = geocode_address('@#$^@#$^', 'XX')
+        from pprint import pprint
+        pprint(results)
         self.assertEqual(0, results['result_count'])
 
 
