@@ -32,15 +32,42 @@
     <title>Open Apparel Registry (beta)</title>
     <!-- Environment Variables -->
     <script src="%PUBLIC_URL%/web/environment.js"></script>
-    <!-- TODO: Replace with actual Google Tag Manager snippet -->
+    <!-- Google Analytics -->
     <script>
-      if (window.ENVIRONMENT &&
-          window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY &&
-          window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY !== "" &&
-          window.ENVIRONMENT.ENVIRONMENT !== 'development') {
-        console.log(window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY);
-      }
+        var GA_TRACKING = 'GA_TRACKING';
+        var HAS_ACCEPTED_GA_TRACKING = 'HAS_ACCEPTED_GA_TRACKING';
+
+        function setGADisableKey(key, value) {
+            var disableGAKey = 'ga-disable-' + key;
+            window[disableGAKey] = value || true;
+        }
+
+        if (window.ENVIRONMENT &&
+            window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY &&
+            window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY !== "" &&
+            window.ENVIRONMENT.ENVIRONMENT === 'development') {
+            // Initially disable tracking until we check that the user has accepted the notification
+            // see https://developers.google.com/analytics/devguides/collection/analyticsjs/user-opt-out
+            setGADisableKey(window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY, true);
+
+            if (window.localStorage && window.localStorage.getItem(GA_TRACKING) === HAS_ACCEPTED_GA_TRACKING) {
+                setGADisableKey(window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY, false);
+            }
+
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                                     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics_debug.js','ga');
+
+            ga('create', window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY, 'auto');
+            ga('set', 'anonymizeIp', true);
+
+            if (window.localStorage && window.localStorage.getItem(GA_TRACKING) === HAS_ACCEPTED_GA_TRACKING) {
+                ga('send', 'pageview');
+            }
+        }
     </script>
+    <!-- End Google Analytics -->
     <!--
       Rollbar Configuration
       https://docs.rollbar.com/docs/browser-js
