@@ -1,0 +1,11 @@
+/*
+  Since React doesn't allow us to inline certain css properties, such as :hover,
+  it can quickly become annoying to generate stylesheets for removing default browser
+  styles such as the blue :focus highlight. This file contains classes that remove the
+  default styles.
+ */
+
+ .noFocus:focus {
+   highlight: none;
+   outline: none;
+ }

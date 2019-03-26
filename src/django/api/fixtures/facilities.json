@@ -1,0 +1,2121 @@
+[
+    {
+        "model": "api.facility",
+        "pk": "CN2019072X46HPM",
+        "fields": {
+            "name": "QIANG XING FOOTWEAR LTD",
+            "address": "NO.3 OF FIRST LANE LONGZHU ROAD,NANQU SHANG TANG INDUSTRIAL ZONE ,ZHONGSHAN CITY ,GUANGDONG PROVINCE",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.3593869 22.4701435)",
+            "created_from": 3,
+            "created_at": "2019-03-08T02:36:16+00:00",
+            "updated_at": "2019-03-13T21:14:05.155601+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072JD1RHF",
+        "fields": {
+            "name": "SHANTOU CITY OVERSEAS CHINESE UNION TEXTILES & ARTS LIMITED",
+            "address": "2/F BLOCK 1, NO. 79 JINHU ROAD, SHANTOU CITY, GUANGDONG, CHINA",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (116.696187 23.374827)",
+            "created_from": 4,
+            "created_at": "2019-03-12T19:31:53+00:00",
+            "updated_at": "2019-03-13T21:14:05.418239+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072VR6M2N",
+        "fields": {
+            "name": "Y-JESSI",
+            "address": "NO.376-5 SHICHA ROAD\uff0cSHENMING INTERNATIONAL CENTER, GUANGZHOU, CHINA\u25a1",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.2403506 23.1864478)",
+            "created_from": 22,
+            "created_at": "2019-03-11T23:01:57+00:00",
+            "updated_at": "2019-03-13T21:14:05.186002+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072FMVQ72",
+        "fields": {
+            "name": "SHARE SHOES",
+            "address": "RM A3-1, 5F BUILDING, NO.129 JUNYING PLAZA XI CHA RD, GUANGZHOU, CHINA 510407",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.234807 23.15572)",
+            "created_from": 24,
+            "created_at": "2019-03-06T10:00:14+00:00",
+            "updated_at": "2019-03-13T21:14:05.003384+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072M15MYJ",
+        "fields": {
+            "name": "ZHEJIANG LAIMENG CHILDREN  SHOES CO.,LTD",
+            "address": "NO. 2,CIFENG WEST ROAD,OUHAI ECONOMIC DEVLEOPMENT DISTRICT, WENZHOU,ZHEJIANG",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.666565 27.956389)",
+            "created_from": 25,
+            "created_at": "2019-03-12T17:00:49+00:00",
+            "updated_at": "2019-03-13T21:14:05.327035+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190726Z6X0E",
+        "fields": {
+            "name": "ZHEN JIANG DONG CHUANG FUR & LEATHER CO.,LTD",
+            "address": "GAOQIAO TOWN, DANTU DISTRICT, ZHENJIANG CITY, JIANGSU PROVINCE.",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.652005 32.230706)",
+            "created_from": 35,
+            "created_at": "2019-03-12T21:24:54+00:00",
+            "updated_at": "2019-03-13T21:14:05.403018+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072E0CPVH",
+        "fields": {
+            "name": "DONGGUAN MEIQUAN SHOES CO.,LTD",
+            "address": "AO TAI CROSS ROAD XU HUAN ROAD HOU JIE TOWN DONG GUAN CITY GUANG DONG PROVINCE CHINA",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.670324 22.935289)",
+            "created_from": 36,
+            "created_at": "2019-03-09T02:55:39+00:00",
+            "updated_at": "2019-03-13T21:14:05.183540+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "TH201907281QVGW",
+        "fields": {
+            "name": "BASINI",
+            "address": "9-9/1 MOO 12 MALAIMAN ROAD, SRAPATTANA, KAMPANGSAN, NAKHONPTHOM 73180",
+            "country_code": "TH",
+            "location": "SRID=4326;POINT (100.1026377 14.4741754)",
+            "created_from": 40,
+            "created_at": "2019-03-05T18:49:43+00:00",
+            "updated_at": "2019-03-13T21:14:05.978077+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "ID2019072FCH17P",
+        "fields": {
+            "name": "PT. SHOU FONG LASTINDO",
+            "address": "JL. RAYA PANDEREJO DS. LEGOK \u2013 GEMPOL PASURUAN (67155) \u2013 JAWA TIMUR",
+            "country_code": "ID",
+            "location": "SRID=4326;POINT (112.7184169 -7.565125999999999)",
+            "created_from": 41,
+            "created_at": "2019-03-07T07:33:06+00:00",
+            "updated_at": "2019-03-13T21:14:05.592784+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190728Q9E84",
+        "fields": {
+            "name": "WEHZHOU JIETU SHOES CO.,LTD",
+            "address": "NO.8,SHUANGBAO WEST ROAD,OUHAI ECONOMY DEVELOPMENT ZONE,WENZHOU CITY,ZHEJIANG PROVINCE ,CHINA",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.66201 27.966814)",
+            "created_from": 53,
+            "created_at": "2019-03-07T10:15:45+00:00",
+            "updated_at": "2019-03-13T21:14:05.801245+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072X9GCCM",
+        "fields": {
+            "name": "DESAY GROUP CO., LTD.",
+            "address": "NO.8 CUIBAI ROAD,OUHAI ECONOMIC DEVELOPMENT AREA.WENZHOU,CHINA",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.659854 27.96723)",
+            "created_from": 54,
+            "created_at": "2019-03-12T15:34:31+00:00",
+            "updated_at": "2019-03-13T21:14:05.354604+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "IN2019072RXRSWE",
+        "fields": {
+            "name": "TMAR",
+            "address": "49,WUTHUCATTAN STREET,PERIAMET,CHENNAI 600 003.INDIA",
+            "country_code": "IN",
+            "location": "SRID=4326;POINT (80.2683718 13.0906065)",
+            "created_from": 64,
+            "created_at": "2019-03-12T20:19:28+00:00",
+            "updated_at": "2019-03-13T21:14:05.777746+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072E481XY",
+        "fields": {
+            "name": "QUANZHOU XINXING FOOTWEAR CO., LTD",
+            "address": "WUYI INDUSTIAL ZONE, BAIQI VILLAGE, HUI'AN COUNTY,QUANZHOU CITY, FUJIAN PROVINCE",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (118.71899 24.880992)",
+            "created_from": 74,
+            "created_at": "2019-03-13T04:30:01+00:00",
+            "updated_at": "2019-03-13T21:14:05.128679+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072Z0SGBS",
+        "fields": {
+            "name": "QUANZHOU HAIRUN SPORTING GOODS CO.,LTD",
+            "address": "NO 128 NAHUA ROAD,NAPU LNDUSTRIAL, QUANZHOU CITY,FUJIAN PROVINCR,CHINA",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (118.675675 24.874132)",
+            "created_from": 75,
+            "created_at": "2019-03-10T04:50:01+00:00",
+            "updated_at": "2019-03-13T21:14:05.632318+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072GDPBY2",
+        "fields": {
+            "name": "Dalian Sportech Apparel Co., Ltd.",
+            "address": "No. 153 West of Liaohe Road, Economic & Technical Development Zone, Dalian City, Liaoning Province 116600",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (104.195397 35.86166)",
+            "created_from": 76,
+            "created_at": "2019-03-13T06:17:07+00:00",
+            "updated_at": "2019-03-13T21:14:05.523204+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072E6TK18",
+        "fields": {
+            "name": "Dongguan Luyang Shoes Co., Ltd.",
+            "address": "Development Zone of Chi-Ling, Hou Jie Town, DongGuan City, Guangdong Province 523940",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.6989893 22.9650092)",
+            "created_from": 77,
+            "created_at": "2019-03-05T17:07:38+00:00",
+            "updated_at": "2019-03-13T21:14:05.733340+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "JO2019072MBA8NM",
+        "fields": {
+            "name": "Al Hanan",
+            "address": "Alhoson Street Bebrs Building, P.O.Box. 888 Irbid 21110",
+            "country_code": "JO",
+            "location": "SRID=4326;POINT (35.8686066 32.5782142)",
+            "created_from": 83,
+            "created_at": "2019-03-13T10:18:11+00:00",
+            "updated_at": "2019-03-13T21:14:05.351218+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "MX2019072299KFG",
+        "fields": {
+            "name": "Robinson Manufacturing Co. de Mexico S.A. de C.V.",
+            "address": "Calle Industrial Alimenticia 2311, Linares 67735",
+            "country_code": "MX",
+            "location": "SRID=4326;POINT (-99.56727099999999 24.885091)",
+            "created_from": 87,
+            "created_at": "2019-03-12T15:30:41+00:00",
+            "updated_at": "2019-03-13T21:14:05.998551+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "TR201907287AF7A",
+        "fields": {
+            "name": "Pim Tekstil San.Ve. Tic. Sti.",
+            "address": "Yarimburgaz Mh. Atat\u00fcrk Cd. No.31, 34306 Cekmece, Istanbul 34290",
+            "country_code": "TR",
+            "location": "SRID=4326;POINT (28.7537345 41.0558738)",
+            "created_from": 90,
+            "created_at": "2019-03-06T17:30:37+00:00",
+            "updated_at": "2019-03-13T21:14:05.868855+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "IN20190720Q5BRB",
+        "fields": {
+            "name": "Bhartiya International Ltd.",
+            "address": "Apiic Industrial Park, Kondur Village, Tada Mandal, Spsr Nellore Dist, 524401",
+            "country_code": "IN",
+            "location": "SRID=4326;POINT (80.0283415 13.589216)",
+            "created_from": 97,
+            "created_at": "2019-03-09T04:02:04+00:00",
+            "updated_at": "2019-03-13T21:14:05.961044+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN201907239W11G",
+        "fields": {
+            "name": "Changzhou Beisheng Garments Co. Ltd.",
+            "address": "Fukang Road, Xinbei District, Changzhou, Jiangsu Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.9212348 31.84225559999999)",
+            "created_from": 99,
+            "created_at": "2019-03-10T20:42:08+00:00",
+            "updated_at": "2019-03-13T21:14:05.895909+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072JX7949",
+        "fields": {
+            "name": "Donglong (Tancheng) Garments Co. Ltd.",
+            "address": "Yanghong Road Yangji Town, Tancheng City, Shandong Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.797634 32.23483)",
+            "created_from": 103,
+            "created_at": "2019-03-12T09:53:26+00:00",
+            "updated_at": "2019-03-13T21:14:05.240020+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD20190725RZX5S",
+        "fields": {
+            "name": "Eypllion Style Ltd.",
+            "address": "Bahadurpur, Vawal Mirzapur, Gazipur Sadar, Gazipur, 1703",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.403094 24.1315156)",
+            "created_from": 112,
+            "created_at": "2019-03-12T05:42:27+00:00",
+            "updated_at": "2019-03-13T21:14:05.238219+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072BS7DFD",
+        "fields": {
+            "name": "Haiyan Shenda Clothes Co. Ltd. ",
+            "address": "314304 Haitang Street, Haiyan City, Zheijang",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.0057666 30.5750581)",
+            "created_from": 116,
+            "created_at": "2019-03-10T16:34:30+00:00",
+            "updated_at": "2019-03-13T21:14:05.177297+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD2019072AANHPB",
+        "fields": {
+            "name": "Hamza Textiles Ltd.",
+            "address": "Nayapara, Kashimpur, Gazipur",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.3209478 23.9887791)",
+            "created_from": 117,
+            "created_at": "2019-03-10T06:33:09+00:00",
+            "updated_at": "2019-03-13T21:14:05.981330+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072VXDV06",
+        "fields": {
+            "name": "Hangzhou Fuyang Zhongrui Knitting Mill",
+            "address": "Huajia Natural Village, GuaQiao Bu Village, Changkou Town, FuYang District",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.869131 29.900998)",
+            "created_from": 119,
+            "created_at": "2019-03-13T16:56:54+00:00",
+            "updated_at": "2019-03-13T21:14:05.972660+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190723PQRP4",
+        "fields": {
+            "name": "High Fashion Co. Ltd.",
+            "address": "No. 8 Qiannong Road, Xiaoshan ETDZ, Hangzhou, 311231",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.3145561 30.2371126)",
+            "created_from": 121,
+            "created_at": "2019-03-08T16:59:48+00:00",
+            "updated_at": "2019-03-13T21:14:05.495017+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072WVSR5K",
+        "fields": {
+            "name": "Huai An Yuan Tong Headwear Mfg. Co. Ltd.",
+            "address": "No. 30 & 32 Yan Huang Avenue, Lian Shui Economic Development Zone, Jiang Su Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (104.195397 35.86166)",
+            "created_from": 123,
+            "created_at": "2019-03-11T23:48:28+00:00",
+            "updated_at": "2019-03-13T21:14:05.897140+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "IN2019072HGJV60",
+        "fields": {
+            "name": "Jeans Knit Private Ltd Unit 4",
+            "address": "No. 20-A/21-E, II Phase, Peenya Industrial Area, Bangalore, 562028",
+            "country_code": "IN",
+            "location": "SRID=4326;POINT (77.52252940000001 13.0350599)",
+            "created_from": 127,
+            "created_at": "2019-03-05T18:03:42+00:00",
+            "updated_at": "2019-03-13T21:14:05.957119+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "IN2019072SE6ARV",
+        "fields": {
+            "name": "Jeyam Printing",
+            "address": "No. 14/2,3/3, Vednathangal High Road, Kolambakkam Village, Kancheepuram Dist",
+            "country_code": "IN",
+            "location": "SRID=4326;POINT (79.8560694 12.5454597)",
+            "created_from": 129,
+            "created_at": "2019-03-06T14:49:59+00:00",
+            "updated_at": "2019-03-13T21:14:05.033327+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072JJM5WZ",
+        "fields": {
+            "name": "Leekwan Embroidery (Haining) Ltd. ",
+            "address": "No. 2 Hongqi Road, Maqiao Warp Knitting Industrial Zone Haining City, Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.675359 30.468071)",
+            "created_from": 137,
+            "created_at": "2019-03-06T07:57:20+00:00",
+            "updated_at": "2019-03-13T21:14:05.442322+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072585BAD",
+        "fields": {
+            "name": "Nantong Foremost Headwears Co. Ltd.",
+            "address": "No. 18 Foremost Road, QinZao Town, Gangzha District, Nantong 226008, Jiangsu",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.8649816 32.0643471)",
+            "created_from": 139,
+            "created_at": "2019-03-05T16:28:11+00:00",
+            "updated_at": "2019-03-13T21:14:05.876076+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072F23H6H",
+        "fields": {
+            "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
+            "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.596047 32.172013)",
+            "created_from": 140,
+            "created_at": "2019-03-12T17:10:56+00:00",
+            "updated_at": "2019-03-13T21:14:05.413401+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "TR2019072QVRW12",
+        "fields": {
+            "name": "Nersoy Tekstil San. Ve Tic. Ltd. Sti. Washing",
+            "address": "Organize Sanayi Bolgesi 4, Nolu Cadde 1880 Parsel, Caycuma, Zonguldak",
+            "country_code": "TR",
+            "location": "SRID=4326;POINT (32.121957 41.409699)",
+            "created_from": 145,
+            "created_at": "2019-03-05T03:24:42+00:00",
+            "updated_at": "2019-03-13T21:14:05.576708+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072HR30ZH",
+        "fields": {
+            "name": "Ningbo Venux Apparel Co. Ltd.",
+            "address": "110 South Xiwu Road, Fenghua Ningbo, Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.481373 29.676311)",
+            "created_from": 147,
+            "created_at": "2019-03-08T00:27:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.734844+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN201907225MXTR",
+        "fields": {
+            "name": "Pinghu Sensen Clothing Co. Ltd. ",
+            "address": "Zhangqiao Village, Caoqiao Street, Pinghu, Jiaxing City",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.698307 30.581304)",
+            "created_from": 149,
+            "created_at": "2019-03-06T07:44:07+00:00",
+            "updated_at": "2019-03-13T21:14:05.935813+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072XR0252",
+        "fields": {
+            "name": "ShaoXing City ShangYu Shuaite Garments Co. Ltd.",
+            "address": "Baiguan Industrial Park, Baiguan Street, Shangyu District, ShaoXing City",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.874904 30.019117)",
+            "created_from": 154,
+            "created_at": "2019-03-06T00:20:26+00:00",
+            "updated_at": "2019-03-13T21:14:05.567018+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD20190724B2CMC",
+        "fields": {
+            "name": "Square Fashions Ltd.",
+            "address": "Zamirdia, Habir Bari, Bhaluka, Mymensigh ",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.3983829 24.2920231)",
+            "created_from": 155,
+            "created_at": "2019-03-10T19:56:27+00:00",
+            "updated_at": "2019-03-13T21:14:05.008093+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072S8YGD2",
+        "fields": {
+            "name": "Together Garment Factory",
+            "address": "2/F, No. 132 Fucheng Avenue, Taicheng, Taishan City",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (112.8085934 22.2476525)",
+            "created_from": 160,
+            "created_at": "2019-03-08T21:24:40+00:00",
+            "updated_at": "2019-03-13T21:14:05.231255+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190727TNE8J",
+        "fields": {
+            "name": "Tongxiang Miracle Knitting Factory Co. Ltd.",
+            "address": "No. 2 Industrial Area Economic Development Zone, Tongxiang Hangzhou, Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.55107 30.607581)",
+            "created_from": 161,
+            "created_at": "2019-03-13T19:42:31+00:00",
+            "updated_at": "2019-03-13T21:14:05.601424+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072C6Z1WM",
+        "fields": {
+            "name": "Yangzhou City Jiangdu Rixing Garments Co. Ltd. ",
+            "address": "Renmin Road, Jiangdu District, Yangzhou City,Jiangsu Province,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.5564296 32.4240951)",
+            "created_from": 165,
+            "created_at": "2019-03-08T03:45:42+00:00",
+            "updated_at": "2019-03-13T21:14:05.780909+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072VSW2KB",
+        "fields": {
+            "name": "Zhangjiagang City Sheng Yuan Knitting Clothing Co. Ltd.",
+            "address": "Jiangjia Road, Miaoqiao, Tangqiao Town, Zhangjiagang City",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.6986306 31.811438)",
+            "created_from": 168,
+            "created_at": "2019-03-10T01:15:47+00:00",
+            "updated_at": "2019-03-13T21:14:05.143561+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072VP1QQ6",
+        "fields": {
+            "name": "ZhuJi MingRun",
+            "address": "No. 75, Xiehe Road, West Development Zone, Taozhu Street, Zhuji city, Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.213252 29.718597)",
+            "created_from": 172,
+            "created_at": "2019-03-05T16:44:36+00:00",
+            "updated_at": "2019-03-13T21:14:05.875851+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD2019072RRXDB0",
+        "fields": {
+            "name": "Pan Pacific sweaters Ltd.",
+            "address": "222 South Salna Salna Bazar Gazipur Bangladesh",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.385869 24.0258742)",
+            "created_from": 174,
+            "created_at": "2019-03-06T16:30:09+00:00",
+            "updated_at": "2019-03-13T21:14:05.764917+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD2019072Z5AXKS",
+        "fields": {
+            "name": "Pretty Wool Ware Ltd.",
+            "address": "133-134(Ground & 3rd Floor) Hamayetpur Moheshpur Jhenaidah Bangladesh",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.356331 23.684994)",
+            "created_from": 176,
+            "created_at": "2019-03-12T04:35:27+00:00",
+            "updated_at": "2019-03-13T21:14:05.871046+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072KYRYM1",
+        "fields": {
+            "name": "Changzhou Hualida Garments Group Co.",
+            "address": "Lot 303 No.1108 Zhongwu High Road Changzhou Jiangsu China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.96891 31.75030199999999)",
+            "created_from": 187,
+            "created_at": "2019-03-06T11:09:55+00:00",
+            "updated_at": "2019-03-13T21:14:05.758245+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190727QXJXG",
+        "fields": {
+            "name": "Jiangyin Chenguang Garment Co. Ltd",
+            "address": "No.18 Zhuwen Road Zhutang Town Jiangyin City China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.418632 31.754339)",
+            "created_from": 192,
+            "created_at": "2019-03-06T00:33:28+00:00",
+            "updated_at": "2019-03-13T21:14:05.519121+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072P9E8GB",
+        "fields": {
+            "name": "Jiaxing Ruiyang Garment Co. Ltd",
+            "address": "No. 5 Group Garden Village Pinghu Economic Development Zone Zhejiang Province 314200 China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.001354 30.705412)",
+            "created_from": 196,
+            "created_at": "2019-03-09T19:00:51+00:00",
+            "updated_at": "2019-03-13T21:14:05.388411+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD2019072A86MZ6",
+        "fields": {
+            "name": "AKH Shirts Ltd. Ltd",
+            "address": "Savar Dhaka 1340 Bangladesh",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.2565774 23.8234915)",
+            "created_from": 205,
+            "created_at": "2019-03-06T08:38:54+00:00",
+            "updated_at": "2019-03-13T21:14:05.045840+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072RRPVRZ",
+        "fields": {
+            "name": "Wuxi Liutan Garment Co. Ltd",
+            "address": "No.18 Fengxiang Bei Road Wuxi Jiangsu China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.286231 31.614327)",
+            "created_from": 207,
+            "created_at": "2019-03-12T12:31:13+00:00",
+            "updated_at": "2019-03-13T21:14:05.169511+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072SCW9WC",
+        "fields": {
+            "name": "Yee Hong Apparel Limited Ltd 1st Branch Factory",
+            "address": "Changfu Industrial Region Fushan Liaobu Town Dongguan City Guangdong China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.8422588 22.8967074)",
+            "created_from": 209,
+            "created_at": "2019-03-13T03:04:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.317613+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072DWD8QV",
+        "fields": {
+            "name": "Zhong Shan City Yi Jun Knitwear Co. Ltd.",
+            "address": "No.38 Changsheng Road 2nd Industrial Area Southern District Zhong Shan City Guangdong China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.39277 22.517585)",
+            "created_from": 212,
+            "created_at": "2019-03-06T00:42:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.118082+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "ID2019072DXE1WQ",
+        "fields": {
+            "name": "PT. Glory Industrial Semarang-Demak Ltd.",
+            "address": "Kab  Demak Jawa Tengah Indonesia",
+            "country_code": "ID",
+            "location": "SRID=4326;POINT (110.6645683 -6.9238879)",
+            "created_from": 215,
+            "created_at": "2019-03-08T20:34:44+00:00",
+            "updated_at": "2019-03-13T21:14:05.990118+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD20190723WVFSX",
+        "fields": {
+            "name": "Angshuk Limited Ltd.",
+            "address": "Savar Dhaka 1340 Bangladesh",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.2565774 23.8234915)",
+            "created_from": 216,
+            "created_at": "2019-03-10T12:02:43+00:00",
+            "updated_at": "2019-03-13T21:14:05.875706+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "ID20190725Q8CDZ",
+        "fields": {
+            "name": "PT. Starlight Garment Semarang Ltd.",
+            "address": "Bawen Semarang Central Java Indonesia",
+            "country_code": "ID",
+            "location": "SRID=4326;POINT (110.4619591 -7.2279911)",
+            "created_from": 218,
+            "created_at": "2019-03-08T10:41:43+00:00",
+            "updated_at": "2019-03-13T21:14:05.169753+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "MM2019072HBQ3AF",
+        "fields": {
+            "name": "Myanmar Solamoda Garments No.2 Co. Ltd.",
+            "address": "No. 11-13 DawPhaw Shin Street ShewPyiThar Industry Zone2 Yangon Myanmar",
+            "country_code": "MM",
+            "location": "SRID=4326;POINT (96.230958 16.8341487)",
+            "created_from": 223,
+            "created_at": "2019-03-05T03:09:48+00:00",
+            "updated_at": "2019-03-13T21:14:05.939978+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD2019072VMH8QT",
+        "fields": {
+            "name": "Bea-Con Knit Wear Ltd.(Factory-02)",
+            "address": "National Road 4 Salna Gazipur Dhaka Bangladesh",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.40773329999999 24.0081001)",
+            "created_from": 226,
+            "created_at": "2019-03-09T19:01:34+00:00",
+            "updated_at": "2019-03-13T21:14:05.597044+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN20190722AS6PT",
+        "fields": {
+            "name": "Maple Company Limited-Peony Branch",
+            "address": "Pretty Square Road 7 VSIP Bac Ninh Tu Son Bac Ninh Vietnam",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (105.9784335 21.0792794)",
+            "created_from": 231,
+            "created_at": "2019-03-06T10:52:36+00:00",
+            "updated_at": "2019-03-13T21:14:05.857934+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "FR2019072E9DNAG",
+        "fields": {
+            "name": "Hanes France SAS TMD",
+            "address": "Boulevard Giberstein - 71400 AUTUN",
+            "country_code": "FR",
+            "location": "SRID=4326;POINT (4.283505 46.952314)",
+            "created_from": 236,
+            "created_at": "2019-03-05T08:06:11+00:00",
+            "updated_at": "2019-03-13T21:14:05.113883+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "FR20190727JK2VP",
+        "fields": {
+            "name": "Hanes France SAS CDF",
+            "address": "4 rue Nicephore Niepce - Autun Cedex",
+            "country_code": "FR",
+            "location": "SRID=4326;POINT (4.3035302 46.96961049999999)",
+            "created_from": 237,
+            "created_at": "2019-03-07T01:41:33+00:00",
+            "updated_at": "2019-03-13T21:14:05.038315+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "DO20190724YEKY9",
+        "fields": {
+            "name": "Bonao - Dos Rios",
+            "address": "Autopista Duarte KM 80,Bonao,Dominican Republic",
+            "country_code": "DO",
+            "location": "SRID=4326;POINT (-70.3930733 18.9395153)",
+            "created_from": 240,
+            "created_at": "2019-03-11T21:53:36+00:00",
+            "updated_at": "2019-03-13T21:14:05.054891+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "MX2019072BKEZTZ",
+        "fields": {
+            "name": "Rinplay S. DE R.L. DE C.V. (Huichapan)",
+            "address": "KM 202.5 Carr. Mx,Cd. Juarez,Huichapan,Hidalgo",
+            "country_code": "MX",
+            "location": "SRID=4326;POINT (-99.6508401 20.3786677)",
+            "created_from": 241,
+            "created_at": "2019-03-12T08:24:08+00:00",
+            "updated_at": "2019-03-13T21:14:05.158994+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "HN20190727ERWPA",
+        "fields": {
+            "name": "Hanes Choloma Cutting",
+            "address": "Carretera SPS Pto Cortes,Choloma,Cortes - Bldg 1",
+            "country_code": "HN",
+            "location": "SRID=4326;POINT (-87.92857769999999 15.825072)",
+            "created_from": 243,
+            "created_at": "2019-03-07T06:32:36+00:00",
+            "updated_at": "2019-03-13T21:14:05.322167+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "RO2019072NK8AVB",
+        "fields": {
+            "name": "Rosko Textil (Curtici)",
+            "address": "Zona Libera,Curtici,Arad",
+            "country_code": "RO",
+            "location": "SRID=4326;POINT (21.2859004 46.35079229999999)",
+            "created_from": 246,
+            "created_at": "2019-03-07T19:34:10+00:00",
+            "updated_at": "2019-03-13T21:14:05.015927+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "ZA201907208MFA5",
+        "fields": {
+            "name": "DBA Apparel (Pty) Ltd.",
+            "address": "101 Lawley Street,Durban",
+            "country_code": "ZA",
+            "location": "SRID=4326;POINT (30.980522 -29.935674)",
+            "created_from": 249,
+            "created_at": "2019-03-07T11:29:47+00:00",
+            "updated_at": "2019-03-13T21:14:05.920626+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "SV201907283CVJ2",
+        "fields": {
+            "name": "Jiboa - El Pedregal",
+            "address": "Km. 46 12 Car a La Herradura,El Rosario,La Pax",
+            "country_code": "SV",
+            "location": "SRID=4326;POINT (-88.9533563 13.3536924)",
+            "created_from": 253,
+            "created_at": "2019-03-06T05:36:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.340632+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "SV20190725R8F1K",
+        "fields": {
+            "name": "Confecciones - El Pedregal 4c",
+            "address": "Km. 46 12 Car a La Herradura,El Rosario,La Pax",
+            "country_code": "SV",
+            "location": "SRID=4326;POINT (-88.9533563 13.3536924)",
+            "created_from": 254,
+            "created_at": "2019-03-07T07:57:07+00:00",
+            "updated_at": "2019-03-13T21:14:05.243452+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072B1509K",
+        "fields": {
+            "name": "Phu Bai",
+            "address": "An Qiu Xin Tian Heng Computerized  Embroidery Co. Ltd.",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (108.277199 14.058324)",
+            "created_from": 261,
+            "created_at": "2019-03-11T10:28:54+00:00",
+            "updated_at": "2019-03-13T21:14:05.537048+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "DO2019072P9K2VQ",
+        "fields": {
+            "name": "Bali D",
+            "address": "ZONA FRANCA INDUSTRIAL,San Pedro de Marcoris",
+            "country_code": "DO",
+            "location": "SRID=4326;POINT (-69.2892434 18.4525332)",
+            "created_from": 268,
+            "created_at": "2019-03-06T06:35:46+00:00",
+            "updated_at": "2019-03-13T21:14:05.733567+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "US2019072KF9SFG",
+        "fields": {
+            "name": "Woolwine",
+            "address": "138 Elamsville Rd.,Stuart,VA",
+            "country_code": "US",
+            "location": "SRID=4326;POINT (-80.2631256 36.7749261)",
+            "created_from": 271,
+            "created_at": "2019-03-13T01:37:00+00:00",
+            "updated_at": "2019-03-13T21:14:05.266721+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190721HA9CQ",
+        "fields": {
+            "name": "Chung Tai Garment Factory",
+            "address": "(Block 4,5,7,8) Xinxing Industrial Zone C,Shu Tian Pu Village,Gongming Town",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (104.195397 35.86166)",
+            "created_from": 274,
+            "created_at": "2019-03-11T14:20:07+00:00",
+            "updated_at": "2019-03-13T21:14:05.602066+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072XH4V1M",
+        "fields": {
+            "name": "Longnan County Top Form Underwear",
+            "address": "JIN TANG INDUSTRY PARK JIANGXI Jiangxi",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (115.644264 28.503924)",
+            "created_from": 276,
+            "created_at": "2019-03-13T09:52:47+00:00",
+            "updated_at": "2019-03-13T21:14:05.623713+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "SV20190721W2DGT",
+        "fields": {
+            "name": "Confecciones Del Valle",
+            "address": "KM 24 Carretera A Santa Ana,Colon",
+            "country_code": "SV",
+            "location": "SRID=4326;POINT (-89.35695799999999 13.729986)",
+            "created_from": 280,
+            "created_at": "2019-03-10T03:14:07+00:00",
+            "updated_at": "2019-03-13T21:14:05.698852+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "HT2019072JX41Z4",
+        "fields": {
+            "name": "MD Industries",
+            "address": "Parque Industrial CODEVI,Ouanaminthe",
+            "country_code": "HT",
+            "location": "SRID=4326;POINT (-71.7224924 19.5629456)",
+            "created_from": 282,
+            "created_at": "2019-03-10T21:20:26+00:00",
+            "updated_at": "2019-03-13T21:14:05.988842+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "ID2019072V5M5MF",
+        "fields": {
+            "name": "PT Glory Industrial Semarang II",
+            "address": "JL Coaster No.8 Block A11/A12A,B09/B10/B25/B26/B27 Kawasan Pemrosesan Ekspor(Export Processing Zone),Semarang",
+            "country_code": "ID",
+            "location": "SRID=4326;POINT (110.4290826 -6.9483384)",
+            "created_from": 287,
+            "created_at": "2019-03-09T16:33:54+00:00",
+            "updated_at": "2019-03-13T21:14:05.689922+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "ID20190722MFMWQ",
+        "fields": {
+            "name": "PT Busanaremaja Agracipta",
+            "address": "PT. Busana Remaja Agracipta",
+            "country_code": "ID",
+            "location": "SRID=4326;POINT (110.321984 -7.876946999999999)",
+            "created_from": 290,
+            "created_at": "2019-03-12T11:43:56+00:00",
+            "updated_at": "2019-03-13T21:14:05.742953+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "PH20190728QHRK8",
+        "fields": {
+            "name": "Quickstep Aparel Corp.",
+            "address": "Lot 81,RIS Industrial Complex,168 Mercado St.,Tabe,Guiguinto,Bulacan",
+            "country_code": "PH",
+            "location": "SRID=4326;POINT (120.882215 14.83339)",
+            "created_from": 292,
+            "created_at": "2019-03-13T12:55:37+00:00",
+            "updated_at": "2019-03-13T21:14:05.577603+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "LK2019072FP41A0",
+        "fields": {
+            "name": "Unichela PVt Ltd - Pannala Division",
+            "address": "Kuliyapitiya Road,Pannala,North Western Province Pannala",
+            "country_code": "LK",
+            "location": "SRID=4326;POINT (80.0372819 7.400655200000001)",
+            "created_from": 295,
+            "created_at": "2019-03-09T18:06:54+00:00",
+            "updated_at": "2019-03-13T21:14:05.143959+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN20190725VQ3BY",
+        "fields": {
+            "name": "Makalot Garment Co. Ltd. - MK2",
+            "address": "Thanh Hai Ward,Thanh Ha District,Hai Duong Province",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.401577 20.8877365)",
+            "created_from": 301,
+            "created_at": "2019-03-11T11:31:22+00:00",
+            "updated_at": "2019-03-13T21:14:05.274256+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD20190729KKZKW",
+        "fields": {
+            "name": "SUPREME STITCH LTD.",
+            "address": "WEST SAILDUBE,KASHIMPUR,GAZIPUR,DHAKA,BANGLADESH",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.2991363 23.9627456)",
+            "created_from": 307,
+            "created_at": "2019-03-07T02:54:56+00:00",
+            "updated_at": "2019-03-13T21:14:05.057626+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072VN64VV",
+        "fields": {
+            "name": "Suzhou Jinyuda Textile Co. Ltd",
+            "address": "36-8 Rainbow Road,Luzhi Town. Suzhou,Wuzhong. China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.863056 31.267107)",
+            "created_from": 309,
+            "created_at": "2019-03-10T18:31:55+00:00",
+            "updated_at": "2019-03-13T21:14:05.505026+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072C3KFF6",
+        "fields": {
+            "name": "CHANGZHOU SHUNYAO APPAREL CO. LTD",
+            "address": "No.88 Chenfeng RoadMaolu TownXuebu Village,Changzhou City,57471,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.8649129 31.9930754)",
+            "created_from": 314,
+            "created_at": "2019-03-09T20:10:15+00:00",
+            "updated_at": "2019-03-13T21:14:05.060667+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190723T7D7Y",
+        "fields": {
+            "name": "FUQING DENG FENG SHOES CO. LTD",
+            "address": "QIYUN VILLIAGE,JINYANG TOWN,CHINA",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (104.195397 35.86166)",
+            "created_from": 315,
+            "created_at": "2019-03-10T18:17:36+00:00",
+            "updated_at": "2019-03-13T21:14:05.334922+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072NWMBK9",
+        "fields": {
+            "name": "DONGGUAN JIANISI GARMENT CO. LTD.",
+            "address": "TANG ZHOU ROAD,LI JIA FANG VILLAGE,SHI PAI TOWN,DONGGUAN,GUANGDONG PROVINCE, CHINA",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.926895 23.084276)",
+            "created_from": 316,
+            "created_at": "2019-03-12T14:36:22+00:00",
+            "updated_at": "2019-03-13T21:14:05.390947+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "SV2019072ZHQN0T",
+        "fields": {
+            "name": "Decotex International Ltda. De C.V.",
+            "address": "American Industrial Park,Block H Calle Canada. Km 36 Carretera a Santa Ana. Ciudad Arce. El Salvador.",
+            "country_code": "SV",
+            "location": "SRID=4326;POINT (-89.45353569999999 13.8536285)",
+            "created_from": 318,
+            "created_at": "2019-03-09T07:53:49+00:00",
+            "updated_at": "2019-03-13T21:14:05.445677+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "SV2019072DP735G",
+        "fields": {
+            "name": "Industrias Merlet S.A. de C.V.",
+            "address": "Calle Circunvalacion,Pol. A No.3 Urb. Industrial La Laguna,Antigua Cuscatlan,La Libertad,El Salvador",
+            "country_code": "SV",
+            "location": "SRID=4326;POINT (-89.25147179999999 13.6756725)",
+            "created_from": 319,
+            "created_at": "2019-03-06T02:08:10+00:00",
+            "updated_at": "2019-03-13T21:14:05.148775+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "GT2019072GB66TH",
+        "fields": {
+            "name": "IMPROTEX",
+            "address": "1 Avenida 39 San Pedro Sacatepequez,Guatemala",
+            "country_code": "GT",
+            "location": "SRID=4326;POINT (-90.64608059999999 14.7170605)",
+            "created_from": 322,
+            "created_at": "2019-03-12T16:23:05+00:00",
+            "updated_at": "2019-03-13T21:14:05.877331+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "GT2019072CR71HD",
+        "fields": {
+            "name": "Texsun S.A.",
+            "address": "17 Ave. 40-76 Zona 12. Guatemala. Guatemala.",
+            "country_code": "GT",
+            "location": "SRID=4326;POINT (-90.5529746 14.5625)",
+            "created_from": 323,
+            "created_at": "2019-03-09T17:25:07+00:00",
+            "updated_at": "2019-03-13T21:14:05.797638+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "HN2019072W1HYXM",
+        "fields": {
+            "name": "Hanes Choloma",
+            "address": "Parque Industrial Zip Choloma,Colonia La Mora,Choloma,cortes. Honduras",
+            "country_code": "HN",
+            "location": "SRID=4326;POINT (-87.9528306 15.582993)",
+            "created_from": 327,
+            "created_at": "2019-03-11T02:49:26+00:00",
+            "updated_at": "2019-03-13T21:14:05.482186+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "MX2019072ZATWSJ",
+        "fields": {
+            "name": "GFSI Southwest S. de R.L. de C.V.",
+            "address": "PRIVADA MARTEL SN MANZANA 4,LOTE 7 & 8,Reynosa",
+            "country_code": "MX",
+            "location": "SRID=4326;POINT (-98.2151384 26.0384327)",
+            "created_from": 334,
+            "created_at": "2019-03-09T14:42:02+00:00",
+            "updated_at": "2019-03-13T21:14:05.472201+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "US2019072GQ97YJ",
+        "fields": {
+            "name": "OT Sports",
+            "address": "172 Boone Street,Burlington,NC 27215. USA",
+            "country_code": "US",
+            "location": "SRID=4326;POINT (-79.4164519 36.0753552)",
+            "created_from": 337,
+            "created_at": "2019-03-06T12:59:51+00:00",
+            "updated_at": "2019-03-13T21:14:05.180162+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "US20190723095P4",
+        "fields": {
+            "name": "TNT Printwear",
+            "address": "860 Main St.,Barnwell,South Carolina",
+            "country_code": "US",
+            "location": "SRID=4326;POINT (-81.3526516 33.245133)",
+            "created_from": 340,
+            "created_at": "2019-03-13T06:13:24+00:00",
+            "updated_at": "2019-03-13T21:14:05.034754+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN20190726SDBM4",
+        "fields": {
+            "name": "EG Trading Joint Stock Company",
+            "address": "301 Vu Xuan Thieu Str.,Phuc Loi,Long Bien Dist.,Hanoi. Vietnam.",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (105.9196518 21.0354941)",
+            "created_from": 342,
+            "created_at": "2019-03-07T01:14:40+00:00",
+            "updated_at": "2019-03-13T21:14:05.216537+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072Q6GZ8D",
+        "fields": {
+            "name": "Ever Win Vietnam Co Ltd",
+            "address": "F6 Viet Huong Industrial Zone No.13 National Road Thuan An Town,Vietnam 99222",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.7130148 10.9240636)",
+            "created_from": 348,
+            "created_at": "2019-03-13T00:02:42+00:00",
+            "updated_at": "2019-03-13T21:14:05.015627+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN201907219PZMC",
+        "fields": {
+            "name": "PNG Vietnam Co. Ltd.",
+            "address": "Km 52,Cam Thuong Industrial zone,Hai Duong City 34000,Vietnam",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.3178987 20.9510914)",
+            "created_from": 349,
+            "created_at": "2019-03-12T08:14:49+00:00",
+            "updated_at": "2019-03-13T21:14:05.367511+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN20190720280SW",
+        "fields": {
+            "name": "United Sweethearts Garment Vietnam Co. Ltd.",
+            "address": "Road 10,Nhon Trach 1 Industrial Zone,Nhon Trach District. Dong Nai. Vietnam",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.9307836 10.741199)",
+            "created_from": 357,
+            "created_at": "2019-03-13T07:58:38+00:00",
+            "updated_at": "2019-03-13T21:14:05.647845+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072YDK21T",
+        "fields": {
+            "name": "DeYork Vietnam Co. Ltd.",
+            "address": "Suoi Cao,Phuc Dong Commune,Go Dau District,TayNinh Province. Vietnam.",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (107.3730563 11.0013148)",
+            "created_from": 358,
+            "created_at": "2019-03-13T03:18:13+00:00",
+            "updated_at": "2019-03-13T21:14:05.191784+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072E61EQ0",
+        "fields": {
+            "name": "Yangzhou Yaxiya Headwear & Garment Co.Ltd",
+            "address": "Bali Town,Yangzhou Development Zone. Yangzhou,Jiangsu Province,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.411436 32.374594)",
+            "created_from": 362,
+            "created_at": "2019-03-13T15:46:51+00:00",
+            "updated_at": "2019-03-13T21:14:05.527267+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072471ZM5",
+        "fields": {
+            "name": "Jiangyin Rongjichan Sweater Garment Co. Ltd.",
+            "address": "No.60 Changshan Road,Economic Development Zone,Jiangyin,Jiangsu,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.4585186 31.9352241)",
+            "created_from": 368,
+            "created_at": "2019-03-08T22:40:08+00:00",
+            "updated_at": "2019-03-13T21:14:05.517974+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072QXGMYW",
+        "fields": {
+            "name": "Jiaxing Sunshine Garment Co.Ltd.",
+            "address": "No. 26 Tongyi Road,Xinfeng Industrial  Zone,Nanhu District,Jiaxing City,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.9032723 30.7051796)",
+            "created_from": 370,
+            "created_at": "2019-03-07T04:21:02+00:00",
+            "updated_at": "2019-03-13T21:14:05.671105+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072X51K51",
+        "fields": {
+            "name": "Ningbo Jingye Fashion Co.Ltd.",
+            "address": "Baiyue lndustrial Zone,Jishigang Industrial Town,Ningbo,Zhejiang,China 315171",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.4542076 29.8692456)",
+            "created_from": 372,
+            "created_at": "2019-03-09T12:19:16+00:00",
+            "updated_at": "2019-03-13T21:14:05.332696+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072E7FWSZ",
+        "fields": {
+            "name": "Advancetex Garment Manufacturer Pty. Ltd.",
+            "address": "No.10 Yun Shan Dong Road Huicheng Area,Huizhou City,Guangdong Sheng,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.8737611 23.175322)",
+            "created_from": 374,
+            "created_at": "2019-03-07T22:18:23+00:00",
+            "updated_at": "2019-03-13T21:14:05.501440+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190720GAV50",
+        "fields": {
+            "name": "Guizhou Donghai Clothing Co. Ltd.",
+            "address": "Douyan Village,Qimo Town,Zhijin County,Bijie,Guizhou",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (105.801663 26.721419)",
+            "created_from": 378,
+            "created_at": "2019-03-05T15:36:24+00:00",
+            "updated_at": "2019-03-13T21:14:05.031583+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072MCQQ4R",
+        "fields": {
+            "name": "Younuo Garment Co. Ltd",
+            "address": "No. 88,Xiwen Road,Wenlin Town,Jiangyin City,Jiangsu,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.4160202 31.7259825)",
+            "created_from": 381,
+            "created_at": "2019-03-13T20:07:09+00:00",
+            "updated_at": "2019-03-13T21:14:05.245008+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072G42MYE",
+        "fields": {
+            "name": "Ningbo Purple Field Import & Export Co.Ltd.",
+            "address": "No.66,East on 2nd  Gongmao Road,Jishigang Industrial Area,Ningbo,Zhejiang Province,China",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.4883819 29.8679451)",
+            "created_from": 392,
+            "created_at": "2019-03-06T21:26:35+00:00",
+            "updated_at": "2019-03-13T21:14:05.109895+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072G9R61Y",
+        "fields": {
+            "name": "Dragon-Jety Garments (Shenzhen) Co.,Ltd",
+            "address": "130 Watergate Lane,Ping Wu Industrial Zone,Shenzhen,Guangdong Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (114.057865 22.543096)",
+            "created_from": 396,
+            "created_at": "2019-03-12T19:02:21+00:00",
+            "updated_at": "2019-03-13T21:14:05.164969+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072R092AK",
+        "fields": {
+            "name": "Hai Ning Yue Li Socks Co.,Ltd",
+            "address": "19-20,Wan Ye Industry Zone,No. 368 Luo Long Road,Hai Ning City,Jiaxing,Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.680757 30.510659)",
+            "created_from": 397,
+            "created_at": "2019-03-11T07:18:15+00:00",
+            "updated_at": "2019-03-13T21:14:05.087372+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072FH0REC",
+        "fields": {
+            "name": "Shanghai Conch Apparelparel Co.,Ltd",
+            "address": "2085 Liuxiang Road,Jiading District,Shanghai",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.314883 31.345461)",
+            "created_from": 398,
+            "created_at": "2019-03-11T18:00:06+00:00",
+            "updated_at": "2019-03-13T21:14:05.220936+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072JY99TN",
+        "fields": {
+            "name": "Outdoor Designs VINA Ltd",
+            "address": "24A,To 6,KP Khanh Hoi,Tan Phuoc Khanh,Tan Uyen District,Tan Uyen,Binh Duong Province",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.7322637 11.0026673)",
+            "created_from": 399,
+            "created_at": "2019-03-06T16:25:07+00:00",
+            "updated_at": "2019-03-13T21:14:05.233320+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072477FS0",
+        "fields": {
+            "name": "Wenzhou Kingstar Leather Products Co.,Ltd",
+            "address": "40 Yufeng Road,Xinfeng Village,Xianyan Town,Wenzhou,Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.9075892 27.5646487)",
+            "created_from": 401,
+            "created_at": "2019-03-13T06:48:28+00:00",
+            "updated_at": "2019-03-13T21:14:05.968695+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN201907251KE9P",
+        "fields": {
+            "name": "Shanghai Chengshang Textile & Clothing Co.,Ltd",
+            "address": "Bldg. 35,No. 7162,Hu Nan Road,Pudong District,Shanghai",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.547344 31.1994239)",
+            "created_from": 406,
+            "created_at": "2019-03-12T01:18:35+00:00",
+            "updated_at": "2019-03-13T21:14:05.643450+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "ID2019072F5XKFN",
+        "fields": {
+            "name": "PT. PancApparelrima Ekabrothers",
+            "address": "Jalan Raya Siliwangi 1km No. 178A,Kec Jatiuwung,Tangerang",
+            "country_code": "ID",
+            "location": "SRID=4326;POINT (106.5792563 -6.189061)",
+            "created_from": 411,
+            "created_at": "2019-03-10T00:53:20+00:00",
+            "updated_at": "2019-03-13T21:14:05.393785+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072YW3VTR",
+        "fields": {
+            "name": "Longyou Qinda Tent Factory",
+            "address": "Linjiang Industry Area,10 Lingjiang Road,Longyou,Quzhou,Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (126.918087 41.811979)",
+            "created_from": 413,
+            "created_at": "2019-03-06T09:29:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.446556+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190725WT6W3",
+        "fields": {
+            "name": "Zhejiang Top Circle Textiles Co.,Ltd",
+            "address": "118 Fanrong,Jiaxing,Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.006049 30.715042)",
+            "created_from": 415,
+            "created_at": "2019-03-06T19:19:50+00:00",
+            "updated_at": "2019-03-13T21:14:05.666579+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072M2STP5",
+        "fields": {
+            "name": "Shanghai Zonda Outdoor Goods Co.,Ltd",
+            "address": "528 Xingge Road,Xingqiao Town,Songjiang District,Shanghai,Jiangsu Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.315718 31.058765)",
+            "created_from": 417,
+            "created_at": "2019-03-08T23:47:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.525493+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072GDAWHT",
+        "fields": {
+            "name": "Tianjin Tianshiyuan Sewing Products Co.,Ltd",
+            "address": "Baziqiao,Economic Area,Dazhong Town,Baodi District,Tianjin",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (117.692118 39.06551899999999)",
+            "created_from": 419,
+            "created_at": "2019-03-12T18:10:38+00:00",
+            "updated_at": "2019-03-13T21:14:05.389670+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072ZXTMH1",
+        "fields": {
+            "name": "Quzhou Tianye Camping Tent Co.,Ltd",
+            "address": "No.895 Century Ave,Quzhou,Zhejiang Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (118.913771 28.939327)",
+            "created_from": 420,
+            "created_at": "2019-03-10T01:15:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.258995+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072J28JHR",
+        "fields": {
+            "name": "PHI Co.,Ltd",
+            "address": "XN10,Dai An Industrial Zone KM51,High Way No.5,Tu Minh,Hai Duong City,Hai Duong Province",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.270029 20.933005)",
+            "created_from": 421,
+            "created_at": "2019-03-06T16:30:22+00:00",
+            "updated_at": "2019-03-13T21:14:05.655442+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072VW9T7T",
+        "fields": {
+            "name": "Well Mart Vietnam Co.,Ltd",
+            "address": "Ang Duong Village,Trung LApparel Commune,Vinh Bao District,Hai phong City,Hai Phong,Hai Phong Province",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.4814255 20.688914)",
+            "created_from": 422,
+            "created_at": "2019-03-11T17:55:34+00:00",
+            "updated_at": "2019-03-13T21:14:05.702816+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190729JCBPE",
+        "fields": {
+            "name": "Dong Chong Chong Ming Glove Factory",
+            "address": "No. 43-5 Ji Xiang Wei Nan Street,Dong Chong Town,Nansha District,Guangzhou,Guangdong Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (113.4556904 22.8863474)",
+            "created_from": 431,
+            "created_at": "2019-03-09T18:37:42+00:00",
+            "updated_at": "2019-03-13T21:14:05.804404+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072EXGYHG",
+        "fields": {
+            "name": "(FRoad) Tai'An Shengjin Garments Co.,Ltd",
+            "address": "No.1 Jinlun Road,Laocheng Area,Feicheng,Taian,Taian,Shandong Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (116.7656144 36.2166995)",
+            "created_from": 434,
+            "created_at": "2019-03-08T04:24:29+00:00",
+            "updated_at": "2019-03-13T21:14:05.317121+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072ZACF5F",
+        "fields": {
+            "name": "High Rock Recreation Products",
+            "address": "No.11 Yijing Road,Dong Li Economic Development Area,Tianjin",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (117.357421 39.079404)",
+            "created_from": 436,
+            "created_at": "2019-03-07T01:00:36+00:00",
+            "updated_at": "2019-03-13T21:14:05.782252+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190726Z6V8M",
+        "fields": {
+            "name": "Shanghai Weifang Garments Factory",
+            "address": "No.1270 Hangtang Road,Jinhui Town,Fengxian District,Shanghai",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.596417 30.992815)",
+            "created_from": 437,
+            "created_at": "2019-03-11T20:44:29+00:00",
+            "updated_at": "2019-03-13T21:14:05.416602+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190724BHR31",
+        "fields": {
+            "name": "Shanghai Huatian Knitting Garment Co.,Ltd",
+            "address": "No.151-5 East Huanfeng Road,JinshanDistrict,Shanghai,Jiangsu Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.0333168 30.8933914)",
+            "created_from": 438,
+            "created_at": "2019-03-05T07:32:59+00:00",
+            "updated_at": "2019-03-13T21:14:05.895977+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "NP2019072DV1PDZ",
+        "fields": {
+            "name": "Inc. dba Khangri Sourcing",
+            "address": "Serene Handicrafts,Ittachhen - 15,BhaktApparelur,Kathmandu",
+            "country_code": "NP",
+            "location": "SRID=4326;POINT (85.3239605 27.7172453)",
+            "created_from": 442,
+            "created_at": "2019-03-11T00:38:04+00:00",
+            "updated_at": "2019-03-13T21:14:05.554136+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190726M964K",
+        "fields": {
+            "name": "Siyang City - Qianrun Garments Subsidiary Company",
+            "address": "Siyang Economic Development Zone C-2 (Shenzhen Road 36 Campus South Gates),Siyang Town,Suqian,Jiangsu Province",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (118.727922 33.71439)",
+            "created_from": 443,
+            "created_at": "2019-03-08T12:10:53+00:00",
+            "updated_at": "2019-03-13T21:14:05.094901+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CA2019072P59KM4",
+        "fields": {
+            "name": "Mondor Ltd.",
+            "address": "785 Honore Mercier,St-Jean-sur-Richelieu",
+            "country_code": "CA",
+            "location": "SRID=4326;POINT (-73.2369903 45.3050756)",
+            "created_from": 453,
+            "created_at": "2019-03-13T10:55:31+00:00",
+            "updated_at": "2019-03-13T21:14:05.177211+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "PE20190728EKMX4",
+        "fields": {
+            "name": "Cititex",
+            "address": "5755 Los Estanos Street,Lima",
+            "country_code": "PE",
+            "location": "SRID=4326;POINT (-77.06325749999999 -11.9668868)",
+            "created_from": 471,
+            "created_at": "2019-03-12T18:30:33+00:00",
+            "updated_at": "2019-03-13T21:14:05.184156+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "PE20190729T3HRS",
+        "fields": {
+            "name": "COFACO Industries SAC",
+            "address": "Ave. San Andres 6299,Lima",
+            "country_code": "PE",
+            "location": "SRID=4326;POINT (-77.06699290000002 -11.9549531)",
+            "created_from": 472,
+            "created_at": "2019-03-08T21:27:34+00:00",
+            "updated_at": "2019-03-13T21:14:05.572947+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "PE20190721KJZN4",
+        "fields": {
+            "name": "Textil Del Valle S.A.",
+            "address": "Panamerica Sur Km. 200,Ica",
+            "country_code": "PE",
+            "location": "SRID=4326;POINT (-75.7558399 -14.0349661)",
+            "created_from": 473,
+            "created_at": "2019-03-13T00:09:17+00:00",
+            "updated_at": "2019-03-13T21:14:05.958248+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "PH20190722RTPSG",
+        "fields": {
+            "name": "Feeder Apparel Corp.",
+            "address": "Block C5,5th St. Cor. 2nd Ave. MEZ 1,Lapu-Lapu / Cebu",
+            "country_code": "PH",
+            "location": "SRID=4326;POINT (123.9848224 10.3285407)",
+            "created_from": 474,
+            "created_at": "2019-03-11T16:17:56+00:00",
+            "updated_at": "2019-03-13T21:14:05.053739+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072534TQP",
+        "fields": {
+            "name": "Eclat Textile Co. Ltd. (Vietnam)",
+            "address": "5A Road,Nhon Trach 2 Industrial Zone,Nhon Trach",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.9239773 10.7239137)",
+            "created_from": 485,
+            "created_at": "2019-03-11T07:53:27+00:00",
+            "updated_at": "2019-03-13T21:14:05.945249+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072G1BWYF",
+        "fields": {
+            "name": "E-TOP (Vietnam) Co.",
+            "address": "Lot VII-2 MY XUAN A2 Industrial Zone,Ba Ria",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (107.0456348 10.6335408)",
+            "created_from": 488,
+            "created_at": "2019-03-12T05:15:54+00:00",
+            "updated_at": "2019-03-13T21:14:05.730140+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072HWEK29",
+        "fields": {
+            "name": "Manufacturing Sportwear Joint Stock Company - Thai Binh Branch - MXP8",
+            "address": "Lot with area of 51,765.9m2,Xuan Quang Industrial Cluster,Dong Hung District",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.3699271 20.5640924)",
+            "created_from": 489,
+            "created_at": "2019-03-08T08:25:30+00:00",
+            "updated_at": "2019-03-13T21:14:05.196835+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072HMZ9V1",
+        "fields": {
+            "name": "Pungkook Bentre Co. Ltd",
+            "address": "Lot E4,E5,E10,E11 - Giao Long IP,Chau Thanh District",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.4199755 10.3014784)",
+            "created_from": 492,
+            "created_at": "2019-03-10T17:09:21+00:00",
+            "updated_at": "2019-03-13T21:14:05.477393+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "VN2019072TH1B2J",
+        "fields": {
+            "name": "Viet Thuan Joint Stock Company",
+            "address": "No P1,N5A Street,Nam Dinh City",
+            "country_code": "VN",
+            "location": "SRID=4326;POINT (106.1412673 20.4227194)",
+            "created_from": 496,
+            "created_at": "2019-03-06T17:32:36+00:00",
+            "updated_at": "2019-03-13T21:14:05.871575+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "PT20190722R1CXX",
+        "fields": {
+            "name": "Mundo Textil SA",
+            "address": "Rua da Saudade, N\u00ba 280-400 -4815-413 Caldas de Vizela",
+            "country_code": "PT",
+            "location": "SRID=4326;POINT (-8.3055795 41.3667986)",
+            "created_from": 506,
+            "created_at": "2019-03-13T11:36:32+00:00",
+            "updated_at": "2019-03-13T21:14:05.376326+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN201907228N9GY",
+        "fields": {
+            "name": "Fujian Jinjiang Huamei Knitting & Clothing Co Ltd",
+            "address": "Dongshan,Shenhu,Jinjiang,Fujiang,Xia Men",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (117.430061 23.701262)",
+            "created_from": 513,
+            "created_at": "2019-03-13T18:57:49+00:00",
+            "updated_at": "2019-03-13T21:14:05.152599+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072Q5VWHA",
+        "fields": {
+            "name": "Jinjiang Libixing Garment & Weaving Co Ltd",
+            "address": "Gaohu Industrial Zone,Yinglin Town,Jinjiang,Jing Jiang",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (118.552365 24.781681)",
+            "created_from": 515,
+            "created_at": "2019-03-08T16:51:39+00:00",
+            "updated_at": "2019-03-13T21:14:05.541276+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190723PHVGV",
+        "fields": {
+            "name": "Nantong Hesheng Garment Co Ltd",
+            "address": "Yaojiaoyuan Village,Baipu Town,Rugao County,Nantong",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.750353 32.241892)",
+            "created_from": 519,
+            "created_at": "2019-03-12T15:37:52+00:00",
+            "updated_at": "2019-03-13T21:14:05.035287+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190724A019Y",
+        "fields": {
+            "name": "Hangzhou Haoshi Rubber Products Co Ltd",
+            "address": "Qinzhe Village Yong Chang Town,Fuyang,Hangzhou",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.979564 30.016027)",
+            "created_from": 523,
+            "created_at": "2019-03-09T12:19:44+00:00",
+            "updated_at": "2019-03-13T21:14:05.504885+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072X1YVYV",
+        "fields": {
+            "name": "Jiangxi JHT Apparel Co Ltd",
+            "address": "Zhuqiao North Road,Changdong Industrial Area Qingshanhu Industry,Nanchang",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (115.9494542 28.6072944)",
+            "created_from": 524,
+            "created_at": "2019-03-05T16:48:33+00:00",
+            "updated_at": "2019-03-13T21:14:05.720014+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072RP38YX",
+        "fields": {
+            "name": "Jiangyin Chenlong Garment Co",
+            "address": "No.7 Wanfu Road,Zhutang Town,Jiangyin",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.4044013 31.7701538)",
+            "created_from": 525,
+            "created_at": "2019-03-10T02:41:15+00:00",
+            "updated_at": "2019-03-13T21:14:05.682439+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072FAMR8K",
+        "fields": {
+            "name": "Nanjing Biaomei Hom etextiles Co Ltd",
+            "address": "No.13 Erst Wuchu Road,Hengxi Town,Nanjing",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (118.796877 32.060255)",
+            "created_from": 527,
+            "created_at": "2019-03-07T05:39:32+00:00",
+            "updated_at": "2019-03-13T21:14:05.194613+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072HE5XFP",
+        "fields": {
+            "name": "Zhangjiagang City Runda Finery Co Ltd",
+            "address": "Jingu Village Fenghuang Town,Zhangjiagang",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.556005 31.875572)",
+            "created_from": 529,
+            "created_at": "2019-03-04T23:34:44+00:00",
+            "updated_at": "2019-03-13T21:14:05.296486+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190723YKDFP",
+        "fields": {
+            "name": "Zhucheng Huirun Garment Factory",
+            "address": "Lanjiacun Industrial Park,Zhucheng,Weifang",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.396284 35.978556)",
+            "created_from": 531,
+            "created_at": "2019-03-08T07:16:11+00:00",
+            "updated_at": "2019-03-13T21:14:05.822482+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD2019072BZXKC1",
+        "fields": {
+            "name": "Ratul Knitwears Ltd",
+            "address": "Cs.Sa-41,Zirabo,Savar,Dhaka",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.3172039 23.9101983)",
+            "created_from": 534,
+            "created_at": "2019-03-13T15:09:59+00:00",
+            "updated_at": "2019-03-13T21:14:05.638754+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "BD20190728S1AX4",
+        "fields": {
+            "name": "ZABER AND ZUBAIR FABRICS LTD",
+            "address": "PAGAR,TONGI,GAZIPUR,DHAKA,BANGLADESH;",
+            "country_code": "BD",
+            "location": "SRID=4326;POINT (90.4193781 23.8928709)",
+            "created_from": 539,
+            "created_at": "2019-03-10T03:31:14+00:00",
+            "updated_at": "2019-03-13T21:14:05.890099+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072HM0AC1",
+        "fields": {
+            "name": "FUZHOU QINGXIANG PLASTIC & RUBBER CO LTD",
+            "address": "YUZHAI VILLAGE,GAISHAN TOWN,CANGSHAN DISTRICT,FUZHOU,FUJIAN,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.334132 26.025576)",
+            "created_from": 545,
+            "created_at": "2019-03-08T17:15:32+00:00",
+            "updated_at": "2019-03-13T21:14:05.561485+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190726KHX6K",
+        "fields": {
+            "name": "FUZHOU TIANFU PLASTIC CO LTD",
+            "address": "16 DAOSHANSHAN ROAD,AOSHAN VILLAGE LUOZHOU TOWN CANGSHAN DISTRICT,FUZHOU,FUJIAN,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.349358 25.981892)",
+            "created_from": 546,
+            "created_at": "2019-03-06T06:54:32+00:00",
+            "updated_at": "2019-03-13T21:14:05.474775+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190729NWX63",
+        "fields": {
+            "name": "HANGZHOU QIYAO TEXTILE CO LTD",
+            "address": "NO 17 HONGDA ROAD,LINPING,YUHANG,HANGZHOU,ZHEJIANG,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.286136 30.458229)",
+            "created_from": 547,
+            "created_at": "2019-03-06T02:20:18+00:00",
+            "updated_at": "2019-03-13T21:14:05.483219+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190723FPGB9",
+        "fields": {
+            "name": "HE ZE FITEX APPAREL CO LTD",
+            "address": "WEST OF HOSPITAL,WANGHAOTUN TOWN,MUDAN DISTRICT,HEZE,SHANDONG,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (115.314703 35.127931)",
+            "created_from": 548,
+            "created_at": "2019-03-10T04:32:42+00:00",
+            "updated_at": "2019-03-13T21:14:05.842136+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072WNW4TH",
+        "fields": {
+            "name": "HEZE ELEGANCE FASHIONS LTD",
+            "address": "NO 978 JINAN ROAD,HEZE,SHANDONG,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (115.5362891 35.2188732)",
+            "created_from": 549,
+            "created_at": "2019-03-09T20:37:49+00:00",
+            "updated_at": "2019-03-13T21:14:05.491423+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190728FVD9E",
+        "fields": {
+            "name": "JIANDE XINDA METAL CRAFT CO LTD",
+            "address": "HOU TANG INDUSTRIAL ZONE,JIANDE,HANGZHOU,HANGZHOU,ZHEJIANG,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (119.741865 30.003655)",
+            "created_from": 550,
+            "created_at": "2019-03-06T02:24:44+00:00",
+            "updated_at": "2019-03-13T21:14:05.804573+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072BW2QNV",
+        "fields": {
+            "name": "JINGJIANG XINJIYUAN KNITTING CO LTD-2",
+            "address": "NO. 3 HUIFENG JIXIANG ROAD DONGXING TOWN,JINGJIANG,JINGJIANG,JIANGSU,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.1879397 31.9816401)",
+            "created_from": 553,
+            "created_at": "2019-03-10T20:15:22+00:00",
+            "updated_at": "2019-03-13T21:14:05.930001+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190721JQVZA",
+        "fields": {
+            "name": "NANJING HENGGU ACCESSORIES CO LTD",
+            "address": "NO 8 HUASHANG ROAD,LUKOU CHINESE ENTREPRENEURS PARK,LUKOU TOWN,JIANGNING,NANJING,JIANGSU",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (118.84885 31.767874)",
+            "created_from": 556,
+            "created_at": "2019-03-08T07:01:23+00:00",
+            "updated_at": "2019-03-13T21:14:05.004831+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072WRQPS0",
+        "fields": {
+            "name": "RUGAO HONGTAI TEXTILE CO LTD",
+            "address": "JIANG'AN RUGAO CITY,JIANGSU PROVINCE,CHINA,RUGAO,JIANGSU,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.574945 32.370557)",
+            "created_from": 562,
+            "created_at": "2019-03-11T00:21:49+00:00",
+            "updated_at": "2019-03-13T21:14:05.194259+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072HA6YMS",
+        "fields": {
+            "name": "TAIZHOU JIAOJIANG ERQING EMBROIDERED ART CLOTHES FACTORY",
+            "address": "NO 1 HUANHE(N) ROAD BAISHULI INDUSTRIAL AREA,ZHANG AN STREET,JIAOJIA,TAIZHOU,ZHEJIANG,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (121.4145486 28.7097841)",
+            "created_from": 567,
+            "created_at": "2019-03-06T16:45:26+00:00",
+            "updated_at": "2019-03-13T21:14:05.195528+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072QF10W9",
+        "fields": {
+            "name": "ZHANGJIAGANG SUNRISE HOME TEXTILE CO LTD",
+            "address": "NO.63 NORTH ROAD,FENGHUANG TOWN,ZHANGJIAGANG,JIANGSU,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.556005 31.875572)",
+            "created_from": 575,
+            "created_at": "2019-03-10T16:46:39+00:00",
+            "updated_at": "2019-03-13T21:14:05.975675+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN2019072BPSB2D",
+        "fields": {
+            "name": "ZHAOYUAN CASTTE GARMENT CO LTD",
+            "address": "PANJIAJI VILLAGE,LINGLONG TOWN,ZHAOYUAN CITY,SHANDONG PROVINCE,ZHAOYUAN,SHANDONG",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.434071 37.355469)",
+            "created_from": 576,
+            "created_at": "2019-03-06T20:25:58+00:00",
+            "updated_at": "2019-03-13T21:14:05.799022+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "CN20190720JVV1F",
+        "fields": {
+            "name": "ZHEJIANG WEINA KNITTING INDUSTRIES CO LTD",
+            "address": "YIBEI INDUSTRIAL ZONE,SUXI TOWN,YIWU,ZHEJIANG,CHINA;",
+            "country_code": "CN",
+            "location": "SRID=4326;POINT (120.129008 29.4002639)",
+            "created_from": 578,
+            "created_at": "2019-03-09T07:15:57+00:00",
+            "updated_at": "2019-03-13T21:14:05.153303+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "IN2019072VWCTT3",
+        "fields": {
+            "name": "MUTHU EXPORT HOUSE",
+            "address": "S.F.NO:366 / 1A,D.NO:25,PERIYAKULATHUPALAYAM,VENKAMEDU,KARUR,TAMILNADU",
+            "country_code": "IN",
+            "location": "SRID=4326;POINT (78.08015929999999 10.9770793)",
+            "created_from": 581,
+            "created_at": "2019-03-05T09:32:09+00:00",
+            "updated_at": "2019-03-13T21:14:05.015528+00:00"
+        }
+    },
+    {
+        "model": "api.facility",
+        "pk": "IN2019072T1HSVC",
+        "fields": {
+            "name": "RIVIERA HOME FURNISHINGS PVT LTD",
+            "address": "PLOT NO 07 & 44,SECTOR 29,HUDA,PANIPAT,HARYANA",
+            "country_code": "IN",
+            "location": "SRID=4326;POINT (78.463369 17.513591)",
+            "created_from": 582,
+            "created_at": "2019-03-09T02:36:20+00:00",
+            "updated_at": "2019-03-13T21:14:05.685988+00:00"
+        }
+    }
+]

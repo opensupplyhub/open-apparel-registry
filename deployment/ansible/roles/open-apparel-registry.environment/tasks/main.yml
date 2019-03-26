@@ -1,0 +1,18 @@
+---
+- name: Set AWS_PROFILE
+  lineinfile: 
+    path: "/etc/environment" 
+    regexp: "^AWS_PROFILE="
+    line: "AWS_PROFILE={{ aws_profile }}"
+
+- name: Set OAR_SETTINGS_BUCKET
+  lineinfile:
+    path: "/etc/environment" 
+    regexp: "^OAR_SETTINGS_BUCKET="
+    line: "OAR_SETTINGS_BUCKET={{ oar_settings_bucket }}"
+
+- name: Set vm.max_map_count for ElasticSearch
+  sysctl:
+    name: vm.max_map_count
+    value: 262144
+    state: present

@@ -1,0 +1,198 @@
+[
+    {
+        "model": "api.facilitylist",
+        "pk": 2,
+        "fields": {
+            "contributor": 2,
+            "name": "Winter 2019 Compliance List",
+            "file_name": "Winter 2019 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-12T01:24:11+00:00",
+            "updated_at": "2019-03-14T21:59:08.605650+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 3,
+        "fields": {
+            "contributor": 3,
+            "name": "Winter 2017 Affiliate List",
+            "file_name": "Winter 2017 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-09T19:32:04+00:00",
+            "updated_at": "2019-03-14T21:59:08.305503+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 4,
+        "fields": {
+            "contributor": 4,
+            "name": "Spring 2019 Apparel List",
+            "file_name": "Spring 2019 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-14T18:13:24+00:00",
+            "updated_at": "2019-03-14T21:59:08.168094+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 5,
+        "fields": {
+            "contributor": 5,
+            "name": "Winter 2019 Apparel List",
+            "file_name": "Winter 2019 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-13T09:44:23+00:00",
+            "updated_at": "2019-03-14T21:59:08.996885+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 6,
+        "fields": {
+            "contributor": 6,
+            "name": "Fall 2019 Affiliate List",
+            "file_name": "Fall 2019 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-12T08:20:34+00:00",
+            "updated_at": "2019-03-14T21:59:08.854117+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 7,
+        "fields": {
+            "contributor": 7,
+            "name": "Winter 2019 Affiliate List",
+            "file_name": "Winter 2019 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-13T20:00:54+00:00",
+            "updated_at": "2019-03-14T21:59:08.043911+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 8,
+        "fields": {
+            "contributor": 8,
+            "name": "Fall 2018 Affiliate List",
+            "file_name": "Fall 2018 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-13T03:12:46+00:00",
+            "updated_at": "2019-03-14T21:59:08.849912+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 9,
+        "fields": {
+            "contributor": 9,
+            "name": "Summer 2017 Apparel List",
+            "file_name": "Summer 2017 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-13T04:46:47+00:00",
+            "updated_at": "2019-03-14T21:59:08.391597+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 10,
+        "fields": {
+            "contributor": 10,
+            "name": "Summer 2018 Apparel List",
+            "file_name": "Summer 2018 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-14T07:36:44+00:00",
+            "updated_at": "2019-03-14T21:59:08.969163+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 11,
+        "fields": {
+            "contributor": 11,
+            "name": "Winter 2018 Compliance List",
+            "file_name": "Winter 2018 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-07T22:46:45+00:00",
+            "updated_at": "2019-03-14T21:59:08.910720+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 12,
+        "fields": {
+            "contributor": 12,
+            "name": "Summer 2019 Compliance List",
+            "file_name": "Summer 2019 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-12T12:29:55+00:00",
+            "updated_at": "2019-03-14T21:59:08.637881+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 13,
+        "fields": {
+            "contributor": 13,
+            "name": "Summer 2018 Apparel List",
+            "file_name": "Summer 2018 Apparel List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-06T22:11:40+00:00",
+            "updated_at": "2019-03-14T21:59:08.156573+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 14,
+        "fields": {
+            "contributor": 14,
+            "name": "Winter 2018 Affiliate List",
+            "file_name": "Winter 2018 Affiliate List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-10T05:05:59+00:00",
+            "updated_at": "2019-03-14T21:59:08.137936+00:00"
+        }
+    },
+    {
+        "model": "api.facilitylist",
+        "pk": 15,
+        "fields": {
+            "contributor": 15,
+            "name": "Fall 2018 Compliance List",
+            "file_name": "Fall 2018 Compliance List.csv",
+            "header": "country,name,address,lat,lng",
+            "is_active": true,
+            "is_public": true,
+            "created_at": "2019-03-12T11:21:04+00:00",
+            "updated_at": "2019-03-14T21:59:08.428458+00:00"
+        }
+    }
+]

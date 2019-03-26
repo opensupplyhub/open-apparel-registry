@@ -1,0 +1,66 @@
+version: '2.3'
+services:
+  database:
+    image: quay.io/azavea/postgis:2.4-postgres10.6-slim
+    environment:
+      - POSTGRES_USER=openapparelregistry
+      - POSTGRES_PASSWORD=openapparelregistry
+      - POSTGRES_DB=openapparelregistry
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "openapparelregistry"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+
+  django:
+    image: openapparelregistry
+    env_file: .env.backend
+    environment:
+        - POSTGRES_HOST=database
+        - POSTGRES_PORT=5432
+        - POSTGRES_USER=openapparelregistry
+        - POSTGRES_PASSWORD=openapparelregistry
+        - POSTGRES_DB=openapparelregistry
+        - DJANGO_ENV=Development
+        - DJANGO_SECRET_KEY=secret
+        - DJANGO_LOG_LEVEL=INFO
+        - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
+    build:
+      context: ./src/django
+      dockerfile: Dockerfile
+    volumes:
+        - ./src/django:/usr/local/src
+        - $HOME/.aws:/root/.aws:ro
+    working_dir: /usr/local/src
+    depends_on:
+      database:
+        condition: service_healthy
+    command:
+        - '-b :8081'
+        - '--reload'
+        - '--access-logfile=-'
+        - '--error-logfile=-'
+        - '--log-level=debug'
+        - 'oar.wsgi'
+    ports:
+        - '8081:8081'
+    cpus: 2
+
+  app:
+    image: node:10-slim
+    volumes:
+      - ./src/app:/usr/local/src
+      - /var/cache/open-apparel-registry-node-modules:/usr/local/src/node_modules
+      - ./src/django/static:/usr/local/src/build
+      - $HOME/.aws:/root/.aws:ro
+    env_file: .env.frontend
+    environment:
+      - REACT_APP_GIT_COMMIT=${REACT_APP_GIT_COMMIT:-latest}
+      - REACT_APP_API_URL=http://localhost:8081
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=2000
+      - PORT=6543
+    ports:
+      - 6543:6543
+    working_dir: /usr/local/src
+    command: yarn run start

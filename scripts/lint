@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n "Usage: $(basename "$0")
+Run linters on the project's code.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        # Lint Bash scripts
+        if command -v shellcheck > /dev/null; then
+            shellcheck scripts/*
+        fi
+
+        # Lint React frontend
+        docker-compose \
+            run --rm --no-deps app \
+            yarn lint
+
+        if [ "${1:-}" = "--ci" ]; then
+            # Lint Django app
+            GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+                -f docker-compose.yml \
+                -f docker-compose.ci.yml \
+                run --rm --no-deps --entrypoint flake8 django \
+                --exclude settings.py,manage.py,*.pyc,api/migrations/*
+        else
+            # Lint Django app
+            docker-compose \
+                run --rm --no-deps --entrypoint flake8 django \
+                --exclude settings.py,manage.py,*.pyc,api/migrations/*
+        fi
+    fi
+fi

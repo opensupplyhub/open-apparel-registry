@@ -1,0 +1,73 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Run tests.
+"
+}
+
+function lint() {
+    ./scripts/lint
+}
+
+function lint_ci() {
+    if [[ -n "${GIT_COMMIT}" ]]; then
+        GIT_COMMIT="${GIT_COMMIT}" \
+            ./scripts/lint --ci
+    else
+        echo "ERROR: No GIT_COMMIT variable defined."
+        exit 1
+    fi
+}
+
+function test_django() {
+    docker-compose \
+        run --rm --entrypoint python django \
+        manage.py test --noinput
+}
+
+function test_django_ci() {
+    if [[ -n "${GIT_COMMIT}" ]]; then
+        GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.ci.yml \
+            run --rm --entrypoint python django \
+            manage.py test --noinput
+    else
+        echo "ERROR: No GIT_COMMIT variable defined."
+        exit 1
+    fi
+}
+
+function test_app() {
+    docker-compose \
+        run --rm --no-deps app \
+        yarn test
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    elif [ "${1:-}" = "--lint" ]; then
+        lint
+    elif [ "${1:-}" = "--app" ]; then
+        test_app
+    elif [ "${1:-}" = "--django" ]; then
+        test_django
+    elif [ "${1:-}" = "--ci" ]; then
+        lint_ci
+        test_app
+        test_django_ci
+    else
+        lint
+        test_app
+        test_django
+    fi
+fi

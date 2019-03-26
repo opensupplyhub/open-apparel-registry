@@ -1,0 +1,51 @@
+# Compiled files
+*.pyc
+__pycache__/
+
+# Terraform
+.terraform
+.terraform/
+*.tfplan
+*.tfstate
+*.tfstate.backup
+*.tfvars
+
+# Ansible
+deployment/ansible/roles/azavea.*
+*.retry
+
+# Vagrant
+.vagrant
+
+# JS
+node_modules/
+npm-debug.log
+bundle.js
+vendor.bundle.js
+bundle.js.map
+dist/
+build/
+yarn-error.log
+
+# macOS
+.DS_Store
+
+# OAR
+.env.backend
+.env.frontend
+factories.csv
+*_factories.csv
+src/django/static
+research/dedupe/data
+research/dedupe/dedupe/facilities_learned_settings
+research/dedupe/dedupe/facilities_output.csv
+research/dedupe/dedupe/facility_list_items.csv
+research/dedupe/dedupe/facilities_training.json
+research/dedupe/dedupe/facilities_deduped.csv
+research/rubota/rubota_facilities.csv
+research/dedupe/gazetteer/gazetteer_learned_settings
+research/dedupe/gazetteer/gazetteer_messy.csv
+research/dedupe/gazetteer/gazetteer_messy_pass_2.csv
+research/dedupe/gazetteer/gazetteer_output.csv
+research/dedupe/gazetteer/gazetteer_pass_2_output.csv
+research/dedupe/gazetteer/gazetteer_training.json

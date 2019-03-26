@@ -1,0 +1,8 @@
+- src: azavea.pip
+  version: 1.0.1
+
+- src: azavea.docker
+  version: 4.0.0
+
+- src: azavea.aws-cli
+  version: 0.1.0

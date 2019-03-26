@@ -1,0 +1,146 @@
+#panel-container {
+  background: #fff;
+  box-shadow: 2px 0 4px rgba(0,0,0,.15);
+  z-index: 1;
+  height: calc(100vh - 64px - 47px);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  color: white;
+  background-color: #3d2f8c;  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #003de5 0%, #7964ff 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #003de5 0%,#7964ff 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #003de5 0%,#7964ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#003de5', endColorstr='#7964ff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  padding: 24px 32px;
+  max-height: 110px;
+}
+
+.panel-header__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.panel-header__subheading {
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.factory-header {
+  padding: 10px 10px 10px 0px;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.gm-style-iw-c {
+    border-radius: 0 !important;
+}
+
+.goog-te-gadget-icon {
+    display: none;
+}
+
+.goog-te-gadget-simple {
+    font-size: 12px !important;
+    color: #0427a4;
+    text-decoration: none;
+    font-family: ff-tisa-sans-web-pro,sans-serif;
+    font-weight: 500;
+    padding: 0 16px !important;
+    border: none !important;
+    text-transform: uppercase;
+    background-color: unset !important;
+    vertical-align: middle !important;
+}
+
+.goog-te-menu-value {
+    color: #0427a4 !important;
+}
+
+.popup-container {
+  max-height: 235px;
+  max-width: 235px;
+  overflow: auto;
+}
+
+.popup-item {
+  cursor: pointer;
+  padding: 7px 15px;
+}
+
+.popup-item:hover {
+  background: #ddd;
+}
+
+.popup-text {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.mapboxgl-popup-content {
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 14px;
+}
+
+.mapboxgl-ctrl-bottom-right {
+    margin: 30px 0 !important;
+}
+
+.circle {
+  border-radius: 50%;
+  background: #3d2f8c;
+  margin-right: 5px;
+}
+
+.circle-size-12 {
+  width: 12px;
+  height: 12px;
+  max-height: 12px;
+  min-width: 12px;
+}
+
+.circle-size-18 {
+  width: 18px;
+  height: 18px;
+}
+
+.circle-white-radius {
+  border: 2px white solid;
+}
+
+.centered-circle {
+  position: fixed;
+  margin-top: 79px;
+  margin-left: 149px;
+}
+
+.stripe {
+  height: 18px;
+}
+
+.shadow {
+  box-shadow: 3px 2px 8px rgba(0,0,0,0.3);
+}
+
+.tab-minwidth {
+  min-width: 107px !important;
+}
+
+.tabs {
+  background: white;
+  color: #12085D;
+}
+
+.tabs-indicator-color {
+  background-color: #12085D !important;
+}

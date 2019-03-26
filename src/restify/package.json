@@ -1,0 +1,40 @@
+{
+    "name": "ursa",
+    "version": "0.1.0",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "start": "node src/app.js",
+        "dev": "nodemon -L --watch src src/app.js",
+        "test": "CI=1 jest --forceExit",
+        "script": "node scripts/runner.js $1"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    },
+    "dependencies": {
+        "@mapbox/mapbox-sdk": "^0.4.1",
+        "async": "^2.6.1",
+        "dotenv": "^6.0.0",
+        "fast-csv": "^2.4.1",
+        "fs": "0.0.1-security",
+        "lodash": "^4.17.10",
+        "mongoosastic": "^4.4.1",
+        "mongoose": "^5.3.15",
+        "mongoose-history": "^0.6.0",
+        "restify": "7.3.0",
+        "restify-cors-middleware": "^1.1.1",
+        "restify-errors": "^6.1.1",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "axios": "^0.18.0",
+        "babel-polyfill": "^6.26.0",
+        "babel-preset-es2015": "^6.24.1",
+        "babel-register": "^6.26.0",
+        "jest": "^23.1.0",
+        "nodemon": "^1.17.5",
+        "superagent": "^3.8.3",
+        "supertest": "^3.1.0"
+    }
+}

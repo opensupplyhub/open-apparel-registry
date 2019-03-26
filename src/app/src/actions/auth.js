@@ -1,0 +1,297 @@
+import { createAction } from 'redux-act';
+import isEmail from 'validator/lib/isEmail';
+import { toast } from 'react-toastify';
+
+import csrfRequest from '../util/csrfRequest';
+
+import {
+    logErrorAndDispatchFailure,
+    makeUserLoginURL,
+    makeUserLogoutURL,
+    makeUserSignupURL,
+    makeUserConfirmEmailURL,
+    makeResetPasswordEmailURL,
+    makeResetPasswordConfirmURL,
+    createSignupErrorMessages,
+    createSignupRequestData,
+} from '../util/util';
+
+import { registrationFieldsEnum } from '../util/constants';
+
+export const startSubmitSignUpForm = createAction('START_SUBMIT_SIGN_UP_FORM');
+export const failSubmitSignUpForm = createAction('FAIL_SUBMIT_SIGN_UP_FORM');
+export const completeSubmitSignUpForm = createAction('COMPLETE_SUBMIT_SIGN_UP_FORM');
+
+export const updateSignUpFormInput = createAction('UPDATE_SIGN_UP_FORM_INPUT');
+
+export const startSubmitLoginForm = createAction('START_SUBMIT_LOGIN_FORM');
+export const failSubmitLoginForm = createAction('FAIL_SUBMIT_LOGIN_FORM');
+export const completeSubmitLoginForm = createAction('COMPLETE_SUBMIT_LOGIN_FORM');
+
+export const startSessionLogin = createAction('START_SESSION_LOGIN');
+export const failSessionLogin = createAction('FAIL_SESSION_LOGIN');
+export const completeSessionLogin = createAction('COMPLETE_SESSION_LOGIN');
+
+export const updateLoginFormEmailAddress = createAction('UPDATE_LOGIN_FORM_EMAIL_ADDRESS');
+export const updateLoginFormPassword = createAction('UPDATE_LOGIN_FORM_PASSWORD');
+
+export const startSubmitLogOut = createAction('START_SUBMIT_LOG_OUT');
+export const failSubmitLogOut = createAction('FAIL_SUBMIT_LOG_OUT');
+export const completeSubmitLogOut = createAction('COMPLETE_SUBMIT_LOG_OUT');
+
+export const startRequestForgotPasswordEmail = createAction('START_REQUEST_FORGOT_PASSWORD_EMAIL');
+export const failRequestForgotPasswordEmail = createAction('FAIL_REQUEST_FORGOT_PASSWORD_EMAIL');
+export const completeRequestForgotPasswordEmail = createAction('COMPLETE_REQUEST_FORGOT_PASSWORD_EMAIL');
+
+export const openForgotPasswordDialog = createAction('OPEN_FORGOT_PASSWORD_DIALOG');
+export const closeForgotPasswordDialog = createAction('CLOSE_FORGOT_PASSWORD_DIALOG');
+export const updateForgotPasswordEmailAddress =
+    createAction('UPDATE_FORGOT_PASSWORD_EMAIL_ADDRESS');
+
+export const resetAuthFormState = createAction('RESET_AUTH_FORM_STATE');
+export const resetAuthState = createAction('RESET_AUTH_STATE');
+
+export const updateResetPasswordFormUID = createAction('UPDATE_RESET_PASSWORD_FORM_UID');
+export const updateResetPasswordFormToken = createAction('UPDATE_RESET_PASSWORD_FORM_TOKEN');
+export const updateResetPasswordFormPassword = createAction('UPDATE_RESET_PASSWORD_FORM_PASSWORD');
+export const updateResetPasswordFormPasswordConfirmation =
+    createAction('UPDATE_RESET_PASSWORD_FORM_PASSWORD_CONFIRMATION');
+
+export const startSubmitResetPasswordForm = createAction('START_SUBMIT_RESET_PASSWORD_FORM');
+export const failSubmitResetPasswordForm = createAction('FAIL_SUBMIT_RESET_PASSWORD_FORM');
+export const completeSubmitResetPasswordForm = createAction('COMPLETE_SUBMIT_RESET_PASSWORD_FORM');
+export const resetResetPasswordFormState = createAction('RESET_RESET_PASSWORD_FORM_STATE');
+
+export const startConfirmAccountRegistration = createAction('START_CONFIRM_ACCOUNT_REGISTRATION');
+export const failConfirmAccountRegistration = createAction('FAIL_CONFIRM_ACCOUNT_REGISTRATION');
+export const completeConfirmAccountRegistration = createAction('COMPLETE_CONFIRM_ACCOUNT_REGISTRATION');
+export const resetConfirmAccountRegistration = createAction('RESET_CONFIRM_ACCOUNT_REGISTRATION');
+
+export function submitSignUpForm() {
+    return (dispatch, getState) => {
+        dispatch(startSubmitSignUpForm());
+
+        const {
+            auth: {
+                signup: {
+                    form,
+                },
+            },
+        } = getState();
+
+        const missingRequiredFieldErrorMessages = createSignupErrorMessages(form);
+
+        if (missingRequiredFieldErrorMessages.length) {
+            return dispatch(failSubmitSignUpForm(missingRequiredFieldErrorMessages));
+        }
+
+        if (form[registrationFieldsEnum.password] !==
+            form[registrationFieldsEnum.confirmPassword]) {
+            return dispatch(failSubmitSignUpForm([
+                'Password and confirmation password don\'t match',
+            ]));
+        }
+
+        // Drop confirmPassword from request sent to Django, since it's sent as password
+        const { confirmPassword, ...dataForAPI } = form;
+        const signupData = createSignupRequestData(dataForAPI);
+
+        return csrfRequest
+            .post(makeUserSignupURL(), signupData)
+            .then(({ data }) => dispatch(completeSubmitSignUpForm(data)))
+            .catch(e => dispatch(logErrorAndDispatchFailure(
+                e,
+                'An error prevented signing up',
+                failSubmitSignUpForm,
+            )));
+    };
+}
+
+export function submitLoginForm() {
+    return (dispatch, getState) => {
+        dispatch(startSubmitLoginForm());
+
+        const {
+            auth: {
+                login: {
+                    form: {
+                        email,
+                        password,
+                    },
+                },
+            },
+        } = getState();
+
+        if (!email || !password) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'Email and password are required',
+                failSubmitLoginForm,
+            ));
+        }
+
+        return csrfRequest
+            .post(makeUserLoginURL(), { email, password })
+            .then(({ data }) => dispatch(completeSubmitLoginForm(data)))
+            .catch(e => dispatch(logErrorAndDispatchFailure(
+                e,
+                'An error prevented logging in',
+                failSubmitLoginForm,
+            )));
+    };
+}
+
+export function sessionLogin() {
+    return (dispatch) => {
+        dispatch(startSessionLogin());
+
+        return csrfRequest
+            .get(makeUserLoginURL())
+            .then(({ data }) => dispatch(completeSessionLogin(data)))
+            .catch(e => dispatch(logErrorAndDispatchFailure(
+                e,
+                'User was not signed in',
+                failSessionLogin,
+            )));
+    };
+}
+
+export function requestForgotPasswordEmail() {
+    return (dispatch, getState) => {
+        dispatch(startRequestForgotPasswordEmail());
+
+        const {
+            auth: {
+                forgotPassword: {
+                    form: {
+                        email,
+                    },
+                },
+            },
+        } = getState();
+
+        if (!email) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'Email address was not provided',
+                failRequestForgotPasswordEmail,
+            ));
+        }
+
+        if (!isEmail(email)) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'Email address is invalid',
+                failRequestForgotPasswordEmail,
+            ));
+        }
+
+        return csrfRequest
+            .post(makeResetPasswordEmailURL(), { email })
+            .then(() => {
+                toast('Check your email for password reset instructions');
+                return dispatch(completeRequestForgotPasswordEmail());
+            })
+            .catch(() => dispatch(logErrorAndDispatchFailure(
+                null,
+                'An error prevented sending the forgot password email',
+                failRequestForgotPasswordEmail,
+            )));
+    };
+}
+
+export function submitLogOut() {
+    return (dispatch) => {
+        dispatch(startSubmitLogOut());
+
+        return csrfRequest
+            .post(makeUserLogoutURL())
+            .then(({ data }) => dispatch(completeSubmitLogOut(data)))
+            .catch(e => dispatch(logErrorAndDispatchFailure(
+                e,
+                'An error prevented logging out',
+                failSubmitLogOut,
+            )));
+    };
+}
+
+export function submitResetPassword() {
+    return (dispatch, getState) => {
+        dispatch(startSubmitResetPasswordForm());
+
+        const {
+            auth: {
+                resetPassword: {
+                    uid,
+                    token,
+                    newPassword,
+                    newPasswordConfirmation,
+                },
+            },
+        } = getState();
+
+        if (!uid || !token) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'An error prevented resetting your password',
+                failSubmitResetPasswordForm,
+            ));
+        }
+
+        if (!newPassword || !newPasswordConfirmation) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'Password and password confirmation fields are required',
+                failSubmitResetPasswordForm,
+            ));
+        }
+
+        if (newPassword !== newPasswordConfirmation) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'Password and confirmation don\'t match',
+                failSubmitResetPasswordForm,
+            ));
+        }
+
+        return csrfRequest
+            .post(
+                makeResetPasswordConfirmURL(),
+                {
+                    uid,
+                    token,
+                    new_password1: newPassword,
+                    new_password2: newPasswordConfirmation,
+                },
+            )
+            .then(() => dispatch(completeSubmitResetPasswordForm()))
+            .catch(e => dispatch(logErrorAndDispatchFailure(
+                e,
+                'An error prevented resetting your password',
+                failSubmitResetPasswordForm,
+            )));
+    };
+}
+
+export function confirmAccountRegistration(key) {
+    return (dispatch) => {
+        dispatch(startConfirmAccountRegistration(key));
+
+        if (!key) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'An error prevented confirming the account',
+                failConfirmAccountRegistration,
+            ));
+        }
+
+        return csrfRequest
+            .post(makeUserConfirmEmailURL(), { key })
+            .then(() => dispatch(completeConfirmAccountRegistration()))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented confirming the account',
+                failConfirmAccountRegistration,
+            )));
+    };
+}

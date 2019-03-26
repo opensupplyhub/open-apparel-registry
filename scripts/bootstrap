@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+# fail without OAR_SETTINGS_BUCKET
+set -u
+
+DIR="$(dirname "${0}")/../"
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Pull .env files from S3.
+"
+}
+
+function bootstrap_env() {
+    pushd "${DIR}"
+
+    echo "Pulling .env.backend from s3://${OAR_SETTINGS_BUCKET}"
+    aws s3 cp "s3://${OAR_SETTINGS_BUCKET}/.env.backend" ".env.backend"
+
+    echo "Pulling .env.frontend from s3://${OAR_SETTINGS_BUCKET}"
+    aws s3 cp "s3://${OAR_SETTINGS_BUCKET}/.env.frontend" ".env.frontend"
+
+    popd
+}
+
+function bootstrap_db() {
+    pushd "${DIR}"
+
+    echo "Pulling database dumps from s3://${OAR_SETTINGS_BUCKET}"
+    aws s3 cp "s3://${OAR_SETTINGS_BUCKET}/oar_mongodump_fixed.tar.gz" "/tmp/oar_mongodump_fixed.tar.gz"
+
+    echo "Running mongorestore on database dumps"
+    tar -zxvf /tmp/oar_mongodump_fixed.tar.gz -C /tmp/
+
+    # Bring up MongoDB and ElasticSearch and respect healthchecks using the Restify service
+    docker-compose \
+        -f docker-compose.restify.yml \
+        up -d restify
+    docker-compose \
+        -f docker-compose.restify.yml \
+        stop restify
+
+    # Run mongorestore on fixed database dumps
+    docker-compose \
+        -f docker-compose.restify.yml \
+        run --rm \
+        --entrypoint mongorestore \
+        -v /tmp/oar_mongodump_fixed/:/opt/oar_mongodump_fixed \
+        mongo \
+        --drop --uri=mongodb://mongo:27017/openapparelregistry /opt/oar_mongodump_fixed/ -vvvvv
+
+    echo "Running Mongoosastic ElasticSearch synchronization"
+    docker-compose \
+        -f docker-compose.restify.yml \
+        run --rm \
+        --entrypoint node \
+        -v "$(pwd)/src/restify/scripts:/usr/local/src/scripts" \
+        restify \
+        scripts/synchronize.js
+
+    docker-compose \
+        -f docker-compose.restify.yml \
+        down
+
+    popd
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    elif [ "${1:-}" = "--restify" ]; then
+        bootstrap_db
+    else
+        bootstrap_env
+    fi
+fi

@@ -1,0 +1,11 @@
+version: '2.3'
+services:
+  batch:
+    image: "openapparelregistry-batch:${GIT_COMMIT:-latest}"
+    environment:
+      - GIT_COMMIT=${GIT_COMMIT:-latest}
+    build:
+      context: ./src/batch
+      dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: "${GIT_COMMIT:-latest}"
