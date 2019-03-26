@@ -21,14 +21,28 @@ export default function withQueryStringSync(WrappedComponent) {
                     replace,
                     location: {
                         search,
+                        pathname,
                     },
+                },
+                match: {
+                    path,
                 },
                 filters,
                 hydrateFiltersFromQueryString,
             } = this.props;
 
+            // This check returns null when the component mounts on the facility details route
+            // with a path like /facilities/hello-world?name=facility to stop all facilities
+            // from loading in the background and superseding single facility for the details
+            // page.
+            //
+            // In that case, `path` will be `/facilities` and `pathname` will be
+            // `/facilities/hello-world`. In other cases -- `/` and `/facilities` -- these paths
+            // will match.
+            const fetchFacilitiesOnMount = (pathname === path);
+
             return search
-                ? hydrateFiltersFromQueryString(search)
+                ? hydrateFiltersFromQueryString(search, fetchFacilitiesOnMount)
                 : replace(`?${createQueryStringFromSearchFilters(filters)}`);
         }
 
@@ -87,9 +101,12 @@ export default function withQueryStringSync(WrappedComponent) {
 
     function mapDispatchToProps(dispatch) {
         return {
-            hydrateFiltersFromQueryString: (qs) => {
+            hydrateFiltersFromQueryString: (qs, fetch = true) => {
                 dispatch(setFiltersFromQueryString(qs));
-                return dispatch(fetchFacilities());
+
+                return fetch
+                    ? dispatch(fetchFacilities())
+                    : null;
             },
             clearFacilities: () => dispatch(resetFacilities()),
         };
