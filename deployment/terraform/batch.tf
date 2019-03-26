@@ -63,9 +63,9 @@ data "template_file" "default_job_definition" {
     django_secret_key          = "${var.django_secret_key}"
     google_server_side_api_key = "${var.google_server_side_api_key}"
 
-    aws_region = "${var.aws_region}"
+    rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
 
-    rollbar_client_side_access_token = "${var.rollbar_client_side_access_token}"
+    aws_region = "${var.aws_region}"
   }
 }
 
