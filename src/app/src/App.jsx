@@ -50,7 +50,7 @@ const appStyles = Object.freeze({
         right: '0',
         left: '0',
         position: 'fixed',
-        bottom: '47px',
+        bottom: '51px',
     }),
 });
 

@@ -1,14 +1,12 @@
 import React from 'react';
 import { arrayOf, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
-import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
 
 import FacilityListItemsTableRow from './FacilityListItemsTableRow';
 import FacilityListItemsConfirmationTableRow from './FacilityListItemsConfirmationTableRow';
@@ -45,7 +43,10 @@ const facilityListItemsTableStyles = Object.freeze({
     }),
     summaryStatusStyles: Object.freeze({
         fontSize: '1rem',
+        fontWeight: '500',
         color: 'rgba(0, 0, 0, 0.87)',
+        padding: '20px',
+        lineHeight: '1.2',
     }),
 });
 
@@ -92,22 +93,36 @@ function FacilityListItemsTable({
     };
 
     const paginationControlsRow = (
-        <TableRow>
-            <TableCell
-                colSpan={3}
+        <Grid
+            container
+            direction="row"
+            justify="space-between"
+            alignItems="center"
+        >
+            <Grid
+                item
+                sm={12}
+                md={6}
                 style={facilityListItemsTableStyles.summaryStatusStyles}
             >
                 {makeFacilityListSummaryStatus(list.statuses)}
-            </TableCell>
-            <TablePagination
-                count={list.item_count}
-                rowsPerPage={Number(rowsPerPage)}
-                rowsPerPageOptions={rowsPerPageOptions}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-                page={page - 1}
-                onChangePage={handleChangePage}
-            />
-        </TableRow>
+            </Grid>
+            <Grid
+                item
+                sm={12}
+                md={6}
+            >
+                <TablePagination
+                    count={list.item_count}
+                    rowsPerPage={Number(rowsPerPage)}
+                    rowsPerPageOptions={rowsPerPageOptions}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                    page={page - 1}
+                    onChangePage={handleChangePage}
+                    component="div"
+                />
+            </Grid>
+        </Grid>
     );
 
     const tableRows = fetchingItems ? [] : items
@@ -205,10 +220,10 @@ function FacilityListItemsTable({
 
     return (
         <Paper style={facilityListItemsTableStyles.containerStyles}>
+            {paginationControlsRow}
             <div style={facilityListItemsTableStyles.tableWrapperStyles}>
                 <Table>
                     <TableHead>
-                        {paginationControlsRow}
                         <FacilityListItemsTableRow
                             rowIndex="CSV Row Index"
                             countryName="Country Name"
@@ -221,11 +236,9 @@ function FacilityListItemsTable({
                     <TableBody>
                         {tableRows}
                     </TableBody>
-                    <TableFooter>
-                        {paginationControlsRow}
-                    </TableFooter>
                 </Table>
             </div>
+            {paginationControlsRow}
         </Paper>
     );
 }
