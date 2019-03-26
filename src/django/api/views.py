@@ -428,6 +428,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
                 .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
+                .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
             ]
 
@@ -442,6 +443,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
                 .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
+                .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
             ]
 
