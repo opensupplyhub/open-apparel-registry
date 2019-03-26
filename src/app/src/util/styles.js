@@ -48,6 +48,7 @@ export const confirmRejectMatchRowStyles = Object.freeze({
         flexDirection: 'column',
     }),
     cellRowStyles: Object.freeze({
+        height: '55px',
         minHeight: '55px',
         alignItems: 'top',
         maxWidth: '250px',
