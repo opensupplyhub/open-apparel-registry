@@ -6,11 +6,12 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Tooltip from '@material-ui/core/Tooltip';
 import isObject from 'lodash/isObject';
 
 import { facilityMatchStatusChoicesEnum } from '../util/constants';
-
 import { confirmRejectMatchRowStyles } from '../util/styles';
+import TruncateTooltip from './TruncateTooltip';
 
 const confirmRejectDialogStates = Object.freeze({
     none: 'none',
@@ -80,16 +81,21 @@ export default class CellElement extends Component {
 
                 if (linkURL) {
                     return (
-                        <Link
-                            to={linkURL}
-                            href={linkURL}
-                        >
-                            {item}
-                        </Link>
+                        <Tooltip title={item} placement="top">
+                            <Link
+                                to={linkURL}
+                                href={linkURL}
+                                className="text-overflow"
+                            >
+                                {item}
+                            </Link>
+                        </Tooltip>
                     );
                 }
 
-                return item;
+                return (
+                    <TruncateTooltip truncate={item} />
+                );
             })();
 
             return (
@@ -246,7 +252,7 @@ export default class CellElement extends Component {
         return (
             <div
                 key={item.id}
-                style={confirmRejectMatchRowStyles.cellRowStyles}
+                style={confirmRejectMatchRowStyles.cellRowActionStyles}
             >
                 <div style={confirmRejectMatchRowStyles.cellActionStyles}>
                     <Button

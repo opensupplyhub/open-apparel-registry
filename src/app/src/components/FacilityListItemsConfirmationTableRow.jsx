@@ -17,6 +17,7 @@ import { listTableCellStyles } from '../util/styles';
 
 import { makeFacilityDetailLink } from '../util/util';
 
+
 function FacilityListItemsConfirmationTableRow({
     item,
     makeConfirmMatchFunction,

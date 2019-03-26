@@ -11,6 +11,8 @@ import { listTableCellStyles } from '../util/styles';
 
 import { makeFacilityDetailLink } from '../util/util';
 
+import TruncateTooltip from './TruncateTooltip';
+
 const propsAreEqual = (prevProps, nextProps) =>
     isEqual(prevProps.rowIndex, nextProps.rowIndex)
     && isEqual(prevProps.countryCode, nextProps.countryCode)
@@ -75,7 +77,7 @@ const FacilityListItemsTableRow = memo(({
             padding="default"
             style={listTableCellStyles.addressCellStyles}
         >
-            {address}
+            <TruncateTooltip truncate={address} />
         </TableCell>
         <TableCell
             padding="default"

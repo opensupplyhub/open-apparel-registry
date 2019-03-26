@@ -5,6 +5,8 @@ import get from 'lodash/get';
 
 import CellElement from './CellElement';
 
+import TruncateTooltip from './TruncateTooltip';
+
 import { facilityMatchStatusChoicesEnum } from '../util/constants';
 
 import { confirmRejectMatchRowStyles } from '../util/styles';
@@ -22,7 +24,7 @@ export default function FacilityListItemsDetailedTableRowCell({
     return (
         <div style={confirmRejectMatchRowStyles.cellStyles}>
             <div style={confirmRejectMatchRowStyles.cellTitleStyles}>
-                {title}
+                <TruncateTooltip truncate={title} />
             </div>
             <div style={confirmRejectMatchRowStyles.cellSubtitleStyles}>
                 <Typography variant="body2">
