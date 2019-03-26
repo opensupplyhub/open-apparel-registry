@@ -8,6 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
 
 import FacilityListItemsTableRow from './FacilityListItemsTableRow';
 import FacilityListItemsConfirmationTableRow from './FacilityListItemsConfirmationTableRow';
@@ -25,6 +26,7 @@ import {
     makePaginatedFacilityListItemsDetailLinkWithRowCount,
     getValueFromEvent,
     createPaginationOptionsFromQueryString,
+    makeFacilityListSummaryStatus,
 } from '../util/util';
 
 import {
@@ -40,6 +42,10 @@ const facilityListItemsTableStyles = Object.freeze({
     }),
     tableWrapperStyles: Object.freeze({
         overflowX: 'auto',
+    }),
+    summaryStatusStyles: Object.freeze({
+        fontSize: '1rem',
+        color: 'rgba(0, 0, 0, 0.87)',
     }),
 });
 
@@ -87,6 +93,12 @@ function FacilityListItemsTable({
 
     const paginationControlsRow = (
         <TableRow>
+            <TableCell
+                colSpan={3}
+                style={facilityListItemsTableStyles.summaryStatusStyles}
+            >
+                {makeFacilityListSummaryStatus(list.statuses)}
+            </TableCell>
             <TablePagination
                 count={list.item_count}
                 rowsPerPage={Number(rowsPerPage)}

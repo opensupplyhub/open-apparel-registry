@@ -92,6 +92,13 @@ const completeConfirmMatch = (state, payload) => {
             : state.selectedFacilityListItemsRowIndex;
 
     return update(state, {
+        list: {
+            data: {
+                statuses: {
+                    $set: payload.list_statuses,
+                },
+            },
+        },
         confirmOrRejectMatch: {
             fetching: { $set: false },
             error: { $set: null },
