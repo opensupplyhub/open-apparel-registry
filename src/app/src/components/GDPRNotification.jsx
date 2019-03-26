@@ -51,13 +51,21 @@ export default class GDPRNotification extends Component {
             </div>
         );
 
-        const GDPRMessage =
-            `We use cookies to collect and analyze
-            information on site performance and usage,
-            and to enhance content. By clicking Accept,
-            you agree to allow cookies to be placed.
-            To find out more, visit our terms of service
-            and our privacy policy.`;
+        const snackbarMessage = (
+            <div>
+                The Open Apparel Registry uses cookies to collect and analyze
+                site performance and usage. By clicking the Accept button, you
+                agree to allow us to place cookies and share information with
+                Google Analytics. For more information, please visit our{` `}
+                <a
+                    href="https://info.openapparel.org/tos/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Terms and Conditions of Use and Privacy Policy.
+                </a>
+            </div>
+        );
 
         return (
             <ShowOnly when={this.state.open}>
@@ -69,7 +77,7 @@ export default class GDPRNotification extends Component {
                         horizontal: 'right',
                     }}
                     action={GDPRActions}
-                    message={GDPRMessage}
+                    message={snackbarMessage}
                 />
             </ShowOnly>
         );
