@@ -62,6 +62,7 @@ bastion_instance_type = "t3.nano"
 
 google_server_side_api_key = ""
 google_client_side_api_key = ""
+google_analytics_key = ""
 
 rollbar_server_side_access_token = ""
 rollbar_client_side_access_token = ""

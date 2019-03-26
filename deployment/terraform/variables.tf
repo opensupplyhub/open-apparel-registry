@@ -198,6 +198,10 @@ variable "google_server_side_api_key" {}
 
 variable "google_client_side_api_key" {}
 
+variable "google_analytics_key" {
+  default = ""
+}
+
 variable "rollbar_server_side_access_token" {}
 
 variable "rollbar_client_side_access_token" {}
