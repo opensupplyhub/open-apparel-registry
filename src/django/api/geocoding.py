@@ -4,15 +4,15 @@ import requests
 
 
 ZERO_RESULTS = "ZERO_RESULTS"
+GEOCODING_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 
 
-def create_geocoding_api_url(address, country_code):
-    return (
-        "https://maps.googleapis.com/maps/api/geocode/json"
-        "?components=country:{0}"
-        "&address={1}"
-        "&key={2}"
-    ).format(country_code, address, settings.GOOGLE_SERVER_SIDE_API_KEY)
+def create_geocoding_params(address, country_code):
+    return {
+        'components': 'country:{}'.format(country_code),
+        'address': address,
+        'key': settings.GOOGLE_SERVER_SIDE_API_KEY
+    }
 
 
 def format_geocoded_address_data(data):
@@ -39,9 +39,8 @@ def format_no_geocode_results(data):
 
 
 def geocode_address(address, country_code):
-
-    request_url = create_geocoding_api_url(address, country_code)
-    r = requests.get(request_url)
+    params = create_geocoding_params(address, country_code)
+    r = requests.get(GEOCODING_URL, params=params)
 
     if r.status_code != 200:
         raise ValueError("Geocoding request failed with status"
