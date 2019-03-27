@@ -8,7 +8,7 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+
     <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon/favicon-16x16.png">
@@ -32,15 +32,25 @@
     <title>Open Apparel Registry (beta)</title>
     <!-- Environment Variables -->
     <script src="%PUBLIC_URL%/web/environment.js"></script>
-    <!-- TODO: Replace with actual Google Tag Manager snippet -->
+    <!-- Google Analytics -->
     <script>
-      if (window.ENVIRONMENT &&
-          window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY &&
-          window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY !== "" &&
-          window.ENVIRONMENT.ENVIRONMENT !== 'development') {
-        console.log(window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY);
-      }
+        if (window.ENVIRONMENT &&
+            window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY &&
+            window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY !== "") {
+            // Initially disable tracking until we check that the user has accepted the notification
+            //
+            // See: https://developers.google.com/analytics/devguides/collection/analyticsjs/user-opt-out
+            //
+            // We will later delete this key and start Google Analytics tracking in the application code
+            // if it is verified that the user has selected "Accept" for the Google Analytics tracking
+            // notification. See: /src/app/src/util/util.ga.js
+            //
+            // Set for every environment to ensure it is always set.
+            var disableGAKey = 'ga-disable-' + window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY;
+            window[disableGAKey] = true;
+        }
     </script>
+    <!-- End Google Analytics -->
     <!--
       Rollbar Configuration
       https://docs.rollbar.com/docs/browser-js
