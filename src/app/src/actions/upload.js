@@ -21,7 +21,7 @@ export const completeUploadFile = createAction('COMPLETE_UPLOAD_FILE');
 
 export const resetUploadState = createAction('RESET_UPLOAD_STATE');
 
-export function uploadFile(file = null) {
+export function uploadFile(file = null, redirectToListDetail) {
     return (dispatch, getState) => {
         dispatch(startUploadFile());
 
@@ -60,7 +60,10 @@ export function uploadFile(file = null) {
 
         return csrfRequest
             .post(makeFacilityListsURL(), formData)
-            .then(() => dispatch(completeUploadFile()))
+            .then(({ data: { id } }) => {
+                dispatch(completeUploadFile());
+                redirectToListDetail(id);
+            })
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented uploading that file',

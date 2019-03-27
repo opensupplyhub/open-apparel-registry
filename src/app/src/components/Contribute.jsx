@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bool } from 'prop-types';
 import Grid from '@material-ui/core/Grid';
@@ -78,7 +78,7 @@ function ContributeList({
                             marginBottom: '20px',
                         }}
                         >
-                            <ContributeForm />
+                            <Route component={ContributeForm} />
                         </Paper>
                         <Paper style={{
                             padding: '20px',

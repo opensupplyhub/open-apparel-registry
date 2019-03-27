@@ -15,6 +15,7 @@ import {
     getValueFromEvent,
     getFileFromInputRef,
     getFileNameFromInputRef,
+    makeFacilityListItemsDetailLink,
 } from '../util/util';
 
 import {
@@ -278,14 +279,21 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, {
+    history: {
+        push,
+    },
+}) {
     return {
         updateName: e => dispatch(updateFileUploadName(getValueFromEvent(e))),
         updateDescription: e => dispatch(updateFileUploadDescription(getValueFromEvent(e))),
         updateFileName: r => dispatch(updateFileUploadFileName(getFileNameFromInputRef(r))),
         updateListToReplace: e =>
             dispatch(updateFileUploadListToReplaceID(getValueFromEvent(e))),
-        uploadList: r => dispatch(uploadFile(getFileFromInputRef(r))),
+        uploadList: r => dispatch(uploadFile(
+            getFileFromInputRef(r),
+            id => push(makeFacilityListItemsDetailLink(id)),
+        )),
         fetchLists: () => dispatch(fetchUserFacilityLists()),
         resetForm: () => {
             dispatch(resetUserFacilityLists());

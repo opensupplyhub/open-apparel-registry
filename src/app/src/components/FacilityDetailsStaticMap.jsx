@@ -27,9 +27,9 @@ export default function FacilityDetailsStaticMap({
 }) {
     return (
         <img
-            style={{ width: '100%' }}
             src={makeGoogleMapsStaticMapURLFromLatLng({ lat, lng })}
             alt={`Facility ${name} at latitide ${lat} and longitude ${lng}`}
+            className="facility-detail_map"
         />
     );
 }

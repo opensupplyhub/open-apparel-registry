@@ -428,6 +428,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
                 .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
+                .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
             ]
 
@@ -442,6 +443,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
                 .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
+                .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
             ]
 
@@ -852,6 +854,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 "facility_list": 1,
                 "country_name": "United States",
                 "processing_errors": null,
+                "list_statuses": ["CONFIRMED_MATCH"],
                 "matched_facility": {
                     "oar_id": "oar_id_1",
                     "name": "facility match name 1",
@@ -909,6 +912,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             facility_list_item.save()
 
             response_data = FacilityListItemSerializer(facility_list_item).data
+
+            response_data['list_statuses'] = (facility_list
+                                              .facilitylistitem_set
+                                              .values_list('status', flat=True)
+                                              .distinct())
+
             return Response(response_data)
         except FacilityList.DoesNotExist:
             raise NotFound()
@@ -1008,6 +1017,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 "matched_facility": null,
                 "processing_errors": null,
                 "facility_list": 1,
+                "list_statuses": ["POTENTIAL_MATCH"],
             }
         """
         try:
@@ -1076,6 +1086,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 facility_list_item.save()
 
             response_data = FacilityListItemSerializer(facility_list_item).data
+
+            response_data['list_statuses'] = (facility_list
+                                              .facilitylistitem_set
+                                              .values_list('status', flat=True)
+                                              .distinct())
+
             return Response(response_data)
         except FacilityList.DoesNotExist:
             raise NotFound()

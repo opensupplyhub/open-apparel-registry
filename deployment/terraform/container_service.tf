@@ -112,6 +112,7 @@ data "template_file" "app" {
 
     google_server_side_api_key = "${var.google_server_side_api_key}"
     google_client_side_api_key = "${var.google_client_side_api_key}"
+    google_analytics_key       = "${var.google_analytics_key}"
 
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
     rollbar_client_side_access_token = "${var.rollbar_client_side_access_token}"
@@ -158,6 +159,7 @@ data "template_file" "app_cli" {
 
     google_server_side_api_key = "${var.google_server_side_api_key}"
     google_client_side_api_key = "${var.google_client_side_api_key}"
+    google_analytics_key       = "${var.google_analytics_key}"
 
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
     rollbar_client_side_access_token = "${var.rollbar_client_side_access_token}"

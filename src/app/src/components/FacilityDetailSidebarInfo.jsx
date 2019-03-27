@@ -18,7 +18,7 @@ const FacilityDetailSidebarInfo = memo(({
 }) => {
     const makeContributorListItem =
         ([id, displayLabel]) => (
-            <li key={id}>
+            <li key={id} className="word-break">
                 <Link
                     to={makeProfileRouteLink(id)}
                     href={makeProfileRouteLink(id)}
@@ -29,7 +29,7 @@ const FacilityDetailSidebarInfo = memo(({
         );
 
     const makeStringListItem = item => (
-        <li key={item}>
+        <li key={item} className="word-break">
             {item}
         </li>);
 

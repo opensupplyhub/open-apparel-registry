@@ -43,7 +43,7 @@ const unselectedMarkerURL = '/images/marker.png';
 
 const facilitiesMapStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
-        height: '99.75%',
+        height: '100%',
         width: '100%',
     }),
     copySearchButtonStyle: Object.freeze({

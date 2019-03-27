@@ -32,6 +32,15 @@
     <title>Open Apparel Registry (beta)</title>
     <!-- Environment Variables -->
     <script src="%PUBLIC_URL%/web/environment.js"></script>
+    <!-- TODO: Replace with actual Google Tag Manager snippet -->
+    <script>
+      if (window.ENVIRONMENT &&
+          window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY &&
+          window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY !== "" &&
+          window.ENVIRONMENT.ENVIRONMENT !== 'development') {
+        console.log(window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY);
+      }
+    </script>
     <!--
       Rollbar Configuration
       https://docs.rollbar.com/docs/browser-js

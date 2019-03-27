@@ -158,11 +158,12 @@ class UserProfileSerializer(ModelSerializer):
 class FacilityListSerializer(ModelSerializer):
     item_count = SerializerMethodField()
     items_url = SerializerMethodField()
+    statuses = SerializerMethodField()
 
     class Meta:
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
-                  'is_public', 'item_count', 'items_url')
+                  'is_public', 'item_count', 'items_url', 'statuses')
 
     def get_item_count(self, facility_list):
         return facility_list.facilitylistitem_set.count()
@@ -170,6 +171,11 @@ class FacilityListSerializer(ModelSerializer):
     def get_items_url(self, facility_list):
         return reverse('facility-list-items',
                        kwargs={'pk': facility_list.pk})
+
+    def get_statuses(self, facility_list):
+        return (facility_list.facilitylistitem_set
+                .values_list('status', flat=True)
+                .distinct())
 
 
 class FacilitySerializer(GeoFeatureModelSerializer):
