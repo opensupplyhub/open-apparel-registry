@@ -15,7 +15,7 @@ import { facilityDetailsRoute } from '../util/constants';
 function MapAndSidebar() {
     return (
         <Fragment>
-            <Grid container>
+            <Grid container className="map-sidebar-container">
                 <Grid
                     item
                     xs={12}

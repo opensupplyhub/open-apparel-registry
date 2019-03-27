@@ -572,7 +572,17 @@ hr {
   overflow: auto;
 }
 
+.facility-detail_map {
+  width: 385px;
+  max-width: 100%;
+  flex: none;
+  margin: 30px auto 0;
+  border-radius: 5px;
+}
 
+.word-break {
+  word-break: break-all;
+}
 
 /* @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
