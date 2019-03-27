@@ -9,13 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Summary status for facility lists [#378](https://github.com/open-apparel-registry/open-apparel-registry/pull/378)
-- Environment variables for Google Analytics [#395](https://github.com/open-apparel-registry/open-apparel-registry/pull/395)
-
 ### Changed
-
-- Do not show facilities from inactive lists when searching [#401](https://github.com/open-apparel-registry/open-apparel-registry/pull/401)
-- Redirect to facility list upon successful upload [#404](https://github.com/open-apparel-registry/open-apparel-registry/pull/404)
 
 ### Deprecated
 
@@ -23,9 +17,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+### Security
+
+
+## [0.2.0] - 2019-03-27
+
+### Added
+
+- Summary status for facility lists [#378](https://github.com/open-apparel-registry/open-apparel-registry/pull/378)
+- Environment variables for Google Analytics [#395](https://github.com/open-apparel-registry/open-apparel-registry/pull/395)
+
+### Changed
+
+- Do not show facilities from inactive lists when searching [#401](https://github.com/open-apparel-registry/open-apparel-registry/pull/401)
+- Redirect to facility list upon successful upload [#404](https://github.com/open-apparel-registry/open-apparel-registry/pull/404)
+- Better support for wide and narrow browser widths [#392](https://github.com/open-apparel-registry/open-apparel-registry/pull/392)
+
+### Fixed
+
 - Handle geocodes with unescaped `#` character [#402](https://github.com/open-apparel-registry/open-apparel-registry/pull/402)
 
-### Security
 
 ## [0.1.0] - 2019-03-26
 
