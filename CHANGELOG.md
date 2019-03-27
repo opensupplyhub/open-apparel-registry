@@ -45,4 +45,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Initial release.
 
 [unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/0.1.0...HEAD
+[0.2.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/0.2.0
 [0.1.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/0.1.0
