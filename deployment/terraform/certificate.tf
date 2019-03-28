@@ -27,4 +27,10 @@ module "cert_lb" {
   subject_alternative_names = ["*.${var.r53_public_hosted_zone}"]
   hosted_zone_id            = "${aws_route53_zone.external.zone_id}"
   validation_record_ttl     = "60"
+
+  # To avoid a scenerio where Terraform tries to destroy this resource while it
+  # is still associated with an ALB listener. 
+  lifecycle {
+    create_before_destroy = true
+  }
 }
