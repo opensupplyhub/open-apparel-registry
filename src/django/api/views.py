@@ -259,7 +259,7 @@ class APIAuthToken(ObtainAuthToken):
 @permission_classes((AllowAny,))
 def all_contributors(request):
     """
-    Returns a list of contributors as tuples of contributor IDs and names.
+    Returns list contributors as a list of tuples of contributor IDs and names.
 
     ## Sample Response
 
@@ -271,8 +271,11 @@ def all_contributors(request):
     response_data = [
         (contributor.id, contributor.name)
         for contributor
-        in Contributor.objects.all().order_by('name')
+        in Contributor.objects.filter(
+            facilitylist__is_active=True,
+            facilitylist__is_public=True).order_by('name')
     ]
+
     return Response(response_data)
 
 
