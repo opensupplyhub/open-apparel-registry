@@ -38,6 +38,7 @@ from api.models import (FacilityList,
 from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
+                             FacilityQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              UserSerializer,
@@ -404,10 +405,16 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 ]
             }
         """
+        params = FacilityQueryParamsSerializer(data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+
         name = request.query_params.get(FacilitiesQueryParams.NAME,
                                         None)
         contributors = request.query_params \
                               .getlist(FacilitiesQueryParams.CONTRIBUTORS)
+
         contributor_types = request \
             .query_params \
             .getlist(FacilitiesQueryParams.CONTRIBUTOR_TYPES)
