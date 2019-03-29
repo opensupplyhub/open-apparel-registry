@@ -25,7 +25,7 @@ export default () => (
 
                     <h2 id="Uploading-a-list">Uploading a list</h2>
 
-                    <p>Contributors submit their facility lists to the OARfor processing by uploading
+                    <p>Contributors submit their facility lists to the OAR for processing by uploading
                         lists in comma-separated value (CSV) format. All popular spreadsheet programs,
                         including Microsoft Excel, can save a sheet in CSV format. The OAR provides a
                         downloadable template, but any CSV can be read and processed if it meets the
