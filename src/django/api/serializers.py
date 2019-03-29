@@ -7,6 +7,7 @@ from django.urls import reverse
 from rest_framework.serializers import (CharField,
                                         EmailField,
                                         IntegerField,
+                                        ListField,
                                         ModelSerializer,
                                         SerializerMethodField,
                                         ValidationError,
@@ -182,9 +183,18 @@ class FacilityListSerializer(ModelSerializer):
 
 class FacilityQueryParamsSerializer(Serializer):
     name = CharField(required=False)
-    contributors = IntegerField(required=False)
-    contributor_types = CharField(required=False)
-    countries = CharField(required=False)
+    contributors = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )
+    contributor_types = ListField(
+        child=CharField(required=False),
+        required=False,
+    )
+    countries = ListField(
+        child=CharField(required=False),
+        required=False,
+    )
     page = IntegerField(required=False)
     pageSize = IntegerField(required=False)
 
