@@ -938,7 +938,7 @@ class DedupeMatchingTests(TestCase):
     def setUp(self):
         self.contributor = Contributor.objects.first()
 
-    def create_list(self, items):
+    def create_list(self, items, status=FacilityListItem.GEOCODED):
         facility_list = FacilityList(
             contributor=self.contributor, name='test', description='',
             file_name='test.csv', header='country,name,address')
@@ -947,7 +947,7 @@ class DedupeMatchingTests(TestCase):
             country_code, name, address = item
             list_item = FacilityListItem(
                 facility_list=facility_list, row_index=index, raw_data='',
-                status=FacilityListItem.GEOCODED, name=name, address=address,
+                status=status, name=name, address=address,
                 country_code=country_code, geocoded_address='')
             list_item.save()
         return facility_list
@@ -965,6 +965,7 @@ class DedupeMatchingTests(TestCase):
         self.assertEqual(str(facility.id), matches[item_id][0][0])
         self.assertEqual(0.5, result['results']['gazetteer_threshold'])
         self.assertFalse(result['results']['no_gazetteer_matches'])
+        self.assertFalse(result['results']['no_geocoded_items'])
 
     def test_does_not_match(self):
         facility_list = self.create_list([
@@ -973,6 +974,15 @@ class DedupeMatchingTests(TestCase):
         matches = result['item_matches']
         self.assertEqual(0, len(matches))
         self.assertTrue(result['results']['no_gazetteer_matches'])
+
+    def test_no_geocoded_items(self):
+        facility = Facility.objects.first()
+        facility_list = self.create_list([
+            (facility.country_code, interspace(facility.name),
+             junk_chars(facility.address.upper()))],
+                                         status=FacilityListItem.PARSED)
+        result = match_facility_list_items(facility_list)
+        self.assertTrue(result['results']['no_geocoded_items'])
 
 
 class OarIdTests(TestCase):
