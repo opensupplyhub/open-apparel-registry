@@ -44,7 +44,7 @@ def fetch_latest_active_batch_job_definition_arn(client, environment):
             'No job queues available. Response {0}'.format(response))
 
 
-def submit_jobs(environment, facility_list):
+def submit_jobs(environment, facility_list, skip_parse=False):
     """
     Submit AWS Batch jobs to process each FacilityListItem in a FacilityList
     through all processing steps.
@@ -102,30 +102,38 @@ def submit_jobs(environment, facility_list):
         with connection.cursor() as cursor:
             cursor.execute(query)
 
+    depends_on = None
+    job_ids = []
+
     # PARSE
-    started = str(datetime.utcnow())
-    # The parse task is just quick string manipulation. We submit it as a
-    # normal job rather than as an array job to avoid extra overhead that just
-    # slows things down.
-    parse_job_id = submit_job('parse')
-    finished = str(datetime.utcnow())
-    append_processing_result({
-        'action': ProcessingAction.SUBMIT_JOB,
-        'type': 'parse',
-        'job_id': parse_job_id,
-        'error': False,
-        'is_array': False,
-        'started_at': started,
-        'finished_at': finished,
-    })
+    if not skip_parse:
+        started = str(datetime.utcnow())
+        # The parse task is just quick string manipulation. We submit it as a
+        # normal job rather than as an array job to avoid extra overhead that
+        # just slows things down.
+        parse_job_id = submit_job('parse')
+        job_ids.append(parse_job_id)
+        depends_on = [{'jobId': parse_job_id}]
+        finished = str(datetime.utcnow())
+        append_processing_result({
+            'action': ProcessingAction.SUBMIT_JOB,
+            'type': 'parse',
+            'job_id': parse_job_id,
+            'error': False,
+            'is_array': False,
+            'started_at': started,
+            'finished_at': finished,
+        })
 
     # GEOCODE
     started = str(datetime.utcnow())
     row_count = facility_list.facilitylistitem_set.count()
     is_array = row_count > 1
     geocode_job_id = submit_job('geocode',
-                                depends_on=[{'jobId': parse_job_id}],
+                                depends_on=depends_on,
                                 is_array=is_array)
+    job_ids.append(geocode_job_id)
+    depends_on = [{'jobId': geocode_job_id}]
     finished = str(datetime.utcnow())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
@@ -139,8 +147,8 @@ def submit_jobs(environment, facility_list):
 
     # MATCH
     started = str(datetime.utcnow())
-    match_job_id = submit_job('match',
-                              depends_on=[{'jobId': geocode_job_id}])
+    match_job_id = submit_job('match', depends_on=depends_on)
+    job_ids.append(match_job_id)
     finished = str(datetime.utcnow())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
@@ -151,3 +159,5 @@ def submit_jobs(environment, facility_list):
         'started_at': started,
         'finished_at': finished,
     })
+
+    return job_ids

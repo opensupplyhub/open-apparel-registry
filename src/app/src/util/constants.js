@@ -57,10 +57,10 @@ const accountEmailField = Object.freeze({
 
 const accountNameField = Object.freeze({
     id: registrationFieldsEnum.name,
-    label: 'Account Name',
+    label: 'Contributor Name',
     type: inputTypesEnum.text,
     required: true,
-    hint: `Your account name will appear as the contributor name on all
+    hint: `Your contributor name will appear publicly on all
 facilities that you upload as the data source for each facility
 contributed.`,
     modelFieldName: 'name',
@@ -68,11 +68,11 @@ contributed.`,
 
 const accountDescriptionField = Object.freeze({
     id: registrationFieldsEnum.description,
-    label: 'Account Description',
+    label: 'Contributor Description',
     type: inputTypesEnum.text,
     required: true,
-    hint: `Enter a description of your account. This will appear in your
-account profile`,
+    hint: `Enter a description of the contributor. This will appear in your
+public contributor profile.`,
     modelFieldName: 'description',
 });
 

@@ -2,6 +2,8 @@
 
 node {
 	try {
+        env.COMPOSE_PROJECT_NAME = "open-apparel-registry-${env.BRANCH_NAME}"
+
 	    // Checkout the proper revision into the workspace.
 		stage('checkout') {
 			checkout scm 

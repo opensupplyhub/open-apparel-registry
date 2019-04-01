@@ -11,6 +11,7 @@ class ProcessingAction:
     GEOCODE = 'geocode'
     MATCH = 'match'
     SUBMIT_JOB = 'submitjob'
+    CONFIRM = 'confirm'
 
 
 class FacilitiesQueryParams:

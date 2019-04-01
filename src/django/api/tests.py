@@ -938,7 +938,7 @@ class DedupeMatchingTests(TestCase):
     def setUp(self):
         self.contributor = Contributor.objects.first()
 
-    def create_list(self, items):
+    def create_list(self, items, status=FacilityListItem.GEOCODED):
         facility_list = FacilityList(
             contributor=self.contributor, name='test', description='',
             file_name='test.csv', header='country,name,address')
@@ -947,7 +947,7 @@ class DedupeMatchingTests(TestCase):
             country_code, name, address = item
             list_item = FacilityListItem(
                 facility_list=facility_list, row_index=index, raw_data='',
-                status=FacilityListItem.GEOCODED, name=name, address=address,
+                status=status, name=name, address=address,
                 country_code=country_code, geocoded_address='')
             list_item.save()
         return facility_list
@@ -965,6 +965,7 @@ class DedupeMatchingTests(TestCase):
         self.assertEqual(str(facility.id), matches[item_id][0][0])
         self.assertEqual(0.5, result['results']['gazetteer_threshold'])
         self.assertFalse(result['results']['no_gazetteer_matches'])
+        self.assertFalse(result['results']['no_geocoded_items'])
 
     def test_does_not_match(self):
         facility_list = self.create_list([
@@ -973,6 +974,15 @@ class DedupeMatchingTests(TestCase):
         matches = result['item_matches']
         self.assertEqual(0, len(matches))
         self.assertTrue(result['results']['no_gazetteer_matches'])
+
+    def test_no_geocoded_items(self):
+        facility = Facility.objects.first()
+        facility_list = self.create_list([
+            (facility.country_code, interspace(facility.name),
+             junk_chars(facility.address.upper()))],
+                                         status=FacilityListItem.PARSED)
+        result = match_facility_list_items(facility_list)
+        self.assertTrue(result['results']['no_geocoded_items'])
 
 
 class OarIdTests(TestCase):
@@ -990,3 +1000,119 @@ class OarIdTests(TestCase):
 
     def test_invalid_country(self):
         self.assertRaises(ValueError, make_oar_id, '99')
+
+
+class ContributorsListAPIEndpointTests(TestCase):
+    def setUp(self):
+        self.name_one = 'name_one'
+        self.name_two = 'name_two'
+        self.name_three = 'name_three'
+        self.name_four = 'name_four'
+
+        self.address_one = 'address_one'
+        self.address_two = 'address_two'
+        self.address_three = 'address_three'
+        self.address_four = 'address_four'
+
+        self.email_one = 'one@example.com'
+        self.email_two = 'two@example.com'
+        self.email_three = 'three@example.com'
+        self.email_four = 'four@example.com'
+
+        self.contrib_one_name = 'contributor that should be included'
+        self.contrib_two_name = 'contributor with no lists'
+        self.contrib_three_name = 'contributor with an inactive list'
+        self.contrib_four_name = 'contributor with a non public list'
+
+        self.country_code = 'US'
+        self.list_one_name = 'one'
+        self.list_three_name = 'three'
+        self.list_four_name = 'four'
+
+        self.user_one = User.objects.create(email=self.email_one)
+        self.user_two = User.objects.create(email=self.email_two)
+        self.user_three = User.objects.create(email=self.email_three)
+        self.user_four = User.objects.create(email=self.email_four)
+
+        self.contrib_one = Contributor \
+            .objects \
+            .create(admin=self.user_one,
+                    name=self.contrib_one_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_two = Contributor \
+            .objects \
+            .create(admin=self.user_two,
+                    name=self.contrib_two_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_three = Contributor \
+            .objects \
+            .create(admin=self.user_three,
+                    name=self.contrib_three_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_four = Contributor \
+            .objects \
+            .create(admin=self.user_four,
+                    name=self.contrib_four_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_one = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name=self.list_one_name,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_one)
+
+        # Contributor two has no lists
+
+        self.list_three = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="three",
+                    name=self.list_three_name,
+                    is_active=False,
+                    is_public=True,
+                    contributor=self.contrib_three)
+
+        self.list_four = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="four",
+                    name=self.list_four_name,
+                    is_active=True,
+                    is_public=False,
+                    contributor=self.contrib_four)
+
+    def test_contributors_list_has_only_contributors_with_active_lists(self):
+        response = self.client.get('/api/contributors/')
+        response_data = response.json()
+        contributor_names = list(zip(*response_data))[1]
+
+        self.assertIn(
+            self.contrib_one_name,
+            contributor_names,
+        )
+
+        self.assertNotIn(
+            self.contrib_two_name,
+            contributor_names,
+        )
+
+        self.assertNotIn(
+            self.contrib_three_name,
+            contributor_names,
+        )
+
+        self.assertNotIn(
+            self.contrib_four_name,
+            contributor_names,
+        )
+
+        self.assertEqual(
+            1,
+            len(contributor_names),
+        )

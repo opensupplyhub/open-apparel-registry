@@ -6,9 +6,12 @@ from django.contrib.auth import password_validation
 from django.urls import reverse
 from rest_framework.serializers import (CharField,
                                         EmailField,
+                                        IntegerField,
+                                        ListField,
                                         ModelSerializer,
                                         SerializerMethodField,
-                                        ValidationError)
+                                        ValidationError,
+                                        Serializer)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_auth.serializers import (PasswordResetSerializer,
                                    PasswordResetConfirmSerializer)
@@ -176,6 +179,24 @@ class FacilityListSerializer(ModelSerializer):
         return (facility_list.facilitylistitem_set
                 .values_list('status', flat=True)
                 .distinct())
+
+
+class FacilityQueryParamsSerializer(Serializer):
+    name = CharField(required=False)
+    contributors = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )
+    contributor_types = ListField(
+        child=CharField(required=False),
+        required=False,
+    )
+    countries = ListField(
+        child=CharField(required=False),
+        required=False,
+    )
+    page = IntegerField(required=False)
+    pageSize = IntegerField(required=False)
 
 
 class FacilitySerializer(GeoFeatureModelSerializer):
