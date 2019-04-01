@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.1.0] - 2019-04-01
+
+### Added
+
 - Add `reprocess_geocode_failures` management command [#439](https://github.com/open-apparel-registry/open-apparel-registry/pull/439)
 
 ### Changed
@@ -17,17 +31,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Filter contributors with no active and public lists from contributors search dropdown [#430](https://github.com/open-apparel-registry/open-apparel-registry/pull/430)
 - Remove `"(beta)"` from page title [#418](https://github.com/open-apparel-registry/open-apparel-registry/pull/418)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Set ERROR_MATCHING status to non-geocoded list items for which all potential matches have been rejected [#437](https://github.com/open-apparel-registry/open-apparel-registry/pull/437)
 - Return 400/Bad Request error for /api/facilities request with invalid contributor parameter type. [#433](https://github.com/open-apparel-registry/open-apparel-registry/pull/433)
 - Avoid unhandled exception when matching a list with no geocoded items [#439](https://github.com/open-apparel-registry/open-apparel-registry/pull/439)
 
-### Security
 
 ## [2.0.0] - 2019-03-27
 ### Added
@@ -50,7 +59,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.0.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.1.0...HEAD
+[2.1.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.1.0
 [2.0.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.0.0
 [0.2.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/0.2.0
 [0.1.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/0.1.0
