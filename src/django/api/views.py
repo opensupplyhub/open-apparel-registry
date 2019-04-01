@@ -1,6 +1,8 @@
 import os
 import sys
 
+from datetime import datetime
+
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
@@ -28,7 +30,9 @@ import coreapi
 
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
-from api.constants import CsvHeaderField, FacilitiesQueryParams
+from api.constants import (CsvHeaderField,
+                           FacilitiesQueryParams,
+                           ProcessingAction)
 from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
@@ -1069,30 +1073,53 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .filter(facility_list_item=facility_list_item) \
                 .filter(status=FacilityMatch.PENDING)
 
-            # Create a new facility if no potential matches remain
+            # If no potential matches remain:
+            #
+            # - create a new facility for a list item with a geocoded point
+            # - set status to `ERROR_MATCHING` for list item with no point
             if remaining_potential_matches.count() == 0:
-                new_facility = Facility \
-                    .objects \
-                    .create(name=facility_list_item.name,
-                            address=facility_list_item.address,
-                            country_code=facility_list_item.country_code,
-                            location=facility_list_item.geocoded_point,
-                            created_from=facility_list_item)
+                no_location = facility_list_item.geocoded_point is None
+                no_geocoding_results = facility_list_item.status == \
+                    FacilityListItem.GEOCODED_NO_RESULTS
 
-                # also create a new facility match
-                FacilityMatch \
-                    .objects \
-                    .create(facility_list_item=facility_list_item,
-                            facility=new_facility,
-                            confidence=1.0,
-                            status=FacilityMatch.CONFIRMED,
-                            results={
-                                "match_type": "all_potential_matches_rejected",
-                            })
+                if (no_location or no_geocoding_results):
+                    facility_list_item.status = FacilityListItem.ERROR_MATCHING
+                    timestamp = str(datetime.utcnow())
+                    facility_list_item.processing_results.append({
+                        'action': ProcessingAction.CONFIRM,
+                        'started_at': timestamp,
+                        'error': True,
+                        'message': ('Unable to create a new facility from an '
+                                    'item with no geocoded location'),
+                        'finished_at': timestamp,
+                    })
+                else:
+                    new_facility = Facility \
+                        .objects \
+                        .create(name=facility_list_item.name,
+                                address=facility_list_item.address,
+                                country_code=facility_list_item.country_code,
+                                location=facility_list_item.geocoded_point,
+                                created_from=facility_list_item)
 
-                facility_list_item.facility = new_facility
+                    # also create a new facility match
+                    match_results = {
+                        "match_type": "all_potential_matches_rejected",
+                    }
 
-                facility_list_item.status = FacilityListItem.CONFIRMED_MATCH
+                    FacilityMatch \
+                        .objects \
+                        .create(facility_list_item=facility_list_item,
+                                facility=new_facility,
+                                confidence=1.0,
+                                status=FacilityMatch.CONFIRMED,
+                                results=match_results)
+
+                    facility_list_item.facility = new_facility
+
+                    facility_list_item.status = FacilityListItem \
+                        .CONFIRMED_MATCH
+
                 facility_list_item.save()
 
             response_data = FacilityListItemSerializer(facility_list_item).data
