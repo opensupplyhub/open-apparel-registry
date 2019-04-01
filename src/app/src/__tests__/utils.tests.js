@@ -56,6 +56,7 @@ const {
     makeFacilityListItemsRetrieveCSVItemsURL,
     makeFacilityListDataURLs,
     makeFacilityListSummaryStatus,
+    addProtocolToWebsiteURLIfMissing,
 } = require('../util/util');
 
 const {
@@ -1078,4 +1079,24 @@ it('creates a summary status message given a list of facility list item statuses
         ]),
         `${facilityListSummaryStatusMessages.AWAITING} ${facilityListSummaryStatusMessages.ERROR}`,
     )).toBe(true);
+});
+
+it('adds a protocol to a website URL if the protocol is missing, but not if it is there', () => {
+    const urlWithHTTP = 'http://example.com';
+    const expectedResultForURLWithHTTP = 'http://example.com';
+
+    expect(addProtocolToWebsiteURLIfMissing(urlWithHTTP))
+        .toBe(expectedResultForURLWithHTTP);
+
+    const urlWithHTTPS = 'https://example.com';
+    const expectedResultForURLWithHTTPS = 'https://example.com';
+
+    expect(addProtocolToWebsiteURLIfMissing(urlWithHTTPS))
+        .toBe(expectedResultForURLWithHTTPS);
+
+    const urlWithNoProtocol = 'example.com';
+    const expectedResultForURLWithNoProtocol = 'http://example.com';
+
+    expect(addProtocolToWebsiteURLIfMissing(urlWithNoProtocol))
+        .toBe(expectedResultForURLWithNoProtocol);
 });
