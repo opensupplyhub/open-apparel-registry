@@ -263,7 +263,8 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
     messy = {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
              for i in facility_list_item_set}
 
-    if len(canonical.keys()) > 0:
+    if len(canonical.keys()) > 0 and len(messy.keys()) > 0:
+        no_geocoded_items = False
         gazetteer = train_gazetteer(messy, canonical)
         try:
             gazetteer.threshold(messy, recall_weight=recall_weight)
@@ -275,7 +276,8 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
             no_gazetteer_matches = True
     else:
         results = []
-        no_gazetteer_matches = True
+        no_gazetteer_matches = len(canonical.keys()) == 0
+        no_geocoded_items = len(messy.keys()) == 0
 
     finished = str(datetime.utcnow())
 
@@ -289,6 +291,7 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
         'item_matches': item_matches,
         'results': {
             'no_gazetteer_matches': no_gazetteer_matches,
+            'no_geocoded_items': no_geocoded_items,
             'gazetteer_threshold': gazetteer_threshold,
             'automatic_threshold': automatic_threshold,
             'recall_weight': recall_weight,
