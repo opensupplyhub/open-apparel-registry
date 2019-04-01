@@ -11,6 +11,8 @@ import {
     contributorTypeOptions,
 } from '../util/constants';
 
+import { addProtocolToWebsiteURLIfMissing } from '../util/util';
+
 const userProfileFieldStyles = Object.freeze({
     viewOnlyStyles: Object.freeze({
         padding: '1rem 0',
@@ -64,7 +66,7 @@ export default function UserProfileField({
                             id === registrationFieldsEnum.website
                                 ? (
                                     <a
-                                        href={value}
+                                        href={addProtocolToWebsiteURLIfMissing(value)}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >

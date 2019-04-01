@@ -482,3 +482,15 @@ export const makeFacilityListSummaryStatus = (statuses) => {
             ${awaitingMessage}
             ${errorMessage}`.replace(/\s+/g, ' ').trim();
 };
+
+export const addProtocolToWebsiteURLIfMissing = (url) => {
+    if (startsWith(url, 'http://')) {
+        return url;
+    }
+
+    if (startsWith(url, 'https://')) {
+        return url;
+    }
+
+    return `http://${url}`;
+};
