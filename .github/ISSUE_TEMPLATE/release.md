@@ -32,7 +32,7 @@ $ git rev-parse --short HEAD
 $ ./scripts/manage.py ecsmanage -e production migrate
 ```
 - [ ] Finish and publish the release branch:
-    - When prompted, use `X.Y.Z` as the merge commit message
+    - When prompted, keep default commit messages
     - Use `X.Y.Z` as the tag message
 ```bash
 $ git flow release finish -p X.Y.Z 
