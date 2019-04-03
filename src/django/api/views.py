@@ -278,7 +278,7 @@ def all_contributors(request):
         for contributor
         in Contributor.objects.filter(
             facilitylist__is_active=True,
-            facilitylist__is_public=True).order_by('name')
+            facilitylist__is_public=True).distinct().order_by('name')
     ]
 
     return Response(response_data)

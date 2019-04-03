@@ -1026,6 +1026,7 @@ class ContributorsListAPIEndpointTests(TestCase):
 
         self.country_code = 'US'
         self.list_one_name = 'one'
+        self.list_one_b_name = 'one-b'
         self.list_three_name = 'three'
         self.list_four_name = 'four'
 
@@ -1063,6 +1064,15 @@ class ContributorsListAPIEndpointTests(TestCase):
             .create(header="header",
                     file_name="one",
                     name=self.list_one_name,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_one)
+
+        self.list_one_b = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one-b",
+                    name=self.list_one_b_name,
                     is_active=True,
                     is_public=True,
                     contributor=self.contrib_one)
