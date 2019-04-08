@@ -2,7 +2,7 @@
 # RDS resources
 #
 resource "aws_db_subnet_group" "default" {
-  name        = "${var.rds_database_identifier}"
+  name        = "${replace(var.rds_database_identifier, "-enc", "")}"
   description = "Private subnets for the RDS instances"
   subnet_ids  = ["${module.vpc.private_subnet_ids}"]
 
@@ -14,7 +14,7 @@ resource "aws_db_subnet_group" "default" {
 }
 
 resource "aws_db_parameter_group" "default" {
-  name        = "${var.rds_database_identifier}"
+  name        = "${replace(var.rds_database_identifier, "-enc", "")}"
   description = "Parameter group for the RDS instances"
   family      = "${var.rds_parameter_group_family}"
 
@@ -65,8 +65,8 @@ resource "aws_db_parameter_group" "default" {
   }
 }
 
-module "database" {
-  source = "github.com/azavea/terraform-aws-postgresql-rds?ref=2.6.0"
+module "database_enc" {
+  source = "github.com/azavea/terraform-aws-postgresql-rds?ref=2.5.0"
 
   vpc_id                     = "${module.vpc.id}"
   allocated_storage          = "${var.rds_allocated_storage}"
@@ -88,7 +88,6 @@ module "database" {
   storage_encrypted          = "${var.rds_storage_encrypted}"
   subnet_group               = "${aws_db_subnet_group.default.name}"
   parameter_group            = "${aws_db_parameter_group.default.name}"
-  monitoring_interval        = "${var.rds_monitoring_interval}"
 
   alarm_cpu_threshold                = "${var.rds_cpu_threshold_percent}"
   alarm_disk_queue_threshold         = "${var.rds_disk_queue_threshold}"

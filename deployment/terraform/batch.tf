@@ -54,7 +54,7 @@ data "template_file" "default_job_definition" {
     image_url = "${module.ecr_repository_batch.repository_url}:${var.image_tag}"
 
     postgres_host     = "${aws_route53_record.database.name}"
-    postgres_port     = "${module.database.port}"
+    postgres_port     = "${module.database_enc.port}"
     postgres_user     = "${var.rds_database_username}"
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"

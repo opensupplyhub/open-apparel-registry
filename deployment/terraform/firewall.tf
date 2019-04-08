@@ -21,14 +21,14 @@ resource "aws_security_group_rule" "bastion_ssh_egress" {
   security_group_id = "${module.vpc.bastion_security_group_id}"
 }
 
-resource "aws_security_group_rule" "bastion_rds_egress" {
+resource "aws_security_group_rule" "bastion_rds_enc_egress" {
   type      = "egress"
-  from_port = "${module.database.port}"
-  to_port   = "${module.database.port}"
+  from_port = "${module.database_enc.port}"
+  to_port   = "${module.database_enc.port}"
   protocol  = "tcp"
 
   security_group_id        = "${module.vpc.bastion_security_group_id}"
-  source_security_group_id = "${module.database.database_security_group_id}"
+  source_security_group_id = "${module.database_enc.database_security_group_id}"
 }
 
 resource "aws_security_group_rule" "bastion_app_egress" {
@@ -90,33 +90,33 @@ resource "aws_security_group_rule" "alb_app_egress" {
 #
 # RDS security group resources
 #
-resource "aws_security_group_rule" "rds_app_ingress" {
+resource "aws_security_group_rule" "rds_enc_app_ingress" {
   type      = "ingress"
-  from_port = "${module.database.port}"
-  to_port   = "${module.database.port}"
+  from_port = "${module.database_enc.port}"
+  to_port   = "${module.database_enc.port}"
   protocol  = "tcp"
 
-  security_group_id        = "${module.database.database_security_group_id}"
+  security_group_id        = "${module.database_enc.database_security_group_id}"
   source_security_group_id = "${aws_security_group.app.id}"
 }
 
-resource "aws_security_group_rule" "rds_batch_ingress" {
+resource "aws_security_group_rule" "rds_enc_batch_ingress" {
   type      = "ingress"
-  from_port = "${module.database.port}"
-  to_port   = "${module.database.port}"
+  from_port = "${module.database_enc.port}"
+  to_port   = "${module.database_enc.port}"
   protocol  = "tcp"
 
-  security_group_id        = "${module.database.database_security_group_id}"
+  security_group_id        = "${module.database_enc.database_security_group_id}"
   source_security_group_id = "${aws_security_group.batch.id}"
 }
 
-resource "aws_security_group_rule" "rds_bastion_ingress" {
+resource "aws_security_group_rule" "rds_enc_bastion_ingress" {
   type      = "ingress"
-  from_port = "${module.database.port}"
-  to_port   = "${module.database.port}"
+  from_port = "${module.database_enc.port}"
+  to_port   = "${module.database_enc.port}"
   protocol  = "tcp"
 
-  security_group_id        = "${module.database.database_security_group_id}"
+  security_group_id        = "${module.database_enc.database_security_group_id}"
   source_security_group_id = "${module.vpc.bastion_security_group_id}"
 }
 
@@ -134,14 +134,14 @@ resource "aws_security_group_rule" "app_https_egress" {
   security_group_id = "${aws_security_group.app.id}"
 }
 
-resource "aws_security_group_rule" "app_rds_egress" {
+resource "aws_security_group_rule" "app_rds_enc_egress" {
   type      = "egress"
-  from_port = "${module.database.port}"
-  to_port   = "${module.database.port}"
+  from_port = "${module.database_enc.port}"
+  to_port   = "${module.database_enc.port}"
   protocol  = "tcp"
 
   security_group_id        = "${aws_security_group.app.id}"
-  source_security_group_id = "${module.database.database_security_group_id}"
+  source_security_group_id = "${module.database_enc.database_security_group_id}"
 }
 
 resource "aws_security_group_rule" "app_alb_ingress" {
@@ -177,14 +177,14 @@ resource "aws_security_group_rule" "batch_https_egress" {
   security_group_id = "${aws_security_group.batch.id}"
 }
 
-resource "aws_security_group_rule" "batch_rds_egress" {
+resource "aws_security_group_rule" "batch_rds_enc_egress" {
   type      = "egress"
-  from_port = "${module.database.port}"
-  to_port   = "${module.database.port}"
+  from_port = "${module.database_enc.port}"
+  to_port   = "${module.database_enc.port}"
   protocol  = "tcp"
 
   security_group_id        = "${aws_security_group.batch.id}"
-  source_security_group_id = "${module.database.database_security_group_id}"
+  source_security_group_id = "${module.database_enc.database_security_group_id}"
 }
 
 resource "aws_security_group_rule" "batch_bastion_ingress" {
