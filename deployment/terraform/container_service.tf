@@ -105,7 +105,7 @@ data "template_file" "app" {
     memory = "${var.app_fargate_memory}"
 
     postgres_host     = "${aws_route53_record.database.name}"
-    postgres_port     = "${module.database.port}"
+    postgres_port     = "${module.database_enc.port}"
     postgres_user     = "${var.rds_database_username}"
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
@@ -152,7 +152,7 @@ data "template_file" "app_cli" {
     memory = "${var.cli_fargate_memory}"
 
     postgres_host     = "${aws_route53_record.database.name}"
-    postgres_port     = "${module.database.port}"
+    postgres_port     = "${module.database_enc.port}"
     postgres_user     = "${var.rds_database_username}"
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
