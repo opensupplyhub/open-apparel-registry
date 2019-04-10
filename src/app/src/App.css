@@ -119,6 +119,9 @@ li.dropdown-list-item button {
 .form__field {
   margin-bottom: 32px;
 }
+.form__field-header {
+    margin-bottom: 32px;
+}
 .form__field--dense {
   margin-bottom: 16px;
 }

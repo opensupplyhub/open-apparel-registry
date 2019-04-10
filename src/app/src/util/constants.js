@@ -125,6 +125,7 @@ const accountConfirmPasswordField = Object.freeze({
 const accountCurrentPasswordField = Object.freeze({
     id: profileFieldsEnum.currentPassword,
     label: 'Current Password',
+    header: 'If you do not need to change your password leave these three password fields empty.',
     type: inputTypesEnum.password,
     modelFieldName: 'current_password',
     hideOnViewOnlyProfile: true,
