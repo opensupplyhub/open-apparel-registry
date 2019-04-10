@@ -386,8 +386,6 @@ class GeocodingTest(TestCase):
 
     def test_ungeocodable_address_returns_zero_resusts(self):
         results = geocode_address('@#$^@#$^', 'XX')
-        from pprint import pprint
-        pprint(results)
         self.assertEqual(0, results['result_count'])
 
 
