@@ -5,9 +5,10 @@ from datetime import datetime
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
-from django.core.exceptions import PermissionDenied
+from django.core import exceptions as core_exceptions
 from django.conf import settings
 from django.contrib.auth import (authenticate, login, logout)
+from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from rest_framework import viewsets, status
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -169,21 +170,35 @@ class UserProfile(RetrieveUpdateAPIView):
     @permission_classes((IsRegisteredAndConfirmed,))
     def put(self, request, pk, *args, **kwargs):
         if not request.user.is_authenticated:
-            raise PermissionDenied
+            raise core_exceptions.PermissionDenied
 
         if not request.user.did_register_and_confirm_email:
-            raise PermissionDenied
+            raise core_exceptions.PermissionDenied
 
         try:
             user_for_update = User.objects.get(pk=pk)
 
             if request.user != user_for_update:
-                raise PermissionDenied
+                raise core_exceptions.PermissionDenied
 
-            password = request.data.get('password')
+            current_password = request.data.get('current_password', '')
+            new_password = request.data.get('new_password', '')
+            confirm_new_password = request.data.get('confirm_new_password', '')
 
-            if not check_password(password, user_for_update.password):
-                raise PermissionDenied
+            if current_password != '' and new_password != '':
+                if new_password != confirm_new_password:
+                    raise ValidationError(
+                        'New password and confirm new password do not match')
+
+                if not check_password(current_password,
+                                      user_for_update.password):
+                    raise ValidationError('Your current password is incorrect')
+
+                try:
+                    password_validation.validate_password(
+                        password=new_password, user=user_for_update)
+                except core_exceptions.ValidationError as e:
+                    raise ValidationError({"new_password": list(e.messages)})
 
             name = request.data.get('name')
             description = request.data.get('description')
@@ -214,7 +229,16 @@ class UserProfile(RetrieveUpdateAPIView):
             user_contributor.contrib_type = contrib_type
             user_contributor.other_contrib_type = other_contrib_type
             user_contributor.save()
+
+            if new_password != '':
+                user_for_update.set_password(new_password)
+
             user_for_update.save()
+
+            # Changing the password causes the user to be logged out, which we
+            # don't want
+            if new_password != '':
+                login(request, user_for_update)
 
             response_data = UserProfileSerializer(user_for_update).data
             return Response(response_data)
