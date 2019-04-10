@@ -8,22 +8,27 @@ const FilterSidebarGuideTab = memo(() => (
         style={filterSidebarStyles.controlPanelContentStyles}
     >
         <p className="control-panel__body">
-            The Open Apparel Registry (OAR) is an open source tool which maps
-            garment facilities worldwide and assigns a unique ID number to each.
-            Its goal is to become the go-to source for identifying apparel
-            facilities and their affiliations by collating disparate supplier
-            lists from industry stakeholders into one central, open source map
-            and database.
+            The Open Apparel Registry (OAR) is an open data tool for correctly
+            identifying global apparel facilities and their affiliations. The
+            OAR collates disparate supplier lists from industry stakeholders
+            into one global map and registry and assigns each unique facility an
+            OAR ID.
         </p>
         <p className="control-panel__body">
             The collated database of facility names, addresses and affiliated
-            parties is powered by an advanced name and address-matching algorithm
-            and will be available for use by any organization, for free.
+            parties, pulled from public and contributed data, is powered by an
+            advanced name and address-matching algorithm, developed by
+            geospatial software firm, Azavea. The free-to-use, open source tool
+            can be used by any organization to update and standardize a supplier
+            list against the database, view facility affiliations and use the
+            OAR ID as a unique and shared ID across software systems and
+            databases.
         </p>
         <p className="control-panel__body">
-            To contribute to the database, users must create a free account.
-            Anyone can sign up and contribute. Users interested in browsing the
-            OAR are able to access it without creating an account.
+            To contribute to the database, users must create a free account at
+            the Register tab on the main toolbar. Anyone can sign up and
+            contribute. Users interested in browsing the OAR are able to search
+            the site without creating an account.
         </p>
         <a
             href="http://info.openapparel.org/about"
