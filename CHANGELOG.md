@@ -18,6 +18,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.2.0] - 2019-04-11
+
+### Added
+- Password can be changed from the profile page [#469](https://github.com/open-apparel-registry/open-apparel-registry/pull/469)
+
+### Changed
+- Update release checklist to keep default commit messages [#451](https://github.com/open-apparel-registry/open-apparel-registry/pull/451)
+- Add support for encrypted RDS for PostgreSQL storage [#461](https://github.com/open-apparel-registry/open-apparel-registry/pull/461)
+- Update the text on the home page "Guide" tab [#468](https://github.com/open-apparel-registry/open-apparel-registry/pull/468)
+
+### Fixed
+
+- Add a new error boundary to enable the FacilitiesMap component to crash without crashing the rest of the app [#446](https://github.com/open-apparel-registry/open-apparel-registry/pull/446)
+- Revise geocoding unit test to be more robust [#466](https://github.com/open-apparel-registry/open-apparel-registry/pull/466)
+- Remove duplicate values from the contributors API [#453](https://github.com/open-apparel-registry/open-apparel-registry/pull/453)
+
+
 ## [2.1.0] - 2019-04-01
 
 ### Added
@@ -59,7 +76,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.1.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.2.0...HEAD
+[2.2.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.2.0
 [2.1.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.1.0
 [2.0.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.0.0
 [0.2.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/0.2.0

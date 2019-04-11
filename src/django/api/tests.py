@@ -21,7 +21,7 @@ from api.processing import (parse_facility_list_item,
 from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
-from api.test_data import azavea_office_data, parsed_city_hall_data
+from api.test_data import parsed_city_hall_data
 
 
 class FacilityListCreateTest(APITestCase):
@@ -376,14 +376,16 @@ class GeocodingUtilsTest(TestCase):
 
 
 class GeocodingTest(TestCase):
-    def test_correct_address_is_geocoded_properly(self):
+    def test_geocode_response_contains_expected_keys(self):
         geocoded_data = geocode_address('990 Spring Garden St, Philly', 'US')
-        self.assertDictEqual(geocoded_data, azavea_office_data)
+        self.assertIn('full_response', geocoded_data)
+        self.assertIn('geocoded_address', geocoded_data)
+        self.assertIn('geocoded_point', geocoded_data)
+        self.assertIn('lat', geocoded_data['geocoded_point'])
+        self.assertIn('lng', geocoded_data['geocoded_point'])
 
     def test_ungeocodable_address_returns_zero_resusts(self):
         results = geocode_address('@#$^@#$^', 'XX')
-        from pprint import pprint
-        pprint(results)
         self.assertEqual(0, results['result_count'])
 
 
@@ -1026,6 +1028,7 @@ class ContributorsListAPIEndpointTests(TestCase):
 
         self.country_code = 'US'
         self.list_one_name = 'one'
+        self.list_one_b_name = 'one-b'
         self.list_three_name = 'three'
         self.list_four_name = 'four'
 
@@ -1063,6 +1066,15 @@ class ContributorsListAPIEndpointTests(TestCase):
             .create(header="header",
                     file_name="one",
                     name=self.list_one_name,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_one)
+
+        self.list_one_b = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one-b",
+                    name=self.list_one_b_name,
                     is_active=True,
                     is_public=True,
                     contributor=self.contrib_one)
