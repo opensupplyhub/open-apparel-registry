@@ -3,6 +3,7 @@ import { arrayOf, bool, func, oneOf, string } from 'prop-types';
 
 import ControlledTextInput from './ControlledTextInput';
 import ControlledSelectInput from './ControlledSelectInput';
+import ShowOnly from './ShowOnly';
 
 import {
     inputTypesEnum,
@@ -34,6 +35,7 @@ export default function UserProfileField({
     hideOnViewOnlyProfile,
     submitFormOnEnterKeyPress,
     autoFocus,
+    header,
 }) {
     if (type === inputTypesEnum.checkbox) {
         window.console.warn(`checkbox not yet implemented for ${id}`);
@@ -112,6 +114,11 @@ export default function UserProfileField({
 
     return (
         <div className="control-panel__group">
+            <ShowOnly when={!!header}>
+                <div className="form__field-header">
+                    {header}
+                </div>
+            </ShowOnly>
             <div className="form__field">
                 <label
                     htmlFor={id}
@@ -139,11 +146,13 @@ UserProfileField.defaultProps = {
     isEditableProfile: false,
     hideOnViewOnlyProfile: false,
     autoFocus: false,
+    header: null,
 };
 
 UserProfileField.propTypes = {
     id: oneOf(Object.values(profileFieldsEnum)).isRequired,
     label: string.isRequired,
+    header: string,
     type: oneOf(Object.values(inputTypesEnum)).isRequired,
     options: arrayOf(oneOf(contributorTypeOptions)),
     value: string.isRequired,

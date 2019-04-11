@@ -42,7 +42,9 @@ export const profileFieldsEnum = Object.freeze({
     [registrationFieldsEnum.wesbite]: registrationFieldsEnum.website,
     [registrationFieldsEnum.contributorType]: registrationFieldsEnum.contributorType,
     [registrationFieldsEnum.otherContributorType]: registrationFieldsEnum.otherContributorType,
-    [registrationFieldsEnum.password]: registrationFieldsEnum.password,
+    currentPassword: 'currentPassword',
+    newPassword: 'newPassword',
+    confirmNewPassword: 'confirmNewPassword',
 });
 
 const accountEmailField = Object.freeze({
@@ -120,6 +122,34 @@ const accountConfirmPasswordField = Object.freeze({
     modelFieldName: 'confirmPassword',
 });
 
+const accountCurrentPasswordField = Object.freeze({
+    id: profileFieldsEnum.currentPassword,
+    label: 'Current Password',
+    header: 'If you do not need to change your password leave these three password fields empty.',
+    type: inputTypesEnum.password,
+    modelFieldName: 'current_password',
+    hideOnViewOnlyProfile: true,
+    required: false,
+});
+
+const accountNewPasswordField = Object.freeze({
+    id: profileFieldsEnum.newPassword,
+    label: 'New Password',
+    type: inputTypesEnum.password,
+    modelFieldName: 'new_password',
+    hideOnViewOnlyProfile: true,
+    required: false,
+});
+
+const accountConfirmNewPasswordField = Object.freeze({
+    id: profileFieldsEnum.confirmNewPassword,
+    label: 'Confirm New Password',
+    type: inputTypesEnum.password,
+    modelFieldName: 'confirm_new_password',
+    hideOnViewOnlyProfile: true,
+    required: false,
+});
+
 const accountNewsletterField = Object.freeze({
     id: registrationFieldsEnum.newsletter,
     label: 'Sign up for OAR newsletter',
@@ -159,7 +189,9 @@ export const profileFormFields = Object.freeze([
     accountContributorTypeField,
     accountOtherContributorTypeField,
     accountWebsiteField,
-    accountPasswordField,
+    accountCurrentPasswordField,
+    accountNewPasswordField,
+    accountConfirmNewPasswordField,
 ]);
 
 export const mainRoute = '/';

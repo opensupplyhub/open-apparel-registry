@@ -138,6 +138,7 @@ class UserProfile extends Component {
                     key={field.id}
                     id={field.id}
                     label={field.label}
+                    header={field.header}
                     type={field.type}
                     options={field.options}
                     value={profile[field.id]}

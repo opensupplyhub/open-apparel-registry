@@ -28,7 +28,7 @@ import {
     completeSubmitLogOut,
 } from '../actions/auth';
 
-import { registrationFieldsEnum } from '../util/constants';
+import { registrationFieldsEnum, profileFieldsEnum } from '../util/constants';
 
 const initialState = Object.freeze({
     profile: Object.freeze({
@@ -39,7 +39,9 @@ const initialState = Object.freeze({
         [registrationFieldsEnum.website]: '',
         [registrationFieldsEnum.contributorType]: '',
         [registrationFieldsEnum.otherContributorType]: '',
-        [registrationFieldsEnum.password]: '',
+        [profileFieldsEnum.currentPassword]: '',
+        [profileFieldsEnum.newPassword]: '',
+        [profileFieldsEnum.confirmNewPassword]: '',
     }),
     formSubmission: {
         fetching: false,
@@ -130,6 +132,9 @@ export default createReducer({
             website: { $set: payload.website || '' },
             contributorType: { $set: payload.contributor_type || '' },
             otherContributorType: { $set: payload.other_contributor_type || '' },
+            currentPassword: { $set: '' },
+            newPassword: { $set: '' },
+            confirmNewPassword: { $set: '' },
         },
         fetching: { $set: false },
         error: { $set: null },
@@ -170,7 +175,11 @@ export default createReducer({
             [registrationFieldsEnum.website]: { $set: payload.website },
             [registrationFieldsEnum.contributorType]: { $set: payload.contributor_type },
             [registrationFieldsEnum.otherContributorType]: { $set: payload.other_contributor_type },
-            [registrationFieldsEnum.password]: { $set: initialState.profile.password },
+            [profileFieldsEnum.currentPassword]: { $set: initialState.profile.currentPassword },
+            [profileFieldsEnum.newPassword]: { $set: initialState.profile.newPassword },
+            [profileFieldsEnum.confirmNewPassword]: {
+                $set: initialState.profile.confirmNewPassword,
+            },
         },
     }),
     [resetUserProfile]: () => initialState,
