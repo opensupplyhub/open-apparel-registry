@@ -603,7 +603,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 'Uploaded file exceeds the maximum size of {:.1f}MB.'.format(
                     mb))
         try:
-            header = csv_file.readline().decode().rstrip()
+            header = csv_file.readline().decode(encoding='utf-8-sig').rstrip()
         except UnicodeDecodeError:
             ROLLBAR = getattr(settings, 'ROLLBAR', {})
             if ROLLBAR:
@@ -671,7 +671,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                     items.append(FacilityListItem(
                         row_index=(idx - 1),
                         facility_list=new_list,
-                        raw_data=line.decode().rstrip()
+                        raw_data=line.decode(encoding='utf-8-sig').rstrip()
                     ))
                 except UnicodeDecodeError:
                     ROLLBAR = getattr(settings, 'ROLLBAR', {})
