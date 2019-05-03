@@ -24,6 +24,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import BaseFilterBackend
+from rest_framework.schemas.inspectors import AutoSchema
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
@@ -33,6 +34,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilitiesQueryParams,
+                           FacilityListItemsQueryParams,
                            ProcessingAction)
 from api.models import (FacilityList,
                         FacilityListItem,
@@ -43,6 +45,7 @@ from api.models import (FacilityList,
 from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
+                             FacilityListItemsQueryParamsSerializer,
                              FacilityQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
@@ -541,6 +544,25 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         return Response({"count": count})
 
 
+class FacilityListViewSetSchema(AutoSchema):
+    def get_serializer_fields(self, path, method):
+        if path[-7:] == '/items/':
+            statuses = ', '.join(
+                [c[0] for c in FacilityListItem.STATUS_CHOICES])
+            return [
+                coreapi.Field(
+                    name='status',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=('Only return items matching this status.'
+                                 'Must be one of {}').format(statuses),
+                ),
+            ]
+
+        return []
+
+
 class FacilityListViewSet(viewsets.ModelViewSet):
     """
     Upload and update facility lists for an authenticated Contributor.
@@ -549,6 +571,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     serializer_class = FacilityListSerializer
     permission_classes = [IsRegisteredAndConfirmed]
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
+
+    schema = FacilityListViewSetSchema()
 
     def _validate_header(self, header):
         if header is None or header == '':
@@ -783,6 +807,15 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 ...
             }
         """
+
+        params = FacilityListItemsQueryParamsSerializer(
+            data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+
+        status = request.query_params.getlist(
+            FacilityListItemsQueryParams.STATUS)
         try:
             user_contributor = request.user.contributor
             facility_list = FacilityList \
@@ -791,8 +824,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .get(pk=pk)
             queryset = FacilityListItem \
                 .objects \
-                .filter(facility_list=facility_list) \
-                .order_by('row_index')
+                .filter(facility_list=facility_list)
+            if status is not None and len(status) > 0:
+                queryset = queryset.filter(status__in=status)
+            queryset = queryset.order_by('row_index')
 
             page_queryset = self.paginate_queryset(queryset)
             if page_queryset is not None:

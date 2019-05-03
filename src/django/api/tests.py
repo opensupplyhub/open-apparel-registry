@@ -1141,3 +1141,87 @@ class ContributorsListAPIEndpointTests(TestCase):
             1,
             len(contributor_names),
         )
+
+
+class FacilityListItemTests(APITestCase):
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'example123'
+        self.user = User.objects.create(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.facility_list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='test list',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        statuses = [c[0] for c in FacilityListItem.STATUS_CHOICES]
+        for i, possible_status in enumerate(statuses):
+            FacilityListItem \
+                .objects \
+                .create(name='test name',
+                        address='test address',
+                        country_code='US',
+                        facility_list=self.facility_list,
+                        row_index=i,
+                        status=possible_status)
+
+        self.client.login(email=self.email,
+                          password=self.password)
+
+    def test_get_all_items(self):
+        response = self.client.get(
+            reverse('facility-list-items',
+                    kwargs={'pk': self.facility_list.pk}))
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertEqual(len(FacilityListItem.STATUS_CHOICES),
+                         len(content['results']))
+
+    def test_get_items_filtered_by_status(self):
+        url = reverse('facility-list-items',
+                      kwargs={'pk': self.facility_list.pk})
+
+        response = self.client.get('{}?status=GEOCODED'.format(url))
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertEqual(1, len(content['results']))
+        self.assertEqual('GEOCODED', content['results'][0]['status'])
+
+    def test_get_multiple_statuses(self):
+        url = reverse('facility-list-items',
+                      kwargs={'pk': self.facility_list.pk})
+
+        response = self.client.get(
+            '{}?status=GEOCODED&status=MATCHED'.format(url))
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertEqual(2, len(content['results']))
+
+    def test_invalid_status_returns_400(self):
+        url = reverse('facility-list-items',
+                      kwargs={'pk': self.facility_list.pk})
+
+        response = self.client.get('{}?status=FOO'.format(url))
+        self.assertEqual(400, response.status_code)
+        content = json.loads(response.content)
+        self.assertTrue('status' in content)
+
+    def test_empty_status_filter_returns_400(self):
+        url = reverse('facility-list-items',
+                      kwargs={'pk': self.facility_list.pk})
+        response = self.client.get('{}?status='.format(url))
+        self.assertEqual(400, response.status_code)
+        content = json.loads(response.content)
+        self.assertTrue('status' in content)
