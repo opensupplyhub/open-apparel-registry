@@ -185,6 +185,22 @@ export const createPaginationOptionsFromQueryString = (qs) => {
     });
 };
 
+export const createParamsFromQueryString = (qs) => {
+    const qsToParse = startsWith(qs, '?')
+        ? qs.slice(1)
+        : qs;
+
+    const {
+        status,
+    } = querystring.parse(qsToParse);
+
+    if (status) {
+        return Object.freeze({ status });
+    }
+
+    return {};
+};
+
 export const getTokenFromQueryString = (qs) => {
     const qsToParse = startsWith(qs, '?')
         ? qs.slice(1)
@@ -332,8 +348,10 @@ export const getBBoxForArrayOfGeoJSONPoints = flow(
 );
 
 export const makeFacilityListItemsDetailLink = id => `/lists/${id}`;
-export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (id, page, rowsPerPage) =>
-    `/lists/${id}?page=${page}&rowsPerPage=${rowsPerPage}`;
+export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (
+    id, page, rowsPerPage, params,
+) =>
+    `/lists/${id}?${querystring.stringify(Object.assign({}, params, { page, rowsPerPage }))}`;
 
 export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) => Object.freeze([
     page * rowsPerPage,

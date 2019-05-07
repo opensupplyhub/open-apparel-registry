@@ -24,6 +24,7 @@ import {
     makePaginatedFacilityListItemsDetailLinkWithRowCount,
     getValueFromEvent,
     createPaginationOptionsFromQueryString,
+    createParamsFromQueryString,
     makeFacilityListSummaryStatus,
 } from '../util/util';
 
@@ -53,6 +54,7 @@ const facilityListItemsTableStyles = Object.freeze({
 function FacilityListItemsTable({
     list,
     items,
+    filteredCount,
     fetchingItems,
     selectedFacilityListItemsRowIndex,
     makeSelectListItemTableRowFunction,
@@ -74,13 +76,16 @@ function FacilityListItemsTable({
         rowsPerPage,
     } = createPaginationOptionsFromQueryString(search);
 
+    const params = createParamsFromQueryString(search);
+
     const handleChangePage = (_, newPage) => {
         push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
             (newPage + 1),
             rowsPerPage,
+            params,
         ));
-        fetchListItems(listID, newPage + 1, rowsPerPage);
+        fetchListItems(listID, newPage + 1, rowsPerPage, params);
     };
 
     const handleChangeRowsPerPage = (e) => {
@@ -88,8 +93,9 @@ function FacilityListItemsTable({
             listID,
             page,
             getValueFromEvent(e),
+            params,
         ));
-        fetchListItems(listID, page, getValueFromEvent(e));
+        fetchListItems(listID, page, getValueFromEvent(e), params);
     };
 
     const paginationControlsRow = (
@@ -113,7 +119,7 @@ function FacilityListItemsTable({
                 md={6}
             >
                 <TablePagination
-                    count={list.item_count}
+                    count={filteredCount}
                     rowsPerPage={Number(rowsPerPage)}
                     rowsPerPageOptions={rowsPerPageOptions}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
@@ -249,6 +255,7 @@ FacilityListItemsTable.defaultProps = {
 
 FacilityListItemsTable.propTypes = {
     items: arrayOf(facilityListItemPropType),
+    filteredCount: number.isRequired,
     match: shape({
         params: shape({
             listID: string.isRequired,
@@ -270,6 +277,7 @@ function mapStateToProps({
         list: {
             data: list,
         },
+        filteredCount,
         selectedFacilityListItemsRowIndex,
     },
 
@@ -277,6 +285,7 @@ function mapStateToProps({
     return {
         list,
         items,
+        filteredCount,
         fetchingItems,
         selectedFacilityListItemsRowIndex,
     };
@@ -286,8 +295,8 @@ function mapDispatchToProps(dispatch) {
     return {
         makeSelectListItemTableRowFunction: rowIndex =>
             () => dispatch(setSelectedFacilityListItemsRowIndex(rowIndex)),
-        fetchListItems: (listID, page, rowsPerPage) =>
-            dispatch(fetchFacilityListItems(listID, page, rowsPerPage)),
+        fetchListItems: (listID, page, rowsPerPage, params) =>
+            dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
     };
 }
 
