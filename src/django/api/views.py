@@ -1,10 +1,13 @@
+import operator
 import os
 import sys
 
 from datetime import datetime
+from functools import reduce
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
+from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
 from django.conf import settings
 from django.contrib.auth import (authenticate, login, logout)
@@ -808,6 +811,24 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             }
         """
 
+        special_case_q_statements = {
+            FacilityListItem.NEW_FACILITY: Q(
+                        Q(status__in=('MATCHED', 'CONFIRMED_MATCH')) &
+                        Q(facility__created_from_id=F('id'))),
+            FacilityListItem.MATCHED: Q(
+                        Q(status='MATCHED') &
+                        ~Q(facility__created_from_id=F('id'))),
+            FacilityListItem.CONFIRMED_MATCH: Q(
+                        Q(status='CONFIRMED_MATCH') &
+                        ~Q(facility__created_from_id=F('id')))
+        }
+
+        def make_q_from_status(status):
+            if status in special_case_q_statements:
+                return(special_case_q_statements[status])
+            else:
+                return Q(status=status)
+
         params = FacilityListItemsQueryParamsSerializer(
             data=request.query_params)
 
@@ -826,7 +847,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .objects \
                 .filter(facility_list=facility_list)
             if status is not None and len(status) > 0:
-                queryset = queryset.filter(status__in=status)
+                q_statements = [make_q_from_status(s) for s in status]
+                queryset = queryset.filter(reduce(operator.or_, q_statements))
+
             queryset = queryset.order_by('row_index')
 
             page_queryset = self.paginate_queryset(queryset)

@@ -206,7 +206,8 @@ class FacilityListItemsQueryParamsSerializer(Serializer):
     )
 
     def validate_status(self, value):
-        valid_statuses = [c[0] for c in FacilityListItem.STATUS_CHOICES]
+        valid_statuses = ([c[0] for c in FacilityListItem.STATUS_CHOICES]
+                          + [FacilityListItem.NEW_FACILITY])
         for item in value:
             if item not in valid_statuses:
                 raise ValidationError(

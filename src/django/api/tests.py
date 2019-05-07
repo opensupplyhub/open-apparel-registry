@@ -1225,3 +1225,34 @@ class FacilityListItemTests(APITestCase):
         self.assertEqual(400, response.status_code)
         content = json.loads(response.content)
         self.assertTrue('status' in content)
+
+    def test_new_facility(self):
+        url = reverse('facility-list-items',
+                      kwargs={'pk': self.facility_list.pk})
+
+        # First assert that there are no NEW_FACILITYs in our test data.
+        response = self.client.get(
+            '{}?status=NEW_FACILITY'.format(url))
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertEqual(0, len(content['results']))
+
+        # Create a facility from the test list item
+        list_item = FacilityListItem.objects.filter(
+            facility_list=self.facility_list,
+            status=FacilityListItem.MATCHED,
+        ).first()
+        facility = Facility.objects.create(
+            country_code=list_item.country_code,
+            created_from=list_item,
+            location=Point(0, 0),
+        )
+        list_item.facility = facility
+        list_item.save()
+
+        # Assert that we now have a NEW_FACILITY
+        response = self.client.get(
+            '{}?status=NEW_FACILITY'.format(url))
+        self.assertEqual(200, response.status_code)
+        content = json.loads(response.content)
+        self.assertEqual(1, len(content['results']))

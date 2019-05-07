@@ -240,6 +240,11 @@ class FacilityListItem(models.Model):
     ERROR_GEOCODING = 'ERROR_GEOCODING'
     ERROR_MATCHING = 'ERROR_MATCHING'
 
+    # NEW_FACILITY is a meta status. If the `status` of a `FacilityListItem` is
+    # `MATCHED` or `CONFIRMED_MATCH` and the `facility` was `created_from` the
+    # `FacilityListItem` then the item represents a new facility.
+    NEW_FACILITY = 'NEW_FACILITY'
+
     # These status choices must be kept in sync with the client's
     # `facilityListItemStatusChoicesEnum`.
     STATUS_CHOICES = (
