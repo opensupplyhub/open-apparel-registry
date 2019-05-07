@@ -195,7 +195,9 @@ export const createParamsFromQueryString = (qs) => {
     } = querystring.parse(qsToParse);
 
     if (status) {
-        return Object.freeze({ status });
+        return Array.isArray(status)
+            ? Object.freeze({ status })
+            : Object.freeze({ status: [status] });
     }
 
     return {};

@@ -1,12 +1,16 @@
 import React from 'react';
 import { arrayOf, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
+import update from 'immutability-helper';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TablePagination from '@material-ui/core/TablePagination';
+import ReactSelect from 'react-select';
+import ShowOnly from './ShowOnly';
 
 import FacilityListItemsTableRow from './FacilityListItemsTableRow';
 import FacilityListItemsConfirmationTableRow from './FacilityListItemsConfirmationTableRow';
@@ -32,6 +36,7 @@ import {
     rowsPerPageOptions,
     facilityListItemStatusChoicesEnum,
     facilityListItemErrorStatuses,
+    facilityListStatusFilterChoices,
 } from '../util/constants';
 
 const facilityListItemsTableStyles = Object.freeze({
@@ -49,7 +54,24 @@ const facilityListItemsTableStyles = Object.freeze({
         padding: '20px',
         lineHeight: '1.2',
     }),
+    statusFilterStyles: Object.freeze({
+        padding: '20px 0 0 20px',
+    }),
+    statusFilterSelectStyles: Object.freeze({
+        display: 'inline-block',
+        width: '40%',
+    }),
+    statusFilterMessageStyles: Object.freeze({
+        padding: '0 0 0 20px',
+    }),
 });
+
+const createSelectedStatusChoicesFromParams = (params) => {
+    if (params && params.status) {
+        return params.status.map(x => ({ label: x, value: x }));
+    }
+    return null;
+};
 
 function FacilityListItemsTable({
     list,
@@ -97,6 +119,33 @@ function FacilityListItemsTable({
         ));
         fetchListItems(listID, page, getValueFromEvent(e), params);
     };
+
+    const handleChangeStatusFilter = (selected) => {
+        const newParams = update(params, {
+            status: { $set: selected ? selected.map(x => x.value) : null },
+        });
+        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            1,
+            rowsPerPage,
+            newParams,
+        ));
+        fetchListItems(listID, 1, rowsPerPage, newParams);
+    };
+
+    const handleShowAllClicked = () => {
+        const newParams = update(params, {
+            $unset: ['status'],
+        });
+        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            1,
+            rowsPerPage,
+            newParams,
+        ));
+        fetchListItems(listID, 1, rowsPerPage, newParams);
+    };
+
 
     const paginationControlsRow = (
         <Grid
@@ -226,6 +275,28 @@ function FacilityListItemsTable({
 
     return (
         <Paper style={facilityListItemsTableStyles.containerStyles}>
+            <div style={facilityListItemsTableStyles.statusFilterStyles}>
+                <div style={facilityListItemsTableStyles.statusFilterSelectStyles}>
+                    <ReactSelect
+                        isMulti
+                        id="listItemStatus"
+                        name="listItemStatus"
+                        classNamePrefix="select"
+                        options={facilityListStatusFilterChoices}
+                        placeholder="Filter by item status..."
+                        value={createSelectedStatusChoicesFromParams(params)}
+                        onChange={handleChangeStatusFilter}
+                    />
+                </div>
+                <ShowOnly when={!!(params && params.status)}>
+                    <span style={facilityListItemsTableStyles.statusFilterMessageStyles}>
+                        Showing {filteredCount} of {list.item_count} items.
+                    </span>
+                    <Button color="primary" onClick={handleShowAllClicked}>
+                        Show all items
+                    </Button>
+                </ShowOnly>
+            </div>
             {paginationControlsRow}
             <div style={facilityListItemsTableStyles.tableWrapperStyles}>
                 <Table>
