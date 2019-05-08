@@ -167,19 +167,15 @@ export function assembleAndDownloadFacilityListCSV() {
             } = data;
 
             const dataURLs = makeFacilityListDataURLs(id, count);
-            const responseData = await Promise.all(
-                dataURLs.map(async (url) => {
-                    const {
-                        data: {
-                            results,
-                        },
-                    } = await csrfRequest.get(url);
-
-                    return results;
-                }),
-            );
-
-            const csvData = [].concat(...responseData);
+            let csvData = [];
+            for (let i = 0, len = dataURLs.length; i < len; i += 1) {
+                const {
+                    data: {
+                        results,
+                    },
+                } = await csrfRequest.get(dataURLs[i]); // eslint-disable-line no-await-in-loop
+                csvData = csvData.concat(results);
+            }
             downloadListItemCSV(data, csvData);
 
             return dispatch(completeAssembleAndDownloadFacilityListCSV(csvData));

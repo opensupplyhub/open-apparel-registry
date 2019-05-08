@@ -49,6 +49,11 @@ class FacilityListCreateTest(APITestCase):
             'facilities.csv',
             b'\n'.join([s.encode() for s in self.test_csv_rows]),
             content_type='text/csv')
+        self.test_file_with_bom = SimpleUploadedFile(
+            'facilities_with_bom.csv',
+            b'\n'.join([self.test_csv_rows[0].encode('utf-8-sig')] +
+                       [s.encode() for s in self.test_csv_rows[1:]]),
+            content_type='text/csv')
 
     def post_header_only_file(self, **kwargs):
         if kwargs is None:
@@ -59,6 +64,14 @@ class FacilityListCreateTest(APITestCase):
         return self.client.post(reverse('facility-list-list'),
                                 {'file': csv_file, **kwargs},
                                 format='multipart')
+
+    def test_can_post_file_with_bom(self):
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'file': self.test_file_with_bom},
+                                    format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_list = FacilityList.objects.last()
+        self.assertEqual(self.test_csv_rows[0], new_list.header)
 
     def test_creates_list_and_items(self):
         previous_list_count = FacilityList.objects.all().count()
