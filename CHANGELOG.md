@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
-- Change facility list CSV download to request one page at a time [#496](https://github.com/open-apparel-registry/open-apparel-registry/pull/496)
-- Handle CSV files that include a byte order mark [#498](https://github.com/open-apparel-registry/open-apparel-registry/pull/498)
 
 ### Deprecated
 
@@ -19,6 +17,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+
+## [2.3.0] - 2019-05-08
+
+### Changed
+- Change facility list CSV download to request one page at a time [#496](https://github.com/open-apparel-registry/open-apparel-registry/pull/496)
+- Handle CSV files that include a byte order mark [#498](https://github.com/open-apparel-registry/open-apparel-registry/pull/498)
+
 
 ## [2.2.0] - 2019-04-11
 
@@ -78,7 +84,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.2.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.3.0...HEAD
+[2.3.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.3.0
 [2.2.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.2.0
 [2.1.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.1.0
 [2.0.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.0.0
