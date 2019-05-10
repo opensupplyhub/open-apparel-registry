@@ -8,6 +8,8 @@ import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import ReactSelect from 'react-select';
 import ShowOnly from './ShowOnly';
@@ -221,6 +223,8 @@ class FacilityListItemsTable extends Component {
             </Grid>
         );
 
+        const listIsEmpty = !fetchingItems && items && items.length === 0;
+
         const tableRows = fetchingItems ? [] : items
             .map((item) => {
                 const handleSelectRow = makeSelectListItemTableRowFunction(item.row_index);
@@ -353,6 +357,13 @@ class FacilityListItemsTable extends Component {
                         </TableHead>
                         <TableBody>
                             {tableRows}
+                            <ShowOnly when={listIsEmpty}>
+                                <TableRow>
+                                    <TableCell colSpan={5} style={{ textAlign: 'center' }}>
+                                        No matching items.
+                                    </TableCell>
+                                </TableRow>
+                            </ShowOnly>
                         </TableBody>
                     </Table>
                 </div>
