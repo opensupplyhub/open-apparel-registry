@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { arrayOf, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
@@ -73,147 +73,233 @@ const createSelectedStatusChoicesFromParams = (params) => {
     return null;
 };
 
-function FacilityListItemsTable({
-    list,
-    items,
-    filteredCount,
-    fetchingItems,
-    selectedFacilityListItemsRowIndex,
-    makeSelectListItemTableRowFunction,
-    fetchListItems,
-    match: {
-        params: {
-            listID,
-        },
-    },
-    history: {
-        push,
-        location: {
-            search,
-        },
-    },
-}) {
-    const {
-        page,
-        rowsPerPage,
-    } = createPaginationOptionsFromQueryString(search);
 
-    const params = createParamsFromQueryString(search);
+class FacilityListItemsTable extends Component {
+    componentDidUpdate(prevProps) {
+        const {
+            items,
+            fetchListItems,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
 
-    const handleChangePage = (_, newPage) => {
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-            listID,
-            (newPage + 1),
-            rowsPerPage,
-            params,
-        ));
-        fetchListItems(listID, newPage + 1, rowsPerPage, params);
-    };
+        const params = createParamsFromQueryString(search);
+        if (params.status
+            && params.status.includes(facilityListItemStatusChoicesEnum.POTENTIAL_MATCH)
+            && items
+            && prevProps.items) {
+            const previousPotentialMatchCount = prevProps
+                .items
+                .filter(x => x.status === facilityListItemStatusChoicesEnum.POTENTIAL_MATCH)
+                .length;
+            const currentPotentialMatchCount = items
+                .filter(x => x.status === facilityListItemStatusChoicesEnum.POTENTIAL_MATCH)
+                .length;
+            if (previousPotentialMatchCount !== currentPotentialMatchCount) {
+                const {
+                    page,
+                    rowsPerPage,
+                } = createPaginationOptionsFromQueryString(search);
+                fetchListItems(listID, page, rowsPerPage, params);
+            }
+        }
+    }
 
-    const handleChangeRowsPerPage = (e) => {
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-            listID,
+    render() {
+        const {
+            list,
+            items,
+            filteredCount,
+            fetchingItems,
+            selectedFacilityListItemsRowIndex,
+            makeSelectListItemTableRowFunction,
+            fetchListItems,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                push,
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
+        const {
             page,
-            getValueFromEvent(e),
-            params,
-        ));
-        fetchListItems(listID, page, getValueFromEvent(e), params);
-    };
-
-    const handleChangeStatusFilter = (selected) => {
-        const newParams = update(params, {
-            status: { $set: selected ? selected.map(x => x.value) : null },
-        });
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-            listID,
-            1,
             rowsPerPage,
-            newParams,
-        ));
-        fetchListItems(listID, 1, rowsPerPage, newParams);
-    };
+        } = createPaginationOptionsFromQueryString(search);
 
-    const handleShowAllClicked = () => {
-        const newParams = update(params, {
-            $unset: ['status'],
-        });
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-            listID,
-            1,
-            rowsPerPage,
-            newParams,
-        ));
-        fetchListItems(listID, 1, rowsPerPage, newParams);
-    };
+        const params = createParamsFromQueryString(search);
+
+        const handleChangePage = (_, newPage) => {
+            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+                listID,
+                (newPage + 1),
+                rowsPerPage,
+                params,
+            ));
+            fetchListItems(listID, newPage + 1, rowsPerPage, params);
+        };
+
+        const handleChangeRowsPerPage = (e) => {
+            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+                listID,
+                page,
+                getValueFromEvent(e),
+                params,
+            ));
+            fetchListItems(listID, page, getValueFromEvent(e), params);
+        };
+
+        const handleChangeStatusFilter = (selected) => {
+            const newParams = update(params, {
+                status: { $set: selected ? selected.map(x => x.value) : null },
+            });
+            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+                listID,
+                1,
+                rowsPerPage,
+                newParams,
+            ));
+            fetchListItems(listID, 1, rowsPerPage, newParams);
+        };
+
+        const handleShowAllClicked = () => {
+            const newParams = update(params, {
+                $unset: ['status'],
+            });
+            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+                listID,
+                1,
+                rowsPerPage,
+                newParams,
+            ));
+            fetchListItems(listID, 1, rowsPerPage, newParams);
+        };
 
 
-    const paginationControlsRow = (
-        <Grid
-            container
-            direction="row"
-            justify="space-between"
-            alignItems="center"
-        >
+        const paginationControlsRow = (
             <Grid
-                item
-                sm={12}
-                md={6}
-                style={facilityListItemsTableStyles.summaryStatusStyles}
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
             >
-                {makeFacilityListSummaryStatus(list.statuses)}
-            </Grid>
-            <Grid
-                item
-                sm={12}
-                md={6}
-            >
-                <TablePagination
-                    count={filteredCount}
-                    rowsPerPage={Number(rowsPerPage)}
-                    rowsPerPageOptions={rowsPerPageOptions}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                    page={page - 1}
-                    onChangePage={handleChangePage}
-                    component="div"
-                />
-            </Grid>
-        </Grid>
-    );
-
-    const tableRows = fetchingItems ? [] : items
-        .map((item) => {
-            const handleSelectRow = makeSelectListItemTableRowFunction(item.row_index);
-
-            if (item.status === facilityListItemStatusChoicesEnum.POTENTIAL_MATCH) {
-                return (
-                    <FacilityListItemsConfirmationTableRow
-                        key={item.row_index}
-                        item={item}
-                        listID={listID}
+                <Grid
+                    item
+                    sm={12}
+                    md={6}
+                    style={facilityListItemsTableStyles.summaryStatusStyles}
+                >
+                    {makeFacilityListSummaryStatus(list.statuses)}
+                </Grid>
+                <Grid
+                    item
+                    sm={12}
+                    md={6}
+                >
+                    <TablePagination
+                        count={filteredCount}
+                        rowsPerPage={Number(rowsPerPage)}
+                        rowsPerPageOptions={rowsPerPageOptions}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                        page={page - 1}
+                        onChangePage={handleChangePage}
+                        component="div"
                     />
-                );
-            }
+                </Grid>
+            </Grid>
+        );
 
-            if ((item.status === facilityListItemStatusChoicesEnum.MATCHED
-                 || item.status === facilityListItemStatusChoicesEnum.CONFIRMED_MATCH)
-                && item.id === item.matched_facility.created_from_id) {
-                return (
-                    <FacilityListItemsTableRow
-                        key={item.row_index}
-                        rowIndex={item.row_index}
-                        countryName={item.country_name}
-                        name={item.name}
-                        address={item.address}
-                        status={item.status}
-                        handleSelectRow={handleSelectRow}
-                        hover={false}
-                        newFacility
-                        oarID={item.matched_facility.oar_id}
-                    />
-                );
-            }
+        const tableRows = fetchingItems ? [] : items
+            .map((item) => {
+                const handleSelectRow = makeSelectListItemTableRowFunction(item.row_index);
 
-            if (item.row_index !== selectedFacilityListItemsRowIndex) {
+                if (item.status === facilityListItemStatusChoicesEnum.POTENTIAL_MATCH) {
+                    return (
+                        <FacilityListItemsConfirmationTableRow
+                            key={item.row_index}
+                            item={item}
+                            listID={listID}
+                        />
+                    );
+                }
+
+                if ((item.status === facilityListItemStatusChoicesEnum.MATCHED
+                     || item.status === facilityListItemStatusChoicesEnum.CONFIRMED_MATCH)
+                    && item.id === item.matched_facility.created_from_id) {
+                    return (
+                        <FacilityListItemsTableRow
+                            key={item.row_index}
+                            rowIndex={item.row_index}
+                            countryName={item.country_name}
+                            name={item.name}
+                            address={item.address}
+                            status={item.status}
+                            handleSelectRow={handleSelectRow}
+                            hover={false}
+                            newFacility
+                            oarID={item.matched_facility.oar_id}
+                        />
+                    );
+                }
+
+                if (item.row_index !== selectedFacilityListItemsRowIndex) {
+                    return (
+                        <FacilityListItemsTableRow
+                            key={item.row_index}
+                            rowIndex={item.row_index}
+                            countryName={item.country_name}
+                            name={item.name}
+                            address={item.address}
+                            status={item.status}
+                            handleSelectRow={handleSelectRow}
+                            hover
+                        />
+                    );
+                }
+
+                if (facilityListItemErrorStatuses.includes(item.status)) {
+                    return (
+                        <FacilityListItemsErrorTableRow
+                            key={item.row_index}
+                            rowIndex={item.row_index}
+                            countryName={item.country_name}
+                            name={item.name}
+                            address={item.address}
+                            status={item.status}
+                            errors={item.processing_errors}
+                            handleSelectRow={handleSelectRow}
+                        />
+                    );
+                }
+
+                if (item.status === facilityListItemStatusChoicesEnum.MATCHED
+                    || item.status === facilityListItemStatusChoicesEnum.CONFIRMED_MATCH) {
+                    return (
+                        <FacilityListItemsMatchTableRow
+                            key={item.row_index}
+                            rowIndex={item.row_index}
+                            countryName={item.country_name}
+                            name={item.name}
+                            address={item.address}
+                            status={item.status}
+                            matchedFacility={item.matched_facility}
+                            handleSelectRow={handleSelectRow}
+                        />
+                    );
+                }
+
                 return (
                     <FacilityListItemsTableRow
                         key={item.row_index}
@@ -226,98 +312,54 @@ function FacilityListItemsTable({
                         hover
                     />
                 );
-            }
+            });
 
-            if (facilityListItemErrorStatuses.includes(item.status)) {
-                return (
-                    <FacilityListItemsErrorTableRow
-                        key={item.row_index}
-                        rowIndex={item.row_index}
-                        countryName={item.country_name}
-                        name={item.name}
-                        address={item.address}
-                        status={item.status}
-                        errors={item.processing_errors}
-                        handleSelectRow={handleSelectRow}
-                    />
-                );
-            }
-
-            if (item.status === facilityListItemStatusChoicesEnum.MATCHED
-                || item.status === facilityListItemStatusChoicesEnum.CONFIRMED_MATCH) {
-                return (
-                    <FacilityListItemsMatchTableRow
-                        key={item.row_index}
-                        rowIndex={item.row_index}
-                        countryName={item.country_name}
-                        name={item.name}
-                        address={item.address}
-                        status={item.status}
-                        matchedFacility={item.matched_facility}
-                        handleSelectRow={handleSelectRow}
-                    />
-                );
-            }
-
-            return (
-                <FacilityListItemsTableRow
-                    key={item.row_index}
-                    rowIndex={item.row_index}
-                    countryName={item.country_name}
-                    name={item.name}
-                    address={item.address}
-                    status={item.status}
-                    handleSelectRow={handleSelectRow}
-                    hover
-                />
-            );
-        });
-
-    return (
-        <Paper style={facilityListItemsTableStyles.containerStyles}>
-            <div style={facilityListItemsTableStyles.statusFilterStyles}>
-                <div style={facilityListItemsTableStyles.statusFilterSelectStyles}>
-                    <ReactSelect
-                        isMulti
-                        id="listItemStatus"
-                        name="listItemStatus"
-                        classNamePrefix="select"
-                        options={facilityListStatusFilterChoices}
-                        placeholder="Filter by item status..."
-                        value={createSelectedStatusChoicesFromParams(params)}
-                        onChange={handleChangeStatusFilter}
-                    />
-                </div>
-                <ShowOnly when={!!(params && params.status)}>
-                    <span style={facilityListItemsTableStyles.statusFilterMessageStyles}>
-                        Showing {filteredCount} of {list.item_count} items.
-                    </span>
-                    <Button color="primary" onClick={handleShowAllClicked}>
-                        Show all items
-                    </Button>
-                </ShowOnly>
-            </div>
-            {paginationControlsRow}
-            <div style={facilityListItemsTableStyles.tableWrapperStyles}>
-                <Table>
-                    <TableHead>
-                        <FacilityListItemsTableRow
-                            rowIndex="CSV Row Index"
-                            countryName="Country Name"
-                            name="Name"
-                            address="Address"
-                            status="Status"
-                            hover={false}
+        return (
+            <Paper style={facilityListItemsTableStyles.containerStyles}>
+                <div style={facilityListItemsTableStyles.statusFilterStyles}>
+                    <div style={facilityListItemsTableStyles.statusFilterSelectStyles}>
+                        <ReactSelect
+                            isMulti
+                            id="listItemStatus"
+                            name="listItemStatus"
+                            classNamePrefix="select"
+                            options={facilityListStatusFilterChoices}
+                            placeholder="Filter by item status..."
+                            value={createSelectedStatusChoicesFromParams(params)}
+                            onChange={handleChangeStatusFilter}
                         />
-                    </TableHead>
-                    <TableBody>
-                        {tableRows}
-                    </TableBody>
-                </Table>
-            </div>
-            {paginationControlsRow}
-        </Paper>
-    );
+                    </div>
+                    <ShowOnly when={!!(params && params.status)}>
+                        <span style={facilityListItemsTableStyles.statusFilterMessageStyles}>
+                            Showing {filteredCount} of {list.item_count} items.
+                        </span>
+                        <Button color="primary" onClick={handleShowAllClicked}>
+                            Show all items
+                        </Button>
+                    </ShowOnly>
+                </div>
+                {paginationControlsRow}
+                <div style={facilityListItemsTableStyles.tableWrapperStyles}>
+                    <Table>
+                        <TableHead>
+                            <FacilityListItemsTableRow
+                                rowIndex="CSV Row Index"
+                                countryName="Country Name"
+                                name="Name"
+                                address="Address"
+                                status="Status"
+                                hover={false}
+                            />
+                        </TableHead>
+                        <TableBody>
+                            {tableRows}
+                        </TableBody>
+                    </Table>
+                </div>
+                {paginationControlsRow}
+            </Paper>
+        );
+    }
 }
 
 FacilityListItemsTable.defaultProps = {
