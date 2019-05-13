@@ -115,14 +115,8 @@ class FacilityListItemsTable extends Component {
         }
     }
 
-    render() {
+    handleChangePage = (_, newPage) => {
         const {
-            list,
-            items,
-            filteredCount,
-            fetchingItems,
-            selectedFacilityListItemsRowIndex,
-            makeSelectListItemTableRowFunction,
             fetchListItems,
             match: {
                 params: {
@@ -136,59 +130,139 @@ class FacilityListItemsTable extends Component {
                 },
             },
         } = this.props;
+
+        const {
+            rowsPerPage,
+        } = createPaginationOptionsFromQueryString(search);
+
+        const params = createParamsFromQueryString(search);
+
+        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            (newPage + 1),
+            rowsPerPage,
+            params,
+        ));
+        fetchListItems(listID, newPage + 1, rowsPerPage, params);
+    }
+
+    handleChangeRowsPerPage = (e) => {
+        const {
+            fetchListItems,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                push,
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
+
+        const { page } = createPaginationOptionsFromQueryString(search);
+
+        const params = createParamsFromQueryString(search);
+
+        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            page,
+            getValueFromEvent(e),
+            params,
+        ));
+        fetchListItems(listID, page, getValueFromEvent(e), params);
+    }
+
+    handleChangeStatusFilter = (selected) => {
+        const {
+            fetchListItems,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                push,
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
+
+        const { rowsPerPage } = createPaginationOptionsFromQueryString(search);
+        const params = createParamsFromQueryString(search);
+        const newParams = update(params, {
+            status: { $set: selected ? selected.map(x => x.value) : null },
+        });
+
+        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            1,
+            rowsPerPage,
+            newParams,
+        ));
+        fetchListItems(listID, 1, rowsPerPage, newParams);
+    }
+
+    handleShowAllClicked = () => {
+        const {
+            fetchListItems,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                push,
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
+
+        const { rowsPerPage } = createPaginationOptionsFromQueryString(search);
+        const params = createParamsFromQueryString(search);
+
+        const newParams = update(params, {
+            $unset: ['status'],
+        });
+        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            1,
+            rowsPerPage,
+            newParams,
+        ));
+        fetchListItems(listID, 1, rowsPerPage, newParams);
+    }
+
+    render() {
+        const {
+            list,
+            items,
+            filteredCount,
+            fetchingItems,
+            selectedFacilityListItemsRowIndex,
+            makeSelectListItemTableRowFunction,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
+
         const {
             page,
             rowsPerPage,
         } = createPaginationOptionsFromQueryString(search);
 
         const params = createParamsFromQueryString(search);
-
-        const handleChangePage = (_, newPage) => {
-            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-                listID,
-                (newPage + 1),
-                rowsPerPage,
-                params,
-            ));
-            fetchListItems(listID, newPage + 1, rowsPerPage, params);
-        };
-
-        const handleChangeRowsPerPage = (e) => {
-            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-                listID,
-                page,
-                getValueFromEvent(e),
-                params,
-            ));
-            fetchListItems(listID, page, getValueFromEvent(e), params);
-        };
-
-        const handleChangeStatusFilter = (selected) => {
-            const newParams = update(params, {
-                status: { $set: selected ? selected.map(x => x.value) : null },
-            });
-            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-                listID,
-                1,
-                rowsPerPage,
-                newParams,
-            ));
-            fetchListItems(listID, 1, rowsPerPage, newParams);
-        };
-
-        const handleShowAllClicked = () => {
-            const newParams = update(params, {
-                $unset: ['status'],
-            });
-            push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
-                listID,
-                1,
-                rowsPerPage,
-                newParams,
-            ));
-            fetchListItems(listID, 1, rowsPerPage, newParams);
-        };
-
 
         const paginationControlsRow = (
             <Grid
@@ -214,9 +288,9 @@ class FacilityListItemsTable extends Component {
                         count={filteredCount}
                         rowsPerPage={Number(rowsPerPage)}
                         rowsPerPageOptions={rowsPerPageOptions}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
                         page={page - 1}
-                        onChangePage={handleChangePage}
+                        onChangePage={this.handleChangePage}
                         component="div"
                     />
                 </Grid>
@@ -330,14 +404,14 @@ class FacilityListItemsTable extends Component {
                             options={facilityListStatusFilterChoices}
                             placeholder="Filter by item status..."
                             value={createSelectedStatusChoicesFromParams(params)}
-                            onChange={handleChangeStatusFilter}
+                            onChange={this.handleChangeStatusFilter}
                         />
                     </div>
                     <ShowOnly when={!!(params && params.status)}>
                         <span style={facilityListItemsTableStyles.statusFilterMessageStyles}>
                             Showing {filteredCount} of {list.item_count} items.
                         </span>
-                        <Button color="primary" onClick={handleShowAllClicked}>
+                        <Button color="primary" onClick={this.handleShowAllClicked}>
                             Show all items
                         </Button>
                     </ShowOnly>
