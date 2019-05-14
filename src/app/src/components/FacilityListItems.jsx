@@ -28,7 +28,10 @@ import {
 
 import { facilityListPropType } from '../util/propTypes';
 
-import { createPaginationOptionsFromQueryString } from '../util/util';
+import {
+    createPaginationOptionsFromQueryString,
+    createParamsFromQueryString,
+} from '../util/util';
 
 const facilityListItemsStyles = Object.freeze({
     headerStyles: Object.freeze({
@@ -290,9 +293,11 @@ function mapDispatchToProps(dispatch, {
         rowsPerPage,
     } = createPaginationOptionsFromQueryString(search);
 
+    const params = createParamsFromQueryString(search);
+
     return {
         fetchList: () => dispatch(fetchFacilityList(listID)),
-        fetchListItems: () => dispatch(fetchFacilityListItems(listID, page, rowsPerPage)),
+        fetchListItems: () => dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
         clearListItems: () => dispatch(resetFacilityListItems()),
         downloadCSV: () => dispatch(assembleAndDownloadFacilityListCSV()),
     };

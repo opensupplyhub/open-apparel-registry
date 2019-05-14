@@ -199,6 +199,22 @@ class FacilityQueryParamsSerializer(Serializer):
     pageSize = IntegerField(required=False)
 
 
+class FacilityListItemsQueryParamsSerializer(Serializer):
+    status = ListField(
+        child=CharField(required=False),
+        required=False,
+    )
+
+    def validate_status(self, value):
+        valid_statuses = ([c[0] for c in FacilityListItem.STATUS_CHOICES]
+                          + [FacilityListItem.NEW_FACILITY])
+        for item in value:
+            if item not in valid_statuses:
+                raise ValidationError(
+                    '{} is not a valid status. Must be one of {}'.format(
+                        item, ', '.join(valid_statuses)))
+
+
 class FacilitySerializer(GeoFeatureModelSerializer):
     oar_id = SerializerMethodField()
     country_name = SerializerMethodField()

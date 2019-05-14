@@ -36,6 +36,7 @@ const initialState = Object.freeze({
         fetching: false,
         error: null,
     },
+    filteredCount: 0,
     confirmOrRejectMatch: Object.freeze({
         fetching: false,
         error: null,
@@ -161,9 +162,10 @@ export default createReducer({
         },
     }),
     [completeFetchFacilityListItems]: (state, payload) => update(state, {
+        filteredCount: { $set: payload.count },
         items: {
             $merge: {
-                data: payload,
+                data: payload.results,
                 fetching: false,
                 error: null,
             },

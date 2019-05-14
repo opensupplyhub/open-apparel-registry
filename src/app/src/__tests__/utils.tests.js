@@ -37,6 +37,7 @@ const {
     makeSliceArgumentsForTablePagination,
     getNumberFromParsedQueryStringParamOrUseDefault,
     createPaginationOptionsFromQueryString,
+    createParamsFromQueryString,
     makeReportADataIssueEmailLink,
     makeFeatureCollectionFromSingleFeature,
     createConfirmOrRejectMatchData,
@@ -659,6 +660,28 @@ it('creates a set of pagination options from a querystring', () => {
         createPaginationOptionsFromQueryString(complexQueryString),
         expectedComplexQueryStringValues,
     )).toBe(true);
+});
+
+it('creates params from a query string', () => {
+    const emptyQueryString = '';
+    const expectedParamsForEmptyQueryString = {};
+    expect(createParamsFromQueryString(emptyQueryString))
+        .toEqual(expectedParamsForEmptyQueryString);
+
+    const oneStatusQueryString = '?status=NEW_FACILITY';
+    const expectedParamsForOneStatus = { status: ['NEW_FACILITY'] };
+    expect(createParamsFromQueryString(oneStatusQueryString))
+        .toEqual(expectedParamsForOneStatus);
+
+    const twoStatusQueryString = '?status=NEW_FACILITY&status=MATCHED';
+    const expectedParamsForTwoStatus = { status: ['NEW_FACILITY', 'MATCHED'] };
+    expect(createParamsFromQueryString(twoStatusQueryString))
+        .toEqual(expectedParamsForTwoStatus);
+
+    const ignoredArgQueryString = '?foo=bar';
+    const expectedParamsForIgnoredArg = {};
+    expect(createParamsFromQueryString(ignoredArgQueryString))
+        .toEqual(expectedParamsForIgnoredArg);
 });
 
 it('creates an email link for reporting a data issue for a facility with a given OAR ID', () => {

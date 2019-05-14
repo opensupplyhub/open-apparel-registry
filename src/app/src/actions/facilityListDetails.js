@@ -69,7 +69,9 @@ export function fetchFacilityList(listID = null) {
     };
 }
 
-export function fetchFacilityListItems(listID = null, page = undefined, rowsPerPage = undefined) {
+export function fetchFacilityListItems(
+    listID = null, page = undefined, rowsPerPage = undefined, params = null,
+) {
     return (dispatch) => {
         dispatch(startFetchFacilityListItems());
 
@@ -82,12 +84,13 @@ export function fetchFacilityListItems(listID = null, page = undefined, rowsPerP
         }
 
         const url = makeSingleFacilityListItemsURL(listID);
-        const qs = page || rowsPerPage
-            ? `?${querystring.stringify({ page, pageSize: rowsPerPage })}`
-            : '';
+        const pageParams = page || rowsPerPage
+            ? { page, pageSize: rowsPerPage }
+            : null;
+        const qs = `?${querystring.stringify(Object.assign({}, params, pageParams))}`;
         return csrfRequest
             .get(`${url}${qs}`)
-            .then(({ data }) => dispatch(completeFetchFacilityListItems(data.results)))
+            .then(({ data }) => dispatch(completeFetchFacilityListItems(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 `An error prevented fetching facility list items for ${listID}`,
