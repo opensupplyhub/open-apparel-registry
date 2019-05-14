@@ -17,9 +17,9 @@
         "lodash": "4.17.11",
         "moment": "2.24.0",
         "prop-types": "15.6.2",
-        "react": "16.7.0",
+        "react": "16.8.6",
         "react-copy-to-clipboard": "5.0.1",
-        "react-dom": "16.7.0",
+        "react-dom": "16.8.6",
         "react-map-gl": "3.2.8",
         "react-redux": "5.1.0",
         "react-router": "4.3.1",
@@ -52,7 +52,8 @@
         "eslint-plugin-import": "2.14.0",
         "eslint-plugin-jest": "21.27.2",
         "eslint-plugin-jsx-a11y": "6.1.2",
-        "eslint-plugin-react": "7.11.1"
+        "eslint-plugin-react": "7.11.1",
+        "eslint-plugin-react-hooks": "1.6.0"
     },
     "proxy": "http://django:8081",
     "browserslist": [
