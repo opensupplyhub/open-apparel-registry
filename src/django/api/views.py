@@ -395,6 +395,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
     def list(self, request):
         """
         Returns a list of facilities in GeoJSON format for a given query.
+        (Maximum of 500 facilities per page.)
 
         ### Sample Response
             {
