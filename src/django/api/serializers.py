@@ -4,6 +4,7 @@ from django.db import transaction
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import password_validation
 from django.urls import reverse
+from django.db.models import Count
 from rest_framework.serializers import (CharField,
                                         EmailField,
                                         IntegerField,
@@ -162,11 +163,13 @@ class FacilityListSerializer(ModelSerializer):
     item_count = SerializerMethodField()
     items_url = SerializerMethodField()
     statuses = SerializerMethodField()
+    status_counts = SerializerMethodField()
 
     class Meta:
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
-                  'is_public', 'item_count', 'items_url', 'statuses')
+                  'is_public', 'item_count', 'items_url', 'statuses',
+                  'status_counts')
 
     def get_item_count(self, facility_list):
         return facility_list.facilitylistitem_set.count()
@@ -179,6 +182,88 @@ class FacilityListSerializer(ModelSerializer):
         return (facility_list.facilitylistitem_set
                 .values_list('status', flat=True)
                 .distinct())
+
+    def get_status_counts(self, facility_list):
+        statuses = FacilityListItem \
+            .objects \
+            .filter(facility_list=facility_list) \
+            .values('status') \
+            .annotate(status_count=Count('status')) \
+
+        status_counts_dictionary = {
+            status_dict.get('status'): status_dict.get('status_count')
+            for status_dict
+            in statuses
+        }
+
+        uploaded = status_counts_dictionary.get(
+            FacilityListItem.UPLOADED,
+            0
+        )
+
+        parsed = status_counts_dictionary.get(
+            FacilityListItem.PARSED,
+            0
+        )
+
+        geocoded = status_counts_dictionary.get(
+            FacilityListItem.GEOCODED,
+            0
+        )
+
+        geocoded_no_results = status_counts_dictionary.get(
+            FacilityListItem.GEOCODED_NO_RESULTS,
+            0
+        )
+
+        matched = status_counts_dictionary.get(
+            FacilityListItem.MATCHED,
+            0
+        )
+
+        potential_match = status_counts_dictionary.get(
+            FacilityListItem.POTENTIAL_MATCH,
+            0
+        )
+
+        confirmed_match = status_counts_dictionary.get(
+            FacilityListItem.CONFIRMED_MATCH,
+            0
+        )
+
+        error = status_counts_dictionary.get(
+            FacilityListItem.ERROR,
+            0
+        )
+
+        error_parsing = status_counts_dictionary.get(
+            FacilityListItem.ERROR_PARSING,
+            0
+        )
+
+        error_geocoding = status_counts_dictionary.get(
+            FacilityListItem.ERROR_GEOCODING,
+            0
+        )
+
+        error_matching = status_counts_dictionary.get(
+            FacilityListItem.ERROR_MATCHING,
+            0
+        )
+
+        return {
+            FacilityListItem.UPLOADED: uploaded,
+            FacilityListItem.PARSED: parsed,
+            FacilityListItem.GEOCODED: geocoded,
+            FacilityListItem.GEOCODED_NO_RESULTS: geocoded_no_results,
+            FacilityListItem.MATCHED: matched,
+            FacilityListItem.POTENTIAL_MATCH: potential_match,
+            FacilityListItem.CONFIRMED_MATCH: confirmed_match,
+            FacilityListItem.ERROR: error,
+            FacilityListItem.ERROR_PARSING: error_parsing,
+            FacilityListItem.ERROR_GEOCODING: error_geocoding,
+            FacilityListItem.ERROR_MATCHING: error_matching,
+        }
 
 
 class FacilityQueryParamsSerializer(Serializer):
