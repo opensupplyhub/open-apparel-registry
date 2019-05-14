@@ -150,3 +150,29 @@ resource "aws_iam_role_policy_attachment" "spot_fleet_policy" {
   role       = "${aws_iam_role.container_instance_spot_fleet.name}"
   policy_arn = "${var.spot_fleet_service_role_policy_arn}"
 }
+
+#
+# Lambda resources
+#
+data "aws_iam_policy_document" "alert_batch_failures_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "alert_batch_failures" {
+  name               = "lambda${var.environment}AlertBatchFailures"
+  assume_role_policy = "${data.aws_iam_policy_document.alert_batch_failures_assume_role.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "alert_batch_failures_lambda_policy" {
+  role       = "${aws_iam_role.alert_batch_failures.name}"
+  policy_arn = "${var.aws_lambda_service_role_policy_arn}"
+}
