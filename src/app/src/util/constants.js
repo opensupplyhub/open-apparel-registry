@@ -372,3 +372,13 @@ export const emptyFeatureCollection = Object.freeze({
 });
 
 export const ENTER_KEY = 'Enter';
+
+export const facilitiesListTableTooltipTitles = Object.freeze({
+    total: 'Total number of items in this list.',
+    uploaded: 'Number of items that have been uploaded but not yet processed.',
+    parsed: 'Number of items that have had their addresses parsed but have not yet been geocoded.',
+    geocoded: 'Number of items that have been geocoded but not yet matched.',
+    matched: 'Number of items that have been matched with an existing facility or created a new facility.',
+    error: 'Number of items that have encountered errors during processing',
+    potentialMatch: 'Number of items with potential matches to confirm or reject.',
+});

@@ -1,4 +1,6 @@
 import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
+import mapValues from 'lodash/mapValues';
+import omitBy from 'lodash/omitBy';
 
 import {
     registrationFieldsEnum,
@@ -107,6 +109,15 @@ export const facilityListPropType = shape({
     is_active: bool.isRequired,
     is_public: bool.isRequired,
     item_count: number.isRequired,
+    items_url: string.isRequired,
+    statuses: arrayOf(oneOf(Object.values(facilityListItemStatusChoicesEnum))),
+    status_counts: shape(mapValues(
+        omitBy(
+            facilityListItemStatusChoicesEnum,
+            status => status === facilityListItemStatusChoicesEnum.NEW_FACILITY,
+        ),
+        () => number.isRequired,
+    )).isRequired,
 });
 
 export const contributorOptionsPropType = arrayOf(shape({
