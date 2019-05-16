@@ -5,6 +5,7 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
 from allauth.account.models import EmailAddress
+from simple_history.models import HistoricalRecords
 
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
@@ -381,6 +382,8 @@ class Facility(models.Model):
                    'was created.'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)
