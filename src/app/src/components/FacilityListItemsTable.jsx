@@ -124,7 +124,7 @@ class FacilityListItemsTable extends Component {
                 },
             },
             history: {
-                push,
+                replace,
                 location: {
                     search,
                 },
@@ -137,7 +137,7 @@ class FacilityListItemsTable extends Component {
 
         const params = createParamsFromQueryString(search);
 
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+        replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
             (newPage + 1),
             rowsPerPage,
@@ -155,7 +155,7 @@ class FacilityListItemsTable extends Component {
                 },
             },
             history: {
-                push,
+                replace,
                 location: {
                     search,
                 },
@@ -166,7 +166,7 @@ class FacilityListItemsTable extends Component {
 
         const params = createParamsFromQueryString(search);
 
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+        replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
             page,
             getValueFromEvent(e),
@@ -184,7 +184,7 @@ class FacilityListItemsTable extends Component {
                 },
             },
             history: {
-                push,
+                replace,
                 location: {
                     search,
                 },
@@ -197,7 +197,7 @@ class FacilityListItemsTable extends Component {
             status: { $set: selected ? selected.map(x => x.value) : null },
         });
 
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+        replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
             1,
             rowsPerPage,
@@ -215,7 +215,7 @@ class FacilityListItemsTable extends Component {
                 },
             },
             history: {
-                push,
+                replace,
                 location: {
                     search,
                 },
@@ -228,7 +228,7 @@ class FacilityListItemsTable extends Component {
         const newParams = update(params, {
             $unset: ['status'],
         });
-        push(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+        replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
             1,
             rowsPerPage,
