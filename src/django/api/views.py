@@ -1,10 +1,13 @@
+import operator
 import os
 import sys
 
 from datetime import datetime
+from functools import reduce
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
+from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
 from django.conf import settings
 from django.contrib.auth import (authenticate, login, logout)
@@ -24,6 +27,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import BaseFilterBackend
+from rest_framework.schemas.inspectors import AutoSchema
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
@@ -33,6 +37,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilitiesQueryParams,
+                           FacilityListItemsQueryParams,
                            ProcessingAction)
 from api.models import (FacilityList,
                         FacilityListItem,
@@ -43,6 +48,7 @@ from api.models import (FacilityList,
 from api.processing import parse_csv_line
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
+                             FacilityListItemsQueryParamsSerializer,
                              FacilityQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
@@ -395,6 +401,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
     def list(self, request):
         """
         Returns a list of facilities in GeoJSON format for a given query.
+        (Maximum of 500 facilities per page.)
 
         ### Sample Response
             {
@@ -540,6 +547,25 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         return Response({"count": count})
 
 
+class FacilityListViewSetSchema(AutoSchema):
+    def get_serializer_fields(self, path, method):
+        if path[-7:] == '/items/':
+            statuses = ', '.join(
+                [c[0] for c in FacilityListItem.STATUS_CHOICES])
+            return [
+                coreapi.Field(
+                    name='status',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=('Only return items matching this status.'
+                                 'Must be one of {}').format(statuses),
+                ),
+            ]
+
+        return []
+
+
 class FacilityListViewSet(viewsets.ModelViewSet):
     """
     Upload and update facility lists for an authenticated Contributor.
@@ -548,6 +574,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     serializer_class = FacilityListSerializer
     permission_classes = [IsRegisteredAndConfirmed]
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
+
+    schema = FacilityListViewSetSchema()
 
     def _validate_header(self, header):
         if header is None or header == '':
@@ -782,6 +810,33 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 ...
             }
         """
+
+        special_case_q_statements = {
+            FacilityListItem.NEW_FACILITY: Q(
+                        Q(status__in=('MATCHED', 'CONFIRMED_MATCH')) &
+                        Q(facility__created_from_id=F('id'))),
+            FacilityListItem.MATCHED: Q(
+                        Q(status='MATCHED') &
+                        ~Q(facility__created_from_id=F('id'))),
+            FacilityListItem.CONFIRMED_MATCH: Q(
+                        Q(status='CONFIRMED_MATCH') &
+                        ~Q(facility__created_from_id=F('id')))
+        }
+
+        def make_q_from_status(status):
+            if status in special_case_q_statements:
+                return(special_case_q_statements[status])
+            else:
+                return Q(status=status)
+
+        params = FacilityListItemsQueryParamsSerializer(
+            data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+
+        status = request.query_params.getlist(
+            FacilityListItemsQueryParams.STATUS)
         try:
             user_contributor = request.user.contributor
             facility_list = FacilityList \
@@ -790,8 +845,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .get(pk=pk)
             queryset = FacilityListItem \
                 .objects \
-                .filter(facility_list=facility_list) \
-                .order_by('row_index')
+                .filter(facility_list=facility_list)
+            if status is not None and len(status) > 0:
+                q_statements = [make_q_from_status(s) for s in status]
+                queryset = queryset.filter(reduce(operator.or_, q_statements))
+
+            queryset = queryset.order_by('row_index')
 
             page_queryset = self.paginate_queryset(queryset)
             if page_queryset is not None:

@@ -12,3 +12,4 @@ class FacilitiesGeoJSONPagination(GeoJsonPagination):
     page_query_param = 'page'
     page_size_query_param = 'pageSize'
     page_size = 500
+    max_page_size = 500

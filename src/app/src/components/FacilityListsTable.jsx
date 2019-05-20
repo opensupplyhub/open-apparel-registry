@@ -7,9 +7,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import sum from 'lodash/sum';
+
+import FacilityListsTooltipTableCell from './FacilityListsTooltipTableCell';
 
 import { facilityListPropType } from '../util/propTypes';
 import { makeFacilityListItemsDetailLink } from '../util/util';
+import { facilitiesListTableTooltipTitles } from '../util/constants';
 
 const facilityListsTableStyles = Object.freeze({
     inactiveListStyles: Object.freeze({
@@ -44,7 +48,28 @@ function FacilityListsTable({
                         <TableCell>
                             File Name
                         </TableCell>
-                        <TableCell>
+                        <TableCell padding="dense">
+                            Total
+                        </TableCell>
+                        <TableCell padding="dense">
+                            Uploaded
+                        </TableCell>
+                        <TableCell padding="dense">
+                            Parsed
+                        </TableCell>
+                        <TableCell padding="dense">
+                            Geocoded
+                        </TableCell>
+                        <TableCell padding="dense">
+                            Matched
+                        </TableCell>
+                        <TableCell padding="dense">
+                            Error
+                        </TableCell>
+                        <TableCell padding="dense">
+                            Potential Match
+                        </TableCell>
+                        <TableCell padding="dense">
                             Active
                         </TableCell>
                     </TableRow>
@@ -72,7 +97,54 @@ function FacilityListsTable({
                                     <TableCell>
                                         {list.file_name}
                                     </TableCell>
-                                    <TableCell>
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={facilitiesListTableTooltipTitles.total}
+                                        tableCellText={list.item_count}
+                                    />
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={facilitiesListTableTooltipTitles.uploaded}
+                                        tableCellText={list.status_counts.UPLOADED}
+                                    />
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={facilitiesListTableTooltipTitles.parsed}
+                                        tableCellText={list.status_counts.PARSED}
+                                    />
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={facilitiesListTableTooltipTitles.geocoded}
+                                        tableCellText={
+                                            sum([
+                                                list.status_counts.GEOCODED,
+                                                list.status_counts.GEOCODED_NO_RESULTS,
+                                            ])
+                                        }
+                                    />
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={facilitiesListTableTooltipTitles.matched}
+                                        tableCellText={
+                                            sum([
+                                                list.status_counts.MATCHED,
+                                                list.status_counts.CONFIRMED_MATCH,
+                                            ])
+                                        }
+                                    />
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={facilitiesListTableTooltipTitles.error}
+                                        tableCellText={
+                                            sum([
+                                                list.status_counts.ERROR,
+                                                list.status_counts.ERROR_PARSING,
+                                                list.status_counts.ERROR_GEOCODING,
+                                                list.status_counts.ERROR_MATCHING,
+                                            ])
+                                        }
+                                    />
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={
+                                            facilitiesListTableTooltipTitles.potentialMatch
+                                        }
+                                        tableCellText={list.status_counts.POTENTIAL_MATCH}
+                                    />
+                                    <TableCell padding="dense">
                                         {list.is_active ? 'Active' : 'Inactive'}
                                     </TableCell>
                                 </TableRow>))

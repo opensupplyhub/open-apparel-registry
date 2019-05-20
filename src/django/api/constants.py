@@ -19,3 +19,7 @@ class FacilitiesQueryParams:
     CONTRIBUTORS = 'contributors'
     CONTRIBUTOR_TYPES = 'contributor_types'
     COUNTRIES = 'countries'
+
+
+class FacilityListItemsQueryParams:
+    STATUS = 'status'

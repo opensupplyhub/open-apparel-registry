@@ -252,3 +252,7 @@ variable "batch_service_role_policy_arn" {
 variable "spot_fleet_service_role_policy_arn" {
   default = "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole"
 }
+
+variable "aws_lambda_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}

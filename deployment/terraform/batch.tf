@@ -74,4 +74,8 @@ resource "aws_batch_job_definition" "default" {
   type = "container"
 
   container_properties = "${data.template_file.default_job_definition.rendered}"
+
+  retry_strategy {
+    attempts = 3
+  }
 }

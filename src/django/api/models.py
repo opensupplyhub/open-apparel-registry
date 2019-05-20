@@ -5,6 +5,7 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
 from allauth.account.models import EmailAddress
+from simple_history.models import HistoricalRecords
 
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
@@ -240,6 +241,11 @@ class FacilityListItem(models.Model):
     ERROR_GEOCODING = 'ERROR_GEOCODING'
     ERROR_MATCHING = 'ERROR_MATCHING'
 
+    # NEW_FACILITY is a meta status. If the `status` of a `FacilityListItem` is
+    # `MATCHED` or `CONFIRMED_MATCH` and the `facility` was `created_from` the
+    # `FacilityListItem` then the item represents a new facility.
+    NEW_FACILITY = 'NEW_FACILITY'
+
     # These status choices must be kept in sync with the client's
     # `facilityListItemStatusChoicesEnum`.
     STATUS_CHOICES = (
@@ -376,6 +382,8 @@ class Facility(models.Model):
                    'was created.'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)

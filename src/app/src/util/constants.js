@@ -273,6 +273,7 @@ export const facilityListItemStatusChoicesEnum = Object.freeze({
     MATCHED: 'MATCHED',
     POTENTIAL_MATCH: 'POTENTIAL_MATCH',
     CONFIRMED_MATCH: 'CONFIRMED_MATCH',
+    NEW_FACILITY: 'NEW_FACILITY', // This is not a status that appears in the database
     ERROR: 'ERROR',
     ERROR_PARSING: 'ERROR_PARSING',
     ERROR_GEOCODING: 'ERROR_GEOCODING',
@@ -284,6 +285,57 @@ export const facilityListItemErrorStatuses = Object.freeze([
     facilityListItemStatusChoicesEnum.ERROR_PARSING,
     facilityListItemStatusChoicesEnum.ERROR_GEOCODING,
     facilityListItemStatusChoicesEnum.ERROR_MATCHING,
+]);
+
+export const facilityListStatusFilterChoices = Object.freeze([
+    {
+        label: facilityListItemStatusChoicesEnum.UPLOADED,
+        value: facilityListItemStatusChoicesEnum.UPLOADED,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.PARSED,
+        value: facilityListItemStatusChoicesEnum.PARSED,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.GEOCODED,
+        value: facilityListItemStatusChoicesEnum.GEOCODED,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.GEOCODED_NO_RESULTS,
+        value: facilityListItemStatusChoicesEnum.GEOCODED_NO_RESULTS,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.MATCHED,
+        value: facilityListItemStatusChoicesEnum.MATCHED,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.POTENTIAL_MATCH,
+        value: facilityListItemStatusChoicesEnum.POTENTIAL_MATCH,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
+        value: facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.NEW_FACILITY,
+        value: facilityListItemStatusChoicesEnum.NEW_FACILITY,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.ERROR,
+        value: facilityListItemStatusChoicesEnum.ERROR,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.ERROR_PARSING,
+        value: facilityListItemStatusChoicesEnum.ERROR_PARSING,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.ERROR_GEOCODING,
+        value: facilityListItemStatusChoicesEnum.ERROR_GEOCODING,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.ERROR_MATCHING,
+        value: facilityListItemStatusChoicesEnum.ERROR_MATCHING,
+    },
 ]);
 
 export const facilityListSummaryStatusMessages = Object.freeze({
@@ -320,3 +372,13 @@ export const emptyFeatureCollection = Object.freeze({
 });
 
 export const ENTER_KEY = 'Enter';
+
+export const facilitiesListTableTooltipTitles = Object.freeze({
+    total: 'Total number of items in this list.',
+    uploaded: 'Number of items that have been uploaded but not yet processed.',
+    parsed: 'Number of items that have had their addresses parsed but have not yet been geocoded.',
+    geocoded: 'Number of items that have been geocoded but not yet matched.',
+    matched: 'Number of items that have been matched with an existing facility or created a new facility.',
+    error: 'Number of items that have encountered errors during processing',
+    potentialMatch: 'Number of items with potential matches to confirm or reject.',
+});
