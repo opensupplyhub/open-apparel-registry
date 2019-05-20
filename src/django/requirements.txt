@@ -3,6 +3,7 @@ boto3==1.9.92
 coreapi==2.3.3
 dedupe==1.9.4
 django-amazon-ses==2.0.0
+git+git://github.com/azavea/django-ecsmanage@feature/jrb/fix-python-37#django-ecsmanage
 django-extensions==2.1.4
 django-jsonview==1.2.0
 django-rest-auth[with_social]==0.9.3
