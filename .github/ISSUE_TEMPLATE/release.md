@@ -29,7 +29,7 @@ $ git rev-parse --short HEAD
 ```
 - [ ] Run migrations, if applicable (see the `showmigrations` release pipeline stage):
 ```bash
-$ ./scripts/manage.py ecsmanage -e production migrate
+$ ./scripts/manage ecsmanage -e production migrate
 ```
 - [ ] Finish and publish the release branch:
     - When prompted, keep default commit messages
