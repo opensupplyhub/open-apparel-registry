@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'watchman',
     'simple_history',
+    'waffle',
     'api',
     'web',
     'ecsmanage',
@@ -163,6 +164,7 @@ MIDDLEWARE = [
     'spa.middleware.SPAMiddleware',
     'rollbar.contrib.django.middleware.RollbarNotifierMiddlewareExcluding404',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 ]
 
 ROOT_URLCONF = 'oar.urls'

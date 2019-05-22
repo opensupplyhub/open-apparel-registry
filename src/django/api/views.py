@@ -32,6 +32,7 @@ from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
 import coreapi
+from waffle import switch_is_active
 
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
@@ -1219,3 +1220,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             raise NotFound()
         except FacilityMatch.DoesNotExist:
             raise NotFound()
+
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def api_feature_flags(request):
+    response_data = {
+        'claim_a_facility': switch_is_active('claim_a_facility'),
+    }
+
+    return Response(response_data)

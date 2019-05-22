@@ -10,6 +10,7 @@ import {
     FEATURE_COLLECTION,
     POINT,
     facilityMatchStatusChoicesEnum,
+    CLAIM_A_FACILITY,
 } from './constants';
 
 export const registrationFormValuesPropType = shape({
@@ -190,3 +191,5 @@ export const filtersPropType = shape({
 
 export const facilityListItemStatusPropType =
     oneOf(Object.values(facilityListItemStatusChoicesEnum).concat('Status'));
+
+export const featureFlagPropType = oneOf([CLAIM_A_FACILITY]);

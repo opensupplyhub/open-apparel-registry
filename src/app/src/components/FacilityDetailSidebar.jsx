@@ -9,6 +9,7 @@ import last from 'lodash/last';
 
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
+import FeatureFlag from './FeatureFlag';
 
 import {
     fetchSingleFacility,
@@ -18,6 +19,8 @@ import {
 import { facilityDetailsPropType } from '../util/propTypes';
 
 import { makeReportADataIssueEmailLink } from '../util/util';
+
+import { CLAIM_A_FACILITY } from '../util/constants';
 
 const detailsSidebarStyles = Object.freeze({
     backButtonStyle: Object.freeze({
@@ -179,6 +182,13 @@ class FacilityDetailSidebar extends Component {
                                 REPORT A DATA ISSUE
                             </a>
                         </div>
+                        <FeatureFlag flag={CLAIM_A_FACILITY}>
+                            <div className="control-panel__gorup">
+                                <p>
+                                    Claim this facility.
+                                </p>
+                            </div>
+                        </FeatureFlag>
                     </div>
                 </div>
             </div>

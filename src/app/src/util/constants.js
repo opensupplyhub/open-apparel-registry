@@ -382,3 +382,5 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
     error: 'Number of items that have encountered errors during processing',
     potentialMatch: 'Number of items with potential matches to confirm or reject.',
 });
+
+export const CLAIM_A_FACILITY = 'claim_a_facility';
