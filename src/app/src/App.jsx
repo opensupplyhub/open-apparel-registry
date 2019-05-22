@@ -26,6 +26,7 @@ import RouteNotFound from './components/RouteNotFound';
 import './App.css';
 
 import { sessionLogin } from './actions/auth';
+import { fetchFeatureFlags } from './actions/featureFlags';
 
 import {
     mainRoute,
@@ -56,6 +57,7 @@ const appStyles = Object.freeze({
 
 class App extends Component {
     componentDidMount() {
+        this.props.getFeatureFlags();
         return this.props.logIn();
     }
 
@@ -134,6 +136,7 @@ App.propTypes = {
 
 function mapDispatchToProps(dispatch) {
     return {
+        getFeatureFlags: () => dispatch(fetchFeatureFlags()),
         logIn: () => dispatch(sessionLogin()),
     };
 }

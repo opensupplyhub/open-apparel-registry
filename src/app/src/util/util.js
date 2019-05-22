@@ -23,6 +23,8 @@ import lowerCase from 'lodash/lowerCase';
 import range from 'lodash/range';
 import ceil from 'lodash/ceil';
 import toInteger from 'lodash/toInteger';
+import keys from 'lodash/keys';
+import pickBy from 'lodash/pickBy';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -88,6 +90,8 @@ export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
 export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
 
 export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
+
+export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
 
 export const getValueFromObject = ({ value }) => value;
 
@@ -514,3 +518,6 @@ export const addProtocolToWebsiteURLIfMissing = (url) => {
 
     return `http://${url}`;
 };
+
+export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
+    keys(pickBy(featureFlags, identity));
