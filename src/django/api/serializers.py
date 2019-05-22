@@ -110,11 +110,12 @@ class UserProfileSerializer(ModelSerializer):
     website = SerializerMethodField()
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
+    facility_lists = SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'description', 'website', 'contributor_type',
-                  'other_contributor_type')
+                  'other_contributor_type', 'facility_lists')
 
     def get_name(self, user):
         try:
@@ -151,6 +152,23 @@ class UserProfileSerializer(ModelSerializer):
             return user.contributor.id
         except Contributor.DoesNotExist:
             return None
+
+    def get_facility_lists(self, user):
+        try:
+            contributor = user.contributor
+            return FacilityListSummarySerializer(
+                contributor.facilitylist_set.filter(
+                    is_active=True, is_public=True).order_by('-created_at'),
+                many=True,
+            ).data
+        except Contributor.DoesNotExist:
+            return []
+
+
+class FacilityListSummarySerializer(ModelSerializer):
+    class Meta:
+        model = FacilityList
+        fields = ('id', 'name', 'description')
 
 
 class FacilityListSerializer(ModelSerializer):
