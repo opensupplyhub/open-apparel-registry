@@ -34,10 +34,24 @@ def _report_error_to_rollbar(file, request):
                 'file_name': file.name})
 
 
+def get_excel_sheet(file, request):
+    import defusedxml
+    from defusedxml.common import EntitiesForbidden
+
+    defusedxml.defuse_stdlib()
+
+    try:
+        return xlrd.open_workbook(file_contents=file.read(),
+                                  on_demand=True).sheet_by_index(0)
+    except EntitiesForbidden:
+        _report_error_to_rollbar(file, request)
+        raise ValidationError('This file may be damaged and '
+                              'cannot be processed safely')
+
+
 def parse_excel(file, request):
     try:
-        sheet = xlrd.open_workbook(file_contents=file.read(),
-                                   on_demand=True).sheet_by_index(0)
+        sheet = get_excel_sheet(file, request)
 
         header = ','.join(sheet.row_values(0))
         rows = ['"{}"'.format('","'.join(sheet.row_values(idx)))
