@@ -26,10 +26,10 @@ export default () => (
                     <h2 id="Uploading-a-list">Uploading a list</h2>
 
                     <p>Contributors submit their facility lists to the OAR for processing by uploading
-                        lists in comma-separated value (CSV) format. All popular spreadsheet programs,
-                        including Microsoft Excel, can save a sheet in CSV format. The OAR provides a
-                        downloadable template, but any CSV can be read and processed if it meets the
-                        following criteria:</p>
+                        lists in Microsoft Excel (XLS or XLSX) or comma-separated value (CSV) format.
+                        All popular spreadsheet programs support at least one of these formats. The
+                        OAR provides a downloadable CSV template, but any Excel or CSV can be read and
+                        processed if it meets the following criteria:</p>
 
                     <ul>
                         <li>Includes a header row with the following field names (in lowercase)
@@ -46,10 +46,12 @@ export default () => (
                         <li>Less than 5MB in size.</li>
                     </ul>
 
+                    <p>Excel files should have only one sheet and no empty cells before the data starts.</p>
+
 
                     <h2 id="Processing">Processing</h2>
 
-                    <p>Each line in a contributed facility list CSV file is processed separately and
+                    <p>Each line in a contributed facility list file is processed separately and
                         passes through three steps:</p>
 
                     <h3 id="Parse">Parse</h3>
@@ -124,7 +126,7 @@ export default () => (
 
                     <blockquote><p>Why are only some of the facilities from my list appearing in searches?</p></blockquote>
 
-                    <p>Each row from a contributed CSV file is processed separately. Rows that are
+                    <p>Each row from a contributed file is processed separately. Rows that are
                         matched successfully or rows from which new OAR facilities are created will
                         appear in searches immediately after processing. If the application requires the
                         contributor to verify a potential match, the facility will not be searchable

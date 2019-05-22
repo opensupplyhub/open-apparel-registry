@@ -32,7 +32,11 @@ const ContributeHeader = memo(() => (
                         File size limit: 5MB
                     </li>
                     <li className="helper-list__item">
-                        Save your file as a CSV file:{' '}
+                        Save your file as an{' '}
+                        <strong>
+                            Excel file (.xls, .xlsx)
+                        </strong>
+                        {' '}or as a{' '}
                         <strong>
                             CSV UTF-8 (.csv)
                         </strong>
