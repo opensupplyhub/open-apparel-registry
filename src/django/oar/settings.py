@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     'simple_history',
     'api',
     'web',
+    'ecsmanage',
 ]
 
 # For allauth
@@ -144,7 +145,7 @@ SWAGGER_SETTINGS = {
     'info': {
         'description': 'Open Apparel Registry API',
         'license': 'MIT',
-        'licenseUrl': 'https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/LICENSE', # noqa
+        'licenseUrl': 'https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/LICENSE',  # noqa
         'title': 'Open Apparel Registry API',
     },
     'USE_SESSION_AUTH': False,
@@ -265,7 +266,8 @@ if DEBUG:
 else:
     EMAIL_BACKEND = 'django_amazon_ses.EmailBackend'
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@staging.openapparel.org')
+DEFAULT_FROM_EMAIL = os.getenv(
+    'DEFAULT_FROM_EMAIL', 'noreply@staging.openapparel.org')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -276,10 +278,50 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_STORAGE = 'spa.storage.SPAStaticFilesStorage'
 
 # Watchman
+# https://github.com/mwarkentin/django-watchman
+
 WATCHMAN_ERROR_CODE = 503
 WATCHMAN_CHECKS = (
     'watchman.checks.databases',
 )
+
+# django-ecsmanage
+# https://github.com/azavea/django-ecsmanage
+
+ECSMANAGE_ENVIRONMENTS = {
+    'default': {
+        'TASK_DEFINITION_NAME': 'StagingAppCLI',
+        'CLUSTER_NAME': 'ecsStagingCluster',
+        'LAUNCH_TYPE': 'FARGATE',
+        'SECURITY_GROUP_TAGS': {
+            'Name': 'sgAppEcsService',
+            'Environment': 'Staging',
+            'Project': 'OpenApparelRegistry'
+        },
+        'SUBNET_TAGS': {
+            'Name': 'PrivateSubnet',
+            'Environment': 'Staging',
+            'Project': 'OpenApparelRegistry'
+        },
+        'AWS_REGION': 'eu-west-1',
+    },
+    'production': {
+        'TASK_DEFINITION_NAME': 'ProductionAppCLI',
+        'CLUSTER_NAME': 'ecsProductionCluster',
+        'LAUNCH_TYPE': 'FARGATE',
+        'SECURITY_GROUP_TAGS': {
+            'Name': 'sgAppEcsService',
+            'Environment': 'Production',
+            'Project': 'OpenApparelRegistry'
+        },
+        'SUBNET_TAGS': {
+            'Name': 'PrivateSubnet',
+            'Environment': 'Production',
+            'Project': 'OpenApparelRegistry'
+        },
+        'AWS_REGION': 'eu-west-1',
+    }
+}
 
 # Application settings
 MAX_UPLOADED_FILE_SIZE_IN_BYTES = 5242880
