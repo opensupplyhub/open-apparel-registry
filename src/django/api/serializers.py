@@ -118,43 +118,37 @@ class UserProfileSerializer(ModelSerializer):
 
     def get_name(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.name
+            return user.contributor.name
         except Contributor.DoesNotExist:
             return None
 
     def get_description(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.description
+            return user.contributor.description
         except Contributor.DoesNotExist:
             return None
 
     def get_website(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.website
+            return user.contributor.website
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.contrib_type
+            return user.contributor.contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_other_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.other_contrib_type
+            return user.contributor.other_contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_id(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.id
+            return user.contributor.id
         except Contributor.DoesNotExist:
             return None
 
