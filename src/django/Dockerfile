@@ -7,7 +7,6 @@ COPY requirements.txt /usr/local/src/
 RUN set -ex \
     && buildDeps=" \
     build-essential \
-    git \
     " \
     && apt-get update && apt-get install -y $buildDeps --no-install-recommends \
     && pip install --no-cache-dir -r requirements.txt \
