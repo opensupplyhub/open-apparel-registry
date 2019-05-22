@@ -75,7 +75,7 @@ class NavbarDropdown extends Component {
                     aria-haspopup="true"
                     onClick={this.handleToggle}
                 >
-                    {title}
+                    {title || 'User'}
                 </Button>
                 <Popper
                     className="dropdown"
@@ -115,8 +115,12 @@ class NavbarDropdown extends Component {
     }
 }
 
+NavbarDropdown.defaultProps = {
+    title: '',
+};
+
 NavbarDropdown.propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     links: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
