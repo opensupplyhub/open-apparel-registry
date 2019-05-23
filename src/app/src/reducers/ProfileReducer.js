@@ -28,7 +28,11 @@ import {
     completeSubmitLogOut,
 } from '../actions/auth';
 
-import { registrationFieldsEnum, profileFieldsEnum } from '../util/constants';
+import {
+    registrationFieldsEnum,
+    profileFieldsEnum,
+    profileSummaryFieldsEnum,
+} from '../util/constants';
 
 const initialState = Object.freeze({
     profile: Object.freeze({
@@ -42,6 +46,7 @@ const initialState = Object.freeze({
         [profileFieldsEnum.currentPassword]: '',
         [profileFieldsEnum.newPassword]: '',
         [profileFieldsEnum.confirmNewPassword]: '',
+        [profileSummaryFieldsEnum.facilityLists]: [],
     }),
     formSubmission: {
         fetching: false,
@@ -135,6 +140,10 @@ export default createReducer({
             currentPassword: { $set: '' },
             newPassword: { $set: '' },
             confirmNewPassword: { $set: '' },
+            facilityLists: {
+                $set: payload.facility_lists
+                    || initialState[profileSummaryFieldsEnum.facilityLists],
+            },
         },
         fetching: { $set: false },
         error: { $set: null },

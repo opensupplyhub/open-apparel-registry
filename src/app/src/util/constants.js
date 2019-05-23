@@ -47,6 +47,10 @@ export const profileFieldsEnum = Object.freeze({
     confirmNewPassword: 'confirmNewPassword',
 });
 
+export const profileSummaryFieldsEnum = Object.freeze({
+    facilityLists: 'facilityLists',
+});
+
 const accountEmailField = Object.freeze({
     id: registrationFieldsEnum.email,
     label: 'Email Address',
