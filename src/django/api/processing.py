@@ -2,8 +2,10 @@ import csv
 import os
 import traceback
 import re
+import sys
 
 import dedupe
+import xlrd
 
 from collections import defaultdict
 from datetime import datetime
@@ -18,6 +20,69 @@ from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityList, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
+
+
+def _report_error_to_rollbar(file, request):
+    ROLLBAR = getattr(settings, 'ROLLBAR', {})
+    if ROLLBAR:
+        import rollbar
+        rollbar.report_exc_info(
+            sys.exc_info(),
+            extra_data={
+                'user_id': request.user.id,
+                'contributor_id': request.user.contributor.id,
+                'file_name': file.name})
+
+
+def get_excel_sheet(file, request):
+    import defusedxml
+    from defusedxml.common import EntitiesForbidden
+
+    defusedxml.defuse_stdlib()
+
+    try:
+        return xlrd.open_workbook(file_contents=file.read(),
+                                  on_demand=True).sheet_by_index(0)
+    except EntitiesForbidden:
+        _report_error_to_rollbar(file, request)
+        raise ValidationError('This file may be damaged and '
+                              'cannot be processed safely')
+
+
+def parse_excel(file, request):
+    try:
+        sheet = get_excel_sheet(file, request)
+
+        header = ','.join(sheet.row_values(0))
+        rows = ['"{}"'.format('","'.join(sheet.row_values(idx)))
+                for idx in range(1, sheet.nrows)]
+
+        return header, rows
+    except Exception:
+        _report_error_to_rollbar(file, request)
+        raise ValidationError('Error parsing Excel file')
+
+
+def parse_csv(file, request):
+    rows = []
+
+    try:
+        header = file.readline().decode(encoding='utf-8-sig').rstrip()
+    except UnicodeDecodeError:
+        _report_error_to_rollbar(file, request)
+        raise ValidationError('Unsupported file encoding. Please '
+                              'submit a UTF-8 CSV.')
+
+    for idx, line in enumerate(file):
+        if idx > 0:
+            try:
+                rows.append(line.decode(encoding='utf-8-sig').rstrip())
+            except UnicodeDecodeError:
+                _report_error_to_rollbar(file, request)
+                raise ValidationError('Unsupported file encoding. Please '
+                                      'submit a UTF-8 CSV.')
+
+    return header, rows
 
 
 def parse_csv_line(line):

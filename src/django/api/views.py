@@ -1,6 +1,5 @@
 import operator
 import os
-import sys
 
 from datetime import datetime
 from functools import reduce
@@ -9,7 +8,6 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
-from django.conf import settings
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
@@ -46,7 +44,7 @@ from api.models import (FacilityList,
                         FacilityMatch,
                         Contributor,
                         User)
-from api.processing import parse_csv_line
+from api.processing import parse_csv_line, parse_csv, parse_excel
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
@@ -590,6 +588,20 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                     CsvHeaderField.COUNTRY, CsvHeaderField.NAME,
                     CsvHeaderField.ADDRESS))
 
+    def _extract_header_rows(self, file, request):
+        ext = file.name[-4:]
+
+        if ext in ['.xls', 'xlsx']:
+            header, rows = parse_excel(file, request)
+        elif ext == '.csv':
+            header, rows = parse_csv(file, request)
+        else:
+            raise ValidationError('Unsupported file type. Please submit Excel '
+                                  'or UTF-8 CSV.')
+
+        self._validate_header(header)
+        return header, rows
+
     @transaction.atomic
     def create(self, request):
         """
@@ -631,22 +643,6 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             raise ValidationError(
                 'Uploaded file exceeds the maximum size of {:.1f}MB.'.format(
                     mb))
-        try:
-            header = csv_file.readline().decode(encoding='utf-8-sig').rstrip()
-        except UnicodeDecodeError:
-            ROLLBAR = getattr(settings, 'ROLLBAR', {})
-            if ROLLBAR:
-                import rollbar
-                rollbar.report_exc_info(
-                    sys.exc_info(),
-                    extra_data={
-                        'user_id': request.user.id,
-                        'contributor_id': request.user.contributor.id,
-                        'file_name': csv_file.name})
-            raise ValidationError('Unsupported file encoding. Please '
-                                  'submit a UTF-8 CSV.')
-
-        self._validate_header(header)
 
         try:
             contributor = request.user.contributor
@@ -680,6 +676,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                     'FacilityList {0} has already been replaced.'.format(
                         replaces.pk))
 
+        header, rows = self._extract_header_rows(csv_file, request)
+
         new_list = FacilityList(
             contributor=contributor,
             name=name,
@@ -693,27 +691,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             replaces.is_active = False
             replaces.save()
 
-        items = []
-        for idx, line in enumerate(csv_file):
-            if idx > 0:
-                try:
-                    items.append(FacilityListItem(
-                        row_index=(idx - 1),
-                        facility_list=new_list,
-                        raw_data=line.decode(encoding='utf-8-sig').rstrip()
-                    ))
-                except UnicodeDecodeError:
-                    ROLLBAR = getattr(settings, 'ROLLBAR', {})
-                    if ROLLBAR:
-                        import rollbar
-                        rollbar.report_exc_info(
-                            sys.exc_info(),
-                            extra_data={
-                                'user_id': request.user.id,
-                                'contributor_id': request.user.contributor.id,
-                                'file_name': csv_file.name})
-                    raise ValidationError('Unsupported file encoding. Please '
-                                          'submit a UTF-8 CSV.')
+        items = [FacilityListItem(row_index=idx,
+                                  facility_list=new_list,
+                                  raw_data=row)
+                 for idx, row in enumerate(rows)]
         FacilityListItem.objects.bulk_create(items)
 
         if ENVIRONMENT in ('Staging', 'Production'):

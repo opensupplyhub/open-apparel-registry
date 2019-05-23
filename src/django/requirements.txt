@@ -2,6 +2,7 @@ base32-crockford==0.3.0
 boto3==1.9.92
 coreapi==2.3.3
 dedupe==1.9.4
+defusedxml==0.6.0
 django-amazon-ses==2.0.0
 django-ecsmanage==1.0.1
 django-extensions==2.1.4
@@ -22,3 +23,4 @@ pytz==2018.7
 requests==2.21.0
 rollbar==0.14.6
 Unidecode==1.0.23
+xlrd==1.2.0
