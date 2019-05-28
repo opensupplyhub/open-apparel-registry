@@ -297,6 +297,7 @@ class FacilityQueryParamsSerializer(Serializer):
 
 
 class FacilityListItemsQueryParamsSerializer(Serializer):
+    search = CharField(required=False)
     status = ListField(
         child=CharField(required=False),
         required=False,
