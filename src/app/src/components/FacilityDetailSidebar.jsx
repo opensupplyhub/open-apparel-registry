@@ -4,12 +4,14 @@ import { arrayOf, bool, func, shape, string } from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Link } from 'react-router-dom';
 import head from 'lodash/head';
 import last from 'lodash/last';
 
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
 import FeatureFlag from './FeatureFlag';
+import BadgeUnclaimed from './BadgeUnclaimed';
 
 import {
     fetchSingleFacility,
@@ -18,17 +20,23 @@ import {
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
-import { makeReportADataIssueEmailLink } from '../util/util';
+import { makeReportADataIssueEmailLink, makeClaimFacilityLink } from '../util/util';
 
 import { CLAIM_A_FACILITY } from '../util/constants';
 
 const detailsSidebarStyles = Object.freeze({
-    backButtonStyle: Object.freeze({
-        width: '24px',
-        marginRight: '16px',
+    headerButtonStyle: Object.freeze({
+        width: '30px',
+        marginRight: '14px',
+        marginLeft: '8px',
     }),
-    emailLinkStyle: Object.freeze({
+    linkSectionStyle: Object.freeze({
+        display: 'flex',
+        flexDirection: 'column',
+    }),
+    linkStyle: Object.freeze({
         display: 'inline-block',
+        fontSize: '16px',
     }),
 });
 
@@ -73,6 +81,7 @@ class FacilityDetailSidebar extends Component {
             },
             history: {
                 goBack,
+                push,
             },
         } = this.props;
 
@@ -126,7 +135,7 @@ class FacilityDetailSidebar extends Component {
                     <IconButton
                         aria-label="ArrowBack"
                         className="color-white"
-                        style={detailsSidebarStyles.backButtonStyle}
+                        style={detailsSidebarStyles.headerButtonStyle}
                         onClick={goBack}
                         disabled={fetching}
                     >
@@ -140,6 +149,18 @@ class FacilityDetailSidebar extends Component {
                             {data.properties.address} - {data.properties.country_name}
                         </p>
                     </div>
+                    <FeatureFlag flag={CLAIM_A_FACILITY}>
+                        <IconButton
+                            aria-label="ArrowBack"
+                            className="color-white"
+                            style={detailsSidebarStyles.headerButtonStyle}
+                            onClick={() => push(makeClaimFacilityLink(data.properties.oar_id))}
+                            disabled={fetching}
+                            title="Claim this facility"
+                        >
+                            <BadgeUnclaimed />
+                        </IconButton>
+                    </FeatureFlag>
                 </div>
                 <div className="facility-detail_data">
                     <FacilityDetailsStaticMap data={data} />
@@ -174,21 +195,26 @@ class FacilityDetailSidebar extends Component {
                             isContributorsList
                         />
                         <div className="control-panel__group">
-                            <a
-                                className="link-underline small"
-                                href={makeReportADataIssueEmailLink(data.properties.oar_id)}
-                                style={detailsSidebarStyles.emailLinkStyle}
-                            >
-                                REPORT A DATA ISSUE
-                            </a>
-                        </div>
-                        <FeatureFlag flag={CLAIM_A_FACILITY}>
-                            <div className="control-panel__gorup">
-                                <p>
-                                    Claim this facility.
-                                </p>
+                            <div style={detailsSidebarStyles.linkSectionStyle}>
+                                <a
+                                    className="link-underline small"
+                                    href={makeReportADataIssueEmailLink(data.properties.oar_id)}
+                                    style={detailsSidebarStyles.linkStyle}
+                                >
+                                    Suggest a data edit
+                                </a>
+                                <FeatureFlag flag={CLAIM_A_FACILITY}>
+                                    <Link
+                                        className="link-underline small"
+                                        to={makeClaimFacilityLink(data.properties.oar_id)}
+                                        href={makeClaimFacilityLink(data.properties.oar_id)}
+                                        style={detailsSidebarStyles.linkStyle}
+                                    >
+                                        Claim this facility
+                                    </Link>
+                                </FeatureFlag>
                             </div>
-                        </FeatureFlag>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -212,6 +238,7 @@ FacilityDetailSidebar.propTypes = {
     }).isRequired,
     history: shape({
         goBack: func.isRequired,
+        push: func.isRequired,
     }).isRequired,
     fetchFacility: func.isRequired,
     clearFacility: func.isRequired,

@@ -364,6 +364,8 @@ export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 
 export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
 
+export const makeClaimFacilityLink = oarID => `${facilitiesRoute}/${oarID}/claim`;
+
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
 
 export const getBBoxForArrayOfGeoJSONPoints = flow(
