@@ -14,6 +14,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import ReactSelect from 'react-select';
 import ShowOnly from './ShowOnly';
 
+import FacilityListItemsFilterSearch from './FacilityListItemsFilterSearch';
 import FacilityListItemsTableRow from './FacilityListItemsTableRow';
 import FacilityListItemsConfirmationTableRow from './FacilityListItemsConfirmationTableRow';
 import FacilityListItemsErrorTableRow from './FacilityListItemsErrorTableRow';
@@ -56,6 +57,10 @@ const facilityListItemsTableStyles = Object.freeze({
         padding: '20px',
         lineHeight: '1.2',
     }),
+    searchFilterStyles: Object.freeze({
+        display: 'inline-block',
+        marginRight: '5px',
+    }),
     statusFilterStyles: Object.freeze({
         padding: '20px 0 0 20px',
     }),
@@ -74,7 +79,6 @@ const createSelectedStatusChoicesFromParams = (params) => {
     }
     return null;
 };
-
 
 class FacilityListItemsTable extends Component {
     componentDidUpdate(prevProps) {
@@ -173,6 +177,37 @@ class FacilityListItemsTable extends Component {
             params,
         ));
         fetchListItems(listID, page, getValueFromEvent(e), params);
+    }
+
+    handleChangeSearchTerm = (term) => {
+        const {
+            fetchListItems,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                replace,
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
+
+        const { rowsPerPage } = createPaginationOptionsFromQueryString(search);
+        const params = createParamsFromQueryString(search);
+        const newParams = update(params, {
+            search: { $set: term !== '' ? term : null },
+        });
+
+        replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            1,
+            rowsPerPage,
+            newParams,
+        ));
+        fetchListItems(listID, 1, rowsPerPage, newParams);
     }
 
     handleChangeStatusFilter = (selected) => {
@@ -395,6 +430,12 @@ class FacilityListItemsTable extends Component {
         return (
             <Paper style={facilityListItemsTableStyles.containerStyles}>
                 <div style={facilityListItemsTableStyles.statusFilterStyles}>
+                    <div style={facilityListItemsTableStyles.searchFilterStyles}>
+                        <FacilityListItemsFilterSearch
+                            currentValue={params.search || ''}
+                            onSearch={this.handleChangeSearchTerm}
+                        />
+                    </div>
                     <div style={facilityListItemsTableStyles.statusFilterSelectStyles}>
                         <ReactSelect
                             isMulti

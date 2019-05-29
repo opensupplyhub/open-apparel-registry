@@ -197,16 +197,21 @@ export const createParamsFromQueryString = (qs) => {
         : qs;
 
     const {
+        search,
         status,
     } = querystring.parse(qsToParse);
 
+    const params = {};
+
     if (status) {
-        return Array.isArray(status)
-            ? Object.freeze({ status })
-            : Object.freeze({ status: [status] });
+        params.status = Array.isArray(status) ? status : [status];
     }
 
-    return {};
+    if (search) {
+        params.search = search;
+    }
+
+    return params;
 };
 
 export const getTokenFromQueryString = (qs) => {
