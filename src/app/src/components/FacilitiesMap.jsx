@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { func, number } from 'prop-types';
+import { bool, func, number, string } from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import MarkerClusterer from '@google/markerclusterer';
 import isEqual from 'lodash/isEqual';
@@ -14,6 +14,8 @@ import distance from '@turf/distance';
 import Button from './Button';
 import ShowOnly from './ShowOnly';
 import FacilitiesMapPopup from './FacilitiesMapPopup';
+
+import { COUNTRY_CODES } from '../util/constants';
 
 import {
     initialCenter,
@@ -476,17 +478,19 @@ class FacilitiesMap extends Component {
         return (
             <Fragment>
                 <div style={facilitiesMapStyles.mapContainerStyles}>
-                    <GoogleMapReact
-                        defaultCenter={initialCenter}
-                        defaultZoom={initialZoom}
-                        yesIWantToUseGoogleMapApiInternals
-                        onGoogleApiLoaded={this.handleAPILoaded}
-                        bootstrapURLKeys={{
-                            region: 'IE',
-                            key: GOOGLE_CLIENT_SIDE_API_KEY,
-                        }}
-                        options={this.createMapOptions}
-                    />
+                    <ShowOnly when={this.props.clientInfoFetched}>
+                        <GoogleMapReact
+                            defaultCenter={initialCenter}
+                            defaultZoom={initialZoom}
+                            yesIWantToUseGoogleMapApiInternals
+                            onGoogleApiLoaded={this.handleAPILoaded}
+                            bootstrapURLKeys={{
+                                region: this.props.countryCode,
+                                key: GOOGLE_CLIENT_SIDE_API_KEY,
+                            }}
+                            options={this.createMapOptions}
+                        />
+                    </ShowOnly>
                 </div>
                 <CopyToClipboard
                     text={window.location.href}
@@ -522,6 +526,8 @@ FacilitiesMap.propTypes = {
     navigateToFacilityDetails: func.isRequired,
     facilityDetailsData: facilityPropType,
     resetButtonClickCount: number.isRequired,
+    clientInfoFetched: bool.isRequired,
+    countryCode: string.isRequired,
 };
 
 function mapStateToProps({
@@ -538,11 +544,17 @@ function mapStateToProps({
             resetButtonClickCount,
         },
     },
+    clientInfo: {
+        fetched,
+        countryCode,
+    },
 }) {
     return {
         data,
         facilityDetailsData,
         resetButtonClickCount,
+        clientInfoFetched: fetched,
+        countryCode: countryCode || COUNTRY_CODES.default,
     };
 }
 
