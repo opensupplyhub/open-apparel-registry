@@ -93,6 +93,8 @@ export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
 export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
 
+export const makeGetClientInfoURL = () => 'https://api.userinfo.io/userinfos';
+
 export const getValueFromObject = ({ value }) => value;
 
 export const createQueryStringFromSearchFilters = ({
