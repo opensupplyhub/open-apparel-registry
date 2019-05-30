@@ -22,9 +22,13 @@ import {
     authRegisterFormRoute,
     mainRoute,
     facilitiesRoute,
+    dashboardRoute,
 } from '../util/constants';
 
-import { makeProfileRouteLink } from '../util/util';
+import {
+    makeProfileRouteLink,
+    checkWhetherUserHasDashboardAccess,
+} from '../util/util';
 
 const componentStyles = Object.freeze({
     containerStyle: Object.freeze({
@@ -58,30 +62,44 @@ const componentStyles = Object.freeze({
     }),
 });
 
-const createUserDropdownLinks = (user, logoutAction, myFacilitiesAction) => Object.freeze([
-    Object.freeze({
-        text: 'My Profile',
-        url: makeProfileRouteLink(user.id),
-        type: 'link',
-    }),
-    Object.freeze({
-        text: 'My Lists',
-        url: '/lists',
-        type: 'link',
-    }),
-    Object.freeze({
-        text: 'My Facilities',
-        type: 'button',
-        action: user.contributor_id
-            ? () => myFacilitiesAction(user.contributor_id)
-            : noop,
-    }),
-    Object.freeze({
-        text: 'Log Out',
-        type: 'button',
-        action: logoutAction,
-    }),
-]);
+const createUserDropdownLinks = (user, logoutAction, myFacilitiesAction) => {
+    const dashboardLink = checkWhetherUserHasDashboardAccess(user)
+        ? Object.freeze([
+            Object.freeze({
+                text: 'Dashboard',
+                url: dashboardRoute,
+                type: 'link',
+            }),
+        ])
+        : [];
+
+    return dashboardLink.concat(
+        Object.freeze([
+            Object.freeze({
+                text: 'My Profile',
+                url: makeProfileRouteLink(user.id),
+                type: 'link',
+            }),
+            Object.freeze({
+                text: 'My Lists',
+                url: '/lists',
+                type: 'link',
+            }),
+            Object.freeze({
+                text: 'My Facilities',
+                type: 'button',
+                action: user.contributor_id
+                    ? () => myFacilitiesAction(user.contributor_id)
+                    : noop,
+            }),
+            Object.freeze({
+                text: 'Log Out',
+                type: 'button',
+                action: logoutAction,
+            }),
+        ]),
+    );
+};
 
 function NavbarLoginButtonGroup({
     user,
