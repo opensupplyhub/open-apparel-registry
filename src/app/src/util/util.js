@@ -28,6 +28,8 @@ import pickBy from 'lodash/pickBy';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
+import env from './env';
+
 import {
     OTHER,
     FEATURE_COLLECTION,
@@ -93,7 +95,16 @@ export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
 export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
 
-export const makeGetClientInfoURL = () => 'https://api.userinfo.io/userinfos';
+const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
+// NOTE: We only use an API key for ipgeolocation.io in development. On staging
+// and production we use request origin validation so that we don't have to
+// expose an API key
+export const makeGetClientInfoURL = () => {
+    const clientInfoURLSuffix = !env('ENVIRONMENT') || env('ENVIRONMENT') === 'development'
+        ? `&apiKey=${env('REACT_APP_IPGEOLOCATION_API_KEY')}`
+        : '';
+    return `${clientInfoURL}${clientInfoURLSuffix}`;
+};
 
 export const getValueFromObject = ({ value }) => value;
 
