@@ -58,15 +58,15 @@ const facilityListItemsTableStyles = Object.freeze({
         lineHeight: '1.2',
     }),
     searchFilterStyles: Object.freeze({
-        display: 'inline-block',
         marginRight: '5px',
     }),
     statusFilterStyles: Object.freeze({
-        padding: '20px 0 0 20px',
+        padding: '10px 20px 0 20px',
+        display: 'flex',
+        alignItems: 'center',
     }),
     statusFilterSelectStyles: Object.freeze({
-        display: 'inline-block',
-        width: '40%',
+        flex: '2',
     }),
     statusFilterMessageStyles: Object.freeze({
         padding: '0 0 0 20px',
@@ -446,6 +446,19 @@ class FacilityListItemsTable extends Component {
                             placeholder="Filter by item status..."
                             value={createSelectedStatusChoicesFromParams(params)}
                             onChange={this.handleChangeStatusFilter}
+                            styles={{
+                                control: provided => ({
+                                    ...provided,
+                                    height: '56px',
+                                }),
+                            }}
+                            theme={theme => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                    primary: '#00319D',
+                                },
+                            })}
                         />
                     </div>
                     <ShowOnly when={!!(params && (params.status || params.search))}>

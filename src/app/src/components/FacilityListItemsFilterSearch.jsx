@@ -67,7 +67,6 @@ export default function FacilityListItemsTableSearch({
 
     return (
         <TextField
-            margin="dense"
             variant="outlined"
             type="text"
             label="Search"
