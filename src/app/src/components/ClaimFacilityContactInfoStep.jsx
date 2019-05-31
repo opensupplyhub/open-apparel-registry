@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
+import { isEmail } from 'validator';
+import isEmpty from 'lodash/isEmpty';
+
+import RequiredAsterisk from './RequiredAsterisk';
 
 import {
     updateClaimAFacilityContactPerson,
@@ -32,9 +36,14 @@ function ClaimFacilityContactInfoStep({
         <>
             <div style={claimAFacilityFormStyles.inputGroupStyles}>
                 <InputLabel htmlFor={contactName.id}>
-                    <Typography variant="title">{contactName.label}</Typography>
+                    <Typography variant="title">
+                        {contactName.label}
+                        <RequiredAsterisk />
+                    </Typography>
                 </InputLabel>
                 <TextField
+                    autoFocus
+                    error={isEmpty(contactPerson)}
                     id={contactName.id}
                     variant="outlined"
                     style={claimAFacilityFormStyles.textFieldStyles}
@@ -47,9 +56,11 @@ function ClaimFacilityContactInfoStep({
                 <InputLabel htmlFor={contactEmail.id}>
                     <Typography variant="title">
                         {contactEmail.label}
+                        <RequiredAsterisk />
                     </Typography>
                 </InputLabel>
                 <TextField
+                    error={!isEmail(email)}
                     id={contactEmail.id}
                     variant="outlined"
                     style={claimAFacilityFormStyles.textFieldStyles}
@@ -65,9 +76,11 @@ function ClaimFacilityContactInfoStep({
                 <InputLabel htmlFor={contactPhone.id}>
                     <Typography variant="title">
                         {contactPhone.label}
+                        <RequiredAsterisk />
                     </Typography>
                 </InputLabel>
                 <TextField
+                    error={isEmpty(phoneNumber)}
                     id={contactPhone.id}
                     variant="outlined"
                     style={claimAFacilityFormStyles.textFieldStyles}

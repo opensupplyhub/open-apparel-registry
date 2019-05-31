@@ -25,6 +25,8 @@ import ceil from 'lodash/ceil';
 import toInteger from 'lodash/toInteger';
 import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
+import every from 'lodash/every';
+import { isEmail } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -90,6 +92,7 @@ export const makeGetCountriesURL = () => '/api/countries/';
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
 export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
+export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/`;
 
 export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
@@ -543,3 +546,29 @@ export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
     keys(pickBy(featureFlags, identity));
 
 export const checkWhetherUserHasDashboardAccess = user => get(user, 'is_superuser', false);
+
+export const claimAFacilityFormIsValid = ({
+    email,
+    companyName,
+    contactPerson,
+    phoneNumber,
+    preferredContactMethod,
+}) => every([
+    isEmail(email),
+    !isEmpty(companyName),
+    !isEmpty(contactPerson),
+    !isEmpty(phoneNumber),
+    !isEmpty(preferredContactMethod),
+], identity);
+
+export const claimFacilityContactInfoStepIsValid = ({
+    email,
+    contactPerson,
+    phoneNumber,
+}) => every([
+    isEmail(email),
+    !isEmpty(contactPerson),
+    !isEmpty(phoneNumber),
+]);
+
+export const claimFacilityFacilityInfoStepIsValid = ({ companyName }) => !isEmpty(companyName);

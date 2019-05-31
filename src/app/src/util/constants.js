@@ -425,7 +425,7 @@ export const claimAFacilityFormFields = Object.freeze({
     }),
     verificationMethod: Object.freeze({
         id: 'verification-method',
-        label: 'How can we verify you?',
+        label: 'Any additional details?',
     }),
     preferredContactMethod: Object.freeze({
         id: 'preferred-contact',
@@ -433,7 +433,7 @@ export const claimAFacilityFormFields = Object.freeze({
     }),
 });
 
-export const claimAFacilitySelectOptions = Object.freeze([
+export const claimAFacilityPreferredContactOptions = Object.freeze([
     Object.freeze({
         value: 'email',
         label: 'Email',

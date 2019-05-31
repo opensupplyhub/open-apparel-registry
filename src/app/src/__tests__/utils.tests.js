@@ -15,6 +15,7 @@ const {
     makeGetCountriesURL,
     makeGetFacilitiesURL,
     makeGetFacilityByOARIdURL,
+    makeClaimFacilityAPIURL,
     makeGetFacilitiesURLWithQueryString,
     getValueFromObject,
     createQueryStringFromSearchFilters,
@@ -61,6 +62,9 @@ const {
     addProtocolToWebsiteURLIfMissing,
     convertFeatureFlagsObjectToListOfActiveFlags,
     checkWhetherUserHasDashboardAccess,
+    claimAFacilityFormIsValid,
+    claimFacilityContactInfoStepIsValid,
+    claimFacilityFacilityInfoStepIsValid,
 } = require('../util/util');
 
 const {
@@ -1159,4 +1163,66 @@ it('checks whether a user has dashboard access', () => {
 
     expect(checkWhetherUserHasDashboardAccess(unauthorizedUser))
         .toBe(false);
+});
+
+it('creates a URL for POSTing the claim a facility form', () => {
+    const oarID = '12345';
+
+    const expectedURLMatch = '/api/facilities/12345/claim/';
+
+    expect(isEqual(
+        makeClaimFacilityAPIURL(oarID),
+        expectedURLMatch,
+    )).toBe(true);
+});
+
+it('checks whether the claim a facility form is valid', () => {
+    const validForm = {
+        email: 'email@example.com',
+        companyName: 'companyName',
+        contactPerson: 'contactPerson',
+        phoneNumber: 'phoneNumber',
+        preferredContactMethod: {
+            label: 'label',
+            value: 'value',
+        },
+    };
+
+    expect(isEqual(
+        claimAFacilityFormIsValid(validForm),
+        true,
+    )).toBe(true);
+
+    expect(isEqual(
+        claimFacilityContactInfoStepIsValid(validForm),
+        true,
+    )).toBe(true);
+
+    expect(isEqual(
+        claimFacilityFacilityInfoStepIsValid(validForm),
+        true,
+    )).toBe(true);
+
+    const invalidForm = {
+        email: 'email@example.com',
+        companyName: '',
+        contactPerson: '',
+        phoneNumber: '',
+        preferredContactMethod: null,
+    };
+
+    expect(isEqual(
+        claimAFacilityFormIsValid(invalidForm),
+        true,
+    )).toBe(false);
+
+    expect(isEqual(
+        claimFacilityContactInfoStepIsValid(invalidForm),
+        true,
+    )).toBe(false);
+
+    expect(isEqual(
+        claimFacilityFacilityInfoStepIsValid(invalidForm),
+        true,
+    )).toBe(false);
 });

@@ -25,6 +25,7 @@ import AboutProcessing from './components/AboutProcessing';
 import RouteNotFound from './components/RouteNotFound';
 import Dashboard from './components/Dashboard';
 import Translate from './components/Translate';
+import FeatureFlag from './components/FeatureFlag';
 import ClaimFacility from './components/ClaimFacility';
 
 import './App.css';
@@ -47,6 +48,7 @@ import {
     aboutProcessingRoute,
     dashboardRoute,
     claimFacilityRoute,
+    CLAIM_A_FACILITY,
 } from './util/constants';
 
 const appStyles = Object.freeze({
@@ -86,7 +88,14 @@ class App extends Component {
                                 <Route
                                     exact
                                     path={claimFacilityRoute}
-                                    component={ClaimFacility}
+                                    render={() => (
+                                        <FeatureFlag
+                                            flag={CLAIM_A_FACILITY}
+                                            alternative={<Route component={MapAndSidebar} />}
+                                        >
+                                            <Route component={ClaimFacility} />
+                                        </FeatureFlag>
+                                    )}
                                 />
                                 <Route
                                     path={facilitiesRoute}

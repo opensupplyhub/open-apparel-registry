@@ -3,6 +3,9 @@ import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Link, Route } from 'react-router-dom';
 
 import AppGrid from '../components/AppGrid';
 import AppOverflow from '../components/AppOverflow';
@@ -15,6 +18,10 @@ import {
 } from '../actions/claimFacility';
 
 import { facilityDetailsPropType } from '../util/propTypes';
+
+import { authLoginFormRoute } from '../util/constants';
+
+import { makeFacilityDetailLink } from '../util/util';
 
 const claimFacilityContainerStyles = Object.freeze({
     containerStyles: Object.freeze({
@@ -33,6 +40,12 @@ function ClaimFacility({
     error,
     getFacilityData,
     clearClaimData,
+    userHasSignedIn,
+    match: {
+        params: {
+            oarID,
+        },
+    },
 }) {
     useEffect(() => {
         getFacilityData();
@@ -42,6 +55,23 @@ function ClaimFacility({
 
     if (fetching) {
         return <CircularProgress />;
+    }
+
+    if (!userHasSignedIn) {
+        return (
+            <AppGrid title="Claim this facility">
+                <Grid container className="margin-bottom-64">
+                    <Grid item xs={12}>
+                        <Link
+                            to={authLoginFormRoute}
+                            href={authLoginFormRoute}
+                        >
+                            Log in to claim a facility on Open Apparel Registry
+                        </Link>
+                    </Grid>
+                </Grid>
+            </AppGrid>
+        );
     }
 
     if (error) {
@@ -56,11 +86,24 @@ function ClaimFacility({
 
     return (
         <AppOverflow>
-            <AppGrid title="Claim this facility">
+            <AppGrid
+                title="Claim this facility"
+                backButtonComponent={
+                    (
+                        <Link
+                            to={makeFacilityDetailLink(oarID)}
+                            href={makeFacilityDetailLink(oarID)}
+                            style={{ color: 'black' }}
+                        >
+                            <ArrowBackIcon fill="black" />
+                        </Link>
+                    )
+                }
+            >
                 <div style={claimFacilityContainerStyles.containerStyles}>
                     <Paper style={claimFacilityContainerStyles.paperStyles}>
                         <ClaimFacilityHeader data={data} />
-                        <ClaimFacilityStepper />
+                        <Route component={ClaimFacilityStepper} />
                     </Paper>
                 </div>
             </AppGrid>
@@ -79,16 +122,22 @@ ClaimFacility.propTypes = {
     error: arrayOf(string),
     getFacilityData: func.isRequired,
     clearClaimData: func.isRequired,
+    userHasSignedIn: bool.isRequired,
 };
 
 function mapStateToProps({
     claimFacility: {
         facilityData: { data, fetching, error },
     },
+    auth: {
+        user: { user },
+        session: { fetching: sessionFetching },
+    },
 }) {
     return {
         data,
-        fetching,
+        fetching: fetching || sessionFetching,
+        userHasSignedIn: !!user,
         error,
     };
 }

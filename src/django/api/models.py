@@ -380,7 +380,7 @@ class FacilityClaim(models.Model):
     contact_person = models.CharField(
         max_length=200,
         null=False,
-        blank=True,
+        blank=False,
         help_text='The contact person for the facility claim')
     email = models.EmailField(
         null=False,
@@ -389,7 +389,7 @@ class FacilityClaim(models.Model):
     phone_number = models.CharField(
         max_length=200,
         null=False,
-        blank=True,
+        blank=False,
         help_text='The contact phone number for the facility claim')
     company_name = models.CharField(
         max_length=200,
@@ -411,7 +411,8 @@ class FacilityClaim(models.Model):
         help_text='An explanation of how the facility can be verified')
     preferred_contact_method = models.CharField(
         max_length=200,
-        null=True,
+        null=False,
+        blank=False,
         choices=PREFERRED_CONTACT_CHOICES,
         help_text='The preferred contact method: email or phone')
     status = models.CharField(

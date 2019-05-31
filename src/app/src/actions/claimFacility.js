@@ -1,8 +1,16 @@
 import { createAction } from 'redux-act';
+import get from 'lodash/get';
+import snakeCase from 'lodash/snakeCase';
+import mapKeys from 'lodash/mapKeys';
 
 import csrfRequest from '../util/csrfRequest';
 
-import { logErrorAndDispatchFailure, makeGetFacilityByOARIdURL } from '../util/util';
+import {
+    logErrorAndDispatchFailure,
+    makeGetFacilityByOARIdURL,
+    makeClaimFacilityAPIURL,
+    claimAFacilityFormIsValid,
+} from '../util/util';
 
 export const startFetchClaimFacilityData = createAction('START_FETCH_CLAIM_FACILITY_DATA');
 export const failFetchClaimFacilityData = createAction('FAIL_FETCH_CLAIM_FACILITY_DATA');
@@ -50,8 +58,6 @@ export const completeSubmitClaimAFacilityData =
 
 export function submitClaimAFacilityData(oarID) {
     return (dispatch, getState) => {
-        dispatch(startSubmitClaimAFacilityData());
-
         const {
             claimFacility: {
                 claimData: {
@@ -60,10 +66,21 @@ export function submitClaimAFacilityData(oarID) {
             },
         } = getState();
 
-        window.console.dir(formData);
+        if (!claimAFacilityFormIsValid(formData)) {
+            return null;
+        }
 
-        return Promise
-            .resolve(({ data: oarID }))
+        const postData = mapKeys(
+            Object.assign({}, formData, {
+                preferredContactMethod: get(formData, 'preferredContactMethod.value', null),
+            }),
+            (_, k) => snakeCase(k),
+        );
+
+        dispatch(startSubmitClaimAFacilityData());
+
+        return csrfRequest
+            .post(makeClaimFacilityAPIURL(oarID), postData)
             .then(({ data }) => dispatch(completeSubmitClaimAFacilityData(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,

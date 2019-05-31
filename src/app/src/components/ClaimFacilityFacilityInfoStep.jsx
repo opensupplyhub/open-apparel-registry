@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
+import { isEmpty } from 'validator';
+
+import RequiredAsterisk from './RequiredAsterisk';
 
 import {
     updateClaimAFacilityCompany,
@@ -38,9 +41,12 @@ function ClaimFacilityFacilityInfoStep({
                 <InputLabel htmlFor={companyFormField.id}>
                     <Typography variant="title">
                         {companyFormField.label}
+                        <RequiredAsterisk />
                     </Typography>
                 </InputLabel>
                 <TextField
+                    autoFocus
+                    error={isEmpty(companyName)}
                     id={companyFormField.id}
                     variant="outlined"
                     style={claimAFacilityFormStyles.textFieldStyles}
