@@ -261,7 +261,7 @@ class FacilityListItemsTable extends Component {
         const params = createParamsFromQueryString(search);
 
         const newParams = update(params, {
-            $unset: ['status'],
+            $unset: ['status', 'search'],
         });
         replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
@@ -448,7 +448,7 @@ class FacilityListItemsTable extends Component {
                             onChange={this.handleChangeStatusFilter}
                         />
                     </div>
-                    <ShowOnly when={!!(params && params.status)}>
+                    <ShowOnly when={!!(params && (params.status || params.search))}>
                         <span style={facilityListItemsTableStyles.statusFilterMessageStyles}>
                             Showing {filteredCount} of {list.item_count} items.
                         </span>
