@@ -60,6 +60,7 @@ const {
     makeFacilityListSummaryStatus,
     addProtocolToWebsiteURLIfMissing,
     convertFeatureFlagsObjectToListOfActiveFlags,
+    checkWhetherUserHasDashboardAccess,
 } = require('../util/util');
 
 const {
@@ -1142,4 +1143,20 @@ it('creates a list including only active features from a feature flags object', 
 
     expect(includes(listOfActiveFeatureFlags, EXPORT_SHAPEFILE))
         .toBe(true);
+});
+
+it('checks whether a user has dashboard access', () => {
+    const authorizedUser = {
+        is_superuser: true,
+    };
+
+    const unauthorizedUser = {
+        is_superuser: false,
+    };
+
+    expect(checkWhetherUserHasDashboardAccess(authorizedUser))
+        .toBe(true);
+
+    expect(checkWhetherUserHasDashboardAccess(unauthorizedUser))
+        .toBe(false);
 });

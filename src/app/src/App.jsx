@@ -22,6 +22,7 @@ import GDPRNotification from './components/GDPRNotification';
 import ConfirmRegistration from './components/ConfirmRegistration';
 import AboutProcessing from './components/AboutProcessing';
 import RouteNotFound from './components/RouteNotFound';
+import Dashboard from './components/Dashboard';
 
 import './App.css';
 
@@ -41,6 +42,7 @@ import {
     facilitiesRoute,
     profileRoute,
     aboutProcessingRoute,
+    dashboardRoute,
 } from './util/constants';
 
 const appStyles = Object.freeze({
@@ -103,6 +105,10 @@ class App extends Component {
                                 <Route
                                     path={contributeRoute}
                                     component={Contribute}
+                                />
+                                <Route
+                                    path={dashboardRoute}
+                                    component={Dashboard}
                                 />
                                 <Route
                                     path={facilityListItemsRoute}

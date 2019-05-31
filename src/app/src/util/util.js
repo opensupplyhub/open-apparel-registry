@@ -523,3 +523,5 @@ export const addProtocolToWebsiteURLIfMissing = (url) => {
 
 export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
     keys(pickBy(featureFlags, identity));
+
+export const checkWhetherUserHasDashboardAccess = user => get(user, 'is_superuser', false);
