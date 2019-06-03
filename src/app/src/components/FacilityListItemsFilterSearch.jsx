@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { func, string } from 'prop-types';
 
+import trim from 'lodash/trim';
+
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
@@ -24,7 +26,9 @@ export default function FacilityListItemsTableSearch({
             return;
         }
 
-        onSearch(searchText);
+        const term = trim(searchText);
+        onSearch(term);
+        setSearchText(term);
     };
 
     const handleTextChange = (e) => {

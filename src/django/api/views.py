@@ -822,6 +822,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         status = request.query_params.getlist(
             FacilityListItemsQueryParams.STATUS)
 
+        if search is not None:
+            search = search.strip()
+
         try:
             user_contributor = request.user.contributor
             facility_list = FacilityList \
@@ -831,7 +834,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             queryset = FacilityListItem \
                 .objects \
                 .filter(facility_list=facility_list)
-            if search is not None:
+            if search is not None and len(search) > 0:
                 queryset = queryset.filter(
                     Q(facility__name__icontains=search) |
                     Q(facility__address__icontains=search))
