@@ -5,6 +5,7 @@ import { func } from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
+import { hot } from 'react-hot-loader/root';
 
 import history from './util/history';
 import Navbar from './components/Navbar';
@@ -150,4 +151,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(() => ({}), mapDispatchToProps)(withStyles(appStyles)(App));
+export default hot(connect(() => ({}), mapDispatchToProps)(withStyles(appStyles)(App)));
