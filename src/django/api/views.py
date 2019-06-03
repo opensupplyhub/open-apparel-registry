@@ -817,8 +817,14 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if not params.is_valid():
             raise ValidationError(params.errors)
 
+        search = request.query_params.get(
+            FacilityListItemsQueryParams.SEARCH)
         status = request.query_params.getlist(
             FacilityListItemsQueryParams.STATUS)
+
+        if search is not None:
+            search = search.strip()
+
         try:
             user_contributor = request.user.contributor
             facility_list = FacilityList \
@@ -828,6 +834,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             queryset = FacilityListItem \
                 .objects \
                 .filter(facility_list=facility_list)
+            if search is not None and len(search) > 0:
+                queryset = queryset.filter(
+                    Q(facility__name__icontains=search) |
+                    Q(facility__address__icontains=search))
             if status is not None and len(status) > 0:
                 q_statements = [make_q_from_status(s) for s in status]
                 queryset = queryset.filter(reduce(operator.or_, q_statements))

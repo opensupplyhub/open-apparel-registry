@@ -22,4 +22,5 @@ class FacilitiesQueryParams:
 
 
 class FacilityListItemsQueryParams:
+    SEARCH = 'search'
     STATUS = 'status'
