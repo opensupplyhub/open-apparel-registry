@@ -17,12 +17,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
                                        NotFound,
-                                       AuthenticationFailed)
+                                       AuthenticationFailed,
+                                       PermissionDenied)
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        action)
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import BaseFilterBackend
@@ -54,7 +55,8 @@ from api.serializers import (FacilityListSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              UserSerializer,
-                             UserProfileSerializer)
+                             UserProfileSerializer,
+                             FacilityClaimSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
@@ -1280,3 +1282,26 @@ def api_feature_flags(request):
     }
 
     return Response(response_data)
+
+
+class FacilityClaimViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for admin operations on FacilityClaims.
+    """
+    queryset = FacilityClaim.objects.all()
+    serializer_class = FacilityClaimSerializer
+    permission_classes = [IsAdminUser]
+
+    def create(self, request):
+        pass
+
+    def list(self, request):
+        if not switch_is_active('claim_a_facility'):
+            return NotFound()
+
+        if not request.user.is_superuser:
+            return PermissionDenied()
+
+        response_data = FacilityClaimSerializer(self.queryset, many=True).data
+
+        return Response(response_data)

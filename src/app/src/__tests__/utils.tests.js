@@ -33,6 +33,8 @@ const {
     mapDjangoChoiceTuplesToSelectOptions,
     allListsAreEmpty,
     makeFacilityDetailLink,
+    makeFacilityClaimDetailsLink,
+    getIDFromEvent,
     getBBoxForArrayOfGeoJSONPoints,
     makeFacilityListItemsDetailLink,
     makePaginatedFacilityListItemsDetailLinkWithRowCount,
@@ -1225,4 +1227,29 @@ it('checks whether the claim a facility form is valid', () => {
         claimFacilityFacilityInfoStepIsValid(invalidForm),
         true,
     )).toBe(false);
+});
+
+it('creates a facility claim details link', () => {
+    const claimID = 'claimID';
+    const expectedMatch = '/dashboard/claims/claimID';
+
+    expect(isEqual(
+        makeFacilityClaimDetailsLink(claimID),
+        expectedMatch,
+    )).toBe(true);
+});
+
+it('gets an ID from an event', () => {
+    const event = {
+        target: {
+            id: 'id',
+        },
+    };
+
+    const expectedID = 'id';
+
+    expect(isEqual(
+        getIDFromEvent(event),
+        expectedID,
+    )).toBe(true);
 });

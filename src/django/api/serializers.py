@@ -22,6 +22,7 @@ from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
                         FacilityMatch,
+                        FacilityClaim,
                         User,
                         Contributor)
 from api.countries import COUNTRY_NAMES
@@ -371,6 +372,30 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')
+
+
+class FacilityClaimSerializer(ModelSerializer):
+    facility_name = SerializerMethodField()
+    oar_id = SerializerMethodField()
+    contributor_name = SerializerMethodField()
+    contributor_id = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaim
+        fields = ('id', 'created_at', 'updated_at', 'contributor_id', 'oar_id',
+                  'contributor_name', 'facility_name', 'status')
+
+    def get_facility_name(self, claim):
+        return claim.facility.name
+
+    def get_oar_id(self, claim):
+        return claim.facility_id
+
+    def get_contributor_name(self, claim):
+        return claim.contributor.name
+
+    def get_contributor_id(self, claim):
+        return claim.contributor_id
 
 
 class FacilityMatchSerializer(ModelSerializer):

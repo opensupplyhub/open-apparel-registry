@@ -15,6 +15,15 @@ export const contributorTypeOptions = Object.freeze([
     OTHER,
 ]);
 
+// These choices must be kept in sync with the identical list
+// kept in the Django API's models.py file
+export const facilityClaimStatusChoicesEnum = Object.freeze({
+    PENDING: 'PENDING',
+    APPROVED: 'APPROVED',
+    DENIED: 'DENIED',
+    REVOKED: 'REVOKED',
+});
+
 export const inputTypesEnum = Object.freeze({
     text: 'text',
     password: 'password',
@@ -216,6 +225,7 @@ export const dashboardListsRoute = '/dashboard/lists';
 export const dashboardClaimsRoute = '/dashboard/claims';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
+export const dashboardClaimsDetailsRoute = '/dashboard/claims/:claimID';
 
 export const contributeCSVTemplate =
     'country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt';

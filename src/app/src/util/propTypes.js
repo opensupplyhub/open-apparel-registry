@@ -11,6 +11,7 @@ import {
     POINT,
     facilityMatchStatusChoicesEnum,
     CLAIM_A_FACILITY,
+    facilityClaimStatusChoicesEnum,
 } from './constants';
 
 export const registrationFormValuesPropType = shape({
@@ -196,3 +197,14 @@ export const facilityListItemStatusPropType =
     oneOf(Object.values(facilityListItemStatusChoicesEnum).concat('Status'));
 
 export const featureFlagPropType = oneOf([CLAIM_A_FACILITY]);
+
+export const facilityClaimsListPropType = arrayOf(shape({
+    created_at: string.isRequired,
+    updated_at: string.isRequired,
+    id: number.isRequired,
+    oar_id: string.isRequired,
+    facility_name: string.isRequired,
+    contributor_id: number.isRequired,
+    contributor_name: string.isRequired,
+    status: oneOf(Object.values(facilityClaimStatusChoicesEnum)),
+}).isRequired);

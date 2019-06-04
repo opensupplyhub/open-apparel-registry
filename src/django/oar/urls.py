@@ -30,7 +30,7 @@ from oar import settings
 router = routers.DefaultRouter()
 router.register('facility-lists', views.FacilityListViewSet, 'facility-list')
 router.register('facilities', views.FacilitiesViewSet, 'facility')
-
+router.register('facility-claims', views.FacilityClaimViewSet, 'facility-claim')
 
 public_apis = [
     url(r'^api/', include(router.urls)),
