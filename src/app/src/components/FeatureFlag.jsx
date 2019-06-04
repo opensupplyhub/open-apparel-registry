@@ -10,10 +10,11 @@ import { convertFeatureFlagsObjectToListOfActiveFlags } from '../util/util';
 function FeatureFlag({
     flag,
     children,
+    alternative,
     activeFeatureFlags,
 }) {
     if (!includes(activeFeatureFlags, flag)) {
-        return null;
+        return alternative;
     }
 
     return (
@@ -23,9 +24,14 @@ function FeatureFlag({
     );
 }
 
+FeatureFlag.defaultProps = {
+    alternative: null,
+};
+
 FeatureFlag.propTypes = {
     flag: featureFlagPropType.isRequired,
     children: node.isRequired,
+    alternative: node,
     activeFeatureFlags: arrayOf(featureFlagPropType).isRequired,
 };
 
