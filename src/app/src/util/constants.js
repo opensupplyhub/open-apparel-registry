@@ -211,6 +211,8 @@ export const facilityDetailsRoute = '/facilities/:oarID';
 export const profileRoute = '/profile/:id';
 export const aboutProcessingRoute = '/about/processing';
 export const dashboardRoute = '/dashboard';
+export const dashboardListsRoute = '/dashboard/lists';
+export const dashboardClaimsRoute = '/dashboard/claims';
 
 export const contributeCSVTemplate =
     'country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt';
