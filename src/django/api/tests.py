@@ -1,4 +1,6 @@
 import json
+import os
+import xlrd
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -55,6 +57,20 @@ class FacilityListCreateTest(APITestCase):
                        [s.encode() for s in self.test_csv_rows[1:]]),
             content_type='text/csv')
 
+        lists_dir = '/usr/local/src/api/management/commands/facility_lists/'
+        with open(os.path.join(lists_dir, '12.xls'), 'rb') as xls:
+            self.test_file_xls = SimpleUploadedFile(
+                '12.xls',
+                xls.read(),
+                content_type='application/vnd.ms-excel')
+
+        with open(os.path.join(lists_dir, '12.xlsx'), 'rb') as xlsx:
+            self.test_file_xlsx = SimpleUploadedFile(
+                '12.xlsx',
+                xlsx.read(),
+                content_type='application/vnd.openxmlformats-'
+                             'officedocument.spreadsheetml.sheet')
+
     def post_header_only_file(self, **kwargs):
         if kwargs is None:
             kwargs = {}
@@ -86,6 +102,44 @@ class FacilityListCreateTest(APITestCase):
                          previous_item_count + len(self.test_csv_rows) - 1)
         items = list(FacilityListItem.objects.all())
         self.assertEqual(items[0].raw_data, self.test_csv_rows[1])
+
+    def test_creates_list_and_items_xls(self):
+        previous_list_count = FacilityList.objects.all().count()
+        previous_item_count = FacilityListItem.objects.all().count()
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'name': 'creates_list_and_items_xls',
+                                     'file': self.test_file_xls},
+                                    format='multipart')
+        self.test_file_xls.seek(0)
+        sheet = xlrd.open_workbook(file_contents=self.test_file_xls.read(),
+                                   on_demand=True).sheet_by_index(0)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(FacilityList.objects.all().count(),
+                         previous_list_count + 1)
+        self.assertEqual(FacilityListItem.objects.all().count(),
+                         previous_item_count + sheet.nrows - 1)
+        items = list(FacilityListItem.objects.all())
+        self.assertEqual(items[0].raw_data, '"{}"'.format(
+            '","'.join(sheet.row_values(1))))
+
+    def test_creates_list_and_items_xlsx(self):
+        previous_list_count = FacilityList.objects.all().count()
+        previous_item_count = FacilityListItem.objects.all().count()
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'name': 'creates_list_and_items_xlsx',
+                                     'file': self.test_file_xlsx},
+                                    format='multipart')
+        self.test_file_xlsx.seek(0)
+        sheet = xlrd.open_workbook(file_contents=self.test_file_xlsx.read(),
+                                   on_demand=True).sheet_by_index(0)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(FacilityList.objects.all().count(),
+                         previous_list_count + 1)
+        self.assertEqual(FacilityListItem.objects.all().count(),
+                         previous_item_count + sheet.nrows - 1)
+        items = list(FacilityListItem.objects.all())
+        self.assertEqual(items[0].raw_data, '"{}"'.format(
+            '","'.join(sheet.row_values(1))))
 
     def test_file_required(self):
         response = self.client.post(reverse('facility-list-list'))

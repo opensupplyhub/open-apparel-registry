@@ -208,6 +208,19 @@ def make_facility_list_name():
                                      random.choice(options))
 
 
+def make_facility_list_description(pk, name):
+    description = (
+        'This is the detailed description of the list named {}. Descriptions '
+        'can be pretty long. This one is not that long, but it is long enough '
+        'so that when designing an interface to display the description we '
+        'will be sure to leave enough space.'
+    )
+    if pk % 2 == 0:
+        return description.format(name)
+    else:
+        return None
+
+
 def make_facility_list(pk, contributor_pk=None):
     (created_at, updated_at) = make_created_updated()
     if contributor_pk is not None:
@@ -215,12 +228,14 @@ def make_facility_list(pk, contributor_pk=None):
     else:
         contributor = pk
     name = make_facility_list_name()
+    description = make_facility_list_description(pk, name)
     return {
         'model': 'api.facilitylist',
         'pk': pk,
         'fields': {
             'contributor': contributor,
             'name': name,
+            'description': description,
             'file_name': name + '.csv',
             'header': 'country,name,address,lat,lng',
             'is_active': True,

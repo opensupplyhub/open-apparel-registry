@@ -5,6 +5,7 @@ import { func } from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
+import { hot } from 'react-hot-loader/root';
 
 import history from './util/history';
 import Navbar from './components/Navbar';
@@ -22,10 +23,14 @@ import GDPRNotification from './components/GDPRNotification';
 import ConfirmRegistration from './components/ConfirmRegistration';
 import AboutProcessing from './components/AboutProcessing';
 import RouteNotFound from './components/RouteNotFound';
+import Dashboard from './components/Dashboard';
+import Translate from './components/Translate';
 
 import './App.css';
 
 import { sessionLogin } from './actions/auth';
+import { fetchFeatureFlags } from './actions/featureFlags';
+import { fetchClientInfo } from './actions/clientInfo';
 
 import {
     mainRoute,
@@ -39,6 +44,7 @@ import {
     facilitiesRoute,
     profileRoute,
     aboutProcessingRoute,
+    dashboardRoute,
 } from './util/constants';
 
 const appStyles = Object.freeze({
@@ -56,6 +62,8 @@ const appStyles = Object.freeze({
 
 class App extends Component {
     componentDidMount() {
+        this.props.getFeatureFlags();
+        this.props.getClientInfo();
         return this.props.logIn();
     }
 
@@ -64,6 +72,7 @@ class App extends Component {
             <ErrorBoundary>
                 <Router history={history}>
                     <div className="App">
+                        <Translate />
                         <Navbar />
                         <main style={appStyles.mainPanelStyle}>
                             <Switch>
@@ -101,6 +110,10 @@ class App extends Component {
                                     component={Contribute}
                                 />
                                 <Route
+                                    path={dashboardRoute}
+                                    component={Dashboard}
+                                />
+                                <Route
                                     path={facilityListItemsRoute}
                                     component={FacilityListItems}
                                 />
@@ -134,8 +147,10 @@ App.propTypes = {
 
 function mapDispatchToProps(dispatch) {
     return {
+        getFeatureFlags: () => dispatch(fetchFeatureFlags()),
+        getClientInfo: () => dispatch(fetchClientInfo()),
         logIn: () => dispatch(sessionLogin()),
     };
 }
 
-export default connect(() => ({}), mapDispatchToProps)(withStyles(appStyles)(App));
+export default hot(connect(() => ({}), mapDispatchToProps)(withStyles(appStyles)(App)));

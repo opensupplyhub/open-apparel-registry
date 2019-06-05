@@ -63,6 +63,8 @@ internal_apis = [
         name='get_and_update_user_profile'),
     url(r'^api-token-auth/', views.APIAuthToken.as_view(),
         name='api_token_auth'),
+    url(r'^api-feature-flags', views.api_feature_flags,
+        name='api_feature_flags'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns = public_apis + internal_apis

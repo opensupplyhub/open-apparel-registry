@@ -110,53 +110,65 @@ class UserProfileSerializer(ModelSerializer):
     website = SerializerMethodField()
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
+    facility_lists = SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'description', 'website', 'contributor_type',
-                  'other_contributor_type')
+                  'other_contributor_type', 'facility_lists')
 
     def get_name(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.name
+            return user.contributor.name
         except Contributor.DoesNotExist:
             return None
 
     def get_description(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.description
+            return user.contributor.description
         except Contributor.DoesNotExist:
             return None
 
     def get_website(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.website
+            return user.contributor.website
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.contrib_type
+            return user.contributor.contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_other_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.other_contrib_type
+            return user.contributor.other_contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_id(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.id
+            return user.contributor.id
         except Contributor.DoesNotExist:
             return None
+
+    def get_facility_lists(self, user):
+        try:
+            contributor = user.contributor
+            return FacilityListSummarySerializer(
+                contributor.facilitylist_set.filter(
+                    is_active=True, is_public=True).order_by('-created_at'),
+                many=True,
+            ).data
+        except Contributor.DoesNotExist:
+            return []
+
+
+class FacilityListSummarySerializer(ModelSerializer):
+    class Meta:
+        model = FacilityList
+        fields = ('id', 'name', 'description')
 
 
 class FacilityListSerializer(ModelSerializer):
@@ -285,6 +297,7 @@ class FacilityQueryParamsSerializer(Serializer):
 
 
 class FacilityListItemsQueryParamsSerializer(Serializer):
+    search = CharField(required=False)
     status = ListField(
         child=CharField(required=False),
         required=False,

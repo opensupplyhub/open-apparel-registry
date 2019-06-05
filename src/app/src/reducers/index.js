@@ -16,6 +16,8 @@ import FiltersReducer from './FiltersReducer';
 import UIReducer from './UIReducer';
 import FacilitiesReducer from './FacilitiesReducer';
 import FacilityCountReducer from './FacilityCountReducer';
+import FeatureFlagsReducer from './FeatureFlagsReducer';
+import ClientInfoReducer from './ClientInfoReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -28,4 +30,6 @@ export default combineReducers({
     ui: UIReducer,
     facilities: FacilitiesReducer,
     facilityCount: FacilityCountReducer,
+    featureFlags: FeatureFlagsReducer,
+    clientInfo: ClientInfoReducer,
 });

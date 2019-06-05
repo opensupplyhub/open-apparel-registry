@@ -10,9 +10,9 @@ const ContributeTroubleshooting = memo(() => (
                 </p>
                 <ul className="helper-list">
                     <li className="helper-list__item">
-                        Check that your CSV file uses commas to separate the
-                        individual fields, not semcolons, tabs, or other
-                        characters.
+                        If uploading a CSV file, check that it uses commas to
+                        separate the individual fields, not semcolons, tabs,
+                        or other characters.
                     </li>
                     <li className="helper-list__item">
                         Check that you have not changed the
@@ -25,7 +25,7 @@ const ContributeTroubleshooting = memo(() => (
                         Check that you do not have any blank
                         cells in the country, name, or address
                         columns, or any merged cells in your
-                        CSV.
+                        Excel or CSV file.
                     </li>
                     <li>
                         If you are still experiencing issues

@@ -3,6 +3,7 @@
 
 const mapValues = require('lodash/mapValues');
 const isEqual = require('lodash/isEqual');
+const includes = require('lodash/includes');
 const turf = require('@turf/turf');
 
 const {
@@ -58,6 +59,8 @@ const {
     makeFacilityListDataURLs,
     makeFacilityListSummaryStatus,
     addProtocolToWebsiteURLIfMissing,
+    convertFeatureFlagsObjectToListOfActiveFlags,
+    checkWhetherUserHasDashboardAccess,
 } = require('../util/util');
 
 const {
@@ -1122,4 +1125,38 @@ it('adds a protocol to a website URL if the protocol is missing, but not if it i
 
     expect(addProtocolToWebsiteURLIfMissing(urlWithNoProtocol))
         .toBe(expectedResultForURLWithNoProtocol);
+});
+
+it('creates a list including only active features from a feature flags object', () => {
+    const IMPORT_SHAPEFILE = 'import_shapefile';
+    const EXPORT_SHAPEFILE = 'export_shapefile';
+
+    const features = {
+        import_shapefile: false,
+        export_shapefile: true,
+    };
+
+    const listOfActiveFeatureFlags = convertFeatureFlagsObjectToListOfActiveFlags(features);
+
+    expect(includes(listOfActiveFeatureFlags, IMPORT_SHAPEFILE))
+        .toBe(false);
+
+    expect(includes(listOfActiveFeatureFlags, EXPORT_SHAPEFILE))
+        .toBe(true);
+});
+
+it('checks whether a user has dashboard access', () => {
+    const authorizedUser = {
+        is_superuser: true,
+    };
+
+    const unauthorizedUser = {
+        is_superuser: false,
+    };
+
+    expect(checkWhetherUserHasDashboardAccess(authorizedUser))
+        .toBe(true);
+
+    expect(checkWhetherUserHasDashboardAccess(unauthorizedUser))
+        .toBe(false);
 });

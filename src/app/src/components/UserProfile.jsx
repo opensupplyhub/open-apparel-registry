@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import AppGrid from './AppGrid';
 import AppOverflow from './AppOverflow';
 import Button from './Button';
+import FacilityListSummary from './FacilityListSummary';
 import UserProfileField from './UserProfileField';
 import UserAPITokens from './UserAPITokens';
 
@@ -191,6 +192,16 @@ class UserProfile extends Component {
                 </div>)
             : null;
 
+        const facilityLists = !isEditableProfile && profile.facilityLists.length > 0
+            ? (
+                <React.Fragment>
+                    <h3>Facility Lists</h3>
+                    {profile.facilityLists.map(
+                        list => <FacilityListSummary key={list.id} {...list} />,
+                    )}
+                </React.Fragment>)
+            : null;
+
         const apiTokensSection = isEditableProfile
             ? <UserAPITokens />
             : null;
@@ -203,6 +214,7 @@ class UserProfile extends Component {
                 >
                     <Grid item xs={12} sm={7}>
                         {profileInputs}
+                        {facilityLists}
                         {errorMessages}
                         {submitButton}
                         {apiTokensSection}

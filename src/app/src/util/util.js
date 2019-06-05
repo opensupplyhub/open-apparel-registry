@@ -23,8 +23,12 @@ import lowerCase from 'lodash/lowerCase';
 import range from 'lodash/range';
 import ceil from 'lodash/ceil';
 import toInteger from 'lodash/toInteger';
+import keys from 'lodash/keys';
+import pickBy from 'lodash/pickBy';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
+
+import env from './env';
 
 import {
     OTHER,
@@ -88,6 +92,19 @@ export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
 export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
 
 export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
+
+export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
+
+const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
+// NOTE: We only use an API key for ipgeolocation.io in development. On staging
+// and production we use request origin validation so that we don't have to
+// expose an API key
+export const makeGetClientInfoURL = () => {
+    const clientInfoURLSuffix = !env('ENVIRONMENT') || env('ENVIRONMENT') === 'development'
+        ? `&apiKey=${env('REACT_APP_IPGEOLOCATION_API_KEY')}`
+        : '';
+    return `${clientInfoURL}${clientInfoURLSuffix}`;
+};
 
 export const getValueFromObject = ({ value }) => value;
 
@@ -191,16 +208,21 @@ export const createParamsFromQueryString = (qs) => {
         : qs;
 
     const {
+        search,
         status,
     } = querystring.parse(qsToParse);
 
+    const params = {};
+
     if (status) {
-        return Array.isArray(status)
-            ? Object.freeze({ status })
-            : Object.freeze({ status: [status] });
+        params.status = Array.isArray(status) ? status : [status];
     }
 
-    return {};
+    if (search) {
+        params.search = search;
+    }
+
+    return params;
 };
 
 export const getTokenFromQueryString = (qs) => {
@@ -514,3 +536,8 @@ export const addProtocolToWebsiteURLIfMissing = (url) => {
 
     return `http://${url}`;
 };
+
+export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
+    keys(pickBy(featureFlags, identity));
+
+export const checkWhetherUserHasDashboardAccess = user => get(user, 'is_superuser', false);

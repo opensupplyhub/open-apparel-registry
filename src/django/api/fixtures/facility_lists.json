@@ -4,13 +4,14 @@
         "pk": 2,
         "fields": {
             "contributor": 2,
-            "name": "Winter 2019 Compliance List",
-            "file_name": "Winter 2019 Compliance List.csv",
+            "name": "Spring 2019 Compliance List",
+            "description": "This is the detailed description of the list named Spring 2019 Compliance List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
+            "file_name": "Spring 2019 Compliance List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-12T01:24:11+00:00",
-            "updated_at": "2019-03-14T21:59:08.605650+00:00"
+            "created_at": "2019-05-21T20:28:53+00:00",
+            "updated_at": "2019-05-22T21:42:47.852880+00:00"
         }
     },
     {
@@ -18,13 +19,14 @@
         "pk": 3,
         "fields": {
             "contributor": 3,
-            "name": "Winter 2017 Affiliate List",
-            "file_name": "Winter 2017 Affiliate List.csv",
+            "name": "Fall 2018 Affiliate List",
+            "description": null,
+            "file_name": "Fall 2018 Affiliate List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-09T19:32:04+00:00",
-            "updated_at": "2019-03-14T21:59:08.305503+00:00"
+            "created_at": "2019-05-15T20:03:20+00:00",
+            "updated_at": "2019-05-22T21:42:47.298485+00:00"
         }
     },
     {
@@ -32,13 +34,14 @@
         "pk": 4,
         "fields": {
             "contributor": 4,
-            "name": "Spring 2019 Apparel List",
-            "file_name": "Spring 2019 Apparel List.csv",
+            "name": "Spring 2018 Compliance List",
+            "description": "This is the detailed description of the list named Spring 2018 Compliance List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
+            "file_name": "Spring 2018 Compliance List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-14T18:13:24+00:00",
-            "updated_at": "2019-03-14T21:59:08.168094+00:00"
+            "created_at": "2019-05-15T13:04:50+00:00",
+            "updated_at": "2019-05-22T21:42:47.838226+00:00"
         }
     },
     {
@@ -46,13 +49,14 @@
         "pk": 5,
         "fields": {
             "contributor": 5,
-            "name": "Winter 2019 Apparel List",
-            "file_name": "Winter 2019 Apparel List.csv",
+            "name": "Winter 2017 Apparel List",
+            "description": null,
+            "file_name": "Winter 2017 Apparel List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-13T09:44:23+00:00",
-            "updated_at": "2019-03-14T21:59:08.996885+00:00"
+            "created_at": "2019-05-21T23:37:32+00:00",
+            "updated_at": "2019-05-22T21:42:47.773436+00:00"
         }
     },
     {
@@ -60,13 +64,14 @@
         "pk": 6,
         "fields": {
             "contributor": 6,
-            "name": "Fall 2019 Affiliate List",
-            "file_name": "Fall 2019 Affiliate List.csv",
+            "name": "Fall 2018 Apparel List",
+            "description": "This is the detailed description of the list named Fall 2018 Apparel List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
+            "file_name": "Fall 2018 Apparel List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-12T08:20:34+00:00",
-            "updated_at": "2019-03-14T21:59:08.854117+00:00"
+            "created_at": "2019-05-20T10:04:24+00:00",
+            "updated_at": "2019-05-22T21:42:47.954648+00:00"
         }
     },
     {
@@ -74,13 +79,14 @@
         "pk": 7,
         "fields": {
             "contributor": 7,
-            "name": "Winter 2019 Affiliate List",
-            "file_name": "Winter 2019 Affiliate List.csv",
+            "name": "Summer 2019 Affiliate List",
+            "description": null,
+            "file_name": "Summer 2019 Affiliate List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-13T20:00:54+00:00",
-            "updated_at": "2019-03-14T21:59:08.043911+00:00"
+            "created_at": "2019-05-19T11:06:58+00:00",
+            "updated_at": "2019-05-22T21:42:47.793898+00:00"
         }
     },
     {
@@ -88,13 +94,14 @@
         "pk": 8,
         "fields": {
             "contributor": 8,
-            "name": "Fall 2018 Affiliate List",
-            "file_name": "Fall 2018 Affiliate List.csv",
+            "name": "Spring 2019 Compliance List",
+            "description": "This is the detailed description of the list named Spring 2019 Compliance List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
+            "file_name": "Spring 2019 Compliance List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-13T03:12:46+00:00",
-            "updated_at": "2019-03-14T21:59:08.849912+00:00"
+            "created_at": "2019-05-14T07:33:17+00:00",
+            "updated_at": "2019-05-22T21:42:47.032889+00:00"
         }
     },
     {
@@ -102,13 +109,14 @@
         "pk": 9,
         "fields": {
             "contributor": 9,
-            "name": "Summer 2017 Apparel List",
-            "file_name": "Summer 2017 Apparel List.csv",
+            "name": "Fall 2019 Compliance List",
+            "description": null,
+            "file_name": "Fall 2019 Compliance List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-13T04:46:47+00:00",
-            "updated_at": "2019-03-14T21:59:08.391597+00:00"
+            "created_at": "2019-05-20T09:41:38+00:00",
+            "updated_at": "2019-05-22T21:42:47.570810+00:00"
         }
     },
     {
@@ -116,13 +124,14 @@
         "pk": 10,
         "fields": {
             "contributor": 10,
-            "name": "Summer 2018 Apparel List",
-            "file_name": "Summer 2018 Apparel List.csv",
+            "name": "Summer 2018 Affiliate List",
+            "description": "This is the detailed description of the list named Summer 2018 Affiliate List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
+            "file_name": "Summer 2018 Affiliate List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-14T07:36:44+00:00",
-            "updated_at": "2019-03-14T21:59:08.969163+00:00"
+            "created_at": "2019-05-15T05:51:34+00:00",
+            "updated_at": "2019-05-22T21:42:47.721080+00:00"
         }
     },
     {
@@ -130,13 +139,14 @@
         "pk": 11,
         "fields": {
             "contributor": 11,
-            "name": "Winter 2018 Compliance List",
-            "file_name": "Winter 2018 Compliance List.csv",
+            "name": "Summer 2018 Compliance List",
+            "description": null,
+            "file_name": "Summer 2018 Compliance List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-07T22:46:45+00:00",
-            "updated_at": "2019-03-14T21:59:08.910720+00:00"
+            "created_at": "2019-05-22T20:54:49+00:00",
+            "updated_at": "2019-05-22T21:42:47.039142+00:00"
         }
     },
     {
@@ -144,13 +154,14 @@
         "pk": 12,
         "fields": {
             "contributor": 12,
-            "name": "Summer 2019 Compliance List",
-            "file_name": "Summer 2019 Compliance List.csv",
+            "name": "Winter 2019 Compliance List",
+            "description": "This is the detailed description of the list named Winter 2019 Compliance List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
+            "file_name": "Winter 2019 Compliance List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-12T12:29:55+00:00",
-            "updated_at": "2019-03-14T21:59:08.637881+00:00"
+            "created_at": "2019-05-19T05:23:16+00:00",
+            "updated_at": "2019-05-22T21:42:47.008913+00:00"
         }
     },
     {
@@ -158,13 +169,14 @@
         "pk": 13,
         "fields": {
             "contributor": 13,
-            "name": "Summer 2018 Apparel List",
-            "file_name": "Summer 2018 Apparel List.csv",
+            "name": "Summer 2019 Affiliate List",
+            "description": null,
+            "file_name": "Summer 2019 Affiliate List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-06T22:11:40+00:00",
-            "updated_at": "2019-03-14T21:59:08.156573+00:00"
+            "created_at": "2019-05-21T01:22:52+00:00",
+            "updated_at": "2019-05-22T21:42:47.976337+00:00"
         }
     },
     {
@@ -172,13 +184,14 @@
         "pk": 14,
         "fields": {
             "contributor": 14,
-            "name": "Winter 2018 Affiliate List",
-            "file_name": "Winter 2018 Affiliate List.csv",
+            "name": "Fall 2017 Apparel List",
+            "description": "This is the detailed description of the list named Fall 2017 Apparel List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
+            "file_name": "Fall 2017 Apparel List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-10T05:05:59+00:00",
-            "updated_at": "2019-03-14T21:59:08.137936+00:00"
+            "created_at": "2019-05-21T17:22:38+00:00",
+            "updated_at": "2019-05-22T21:42:47.535184+00:00"
         }
     },
     {
@@ -186,13 +199,14 @@
         "pk": 15,
         "fields": {
             "contributor": 15,
-            "name": "Fall 2018 Compliance List",
-            "file_name": "Fall 2018 Compliance List.csv",
+            "name": "Fall 2017 Affiliate List",
+            "description": null,
+            "file_name": "Fall 2017 Affiliate List.csv",
             "header": "country,name,address,lat,lng",
             "is_active": true,
             "is_public": true,
-            "created_at": "2019-03-12T11:21:04+00:00",
-            "updated_at": "2019-03-14T21:59:08.428458+00:00"
+            "created_at": "2019-05-19T15:41:37+00:00",
+            "updated_at": "2019-05-22T21:42:47.864057+00:00"
         }
     }
 ]

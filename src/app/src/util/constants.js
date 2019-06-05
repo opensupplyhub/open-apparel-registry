@@ -47,6 +47,10 @@ export const profileFieldsEnum = Object.freeze({
     confirmNewPassword: 'confirmNewPassword',
 });
 
+export const profileSummaryFieldsEnum = Object.freeze({
+    facilityLists: 'facilityLists',
+});
+
 const accountEmailField = Object.freeze({
     id: registrationFieldsEnum.email,
     label: 'Email Address',
@@ -206,6 +210,9 @@ export const facilitiesRoute = '/facilities';
 export const facilityDetailsRoute = '/facilities/:oarID';
 export const profileRoute = '/profile/:id';
 export const aboutProcessingRoute = '/about/processing';
+export const dashboardRoute = '/dashboard';
+export const dashboardListsRoute = '/dashboard/lists';
+export const dashboardClaimsRoute = '/dashboard/claims';
 
 export const contributeCSVTemplate =
     'country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt';
@@ -381,4 +388,11 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
     matched: 'Number of items that have been matched with an existing facility or created a new facility.',
     error: 'Number of items that have encountered errors during processing',
     potentialMatch: 'Number of items with potential matches to confirm or reject.',
+});
+
+export const CLAIM_A_FACILITY = 'claim_a_facility';
+
+export const COUNTRY_CODES = Object.freeze({
+    default: 'IE',
+    china: 'CN',
 });

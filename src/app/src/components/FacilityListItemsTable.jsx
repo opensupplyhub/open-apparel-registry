@@ -14,6 +14,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import ReactSelect from 'react-select';
 import ShowOnly from './ShowOnly';
 
+import FacilityListItemsFilterSearch from './FacilityListItemsFilterSearch';
 import FacilityListItemsTableRow from './FacilityListItemsTableRow';
 import FacilityListItemsConfirmationTableRow from './FacilityListItemsConfirmationTableRow';
 import FacilityListItemsErrorTableRow from './FacilityListItemsErrorTableRow';
@@ -56,12 +57,16 @@ const facilityListItemsTableStyles = Object.freeze({
         padding: '20px',
         lineHeight: '1.2',
     }),
+    searchFilterStyles: Object.freeze({
+        marginRight: '5px',
+    }),
     statusFilterStyles: Object.freeze({
-        padding: '20px 0 0 20px',
+        padding: '10px 20px 0 20px',
+        display: 'flex',
+        alignItems: 'center',
     }),
     statusFilterSelectStyles: Object.freeze({
-        display: 'inline-block',
-        width: '40%',
+        flex: '2',
     }),
     statusFilterMessageStyles: Object.freeze({
         padding: '0 0 0 20px',
@@ -74,7 +79,6 @@ const createSelectedStatusChoicesFromParams = (params) => {
     }
     return null;
 };
-
 
 class FacilityListItemsTable extends Component {
     componentDidUpdate(prevProps) {
@@ -175,6 +179,37 @@ class FacilityListItemsTable extends Component {
         fetchListItems(listID, page, getValueFromEvent(e), params);
     }
 
+    handleChangeSearchTerm = (term) => {
+        const {
+            fetchListItems,
+            match: {
+                params: {
+                    listID,
+                },
+            },
+            history: {
+                replace,
+                location: {
+                    search,
+                },
+            },
+        } = this.props;
+
+        const { rowsPerPage } = createPaginationOptionsFromQueryString(search);
+        const params = createParamsFromQueryString(search);
+        const newParams = update(params, {
+            search: { $set: term !== '' ? term : null },
+        });
+
+        replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
+            listID,
+            1,
+            rowsPerPage,
+            newParams,
+        ));
+        fetchListItems(listID, 1, rowsPerPage, newParams);
+    }
+
     handleChangeStatusFilter = (selected) => {
         const {
             fetchListItems,
@@ -226,7 +261,7 @@ class FacilityListItemsTable extends Component {
         const params = createParamsFromQueryString(search);
 
         const newParams = update(params, {
-            $unset: ['status'],
+            $unset: ['status', 'search'],
         });
         replace(makePaginatedFacilityListItemsDetailLinkWithRowCount(
             listID,
@@ -395,6 +430,12 @@ class FacilityListItemsTable extends Component {
         return (
             <Paper style={facilityListItemsTableStyles.containerStyles}>
                 <div style={facilityListItemsTableStyles.statusFilterStyles}>
+                    <div style={facilityListItemsTableStyles.searchFilterStyles}>
+                        <FacilityListItemsFilterSearch
+                            currentValue={params.search || ''}
+                            onSearch={this.handleChangeSearchTerm}
+                        />
+                    </div>
                     <div style={facilityListItemsTableStyles.statusFilterSelectStyles}>
                         <ReactSelect
                             isMulti
@@ -405,9 +446,22 @@ class FacilityListItemsTable extends Component {
                             placeholder="Filter by item status..."
                             value={createSelectedStatusChoicesFromParams(params)}
                             onChange={this.handleChangeStatusFilter}
+                            styles={{
+                                control: provided => ({
+                                    ...provided,
+                                    height: '56px',
+                                }),
+                            }}
+                            theme={theme => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                    primary: '#00319D',
+                                },
+                            })}
                         />
                     </div>
-                    <ShowOnly when={!!(params && params.status)}>
+                    <ShowOnly when={!!(params && (params.status || params.search))}>
                         <span style={facilityListItemsTableStyles.statusFilterMessageStyles}>
                             Showing {filteredCount} of {list.item_count} items.
                         </span>

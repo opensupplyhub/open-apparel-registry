@@ -18,6 +18,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.5.0] - 2019-06-05
+### Added
+- Add django-waffle and configure Django & React apps to enable feature flags [#531](https://github.com/open-apparel-registry/open-apparel-registry/pull/531)
+- Support uploading Excel files [#532](https://github.com/open-apparel-registry/open-apparel-registry/pull/532)
+- Fetch client country code based on IP [#541](https://github.com/open-apparel-registry/open-apparel-registry/pull/541)
+- Free text search filter for facility list items [#542](https://github.com/open-apparel-registry/open-apparel-registry/pull/542)
+- Add admin-authorized dashboard route: [#553](https://github.com/open-apparel-registry/open-apparel-registry/pull/553)
+- Enabled hot reloading during development in React app [#556](https://github.com/open-apparel-registry/open-apparel-registry/pull/556)
+- Create `/dashboard/lists` and `/dashboard/claims` routes [#557](https://github.com/open-apparel-registry/open-apparel-registry/pull/557)
+
+### Changed
+- Show active facility list names and descriptions on profile page [#534](https://github.com/open-apparel-registry/open-apparel-registry/pull/534)
+- Conditionally make requests to Google services based on client country
+  detected by IP geolocation [#548](https://github.com/open-apparel-registry/open-apparel-registry/pull/548)
+
+### Deprecated
+
+### Removed
+
+### Fixed
+- Fixed script name in release issue template [#529](https://github.com/open-apparel-registry/open-apparel-registry/pull/529)
+
+### Security
+- Bumped Django REST framework to version not impacted by [WS-2019-0037](https://github.com/encode/django-rest-framework/commit/75a489150ae24c2f3c794104a8e98fa43e2c9ce9) [#536](https://github.com/open-apparel-registry/open-apparel-registry/pull/536)
+- Upgrade axios to 0.19.0 [#554](https://github.com/open-apparel-registry/open-apparel-registry/pull/554)
+
 ## [2.4.0] - 2019-05-20
 ### Added
 - Add django-simple-history and create audit model for facilities [#521](https://github.com/open-apparel-registry/open-apparel-registry/pull/521)
@@ -88,7 +114,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.5.0...HEAD
+[2.5.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.5.0
 [2.4.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.4.0
 [2.3.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.3.0
 [2.2.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.2.0
