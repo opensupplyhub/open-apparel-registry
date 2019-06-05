@@ -23,6 +23,7 @@ from api.models import (FacilityList,
                         Facility,
                         FacilityMatch,
                         FacilityClaim,
+                        FacilityClaimReviewNote,
                         User,
                         Contributor)
 from api.countries import COUNTRY_NAMES
@@ -395,7 +396,58 @@ class FacilityClaimSerializer(ModelSerializer):
         return claim.contributor.name
 
     def get_contributor_id(self, claim):
-        return claim.contributor_id
+        return claim.contributor.admin.id
+
+
+class FacilityClaimDetailsSerializer(ModelSerializer):
+    contributor = SerializerMethodField()
+    facility = SerializerMethodField()
+    status_change = SerializerMethodField()
+    notes = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaim
+        fields = ('id', 'created_at', 'updated_at', 'contact_person', 'email',
+                  'phone_number', 'company_name', 'website',
+                  'facility_description', 'preferred_contact_method', 'status',
+                  'contributor', 'facility', 'verification_method',
+                  'status_change', 'notes')
+
+    def get_contributor(self, claim):
+        return UserProfileSerializer(claim.contributor.admin).data
+
+    def get_facility(self, claim):
+        return FacilitySerializer(claim.facility).data
+
+    def get_status_change(self, claim):
+        if claim.status == FacilityClaim.PENDING:
+            return {
+                'status_change_by': None,
+                'status_change_date': None,
+                'status_change_reason': None,
+            }
+
+        return {
+            'status_change_by': claim.status_change_by.email,
+            'status_change_date': claim.status_change_date,
+            'status_change_reason': claim.status_change_reason,
+        }
+
+    def get_notes(self, claim):
+        notes = FacilityClaimReviewNote.objects.filter(claim=claim)
+        data = FacilityClaimReviewNoteSerializer(notes, many=True).data
+        return data
+
+
+class FacilityClaimReviewNoteSerializer(ModelSerializer):
+    author = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaimReviewNote
+        fields = ('id', 'created_at', 'updated_at', 'note', 'author')
+
+    def get_author(self, note):
+        return note.author.email
 
 
 class FacilityMatchSerializer(ModelSerializer):

@@ -25,7 +25,12 @@ const dashboardStyles = Object.freeze({
         display: 'flex',
         flexDirection: 'column',
     }),
+    appGridStyles: Object.freeze({
+        marginBottom: '100px',
+    }),
 });
+
+const DASHBOARD_TITLE = 'Dashboard';
 
 function Dashboard({
     userWithAccessHasSignedIn,
@@ -33,7 +38,7 @@ function Dashboard({
 }) {
     if (fetchingSessionSignIn) {
         return (
-            <AppGrid title="Dashboard">
+            <AppGrid title={DASHBOARD_TITLE}>
                 <CircularProgress />
             </AppGrid>
         );
@@ -41,7 +46,7 @@ function Dashboard({
 
     if (!userWithAccessHasSignedIn) {
         return (
-            <AppGrid title="Dashboard">
+            <AppGrid title={DASHBOARD_TITLE}>
                 Unauthorized
             </AppGrid>
         );
@@ -62,7 +67,46 @@ function Dashboard({
 
     return (
         <AppOverflow>
-            <AppGrid title="Dashboard">
+            <AppGrid
+                style={dashboardStyles.appGridStyles}
+                title={
+                    (
+                        <Switch>
+                            <Route
+                                path={dashboardListsRoute}
+                                render={() => 'Dashboard / Contributor Lists'}
+                            />
+                            <Route
+                                path={dashboardClaimsDetailsRoute}
+                                render={
+                                    () => (
+                                        <FeatureFlag
+                                            flag={CLAIM_A_FACILITY}
+                                            alternative={DASHBOARD_TITLE}
+                                        >
+                                            Dashboad / Facility Claim Details
+                                        </FeatureFlag>
+                                    )
+                                }
+                            />
+                            <Route
+                                path={dashboardClaimsRoute}
+                                render={
+                                    () => (
+                                        <FeatureFlag
+                                            flag={CLAIM_A_FACILITY}
+                                            alternative={DASHBOARD_TITLE}
+                                        >
+                                            Dashboard / Facility Claims
+                                        </FeatureFlag>
+                                    )
+                                }
+                            />
+                            <Route render={() => DASHBOARD_TITLE} />
+                        </Switch>
+                    )
+                }
+            >
                 <Switch>
                     <Route path={dashboardListsRoute} component={DashboardLists} />
                     <Route

@@ -1,0 +1,18 @@
+{% block content %}
+Hi,
+
+You're receiving this email because we approved your request to claim this Open Apparel Registry facility:
+
+- Facility: {{ facility_name }}, {{ facility_address }}
+- Facility URL: {{ facility_url }}
+
+{% if approval_reason|length %}
+Here's the reason for the approval:
+
+{{ approval_reason }}
+{% endif %}
+
+Sincerely,
+
+{% include "mail/signature_block.txt" %}
+{% endblock content %}

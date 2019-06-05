@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Your request to claim an Open Apparel Registry facility was revoked
+        </title>
+    </head>
+    <body>
+        <p>
+            Hi,
+        </p>
+        <p>
+            You're receiving this email because we revoked your request to claim this
+            Open Apparel Registry facility:
+        </p>
+        <ul>
+            <li>
+                Facility: {{ facility_name }}, {{ facility_address }}
+            </li>
+            <li>
+                Facility URL: {{ facility_url }}
+            </li>
+        </ul>
+        {% if revocation_reason|length %}
+        <p>
+            Here's the reason for it was revoked:
+        </p>
+        <p>
+            {{ revocation_reason }}
+        </p>
+        {% endif %}
+        <p>
+            Sincerely,
+        </p>
+        {% include "mail/signature_block.html" %}
+    </body>
+</html>

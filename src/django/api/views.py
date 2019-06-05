@@ -12,6 +12,7 @@ from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -43,6 +44,7 @@ from api.constants import (CsvHeaderField,
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
+                        FacilityClaimReviewNote,
                         Facility,
                         FacilityMatch,
                         Contributor,
@@ -56,12 +58,17 @@ from api.serializers import (FacilityListSerializer,
                              FacilityDetailsSerializer,
                              UserSerializer,
                              UserProfileSerializer,
-                             FacilityClaimSerializer)
+                             FacilityClaimSerializer,
+                             FacilityClaimDetailsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
 from api.pagination import FacilitiesGeoJSONPagination
-from api.mail import send_claim_facility_confirmation_email
+from api.mail import (send_claim_facility_confirmation_email,
+                      send_claim_facility_approval_email,
+                      send_claim_facility_denial_email,
+                      send_claim_facility_revocation_email)
+from api.exceptions import BadRequestException
 
 
 @permission_classes((AllowAny,))
@@ -1295,13 +1302,186 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     def create(self, request):
         pass
 
+    def delete(self, request):
+        pass
+
     def list(self, request):
         if not switch_is_active('claim_a_facility'):
-            return NotFound()
+            raise NotFound()
 
         if not request.user.is_superuser:
-            return PermissionDenied()
+            raise PermissionDenied()
 
-        response_data = FacilityClaimSerializer(self.queryset, many=True).data
+        response_data = FacilityClaimSerializer(FacilityClaim.objects.all(),
+                                                many=True).data
 
         return Response(response_data)
+
+    def retrieve(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+            response_data = FacilityClaimDetailsSerializer(claim).data
+
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='approve')
+    def approve_claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            if claim.status != FacilityClaim.PENDING:
+                raise BadRequestException(
+                    'Only PENDING claims can be approved.',
+                )
+
+            claim.status_change_reason = request.data.get('reason', '')
+            claim.status_change_by = request.user
+            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status = FacilityClaim.APPROVED
+            claim.save()
+
+            note = 'Status was updated to {} for reason: {}'.format(
+                FacilityClaim.APPROVED,
+                claim.status_change_reason,
+            )
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=note,
+            )
+
+            send_claim_facility_approval_email(request, claim)
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='deny')
+    def deny_claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            if claim.status != FacilityClaim.PENDING:
+                raise BadRequestException(
+                    'Only PENDING claims can be denied.',
+                )
+
+            claim.status_change_reason = request.data.get('reason', '')
+            claim.status_change_by = request.user
+            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status = FacilityClaim.DENIED
+            claim.save()
+
+            note = 'Status was updated to {} for reason: {}'.format(
+                FacilityClaim.DENIED,
+                claim.status_change_reason,
+            )
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=note,
+            )
+
+            send_claim_facility_denial_email(request, claim)
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='revoke')
+    def revoke_claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            if claim.status != FacilityClaim.APPROVED:
+                raise BadRequestException(
+                    'Only APPROVED claims can be revoked.',
+                )
+
+            claim.status_change_reason = request.data.get('reason', '')
+            claim.status_change_by = request.user
+            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status = FacilityClaim.REVOKED
+            claim.save()
+
+            note = 'Status was updated to {} for reason: {}'.format(
+                FacilityClaim.REVOKED,
+                claim.status_change_reason,
+            )
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=note,
+            )
+
+            send_claim_facility_revocation_email(request, claim)
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='note')
+    def add_note(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=request.data.get('note')
+            )
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()

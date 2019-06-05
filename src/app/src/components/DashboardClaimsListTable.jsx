@@ -1,7 +1,6 @@
 import React from 'react';
 import { func, shape } from 'prop-types';
-import { withRouter } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -130,7 +129,7 @@ DashboardClaimsListTable.propTypes = {
     data: facilityClaimsListPropType.isRequired,
     history: shape({
         push: func.isRequired,
-    }),
+    }).isRequired,
 };
 
 export default withRouter(DashboardClaimsListTable);

@@ -377,6 +377,8 @@ class FacilityClaim(models.Model):
     DENIED = 'DENIED'
     REVOKED = 'REVOKED'
 
+    # These status choices must be kept in sync with the client's
+    # `facilityClaimStatusChoicesEnum`.
     STATUS_CHOICES = (
         (PENDING, PENDING),
         (APPROVED, APPROVED),
@@ -439,6 +441,44 @@ class FacilityClaim(models.Model):
         choices=STATUS_CHOICES,
         default=PENDING,
         help_text='The current status of this facility claim')
+    status_change_reason = models.TextField(
+        null=True,
+        blank=True,
+        help_text='The reason entered when changing the status of this claim.')
+    status_change_by = models.ForeignKey(
+        'User',
+        null=True,
+        on_delete=models.PROTECT,
+        help_text='The user who changed the status of this facility claim',
+        related_name='approver_of_claim')
+    status_change_date = models.DateTimeField(null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
+
+
+class FacilityClaimReviewNote(models.Model):
+    """
+    A note entered by an administrator when reviewing a FacilityClaim.
+    """
+
+    claim = models.ForeignKey(
+        'FacilityClaim',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The facility claim for this note'
+    )
+    author = models.ForeignKey(
+        'User',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The author of the facility claim review note')
+    note = models.TextField(
+        null=False,
+        blank=False,
+        help_text='The review note')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

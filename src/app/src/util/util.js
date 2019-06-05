@@ -98,6 +98,11 @@ export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
 export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
 export const makeGetFacilityClaimsURL = () => '/api/facility-claims/';
+export const makeGetFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/`;
+export const makeApproveFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/approve/`;
+export const makeDenyFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/deny/`;
+export const makeRevokeFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/revoke/`;
+export const makeAddNewFacilityClaimReviewNoteURL = claimID => `/api/facility-claims/${claimID}/note/`;
 
 const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
 // NOTE: We only use an API key for ipgeolocation.io in development. On staging

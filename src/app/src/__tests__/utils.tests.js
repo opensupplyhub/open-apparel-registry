@@ -35,6 +35,11 @@ const {
     makeFacilityDetailLink,
     makeFacilityClaimDetailsLink,
     getIDFromEvent,
+    makeGetFacilityClaimByClaimIDURL,
+    makeApproveFacilityClaimByClaimIDURL,
+    makeDenyFacilityClaimByClaimIDURL,
+    makeRevokeFacilityClaimByClaimIDURL,
+    makeAddNewFacilityClaimReviewNoteURL,
     getBBoxForArrayOfGeoJSONPoints,
     makeFacilityListItemsDetailLink,
     makePaginatedFacilityListItemsDetailLinkWithRowCount,
@@ -1251,5 +1256,40 @@ it('gets an ID from an event', () => {
     expect(isEqual(
         getIDFromEvent(event),
         expectedID,
+    )).toBe(true);
+});
+
+it('creates links to get facility claim details from a claim ID', () => {
+    const claimID = 'claimID';
+    const expectedMatch = '/api/facility-claims/claimID/';
+
+    expect(isEqual(
+        expectedMatch,
+        makeGetFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    const expectedApproveMatch = '/api/facility-claims/claimID/approve/';
+    const expectedDenyMatch = '/api/facility-claims/claimID/deny/';
+    const expectedRevokeMatch = '/api/facility-claims/claimID/revoke/';
+    const expectedAddNoteMatch = '/api/facility-claims/claimID/note/';
+
+    expect(isEqual(
+        expectedApproveMatch,
+        makeApproveFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    expect(isEqual(
+        expectedDenyMatch,
+        makeDenyFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    expect(isEqual(
+        expectedRevokeMatch,
+        makeRevokeFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    expect(isEqual(
+        expectedAddNoteMatch,
+        makeAddNewFacilityClaimReviewNoteURL(claimID),
     )).toBe(true);
 });

@@ -206,5 +206,34 @@ export const facilityClaimsListPropType = arrayOf(shape({
     facility_name: string.isRequired,
     contributor_id: number.isRequired,
     contributor_name: string.isRequired,
-    status: oneOf(Object.values(facilityClaimStatusChoicesEnum)),
+    status: oneOf(Object.values(facilityClaimStatusChoicesEnum)).isRequired,
 }).isRequired);
+
+export const facilityClaimNotePropType = shape({
+    id: number.isRequired,
+    created_at: string.isRequired,
+    updated_at: string.isRequired,
+    note: string.isRequired,
+});
+
+export const facilityClaimPropType = shape({
+    id: number.isRequired,
+    created_at: string.isRequired,
+    updated_at: string.isRequired,
+    contact_person: string.isRequired,
+    email: string.isRequired,
+    phone_number: string.isRequired,
+    company_name: string.isRequired,
+    website: string.isRequired,
+    facility_description: string.isRequired,
+    preferred_contact_method: string.isRequired,
+    status: oneOf(Object.values(facilityClaimStatusChoicesEnum)).isRequired,
+    contributor: shape({}).isRequired,
+    facility: facilityPropType.isRequired,
+    stauts_change: shape({
+        status_change_by: string,
+        status_change_date: string,
+        status_change_reason: string,
+    }).isRequired,
+    notes: arrayOf(facilityClaimNotePropType).isRequired,
+});
