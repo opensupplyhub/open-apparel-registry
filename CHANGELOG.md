@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.5.0] - 2019-06-05
+### Added
 - Add django-waffle and configure Django & React apps to enable feature flags [#531](https://github.com/open-apparel-registry/open-apparel-registry/pull/531)
 - Support uploading Excel files [#532](https://github.com/open-apparel-registry/open-apparel-registry/pull/532)
 - Fetch client country code based on IP [#541](https://github.com/open-apparel-registry/open-apparel-registry/pull/541)
@@ -101,7 +114,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.4.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.5.0...HEAD
+[2.5.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.5.0
 [2.4.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.4.0
 [2.3.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.3.0
 [2.2.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.2.0
