@@ -24,6 +24,7 @@ import ConfirmRegistration from './components/ConfirmRegistration';
 import AboutProcessing from './components/AboutProcessing';
 import RouteNotFound from './components/RouteNotFound';
 import Dashboard from './components/Dashboard';
+import Translate from './components/Translate';
 
 import './App.css';
 
@@ -71,6 +72,7 @@ class App extends Component {
             <ErrorBoundary>
                 <Router history={history}>
                     <div className="App">
+                        <Translate />
                         <Navbar />
                         <main style={appStyles.mainPanelStyle}>
                             <Switch>

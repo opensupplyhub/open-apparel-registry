@@ -391,3 +391,8 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
 });
 
 export const CLAIM_A_FACILITY = 'claim_a_facility';
+
+export const COUNTRY_CODES = Object.freeze({
+    default: 'IE',
+    china: 'CN',
+});

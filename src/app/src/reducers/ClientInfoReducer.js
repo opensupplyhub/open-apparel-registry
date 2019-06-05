@@ -16,6 +16,6 @@ export default createReducer({
     }),
     [completeFetchClientInfo]: (state, payload) => update(state, {
         fetched: { $set: true },
-        countryCode: { $set: payload.country.code },
+        countryCode: { $set: payload.country_code2 },
     }),
 }, initialState);

@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Show active facility list names and descriptions on profile page [#534](https://github.com/open-apparel-registry/open-apparel-registry/pull/534)
+- Conditionally make requests to Google services based on client country
+  detected by IP geolocation [#548](https://github.com/open-apparel-registry/open-apparel-registry/pull/548)
 
 ### Deprecated
 
