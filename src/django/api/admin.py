@@ -53,8 +53,12 @@ class FacilityMatchAdmin(admin.ModelAdmin):
     pretty_results.short_description = 'Results'
 
 
+class ContributorAdmin(SimpleHistoryAdmin):
+    history_list_display = ('is_verified', 'verification_notes')
+
+
 admin.site.register(models.User, OarUserAdmin)
-admin.site.register(models.Contributor)
+admin.site.register(models.Contributor, ContributorAdmin)
 admin.site.register(models.FacilityList)
 admin.site.register(models.FacilityListItem, FacilityListItemAdmin)
 admin.site.register(models.Facility, FacilityHistoryAdmin)

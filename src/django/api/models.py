@@ -96,8 +96,25 @@ class Contributor(models.Model):
         blank=True,
         help_text='Free text field if selected contributor type is other'
     )
+    is_verified = models.BooleanField(
+        'verified',
+        default=False,
+        help_text=(
+            'Has this contributor has been verified by OAR staff.'
+        ),
+    )
+    verification_notes = models.TextField(
+        null=False,
+        blank=True,
+        help_text=(
+            'A description of the manual steps taken to verify the '
+            'contributor.'
+        )
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)
