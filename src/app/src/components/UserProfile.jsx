@@ -11,6 +11,8 @@ import Button from './Button';
 import FacilityListSummary from './FacilityListSummary';
 import UserProfileField from './UserProfileField';
 import UserAPITokens from './UserAPITokens';
+import BadgeVerified from './BadgeVerified';
+import COLOURS from '../util/COLOURS';
 
 import '../styles/css/specialStates.css';
 
@@ -63,6 +65,13 @@ const profileStyles = Object.freeze({
     errorMessagesStyles: Object.freeze({
         color: 'red',
         padding: '1rem',
+    }),
+    titleStyles: Object.freeze({
+        fontWeight: 'normal',
+        fontSize: '32px',
+    }),
+    badgeVerifiedStyles: Object.freeze({
+        padding: '10px',
     }),
 });
 
@@ -133,6 +142,9 @@ class UserProfile extends Component {
             (user && [profile.id, Number(id)].every(val => val === user.id));
 
         const profileInputs = profileFormFields
+            // Only show the name field on the profile page of the current user.
+            // On other profile pages the name is the title of the page.
+            .filter(field => isEditableProfile || field.id !== 'name')
             .map((field, index) => (
                 <UserProfileField
                     autoFocus={index === 1} // the first field is email & isn't an input
@@ -155,9 +167,16 @@ class UserProfile extends Component {
                     submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                 />));
 
+
         const title = isEditableProfile
             ? 'My Profile'
-            : 'Profile';
+            : (
+                <React.Fragment>
+                    {profile.name}
+                    <span title="Verified" style={profileStyles.badgeVerifiedStyles}>
+                        <BadgeVerified color={COLOURS.NAVY_BLUE} />
+                    </span>
+                </React.Fragment>);
 
         const showErrorMessages = isEditableProfile
             && errorsUpdatingProfile

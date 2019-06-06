@@ -105,11 +105,12 @@ class UserProfileSerializer(ModelSerializer):
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
     facility_lists = SerializerMethodField()
+    is_verified = SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'description', 'website', 'contributor_type',
-                  'other_contributor_type', 'facility_lists')
+                  'other_contributor_type', 'facility_lists', 'is_verified')
 
     def get_name(self, user):
         try:
@@ -157,6 +158,12 @@ class UserProfileSerializer(ModelSerializer):
             ).data
         except Contributor.DoesNotExist:
             return []
+
+    def get_is_verified(self, user):
+        try:
+            return user.contributor.is_verified
+        except Contributor.DoesNotExist:
+            return False
 
 
 class FacilityListSummarySerializer(ModelSerializer):
