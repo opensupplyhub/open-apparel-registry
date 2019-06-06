@@ -554,20 +554,18 @@ class Facility(models.Model):
             .facilitymatch_set
             .filter(status__in=[FacilityMatch.AUTOMATIC,
                                 FacilityMatch.CONFIRMED])
+            .order_by('updated_at')
             .values_list('facility_list_item')
         ]
 
-        return {
-            "{} ({})".format(
-                match.facility_list.contributor.name,
-                match.facility_list.name,
-            ): match.facility_list.contributor.admin.id
+        return [
+            match.facility_list
             for match
             in facility_list_item_matches
             if match.facility_list.is_active
             and match.facility_list.is_public
             and match.facility_list.contributor is not None
-        }
+        ]
 
 
 class FacilityMatch(models.Model):

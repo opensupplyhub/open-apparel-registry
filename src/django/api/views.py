@@ -525,7 +525,13 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                     "oar_id": "OAR_ID",
                     "other_names": [],
                     "other_addresses": [],
-                    "contributors": [[1, "Contributor One"]]
+                    "contributors": [
+                        {
+                            "id": 1,
+                            "name": "Brand A (2019 Q1 List)",
+                            "is_verified": true
+                        }
+                    ]
                 }
             }
         """

@@ -151,6 +151,12 @@ export const facilityPropType = shape({
     }).isRequired,
 });
 
+export const facilityDetailsContributorPropType = shape({
+    id: number.isRequired,
+    name: string.isRequired,
+    is_verified: bool.isRequired,
+});
+
 export const facilityDetailsPropType = shape({
     id: string.isRequired,
     type: oneOf([FEATURE]).isRequired,
@@ -165,10 +171,7 @@ export const facilityDetailsPropType = shape({
         country_name: string.isRequired,
         other_names: arrayOf(string),
         other_addresses: arrayOf(string),
-        contributors: arrayOf(arrayOf(oneOfType([
-            string,
-            number,
-        ]).isRequired).isRequired),
+        contributors: arrayOf(facilityDetailsContributorPropType),
     }).isRequired,
 });
 

@@ -1,9 +1,12 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { arrayOf, bool, number, oneOfType, string } from 'prop-types';
+import { arrayOf, bool, string } from 'prop-types';
 import isEqual from 'lodash/isEqual';
 
 import ShowOnly from './ShowOnly';
+import BadgeVerified from './BadgeVerified';
+import COLOURS from '../util/COLOURS';
+import { facilityDetailsContributorPropType } from '../util/propTypes';
 
 import { makeProfileRouteLink } from '../util/util';
 
@@ -11,19 +14,35 @@ const propsAreEqual = (prevProps, nextProps) =>
     isEqual(prevProps.label, nextProps.label)
     && isEqual(prevProps.data, nextProps.data);
 
+const styles = {
+    badgeVerified: {
+        width: '13px',
+        verticalAlign: 'top',
+        margin: '-2px 4px 0px 0px',
+    },
+};
+
 const FacilityDetailSidebarInfo = memo(({
     data,
     label,
     isContributorsList,
 }) => {
     const makeContributorListItem =
-        ([id, displayLabel]) => (
+        ({ id, name, is_verified: isVerified }) => (
             <li key={id} className="word-break">
+                <ShowOnly when={isVerified}>
+                    <span title="Verified">
+                        <BadgeVerified
+                            color={COLOURS.NAVY_BLUE}
+                            style={styles.badgeVerified}
+                        />
+                    </span>
+                </ShowOnly>
                 <Link
                     to={makeProfileRouteLink(id)}
                     href={makeProfileRouteLink(id)}
                 >
-                    {displayLabel}
+                    {name}
                 </Link>
             </li>
         );
@@ -58,13 +77,7 @@ FacilityDetailSidebarInfo.defaultProps = {
 };
 
 FacilityDetailSidebarInfo.propTypes = {
-    data: arrayOf(oneOfType([
-        arrayOf(oneOfType([
-            number,
-            string,
-        ])),
-        string,
-    ])).isRequired,
+    data: arrayOf(facilityDetailsContributorPropType).isRequired,
     label: string.isRequired,
     isContributorsList: bool,
 };

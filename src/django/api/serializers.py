@@ -358,9 +358,15 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
 
     def get_contributors(self, facility):
         return [
-            (id, display_name)
-            for (display_name, id)
-            in facility.contributors().items()
+            {
+                'id': facility_list.contributor.id,
+                'name': '{} ({})'.format(
+                    facility_list.contributor.name,
+                    facility_list.name),
+                'is_verified': facility_list.contributor.is_verified,
+            }
+            for facility_list
+            in facility.contributors()
         ]
 
     def get_country_name(self, facility):
