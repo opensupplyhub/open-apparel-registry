@@ -342,6 +342,93 @@ class FacilityListItem(models.Model):
         return 'FacilityListItem {id} - {status}'.format(**self.__dict__)
 
 
+class FacilityClaim(models.Model):
+    """
+    Data submitted from a user attempting to make a verified claim of a
+    Facility to be evaluated by OAR moderators.
+    """
+    EMAIL = 'EMAIL'
+    PHONE = 'PHONE'
+
+    PREFERRED_CONTACT_CHOICES = (
+        (EMAIL, EMAIL),
+        (PHONE, PHONE),
+    )
+
+    PENDING = 'PENDING'
+    APPROVED = 'APPROVED'
+    DENIED = 'DENIED'
+    REVOKED = 'REVOKED'
+
+    STATUS_CHOICES = (
+        (PENDING, PENDING),
+        (APPROVED, APPROVED),
+        (DENIED, DENIED),
+        (REVOKED, REVOKED),
+    )
+
+    contributor = models.ForeignKey(
+        'Contributor',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The contributor who submitted this facility claim')
+    facility = models.ForeignKey(
+        'Facility',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The facility for which this claim has been submitted')
+    contact_person = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The contact person for the facility claim')
+    email = models.EmailField(
+        null=False,
+        blank=False,
+        help_text='The contact email for the facility claim')
+    phone_number = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The contact phone number for the facility claim')
+    company_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=True,
+        help_text='The company name for the facility')
+    website = models.CharField(
+        max_length=200,
+        null=False,
+        blank=True,
+        help_text='The website for the facility')
+    facility_description = models.TextField(
+        null=False,
+        blank=True,
+        help_text='A description of the facility')
+    verification_method = models.TextField(
+        null=False,
+        blank=True,
+        help_text='An explanation of how the facility can be verified')
+    preferred_contact_method = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=PREFERRED_CONTACT_CHOICES,
+        help_text='The preferred contact method: email or phone')
+    status = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=STATUS_CHOICES,
+        default=PENDING,
+        help_text='The current status of this facility claim')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
+
+
 class Facility(models.Model):
     """
     An official OAR facility. Search results are returned from this table.

@@ -208,6 +208,7 @@ export const listsRoute = '/lists';
 export const facilityListItemsRoute = '/lists/:listID';
 export const facilitiesRoute = '/facilities';
 export const facilityDetailsRoute = '/facilities/:oarID';
+export const claimFacilityRoute = '/facilities/:oarID/claim';
 export const profileRoute = '/profile/:id';
 export const aboutProcessingRoute = '/about/processing';
 export const dashboardRoute = '/dashboard';
@@ -396,3 +397,49 @@ export const COUNTRY_CODES = Object.freeze({
     default: 'IE',
     china: 'CN',
 });
+
+export const claimAFacilityFormFields = Object.freeze({
+    contactName: Object.freeze({
+        id: 'contact-full-name',
+        label: 'Contact person full name',
+    }),
+    contactEmail: Object.freeze({
+        id: 'contact-email-address',
+        label: 'Email',
+    }),
+    contactPhone: Object.freeze({
+        id: 'contact-phone-number',
+        label: 'Phone number',
+    }),
+    companyName: Object.freeze({
+        id: 'company-name',
+        label: 'Official name of LLC or company registered',
+    }),
+    website: Object.freeze({
+        id: 'website',
+        label: 'Facility website',
+    }),
+    facilityDescription: Object.freeze({
+        id: 'facility-description',
+        label: 'Facility bio/description',
+    }),
+    verificationMethod: Object.freeze({
+        id: 'verification-method',
+        label: 'Any additional details?',
+    }),
+    preferredContactMethod: Object.freeze({
+        id: 'preferred-contact',
+        label: 'Preferred method of contact',
+    }),
+});
+
+export const claimAFacilityPreferredContactOptions = Object.freeze([
+    Object.freeze({
+        value: 'email',
+        label: 'Email',
+    }),
+    Object.freeze({
+        value: 'phone',
+        label: 'Phone',
+    }),
+]);

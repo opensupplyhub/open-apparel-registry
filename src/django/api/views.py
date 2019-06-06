@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
+from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
@@ -40,6 +41,7 @@ from api.constants import (CsvHeaderField,
                            ProcessingAction)
 from api.models import (FacilityList,
                         FacilityListItem,
+                        FacilityClaim,
                         Facility,
                         FacilityMatch,
                         Contributor,
@@ -57,6 +59,7 @@ from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
 from api.pagination import FacilitiesGeoJSONPagination
+from api.mail import send_claim_facility_confirmation_email
 
 
 @permission_classes((AllowAny,))
@@ -544,6 +547,56 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         """
         count = Facility.objects.count()
         return Response({"count": count})
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            return NotFound()
+
+        try:
+            facility = Facility.objects.get(pk=pk)
+            contributor = request.user.contributor
+
+            contact_person = request.data.get('contact_person')
+            email = request.data.get('email')
+            phone_number = request.data.get('phone_number')
+            company_name = request.data.get('company_name')
+            website = request.data.get('website')
+            facility_description = request.data.get('facility_description')
+            verification_method = request.data.get('verification_method')
+            preferred_contact_method = request \
+                .data \
+                .get('preferred_contact_method', '')
+
+            try:
+                validate_email(email)
+            except core_exceptions.ValidationError:
+                raise ValidationError('Valid email is required')
+
+            if not company_name:
+                raise ValidationError('Company name is required')
+
+            facility_claim = FacilityClaim.objects.create(
+                facility=facility,
+                contributor=contributor,
+                contact_person=contact_person,
+                email=email,
+                phone_number=phone_number,
+                company_name=company_name,
+                website=website,
+                facility_description=facility_description,
+                verification_method=verification_method,
+                preferred_contact_method=preferred_contact_method)
+
+            send_claim_facility_confirmation_email(request, facility_claim)
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Facility.DoesNotExist:
+            raise NotFound()
+        except Contributor.DoesNotExist:
+            raise NotFound()
 
 
 class FacilityListViewSetSchema(AutoSchema):
