@@ -12,6 +12,7 @@ import FacilityListSummary from './FacilityListSummary';
 import UserProfileField from './UserProfileField';
 import UserAPITokens from './UserAPITokens';
 import BadgeVerified from './BadgeVerified';
+import ShowOnly from './ShowOnly';
 import COLOURS from '../util/COLOURS';
 
 import '../styles/css/specialStates.css';
@@ -168,15 +169,15 @@ class UserProfile extends Component {
                 />));
 
 
-        const title = isEditableProfile
-            ? 'My Profile'
-            : (
-                <React.Fragment>
-                    {profile.name}
+        const title = (
+            <React.Fragment>
+                {isEditableProfile ? 'My Profile' : profile.name}
+                <ShowOnly when={profile.isVerified}>
                     <span title="Verified" style={profileStyles.badgeVerifiedStyles}>
                         <BadgeVerified color={COLOURS.NAVY_BLUE} />
                     </span>
-                </React.Fragment>);
+                </ShowOnly>
+            </React.Fragment>);
 
         const showErrorMessages = isEditableProfile
             && errorsUpdatingProfile
