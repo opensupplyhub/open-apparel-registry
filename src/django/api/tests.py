@@ -604,12 +604,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
 
     def test_returns_contributors(self):
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.contrib_one_name,
-                                           self.list_one_name)
-        contributor_two = "{} ({})".format(self.contrib_two_name,
-                                           self.list_two_name)
-        self.assertIn(contributor_one, contributors)
-        self.assertIn(contributor_two, contributors)
+        self.assertIn(self.list_one, contributors)
+        self.assertIn(self.list_two, contributors)
         self.assertEqual(len(contributors), 2)
 
     def test_excludes_canonical_name_from_other_names(self):
@@ -640,12 +636,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.list_two.is_active = False
         self.list_two.save()
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.contrib_one_name,
-                                           self.list_one_name)
-        contributor_two = "{} ({})".format(self.contrib_two_name,
-                                           self.list_two_name)
-        self.assertIn(contributor_one, contributors)
-        self.assertNotIn(contributor_two, contributors)
+        self.assertIn(self.list_one, contributors)
+        self.assertNotIn(self.list_two, contributors)
 
     def test_excludes_other_names_from_non_public_lists(self):
         self.list_two.is_public = False
@@ -665,12 +657,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.list_two.is_public = False
         self.list_two.save()
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.contrib_one_name,
-                                           self.list_one_name)
-        contributor_two = "{} ({})".format(self.contrib_two_name,
-                                           self.list_two_name)
-        self.assertIn(contributor_one, contributors)
-        self.assertNotIn(contributor_two, contributors)
+        self.assertIn(self.list_one, contributors)
+        self.assertNotIn(self.list_two, contributors)
 
     def test_excludes_unmatched_facilities_from_other_names(self):
         self.facility_match_two.status = FacilityMatch.REJECTED
@@ -690,12 +678,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.facility_match_two.status = FacilityMatch.REJECTED
         self.facility_match_two.save()
         contributors = self.facility.contributors()
-        contributor_one = "{} ({})".format(self.contrib_one_name,
-                                           self.list_one_name)
-        contributor_two = "{} ({})".format(self.contrib_two_name,
-                                           self.list_two_name)
-        self.assertIn(contributor_one, contributors)
-        self.assertNotIn(contributor_two, contributors)
+        self.assertIn(self.list_one, contributors)
+        self.assertNotIn(self.list_two, contributors)
         self.assertEqual(len(contributors), 1)
 
 

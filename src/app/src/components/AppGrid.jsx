@@ -44,7 +44,7 @@ AppGrid.defaultProps = {
 };
 
 AppGrid.propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.node.isRequired,
     style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node.isRequired,
     backButtonComponent: PropTypes.node,

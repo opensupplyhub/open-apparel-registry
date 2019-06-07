@@ -140,6 +140,7 @@ export default createReducer({
             currentPassword: { $set: '' },
             newPassword: { $set: '' },
             confirmNewPassword: { $set: '' },
+            isVerified: { $set: payload.is_verified || false },
             facilityLists: {
                 $set: payload.facility_lists
                     || initialState[profileSummaryFieldsEnum.facilityLists],

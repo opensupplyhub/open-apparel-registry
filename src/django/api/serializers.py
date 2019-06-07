@@ -63,43 +63,37 @@ class UserSerializer(ModelSerializer):
 
     def get_name(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.name
+            return user.contributor.name
         except Contributor.DoesNotExist:
             return None
 
     def get_description(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.description
+            return user.contributor.description
         except Contributor.DoesNotExist:
             return None
 
     def get_website(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.website
+            return user.contributor.website
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.contrib_type
+            return user.contributor.contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_other_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.other_contrib_type
+            return user.contributor.other_contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_id(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.id
+            return user.contributor.id
         except Contributor.DoesNotExist:
             return None
 
@@ -111,11 +105,12 @@ class UserProfileSerializer(ModelSerializer):
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
     facility_lists = SerializerMethodField()
+    is_verified = SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'description', 'website', 'contributor_type',
-                  'other_contributor_type', 'facility_lists')
+                  'other_contributor_type', 'facility_lists', 'is_verified')
 
     def get_name(self, user):
         try:
@@ -163,6 +158,12 @@ class UserProfileSerializer(ModelSerializer):
             ).data
         except Contributor.DoesNotExist:
             return []
+
+    def get_is_verified(self, user):
+        try:
+            return user.contributor.is_verified
+        except Contributor.DoesNotExist:
+            return False
 
 
 class FacilityListSummarySerializer(ModelSerializer):
@@ -357,9 +358,15 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
 
     def get_contributors(self, facility):
         return [
-            (id, display_name)
-            for (display_name, id)
-            in facility.contributors().items()
+            {
+                'id': facility_list.contributor.id,
+                'name': '{} ({})'.format(
+                    facility_list.contributor.name,
+                    facility_list.name),
+                'is_verified': facility_list.contributor.is_verified,
+            }
+            for facility_list
+            in facility.contributors()
         ]
 
     def get_country_name(self, facility):
