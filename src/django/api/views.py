@@ -856,11 +856,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             }
         """
         try:
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(contributor=user_contributor) \
-                .get(pk=pk)
+            if request.user.is_superuser:
+                facility_lists = FacilityList.objects.all()
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
+
+            facility_list = facility_lists.get(pk=pk)
             response_data = self.serializer_class(facility_list).data
 
             return Response(response_data)
@@ -930,11 +932,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             search = search.strip()
 
         try:
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(contributor=user_contributor) \
-                .get(pk=pk)
+            if request.user.is_superuser:
+                facility_lists = FacilityList.objects.all()
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
+
+            facility_list = facility_lists.get(pk=pk)
         except FacilityList.DoesNotExist:
             raise NotFound()
 
