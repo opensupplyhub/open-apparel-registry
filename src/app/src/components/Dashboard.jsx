@@ -6,19 +6,31 @@ import { Link, Route, Switch } from 'react-router-dom';
 
 import DashboardLists from './DashboardLists';
 import DashboardClaims from './DashboardClaims';
+import DashboardClaimsDetails from './DashboardClaimsDetails';
 import FeatureFlag from './FeatureFlag';
 
 import { checkWhetherUserHasDashboardAccess } from '../util/util';
-import { CLAIM_A_FACILITY, dashboardListsRoute, dashboardClaimsRoute } from '../util/constants';
+import {
+    CLAIM_A_FACILITY,
+    dashboardListsRoute,
+    dashboardClaimsRoute,
+    dashboardClaimsDetailsRoute,
+} from '../util/constants';
 
 import AppGrid from './AppGrid';
+import AppOverflow from './AppOverflow';
 
 const dashboardStyles = Object.freeze({
     linkSectionStyles: Object.freeze({
         display: 'flex',
         flexDirection: 'column',
     }),
+    appGridStyles: Object.freeze({
+        marginBottom: '100px',
+    }),
 });
+
+const DASHBOARD_TITLE = 'Dashboard';
 
 function Dashboard({
     userWithAccessHasSignedIn,
@@ -26,7 +38,7 @@ function Dashboard({
 }) {
     if (fetchingSessionSignIn) {
         return (
-            <AppGrid title="Dashboard">
+            <AppGrid title={DASHBOARD_TITLE}>
                 <CircularProgress />
             </AppGrid>
         );
@@ -34,7 +46,7 @@ function Dashboard({
 
     if (!userWithAccessHasSignedIn) {
         return (
-            <AppGrid title="Dashboard">
+            <AppGrid title={DASHBOARD_TITLE}>
                 Unauthorized
             </AppGrid>
         );
@@ -54,25 +66,79 @@ function Dashboard({
     );
 
     return (
-        <AppGrid title="Dashboard">
-            <Switch>
-                <Route path={dashboardListsRoute} component={DashboardLists} />
-                <Route
-                    path={dashboardClaimsRoute}
-                    render={
-                        () => (
-                            <FeatureFlag
-                                flag={CLAIM_A_FACILITY}
-                                alternative={linkSection}
-                            >
-                                <Route component={DashboardClaims} />
-                            </FeatureFlag>
-                        )
-                    }
-                />
-                <Route render={() => linkSection} />
-            </Switch>
-        </AppGrid>
+        <AppOverflow>
+            <AppGrid
+                style={dashboardStyles.appGridStyles}
+                title={
+                    (
+                        <Switch>
+                            <Route
+                                path={dashboardListsRoute}
+                                render={() => 'Dashboard / Contributor Lists'}
+                            />
+                            <Route
+                                path={dashboardClaimsDetailsRoute}
+                                render={
+                                    () => (
+                                        <FeatureFlag
+                                            flag={CLAIM_A_FACILITY}
+                                            alternative={DASHBOARD_TITLE}
+                                        >
+                                            Dashboad / Facility Claim Details
+                                        </FeatureFlag>
+                                    )
+                                }
+                            />
+                            <Route
+                                path={dashboardClaimsRoute}
+                                render={
+                                    () => (
+                                        <FeatureFlag
+                                            flag={CLAIM_A_FACILITY}
+                                            alternative={DASHBOARD_TITLE}
+                                        >
+                                            Dashboard / Facility Claims
+                                        </FeatureFlag>
+                                    )
+                                }
+                            />
+                            <Route render={() => DASHBOARD_TITLE} />
+                        </Switch>
+                    )
+                }
+            >
+                <Switch>
+                    <Route path={dashboardListsRoute} component={DashboardLists} />
+                    <Route
+                        path={dashboardClaimsDetailsRoute}
+                        render={
+                            () => (
+                                <FeatureFlag
+                                    flag={CLAIM_A_FACILITY}
+                                    alternative={linkSection}
+                                >
+                                    <Route component={DashboardClaimsDetails} />
+                                </FeatureFlag>
+                            )
+                        }
+                    />
+                    <Route
+                        path={dashboardClaimsRoute}
+                        render={
+                            () => (
+                                <FeatureFlag
+                                    flag={CLAIM_A_FACILITY}
+                                    alternative={linkSection}
+                                >
+                                    <Route component={DashboardClaims} />
+                                </FeatureFlag>
+                            )
+                        }
+                    />
+                    <Route render={() => linkSection} />
+                </Switch>
+            </AppGrid>
+        </AppOverflow>
     );
 }
 

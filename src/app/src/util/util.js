@@ -97,6 +97,12 @@ export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/
 export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
 export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
+export const makeGetFacilityClaimsURL = () => '/api/facility-claims/';
+export const makeGetFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/`;
+export const makeApproveFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/approve/`;
+export const makeDenyFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/deny/`;
+export const makeRevokeFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/revoke/`;
+export const makeAddNewFacilityClaimReviewNoteURL = claimID => `/api/facility-claims/${claimID}/note/`;
 
 const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
 // NOTE: We only use an API key for ipgeolocation.io in development. On staging
@@ -308,6 +314,8 @@ export function logErrorAndDispatchFailure(error, defaultMessage, failureAction)
 
 export const getValueFromEvent = ({ target: { value } }) => value;
 
+export const getIDFromEvent = ({ target: { id } }) => id;
+
 export const getCheckedFromEvent = ({ target: { checked } }) => checked;
 
 export const getFileFromInputRef = inputRef =>
@@ -368,6 +376,8 @@ export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
 
 export const makeClaimFacilityLink = oarID => `${facilitiesRoute}/${oarID}/claim`;
+
+export const makeFacilityClaimDetailsLink = claimID => `/dashboard/claims/${claimID}`;
 
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
 

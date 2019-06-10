@@ -2,6 +2,7 @@ import json
 import os
 import xlrd
 
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
@@ -12,9 +13,11 @@ from django.contrib.gis.geos import Point
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
+from waffle.testutils import override_switch
 
 from api.constants import ProcessingAction
 from api.models import (Facility, FacilityList, FacilityListItem,
+                        FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, Contributor, User)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.processing import (parse_facility_list_item,
@@ -137,7 +140,7 @@ class FacilityListCreateTest(APITestCase):
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
                          previous_item_count + sheet.nrows - 1)
-        items = list(FacilityListItem.objects.all())
+        items = list(FacilityListItem.objects.all().order_by('row_index'))
         self.assertEqual(items[0].raw_data, '"{}"'.format(
             '","'.join(sheet.row_values(1))))
 
@@ -1294,3 +1297,199 @@ class FacilityListItemTests(APITestCase):
         self.assertEqual(200, response.status_code)
         content = json.loads(response.content)
         self.assertEqual(1, len(content['results']))
+
+
+class FacilityClaimAdminDashboardTests(APITestCase):
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'example123'
+        self.user = User.objects.create(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name='List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item)
+
+        self.facility_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=self.contributor,
+                facility=self.facility,
+                contact_person='Name',
+                email=self.email,
+                phone_number=12345,
+                company_name='Test',
+                website='http://example.com',
+                facility_description='description',
+                preferred_contact_method=FacilityClaim.EMAIL)
+
+        self.superuser = User \
+            .objects \
+            .create_superuser('superuser@example.com',
+                              'superuser')
+
+        self.client.login(email='superuser@example.com',
+                          password='superuser')
+
+    @override_switch('claim_a_facility', active=True)
+    def test_approve_facility_claim(self):
+        self.assertEqual(len(mail.outbox), 0)
+
+        response = self.client.post(
+            '/api/facility-claims/{}/approve/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(mail.outbox), 1)
+
+        updated_facility_claim = FacilityClaim \
+            .objects \
+            .get(pk=self.facility_claim.id)
+
+        self.assertEqual(
+            FacilityClaim.APPROVED,
+            updated_facility_claim.status,
+        )
+
+        notes_count = FacilityClaimReviewNote \
+            .objects \
+            .filter(claim=updated_facility_claim) \
+            .count()
+
+        self.assertEqual(notes_count, 1)
+
+        error_response = self.client.post(
+            '/api/facility-claims/{}/approve/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(400, error_response.status_code)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_deny_facility_claim(self):
+        self.assertEqual(len(mail.outbox), 0)
+
+        response = self.client.post(
+            '/api/facility-claims/{}/deny/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(mail.outbox), 1)
+
+        updated_facility_claim = FacilityClaim \
+            .objects \
+            .get(pk=self.facility_claim.id)
+
+        self.assertEqual(
+            FacilityClaim.DENIED,
+            updated_facility_claim.status,
+        )
+
+        notes_count = FacilityClaimReviewNote \
+            .objects \
+            .filter(claim=updated_facility_claim) \
+            .count()
+
+        self.assertEqual(notes_count, 1)
+
+        error_response = self.client.post(
+            '/api/facility-claims/{}/deny/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(400, error_response.status_code)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_revoke_facility_claim(self):
+        self.assertEqual(len(mail.outbox), 0)
+
+        error_response = self.client.post(
+            '/api/facility-claims/{}/revoke/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(400, error_response.status_code)
+
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response = self.client.post(
+            '/api/facility-claims/{}/revoke/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(len(mail.outbox), 1)
+
+        updated_facility_claim = FacilityClaim \
+            .objects \
+            .get(pk=self.facility_claim.id)
+
+        self.assertEqual(
+            FacilityClaim.REVOKED,
+            updated_facility_claim.status,
+        )
+
+        notes_count = FacilityClaimReviewNote \
+            .objects \
+            .filter(claim=updated_facility_claim) \
+            .count()
+
+        self.assertEqual(notes_count, 1)
+
+        another_error_response = self.client.post(
+            '/api/facility-claims/{}/revoke/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(400, another_error_response.status_code)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_add_claim_review_note(self):
+        response = self.client.post('/api/facility-claims/1/note/',
+                                    {'note': 'note'})
+
+        self.assertEqual(200, response.status_code)
+
+        notes_count = FacilityClaimReviewNote \
+            .objects \
+            .filter(claim=self.facility_claim) \
+            .count()
+
+        self.assertEqual(notes_count, 1)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_claims_list_API_accessible_only_to_superusers(self):
+        response = self.client.get('/api/facility-claims/')
+        self.assertEqual(200, response.status_code)
+
+        self.client.logout()
+        self.client.login(email=self.email,
+                          password=self.password)
+
+        error_response = self.client.get('/api/facility-claims/')
+        self.assertEqual(403, error_response.status_code)
