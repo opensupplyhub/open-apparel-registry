@@ -27,6 +27,7 @@ import Dashboard from './components/Dashboard';
 import Translate from './components/Translate';
 import FeatureFlag from './components/FeatureFlag';
 import ClaimFacility from './components/ClaimFacility';
+import ClaimedFacilities from './components/ClaimedFacilities';
 
 import './App.css';
 
@@ -48,6 +49,7 @@ import {
     aboutProcessingRoute,
     dashboardRoute,
     claimFacilityRoute,
+    claimedFacilitiesRoute,
     CLAIM_A_FACILITY,
 } from './util/constants';
 
@@ -94,6 +96,17 @@ class App extends Component {
                                             alternative={<Route component={MapAndSidebar} />}
                                         >
                                             <Route component={ClaimFacility} />
+                                        </FeatureFlag>
+                                    )}
+                                />
+                                <Route
+                                    path={claimedFacilitiesRoute}
+                                    render={() => (
+                                        <FeatureFlag
+                                            flag={CLAIM_A_FACILITY}
+                                            alternative={<RouteNotFound />}
+                                        >
+                                            <Route component={ClaimedFacilities} />
                                         </FeatureFlag>
                                     )}
                                 />
