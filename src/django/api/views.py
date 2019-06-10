@@ -935,29 +935,30 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .objects \
                 .filter(contributor=user_contributor) \
                 .get(pk=pk)
-            queryset = FacilityListItem \
-                .objects \
-                .filter(facility_list=facility_list)
-            if search is not None and len(search) > 0:
-                queryset = queryset.filter(
-                    Q(facility__name__icontains=search) |
-                    Q(facility__address__icontains=search))
-            if status is not None and len(status) > 0:
-                q_statements = [make_q_from_status(s) for s in status]
-                queryset = queryset.filter(reduce(operator.or_, q_statements))
-
-            queryset = queryset.order_by('row_index')
-
-            page_queryset = self.paginate_queryset(queryset)
-            if page_queryset is not None:
-                serializer = FacilityListItemSerializer(page_queryset,
-                                                        many=True)
-                return self.get_paginated_response(serializer.data)
-
-            serializer = FacilityListItemSerializer(queryset, many=True)
-            return Response(serializer.data)
         except FacilityList.DoesNotExist:
             raise NotFound()
+
+        queryset = FacilityListItem \
+            .objects \
+            .filter(facility_list=facility_list)
+        if search is not None and len(search) > 0:
+            queryset = queryset.filter(
+                Q(facility__name__icontains=search) |
+                Q(facility__address__icontains=search))
+        if status is not None and len(status) > 0:
+            q_statements = [make_q_from_status(s) for s in status]
+            queryset = queryset.filter(reduce(operator.or_, q_statements))
+
+        queryset = queryset.order_by('row_index')
+
+        page_queryset = self.paginate_queryset(queryset)
+        if page_queryset is not None:
+            serializer = FacilityListItemSerializer(page_queryset,
+                                                    many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = FacilityListItemSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     @transaction.atomic
     @action(detail=True,
