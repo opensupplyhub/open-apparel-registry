@@ -359,7 +359,7 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     def get_contributors(self, facility):
         return [
             {
-                'id': facility_list.contributor.id,
+                'id': facility_list.contributor.admin.id,
                 'name': '{} ({})'.format(
                     facility_list.contributor.name,
                     facility_list.name),
