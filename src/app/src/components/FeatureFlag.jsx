@@ -1,5 +1,5 @@
 import React from 'react';
-import { arrayOf, node } from 'prop-types';
+import { arrayOf, bool, node } from 'prop-types';
 import { connect } from 'react-redux';
 import includes from 'lodash/includes';
 
@@ -12,7 +12,12 @@ function FeatureFlag({
     children,
     alternative,
     activeFeatureFlags,
+    fetching,
 }) {
+    if (fetching) {
+        return null;
+    }
+
     if (!includes(activeFeatureFlags, flag)) {
         return alternative;
     }
@@ -33,13 +38,18 @@ FeatureFlag.propTypes = {
     children: node.isRequired,
     alternative: node,
     activeFeatureFlags: arrayOf(featureFlagPropType).isRequired,
+    fetching: bool.isRequired,
 };
 
 function mapStateToProps({
-    featureFlags,
+    featureFlags: {
+        fetching,
+        flags,
+    },
 }) {
     return {
-        activeFeatureFlags: convertFeatureFlagsObjectToListOfActiveFlags(featureFlags),
+        activeFeatureFlags: convertFeatureFlagsObjectToListOfActiveFlags(flags),
+        fetching,
     };
 }
 
