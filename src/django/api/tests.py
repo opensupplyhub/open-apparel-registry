@@ -140,7 +140,7 @@ class FacilityListCreateTest(APITestCase):
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
                          previous_item_count + sheet.nrows - 1)
-        items = list(FacilityListItem.objects.all())
+        items = list(FacilityListItem.objects.all().order_by('row_index'))
         self.assertEqual(items[0].raw_data, '"{}"'.format(
             '","'.join(sheet.row_values(1))))
 
