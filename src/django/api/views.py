@@ -39,6 +39,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilitiesQueryParams,
+                           FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            ProcessingAction)
 from api.models import (FacilityList,
@@ -54,6 +55,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
                              FacilityQueryParamsSerializer,
+                             FacilityListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              UserSerializer,
@@ -832,9 +834,29 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             ]
         """
         try:
-            contributor = request.user.contributor
-            queryset = FacilityList.objects.filter(contributor=contributor)
-            response_data = self.serializer_class(queryset, many=True).data
+            if request.user.is_superuser:
+                params = FacilityListQueryParamsSerializer(
+                    data=request.query_params)
+                if not params.is_valid():
+                    raise ValidationError(params.errors)
+
+                contributor = params.data.get(
+                    FacilityListQueryParams.CONTRIBUTOR)
+
+                if contributor is not None:
+                    facility_lists = FacilityList.objects.filter(
+                        contributor=contributor)
+                else:
+                    facility_lists = FacilityList.objects.filter(
+                        contributor=request.user.contributor)
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
+
+            facility_lists = facility_lists.order_by('-created_at')
+
+            response_data = self.serializer_class(facility_lists,
+                                                  many=True).data
             return Response(response_data)
         except Contributor.DoesNotExist:
             raise ValidationError('User contributor cannot be None')

@@ -120,6 +120,7 @@ export const facilityListPropType = shape({
         ),
         () => number.isRequired,
     )).isRequired,
+    created_at: string.isRequired,
 });
 
 export const contributorOptionsPropType = arrayOf(shape({
