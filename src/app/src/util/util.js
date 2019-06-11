@@ -83,6 +83,8 @@ export const makeFacilityListsURL = () => '/api/facility-lists/';
 export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 export const makeSingleFacilityListItemsURL = id => `/api/facility-lists/${id}/items/`;
 
+export const makeDashboardFacilityListsURL = contributorID => `/api/facility-lists/?contributor=${contributorID}`;
+
 export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeGetContributorsURL = () => '/api/contributors/';
@@ -252,6 +254,18 @@ export const getTokenFromQueryString = (qs) => {
         : token;
 };
 
+export const getContributorFromQueryString = (qs) => {
+    const qsToParse = startsWith(qs, '?')
+        ? qs.slice(1)
+        : qs;
+
+    const {
+        contributor = null,
+    } = querystring.parse(qsToParse);
+
+    return parseInt(contributor, 10);
+};
+
 export const allFiltersAreEmpty = filters => values(filters)
     .reduce((acc, next) => {
         if (!isEmpty(next)) {
@@ -384,6 +398,8 @@ export const makeClaimFacilityLink = oarID => `${facilitiesRoute}/${oarID}/claim
 export const makeApprovedClaimDetailsLink = claimID => `/claimed/${claimID}`;
 
 export const makeFacilityClaimDetailsLink = claimID => `/dashboard/claims/${claimID}`;
+
+export const makeDashboardContributorListLink = contributorID => `/dashboard/lists/?contributor=${contributorID}`;
 
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
 

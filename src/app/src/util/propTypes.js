@@ -125,10 +125,14 @@ export const facilityListPropType = shape({
     created_at: string.isRequired,
 });
 
-export const contributorOptionsPropType = arrayOf(shape({
+export const contributorOptionPropType = shape({
     value: oneOfType([number, string]).isRequired,
     label: string.isRequired,
-}));
+});
+
+export const contributorOptionsPropType = arrayOf(
+    contributorOptionPropType,
+);
 
 export const contributorTypeOptionsPropType = arrayOf(shape({
     value: string.isRequired,
