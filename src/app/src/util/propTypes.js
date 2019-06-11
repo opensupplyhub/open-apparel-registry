@@ -36,6 +36,7 @@ export const userPropType = shape({
     email: string.isRequired,
     id: number.isRequired,
     contributor_id: number,
+    is_superuser: bool.isRequired,
 });
 
 export const profileFormValuesPropType = shape(Object
@@ -107,6 +108,7 @@ export const facilityListPropType = shape({
     id: number.isRequired,
     name: string,
     description: string,
+    contributor_id: number,
     file_name: string.isRequired,
     is_active: bool.isRequired,
     is_public: bool.isRequired,

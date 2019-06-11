@@ -199,7 +199,7 @@ class FacilityListSerializer(ModelSerializer):
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
                   'is_public', 'item_count', 'items_url', 'statuses',
-                  'status_counts', 'created_at')
+                  'status_counts', 'contributor_id', 'created_at')
 
     def get_item_count(self, facility_list):
         return facility_list.facilitylistitem_set.count()
