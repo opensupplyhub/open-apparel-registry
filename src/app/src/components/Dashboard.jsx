@@ -84,7 +84,7 @@ function Dashboard({
                                             flag={CLAIM_A_FACILITY}
                                             alternative={DASHBOARD_TITLE}
                                         >
-                                            Dashboad / Facility Claim Details
+                                            Dashboard / Facility Claim Details
                                         </FeatureFlag>
                                     )
                                 }
