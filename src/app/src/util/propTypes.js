@@ -230,10 +230,30 @@ export const facilityClaimPropType = shape({
     status: oneOf(Object.values(facilityClaimStatusChoicesEnum)).isRequired,
     contributor: shape({}).isRequired,
     facility: facilityPropType.isRequired,
-    stauts_change: shape({
+    status_change: shape({
         status_change_by: string,
         status_change_date: string,
         status_change_reason: string,
     }).isRequired,
     notes: arrayOf(facilityClaimNotePropType).isRequired,
+});
+
+export const approvedFacilityClaimPropType = shape({
+    id: number.isRequired,
+    facility_description: string.isRequired,
+    facility_name: string.isRequired,
+    facility_address: string.isRequired,
+    facility_phone_number: string.isRequired,
+    facility_phone_number_publicly_visible: bool.isRequired,
+    facility_website: string.isRequired,
+    facility_minimum_order_quantity: string.isRequired,
+    facility_average_lead_time: string.isRequired,
+    point_of_contact_person_name: string.isRequired,
+    point_of_contact_email: string.isRequired,
+    point_of_contact_publicly_visible: bool.isRequired,
+    office_official_name: string.isRequired,
+    office_country_code: string.isRequired,
+    office_phone_number: string.isRequired,
+    office_info_publicly_visible: bool.isRequired,
+    facility: facilityDetailsPropType.isRequired,
 });

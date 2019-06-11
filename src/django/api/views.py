@@ -59,7 +59,8 @@ from api.serializers import (FacilityListSerializer,
                              UserSerializer,
                              UserProfileSerializer,
                              FacilityClaimSerializer,
-                             FacilityClaimDetailsSerializer)
+                             FacilityClaimDetailsSerializer,
+                             ApprovedFacilityClaimSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
@@ -1485,3 +1486,63 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             return Response(response_data)
         except FacilityClaim.DoesNotExist:
             raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['GET', 'PUT'],
+            url_path='claimed',
+            permission_classes=(IsRegisteredAndConfirmed,))
+    def get_claimed_details(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        try:
+            claim = FacilityClaim \
+                .objects \
+                .filter(contributor=request.user.contributor) \
+                .filter(status=FacilityClaim.APPROVED) \
+                .get(pk=pk)
+
+            if request.user.contributor != claim.contributor:
+                raise NotFound()
+
+            if request.method == 'GET':
+                response_data = ApprovedFacilityClaimSerializer(claim).data
+                return Response(response_data)
+
+            FacilityClaim.objects.filter(pk=pk).update(
+                facility_description=request.data.get('facility_description'),
+                facility_name=request.data.get('facility_name'),
+                facility_address=request.data.get('facility_address'),
+                facility_phone_number=request.data
+                .get('facility_phone_number'),
+                facility_phone_number_publicly_visible=request.data
+                .get('facility_phone_number_publicly_visible'),
+                facility_website=request.data.get('facility_website'),
+                facility_minimum_order_quantity=request.data
+                .get('facility_minimum_order_quantity'),
+                facility_average_lead_time=request.data
+                .get('facility_average_lead_time'),
+                point_of_contact_person_name=request.data
+                .get('point_of_contact_person_name'),
+                point_of_contact_email=request.data
+                .get('point_of_contact_email'),
+                point_of_contact_publicly_visible=request.data
+                .get('point_of_contact_publicly_visible'),
+                office_official_name=request.data
+                .get('office_official_name'),
+                office_address=request.data.get('office_address'),
+                office_country_code=request.data.get('office_country_code'),
+                office_phone_number=request.data.get('office_phone_number'),
+                office_info_publicly_visible=request.data
+                .get('office_info_publicly_visible')
+            )
+
+            updated_claim = FacilityClaim.objects.get(pk=pk)
+
+            response_data = ApprovedFacilityClaimSerializer(updated_claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+        except Contributor.DoesNotExist:
+            raise NotFound('No contributor found for that user')

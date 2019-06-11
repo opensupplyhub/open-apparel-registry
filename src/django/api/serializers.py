@@ -26,7 +26,8 @@ from api.models import (FacilityList,
                         FacilityClaimReviewNote,
                         User,
                         Contributor)
-from api.countries import COUNTRY_NAMES
+from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
+from waffle import switch_is_active
 
 
 class UserSerializer(ModelSerializer):
@@ -37,6 +38,7 @@ class UserSerializer(ModelSerializer):
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
     contributor_id = SerializerMethodField()
+    claimed_facility_ids = SerializerMethodField()
 
     class Meta:
         model = User
@@ -98,6 +100,19 @@ class UserSerializer(ModelSerializer):
             return user.contributor.id
         except Contributor.DoesNotExist:
             return None
+
+    def get_claimed_facility_ids(self, user):
+        if not switch_is_active('claim_a_facility'):
+            return []
+
+        try:
+            return FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .filter(contributor=user.contributor) \
+                .values_list('facility__id', flat=True)
+        except Contributor.DoesNotExist:
+            return []
 
 
 class UserProfileSerializer(ModelSerializer):
@@ -340,12 +355,13 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     other_addresses = SerializerMethodField()
     contributors = SerializerMethodField()
     country_name = SerializerMethodField()
+    claim_info = SerializerMethodField()
 
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
-                  'country_name')
+                  'country_name', 'claim_info')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -373,6 +389,42 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')
+
+    def get_claim_info(self, facility):
+        if not switch_is_active('claim_a_facility'):
+            return None
+
+        try:
+            claim = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .get(facility=facility)
+
+            return {
+                'id': claim.id,
+                'facility': {
+                    'description': claim.facility_description,
+                    'name': claim.facility_name,
+                    'address': claim.facility_address,
+                    'website': claim.facility_website,
+                    'phone_number': claim.facility_phone_number
+                    if claim.facility_phone_number_publicly_visible else None,
+                    'minimum_order': claim.facility_minimum_order_quantity,
+                    'average_lead_time': claim.facility_average_lead_time,
+                },
+                'contact': {
+                    'name': claim.point_of_contact_person_name,
+                    'email': claim.point_of_contact_email,
+                } if claim.point_of_contact_publicly_visible else None,
+                'office': {
+                    'name': claim.office_official_name,
+                    'address': claim.office_address,
+                    'country': claim.office_country_code,
+                    'phone_number': claim.office_phone_number,
+                } if claim.office_info_publicly_visible else None,
+            }
+        except FacilityClaim.DoesNotExist:
+            return None
 
 
 class FacilityClaimSerializer(ModelSerializer):
@@ -448,6 +500,31 @@ class FacilityClaimReviewNoteSerializer(ModelSerializer):
 
     def get_author(self, note):
         return note.author.email
+
+
+class ApprovedFacilityClaimSerializer(ModelSerializer):
+    facility = SerializerMethodField()
+    countries = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaim
+        fields = ('id', 'facility_description', 'facility_name',
+                  'facility_address', 'facility_phone_number',
+                  'facility_phone_number_publicly_visible',
+                  'facility_website', 'facility_minimum_order_quantity',
+                  'facility_average_lead_time', 'point_of_contact_person_name',
+                  'point_of_contact_email',
+                  'point_of_contact_publicly_visible',
+                  'office_official_name', 'office_address',
+                  'office_country_code', 'office_phone_number',
+                  'office_info_publicly_visible',
+                  'facility', 'countries')
+
+    def get_facility(self, claim):
+        return FacilityDetailsSerializer(claim.facility).data
+
+    def get_countries(self, claimd):
+        return COUNTRY_CHOICES
 
 
 class FacilityMatchSerializer(ModelSerializer):
