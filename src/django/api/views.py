@@ -631,6 +631,8 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                     "oar_id": "US2019161ABC123",
                     "contributor_name": "A Contributor",
                     "facility_name": "Clothing, Inc.",
+                    "facility_address": "1234 Main St",
+                    "facility_country": "United States",
                     "status": "APPROVED"
                 }
             ]

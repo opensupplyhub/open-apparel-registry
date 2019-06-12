@@ -38,11 +38,17 @@ function ClaimedFacilitiesListTable({
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell style={dashboardClaimsListTableStyles.oarIdColumnStyles}>
+                        <TableCell>
+                            Name
+                        </TableCell>
+                        <TableCell>
                             OAR ID
                         </TableCell>
                         <TableCell>
-                            Facility Name
+                            Address
+                        </TableCell>
+                        <TableCell>
+                            Country
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -57,10 +63,16 @@ function ClaimedFacilitiesListTable({
                                     style={dashboardClaimsListTableStyles.rowStyles}
                                 >
                                     <TableCell>
+                                        {claim.facility_name}
+                                    </TableCell>
+                                    <TableCell>
                                         {claim.oar_id}
                                     </TableCell>
                                     <TableCell>
-                                        {claim.facility_name}
+                                        {claim.facility_address}
+                                    </TableCell>
+                                    <TableCell>
+                                        {claim.facility_country_name}
                                     </TableCell>
                                 </TableRow>
                             ))
