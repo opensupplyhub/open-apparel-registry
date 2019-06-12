@@ -23,7 +23,7 @@ export default function ClaimedFacilities() {
                                 path={claimedFacilitiesDetailRoute}
                                 render={() => 'Claimed Facility Details'}
                             />
-                            <Route render={() => 'Claimed Facilities'} />
+                            <Route render={() => 'My Facilities'} />
                         </Switch>
                     )
                 }

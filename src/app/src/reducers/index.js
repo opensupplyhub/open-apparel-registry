@@ -21,6 +21,7 @@ import ClientInfoReducer from './ClientInfoReducer';
 import ClaimFacilityReducer from './ClaimFacilityReducer';
 import ClaimFacilityDashboardReducer from './ClaimFacilityDashboardReducer';
 import ClaimedFacilityDetailsReducer from './ClaimedFacilityDetailsReducer';
+import ClaimedFacilitesReducer from './ClaimedFacilitesReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -38,4 +39,5 @@ export default combineReducers({
     claimFacility: ClaimFacilityReducer,
     claimFacilityDashboard: ClaimFacilityDashboardReducer,
     claimedFacilityDetails: ClaimedFacilityDetailsReducer,
+    claimedFacilities: ClaimedFacilitesReducer,
 });

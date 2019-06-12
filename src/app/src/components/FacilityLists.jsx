@@ -15,8 +15,7 @@ import {
     resetUserFacilityLists,
 } from '../actions/facilityLists';
 
-import { authLoginFormRoute } from '../util/constants';
-import { makeMyFacilitiesRoute } from '../util/util';
+import { authLoginFormRoute, claimedFacilitiesRoute } from '../util/constants';
 import { facilityListPropType } from '../util/propTypes';
 
 class FacilityLists extends Component {
@@ -91,8 +90,8 @@ class FacilityLists extends Component {
                 <AppGrid title="My Lists">
                     <ShowOnly when={!!myFacilitiesRoute && !!facilityLists.length}>
                         <Link
-                            to={myFacilitiesRoute}
-                            href={myFacilitiesRoute}
+                            to={claimedFacilitiesRoute}
+                            href={claimedFacilitiesRoute}
                             style={{ paddingBottom: '20px' }}
                         >
                             View my facilities
@@ -107,7 +106,6 @@ class FacilityLists extends Component {
 
 FacilityLists.defaultProps = {
     error: null,
-    myFacilitiesRoute: null,
 };
 
 FacilityLists.propTypes = {
@@ -118,7 +116,6 @@ FacilityLists.propTypes = {
     resetLists: func.isRequired,
     userHasSignedIn: bool.isRequired,
     fetchingSessionSignIn: bool.isRequired,
-    myFacilitiesRoute: string,
 };
 
 function mapStateToProps({
@@ -141,9 +138,6 @@ function mapStateToProps({
         fetching,
         error,
         userHasSignedIn: !!user,
-        myFacilitiesRoute: (user && user.contributor_id)
-            ? makeMyFacilitiesRoute(user.contributor_id)
-            : null,
         fetchingSessionSignIn,
     };
 }

@@ -105,6 +105,8 @@ export const makeRevokeFacilityClaimByClaimIDURL = claimID => `/api/facility-cla
 export const makeAddNewFacilityClaimReviewNoteURL = claimID => `/api/facility-claims/${claimID}/note/`;
 
 export const makeGetOrUpdateApprovedFacilityClaimURL = claimID => `/api/facility-claims/${claimID}/claimed/`;
+export const makeGetClaimedFacilitiesURL = () => '/api/facilities/claimed/';
+export const makeClaimedFacilityDetailsLink = claimID => `/claimed/${claimID}/`;
 
 const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
 // NOTE: We only use an API key for ipgeolocation.io in development. On staging
