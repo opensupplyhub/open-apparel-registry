@@ -1394,6 +1394,49 @@ class FacilityClaimAdminDashboardTests(APITestCase):
         self.assertEqual(400, error_response.status_code)
 
     @override_switch('claim_a_facility', active=True)
+    def test_can_approve_at_most_one_facility_claim(self):
+        response = self.client.post(
+            '/api/facility-claims/{}/approve/'.format(self.facility_claim.id)
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        updated_facility_claim = FacilityClaim \
+            .objects \
+            .get(pk=self.facility_claim.id)
+
+        self.assertEqual(
+            FacilityClaim.APPROVED,
+            updated_facility_claim.status,
+        )
+
+        new_user = User.objects.create(email='new_user@example.com')
+        new_contributor = Contributor \
+            .objects \
+            .create(admin=new_user,
+                    name='new_contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        new_facility_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=new_contributor,
+                facility=self.facility,
+                contact_person='Name',
+                email='new_user@example.com',
+                phone_number=12345,
+                company_name='Test',
+                website='http://example.com',
+                facility_description='description',
+                preferred_contact_method=FacilityClaim.EMAIL)
+
+        error_response = self.client.post(
+            '/api/facility-claims/{}/approve/'.format(new_facility_claim.id)
+        )
+
+        self.assertEqual(400, error_response.status_code)
+
+    @override_switch('claim_a_facility', active=True)
     def test_deny_facility_claim(self):
         self.assertEqual(len(mail.outbox), 0)
 
