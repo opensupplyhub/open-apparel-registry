@@ -1313,8 +1313,10 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         if not request.user.is_superuser:
             raise PermissionDenied()
 
-        response_data = FacilityClaimSerializer(FacilityClaim.objects.all(),
-                                                many=True).data
+        response_data = FacilityClaimSerializer(
+            FacilityClaim.objects.all().order_by('-id'),
+            many=True
+        ).data
 
         return Response(response_data)
 
