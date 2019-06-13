@@ -614,6 +614,41 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         except Contributor.DoesNotExist:
             raise NotFound()
 
+    @action(detail=False, methods=['GET'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def claimed(self, request):
+        """
+        Returns a list of facility claims made by the authenticated user that
+        have been approved.
+         ### Sample Response
+            [
+                {
+                    "id": 1,
+                    "created_at": "2019-06-10T17:28:17.155025Z",
+                    "updated_at": "2019-06-10T17:28:17.155042Z",
+                    "contributor_id": 1,
+                    "oar_id": "US2019161ABC123",
+                    "contributor_name": "A Contributor",
+                    "facility_name": "Clothing, Inc.",
+                    "facility_address": "1234 Main St",
+                    "facility_country": "United States",
+                    "status": "APPROVED"
+                }
+            ]
+        """
+
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+        try:
+            claims = FacilityClaim.objects.filter(
+                contributor=request.user.contributor,
+                status=FacilityClaim.APPROVED)
+        except Contributor.DoesNotExist:
+            raise NotFound(
+                'The current User does not have an associated Contributor')
+        return Response(FacilityClaimSerializer(claims, many=True).data)
+
 
 class FacilityListViewSetSchema(AutoSchema):
     def get_serializer_fields(self, path, method):
