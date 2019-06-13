@@ -1354,6 +1354,17 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                     'Only PENDING claims can be approved.',
                 )
 
+            approved_claims_for_facility_count = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .filter(facility=claim.facility) \
+                .count()
+
+            if approved_claims_for_facility_count > 0:
+                raise BadRequestException(
+                    'A facility may have at most one approved facility claim'
+                )
+
             claim.status_change_reason = request.data.get('reason', '')
             claim.status_change_by = request.user
             claim.status_change_date = datetime.now(tz=timezone.utc)
