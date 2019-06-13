@@ -171,15 +171,6 @@ function DashboardLists({
                             Total
                         </TableCell>
                         <TableCell padding="dense">
-                            Uploaded
-                        </TableCell>
-                        <TableCell padding="dense">
-                            Parsed
-                        </TableCell>
-                        <TableCell padding="dense">
-                            Geocoded
-                        </TableCell>
-                        <TableCell padding="dense">
                             Matched
                         </TableCell>
                         <TableCell padding="dense">
@@ -221,23 +212,6 @@ function DashboardLists({
                                 <FacilityListsTooltipTableCell
                                     tooltipTitle={facilitiesListTableTooltipTitles.total}
                                     tableCellText={list.item_count}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={facilitiesListTableTooltipTitles.uploaded}
-                                    tableCellText={list.status_counts.UPLOADED}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={facilitiesListTableTooltipTitles.parsed}
-                                    tableCellText={list.status_counts.PARSED}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={facilitiesListTableTooltipTitles.geocoded}
-                                    tableCellText={
-                                        sum([
-                                            list.status_counts.GEOCODED,
-                                            list.status_counts.GEOCODED_NO_RESULTS,
-                                        ])
-                                    }
                                 />
                                 <FacilityListsTooltipTableCell
                                     tooltipTitle={facilitiesListTableTooltipTitles.matched}
