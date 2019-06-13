@@ -1470,8 +1470,10 @@ class FacilityClaimAdminDashboardTests(APITestCase):
 
     @override_switch('claim_a_facility', active=True)
     def test_add_claim_review_note(self):
-        response = self.client.post('/api/facility-claims/1/note/',
-                                    {'note': 'note'})
+        api_url = '/api/facility-claims/{}/note/'.format(
+            self.facility_claim.id
+        )
+        response = self.client.post(api_url, {'note': 'note'})
 
         self.assertEqual(200, response.status_code)
 
@@ -1493,3 +1495,156 @@ class FacilityClaimAdminDashboardTests(APITestCase):
 
         error_response = self.client.get('/api/facility-claims/')
         self.assertEqual(403, error_response.status_code)
+
+
+class ApprovedFacilityClaimTests(APITestCase):
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'example123'
+        self.user = User.objects.create(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name='List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item)
+
+        self.facility_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=self.contributor,
+                facility=self.facility,
+                contact_person='Name',
+                email=self.email,
+                phone_number=12345,
+                company_name='Test',
+                website='http://example.com',
+                facility_description='description',
+                preferred_contact_method=FacilityClaim.EMAIL)
+
+        self.superuser_email = 'superuser@example.com'
+        self.superuser_password = 'superuser'
+
+        self.superuser = User \
+            .objects \
+            .create_superuser(self.superuser_email,
+                              self.superuser_password)
+
+        self.client.login(email=self.email,
+                          password=self.password)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_non_approved_facility_claim_is_not_visible(self):
+        api_url = '/api/facility-claims/{}/claimed/'.format(
+            self.facility_claim.id
+        )
+        pending_response = self.client.get(api_url)
+        self.assertEqual(404, pending_response.status_code)
+
+        self.facility_claim.status = FacilityClaim.DENIED
+        self.facility_claim.save()
+        denied_response = self.client.get(api_url)
+        self.assertEqual(404, denied_response.status_code)
+
+        self.facility_claim.status = FacilityClaim.REVOKED
+        self.facility_claim.save()
+        revoked_response = self.client.get(api_url)
+        self.assertEqual(404, revoked_response.status_code)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_approved_facility_claim_is_visible_to_claimant(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response = self.client.get(
+            '/api/facility-claims/{}/claimed/'.format(self.facility_claim.id)
+        )
+        self.assertEqual(200, response.status_code)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_other_user_approved_facility_claims_are_not_visible(self):
+        self.client.logout()
+
+        self.client.login(email=self.superuser_email,
+                          pasword=self.superuser_password)
+
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response = self.client.get(
+            '/api/facility-claims/{}/claimed/'.format(self.facility_claim.id)
+        )
+        self.assertEqual(401, response.status_code)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_approved_facility_claim_info_is_in_details_response(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.facility_description = 'new_description'
+        self.facility_claim.save()
+
+        response_data = self.client.get(
+            '/api/facilities/{}/'.format(self.facility_claim.facility.id)
+        ).json()['properties']['claim_info']['facility']
+
+        self.assertEqual(response_data['description'], 'new_description')
+
+    @override_switch('claim_a_facility', active=True)
+    def test_non_visible_facility_phone_is_not_in_details_response(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response_data = self.client.get(
+            '/api/facilities/{}/'.format(self.facility_claim.facility.id)
+        ).json()['properties']['claim_info']['facility']
+
+        self.assertIsNone(response_data['phone_number'])
+
+    @override_switch('claim_a_facility', active=True)
+    def test_non_visible_office_info_is_not_in_details_response(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response_data = self.client.get(
+            '/api/facilities/{}/'.format(self.facility_claim.facility.id)
+        ).json()['properties']['claim_info']
+
+        self.assertIsNone(response_data['contact'])
+
+    @override_switch('claim_a_facility', active=True)
+    def test_non_visible_contact_info_is_not_in_details_response(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response_data = self.client.get(
+            '/api/facilities/{}/'.format(self.facility_claim.facility.id)
+        ).json()['properties']['claim_info']
+
+        self.assertIsNone(response_data['office'])

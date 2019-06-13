@@ -104,6 +104,8 @@ export const makeDenyFacilityClaimByClaimIDURL = claimID => `/api/facility-claim
 export const makeRevokeFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/revoke/`;
 export const makeAddNewFacilityClaimReviewNoteURL = claimID => `/api/facility-claims/${claimID}/note/`;
 
+export const makeGetOrUpdateApprovedFacilityClaimURL = claimID => `/api/facility-claims/${claimID}/claimed/`;
+
 const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
 // NOTE: We only use an API key for ipgeolocation.io in development. On staging
 // and production we use request origin validation so that we don't have to
@@ -377,6 +379,8 @@ export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
 
 export const makeClaimFacilityLink = oarID => `${facilitiesRoute}/${oarID}/claim`;
 
+export const makeApprovedClaimDetailsLink = claimID => `/claimed/${claimID}`;
+
 export const makeFacilityClaimDetailsLink = claimID => `/dashboard/claims/${claimID}`;
 
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
@@ -399,6 +403,9 @@ export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) => Objec
 
 export const makeReportADataIssueEmailLink = oarId =>
     `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${oarId}`;
+
+export const makeDisputeClaimEmailLink = oarId =>
+    `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${oarId}`;
 
 export const makeFeatureCollectionFromSingleFeature = feature => Object.freeze({
     type: FEATURE_COLLECTION,

@@ -7,11 +7,16 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Link } from 'react-router-dom';
 import head from 'lodash/head';
 import last from 'lodash/last';
+import get from 'lodash/get';
+import includes from 'lodash/includes';
 
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
+import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
 import FeatureFlag from './FeatureFlag';
 import BadgeUnclaimed from './BadgeUnclaimed';
+import BadgeVerified from './BadgeVerified';
+import ShowOnly from './ShowOnly';
 
 import {
     fetchSingleFacility,
@@ -20,9 +25,16 @@ import {
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
-import { makeReportADataIssueEmailLink, makeClaimFacilityLink } from '../util/util';
+import {
+    makeReportADataIssueEmailLink,
+    makeClaimFacilityLink,
+    makeDisputeClaimEmailLink,
+    makeApprovedClaimDetailsLink,
+} from '../util/util';
 
 import { CLAIM_A_FACILITY } from '../util/constants';
+
+import COLOURS from '../util/COLOURS';
 
 const detailsSidebarStyles = Object.freeze({
     headerButtonStyle: Object.freeze({
@@ -47,22 +59,16 @@ class FacilityDetailSidebar extends Component {
 
     componentDidUpdate({
         match: {
-            params: {
-                oarID: prevOARID,
-            },
+            params: { oarID: prevOARID },
         },
     }) {
         const {
             match: {
-                params: {
-                    oarID,
-                },
+                params: { oarID },
             },
         } = this.props;
 
-        return oarID !== prevOARID
-            ? this.props.fetchFacility()
-            : null;
+        return oarID !== prevOARID ? this.props.fetchFacility() : null;
     }
 
     componentWillUnmount() {
@@ -75,14 +81,10 @@ class FacilityDetailSidebar extends Component {
             data,
             error,
             match: {
-                params: {
-                    oarID,
-                },
+                params: { oarID },
             },
-            history: {
-                goBack,
-                push,
-            },
+            history: { goBack, push },
+            facilityIsClaimedByCurrentUser,
         } = this.props;
 
         if (fetching) {
@@ -100,16 +102,11 @@ class FacilityDetailSidebar extends Component {
                 <div className="control-panel">
                     <div className="control-panel__content">
                         <ul>
-                            {
-                                error
-                                    .map(err => (
-                                        <li
-                                            key={err}
-                                            style={{ color: 'red' }}
-                                        >
-                                            {err}
-                                        </li>))
-                            }
+                            {error.map(err => (
+                                <li key={err} style={{ color: 'red' }}>
+                                    {err}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>
@@ -128,6 +125,8 @@ class FacilityDetailSidebar extends Component {
 
         const facilityLat = last(data.geometry.coordinates);
         const facilityLng = head(data.geometry.coordinates);
+
+        const facilityClaimID = get(data, 'properties.claim_info.id', null);
 
         return (
             <div className="control-panel facility-detail">
@@ -150,16 +149,39 @@ class FacilityDetailSidebar extends Component {
                         </p>
                     </div>
                     <FeatureFlag flag={CLAIM_A_FACILITY}>
-                        <IconButton
-                            aria-label="ArrowBack"
-                            className="color-white"
-                            style={detailsSidebarStyles.headerButtonStyle}
-                            onClick={() => push(makeClaimFacilityLink(data.properties.oar_id))}
-                            disabled={fetching}
-                            title="Claim this facility"
-                        >
-                            <BadgeUnclaimed />
-                        </IconButton>
+                        {data.properties.claim_info ? (
+                            <IconButton
+                                className="color-white"
+                                style={detailsSidebarStyles.headerButtonStyle}
+                                onClick={
+                                    () => push(
+                                        (facilityClaimID && facilityIsClaimedByCurrentUser)
+                                            ? makeApprovedClaimDetailsLink(facilityClaimID)
+                                            : '/about/claimedfacilities',
+                                    )
+                                }
+                                disabled={fetching}
+                                title="Claimed Facility"
+                            >
+                                <BadgeVerified color={COLOURS.GREEN} />
+                            </IconButton>
+                        ) : (
+                            <IconButton
+                                className="color-white"
+                                style={detailsSidebarStyles.headerButtonStyle}
+                                onClick={() =>
+                                    push(
+                                        makeClaimFacilityLink(
+                                            data.properties.oar_id,
+                                        ),
+                                    )
+                                }
+                                disabled={fetching}
+                                title="Claim this facility"
+                            >
+                                <BadgeUnclaimed />
+                            </IconButton>
+                        )}
                     </FeatureFlag>
                 </div>
                 <div className="facility-detail_data">
@@ -194,25 +216,70 @@ class FacilityDetailSidebar extends Component {
                             label="Contributors:"
                             isContributorsList
                         />
+                        <FeatureFlag flag={CLAIM_A_FACILITY}>
+                            <ShowOnly when={!!data.properties.claim_info}>
+                                <FacilityDetailSidebarClaimedInfo
+                                    data={data.properties.claim_info}
+                                />
+                            </ShowOnly>
+                        </FeatureFlag>
                         <div className="control-panel__group">
                             <div style={detailsSidebarStyles.linkSectionStyle}>
-                                <a
-                                    className="link-underline small"
-                                    href={makeReportADataIssueEmailLink(data.properties.oar_id)}
-                                    style={detailsSidebarStyles.linkStyle}
-                                >
-                                    Suggest a data edit
-                                </a>
-                                <FeatureFlag flag={CLAIM_A_FACILITY}>
-                                    <Link
-                                        className="link-underline small"
-                                        to={makeClaimFacilityLink(data.properties.oar_id)}
-                                        href={makeClaimFacilityLink(data.properties.oar_id)}
-                                        style={detailsSidebarStyles.linkStyle}
-                                    >
-                                        Claim this facility
-                                    </Link>
-                                </FeatureFlag>
+                                <ShowOnly when={!facilityIsClaimedByCurrentUser}>
+                                    <>
+                                        <a
+                                            className="link-underline small"
+                                            href={makeReportADataIssueEmailLink(
+                                                data.properties.oar_id,
+                                            )}
+                                            style={detailsSidebarStyles.linkStyle}
+                                        >
+                                            Suggest a data edit
+                                        </a>
+                                        <FeatureFlag flag={CLAIM_A_FACILITY}>
+                                            {data.properties.claim_info ? (
+                                                <a
+                                                    className="link-underline small"
+                                                    href={makeDisputeClaimEmailLink(
+                                                        data.properties.oar_id,
+                                                    )}
+                                                    style={
+                                                        detailsSidebarStyles.linkStyle
+                                                    }
+                                                >
+                                                    Dispute claim
+                                                </a>
+                                            ) : (
+                                                <Link
+                                                    className="link-underline small"
+                                                    to={makeClaimFacilityLink(
+                                                        data.properties.oar_id,
+                                                    )}
+                                                    href={makeClaimFacilityLink(
+                                                        data.properties.oar_id,
+                                                    )}
+                                                    style={
+                                                        detailsSidebarStyles.linkStyle
+                                                    }
+                                                >
+                                                    Claim this facility
+                                                </Link>
+                                            )}
+                                        </FeatureFlag>
+                                    </>
+                                </ShowOnly>
+                                <ShowOnly when={facilityIsClaimedByCurrentUser}>
+                                    <FeatureFlag flag={CLAIM_A_FACILITY}>
+                                        <Link
+                                            className="link-underline small"
+                                            to={makeApprovedClaimDetailsLink(facilityClaimID)}
+                                            href={makeApprovedClaimDetailsLink(facilityClaimID)}
+                                            style={detailsSidebarStyles.linkStyle}
+                                        >
+                                            Update claimed facility profile
+                                        </Link>
+                                    </FeatureFlag>
+                                </ShowOnly>
                             </div>
                         </div>
                     </div>
@@ -242,35 +309,53 @@ FacilityDetailSidebar.propTypes = {
     }).isRequired,
     fetchFacility: func.isRequired,
     clearFacility: func.isRequired,
+    facilityIsClaimedByCurrentUser: bool.isRequired,
 };
 
 function mapStateToProps({
     facilities: {
-        singleFacility: {
-            data,
-            fetching,
-            error,
-        },
+        singleFacility: { data, fetching, error },
     },
-}) {
-    return {
-        data,
-        fetching,
-        error,
-    };
-}
-
-function mapDispatchToProps(dispatch, {
+    auth: {
+        user,
+    },
+}, {
     match: {
         params: {
             oarID,
         },
     },
 }) {
+    const currentUserClaimedFacilities = get(user, 'user.claimed_facility_ids', []);
+
+    const facilityIsClaimedByCurrentUser = includes(
+        currentUserClaimedFacilities,
+        oarID,
+    );
+
+    return {
+        data,
+        fetching,
+        error,
+        facilityIsClaimedByCurrentUser,
+    };
+}
+
+function mapDispatchToProps(
+    dispatch,
+    {
+        match: {
+            params: { oarID },
+        },
+    },
+) {
     return {
         fetchFacility: () => dispatch(fetchSingleFacility(oarID)),
         clearFacility: () => dispatch(resetSingleFacility()),
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FacilityDetailSidebar);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(FacilityDetailSidebar);
