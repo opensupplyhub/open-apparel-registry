@@ -495,7 +495,10 @@ class FacilityClaimDetailsSerializer(ModelSerializer):
         }
 
     def get_notes(self, claim):
-        notes = FacilityClaimReviewNote.objects.filter(claim=claim)
+        notes = FacilityClaimReviewNote \
+            .objects \
+            .filter(claim=claim) \
+            .order_by('id')
         data = FacilityClaimReviewNoteSerializer(notes, many=True).data
         return data
 
