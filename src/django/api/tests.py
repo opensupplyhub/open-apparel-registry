@@ -1361,6 +1361,33 @@ class FacilityClaimAdminDashboardTests(APITestCase):
                           password='superuser')
 
     @override_switch('claim_a_facility', active=True)
+    def test_user_cannot_submit_second_facility_claim_with_one_pending(self):
+        self.client.logout()
+        self.client.login(email=self.email,
+                          password=self.password)
+
+        error_response = self.client.post(
+            '/api/facilities/{}/claim/'.format(self.facility.id),
+            {
+                'contact_person': 'contact_person',
+                'email': 'example@example.com',
+                'phone_number': '12345',
+                'company_name': 'company_name',
+                'website': 'http://example.com',
+                'facility_description': 'facility_description',
+                'verification_method': 'verification_method',
+                'preferred_contact_method': FacilityClaim.EMAIL,
+            }
+        )
+
+        self.assertEqual(400, error_response.status_code)
+
+        self.assertEqual(
+            error_response.json()['detail'],
+            'User already has a pending claim on this facility'
+        )
+
+    @override_switch('claim_a_facility', active=True)
     def test_approve_facility_claim(self):
         self.assertEqual(len(mail.outbox), 0)
 

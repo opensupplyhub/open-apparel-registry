@@ -103,16 +103,33 @@ class UserSerializer(ModelSerializer):
 
     def get_claimed_facility_ids(self, user):
         if not switch_is_active('claim_a_facility'):
-            return []
+            return {
+                'approved': None,
+                'pending': None,
+            }
 
         try:
-            return FacilityClaim \
+            approved = FacilityClaim \
                 .objects \
                 .filter(status=FacilityClaim.APPROVED) \
                 .filter(contributor=user.contributor) \
                 .values_list('facility__id', flat=True)
+
+            pending = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.PENDING) \
+                .filter(contributor=user.contributor) \
+                .values_list('facility__id', flat=True)
+
+            return {
+                'pending': pending,
+                'approved': approved,
+            }
         except Contributor.DoesNotExist:
-            return []
+            return {
+                'approved': None,
+                'pending': None,
+            }
 
 
 class UserProfileSerializer(ModelSerializer):

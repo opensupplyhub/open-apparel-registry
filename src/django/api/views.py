@@ -596,6 +596,18 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
             if not company_name:
                 raise ValidationError('Company name is required')
 
+            user_has_pending_claims = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.PENDING) \
+                .filter(facility=facility) \
+                .filter(contributor=contributor) \
+                .count() > 0
+
+            if user_has_pending_claims:
+                raise BadRequestException(
+                    'User already has a pending claim on this facility'
+                )
+
             facility_claim = FacilityClaim.objects.create(
                 facility=facility,
                 contributor=contributor,
@@ -610,7 +622,22 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
 
             send_claim_facility_confirmation_email(request, facility_claim)
 
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            approved = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .filter(contributor=contributor) \
+                .values_list('facility__id', flat=True)
+
+            pending = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.PENDING) \
+                .filter(contributor=contributor) \
+                .values_list('facility__id', flat=True)
+
+            return Response({
+                'pending': pending,
+                'approved': approved,
+            })
         except Facility.DoesNotExist:
             raise NotFound()
         except Contributor.DoesNotExist:
