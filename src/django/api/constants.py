@@ -21,6 +21,10 @@ class FacilitiesQueryParams:
     COUNTRIES = 'countries'
 
 
+class FacilityListQueryParams:
+    CONTRIBUTOR = 'contributor'
+
+
 class FacilityListItemsQueryParams:
     SEARCH = 'search'
     STATUS = 'status'

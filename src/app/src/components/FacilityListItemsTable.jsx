@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { arrayOf, func, number, shape, string } from 'prop-types';
+import { arrayOf, bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import Button from '@material-ui/core/Button';
@@ -290,6 +290,7 @@ class FacilityListItemsTable extends Component {
                     search,
                 },
             },
+            readOnly,
         } = this.props;
 
         const {
@@ -344,6 +345,7 @@ class FacilityListItemsTable extends Component {
                             key={item.row_index}
                             item={item}
                             listID={listID}
+                            readOnly={readOnly}
                         />
                     );
                 }
@@ -503,6 +505,7 @@ class FacilityListItemsTable extends Component {
 
 FacilityListItemsTable.defaultProps = {
     items: null,
+    readOnly: false,
 };
 
 FacilityListItemsTable.propTypes = {
@@ -518,6 +521,7 @@ FacilityListItemsTable.propTypes = {
     }).isRequired,
     selectedFacilityListItemsRowIndex: number.isRequired,
     makeSelectListItemTableRowFunction: func.isRequired,
+    readOnly: bool,
 };
 
 function mapStateToProps({
@@ -532,7 +536,11 @@ function mapStateToProps({
         filteredCount,
         selectedFacilityListItemsRowIndex,
     },
-
+    auth: {
+        user: {
+            user,
+        },
+    },
 }) {
     return {
         list,
@@ -540,6 +548,7 @@ function mapStateToProps({
         filteredCount,
         fetchingItems,
         selectedFacilityListItemsRowIndex,
+        readOnly: user && user.is_superuser && list && user.contributor_id !== list.contributor_id,
     };
 }
 

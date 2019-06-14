@@ -199,7 +199,7 @@ class FacilityListSerializer(ModelSerializer):
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
                   'is_public', 'item_count', 'items_url', 'statuses',
-                  'status_counts')
+                  'status_counts', 'contributor_id', 'created_at')
 
     def get_item_count(self, facility_list):
         return facility_list.facilitylistitem_set.count()
@@ -312,6 +312,10 @@ class FacilityQueryParamsSerializer(Serializer):
     )
     page = IntegerField(required=False)
     pageSize = IntegerField(required=False)
+
+
+class FacilityListQueryParamsSerializer(Serializer):
+    contributor = IntegerField(required=False)
 
 
 class FacilityListItemsQueryParamsSerializer(Serializer):

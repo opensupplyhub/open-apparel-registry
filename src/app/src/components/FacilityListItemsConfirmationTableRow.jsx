@@ -23,6 +23,7 @@ function FacilityListItemsConfirmationTableRow({
     makeRejectMatchFunction,
     listID,
     fetching,
+    readOnly,
 }) {
     const [
         matchIDs,
@@ -127,6 +128,7 @@ function FacilityListItemsConfirmationTableRow({
                     data={matchConfirmOrRejectFunctions}
                     hasActions
                     fetching={fetching}
+                    readOnly={readOnly}
                 />
             </TableCell>
         </TableRow>
@@ -139,6 +141,7 @@ FacilityListItemsConfirmationTableRow.propTypes = {
     makeRejectMatchFunction: func.isRequired,
     listID: string.isRequired,
     fetching: bool.isRequired,
+    readOnly: bool.isRequired,
 };
 
 function mapStateToProps({

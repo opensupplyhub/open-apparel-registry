@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import get from 'lodash/get';
 
 import CellElement from './CellElement';
+import ShowOnly from './ShowOnly';
 
 import { facilityMatchStatusChoicesEnum } from '../util/constants';
 
@@ -18,30 +19,33 @@ export default function FacilityListItemsDetailedTableRowCell({
     fetching,
     errorState,
     linkURLs,
+    readOnly,
 }) {
     return (
         <div style={confirmRejectMatchRowStyles.cellStyles}>
             <div style={confirmRejectMatchRowStyles.cellTitleStyles}>
                 {title}
             </div>
-            <div style={confirmRejectMatchRowStyles.cellSubtitleStyles}>
-                <Typography variant="body2">
-                    {subtitle}
-                </Typography>
-            </div>
-            {
-                data.map((item, index) => (
-                    <Fragment key={hasActions ? item.id : item}>
-                        <CellElement
-                            item={item}
-                            fetching={fetching}
-                            errorState={errorState}
-                            hasActions={hasActions}
-                            stringIsHidden={stringIsHidden}
-                            linkURL={get(linkURLs, [`${index}`], null)}
-                        />
-                    </Fragment>))
-            }
+            <ShowOnly when={!readOnly}>
+                <div style={confirmRejectMatchRowStyles.cellSubtitleStyles}>
+                    <Typography variant="body2">
+                        {subtitle}
+                    </Typography>
+                </div>
+                {
+                    data.map((item, index) => (
+                        <Fragment key={hasActions ? item.id : item}>
+                            <CellElement
+                                item={item}
+                                fetching={fetching}
+                                errorState={errorState}
+                                hasActions={hasActions}
+                                stringIsHidden={stringIsHidden}
+                                linkURL={get(linkURLs, [`${index}`], null)}
+                            />
+                        </Fragment>))
+                }
+            </ShowOnly>
         </div>
     );
 }
@@ -53,6 +57,7 @@ FacilityListItemsDetailedTableRowCell.defaultProps = {
     subtitle: ' ',
     errorState: false,
     linkURLs: null,
+    readOnly: false,
 };
 
 FacilityListItemsDetailedTableRowCell.propTypes = {
@@ -77,4 +82,5 @@ FacilityListItemsDetailedTableRowCell.propTypes = {
     fetching: bool,
     errorState: bool,
     linkURLs: arrayOf(string),
+    readOnly: bool,
 };

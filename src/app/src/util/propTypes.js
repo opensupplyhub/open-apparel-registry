@@ -36,6 +36,7 @@ export const userPropType = shape({
     email: string.isRequired,
     id: number.isRequired,
     contributor_id: number,
+    is_superuser: bool.isRequired,
 });
 
 export const profileFormValuesPropType = shape(Object
@@ -107,6 +108,7 @@ export const facilityListPropType = shape({
     id: number.isRequired,
     name: string,
     description: string,
+    contributor_id: number,
     file_name: string.isRequired,
     is_active: bool.isRequired,
     is_public: bool.isRequired,
@@ -120,12 +122,17 @@ export const facilityListPropType = shape({
         ),
         () => number.isRequired,
     )).isRequired,
+    created_at: string.isRequired,
 });
 
-export const contributorOptionsPropType = arrayOf(shape({
+export const contributorOptionPropType = shape({
     value: oneOfType([number, string]).isRequired,
     label: string.isRequired,
-}));
+});
+
+export const contributorOptionsPropType = arrayOf(
+    contributorOptionPropType,
+);
 
 export const contributorTypeOptionsPropType = arrayOf(shape({
     value: string.isRequired,

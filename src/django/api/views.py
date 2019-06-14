@@ -39,6 +39,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilitiesQueryParams,
+                           FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            ProcessingAction)
 from api.models import (FacilityList,
@@ -54,6 +55,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
                              FacilityQueryParamsSerializer,
+                             FacilityListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              UserSerializer,
@@ -832,9 +834,29 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             ]
         """
         try:
-            contributor = request.user.contributor
-            queryset = FacilityList.objects.filter(contributor=contributor)
-            response_data = self.serializer_class(queryset, many=True).data
+            if request.user.is_superuser:
+                params = FacilityListQueryParamsSerializer(
+                    data=request.query_params)
+                if not params.is_valid():
+                    raise ValidationError(params.errors)
+
+                contributor = params.data.get(
+                    FacilityListQueryParams.CONTRIBUTOR)
+
+                if contributor is not None:
+                    facility_lists = FacilityList.objects.filter(
+                        contributor=contributor)
+                else:
+                    facility_lists = FacilityList.objects.filter(
+                        contributor=request.user.contributor)
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
+
+            facility_lists = facility_lists.order_by('-created_at')
+
+            response_data = self.serializer_class(facility_lists,
+                                                  many=True).data
             return Response(response_data)
         except Contributor.DoesNotExist:
             raise ValidationError('User contributor cannot be None')
@@ -856,11 +878,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             }
         """
         try:
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(contributor=user_contributor) \
-                .get(pk=pk)
+            if request.user.is_superuser:
+                facility_lists = FacilityList.objects.all()
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
+
+            facility_list = facility_lists.get(pk=pk)
             response_data = self.serializer_class(facility_list).data
 
             return Response(response_data)
@@ -930,34 +954,37 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             search = search.strip()
 
         try:
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(contributor=user_contributor) \
-                .get(pk=pk)
-            queryset = FacilityListItem \
-                .objects \
-                .filter(facility_list=facility_list)
-            if search is not None and len(search) > 0:
-                queryset = queryset.filter(
-                    Q(facility__name__icontains=search) |
-                    Q(facility__address__icontains=search))
-            if status is not None and len(status) > 0:
-                q_statements = [make_q_from_status(s) for s in status]
-                queryset = queryset.filter(reduce(operator.or_, q_statements))
+            if request.user.is_superuser:
+                facility_lists = FacilityList.objects.all()
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
 
-            queryset = queryset.order_by('row_index')
-
-            page_queryset = self.paginate_queryset(queryset)
-            if page_queryset is not None:
-                serializer = FacilityListItemSerializer(page_queryset,
-                                                        many=True)
-                return self.get_paginated_response(serializer.data)
-
-            serializer = FacilityListItemSerializer(queryset, many=True)
-            return Response(serializer.data)
+            facility_list = facility_lists.get(pk=pk)
         except FacilityList.DoesNotExist:
             raise NotFound()
+
+        queryset = FacilityListItem \
+            .objects \
+            .filter(facility_list=facility_list)
+        if search is not None and len(search) > 0:
+            queryset = queryset.filter(
+                Q(facility__name__icontains=search) |
+                Q(facility__address__icontains=search))
+        if status is not None and len(status) > 0:
+            q_statements = [make_q_from_status(s) for s in status]
+            queryset = queryset.filter(reduce(operator.or_, q_statements))
+
+        queryset = queryset.order_by('row_index')
+
+        page_queryset = self.paginate_queryset(queryset)
+        if page_queryset is not None:
+            serializer = FacilityListItemSerializer(page_queryset,
+                                                    many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = FacilityListItemSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     @transaction.atomic
     @action(detail=True,
