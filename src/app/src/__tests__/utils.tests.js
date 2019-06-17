@@ -16,6 +16,7 @@ const {
     makeGetFacilitiesURL,
     makeGetFacilityByOARIdURL,
     makeClaimFacilityAPIURL,
+    makeMergeTwoFacilitiesAPIURL,
     makeGetFacilitiesURLWithQueryString,
     getValueFromObject,
     createQueryStringFromSearchFilters,
@@ -1301,5 +1302,18 @@ it('creates links to get facility claim details from a claim ID', () => {
     expect(isEqual(
         expectedAddNoteMatch,
         makeAddNewFacilityClaimReviewNoteURL(claimID),
+    )).toBe(true);
+});
+
+it('creates an API URL for merging two facilties', () => {
+    const targetID = 'targetID';
+    const toMergeID = 'toMergeID';
+
+    const expectedURL =
+          '/api/facilities/merge/?target=targetID&merge=toMergeID';
+
+    expect(isEqual(
+        expectedURL,
+        makeMergeTwoFacilitiesAPIURL(targetID, toMergeID),
     )).toBe(true);
 });
