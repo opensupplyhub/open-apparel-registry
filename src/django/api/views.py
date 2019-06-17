@@ -19,7 +19,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
                                        NotFound,
                                        AuthenticationFailed,
-                                       PermissionDenied)
+                                       PermissionDenied,
+                                       NotAuthenticated)
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
@@ -568,6 +569,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raise NotFound()
 
     def destroy(self, request, pk=None):
+        if request.user.is_anonymous:
+            raise NotAuthenticated()
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     @action(detail=False, methods=['get'])
