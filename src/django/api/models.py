@@ -740,3 +740,40 @@ class FacilityMatch(models.Model):
     def __str__(self):
         return '{0} - {1} - {2}'.format(self.facility_list_item, self.facility,
                                         self.status)
+
+
+class FacilityAlias(models.Model):
+    """
+    Links the OAR ID of a no longer existing Facility to another Facility
+    """
+    MERGE = 'MERGE'
+    DELETE = 'DELETE'
+
+    REASON_CHOICES = (
+        (MERGE, MERGE),
+        (DELETE, DELETE),
+    )
+
+    oar_id = models.CharField(
+        max_length=32,
+        primary_key=True,
+        editable=False,
+        help_text=('The OAR ID of a no longer existent Facility which should '
+                   'be redirected to a different Facility.'))
+    facility = models.ForeignKey(
+        'Facility',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The facility now associated with the oar_id'
+    )
+    reason = models.CharField(
+        null=False,
+        max_length=6,
+        choices=REASON_CHOICES,
+        help_text='The reason why this alias was created'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{} -> {}'.format(self.oar_id, self.facility)
