@@ -28,6 +28,7 @@ import Translate from './components/Translate';
 import FeatureFlag from './components/FeatureFlag';
 import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
+import AboutClaimedFacilities from './components/AboutClaimedFacilities';
 
 import './App.css';
 
@@ -51,6 +52,7 @@ import {
     claimFacilityRoute,
     claimedFacilitiesRoute,
     CLAIM_A_FACILITY,
+    aboutClaimedFacilitiesRoute,
 } from './util/constants';
 
 const appStyles = Object.freeze({
@@ -153,6 +155,17 @@ class App extends Component {
                                 <Route
                                     path={aboutProcessingRoute}
                                     component={AboutProcessing}
+                                />
+                                <Route
+                                    path={aboutClaimedFacilitiesRoute}
+                                    render={() => (
+                                        <FeatureFlag
+                                            flag={CLAIM_A_FACILITY}
+                                            alternative={<RouteNotFound />}
+                                        >
+                                            <AboutClaimedFacilities />
+                                        </FeatureFlag>
+                                    )}
                                 />
                                 <Route render={() => <RouteNotFound />} />
                             </Switch>
