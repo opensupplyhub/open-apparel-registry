@@ -2,6 +2,9 @@ import React from 'react';
 import { number, string, shape } from 'prop-types';
 import trim from 'lodash/trim';
 import Typography from '@material-ui/core/Typography';
+import { Link } from 'react-router-dom';
+
+import { aboutClaimedFacilitiesRoute } from '../util/constants';
 
 const ClaimInfoSection = ({ label, value }) =>
     trim(value) && (
@@ -34,6 +37,21 @@ export default function FacilityDetailsSidebarClaimedInfo({
             <Typography variant="title">
                 Claimed Facility Info
             </Typography>
+            <div className="control-panel__group">
+                <p>
+                    OAR staff has verified that the claimant is connected to the
+                    facility but has not verified the claimed facility details
+                    displayed below.
+                </p>
+                <Link
+                    to={aboutClaimedFacilitiesRoute}
+                    href={aboutClaimedFacilitiesRoute}
+                    className="link-underline small"
+                    style={{ fontSize: '16px' }}
+                >
+                    Learn more about claimed facilities
+                </Link>
+            </div>
             <ClaimInfoSection
                 label="Name"
                 value={facility.name}

@@ -9,7 +9,28 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
+import FeatureFlag from './FeatureFlag';
+
+import {
+    aboutClaimedFacilitiesRoute,
+    CLAIM_A_FACILITY,
+} from '../util/constants';
+
 const itemMap = (item) => {
+    if (item.url === aboutClaimedFacilitiesRoute) {
+        return (
+            <FeatureFlag flag={CLAIM_A_FACILITY}>
+                <Link
+                    to={item.url}
+                    href={item.url}
+                    className="link full-width-height"
+                >
+                    {item.text}
+                </Link>
+            </FeatureFlag>
+        );
+    }
+
     switch (item.type) {
         case 'link':
             return (
