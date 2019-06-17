@@ -735,6 +735,8 @@ class FacilityMatch(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    history = HistoricalRecords()
+
     def __str__(self):
         return '{0} - {1} - {2}'.format(self.facility_list_item, self.facility,
                                         self.status)

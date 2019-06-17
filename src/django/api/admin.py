@@ -38,8 +38,9 @@ class FacilityListItemAdmin(admin.ModelAdmin):
     pretty_processing_results.short_description = 'Processing results'
 
 
-class FacilityMatchAdmin(admin.ModelAdmin):
+class FacilityMatchAdmin(SimpleHistoryAdmin):
     exclude = ('results',)
+    history_list_display = ('status', 'facility')
     readonly_fields = ('facility_list_item', 'facility',
                        'confidence', 'status', 'pretty_results')
 
