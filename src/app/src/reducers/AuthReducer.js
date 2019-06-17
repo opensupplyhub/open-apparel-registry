@@ -41,6 +41,8 @@ import {
 
 import { completeUpdateUserProfile } from '../actions/profile';
 
+import { completeSubmitClaimAFacilityData } from '../actions/claimFacility';
+
 import { registrationFieldsEnum } from '../util/constants';
 
 const initialState = Object.freeze({
@@ -288,6 +290,13 @@ export default createReducer({
     [resetConfirmAccountRegistration]: state => update(state, {
         confirmRegistration: {
             $set: initialState.confirmRegistration,
+        },
+    }),
+    [completeSubmitClaimAFacilityData]: (state, claimedFacilityIDs) => update(state, {
+        user: {
+            user: {
+                claimed_facility_ids: { $set: claimedFacilityIDs },
+            },
         },
     }),
 }, initialState);

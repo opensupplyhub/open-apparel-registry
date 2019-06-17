@@ -85,6 +85,7 @@ class FacilityDetailSidebar extends Component {
             },
             history: { goBack, push },
             facilityIsClaimedByCurrentUser,
+            userHasPendingFacilityClaim,
         } = this.props;
 
         if (fetching) {
@@ -166,21 +167,27 @@ class FacilityDetailSidebar extends Component {
                                 <BadgeVerified color={COLOURS.GREEN} />
                             </IconButton>
                         ) : (
-                            <IconButton
-                                className="color-white"
-                                style={detailsSidebarStyles.headerButtonStyle}
-                                onClick={() =>
-                                    push(
-                                        makeClaimFacilityLink(
-                                            data.properties.oar_id,
-                                        ),
-                                    )
-                                }
-                                disabled={fetching}
-                                title="Claim this facility"
-                            >
-                                <BadgeUnclaimed />
-                            </IconButton>
+                            <ShowOnly when={!userHasPendingFacilityClaim}>
+                                <IconButton
+                                    className="color-white"
+                                    style={detailsSidebarStyles.headerButtonStyle}
+                                    onClick={() =>
+                                        push(
+                                            makeClaimFacilityLink(
+                                                data.properties.oar_id,
+                                            ),
+                                        )
+                                    }
+                                    disabled={fetching || userHasPendingFacilityClaim}
+                                    title={
+                                        userHasPendingFacilityClaim
+                                            ? 'You have a pending claim on this facility'
+                                            : 'Claim this facility'
+                                    }
+                                >
+                                    <BadgeUnclaimed />
+                                </IconButton>
+                            </ShowOnly>
                         )}
                     </FeatureFlag>
                 </div>
@@ -250,20 +257,30 @@ class FacilityDetailSidebar extends Component {
                                                     Dispute claim
                                                 </a>
                                             ) : (
-                                                <Link
-                                                    className="link-underline small"
-                                                    to={makeClaimFacilityLink(
-                                                        data.properties.oar_id,
-                                                    )}
-                                                    href={makeClaimFacilityLink(
-                                                        data.properties.oar_id,
-                                                    )}
-                                                    style={
-                                                        detailsSidebarStyles.linkStyle
-                                                    }
-                                                >
-                                                    Claim this facility
-                                                </Link>
+                                                <>
+                                                    <ShowOnly when={!userHasPendingFacilityClaim}>
+                                                        <Link
+                                                            className="link-underline small"
+                                                            to={makeClaimFacilityLink(
+                                                                data.properties.oar_id,
+                                                            )}
+                                                            href={makeClaimFacilityLink(
+                                                                data.properties.oar_id,
+                                                            )}
+                                                            style={
+                                                                detailsSidebarStyles.linkStyle
+                                                            }
+                                                        >
+                                                            Claim this facility
+                                                        </Link>
+                                                    </ShowOnly>
+                                                    <ShowOnly when={userHasPendingFacilityClaim}>
+                                                        <p>
+                                                            You have a pending claim on this
+                                                            facility
+                                                        </p>
+                                                    </ShowOnly>
+                                                </>
                                             )}
                                         </FeatureFlag>
                                     </>
@@ -310,6 +327,7 @@ FacilityDetailSidebar.propTypes = {
     fetchFacility: func.isRequired,
     clearFacility: func.isRequired,
     facilityIsClaimedByCurrentUser: bool.isRequired,
+    userHasPendingFacilityClaim: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -326,18 +344,30 @@ function mapStateToProps({
         },
     },
 }) {
-    const currentUserClaimedFacilities = get(user, 'user.claimed_facility_ids', []);
+    const {
+        approved: currentUserApprovedClaimedFacilities,
+        pending: currentUserPendingClaimedFacilities,
+    } = get(user, 'user.claimed_facility_ids', { approved: [], pending: [] });
 
     const facilityIsClaimedByCurrentUser = includes(
-        currentUserClaimedFacilities,
+        currentUserApprovedClaimedFacilities,
         oarID,
     );
+
+    // Make this false if the current user has an approved claim
+    // regardless of the presence of any other pending claims
+    const userHasPendingFacilityClaim = includes(
+        currentUserPendingClaimedFacilities,
+        oarID,
+    ) && !facilityIsClaimedByCurrentUser;
 
     return {
         data,
         fetching,
         error,
         facilityIsClaimedByCurrentUser,
+        userHasPendingFacilityClaim,
+        user,
     };
 }
 
