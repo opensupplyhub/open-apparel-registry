@@ -1339,6 +1339,13 @@ class FacilityClaimAdminDashboardTests(APITestCase):
                     location=Point(0, 0),
                     created_from=self.list_item)
 
+        self.facility_match = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    results="",
+                    facility_list_item=self.list_item)
+
         self.facility_claim = FacilityClaim \
             .objects \
             .create(
@@ -1388,7 +1395,7 @@ class FacilityClaimAdminDashboardTests(APITestCase):
         )
 
     @override_switch('claim_a_facility', active=True)
-    def test_approve_facility_claim(self):
+    def test_approve_claim_and_email_claimant_and_contributors(self):
         self.assertEqual(len(mail.outbox), 0)
 
         response = self.client.post(
@@ -1396,7 +1403,11 @@ class FacilityClaimAdminDashboardTests(APITestCase):
         )
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual(len(mail.outbox), 1)
+
+        # Expect two emails to have been sent:
+        #   - one to the user who submitted the facility claim
+        #   - one to a contributor who has this facility on a list
+        self.assertEqual(len(mail.outbox), 2)
 
         updated_facility_claim = FacilityClaim \
             .objects \
@@ -1575,27 +1586,37 @@ class ApprovedFacilityClaimTests(APITestCase):
         self.user.set_password(self.password)
         self.user.save()
 
-        self.contributor = Contributor \
+        self.user_contributor = Contributor \
             .objects \
             .create(admin=self.user,
+                    name='text contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contributor_email = 'contributor@example.com'
+        self.contributor_user = User.objects \
+                                    .create(email=self.contributor_email)
+
+        self.list_contributor = Contributor \
+            .objects \
+            .create(admin=self.contributor_user,
                     name='test contributor',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
-        self.list = FacilityList \
+        self.facility_list = FacilityList \
             .objects \
             .create(header="header",
                     file_name="one",
                     name='List',
                     is_active=True,
                     is_public=True,
-                    contributor=self.contributor)
+                    contributor=self.list_contributor)
 
         self.list_item = FacilityListItem \
             .objects \
             .create(name='Item',
                     address='Address',
                     country_code='US',
-                    facility_list=self.list,
+                    facility_list=self.facility_list,
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH)
 
@@ -1607,10 +1628,17 @@ class ApprovedFacilityClaimTests(APITestCase):
                     location=Point(0, 0),
                     created_from=self.list_item)
 
+        self.facility_match = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    results="",
+                    facility_list_item=self.list_item)
+
         self.facility_claim = FacilityClaim \
             .objects \
             .create(
-                contributor=self.contributor,
+                contributor=self.user_contributor,
                 facility=self.facility,
                 contact_person='Name',
                 email=self.email,
@@ -1685,6 +1713,33 @@ class ApprovedFacilityClaimTests(APITestCase):
         ).json()['properties']['claim_info']['facility']
 
         self.assertEqual(response_data['description'], 'new_description')
+
+    @override_switch('claim_a_facility', active=True)
+    def test_updating_claim_profile_sends_email_to_contributor(self):
+        self.assertEqual(len(mail.outbox), 0)
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response = self.client.put(
+            '/api/facility-claims/{}/claimed/'.format(self.facility_claim.id),
+            {
+                'facility_description': 'test_facility_description',
+                'facility_phone_number_publicly_visible': False,
+                'point_of_contact_publicly_visible': False,
+                'office_info_publicly_visible': False,
+            }
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        updated_description = FacilityClaim \
+            .objects \
+            .get(pk=self.facility_claim.id) \
+            .facility_description
+
+        self.assertEqual(updated_description, 'test_facility_description')
+
+        self.assertEqual(len(mail.outbox), 1)
 
     @override_switch('claim_a_facility', active=True)
     def test_non_visible_facility_phone_is_not_in_details_response(self):
