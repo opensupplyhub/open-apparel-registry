@@ -13,7 +13,7 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
@@ -23,10 +23,10 @@ from rest_framework.exceptions import (ValidationError,
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
-                                       action)
+                                       action,
+                                       schema)
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.schemas.inspectors import AutoSchema
 from rest_auth.views import LoginView, LogoutView
@@ -402,7 +402,20 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
         return []
 
 
-class FacilitiesViewSet(ReadOnlyModelViewSet):
+class FacilitiesAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        if method == 'DELETE':
+            return None
+
+        return super(FacilitiesAutoSchema, self).get_link(
+            path, method, base_url)
+
+
+@schema(FacilitiesAutoSchema())
+class FacilitiesViewSet(mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin,
+                        mixins.DestroyModelMixin,
+                        viewsets.GenericViewSet):
     """
     Get facilities in GeoJSON format.
     """
@@ -553,6 +566,9 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
             return Response(response_data)
         except Facility.DoesNotExist:
             raise NotFound()
+
+    def destroy(self, request, pk=None):
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     @action(detail=False, methods=['get'])
     def count(self, request):
