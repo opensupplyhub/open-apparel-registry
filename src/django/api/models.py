@@ -257,6 +257,7 @@ class FacilityListItem(models.Model):
     ERROR_PARSING = 'ERROR_PARSING'
     ERROR_GEOCODING = 'ERROR_GEOCODING'
     ERROR_MATCHING = 'ERROR_MATCHING'
+    DELETED = 'DELETED'
 
     # NEW_FACILITY is a meta status. If the `status` of a `FacilityListItem` is
     # `MATCHED` or `CONFIRMED_MATCH` and the `facility` was `created_from` the
@@ -277,6 +278,7 @@ class FacilityListItem(models.Model):
         (ERROR_PARSING, ERROR_PARSING),
         (ERROR_GEOCODING, ERROR_GEOCODING),
         (ERROR_MATCHING, ERROR_MATCHING),
+        (DELETED, DELETED),
     )
 
     ERROR_STATUSES = [ERROR, ERROR_PARSING, ERROR_GEOCODING, ERROR_MATCHING]
@@ -678,6 +680,20 @@ class Facility(models.Model):
             and match.facility_list.is_public
             and match.facility_list.contributor is not None
         ]
+
+    def get_created_from_match(self):
+        return self.facilitymatch_set.filter(
+            facility_list_item=self.created_from
+        ).first()
+
+    def get_other_matches(self):
+        return self.facilitymatch_set.exclude(
+            facility_list_item=self.created_from
+        ).all()
+
+    def get_approved_claim(self):
+        return self.facilityclaim_set.filter(
+            status=FacilityClaim.APPROVED).count() > 0
 
 
 class FacilityMatch(models.Model):

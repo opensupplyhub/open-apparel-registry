@@ -298,6 +298,11 @@ class FacilityListSerializer(ModelSerializer):
             0
         )
 
+        deleted = status_counts_dictionary.get(
+            FacilityListItem.DELETED,
+            0
+        )
+
         return {
             FacilityListItem.UPLOADED: uploaded,
             FacilityListItem.PARSED: parsed,
@@ -310,6 +315,7 @@ class FacilityListSerializer(ModelSerializer):
             FacilityListItem.ERROR_PARSING: error_parsing,
             FacilityListItem.ERROR_GEOCODING: error_geocoding,
             FacilityListItem.ERROR_MATCHING: error_matching,
+            FacilityListItem.DELETED: deleted,
         }
 
 

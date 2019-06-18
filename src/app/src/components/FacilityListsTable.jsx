@@ -70,6 +70,9 @@ function FacilityListsTable({
                             Potential Match
                         </TableCell>
                         <TableCell padding="dense">
+                            Deleted
+                        </TableCell>
+                        <TableCell padding="dense">
                             Active
                         </TableCell>
                     </TableRow>
@@ -143,6 +146,12 @@ function FacilityListsTable({
                                             facilitiesListTableTooltipTitles.potentialMatch
                                         }
                                         tableCellText={list.status_counts.POTENTIAL_MATCH}
+                                    />
+                                    <FacilityListsTooltipTableCell
+                                        tooltipTitle={
+                                            facilitiesListTableTooltipTitles.deleted
+                                        }
+                                        tableCellText={list.status_counts.DELETED}
                                     />
                                     <TableCell padding="dense">
                                         {list.is_active ? 'Active' : 'Inactive'}

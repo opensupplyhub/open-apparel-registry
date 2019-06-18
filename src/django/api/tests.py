@@ -2051,4 +2051,38 @@ class FacilityDeleteTest(APITestCase):
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
         response = self.client.delete(self.facility_url)
-        self.assertEqual(501, response.status_code)
+        self.assertEqual(204, response.status_code)
+
+    def test_delete(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
+
+        self.list_item.refresh_from_db()
+        self.assertEqual(
+            FacilityListItem.DELETED, self.list_item.status)
+        self.assertEqual(
+            ProcessingAction.DELETE_FACILITY,
+            self.list_item.processing_results[-1]['action'])
+        self.assertEqual(
+            self.facility.id,
+            self.list_item.processing_results[-1]['deleted_oar_id'])
+
+    def test_cant_delete_if_there_is_an_appoved_claim(self):
+        FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            status=FacilityClaim.APPROVED)
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(400, response.status_code)

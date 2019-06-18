@@ -568,13 +568,48 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
+    @transaction.atomic
     def destroy(self, request, pk=None):
         if request.user.is_anonymous:
             raise NotAuthenticated()
         if not request.user.is_superuser:
             raise PermissionDenied()
 
-        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            raise NotFound()
+
+        if facility.get_approved_claim():
+            raise BadRequestException(
+                'Facilities with approved claims cannot be deleted'
+            )
+
+        now = str(datetime.utcnow())
+        list_item = facility.created_from
+        list_item.status = FacilityListItem.DELETED
+        list_item.processing_results.append({
+            'action': ProcessingAction.DELETE_FACILITY,
+            'started_at': now,
+            'error': False,
+            'finished_at': now,
+            'deleted_oar_id': facility.id,
+        })
+        list_item.facility = None
+        list_item.save()
+
+        match = facility.get_created_from_match()
+        match.changeReason = 'Deleted {}'.format(facility.id)
+        match.delete()
+
+        if facility.get_other_matches().count() > 0:
+            raise BadRequestException(
+                'Deleting a facility with matches is not implemented.'
+            )
+
+        facility.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'])
     def count(self, request):

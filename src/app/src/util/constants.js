@@ -299,6 +299,7 @@ export const facilityListItemStatusChoicesEnum = Object.freeze({
     ERROR_PARSING: 'ERROR_PARSING',
     ERROR_GEOCODING: 'ERROR_GEOCODING',
     ERROR_MATCHING: 'ERROR_MATCHING',
+    DELETED: 'DELETED',
 });
 
 export const facilityListItemErrorStatuses = Object.freeze([
@@ -357,6 +358,10 @@ export const facilityListStatusFilterChoices = Object.freeze([
         label: facilityListItemStatusChoicesEnum.ERROR_MATCHING,
         value: facilityListItemStatusChoicesEnum.ERROR_MATCHING,
     },
+    {
+        label: facilityListItemStatusChoicesEnum.DELETED,
+        value: facilityListItemStatusChoicesEnum.DELETED,
+    },
 ]);
 
 export const facilityListSummaryStatusMessages = Object.freeze({
@@ -402,6 +407,7 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
     matched: 'Number of items that have been matched with an existing facility or created a new facility.',
     error: 'Number of items that have encountered errors during processing',
     potentialMatch: 'Number of items with potential matches to confirm or reject.',
+    deleted: 'Number of items where the related facility has been deleted.',
 });
 
 export const CLAIM_A_FACILITY = 'claim_a_facility';
