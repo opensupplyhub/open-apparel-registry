@@ -2086,3 +2086,18 @@ class FacilityDeleteTest(APITestCase):
                           password=self.superuser_password)
         response = self.client.delete(self.facility_url)
         self.assertEqual(400, response.status_code)
+
+    def test_unapproved_claims_are_deleted(self):
+        FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            status=FacilityClaim.PENDING)
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+        self.assertEqual(
+            0, FacilityClaim.objects.filter(facility=self.facility).count())

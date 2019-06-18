@@ -607,6 +607,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'Deleting a facility with matches is not implemented.'
             )
 
+        for claim in FacilityClaim.objects.filter(facility=facility):
+            claim.changeReason = 'Deleted {}'.format(facility.id)
+            claim.delete()
+
         facility.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
