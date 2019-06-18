@@ -10,6 +10,7 @@ import DashboardClaimsDetails from './DashboardClaimsDetails';
 import DashboardDeleteFacility from './DashboardDeleteFacility';
 import DashboardMergeFacilities from './DashboardMergeFacilities';
 import FeatureFlag from './FeatureFlag';
+import RouteNotFound from './RouteNotFound';
 
 import { checkWhetherUserHasDashboardAccess } from '../util/util';
 
@@ -43,18 +44,14 @@ function Dashboard({
 }) {
     if (fetchingSessionSignIn) {
         return (
-            <AppGrid title={DASHBOARD_TITLE}>
+            <AppGrid title="">
                 <CircularProgress />
             </AppGrid>
         );
     }
 
     if (!userWithAccessHasSignedIn) {
-        return (
-            <AppGrid title={DASHBOARD_TITLE}>
-                Unauthorized
-            </AppGrid>
-        );
+        return <RouteNotFound />;
     }
 
     const linkSection = (
