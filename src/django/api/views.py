@@ -1616,6 +1616,47 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         except FacilityMatch.DoesNotExist:
             raise NotFound()
 
+    @transaction.atomic
+    @action(detail=True, methods=['post'],
+            url_path='remove')
+    def remove_item(self, request, pk=None):
+        try:
+            facility_list = FacilityList \
+                .objects \
+                .filter(contributor=request.user.contributor) \
+                .get(pk=pk)
+
+            facility_list_item = FacilityListItem \
+                .objects \
+                .filter(facility_list=facility_list) \
+                .get(pk=request.data.get('list_item_id'))
+
+            FacilityMatch \
+                .objects \
+                .filter(facility_list_item=facility_list_item) \
+                .update(is_active=False)
+
+            updated_facility_list_item = FacilityListItem \
+                .objects \
+                .filter(facility_list=facility_list) \
+                .get(pk=request.data.get('list_item_id'))
+
+            response_data = FacilityListItemSerializer(
+                updated_facility_list_item).data
+
+            response_data['list_statuses'] = (facility_list
+                                              .facilitylistitem_set
+                                              .values_list('status', flat=True)
+                                              .distinct())
+
+            return Response(response_data)
+        except FacilityList.DoesNotExist:
+            raise NotFound()
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
+            raise NotFound()
+
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
