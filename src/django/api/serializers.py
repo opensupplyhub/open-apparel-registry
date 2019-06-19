@@ -350,7 +350,8 @@ class FacilityListItemsQueryParamsSerializer(Serializer):
 
     def validate_status(self, value):
         valid_statuses = ([c[0] for c in FacilityListItem.STATUS_CHOICES]
-                          + [FacilityListItem.NEW_FACILITY])
+                          + [FacilityListItem.NEW_FACILITY,
+                             FacilityListItem.REMOVED])
         for item in value:
             if item not in valid_statuses:
                 raise ValidationError(
@@ -575,7 +576,8 @@ class FacilityMatchSerializer(ModelSerializer):
     class Meta:
         model = FacilityMatch
         fields = ('id', 'status', 'confidence', 'results',
-                  'oar_id', 'name', 'address', 'location')
+                  'oar_id', 'name', 'address', 'location',
+                  'is_active')
 
     def get_oar_id(self, match):
         return match.facility.id

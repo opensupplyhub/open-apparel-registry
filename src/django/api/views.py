@@ -522,6 +522,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 .objects
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
+                .filter(is_active=True)
                 .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
                 .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
@@ -537,6 +538,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 .objects
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
+                .filter(is_active=True)
                 .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
                 .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
@@ -1197,13 +1199,17 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         special_case_q_statements = {
             FacilityListItem.NEW_FACILITY: Q(
                         Q(status__in=('MATCHED', 'CONFIRMED_MATCH')) &
-                        Q(facility__created_from_id=F('id'))),
+                        Q(facility__created_from_id=F('id')) &
+                        ~Q(facilitymatch__is_active=False)),
             FacilityListItem.MATCHED: Q(
                         Q(status='MATCHED') &
-                        ~Q(facility__created_from_id=F('id'))),
+                        ~Q(facility__created_from_id=F('id')) &
+                        ~Q(facilitymatch__is_active=False)),
             FacilityListItem.CONFIRMED_MATCH: Q(
                         Q(status='CONFIRMED_MATCH') &
-                        ~Q(facility__created_from_id=F('id')))
+                        ~Q(facility__created_from_id=F('id')) &
+                        ~Q(facilitymatch__is_active=False)),
+            FacilityListItem.REMOVED: Q(facilitymatch__is_active=False),
         }
 
         def make_q_from_status(status):
@@ -1313,7 +1319,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 1,
                             "lng": 1
-                        }
+                        },
+                        "is_active": true
                     },
                     {
                         "id": 2,
@@ -1333,7 +1340,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 2,
                             "lng": 2
-                        }
+                        },
+                        "is_active": true
                     }
                 ],
                 "row_index": 1,
@@ -1475,7 +1483,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 1,
                             "lng": 1
-                        }
+                        },
+                        "is_active": true
                     },
                     {
                         "id": 2,
@@ -1495,7 +1504,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 2,
                             "lng": 2
-                        }
+                        },
+                        "is_active": true
                     }
                 ]
                 "row_index": 1,
@@ -1636,13 +1646,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .filter(facility_list_item=facility_list_item) \
                 .update(is_active=False)
 
-            updated_facility_list_item = FacilityListItem \
-                .objects \
-                .filter(facility_list=facility_list) \
-                .get(pk=request.data.get('list_item_id'))
+            facility_list_item.refresh_from_db()
 
-            response_data = FacilityListItemSerializer(
-                updated_facility_list_item).data
+            response_data = FacilityListItemSerializer(facility_list_item).data
 
             response_data['list_statuses'] = (facility_list
                                               .facilitylistitem_set

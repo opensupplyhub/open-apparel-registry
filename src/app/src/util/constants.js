@@ -302,6 +302,7 @@ export const facilityListItemStatusChoicesEnum = Object.freeze({
     ERROR_GEOCODING: 'ERROR_GEOCODING',
     ERROR_MATCHING: 'ERROR_MATCHING',
     DELETED: 'DELETED',
+    REMOVED: 'REMOVED', // This is not a status that appears in the database
 });
 
 export const facilityListItemErrorStatuses = Object.freeze([
@@ -363,6 +364,10 @@ export const facilityListStatusFilterChoices = Object.freeze([
     {
         label: facilityListItemStatusChoicesEnum.DELETED,
         value: facilityListItemStatusChoicesEnum.DELETED,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.REMOVED,
+        value: facilityListItemStatusChoicesEnum.REMOVED,
     },
 ]);
 

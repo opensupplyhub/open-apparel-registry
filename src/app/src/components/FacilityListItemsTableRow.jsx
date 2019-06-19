@@ -1,9 +1,10 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { bool, func, number, oneOfType, string } from 'prop-types';
 import { Link } from 'react-router-dom';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import isEqual from 'lodash/isEqual';
+import Button from '@material-ui/core/Button';
+import isFunction from 'lodash/isFunction';
 
 import { facilityListItemStatusPropType } from '../util/propTypes';
 
@@ -11,17 +12,12 @@ import { listTableCellStyles } from '../util/styles';
 
 import { makeFacilityDetailLink } from '../util/util';
 
-const propsAreEqual = (prevProps, nextProps) =>
-    isEqual(prevProps.rowIndex, nextProps.rowIndex)
-    && isEqual(prevProps.countryCode, nextProps.countryCode)
-    && isEqual(prevProps.name, nextProps.name)
-    && isEqual(prevProps.address, nextProps.address)
-    && isEqual(prevProps.status, nextProps.status)
-    && isEqual(prevProps.hover, nextProps.hover)
-    && isEqual(prevProps.newFacility, nextProps.newFacility)
-    && isEqual(prevProps.oarID, nextProps.oarID);
+const makeTableRowStyles = ({ handleSelectRow, isRemoved }) => ({
+    cursor: isFunction(handleSelectRow) ? 'pointer' : 'auto',
+    opacity: isRemoved ? '0.6' : '1.0',
+});
 
-const FacilityListItemsTableRow = memo(({
+const FacilityListItemsTableRow = ({
     rowIndex,
     countryName,
     name,
@@ -31,15 +27,15 @@ const FacilityListItemsTableRow = memo(({
     handleSelectRow,
     newFacility,
     oarID,
+    isRemoved,
+    handleRemoveItem,
+    removeButtonDisabled,
+    removeButtonID,
 }) => (
     <TableRow
         hover={hover}
         onClick={handleSelectRow}
-        style={
-            handleSelectRow ?
-                { cursor: 'pointer' }
-                : null
-        }
+        style={makeTableRowStyles({ handleSelectRow, isRemoved })}
     >
         <TableCell
             align="center"
@@ -82,19 +78,46 @@ const FacilityListItemsTableRow = memo(({
             style={listTableCellStyles.statusCellStyles}
         >
             {
-                newFacility
-                    ? 'NEW_FACILITY'
-                    : status
+                (() => {
+                    if (isRemoved) {
+                        return 'REMOVED';
+                    }
+
+                    if (!isFunction(handleRemoveItem)) {
+                        return newFacility ? 'NEW_FACILITY' : status;
+                    }
+
+                    return (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <span style={{ marginRight: '5px' }}>
+                                {newFacility ? 'NEW_FACILITY' : status}
+                            </span>
+                            <Button
+                                color="primary"
+                                onClick={handleRemoveItem}
+                                style={{ marginLeft: '5px', marginRight: '5px' }}
+                                disabled={removeButtonDisabled}
+                                id={removeButtonID}
+                            >
+                                Remove
+                            </Button>
+                        </div>
+                    );
+                })()
             }
         </TableCell>
     </TableRow>
-), propsAreEqual);
+);
 
 FacilityListItemsTableRow.defaultProps = {
     hover: false,
     handleSelectRow: null,
     newFacility: false,
     oarID: null,
+    isRemoved: false,
+    handleRemoveItem: null,
+    removeButtonDisabled: false,
+    removeButtonID: null,
 };
 
 FacilityListItemsTableRow.propTypes = {
@@ -106,6 +129,10 @@ FacilityListItemsTableRow.propTypes = {
     handleSelectRow: func,
     newFacility: bool,
     oarID: string,
+    isRemoved: bool,
+    handleRemoveItem: func,
+    removeButtonDisabled: bool,
+    removeButtonID: string,
 };
 
 export default FacilityListItemsTableRow;

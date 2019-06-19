@@ -685,6 +685,23 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.assertNotIn(self.list_two, contributors)
         self.assertEqual(len(contributors), 1)
 
+    def test_excludes_inactive_facility_matches_from_details(self):
+        self.facility_match_two.is_active = False
+        self.facility_match_two.save()
+
+        contributors = self.facility.contributors()
+        self.assertIn(self.list_one, contributors)
+        self.assertNotIn(self.list_two, contributors)
+        self.assertEqual(len(contributors), 1)
+
+        other_names = self.facility.other_names()
+        self.assertNotIn(self.name_two, other_names)
+        self.assertEqual(len(other_names), 0)
+
+        other_addresses = self.facility.other_addresses()
+        self.assertNotIn(self.address_two, other_addresses)
+        self.assertEqual(len(other_addresses), 0)
+
 
 class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
     def setUp(self):

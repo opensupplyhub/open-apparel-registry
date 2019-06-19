@@ -446,6 +446,9 @@ export const createConfirmFacilityListItemMatchURL = listID =>
 export const createRejectFacilityListItemMatchURL = listID =>
     `/api/facility-lists/${listID}/reject/`;
 
+export const createRemoveFacilityListItemURL = listID =>
+    `/api/facility-lists/${listID}/remove/`;
+
 export const makeMyFacilitiesRoute = contributorID =>
     `/facilities/?contributors=${contributorID}`;
 
@@ -610,3 +613,5 @@ export const claimFacilityContactInfoStepIsValid = ({
 ]);
 
 export const claimFacilityFacilityInfoStepIsValid = ({ companyName }) => !isEmpty(companyName);
+
+export const anyListItemMatchesAreInactive = ({ matches }) => some(matches, ['is_active', false]);

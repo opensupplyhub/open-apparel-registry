@@ -1,8 +1,7 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { bool, func, number, oneOfType, shape, string } from 'prop-types';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import isEqual from 'lodash/isEqual';
 
 import FacilityListItemsDetailedTableRowCell from './FacilityListItemsDetailedTableRowCell';
 
@@ -12,11 +11,22 @@ import { makeFacilityDetailLink } from '../util/util';
 
 import { facilityListItemStatusPropType } from '../util/propTypes';
 
-const propsAreEqual = (prevProps, nextProps) =>
-    isEqual(prevProps, nextProps)
-    && isEqual(prevProps.matchedFacility, nextProps.matchedFacility);
+const makeTableRowStyle = (isRemoved) => {
+    if (isRemoved) {
+        return Object.freeze({
+            opacity: '0.6',
+            verticalAlign: 'top',
+            cursor: 'pointer',
+        });
+    }
 
-const FacilityListItemsMatchTableRow = memo(({
+    return Object.freeze({
+        verticalAlign: 'top',
+        cursor: 'pointer',
+    });
+};
+
+const FacilityListItemsMatchTableRow = ({
     rowIndex,
     countryName,
     name,
@@ -25,11 +35,15 @@ const FacilityListItemsMatchTableRow = memo(({
     hover,
     matchedFacility,
     handleSelectRow,
+    isRemoved,
+    handleRemoveItem,
+    removeButtonDisabled,
+    removeButtonID,
 }) => (
     <TableRow
         hover={hover}
         onClick={handleSelectRow}
-        style={{ verticalAlign: 'top' }}
+        style={makeTableRowStyle(isRemoved)}
     >
         <TableCell
             align="center"
@@ -96,13 +110,21 @@ const FacilityListItemsMatchTableRow = memo(({
                 stringIsHidden
                 data={[matchedFacility.oar_id]}
                 hasActions={false}
+                isRemoved={isRemoved}
+                handleRemoveItem={handleRemoveItem}
+                removeButtonDisabled={removeButtonDisabled}
+                removeButtonID={removeButtonID}
             />
         </TableCell>
     </TableRow>
-), propsAreEqual);
+);
 
 FacilityListItemsMatchTableRow.defaultProps = {
     hover: false,
+    isRemoved: false,
+    handleRemoveItem: null,
+    removeButtonDisabled: true,
+    removeButtonID: null,
 };
 
 FacilityListItemsMatchTableRow.propTypes = {
@@ -117,6 +139,10 @@ FacilityListItemsMatchTableRow.propTypes = {
         name: string.isRequired,
     }).isRequired,
     handleSelectRow: func.isRequired,
+    isRemoved: bool,
+    handleRemoveItem: func,
+    removeButtonDisabled: bool,
+    removeButtonID: string,
 };
 
 export default FacilityListItemsMatchTableRow;

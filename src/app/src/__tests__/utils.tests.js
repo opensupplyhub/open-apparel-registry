@@ -74,6 +74,7 @@ const {
     claimAFacilityFormIsValid,
     claimFacilityContactInfoStepIsValid,
     claimFacilityFacilityInfoStepIsValid,
+    anyListItemMatchesAreInactive,
 } = require('../util/util');
 
 const {
@@ -1316,4 +1317,32 @@ it('creates an API URL for merging two facilties', () => {
         expectedURL,
         makeMergeTwoFacilitiesAPIURL(targetID, toMergeID),
     )).toBe(true);
+});
+
+it('checks a facility list item to see whether any matches have been set to inactive', () => {
+    const listItemWithAllMatchesActive = {
+        matches: [
+            {
+                is_active: true,
+            },
+            {
+                is_active: true,
+            },
+        ],
+    };
+
+    expect(anyListItemMatchesAreInactive(listItemWithAllMatchesActive)).toBe(false);
+
+    const listItemWithInactiveMatches = {
+        matches: [
+            {
+                is_active: false,
+            },
+            {
+                is_active: false,
+            },
+        ],
+    };
+
+    expect(anyListItemMatchesAreInactive(listItemWithInactiveMatches)).toBe(true);
 });
