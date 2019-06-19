@@ -13,6 +13,7 @@ class ProcessingAction:
     SUBMIT_JOB = 'submitjob'
     CONFIRM = 'confirm'
     DELETE_FACILITY = 'delete_facility'
+    PROMOTE_MATCH = 'promote_match'
 
 
 class FacilitiesQueryParams:

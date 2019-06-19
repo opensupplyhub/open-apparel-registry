@@ -49,6 +49,7 @@ from api.models import (FacilityList,
                         FacilityClaimReviewNote,
                         Facility,
                         FacilityMatch,
+                        FacilityAlias,
                         Contributor,
                         User)
 from api.processing import parse_csv_line, parse_csv, parse_excel
@@ -602,10 +603,88 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         match.changeReason = 'Deleted {}'.format(facility.id)
         match.delete()
 
-        if facility.get_other_matches().count() > 0:
-            raise BadRequestException(
-                'Deleting a facility with matches is not implemented.'
-            )
+        other_matches = facility.get_other_matches()
+        if other_matches.count() > 0:
+            try:
+                best_match = max(
+                    other_matches.filter(
+                        status__in=(FacilityMatch.AUTOMATIC,
+                                    FacilityMatch.CONFIRMED)),
+                    key=lambda m: m.confidence)
+            except ValueError:
+                # Raised when there are no AUTOMATIC or CONFIRMED matches
+                best_match = None
+            if best_match:
+                best_item = best_match.facility_list_item
+
+                promoted_facility = Facility.objects.create(
+                    name=best_item.name,
+                    address=best_item.address,
+                    country_code=best_item.country_code,
+                    location=best_item.geocoded_point,
+                    created_from=best_item)
+                FacilityAlias.objects.create(
+                    oar_id=facility.id,
+                    facility=promoted_facility,
+                    reason=FacilityAlias.DELETE
+                )
+
+                best_match.facility = promoted_facility
+                best_match.changeReason = (
+                    'Deleted {} and promoted {}'.format(
+                        facility.id,
+                        promoted_facility.id
+                    )
+                )
+                best_match.save()
+
+                best_item.facility = promoted_facility
+                best_item.processing_results.append({
+                    'action': ProcessingAction.PROMOTE_MATCH,
+                    'started_at': now,
+                    'error': False,
+                    'finished_at': now,
+                    'promoted_oar_id': promoted_facility.id,
+                })
+                best_item.save()
+
+                for other_match in other_matches:
+                    if other_match.id != best_match.id:
+                        other_match.facility = promoted_facility
+                        other_match.changeReason = (
+                            'Deleted {} and promoted {}'.format(
+                                facility.id,
+                                promoted_facility.id
+                            )
+                        )
+                        other_match.save()
+
+                        other_item = other_match.facility_list_item
+                        other_item.facility = promoted_facility
+                        other_item.processing_results.append({
+                            'action': ProcessingAction.PROMOTE_MATCH,
+                            'started_at': now,
+                            'error': False,
+                            'finished_at': now,
+                            'promoted_oar_id': promoted_facility.id,
+                        })
+                        other_item.save()
+            else:
+                for other_match in other_matches:
+                    other_match.changeReason = 'Deleted {}'.format(facility.id)
+                    other_match.delete()
+
+                    other_item = other_match.facility_list_item
+                    other_item.status = FacilityListItem.DELETED
+                    other_item.processing_results.append({
+                        'action': ProcessingAction.DELETE_FACILITY,
+                        'started_at': now,
+                        'error': False,
+                        'finished_at': now,
+                        'deleted_oar_id': facility.id,
+                    })
+                    other_item.facility = None
+                    other_item.save()
 
         for claim in FacilityClaim.objects.filter(facility=facility):
             claim.changeReason = 'Deleted {}'.format(facility.id)
