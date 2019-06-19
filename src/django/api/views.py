@@ -1,9 +1,11 @@
 import operator
 import os
+import sys
 
 from datetime import datetime
 from functools import reduce
 
+from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.db.models import F, Q
@@ -70,8 +72,23 @@ from api.pagination import FacilitiesGeoJSONPagination
 from api.mail import (send_claim_facility_confirmation_email,
                       send_claim_facility_approval_email,
                       send_claim_facility_denial_email,
-                      send_claim_facility_revocation_email)
+                      send_claim_facility_revocation_email,
+                      send_approved_claim_notice_to_list_contributors,
+                      send_claim_update_notice_to_list_contributors)
 from api.exceptions import BadRequestException
+
+
+def _report_facility_claim_email_error_to_rollbar(claim):
+    ROLLBAR = getattr(settings, 'ROLLBAR', {})
+
+    if ROLLBAR:
+        import rollbar
+        rollbar.report_exc_info(
+            sys.exc_info(),
+            extra_data={
+                'claim_id': claim.id,
+            }
+        )
 
 
 @permission_classes((AllowAny,))
@@ -1473,6 +1490,12 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             send_claim_facility_approval_email(request, claim)
 
+            try:
+                send_approved_claim_notice_to_list_contributors(request,
+                                                                claim)
+            except Exception:
+                _report_facility_claim_email_error_to_rollbar(claim)
+
             response_data = FacilityClaimDetailsSerializer(claim).data
             return Response(response_data)
         except FacilityClaim.DoesNotExist:
@@ -1641,6 +1664,12 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             )
 
             updated_claim = FacilityClaim.objects.get(pk=pk)
+
+            try:
+                send_claim_update_notice_to_list_contributors(request,
+                                                              updated_claim)
+            except Exception:
+                _report_facility_claim_email_error_to_rollbar(updated_claim)
 
             response_data = ApprovedFacilityClaimSerializer(updated_claim).data
             return Response(response_data)

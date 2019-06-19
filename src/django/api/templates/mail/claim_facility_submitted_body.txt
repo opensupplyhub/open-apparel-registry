@@ -5,7 +5,7 @@ You're receiving this email because we received your request to claim an Open Ap
 
 Here is the information submitted with your request:
 
-- Facility: {{ facility_name }}, {{ facility_address }}
+- Facility: {{ facility_name }}, {{ facility_address }}, {{ facility_country }}
 - Facility URL: {{ facility_url }}
 - Contact person: {{ contact_person }}
 - Email: {{ email }}

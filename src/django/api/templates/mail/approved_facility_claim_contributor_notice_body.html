@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>
-            Your request to claim an Open Apparel Registry facility was approved
+            An OAR facility on one of your facility lists has been claimed
         </title>
     </head>
     <body>
@@ -10,8 +10,11 @@
             Hi,
         </p>
         <p>
-            You're receiving this email because we approved your request to claim this
-            Open Apparel Registry facility:
+            You're receiving this email because we approved a facility claim
+            for a facility appearing on one of your facility lists.
+        </p>
+        <p>
+            The facility is:
         </p>
         <ul>
             <li>
@@ -21,14 +24,6 @@
                 Facility URL: {{ facility_url }}
             </li>
         </ul>
-        {% if approval_reason|length %}
-        <p>
-            Here's the reason for the approval:
-        </p>
-        <p>
-            {{ approval_reason }}
-        </p>
-        {% endif %}
         <p>
             Sincerely,
         </p>
