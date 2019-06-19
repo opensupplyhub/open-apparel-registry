@@ -719,11 +719,11 @@ class FacilityMatch(models.Model):
 
     facility_list_item = models.ForeignKey(
         'FacilityListItem',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         help_text='The list item being matched to an existing facility.')
     facility = models.ForeignKey(
         'Facility',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         help_text=('The existing facility that may match an uploaded list '
                    'item.'))
     results = postgres.JSONField(
