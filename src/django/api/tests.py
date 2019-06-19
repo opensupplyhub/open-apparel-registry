@@ -2300,3 +2300,35 @@ class FacilityDeleteTest(APITestCase):
                           password=self.superuser_password)
         response = self.client.delete(self.facility_url)
         self.assertEqual(204, response.status_code)
+
+
+class FacilityMergeTest(APITestCase):
+    def setUp(self):
+        self.user_email = 'test@example.com'
+        self.user_password = 'example123'
+        self.user = User.objects.create(email=self.user_email)
+        self.user.set_password(self.user_password)
+        self.user.save()
+
+        self.superuser_email = 'super@example.com'
+        self.superuser_password = 'example123'
+        self.superuser = User.objects.create_superuser(
+            email=self.superuser_email,
+            password=self.superuser_password)
+
+        self.merge_url = '/api/facilities/merge/'
+
+    def test_requires_auth(self):
+        response = self.client.post(self.merge_url)
+        self.assertEqual(401, response.status_code)
+
+    def test_requires_superuser(self):
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(403, response.status_code)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(501, response.status_code)

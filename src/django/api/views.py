@@ -425,6 +425,8 @@ class FacilitiesAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
         if method == 'DELETE':
             return None
+        if 'merge' in path:
+            return None
 
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
@@ -849,6 +851,15 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raise NotFound(
                 'The current User does not have an associated Contributor')
         return Response(FacilityClaimSerializer(claims, many=True).data)
+
+    @action(detail=False, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def merge(self, request):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
 class FacilityListViewSetSchema(AutoSchema):
