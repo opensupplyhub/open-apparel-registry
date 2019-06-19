@@ -754,6 +754,13 @@ class FacilityMatch(models.Model):
                    'the admin rejects the match. Only one row for a given '
                    'and facility list item pair should have either AUTOMATIC '
                    'or CONFIRMED status'))
+    is_active = models.BooleanField(
+        null=False,
+        default=True,
+        help_text=('A facility match is_active if its associated list item '
+                   'not been removed; when a list item is removed, this '
+                   'field will be set to False.')
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
