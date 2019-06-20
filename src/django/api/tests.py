@@ -18,7 +18,7 @@ from waffle.testutils import override_switch
 from api.constants import ProcessingAction
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
-                        FacilityMatch, Contributor, User)
+                        FacilityMatch, FacilityAlias, Contributor, User)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
@@ -2034,3 +2034,249 @@ class DashboardListTests(APITestCase):
             response = self.client.get('/api/facility-lists/{}/'.format(l.id))
             self.assertEqual(200, response.status_code)
             self.assertEqual(l.name, response.json()['name'])
+
+
+class FacilityDeleteTest(APITestCase):
+    def setUp(self):
+        self.user_email = 'test@example.com'
+        self.user_password = 'example123'
+        self.user = User.objects.create(email=self.user_email)
+        self.user.set_password(self.user_password)
+        self.user.save()
+
+        self.superuser_email = 'super@example.com'
+        self.superuser_password = 'example123'
+        self.superuser = User.objects.create_superuser(
+            email=self.superuser_email,
+            password=self.superuser_password)
+
+        self.contributor = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='First List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item)
+        self.facility_url = '/api/facilities/{}/'.format(self.facility.id)
+
+        self.list_item.facility = self.facility
+        self.list_item.save()
+
+        self.facility_match = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    results="",
+                    facility_list_item=self.list_item)
+
+    def test_requires_auth(self):
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(401, response.status_code)
+
+    def test_requires_superuser(self):
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(403, response.status_code)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+    def test_delete(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
+
+        self.list_item.refresh_from_db()
+        self.assertEqual(
+            FacilityListItem.DELETED, self.list_item.status)
+        self.assertEqual(
+            ProcessingAction.DELETE_FACILITY,
+            self.list_item.processing_results[-1]['action'])
+        self.assertEqual(
+            self.facility.id,
+            self.list_item.processing_results[-1]['deleted_oar_id'])
+
+    def test_cant_delete_if_there_is_an_appoved_claim(self):
+        FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            status=FacilityClaim.APPROVED)
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(400, response.status_code)
+
+    def test_unapproved_claims_are_deleted(self):
+        FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            status=FacilityClaim.PENDING)
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+        self.assertEqual(
+            0, FacilityClaim.objects.filter(facility=self.facility).count())
+
+    def test_other_match_is_promoted(self):
+        initial_facility_count = Facility.objects.all().count()
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(1, 1),
+                    facility_list=list_2,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility)
+
+        match_2 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='')
+
+        list_3 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='three',
+                    name='Third List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_3 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(2, 2),
+                    facility_list=list_3,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility)
+
+        match_3 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_3,
+                    confidence=0.85,
+                    results='')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        # We should have "promoted" the matched facility to replace the deleted
+        # facility
+        facility_count = Facility.objects.all().count()
+        self.assertEqual(facility_count, initial_facility_count)
+        self.assertEqual(1, FacilityAlias.objects.all().count())
+        alias = FacilityAlias.objects.first()
+        self.assertEqual(FacilityAlias.DELETE, alias.reason)
+        self.assertEqual(self.facility.id, alias.oar_id)
+
+        # The line item previously matched to the deleted facility should now
+        # be matched to a new facility
+        match_3.refresh_from_db()
+        list_item_2.refresh_from_db()
+        self.assertEqual(match_3.facility, list_item_2.facility)
+        match_2.refresh_from_db()
+        self.assertEqual(match_3.facility, match_2.facility)
+
+    def test_rejected_match_is_deleted_not_promoted(self):
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(1, 1),
+                    facility_list=list_2,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.REJECTED,
+                    facility_list_item=list_item_2,
+                    confidence=0,
+                    facility=self.facility,
+                    results='')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        self.assertEqual(0, Facility.objects.all().count())
+        self.assertEqual(0, FacilityMatch.objects.all().count())
+        self.assertEqual(0, FacilityAlias.objects.all().count())
+
+        list_item_2.refresh_from_db()
+        self.assertEqual(FacilityListItem.DELETED, list_item_2.status)
+        self.assertIsNone(list_item_2.facility)
+        self.assertEqual(
+            ProcessingAction.DELETE_FACILITY,
+            list_item_2.processing_results[-1]['action'])
