@@ -879,7 +879,50 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         FacilityMergeQueryParams.TARGET)]
             })
 
-        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+        target = Facility.objects.get(id=target_id)
+        merge = Facility.objects.get(id=merge_id)
+
+        now = str(datetime.utcnow())
+        for merge_match in merge.facilitymatch_set.all():
+            merge_match.facility = target
+            merge_match.status = FacilityMatch.MERGED
+            merge_match.changeReason = 'Merged {} into {}'.format(
+                merge.id, target.id)
+            merge_match.save()
+
+            merge_item = merge_match.facility_list_item
+            merge_item.facility = target
+            merge_item.processing_results.append({
+                'action': ProcessingAction.MERGE_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'merged_oar_id': merge.id,
+            })
+            merge_item.save()
+
+        for alias in FacilityAlias.objects.filter(facility=merge):
+            oar_id = alias.oar_id
+            alias.changeReason = 'Merging {} into {}'.format(
+                merge.id,
+                target.id)
+            alias.delete()
+            FacilityAlias.objects.create(
+                facility=target,
+                oar_id=oar_id,
+                reason=FacilityAlias.MERGE)
+
+        FacilityAlias.objects.create(
+            oar_id=merge.id,
+            facility=target,
+            reason=FacilityAlias.MERGE)
+
+        merge.changeReason = 'Merged with {}'.format(target.id)
+        merge.delete()
+
+        target.refresh_from_db()
+        response_data = FacilityDetailsSerializer(target).data
+        return Response(response_data)
 
 
 class FacilityListViewSetSchema(AutoSchema):

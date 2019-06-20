@@ -14,6 +14,7 @@ class ProcessingAction:
     CONFIRM = 'confirm'
     DELETE_FACILITY = 'delete_facility'
     PROMOTE_MATCH = 'promote_match'
+    MERGE_FACILITY = 'merge_facility'
 
 
 class FacilitiesQueryParams:
