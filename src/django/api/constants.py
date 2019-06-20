@@ -30,3 +30,8 @@ class FacilityListQueryParams:
 class FacilityListItemsQueryParams:
     SEARCH = 'search'
     STATUS = 'status'
+
+
+class FacilityMergeQueryParams:
+    TARGET = 'target'
+    MERGE = 'merge'

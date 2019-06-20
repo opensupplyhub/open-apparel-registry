@@ -2316,7 +2316,66 @@ class FacilityMergeTest(APITestCase):
             email=self.superuser_email,
             password=self.superuser_password)
 
-        self.merge_url = '/api/facilities/merge/'
+        self.contributor = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='First List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item_1 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility_1 = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item_1)
+
+        self.list_item_1.facility = self.facility_1
+        self.list_item_1.save()
+
+        self.list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility_2 = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item_2)
+
+        self.list_item_2.facility = self.facility_2
+        self.list_item_2.save()
+
+        self.merge_endpoint = '/api/facilities/merge/'
+        self.merge_url = '{}?target={}&merge={}'.format(
+            self.merge_endpoint,
+            self.facility_1.id,
+            self.facility_2.id)
 
     def test_requires_auth(self):
         response = self.client.post(self.merge_url)
@@ -2332,3 +2391,39 @@ class FacilityMergeTest(APITestCase):
                           password=self.superuser_password)
         response = self.client.post(self.merge_url)
         self.assertEqual(501, response.status_code)
+
+    def test_required_params(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_endpoint)
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('target', data)
+        self.assertIn('merge', data)
+
+    def test_params_reference_existing_objects(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        url = '{}?target={}&merge={}'.format(self.merge_endpoint, 'foo', 'bar')
+        response = self.client.post(url)
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('target', data)
+        self.assertIn('merge', data)
+
+    def test_requires_distinct_params(self):
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(403, response.status_code)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        url = '{}?target={}&merge={}'.format(self.merge_endpoint,
+                                             self.facility_1.id,
+                                             self.facility_1.id)
+        response = self.client.post(url)
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('target', data)
+        self.assertIn('merge', data)

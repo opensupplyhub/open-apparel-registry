@@ -44,6 +44,7 @@ from api.constants import (CsvHeaderField,
                            FacilitiesQueryParams,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
+                           FacilityMergeQueryParams,
                            ProcessingAction)
 from api.models import (FacilityList,
                         FacilityListItem,
@@ -66,7 +67,8 @@ from api.serializers import (FacilityListSerializer,
                              UserProfileSerializer,
                              FacilityClaimSerializer,
                              FacilityClaimDetailsSerializer,
-                             ApprovedFacilityClaimSerializer)
+                             ApprovedFacilityClaimSerializer,
+                             FacilityMergeQueryParamsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
@@ -858,6 +860,24 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     def merge(self, request):
         if not request.user.is_superuser:
             raise PermissionDenied()
+
+        params = FacilityMergeQueryParamsSerializer(data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+        target_id = request.query_params.get(FacilityMergeQueryParams.TARGET,
+                                             None)
+        merge_id = request.query_params.get(FacilityMergeQueryParams.MERGE,
+                                            None)
+        if target_id == merge_id:
+            raise ValidationError({
+                FacilityMergeQueryParams.TARGET: [
+                    'Cannot be the same as {}.'.format(
+                        FacilityMergeQueryParams.MERGE)],
+                FacilityMergeQueryParams.MERGE: [
+                    'Cannot be the same as {}.'.format(
+                        FacilityMergeQueryParams.TARGET)]
+            })
 
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 

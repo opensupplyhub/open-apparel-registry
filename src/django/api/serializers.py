@@ -694,3 +694,18 @@ class UserPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
         self.user.save()
 
         return self.set_password_form.save()
+
+
+class FacilityMergeQueryParamsSerializer(Serializer):
+    target = CharField(required=True)
+    merge = CharField(required=True)
+
+    def validate_target(self, target_id):
+        if not Facility.objects.filter(id=target_id).exists():
+            raise ValidationError(
+                'Facility {} does not exist.'.format(target_id))
+
+    def validate_merge(self, merge_id):
+        if not Facility.objects.filter(id=merge_id).exists():
+            raise ValidationError(
+                'Facility {} does not exist.'.format(merge_id))
