@@ -69,6 +69,11 @@ class FacilityClaimReviewNoteAdmin(SimpleHistoryAdmin):
     readonly_fields = ('claim', 'author')
 
 
+class FacilityAliasAdmin(SimpleHistoryAdmin):
+    history_list_display = ('oar_id', 'facility')
+    readonly_fields = ('oar_id', 'facility', 'reason')
+
+
 admin.site.register(models.User, OarUserAdmin)
 admin.site.register(models.Contributor, ContributorAdmin)
 admin.site.register(models.FacilityList)
@@ -78,3 +83,4 @@ admin.site.register(models.FacilityMatch, FacilityMatchAdmin)
 admin.site.register(models.FacilityClaim, FacilityClaimAdmin)
 admin.site.register(models.FacilityClaimReviewNote,
                     FacilityClaimReviewNoteAdmin)
+admin.site.register(models.FacilityAlias, FacilityAliasAdmin)
