@@ -32,7 +32,10 @@ import {
     makeApprovedClaimDetailsLink,
 } from '../util/util';
 
-import { CLAIM_A_FACILITY } from '../util/constants';
+import {
+    CLAIM_A_FACILITY,
+    facilitiesRoute,
+} from '../util/constants';
 
 import COLOURS from '../util/COLOURS';
 
@@ -83,7 +86,7 @@ class FacilityDetailSidebar extends Component {
             match: {
                 params: { oarID },
             },
-            history: { goBack, push },
+            history: { push },
             facilityIsClaimedByCurrentUser,
             userHasPendingFacilityClaim,
         } = this.props;
@@ -136,7 +139,7 @@ class FacilityDetailSidebar extends Component {
                         aria-label="ArrowBack"
                         className="color-white"
                         style={detailsSidebarStyles.headerButtonStyle}
-                        onClick={goBack}
+                        onClick={() => push(facilitiesRoute)}
                         disabled={fetching}
                     >
                         <ArrowBackIcon />
