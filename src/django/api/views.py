@@ -430,6 +430,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'merge' in path:
             return None
 
+        if 'claim' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
