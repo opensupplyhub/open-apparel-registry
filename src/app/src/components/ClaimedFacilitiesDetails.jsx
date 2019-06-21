@@ -13,11 +13,14 @@ import memoize from 'lodash/memoize';
 import find from 'lodash/find';
 import stubFalse from 'lodash/stubFalse';
 import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
+import isNull from 'lodash/isNull';
 import Select from 'react-select';
 import { isEmail } from 'validator';
 import { toast } from 'react-toastify';
 
 import ClaimedFacilitiesDetailsSidebar from './ClaimedFacilitiesDetailsSidebar';
+import ShowOnly from './ShowOnly';
 
 import COLOURS from '../util/COLOURS';
 
@@ -28,6 +31,7 @@ import {
     updateClaimedFacilityAddress,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
+    updateClaimedFacilityParentCompany,
     updateClaimedFacilityWebsite,
     updateClaimedFacilityDescription,
     updateClaimedFacilityMinimumOrder,
@@ -43,13 +47,24 @@ import {
     submitClaimedFacilityDetailsUpdate,
 } from '../actions/claimedFacilityDetails';
 
-import { approvedFacilityClaimPropType } from '../util/propTypes';
+import {
+    approvedFacilityClaimPropType,
+    contributorOptionsPropType,
+} from '../util/propTypes';
 
 import {
     getValueFromEvent,
     getCheckedFromEvent,
     mapDjangoChoiceTuplesToSelectOptions,
 } from '../util/util';
+
+import { claimAFacilityFormFields } from '../util/constants';
+
+const {
+    parentCompany: {
+        aside: parentCompanyAside,
+    },
+} = claimAFacilityFormFields;
 
 const claimedFacilitiesDetailsStyles = Object.freeze({
     containerStyles: Object.freeze({
@@ -103,6 +118,9 @@ const claimedFacilitiesDetailsStyles = Object.freeze({
         padding: '10px 0',
         color: 'red',
     }),
+    asideStyles: Object.freeze({
+        padding: '5px 20px 20px 0',
+    }),
 });
 
 const selectStyles = Object.freeze({
@@ -130,7 +148,16 @@ const InputSection = ({
     isSelect = false,
     selectOptions = null,
     hasValidationErrorFn = stubFalse,
+    aside = null,
 }) => {
+    const asideNode = (
+        <ShowOnly when={!isNull(aside)}>
+            <aside style={claimedFacilitiesDetailsStyles.asideStyles}>
+                {aside}
+            </aside>
+        </ShowOnly>
+    );
+
     if (isSelect) {
         return (
             <div style={claimedFacilitiesDetailsStyles.inputSectionStyles}>
@@ -141,6 +168,7 @@ const InputSection = ({
                 >
                     {label}
                 </InputLabel>
+                {asideNode}
                 <Select
                     onChange={onChange}
                     value={find(selectOptions, ['value', value])}
@@ -174,6 +202,7 @@ const InputSection = ({
                     </span>
                 ) : null}
             </InputLabel>
+            {asideNode}
             <TextField
                 variant="outlined"
                 style={claimedFacilitiesDetailsStyles.inputSectionFieldStyles}
@@ -217,6 +246,8 @@ function ClaimedFacilitiesDetails({
     updateContactVisibility,
     updateOfficeVisibility,
     errorUpdating,
+    updateParentCompany,
+    contributorOptions,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -238,7 +269,10 @@ function ClaimedFacilitiesDetails({
 
         if (!updating && isSavingForm) {
             setIsSavingForm(false);
-            toast('Claimed facility profile was saved');
+
+            if (!errorUpdating) {
+                toast('Claimed facility profile was saved');
+            }
         }
     }, [isSavingForm, setIsSavingForm, updating, errorUpdating]);
 
@@ -308,6 +342,25 @@ function ClaimedFacilitiesDetails({
                     onChange={updateFacilityDescription}
                     disabled={updating}
                 />
+                <ShowOnly when={!isEmpty(contributorOptions)}>
+                    <InputSection
+                        label="Parent Company"
+                        aside={parentCompanyAside}
+                        value={get(data, 'facility_parent_company.id', null)}
+                        onChange={updateParentCompany}
+                        disabled={updating}
+                        isSelect
+                        selectOptions={contributorOptions}
+                    />
+                </ShowOnly>
+                <ShowOnly when={!contributorOptions}>
+                    <Typography>
+                        Parent Company
+                    </Typography>
+                    <Typography>
+                        {get(data, 'facility_parent_company.name', null)}
+                    </Typography>
+                </ShowOnly>
                 <InputSection
                     label="Minimum order quantity"
                     value={data.facility_minimum_order_quantity}
@@ -444,6 +497,7 @@ ClaimedFacilitiesDetails.defaultProps = {
     error: null,
     data: null,
     errorUpdating: null,
+    contributorOptions: null,
 };
 
 ClaimedFacilitiesDetails.propTypes = {
@@ -471,6 +525,7 @@ ClaimedFacilitiesDetails.propTypes = {
     updateFacilityPhoneVisibility: func.isRequired,
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
+    contributorOptions: contributorOptionsPropType,
 };
 
 function mapStateToProps({
@@ -480,12 +535,17 @@ function mapStateToProps({
         data,
     },
 }) {
+    const contributorOptions = data && data.contributors
+        ? mapDjangoChoiceTuplesToSelectOptions(data.contributors)
+        : null;
+
     return {
         fetching,
         data,
         error,
         updating,
         errorUpdating,
+        contributorOptions,
     };
 }
 
@@ -522,6 +582,11 @@ function mapDispatchToProps(
         updateFacilityPhoneVisibility: makeDispatchCheckedFn(
             updateClaimedFacilityPhoneVisibility,
         ),
+        updateParentCompany: ({ label, value }) =>
+            dispatch(updateClaimedFacilityParentCompany({
+                id: value,
+                name: label,
+            })),
         updateContactVisibility: makeDispatchCheckedFn(
             updateClaimedFacilityPointOfContactVisibility,
         ),

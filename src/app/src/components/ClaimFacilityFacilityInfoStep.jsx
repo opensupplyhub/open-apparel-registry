@@ -1,10 +1,11 @@
 import React from 'react';
-import { bool, func, string } from 'prop-types';
+import { bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
-import { isEmpty } from 'validator';
+import isEmpty from 'lodash/isEmpty';
+import Select from 'react-select';
 
 import RequiredAsterisk from './RequiredAsterisk';
 
@@ -12,6 +13,7 @@ import {
     updateClaimAFacilityCompany,
     updateClaimAFacilityWebsite,
     updateClaimAFacilityDescription,
+    updateClaimAFacilityParentCompany,
 } from '../actions/claimFacility';
 
 import { getValueFromEvent } from '../util/util';
@@ -20,11 +22,27 @@ import { claimAFacilityFormStyles } from '../util/styles';
 
 import { claimAFacilityFormFields } from '../util/constants';
 
+import { contributorOptionsPropType } from '../util/propTypes';
+
 const {
     companyName: companyFormField,
     website: websiteFormField,
     facilityDescription: descriptionFormField,
+    parentCompany: parentCompanyFormField,
 } = claimAFacilityFormFields;
+
+const selectStyles = Object.freeze({
+    input: provided =>
+        Object.freeze({
+            ...provided,
+            padding: '10px',
+        }),
+    menu: provided =>
+        Object.freeze({
+            ...provided,
+            zIndex: '2',
+        }),
+});
 
 function ClaimFacilityFacilityInfoStep({
     companyName,
@@ -34,6 +52,9 @@ function ClaimFacilityFacilityInfoStep({
     facilityDescription,
     updateDescription,
     fetching,
+    contributorOptions,
+    parentCompany,
+    updateParentCompany,
 }) {
     return (
         <>
@@ -55,6 +76,30 @@ function ClaimFacilityFacilityInfoStep({
                     disabled={fetching}
                 />
             </div>
+            {
+                contributorOptions && (
+                    <div style={claimAFacilityFormStyles.inputGroupStyles}>
+                        <InputLabel htmlFor={parentCompanyFormField.id}>
+                            <Typography variant="title">
+                                {parentCompanyFormField.label}
+                            </Typography>
+                        </InputLabel>
+                        <aside style={claimAFacilityFormStyles.asideStyles}>
+                            {parentCompanyFormField.aside}
+                        </aside>
+                        <div style={claimAFacilityFormStyles.textFieldStyles}>
+                            <Select
+                                options={contributorOptions}
+                                id={parentCompanyFormField.id}
+                                value={parentCompany}
+                                onChange={updateParentCompany}
+                                disabled={fetching}
+                                styles={selectStyles}
+                            />
+                        </div>
+                    </div>
+                )
+            }
             <div style={claimAFacilityFormStyles.inputGroupStyles}>
                 <InputLabel htmlFor={websiteFormField.id}>
                     <Typography variant="title">
@@ -91,6 +136,11 @@ function ClaimFacilityFacilityInfoStep({
     );
 }
 
+ClaimFacilityFacilityInfoStep.defaultProps = {
+    contributorOptions: null,
+    parentCompany: null,
+};
+
 ClaimFacilityFacilityInfoStep.propTypes = {
     companyName: string.isRequired,
     website: string.isRequired,
@@ -99,13 +149,22 @@ ClaimFacilityFacilityInfoStep.propTypes = {
     updateCompany: func.isRequired,
     updateWebsite: func.isRequired,
     updateDescription: func.isRequired,
+    contributorOptions: contributorOptionsPropType,
+    parentCompany: shape({
+        value: number.isRequired,
+        label: string.isRequired,
+    }),
+    updateParentCompany: func.isRequired,
 };
 
 function mapStateToProps({
     claimFacility: {
         claimData: {
-            formData: { companyName, website, facilityDescription },
+            formData: { companyName, website, facilityDescription, parentCompany },
             fetching,
+        },
+        parentCompanyOptions: {
+            data: contributorOptions,
         },
     },
 }) {
@@ -114,6 +173,8 @@ function mapStateToProps({
         website,
         facilityDescription,
         fetching,
+        contributorOptions,
+        parentCompany,
     };
 }
 
@@ -121,6 +182,7 @@ function mapDispatchToProps(dispatch) {
     return {
         updateCompany: e =>
             dispatch(updateClaimAFacilityCompany(getValueFromEvent(e))),
+        updateParentCompany: v => dispatch(updateClaimAFacilityParentCompany(v)),
         updateWebsite: e =>
             dispatch(updateClaimAFacilityWebsite(getValueFromEvent(e))),
         updateDescription: e =>

@@ -115,3 +115,5 @@ export const updateClaimedFacilityOfficeCountry =
     createAction('UPDATE_CLAIMED_FACILITY_OFFICE_COUNTRY');
 export const updateClaimedFacilityOfficePhone =
     createAction('UPDATE_CLAIMED_FACILITY_OFFICE_PHONE');
+export const updateClaimedFacilityParentCompany =
+    createAction('UPDATE_CLAIMED_FACILITY_PARENT_COMPANY');

@@ -15,6 +15,7 @@ import ClaimFacilityStepper from '../components/ClaimFacilityStepper';
 import {
     fetchClaimFacilityData,
     clearClaimFacilityDataAndForm,
+    fetchParentCompanyOptions,
 } from '../actions/claimFacility';
 
 import { facilityDetailsPropType } from '../util/propTypes';
@@ -38,7 +39,7 @@ function ClaimFacility({
     data,
     fetching,
     error,
-    getFacilityData,
+    getClaimData,
     clearClaimData,
     userHasSignedIn,
     match: {
@@ -47,11 +48,13 @@ function ClaimFacility({
         },
     },
 }) {
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
-        getFacilityData();
+        getClaimData();
 
         return clearClaimData;
-    }, [getFacilityData, clearClaimData]);
+    }, []);
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     if (fetching) {
         return <CircularProgress />;
@@ -120,7 +123,7 @@ ClaimFacility.propTypes = {
     data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
-    getFacilityData: func.isRequired,
+    getClaimData: func.isRequired,
     clearClaimData: func.isRequired,
     userHasSignedIn: bool.isRequired,
 };
@@ -128,6 +131,9 @@ ClaimFacility.propTypes = {
 function mapStateToProps({
     claimFacility: {
         facilityData: { data, fetching, error },
+        parentCompanyOptions: {
+            fetching: fetchingParentCompanyOptions,
+        },
     },
     auth: {
         user: { user },
@@ -136,7 +142,7 @@ function mapStateToProps({
 }) {
     return {
         data,
-        fetching: fetching || sessionFetching,
+        fetching: fetching || sessionFetching || fetchingParentCompanyOptions,
         userHasSignedIn: !!user,
         error,
     };
@@ -151,7 +157,10 @@ function mapDispatchToProps(
     },
 ) {
     return {
-        getFacilityData: () => dispatch(fetchClaimFacilityData(oarID)),
+        getClaimData: () => {
+            dispatch(fetchParentCompanyOptions());
+            return dispatch(fetchClaimFacilityData(oarID));
+        },
         clearClaimData: () => dispatch(clearClaimFacilityDataAndForm()),
     };
 }

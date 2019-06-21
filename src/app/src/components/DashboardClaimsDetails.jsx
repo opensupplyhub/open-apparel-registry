@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import moment from 'moment';
 import { Link, Route } from 'react-router-dom';
+import get from 'lodash/get';
 
 import DashboardClaimDetailsControls from './DashboardClaimDetailsControls';
 import DashboardClaimsDetailsNote from './DashboardClaimsDetailsNote';
@@ -149,6 +150,31 @@ function DashboardClaimsDetails({
                 <InfoSection
                     label="Preferred Contact Method"
                     value={data.preferred_contact_method}
+                />
+                <InfoSection
+                    label="Facility Parent Company"
+                    value={
+                        (() => {
+                            const parentCompanyName = get(data, 'facility_parent_company.name', null);
+
+                            if (!parentCompanyName) {
+                                return null;
+                            }
+
+                            const profileLink = makeProfileRouteLink(
+                                get(data, 'facility_parent_company.id', null),
+                            );
+
+                            return (
+                                <Link
+                                    to={profileLink}
+                                    href={profileLink}
+                                >
+                                    {parentCompanyName}
+                                </Link>
+                            );
+                        })()
+                    }
                 />
                 <InfoSection
                     label="Facility Description"

@@ -759,6 +759,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             email = request.data.get('email')
             phone_number = request.data.get('phone_number')
             company_name = request.data.get('company_name')
+            parent_company = request.data.get('parent_company')
             website = request.data.get('website')
             facility_description = request.data.get('facility_description')
             verification_method = request.data.get('verification_method')
@@ -773,6 +774,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             if not company_name:
                 raise ValidationError('Company name is required')
+
+            if parent_company:
+                parent_company_contributor = Contributor \
+                    .objects \
+                    .get(pk=parent_company)
+            else:
+                parent_company_contributor = None
 
             user_has_pending_claims = FacilityClaim \
                 .objects \
@@ -793,6 +801,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 email=email,
                 phone_number=phone_number,
                 company_name=company_name,
+                parent_company=parent_company_contributor,
                 website=website,
                 facility_description=facility_description,
                 verification_method=verification_method,
@@ -1911,6 +1920,17 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                 response_data = ApprovedFacilityClaimSerializer(claim).data
                 return Response(response_data)
 
+            parent_company_data = request.data.get('facility_parent_company')
+
+            if not parent_company_data:
+                parent_company = None
+            elif 'id' not in parent_company_data:
+                parent_company = None
+            else:
+                parent_company = Contributor \
+                    .objects \
+                    .get(pk=parent_company_data['id'])
+
             FacilityClaim.objects.filter(pk=pk).update(
                 facility_description=request.data.get('facility_description'),
                 facility_name=request.data.get('facility_name'),
@@ -1924,6 +1944,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                 .get('facility_minimum_order_quantity'),
                 facility_average_lead_time=request.data
                 .get('facility_average_lead_time'),
+                parent_company=parent_company,
                 point_of_contact_person_name=request.data
                 .get('point_of_contact_person_name'),
                 point_of_contact_email=request.data
@@ -1953,3 +1974,16 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             raise NotFound()
         except Contributor.DoesNotExist:
             raise NotFound('No contributor found for that user')
+
+    @action(detail=False,
+            methods=['GET'],
+            url_path='parent-company-options',
+            permission_classes=(IsRegisteredAndConfirmed,))
+    def get_parent_company_options(self, request):
+        response_data = [
+            (contributor.id, contributor.name)
+            for contributor
+            in Contributor.objects.all().order_by('name')
+        ]
+
+        return Response(response_data)

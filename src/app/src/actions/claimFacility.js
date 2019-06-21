@@ -9,7 +9,9 @@ import {
     logErrorAndDispatchFailure,
     makeGetFacilityByOARIdURL,
     makeClaimFacilityAPIURL,
+    makeParentCompanyOptionsAPIURL,
     claimAFacilityFormIsValid,
+    mapDjangoChoiceTuplesToSelectOptions,
 } from '../util/util';
 
 export const startFetchClaimFacilityData = createAction('START_FETCH_CLAIM_FACILITY_DATA');
@@ -40,6 +42,8 @@ export const updateClaimAFacilityPhoneNumber =
     createAction('UPDATE_CLAIM_A_FACILITY_PHONE_NUMBER');
 export const updateClaimAFacilityCompany =
     createAction('UPDATE_CLAIM_A_FACILITY_COMPANY');
+export const updateClaimAFacilityParentCompany =
+    createAction('UPDATE_CLAIM_A_FACILITY_PARENT_COMPANY');
 export const updateClaimAFacilityWebsite =
     createAction('UPDATE_CLAIM_A_FACILITY_WEBSITE');
 export const updateClaimAFacilityDescription =
@@ -73,6 +77,7 @@ export function submitClaimAFacilityData(oarID) {
         const postData = mapKeys(
             Object.assign({}, formData, {
                 preferredContactMethod: get(formData, 'preferredContactMethod.value', null),
+                parentCompany: get(formData, 'parentCompany.value', null),
             }),
             (_, k) => snakeCase(k),
         );
@@ -86,6 +91,31 @@ export function submitClaimAFacilityData(oarID) {
                 err,
                 'An error prevented submitting facility claim data',
                 failSubmitClaimAFacilityData,
+            )));
+    };
+}
+
+export const startFetchParentCompanyOptions =
+    createAction('START_FETCH_PARENT_COMPANY_OPTIONS');
+export const failFetchParentCompanyOptions =
+    createAction('FAIL_FETCH_PARENT_COMPANY_OPTIONS');
+export const completeFetchParentCompanyOptions =
+    createAction('COMPLETE_FETCH_PARENT_COMPANY_OPTIONS');
+export const resetParentCompanyOptions =
+    createAction('RESET_PARENT_COMPANY_OPTIONS');
+
+export function fetchParentCompanyOptions() {
+    return (dispatch) => {
+        dispatch(startFetchParentCompanyOptions());
+
+        return csrfRequest
+            .get(makeParentCompanyOptionsAPIURL())
+            .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
+            .then(data => dispatch(completeFetchParentCompanyOptions(data)))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented fetching parent company options',
+                failFetchParentCompanyOptions,
             )));
     };
 }
