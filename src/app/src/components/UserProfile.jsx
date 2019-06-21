@@ -13,6 +13,7 @@ import UserProfileField from './UserProfileField';
 import UserAPITokens from './UserAPITokens';
 import BadgeVerified from './BadgeVerified';
 import ShowOnly from './ShowOnly';
+import RouteNotFound from './RouteNotFound';
 import COLOURS from '../util/COLOURS';
 
 import '../styles/css/specialStates.css';
@@ -124,6 +125,7 @@ class UserProfile extends Component {
             updatingProfile,
             errorsUpdatingProfile,
             submitFormOnEnterKeyPress,
+            errorFetchingProfile,
             match: {
                 params: {
                     id,
@@ -137,6 +139,10 @@ class UserProfile extends Component {
 
         if (!profile) {
             return null;
+        }
+
+        if (errorFetchingProfile) {
+            return <RouteNotFound />;
         }
 
         const isEditableProfile =
@@ -248,6 +254,7 @@ class UserProfile extends Component {
 UserProfile.defaultProps = {
     user: null,
     errorsUpdatingProfile: null,
+    errorFetchingProfile: null,
 };
 
 UserProfile.propTypes = {
@@ -266,6 +273,7 @@ UserProfile.propTypes = {
     updatingProfile: bool.isRequired,
     errorsUpdatingProfile: arrayOf(string),
     submitFormOnEnterKeyPress: func.isRequired,
+    errorFetchingProfile: arrayOf(string),
 };
 
 function mapStateToProps({
@@ -281,6 +289,7 @@ function mapStateToProps({
     profile: {
         profile,
         fetching,
+        error: errorFetchingProfile,
         formSubmission: {
             fetching: updatingProfile,
             error: errorsUpdatingProfile,
@@ -293,6 +302,7 @@ function mapStateToProps({
         profile,
         updatingProfile,
         errorsUpdatingProfile,
+        errorFetchingProfile,
     };
 }
 
