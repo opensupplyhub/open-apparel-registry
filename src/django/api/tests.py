@@ -2300,3 +2300,200 @@ class FacilityDeleteTest(APITestCase):
                           password=self.superuser_password)
         response = self.client.delete(self.facility_url)
         self.assertEqual(204, response.status_code)
+
+
+class FacilityMergeTest(APITestCase):
+    def setUp(self):
+        self.user_email = 'test@example.com'
+        self.user_password = 'example123'
+        self.user = User.objects.create(email=self.user_email)
+        self.user.set_password(self.user_password)
+        self.user.save()
+
+        self.superuser_email = 'super@example.com'
+        self.superuser_password = 'example123'
+        self.superuser = User.objects.create_superuser(
+            email=self.superuser_email,
+            password=self.superuser_password)
+
+        self.contributor_1 = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor 1',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_1 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='First List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_1)
+
+        self.list_item_1 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list_1,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility_1 = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item_1)
+
+        self.match_1 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility_1,
+                    facility_list_item=self.list_item_1,
+                    confidence=0.85,
+                    results='')
+
+        self.list_item_1.facility = self.facility_1
+        self.list_item_1.save()
+
+        self.contributor_2 = Contributor \
+            .objects \
+            .create(admin=self.superuser,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_2)
+
+        self.list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list_2,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility_2 = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item_2)
+
+        self.match_2 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility_2,
+                    facility_list_item=self.list_item_2,
+                    confidence=0.85,
+                    results='')
+
+        self.list_item_2.facility = self.facility_2
+        self.list_item_2.save()
+
+        self.existing_alias = FacilityAlias.objects.create(
+            facility=self.facility_2,
+            oar_id='US1234567ABCDEF')
+
+        self.merge_endpoint = '/api/facilities/merge/'
+        self.merge_url = '{}?target={}&merge={}'.format(
+            self.merge_endpoint,
+            self.facility_1.id,
+            self.facility_2.id)
+
+    def test_requires_auth(self):
+        response = self.client.post(self.merge_url)
+        self.assertEqual(401, response.status_code)
+
+    def test_requires_superuser(self):
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(403, response.status_code)
+
+    def test_merge(self):
+        original_facility_count = Facility.objects.all().count()
+        original_alias_count = FacilityAlias.objects.all().count()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(200, response.status_code)
+        data = json.loads(response.content)
+        self.assertEqual(self.facility_1.id, data['id'])
+        self.assertEqual(original_facility_count - 1,
+                         Facility.objects.all().count())
+
+        # The target models should not have changed
+        self.list_item_1.refresh_from_db()
+        self.assertEqual(self.list_item_1.facility, self.facility_1)
+        self.match_1.refresh_from_db()
+        self.assertEqual(self.match_1.facility, self.facility_1)
+        self.assertEqual(self.match_1.facility_list_item, self.list_item_1)
+
+        self.list_item_2.refresh_from_db()
+        self.assertEqual(self.list_item_2.facility, self.facility_1)
+        self.match_2.refresh_from_db()
+        self.assertEqual(self.match_2.facility, self.facility_1)
+        self.assertEqual(self.match_2.facility_list_item, self.list_item_2)
+        self.assertEqual(ProcessingAction.MERGE_FACILITY,
+                         self.list_item_2.processing_results[-1]['action'])
+
+        self.facility_1.refresh_from_db()
+        self.assertIn(self.list_1, self.facility_1.contributors())
+        self.assertIn(self.list_2, self.facility_1.contributors())
+
+        self.assertEqual(original_alias_count + 1,
+                         FacilityAlias.objects.all().count())
+        alias = FacilityAlias.objects.first()
+        for alias in FacilityAlias.objects.all():
+            self.assertEqual(self.facility_1, alias.facility)
+            self.assertIn(alias.oar_id,
+                          (self.facility_2.id, self.existing_alias.oar_id))
+            self.assertEqual(FacilityAlias.MERGE, alias.reason)
+
+    def test_required_params(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_endpoint)
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('target', data)
+        self.assertIn('merge', data)
+
+    def test_params_reference_existing_objects(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        url = '{}?target={}&merge={}'.format(self.merge_endpoint, 'foo', 'bar')
+        response = self.client.post(url)
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('target', data)
+        self.assertIn('merge', data)
+
+    def test_requires_distinct_params(self):
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(403, response.status_code)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        url = '{}?target={}&merge={}'.format(self.merge_endpoint,
+                                             self.facility_1.id,
+                                             self.facility_1.id)
+        response = self.client.post(url)
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('target', data)
+        self.assertIn('merge', data)

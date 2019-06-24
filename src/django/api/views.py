@@ -44,6 +44,7 @@ from api.constants import (CsvHeaderField,
                            FacilitiesQueryParams,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
+                           FacilityMergeQueryParams,
                            ProcessingAction)
 from api.models import (FacilityList,
                         FacilityListItem,
@@ -66,7 +67,8 @@ from api.serializers import (FacilityListSerializer,
                              UserProfileSerializer,
                              FacilityClaimSerializer,
                              FacilityClaimDetailsSerializer,
-                             ApprovedFacilityClaimSerializer)
+                             ApprovedFacilityClaimSerializer,
+                             FacilityMergeQueryParamsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
@@ -424,6 +426,8 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
 class FacilitiesAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
         if method == 'DELETE':
+            return None
+        if 'merge' in path:
             return None
 
         return super(FacilitiesAutoSchema, self).get_link(
@@ -849,6 +853,76 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raise NotFound(
                 'The current User does not have an associated Contributor')
         return Response(FacilityClaimSerializer(claims, many=True).data)
+
+    @action(detail=False, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def merge(self, request):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        params = FacilityMergeQueryParamsSerializer(data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+        target_id = request.query_params.get(FacilityMergeQueryParams.TARGET,
+                                             None)
+        merge_id = request.query_params.get(FacilityMergeQueryParams.MERGE,
+                                            None)
+        if target_id == merge_id:
+            raise ValidationError({
+                FacilityMergeQueryParams.TARGET: [
+                    'Cannot be the same as {}.'.format(
+                        FacilityMergeQueryParams.MERGE)],
+                FacilityMergeQueryParams.MERGE: [
+                    'Cannot be the same as {}.'.format(
+                        FacilityMergeQueryParams.TARGET)]
+            })
+
+        target = Facility.objects.get(id=target_id)
+        merge = Facility.objects.get(id=merge_id)
+
+        now = str(datetime.utcnow())
+        for merge_match in merge.facilitymatch_set.all():
+            merge_match.facility = target
+            merge_match.status = FacilityMatch.MERGED
+            merge_match.changeReason = 'Merged {} into {}'.format(
+                merge.id, target.id)
+            merge_match.save()
+
+            merge_item = merge_match.facility_list_item
+            merge_item.facility = target
+            merge_item.processing_results.append({
+                'action': ProcessingAction.MERGE_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'merged_oar_id': merge.id,
+            })
+            merge_item.save()
+
+        for alias in FacilityAlias.objects.filter(facility=merge):
+            oar_id = alias.oar_id
+            alias.changeReason = 'Merging {} into {}'.format(
+                merge.id,
+                target.id)
+            alias.delete()
+            FacilityAlias.objects.create(
+                facility=target,
+                oar_id=oar_id,
+                reason=FacilityAlias.MERGE)
+
+        FacilityAlias.objects.create(
+            oar_id=merge.id,
+            facility=target,
+            reason=FacilityAlias.MERGE)
+
+        merge.changeReason = 'Merged with {}'.format(target.id)
+        merge.delete()
+
+        target.refresh_from_db()
+        response_data = FacilityDetailsSerializer(target).data
+        return Response(response_data)
 
 
 class FacilityListViewSetSchema(AutoSchema):

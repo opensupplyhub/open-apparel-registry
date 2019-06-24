@@ -623,7 +623,8 @@ class Facility(models.Model):
             in self
             .facilitymatch_set
             .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                FacilityMatch.CONFIRMED])
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])
             .values_list('facility_list_item')
         ]
 
@@ -645,7 +646,8 @@ class Facility(models.Model):
             in self
             .facilitymatch_set
             .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                FacilityMatch.CONFIRMED])
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])
             .values_list('facility_list_item')
         ]
 
@@ -667,19 +669,21 @@ class Facility(models.Model):
             in self
             .facilitymatch_set
             .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                FacilityMatch.CONFIRMED])
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])
             .order_by('updated_at')
             .values_list('facility_list_item')
         ]
 
-        return [
+        # Converting from a list back to a set ensures the items are distinct
+        return list(set([
             match.facility_list
             for match
             in facility_list_item_matches
             if match.facility_list.is_active
             and match.facility_list.is_public
             and match.facility_list.contributor is not None
-        ]
+        ]))
 
     def get_created_from_match(self):
         return self.facilitymatch_set.filter(
@@ -707,6 +711,7 @@ class FacilityMatch(models.Model):
     AUTOMATIC = 'AUTOMATIC'
     CONFIRMED = 'CONFIRMED'
     REJECTED = 'REJECTED'
+    MERGED = 'MERGED'
 
     # These values must stay in sync with the `facilityMatchStatusChoicesEnum`
     # in the client's constants.js file.
@@ -715,6 +720,7 @@ class FacilityMatch(models.Model):
         (AUTOMATIC, AUTOMATIC),
         (CONFIRMED, CONFIRMED),
         (REJECTED, REJECTED),
+        (MERGED, MERGED),
     )
 
     facility_list_item = models.ForeignKey(

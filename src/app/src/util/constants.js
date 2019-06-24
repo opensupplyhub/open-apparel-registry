@@ -390,6 +390,7 @@ export const facilityMatchStatusChoicesEnum = Object.freeze({
     AUTOMATIC: 'AUTOMATIC',
     CONFIRMED: 'CONFIRMED',
     REJECTED: 'REJECTED',
+    MERGED: 'MERGED',
 });
 
 export const emptyFeatureCollection = Object.freeze({
