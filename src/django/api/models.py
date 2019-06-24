@@ -762,6 +762,9 @@ class FacilityAlias(models.Model):
     """
     Links the OAR ID of a no longer existing Facility to another Facility
     """
+    class Meta:
+        verbose_name_plural = "facility aliases"
+
     MERGE = 'MERGE'
     DELETE = 'DELETE'
 
@@ -790,6 +793,8 @@ class FacilityAlias(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{} -> {}'.format(self.oar_id, self.facility)

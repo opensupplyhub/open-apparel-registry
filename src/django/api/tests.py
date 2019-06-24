@@ -2215,6 +2215,10 @@ class FacilityDeleteTest(APITestCase):
                     confidence=0.85,
                     results='')
 
+        alias = FacilityAlias.objects.create(
+            facility=self.facility,
+            oar_id='US1234567ABCDEF')
+
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
         response = self.client.delete(self.facility_url)
@@ -2224,10 +2228,13 @@ class FacilityDeleteTest(APITestCase):
         # facility
         facility_count = Facility.objects.all().count()
         self.assertEqual(facility_count, initial_facility_count)
-        self.assertEqual(1, FacilityAlias.objects.all().count())
-        alias = FacilityAlias.objects.first()
-        self.assertEqual(FacilityAlias.DELETE, alias.reason)
-        self.assertEqual(self.facility.id, alias.oar_id)
+        self.assertEqual(2, FacilityAlias.objects.all().count())
+
+        # We should have created a new alias
+        new_alias = FacilityAlias.objects.exclude(
+            oar_id='US1234567ABCDEF').first()
+        self.assertEqual(FacilityAlias.DELETE, new_alias.reason)
+        self.assertEqual(self.facility.id, new_alias.oar_id)
 
         # The line item previously matched to the deleted facility should now
         # be matched to a new facility
@@ -2236,6 +2243,11 @@ class FacilityDeleteTest(APITestCase):
         self.assertEqual(match_3.facility, list_item_2.facility)
         match_2.refresh_from_db()
         self.assertEqual(match_3.facility, match_2.facility)
+
+        # We should have replaced the alias with one pointing to the new
+        # facility
+        alias.refresh_from_db()
+        self.assertEqual(match_3.facility, alias.facility)
 
     def test_rejected_match_is_deleted_not_promoted(self):
         list_2 = FacilityList \
@@ -2280,3 +2292,11 @@ class FacilityDeleteTest(APITestCase):
         self.assertEqual(
             ProcessingAction.DELETE_FACILITY,
             list_item_2.processing_results[-1]['action'])
+
+    def test_delete_with_alias(self):
+        FacilityAlias.objects.create(facility=self.facility,
+                                     oar_id='US1234567ABCDEF')
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)

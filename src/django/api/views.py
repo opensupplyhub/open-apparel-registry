@@ -686,6 +686,17 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             'promoted_oar_id': promoted_facility.id,
                         })
                         other_item.save()
+
+                for alias in FacilityAlias.objects.filter(facility=facility):
+                    oar_id = alias.oar_id
+                    alias.changeReason = 'Deleted {} and promoted {}'.format(
+                        facility.id,
+                        promoted_facility.id)
+                    alias.delete()
+                    FacilityAlias.objects.create(
+                        facility=promoted_facility,
+                        oar_id=oar_id,
+                        reason=FacilityAlias.DELETE)
             else:
                 for other_match in other_matches:
                     other_match.changeReason = 'Deleted {}'.format(facility.id)
@@ -706,6 +717,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         for claim in FacilityClaim.objects.filter(facility=facility):
             claim.changeReason = 'Deleted {}'.format(facility.id)
             claim.delete()
+
+        for alias in FacilityAlias.objects.filter(facility=facility):
+            alias.changeReason = 'Deleted {}'.format(facility.id)
+            alias.delete()
 
         facility.delete()
 
