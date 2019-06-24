@@ -135,18 +135,22 @@ function FacilityListItemsConfirmationTableRow({
     );
 }
 
+FacilityListItemsConfirmationTableRow.defaultProps = {
+    readOnly: true,
+};
+
 FacilityListItemsConfirmationTableRow.propTypes = {
     item: facilityListItemPropType.isRequired,
     makeConfirmMatchFunction: func.isRequired,
     makeRejectMatchFunction: func.isRequired,
     listID: string.isRequired,
     fetching: bool.isRequired,
-    readOnly: bool.isRequired,
+    readOnly: bool,
 };
 
 function mapStateToProps({
     facilityListDetails: {
-        confirmOrRejectMatch: {
+        confirmOrRejectMatchOrRemoveItem: {
             fetching,
         },
     },

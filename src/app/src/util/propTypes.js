@@ -1,6 +1,8 @@
 import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
 import mapValues from 'lodash/mapValues';
 import omitBy from 'lodash/omitBy';
+import includes from 'lodash/includes';
+import partial from 'lodash/partial';
 
 import {
     registrationFieldsEnum,
@@ -118,7 +120,14 @@ export const facilityListPropType = shape({
     status_counts: shape(mapValues(
         omitBy(
             facilityListItemStatusChoicesEnum,
-            status => status === facilityListItemStatusChoicesEnum.NEW_FACILITY,
+            partial(
+                includes,
+                [
+                    facilityListItemStatusChoicesEnum.NEW_FACILITY,
+                    facilityListItemStatusChoicesEnum.REMOVED,
+
+                ],
+            ),
         ),
         () => number.isRequired,
     )).isRequired,

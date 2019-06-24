@@ -11,9 +11,17 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Typography from '@material-ui/core/Typography';
 import ReactSelect from 'react-select';
-import ShowOnly from './ShowOnly';
+import noop from 'lodash/noop';
+import get from 'lodash/get';
+import includes from 'lodash/includes';
 
+import ShowOnly from './ShowOnly';
 import FacilityListItemsFilterSearch from './FacilityListItemsFilterSearch';
 import FacilityListItemsTableRow from './FacilityListItemsTableRow';
 import FacilityListItemsConfirmationTableRow from './FacilityListItemsConfirmationTableRow';
@@ -25,6 +33,7 @@ import { facilityListItemPropType } from '../util/propTypes';
 import {
     setSelectedFacilityListItemsRowIndex,
     fetchFacilityListItems,
+    removeFacilityListItem,
 } from '../actions/facilityListDetails';
 
 import {
@@ -33,6 +42,8 @@ import {
     createPaginationOptionsFromQueryString,
     createParamsFromQueryString,
     makeFacilityListSummaryStatus,
+    anyListItemMatchesAreInactive,
+    getIDFromEvent,
 } from '../util/util';
 
 import {
@@ -71,7 +82,12 @@ const facilityListItemsTableStyles = Object.freeze({
     statusFilterMessageStyles: Object.freeze({
         padding: '0 0 0 20px',
     }),
+    dialogTextStyles: Object.freeze({
+        fontSize: '20px',
+    }),
 });
+
+const REMOVE_BUTTON_ID = 'REMOVE_BUTTON_ID';
 
 const createSelectedStatusChoicesFromParams = (params) => {
     if (params && params.status) {
@@ -81,6 +97,10 @@ const createSelectedStatusChoicesFromParams = (params) => {
 };
 
 class FacilityListItemsTable extends Component {
+    state = {
+        listItemToRemove: null,
+    };
+
     componentDidUpdate(prevProps) {
         const {
             items,
@@ -95,7 +115,13 @@ class FacilityListItemsTable extends Component {
                     search,
                 },
             },
+            isRemovingItem,
+            errorRemovingItem,
         } = this.props;
+
+        if (!isRemovingItem && prevProps.isRemovingItem && !errorRemovingItem) {
+            this.handleCloseRemoveDialog();
+        }
 
         const params = createParamsFromQueryString(search);
         if (params.status
@@ -272,6 +298,14 @@ class FacilityListItemsTable extends Component {
         fetchListItems(listID, 1, rowsPerPage, newParams);
     }
 
+    handleRemoveButtonClick = listItemToRemove => this.setState(state => Object.assign({}, state, {
+        listItemToRemove,
+    }));
+
+    handleCloseRemoveDialog = () => this.setState(state => Object.assign({}, state, {
+        listItemToRemove: null,
+    }));
+
     render() {
         const {
             list,
@@ -280,6 +314,9 @@ class FacilityListItemsTable extends Component {
             fetchingItems,
             selectedFacilityListItemsRowIndex,
             makeSelectListItemTableRowFunction,
+            makeRemoveFacilityListItemFunction,
+            isRemovingItem,
+            errorRemovingItem,
             match: {
                 params: {
                     listID,
@@ -292,6 +329,8 @@ class FacilityListItemsTable extends Component {
             },
             readOnly,
         } = this.props;
+
+        const { listItemToRemove } = this.state;
 
         const {
             page,
@@ -346,6 +385,10 @@ class FacilityListItemsTable extends Component {
                             item={item}
                             listID={listID}
                             readOnly={readOnly}
+                            isRemoved={anyListItemMatchesAreInactive(item)}
+                            handleRemoveItem={() => this.handleRemoveButtonClick(item)}
+                            removeButtonDisabled={isRemovingItem}
+                            removeButtonID={REMOVE_BUTTON_ID}
                         />
                     );
                 }
@@ -361,10 +404,14 @@ class FacilityListItemsTable extends Component {
                             name={item.name}
                             address={item.address}
                             status={item.status}
-                            handleSelectRow={handleSelectRow}
+                            handleSelectRow={null}
                             hover={false}
                             newFacility
                             oarID={item.matched_facility.oar_id}
+                            isRemoved={anyListItemMatchesAreInactive(item)}
+                            handleRemoveItem={() => this.handleRemoveButtonClick(item)}
+                            removeButtonDisabled={isRemovingItem}
+                            removeButtonID={REMOVE_BUTTON_ID}
                         />
                     );
                 }
@@ -380,6 +427,10 @@ class FacilityListItemsTable extends Component {
                             status={item.status}
                             handleSelectRow={handleSelectRow}
                             hover
+                            isRemoved={anyListItemMatchesAreInactive(item)}
+                            handleRemoveItem={() => this.handleRemoveButtonClick(item)}
+                            removeButtonDisabled={isRemovingItem}
+                            removeButtonID={REMOVE_BUTTON_ID}
                         />
                     );
                 }
@@ -411,6 +462,10 @@ class FacilityListItemsTable extends Component {
                             status={item.status}
                             matchedFacility={item.matched_facility}
                             handleSelectRow={handleSelectRow}
+                            isRemoved={anyListItemMatchesAreInactive(item)}
+                            handleRemoveItem={() => this.handleRemoveButtonClick(item)}
+                            removeButtonDisabled={isRemovingItem}
+                            removeButtonID={REMOVE_BUTTON_ID}
                         />
                     );
                 }
@@ -425,6 +480,7 @@ class FacilityListItemsTable extends Component {
                         status={item.status}
                         handleSelectRow={handleSelectRow}
                         hover
+                        isRemoved={anyListItemMatchesAreInactive(item)}
                     />
                 );
             });
@@ -483,6 +539,7 @@ class FacilityListItemsTable extends Component {
                                 address="Address"
                                 status="Status"
                                 hover={false}
+                                hideRemoveButton
                             />
                         </TableHead>
                         <TableBody>
@@ -498,6 +555,101 @@ class FacilityListItemsTable extends Component {
                     </Table>
                 </div>
                 {paginationControlsRow}
+                <Dialog open={!!listItemToRemove}>
+                    {
+                        listItemToRemove
+                            ? (
+                                <>
+                                    <DialogTitle>
+                                        Remove {listItemToRemove.name}?
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <Typography
+                                            style={facilityListItemsTableStyles.dialogTextStyles}
+                                        >
+                                            Do you really want to remove this list item? The
+                                            removed facility may still appear on the map, but
+                                            it will no longer be associated with your contributor
+                                            account.
+                                        </Typography>
+                                        <ul>
+                                            <li>
+                                                <Typography
+                                                    style={
+                                                        facilityListItemsTableStyles
+                                                            .dialogTextStyles
+                                                    }
+                                                >
+                                                    Name: {listItemToRemove.name}
+                                                </Typography>
+                                            </li>
+                                            <li>
+                                                <Typography
+                                                    style={
+                                                        facilityListItemsTableStyles
+                                                            .dialogTextStyles
+                                                    }
+                                                >
+                                                    Address: {listItemToRemove.address}
+                                                </Typography>
+                                            </li>
+                                            <li>
+                                                <Typography
+                                                    style={
+                                                        facilityListItemsTableStyles
+                                                            .dialogTextStyles
+                                                    }
+                                                >
+                                                    Country: {listItemToRemove.country_name}
+                                                </Typography>
+                                            </li>
+                                            <li>
+                                                <Typography
+                                                    style={
+                                                        facilityListItemsTableStyles
+                                                            .dialogTextStyles
+                                                    }
+                                                >
+                                                    Row Index: {listItemToRemove.row_index}
+                                                </Typography>
+                                            </li>
+                                        </ul>
+                                        {errorRemovingItem && errorRemovingItem.length && (
+                                            <Typography>
+                                                <span style={{ color: 'red' }}>
+                                                    An error prevented removing that list item.
+                                                </span>
+                                            </Typography>
+                                        )}
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            onClick={this.handleCloseRemoveDialog}
+                                            disabled={isRemovingItem}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={
+                                                makeRemoveFacilityListItemFunction(
+                                                    listID,
+                                                    listItemToRemove.id,
+                                                )
+                                            }
+                                            disabled={isRemovingItem}
+                                        >
+                                            Remove list item
+                                        </Button>
+                                    </DialogActions>
+                                </>
+                            )
+                            : <div style={{ display: 'none' }} />
+                    }
+                </Dialog>
             </Paper>
         );
     }
@@ -506,6 +658,7 @@ class FacilityListItemsTable extends Component {
 FacilityListItemsTable.defaultProps = {
     items: null,
     readOnly: false,
+    errorRemovingItem: null,
 };
 
 FacilityListItemsTable.propTypes = {
@@ -521,6 +674,9 @@ FacilityListItemsTable.propTypes = {
     }).isRequired,
     selectedFacilityListItemsRowIndex: number.isRequired,
     makeSelectListItemTableRowFunction: func.isRequired,
+    makeRemoveFacilityListItemFunction: func.isRequired,
+    isRemovingItem: bool.isRequired,
+    errorRemovingItem: arrayOf(string),
     readOnly: bool,
 };
 
@@ -535,6 +691,10 @@ function mapStateToProps({
         },
         filteredCount,
         selectedFacilityListItemsRowIndex,
+        confirmOrRejectMatchOrRemoveItem: {
+            fetching: isRemovingItem,
+            error: errorRemovingItem,
+        },
     },
     auth: {
         user: {
@@ -547,6 +707,8 @@ function mapStateToProps({
         items,
         filteredCount,
         fetchingItems,
+        isRemovingItem,
+        errorRemovingItem,
         selectedFacilityListItemsRowIndex,
         readOnly: user && user.is_superuser && list && user.contributor_id !== list.contributor_id,
     };
@@ -554,10 +716,26 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        makeSelectListItemTableRowFunction: rowIndex =>
-            () => dispatch(setSelectedFacilityListItemsRowIndex(rowIndex)),
+        makeSelectListItemTableRowFunction: rowIndex => (e) => {
+            // Quirkily, Material UI button clicks can happen on the label
+            // and not only directly on the button.
+            const buttonLabel = 'MuiButton-label-44';
+            const clickLocationClassName = get(e, 'target.className', '');
+
+            if (getIDFromEvent(e) === REMOVE_BUTTON_ID) {
+                return noop();
+            }
+
+            if (includes(clickLocationClassName, buttonLabel)) {
+                return noop();
+            }
+
+            return dispatch(setSelectedFacilityListItemsRowIndex(rowIndex));
+        },
         fetchListItems: (listID, page, rowsPerPage, params) =>
             dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
+        makeRemoveFacilityListItemFunction: (listID, listItemID) =>
+            () => dispatch(removeFacilityListItem(listID, listItemID)),
     };
 }
 

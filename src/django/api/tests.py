@@ -685,8 +685,25 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.assertNotIn(self.list_two, contributors)
         self.assertEqual(len(contributors), 1)
 
+    def test_excludes_inactive_facility_matches_from_details(self):
+        self.facility_match_two.is_active = False
+        self.facility_match_two.save()
 
-class ConfirmAndRejectFacilityMatchTest(TestCase):
+        contributors = self.facility.contributors()
+        self.assertIn(self.list_one, contributors)
+        self.assertNotIn(self.list_two, contributors)
+        self.assertEqual(len(contributors), 1)
+
+        other_names = self.facility.other_names()
+        self.assertNotIn(self.name_two, other_names)
+        self.assertEqual(len(other_names), 0)
+
+        other_addresses = self.facility.other_addresses()
+        self.assertNotIn(self.address_two, other_addresses)
+        self.assertEqual(len(other_addresses), 0)
+
+
+class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
     def setUp(self):
         self.country_code = 'US'
 
@@ -699,6 +716,9 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
         self.prior_address_two = 'prior_address_two'
         self.prior_name_one = 'prior_name_one'
         self.prior_name_two = 'prior_name_two'
+        self.prior_user_password = 'example-password'
+        self.prior_user.set_password(self.prior_user_password)
+        self.prior_user.save()
 
         self.prior_contrib = Contributor \
             .objects \
@@ -821,6 +841,9 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
             .format(self.current_list.id)
 
         self.reject_url = '/api/facility-lists/{}/reject/' \
+            .format(self.current_list.id)
+
+        self.remove_url = '/api/facility-lists/{}/remove/' \
             .format(self.current_list.id)
 
     def test_confirming_match_rejects_other_potential_matches(self):
@@ -976,6 +999,78 @@ class ConfirmAndRejectFacilityMatchTest(TestCase):
             initial_facility_matches_count + 1,
             new_facility_matches_count,
         )
+
+    def test_removing_a_list_item_sets_its_matches_to_inactive(self):
+        confirm_response = self.client.post(
+            self.confirm_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        rejected_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_two.id)
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(confirmed_match.status, FacilityMatch.CONFIRMED)
+        self.assertEqual(rejected_match.status, FacilityMatch.REJECTED)
+        self.assertEqual(confirmed_match.is_active, True)
+        self.assertEqual(rejected_match.is_active, True)
+
+        remove_response = self.client.post(
+            self.remove_url,
+            {"list_item_id": self.current_list_item.id},
+        )
+
+        self.assertEqual(remove_response.status_code, 200)
+
+        updated_confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        updated_rejected_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_two.id)
+
+        self.assertEqual(updated_confirmed_match.is_active, False)
+        self.assertEqual(updated_rejected_match.is_active, False)
+
+    def test_only_list_contribtutor_can_remove_a_list_item(self):
+        confirm_response = self.client.post(
+            self.confirm_url,
+            {"list_item_id": self.current_list_item.id,
+             "facility_match_id": self.potential_facility_match_one.id},
+        )
+
+        confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        rejected_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_two.id)
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(confirmed_match.status, FacilityMatch.CONFIRMED)
+        self.assertEqual(rejected_match.status, FacilityMatch.REJECTED)
+        self.assertEqual(confirmed_match.is_active, True)
+        self.assertEqual(rejected_match.is_active, True)
+
+        self.client.logout()
+
+        self.client.login(email=self.prior_user_email,
+                          password=self.prior_user_password)
+
+        remove_response = self.client.post(
+            self.remove_url,
+            {"list_item_id": self.current_list_item.id},
+        )
+
+        self.assertEqual(remove_response.status_code, 404)
 
 
 def interspace(string):

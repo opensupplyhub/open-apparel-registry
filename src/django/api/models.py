@@ -264,6 +264,10 @@ class FacilityListItem(models.Model):
     # `FacilityListItem` then the item represents a new facility.
     NEW_FACILITY = 'NEW_FACILITY'
 
+    # REMOVED is also a meta status. A `FacilityListItem` has been removed if
+    # any of its `FacilityMatch`es have `is_active` set to False.
+    REMOVED = 'REMOVED'
+
     # These status choices must be kept in sync with the client's
     # `facilityListItemStatusChoicesEnum`.
     STATUS_CHOICES = (
@@ -625,6 +629,7 @@ class Facility(models.Model):
             .filter(status__in=[FacilityMatch.AUTOMATIC,
                                 FacilityMatch.CONFIRMED,
                                 FacilityMatch.MERGED])
+            .filter(is_active=True)
             .values_list('facility_list_item')
         ]
 
@@ -648,6 +653,7 @@ class Facility(models.Model):
             .filter(status__in=[FacilityMatch.AUTOMATIC,
                                 FacilityMatch.CONFIRMED,
                                 FacilityMatch.MERGED])
+            .filter(is_active=True)
             .values_list('facility_list_item')
         ]
 
@@ -671,6 +677,7 @@ class Facility(models.Model):
             .filter(status__in=[FacilityMatch.AUTOMATIC,
                                 FacilityMatch.CONFIRMED,
                                 FacilityMatch.MERGED])
+            .filter(is_active=True)
             .order_by('updated_at')
             .values_list('facility_list_item')
         ]
@@ -688,12 +695,12 @@ class Facility(models.Model):
     def get_created_from_match(self):
         return self.facilitymatch_set.filter(
             facility_list_item=self.created_from
-        ).first()
+        ).filter(is_active=True).first()
 
     def get_other_matches(self):
         return self.facilitymatch_set.exclude(
             facility_list_item=self.created_from
-        ).all()
+        ).filter(is_active=True).all()
 
     def get_approved_claim(self):
         return self.facilityclaim_set.filter(
@@ -754,6 +761,13 @@ class FacilityMatch(models.Model):
                    'the admin rejects the match. Only one row for a given '
                    'and facility list item pair should have either AUTOMATIC '
                    'or CONFIRMED status'))
+    is_active = models.BooleanField(
+        null=False,
+        default=True,
+        help_text=('A facility match is_active if its associated list item '
+                   'not been removed; when a list item is removed, this '
+                   'field will be set to False.')
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

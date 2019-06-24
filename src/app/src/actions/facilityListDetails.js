@@ -10,6 +10,7 @@ import {
     createConfirmOrRejectMatchData,
     createConfirmFacilityListItemMatchURL,
     createRejectFacilityListItemMatchURL,
+    createRemoveFacilityListItemURL,
     makeFacilityListDataURLs,
     downloadListItemCSV,
 } from '../util/util';
@@ -189,5 +190,35 @@ export function assembleAndDownloadFacilityListCSV() {
                 failAssembleAndDownloadFacilityListCSV,
             ));
         }
+    };
+}
+
+export const startRemoveFacilityListItem = createAction('START_REMOVE_FACILITY_LIST_ITEM');
+export const failRemoveFacilityListItem = createAction('FAIL_REMOVE_FACILITY_LIST_ITEM');
+export const completeRemoveFacilityListItem = createAction('COMPLETE_REMOVE_FACILITY_LIST_ITEM');
+
+export function removeFacilityListItem(listID, listItemID) {
+    return (dispatch) => {
+        dispatch(startRemoveFacilityListItem());
+
+        if (!listID || !listItemID) {
+            return dispatch(logErrorAndDispatchFailure(
+                null,
+                'listID and listItemID are required parameters',
+                failRemoveFacilityListItem,
+            ));
+        }
+
+        return csrfRequest
+            .post(
+                createRemoveFacilityListItemURL(listID),
+                { list_item_id: listItemID },
+            )
+            .then(({ data }) => dispatch(completeRemoveFacilityListItem(data)))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented removing that facility list item',
+                failRemoveFacilityListItem,
+            )));
     };
 }
