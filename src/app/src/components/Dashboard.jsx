@@ -7,14 +7,20 @@ import { Link, Route, Switch } from 'react-router-dom';
 import DashboardLists from './DashboardLists';
 import DashboardClaims from './DashboardClaims';
 import DashboardClaimsDetails from './DashboardClaimsDetails';
+import DashboardDeleteFacility from './DashboardDeleteFacility';
+import DashboardMergeFacilities from './DashboardMergeFacilities';
 import FeatureFlag from './FeatureFlag';
+import RouteNotFound from './RouteNotFound';
 
 import { checkWhetherUserHasDashboardAccess } from '../util/util';
+
 import {
     CLAIM_A_FACILITY,
     dashboardListsRoute,
     dashboardClaimsRoute,
     dashboardClaimsDetailsRoute,
+    dashboardDeleteFacilityRoute,
+    dashboardMergeFacilitiesRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -38,18 +44,14 @@ function Dashboard({
 }) {
     if (fetchingSessionSignIn) {
         return (
-            <AppGrid title={DASHBOARD_TITLE}>
+            <AppGrid title="">
                 <CircularProgress />
             </AppGrid>
         );
     }
 
     if (!userWithAccessHasSignedIn) {
-        return (
-            <AppGrid title={DASHBOARD_TITLE}>
-                Unauthorized
-            </AppGrid>
-        );
+        return <RouteNotFound />;
     }
 
     const linkSection = (
@@ -62,6 +64,12 @@ function Dashboard({
                     View Facility Claims
                 </Link>
             </FeatureFlag>
+            <Link to={dashboardDeleteFacilityRoute}>
+                Delete a facility
+            </Link>
+            <Link to={dashboardMergeFacilitiesRoute}>
+                Merge two facilities
+            </Link>
         </div>
     );
 
@@ -102,13 +110,32 @@ function Dashboard({
                                     )
                                 }
                             />
+                            <Route
+                                path={dashboardDeleteFacilityRoute}
+                                render={() => 'Dashboard / Delete Facility'}
+                            />
+                            <Route
+                                path={dashboardMergeFacilitiesRoute}
+                                render={() => 'Dashboard / Merge Facilities'}
+                            />
                             <Route render={() => DASHBOARD_TITLE} />
                         </Switch>
                     )
                 }
             >
                 <Switch>
-                    <Route path={dashboardListsRoute} component={DashboardLists} />
+                    <Route
+                        path={dashboardListsRoute}
+                        component={DashboardLists}
+                    />
+                    <Route
+                        path={dashboardDeleteFacilityRoute}
+                        component={DashboardDeleteFacility}
+                    />
+                    <Route
+                        path={dashboardMergeFacilitiesRoute}
+                        component={DashboardMergeFacilities}
+                    />
                     <Route
                         path={dashboardClaimsDetailsRoute}
                         render={
