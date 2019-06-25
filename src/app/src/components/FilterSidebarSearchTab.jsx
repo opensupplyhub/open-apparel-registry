@@ -137,7 +137,7 @@ function FilterSidebarSearchTab({
                         isMulti
                         id={CONTRIBUTORS}
                         name={CONTRIBUTORS}
-                        className="basic-multi-select"
+                        className="basic-multi-select notranslate"
                         classNamePrefix="select"
                         options={contributorOptions}
                         value={contributors}
@@ -157,7 +157,7 @@ function FilterSidebarSearchTab({
                         isMulti
                         id={CONTRIBUTOR_TYPES}
                         name="contributorTypes"
-                        className="basic-multi-select"
+                        className="basic-multi-select notranslate"
                         classNamePrefix="select"
                         options={contributorTypeOptions}
                         value={contributorTypes}

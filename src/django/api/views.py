@@ -430,6 +430,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'merge' in path:
             return None
 
+        if 'claim' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -1683,6 +1686,12 @@ def api_feature_flags(request):
     return Response(response_data)
 
 
+class FacilityClaimsAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+@schema(FacilityClaimsAutoSchema())
 class FacilityClaimViewSet(viewsets.ModelViewSet):
     """
     Viewset for admin operations on FacilityClaims.

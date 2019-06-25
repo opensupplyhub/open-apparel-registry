@@ -75,9 +75,10 @@ const accountNameField = Object.freeze({
     label: 'Contributor Name',
     type: inputTypesEnum.text,
     required: true,
-    hint: `Your contributor name will appear publicly on all
-facilities that you upload as the data source for each facility
-contributed.`,
+    hint: `If you are uploading a supplier list on behalf of the organisation
+you work for, you should add the organisation name here, not your personal name.
+Your contributor name will appear publicly on all facilities that you upload as
+the data source for each facility contributed.`,
     modelFieldName: 'name',
 });
 
