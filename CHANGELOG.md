@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.6.0] - 2019-06-25
+### Added
 - Enable submitting claim a facility form [#540](https://github.com/open-apparel-registry/open-apparel-registry/pull/540)
 - Allow contributors to be verified [#563](https://github.com/open-apparel-registry/open-apparel-registry/pull/563)
 - Add routing to enable users to view claimed facilities [#572](https://github.com/open-apparel-registry/open-apparel-registry/pull/572)
@@ -27,14 +40,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Email contributors when facility claims are approved or claim profiles are updated [#611](https://github.com/open-apparel-registry/open-apparel-registry/pull/611)
 - Add `parent_company` field to facility claims [#626](https://github.com/open-apparel-registry/open-apparel-registry/pull/626)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Miscellaneous bugfixes [#622](https://github.com/open-apparel-registry/open-apparel-registry/pull/622)
-
-### Security
 
 ## [2.5.0] - 2019-06-05
 ### Added
@@ -132,7 +139,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.5.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.6.0...HEAD
+[2.6.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.6.0
 [2.5.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.5.0
 [2.4.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.4.0
 [2.3.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.3.0

@@ -2344,6 +2344,50 @@ class FacilityDeleteTest(APITestCase):
         alias.refresh_from_db()
         self.assertEqual(match_3.facility, alias.facility)
 
+    def test_other_inactive_match_is_promoted(self):
+        initial_facility_count = Facility.objects.all().count()
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(1, 1),
+                    facility_list=list_2,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='',
+                    is_active=False)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        # We should have "promoted" the matched facility to replace the deleted
+        # facility
+        facility_count = Facility.objects.all().count()
+        self.assertEqual(facility_count, initial_facility_count)
+        self.assertEqual(1, FacilityAlias.objects.all().count())
+        alias = FacilityAlias.objects.first()
+        self.assertEqual(list_item_2, alias.facility.created_from)
+
     def test_rejected_match_is_deleted_not_promoted(self):
         list_2 = FacilityList \
             .objects \
@@ -2395,6 +2439,20 @@ class FacilityDeleteTest(APITestCase):
                           password=self.superuser_password)
         response = self.client.delete(self.facility_url)
         self.assertEqual(204, response.status_code)
+
+    def test_delete_removed_item(self):
+        self.facility_match.is_active = False
+        self.facility_match.save()
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
 
 
 class FacilityMergeTest(APITestCase):
