@@ -1261,7 +1261,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if search is not None and len(search) > 0:
             queryset = queryset.filter(
                 Q(facility__name__icontains=search) |
-                Q(facility__address__icontains=search))
+                Q(facility__address__icontains=search) |
+                Q(name__icontains=search) |
+                Q(address__icontains=search))
         if status is not None and len(status) > 0:
             q_statements = [make_q_from_status(s) for s in status]
             queryset = queryset.filter(reduce(operator.or_, q_statements))
