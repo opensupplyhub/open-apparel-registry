@@ -1686,6 +1686,12 @@ def api_feature_flags(request):
     return Response(response_data)
 
 
+class FacilityClaimsAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+@schema(FacilityClaimsAutoSchema())
 class FacilityClaimViewSet(viewsets.ModelViewSet):
     """
     Viewset for admin operations on FacilityClaims.
