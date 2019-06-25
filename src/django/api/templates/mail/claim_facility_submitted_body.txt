@@ -1,0 +1,24 @@
+{% block content %}
+Hi,
+
+You're receiving this email because we received your request to claim an Open Apparel Registry facility. We'll review the request and be in touch soon.
+
+Here is the information submitted with your request:
+
+- Facility: {{ facility_name }}, {{ facility_address }}, {{ facility_country }}
+- Facility URL: {{ facility_url }}
+- Contact person: {{ contact_person }}
+- Email: {{ email }}
+- Phone number: {{ phone_number }}
+- Company name: {{ company_name }}
+- Website: {{ website }}
+- Facility description: {{ facility_description }}
+- Verification method: {{ verification_method }}
+- Preferred contact method: {{ preferred_contact_method }}
+
+We'll review your request to claim the facility and get in touch if we need any additional information.
+
+Sincerely,
+
+{% include "mail/signature_block.txt" %}
+{% endblock content %}

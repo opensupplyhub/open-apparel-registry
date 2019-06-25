@@ -96,8 +96,25 @@ class Contributor(models.Model):
         blank=True,
         help_text='Free text field if selected contributor type is other'
     )
+    is_verified = models.BooleanField(
+        'verified',
+        default=False,
+        help_text=(
+            'Has this contributor has been verified by OAR staff.'
+        ),
+    )
+    verification_notes = models.TextField(
+        null=False,
+        blank=True,
+        help_text=(
+            'A description of the manual steps taken to verify the '
+            'contributor.'
+        )
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)
@@ -240,11 +257,16 @@ class FacilityListItem(models.Model):
     ERROR_PARSING = 'ERROR_PARSING'
     ERROR_GEOCODING = 'ERROR_GEOCODING'
     ERROR_MATCHING = 'ERROR_MATCHING'
+    DELETED = 'DELETED'
 
     # NEW_FACILITY is a meta status. If the `status` of a `FacilityListItem` is
     # `MATCHED` or `CONFIRMED_MATCH` and the `facility` was `created_from` the
     # `FacilityListItem` then the item represents a new facility.
     NEW_FACILITY = 'NEW_FACILITY'
+
+    # REMOVED is also a meta status. A `FacilityListItem` has been removed if
+    # any of its `FacilityMatch`es have `is_active` set to False.
+    REMOVED = 'REMOVED'
 
     # These status choices must be kept in sync with the client's
     # `facilityListItemStatusChoicesEnum`.
@@ -260,6 +282,7 @@ class FacilityListItem(models.Model):
         (ERROR_PARSING, ERROR_PARSING),
         (ERROR_GEOCODING, ERROR_GEOCODING),
         (ERROR_MATCHING, ERROR_MATCHING),
+        (DELETED, DELETED),
     )
 
     ERROR_STATUSES = [ERROR, ERROR_PARSING, ERROR_GEOCODING, ERROR_MATCHING]
@@ -342,6 +365,212 @@ class FacilityListItem(models.Model):
         return 'FacilityListItem {id} - {status}'.format(**self.__dict__)
 
 
+class FacilityClaim(models.Model):
+    """
+    Data submitted from a user attempting to make a verified claim of a
+    Facility to be evaluated by OAR moderators.
+    """
+    EMAIL = 'EMAIL'
+    PHONE = 'PHONE'
+
+    PREFERRED_CONTACT_CHOICES = (
+        (EMAIL, EMAIL),
+        (PHONE, PHONE),
+    )
+
+    PENDING = 'PENDING'
+    APPROVED = 'APPROVED'
+    DENIED = 'DENIED'
+    REVOKED = 'REVOKED'
+
+    # These status choices must be kept in sync with the client's
+    # `facilityClaimStatusChoicesEnum`.
+    STATUS_CHOICES = (
+        (PENDING, PENDING),
+        (APPROVED, APPROVED),
+        (DENIED, DENIED),
+        (REVOKED, REVOKED),
+    )
+
+    contributor = models.ForeignKey(
+        'Contributor',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The contributor who submitted this facility claim')
+    facility = models.ForeignKey(
+        'Facility',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The facility for which this claim has been submitted')
+    contact_person = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The contact person for the facility claim')
+    email = models.EmailField(
+        null=False,
+        blank=False,
+        help_text='The contact email for the facility claim')
+    phone_number = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The contact phone number for the facility claim')
+    company_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=True,
+        help_text='The company name for the facility')
+    website = models.CharField(
+        max_length=200,
+        null=False,
+        blank=True,
+        help_text='The website for the facility')
+    facility_description = models.TextField(
+        null=False,
+        blank=True,
+        help_text='A description of the facility')
+    verification_method = models.TextField(
+        null=False,
+        blank=True,
+        help_text='An explanation of how the facility can be verified')
+    preferred_contact_method = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=PREFERRED_CONTACT_CHOICES,
+        help_text='The preferred contact method: email or phone')
+    status = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=STATUS_CHOICES,
+        default=PENDING,
+        help_text='The current status of this facility claim')
+    status_change_reason = models.TextField(
+        null=True,
+        blank=True,
+        help_text='The reason entered when changing the status of this claim.')
+    status_change_by = models.ForeignKey(
+        'User',
+        null=True,
+        on_delete=models.PROTECT,
+        help_text='The user who changed the status of this facility claim',
+        related_name='approver_of_claim')
+    status_change_date = models.DateTimeField(null=True)
+    facility_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable facility name for this claim.')
+    facility_address = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable facility address for this claim.')
+    facility_phone_number = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable facility phone number for this claim.')
+    facility_phone_number_publicly_visible = models.BooleanField(
+        null=False,
+        default=False,
+        help_text='Is the editable facility phone number publicly visible?')
+    facility_website = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable facility website for this claim.')
+    facility_minimum_order_quantity = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable facility min order quantity for this claim.')
+    facility_average_lead_time = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable facilty avg lead time for this claim.')
+    point_of_contact_person_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable point of contact person name')
+    point_of_contact_email = models.EmailField(
+        null=True,
+        blank=True,
+        help_text='The editable point of contact email')
+    point_of_contact_publicly_visible = models.BooleanField(
+        null=False,
+        default=False,
+        help_text='Is the point of contact info publicly visible?')
+    office_official_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable office name for this claim.')
+    office_address = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable office address for this claim.')
+    office_country_code = models.CharField(
+        max_length=2,
+        null=True,
+        blank=True,
+        choices=COUNTRY_CHOICES,
+        help_text='The editable office country code for this claim.')
+    office_phone_number = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable office phone number for this claim.')
+    office_info_publicly_visible = models.BooleanField(
+        null=False,
+        default=False,
+        help_text='Is the office info publicly visible?')
+    parent_company = models.ForeignKey(
+        'Contributor',
+        related_name='parent_company',
+        null=True,
+        default=None,
+        on_delete=models.PROTECT,
+        help_text='The parent company of this facility claim.')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
+
+
+class FacilityClaimReviewNote(models.Model):
+    """
+    A note entered by an administrator when reviewing a FacilityClaim.
+    """
+
+    claim = models.ForeignKey(
+        'FacilityClaim',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The facility claim for this note'
+    )
+    author = models.ForeignKey(
+        'User',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The author of the facility claim review note')
+    note = models.TextField(
+        null=False,
+        blank=False,
+        help_text='The review note')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
+
+
 class Facility(models.Model):
     """
     An official OAR facility. Search results are returned from this table.
@@ -405,7 +634,9 @@ class Facility(models.Model):
             in self
             .facilitymatch_set
             .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                FacilityMatch.CONFIRMED])
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])
+            .filter(is_active=True)
             .values_list('facility_list_item')
         ]
 
@@ -427,7 +658,9 @@ class Facility(models.Model):
             in self
             .facilitymatch_set
             .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                FacilityMatch.CONFIRMED])
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])
+            .filter(is_active=True)
             .values_list('facility_list_item')
         ]
 
@@ -449,21 +682,36 @@ class Facility(models.Model):
             in self
             .facilitymatch_set
             .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                FacilityMatch.CONFIRMED])
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])
+            .filter(is_active=True)
+            .order_by('updated_at')
             .values_list('facility_list_item')
         ]
 
-        return {
-            "{} ({})".format(
-                match.facility_list.contributor.name,
-                match.facility_list.name,
-            ): match.facility_list.contributor.admin.id
+        # Converting from a list back to a set ensures the items are distinct
+        return list(set([
+            match.facility_list
             for match
             in facility_list_item_matches
             if match.facility_list.is_active
             and match.facility_list.is_public
             and match.facility_list.contributor is not None
-        }
+        ]))
+
+    def get_created_from_match(self):
+        return self.facilitymatch_set.filter(
+            facility_list_item=self.created_from
+        ).first()
+
+    def get_other_matches(self):
+        return self.facilitymatch_set.exclude(
+            facility_list_item=self.created_from
+        ).all()
+
+    def get_approved_claim(self):
+        return self.facilityclaim_set.filter(
+            status=FacilityClaim.APPROVED).count() > 0
 
 
 class FacilityMatch(models.Model):
@@ -477,6 +725,7 @@ class FacilityMatch(models.Model):
     AUTOMATIC = 'AUTOMATIC'
     CONFIRMED = 'CONFIRMED'
     REJECTED = 'REJECTED'
+    MERGED = 'MERGED'
 
     # These values must stay in sync with the `facilityMatchStatusChoicesEnum`
     # in the client's constants.js file.
@@ -485,15 +734,16 @@ class FacilityMatch(models.Model):
         (AUTOMATIC, AUTOMATIC),
         (CONFIRMED, CONFIRMED),
         (REJECTED, REJECTED),
+        (MERGED, MERGED),
     )
 
     facility_list_item = models.ForeignKey(
         'FacilityListItem',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         help_text='The list item being matched to an existing facility.')
     facility = models.ForeignKey(
         'Facility',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         help_text=('The existing facility that may match an uploaded list '
                    'item.'))
     results = postgres.JSONField(
@@ -518,9 +768,60 @@ class FacilityMatch(models.Model):
                    'the admin rejects the match. Only one row for a given '
                    'and facility list item pair should have either AUTOMATIC '
                    'or CONFIRMED status'))
+    is_active = models.BooleanField(
+        null=False,
+        default=True,
+        help_text=('A facility match is_active if its associated list item '
+                   'not been removed; when a list item is removed, this '
+                   'field will be set to False.')
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{0} - {1} - {2}'.format(self.facility_list_item, self.facility,
                                         self.status)
+
+
+class FacilityAlias(models.Model):
+    """
+    Links the OAR ID of a no longer existing Facility to another Facility
+    """
+    class Meta:
+        verbose_name_plural = "facility aliases"
+
+    MERGE = 'MERGE'
+    DELETE = 'DELETE'
+
+    REASON_CHOICES = (
+        (MERGE, MERGE),
+        (DELETE, DELETE),
+    )
+
+    oar_id = models.CharField(
+        max_length=32,
+        primary_key=True,
+        editable=False,
+        help_text=('The OAR ID of a no longer existent Facility which should '
+                   'be redirected to a different Facility.'))
+    facility = models.ForeignKey(
+        'Facility',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text='The facility now associated with the oar_id'
+    )
+    reason = models.CharField(
+        null=False,
+        max_length=6,
+        choices=REASON_CHOICES,
+        help_text='The reason why this alias was created'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
+
+    def __str__(self):
+        return '{} -> {}'.format(self.oar_id, self.facility)

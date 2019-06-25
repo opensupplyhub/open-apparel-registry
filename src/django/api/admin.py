@@ -38,8 +38,9 @@ class FacilityListItemAdmin(admin.ModelAdmin):
     pretty_processing_results.short_description = 'Processing results'
 
 
-class FacilityMatchAdmin(admin.ModelAdmin):
+class FacilityMatchAdmin(SimpleHistoryAdmin):
     exclude = ('results',)
+    history_list_display = ('status', 'facility')
     readonly_fields = ('facility_list_item', 'facility',
                        'confidence', 'status', 'pretty_results')
 
@@ -53,9 +54,33 @@ class FacilityMatchAdmin(admin.ModelAdmin):
     pretty_results.short_description = 'Results'
 
 
+class ContributorAdmin(SimpleHistoryAdmin):
+    history_list_display = ('is_verified', 'verification_notes')
+
+
+class FacilityClaimAdmin(SimpleHistoryAdmin):
+    history_list_display = ('id', 'contact_person', 'created_at', 'status')
+    readonly_fields = ('contributor', 'facility', 'status_change_reason',
+                       'status_change_by', 'status_change_date', 'status')
+
+
+class FacilityClaimReviewNoteAdmin(SimpleHistoryAdmin):
+    history_list_display = ('id', 'created_at')
+    readonly_fields = ('claim', 'author')
+
+
+class FacilityAliasAdmin(SimpleHistoryAdmin):
+    history_list_display = ('oar_id', 'facility')
+    readonly_fields = ('oar_id', 'facility', 'reason')
+
+
 admin.site.register(models.User, OarUserAdmin)
-admin.site.register(models.Contributor)
+admin.site.register(models.Contributor, ContributorAdmin)
 admin.site.register(models.FacilityList)
 admin.site.register(models.FacilityListItem, FacilityListItemAdmin)
 admin.site.register(models.Facility, FacilityHistoryAdmin)
 admin.site.register(models.FacilityMatch, FacilityMatchAdmin)
+admin.site.register(models.FacilityClaim, FacilityClaimAdmin)
+admin.site.register(models.FacilityClaimReviewNote,
+                    FacilityClaimReviewNoteAdmin)
+admin.site.register(models.FacilityAlias, FacilityAliasAdmin)

@@ -1,9 +1,9 @@
 import React from 'react';
-import { bool, func } from 'prop-types';
+import { arrayOf, bool, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import noop from 'lodash/noop';
 import startsWith from 'lodash/startsWith';
+import includes from 'lodash/includes';
 
 import COLOURS from '../util/COLOURS';
 
@@ -11,11 +11,7 @@ import NavbarDropdown from './NavbarDropdown';
 
 import { submitLogOut } from '../actions/auth';
 
-import { setFiltersFromQueryString } from '../actions/filters';
-
-import { fetchFacilities } from '../actions/facilities';
-
-import { userPropType } from '../util/propTypes';
+import { userPropType, featureFlagPropType } from '../util/propTypes';
 
 import {
     authLoginFormRoute,
@@ -23,11 +19,13 @@ import {
     mainRoute,
     facilitiesRoute,
     dashboardRoute,
+    CLAIM_A_FACILITY,
 } from '../util/constants';
 
 import {
     makeProfileRouteLink,
     checkWhetherUserHasDashboardAccess,
+    convertFeatureFlagsObjectToListOfActiveFlags,
 } from '../util/util';
 
 const componentStyles = Object.freeze({
@@ -62,7 +60,7 @@ const componentStyles = Object.freeze({
     }),
 });
 
-const createUserDropdownLinks = (user, logoutAction, myFacilitiesAction) => {
+const createUserDropdownLinks = (user, logoutAction, activeFeatureFlags) => {
     const dashboardLink = checkWhetherUserHasDashboardAccess(user)
         ? Object.freeze([
             Object.freeze({
@@ -73,41 +71,48 @@ const createUserDropdownLinks = (user, logoutAction, myFacilitiesAction) => {
         ])
         : [];
 
-    return dashboardLink.concat(
-        Object.freeze([
-            Object.freeze({
-                text: 'My Profile',
-                url: makeProfileRouteLink(user.id),
-                type: 'link',
-            }),
-            Object.freeze({
-                text: 'My Lists',
-                url: '/lists',
-                type: 'link',
-            }),
+    const userLinks = Object.freeze([
+        Object.freeze({
+            text: 'My Profile',
+            url: makeProfileRouteLink(user.id),
+            type: 'link',
+        }),
+        Object.freeze({
+            text: 'My Lists',
+            url: '/lists',
+            type: 'link',
+        }),
+    ]);
+
+    const claimedFacilityLinks = includes(activeFeatureFlags, CLAIM_A_FACILITY)
+        ? Object.freeze([
             Object.freeze({
                 text: 'My Facilities',
-                type: 'button',
-                action: user.contributor_id
-                    ? () => myFacilitiesAction(user.contributor_id)
-                    : noop,
+                url: '/claimed',
+                type: 'link',
             }),
-            Object.freeze({
-                text: 'Log Out',
-                type: 'button',
-                action: logoutAction,
-            }),
-        ]),
-    );
+        ])
+        : [];
+
+    const logoutLinks = Object.freeze([
+        Object.freeze({
+            text: 'Log Out',
+            type: 'button',
+            action: logoutAction,
+        }),
+    ]);
+
+    return dashboardLink.concat(userLinks).concat(claimedFacilityLinks).concat(logoutLinks);
 };
 
 function NavbarLoginButtonGroup({
     user,
     logout,
     sessionFetching,
-    navigateToMyFacilities,
+    featureFlagsFetching,
+    activeFeatureFlags,
 }) {
-    if (!user || sessionFetching) {
+    if (!user || sessionFetching || featureFlagsFetching) {
         return (
             <div style={componentStyles.containerStyle}>
                 <Link
@@ -134,7 +139,7 @@ function NavbarLoginButtonGroup({
         <div style={componentStyles.containerStyle}>
             <NavbarDropdown
                 title={user.name}
-                links={createUserDropdownLinks(user, logout, navigateToMyFacilities)}
+                links={createUserDropdownLinks(user, logout, activeFeatureFlags)}
             />
         </div>
     );
@@ -148,7 +153,8 @@ NavbarLoginButtonGroup.propTypes = {
     user: userPropType,
     logout: func.isRequired,
     sessionFetching: bool.isRequired,
-    navigateToMyFacilities: func.isRequired,
+    featureFlagsFetching: bool.isRequired,
+    activeFeatureFlags: arrayOf(featureFlagPropType).isRequired,
 };
 
 function mapStateToProps({
@@ -160,10 +166,16 @@ function mapStateToProps({
             fetching: sessionFetching,
         },
     },
+    featureFlags: {
+        fetching: featureFlagsFetching,
+        flags,
+    },
 }) {
     return {
         user,
         sessionFetching,
+        featureFlagsFetching,
+        activeFeatureFlags: convertFeatureFlagsObjectToListOfActiveFlags(flags),
     };
 }
 
@@ -180,14 +192,6 @@ function mapDispatchToProps(dispatch, {
             dispatch(submitLogOut());
 
             if (pathname !== mainRoute && !startsWith(pathname, facilitiesRoute)) {
-                push(facilitiesRoute);
-            }
-        },
-        navigateToMyFacilities: (contributorID) => {
-            dispatch(setFiltersFromQueryString(`?contributors=${contributorID}`));
-            dispatch(fetchFacilities());
-
-            if (pathname !== facilitiesRoute) {
                 push(facilitiesRoute);
             }
         },

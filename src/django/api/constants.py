@@ -12,6 +12,9 @@ class ProcessingAction:
     MATCH = 'match'
     SUBMIT_JOB = 'submitjob'
     CONFIRM = 'confirm'
+    DELETE_FACILITY = 'delete_facility'
+    PROMOTE_MATCH = 'promote_match'
+    MERGE_FACILITY = 'merge_facility'
 
 
 class FacilitiesQueryParams:
@@ -21,6 +24,15 @@ class FacilitiesQueryParams:
     COUNTRIES = 'countries'
 
 
+class FacilityListQueryParams:
+    CONTRIBUTOR = 'contributor'
+
+
 class FacilityListItemsQueryParams:
     SEARCH = 'search'
     STATUS = 'status'
+
+
+class FacilityMergeQueryParams:
+    TARGET = 'target'
+    MERGE = 'merge'

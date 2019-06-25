@@ -94,3 +94,17 @@ export const filterSidebarStyles = Object.freeze({
         overflow: 'auto',
     }),
 });
+
+export const claimAFacilityFormStyles = Object.freeze({
+    textFieldStyles: Object.freeze({
+        width: '95%',
+        padding: '10px 0 10px',
+    }),
+    inputGroupStyles: Object.freeze({
+        width: '100%',
+        padding: '5px 0 5px',
+    }),
+    asideStyles: Object.freeze({
+        padding: '5px 20px 5px 0',
+    }),
+});

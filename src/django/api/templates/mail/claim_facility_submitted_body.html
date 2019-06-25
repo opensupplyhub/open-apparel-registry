@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            We received your request to claim an Open Apparel Registry Facility
+        </title>
+    </head>
+    <body>
+        <p>
+            Hi,
+        </p>
+        <p>
+            You're receiving this email because we received your request to claim an Open
+            Apparel Registry facility. We'll review the request and be in touch soon.
+        </p>
+        <p>
+            Here is the information submitted with your request:
+        </p>
+        <ul>
+            <li>
+                Facility: {{ facility_name }}, {{ facility_address }}, {{ facility_country }}
+            </li>
+            <li>
+                Facility URL: {{ facility_url }}
+            </li>
+            <li>
+                Contact person: {{ contact_person }}
+            </li>
+            <li>
+                Email: {{ email }}
+            </li>
+            <li>
+                Phone number: {{ phone_number }}
+            </li>
+            <li>
+                Company name: {{ company_name }}
+            </li>
+            <li>
+                Website: {{ website }}
+            </li>
+            <li>
+                Facility description: {{ facility_description }}
+            </li>
+            <li>
+                Verification method: {{ verification_method }}
+            </li>
+            <li>
+                Preferred contact method: {{ preferred_contact_method }}
+            </li>
+        </ul>
+        <p>
+            We'll review your request to claim the facility and get in touch if we
+            need any additional information.
+        </p>
+        <p>
+            Sincerely,
+        </p>
+        {% include "mail/signature_block.html" %}
+    </body>
+</html>

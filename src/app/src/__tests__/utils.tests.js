@@ -15,6 +15,8 @@ const {
     makeGetCountriesURL,
     makeGetFacilitiesURL,
     makeGetFacilityByOARIdURL,
+    makeClaimFacilityAPIURL,
+    makeMergeTwoFacilitiesAPIURL,
     makeGetFacilitiesURLWithQueryString,
     getValueFromObject,
     createQueryStringFromSearchFilters,
@@ -32,6 +34,13 @@ const {
     mapDjangoChoiceTuplesToSelectOptions,
     allListsAreEmpty,
     makeFacilityDetailLink,
+    makeFacilityClaimDetailsLink,
+    getIDFromEvent,
+    makeGetFacilityClaimByClaimIDURL,
+    makeApproveFacilityClaimByClaimIDURL,
+    makeDenyFacilityClaimByClaimIDURL,
+    makeRevokeFacilityClaimByClaimIDURL,
+    makeAddNewFacilityClaimReviewNoteURL,
     getBBoxForArrayOfGeoJSONPoints,
     makeFacilityListItemsDetailLink,
     makePaginatedFacilityListItemsDetailLinkWithRowCount,
@@ -47,6 +56,7 @@ const {
     makeMyFacilitiesRoute,
     makeResetPasswordEmailURL,
     getTokenFromQueryString,
+    getContributorFromQueryString,
     makeResetPasswordConfirmURL,
     makeUserProfileURL,
     makeProfileRouteLink,
@@ -61,6 +71,10 @@ const {
     addProtocolToWebsiteURLIfMissing,
     convertFeatureFlagsObjectToListOfActiveFlags,
     checkWhetherUserHasDashboardAccess,
+    claimAFacilityFormIsValid,
+    claimFacilityContactInfoStepIsValid,
+    claimFacilityFacilityInfoStepIsValid,
+    anyListItemMatchesAreInactive,
 } = require('../util/util');
 
 const {
@@ -799,6 +813,15 @@ it('gets a `token` from a querystring', () => {
     expect(getTokenFromQueryString(missingQueryString)).toBe(expectedMissingQueryStringMatch);
 });
 
+it('gets a `contributor` from querystring', () => {
+    expect(getContributorFromQueryString('?contributor=5')).toBe(5);
+    expect(getContributorFromQueryString('?contributor=5&contributor=10')).toBe(5);
+    expect(getContributorFromQueryString('?contributor=five')).toBe(NaN);
+    expect(getContributorFromQueryString('?contributor=')).toBe(NaN);
+    expect(getContributorFromQueryString('?something=else')).toBe(NaN);
+    expect(getContributorFromQueryString('')).toBe(NaN);
+});
+
 it('joins a 2-d array into a correctly escaped CSV string', () => {
     const numericArray = [
         [
@@ -1159,4 +1182,167 @@ it('checks whether a user has dashboard access', () => {
 
     expect(checkWhetherUserHasDashboardAccess(unauthorizedUser))
         .toBe(false);
+});
+
+it('creates a URL for POSTing the claim a facility form', () => {
+    const oarID = '12345';
+
+    const expectedURLMatch = '/api/facilities/12345/claim/';
+
+    expect(isEqual(
+        makeClaimFacilityAPIURL(oarID),
+        expectedURLMatch,
+    )).toBe(true);
+});
+
+it('checks whether the claim a facility form is valid', () => {
+    const validForm = {
+        email: 'email@example.com',
+        companyName: 'companyName',
+        contactPerson: 'contactPerson',
+        phoneNumber: 'phoneNumber',
+        preferredContactMethod: {
+            label: 'label',
+            value: 'value',
+        },
+    };
+
+    expect(isEqual(
+        claimAFacilityFormIsValid(validForm),
+        true,
+    )).toBe(true);
+
+    expect(isEqual(
+        claimFacilityContactInfoStepIsValid(validForm),
+        true,
+    )).toBe(true);
+
+    expect(isEqual(
+        claimFacilityFacilityInfoStepIsValid(validForm),
+        true,
+    )).toBe(true);
+
+    const invalidForm = {
+        email: 'email@example.com',
+        companyName: '',
+        contactPerson: '',
+        phoneNumber: '',
+        preferredContactMethod: null,
+    };
+
+    expect(isEqual(
+        claimAFacilityFormIsValid(invalidForm),
+        true,
+    )).toBe(false);
+
+    expect(isEqual(
+        claimFacilityContactInfoStepIsValid(invalidForm),
+        true,
+    )).toBe(false);
+
+    expect(isEqual(
+        claimFacilityFacilityInfoStepIsValid(invalidForm),
+        true,
+    )).toBe(false);
+});
+
+it('creates a facility claim details link', () => {
+    const claimID = 'claimID';
+    const expectedMatch = '/dashboard/claims/claimID';
+
+    expect(isEqual(
+        makeFacilityClaimDetailsLink(claimID),
+        expectedMatch,
+    )).toBe(true);
+});
+
+it('gets an ID from an event', () => {
+    const event = {
+        target: {
+            id: 'id',
+        },
+    };
+
+    const expectedID = 'id';
+
+    expect(isEqual(
+        getIDFromEvent(event),
+        expectedID,
+    )).toBe(true);
+});
+
+it('creates links to get facility claim details from a claim ID', () => {
+    const claimID = 'claimID';
+    const expectedMatch = '/api/facility-claims/claimID/';
+
+    expect(isEqual(
+        expectedMatch,
+        makeGetFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    const expectedApproveMatch = '/api/facility-claims/claimID/approve/';
+    const expectedDenyMatch = '/api/facility-claims/claimID/deny/';
+    const expectedRevokeMatch = '/api/facility-claims/claimID/revoke/';
+    const expectedAddNoteMatch = '/api/facility-claims/claimID/note/';
+
+    expect(isEqual(
+        expectedApproveMatch,
+        makeApproveFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    expect(isEqual(
+        expectedDenyMatch,
+        makeDenyFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    expect(isEqual(
+        expectedRevokeMatch,
+        makeRevokeFacilityClaimByClaimIDURL(claimID),
+    )).toBe(true);
+
+    expect(isEqual(
+        expectedAddNoteMatch,
+        makeAddNewFacilityClaimReviewNoteURL(claimID),
+    )).toBe(true);
+});
+
+it('creates an API URL for merging two facilties', () => {
+    const targetID = 'targetID';
+    const toMergeID = 'toMergeID';
+
+    const expectedURL =
+          '/api/facilities/merge/?target=targetID&merge=toMergeID';
+
+    expect(isEqual(
+        expectedURL,
+        makeMergeTwoFacilitiesAPIURL(targetID, toMergeID),
+    )).toBe(true);
+});
+
+it('checks a facility list item to see whether any matches have been set to inactive', () => {
+    const listItemWithAllMatchesActive = {
+        matches: [
+            {
+                is_active: true,
+            },
+            {
+                is_active: true,
+            },
+        ],
+    };
+
+    expect(anyListItemMatchesAreInactive(listItemWithAllMatchesActive)).toBe(false);
+
+    const listItemWithInactiveMatches = {
+        matches: [
+            {
+                is_active: false,
+            },
+            {
+                is_active: false,
+            },
+        ],
+    };
+
+    expect(anyListItemMatchesAreInactive(listItemWithInactiveMatches)).toBe(true);
 });

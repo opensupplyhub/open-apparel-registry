@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            An OAR facility on one of your facility lists has had its
+            facility claim data updated
+        </title>
+    </head>
+    <body>
+        <p>
+            Hi,
+        </p>
+        <p>
+            You're receiving this email because a facility on one of your
+            facility lists has had its facility claim data updated.
+        </p>
+        <p>
+            The facility is:
+        </p>
+        <ul>
+            <li>
+                Facility: {{ facility_name }}, {{ facility_address }}, {{ facility_country }}
+            </li>
+            <li>
+                Facility URL: {{ facility_url }}
+            </li>
+        </ul>
+        <p>
+            Sincerely,
+        </p>
+        {% include "mail/signature_block.html" %}
+    </body>
+</html>

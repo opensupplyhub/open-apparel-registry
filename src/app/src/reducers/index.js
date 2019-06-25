@@ -18,6 +18,13 @@ import FacilitiesReducer from './FacilitiesReducer';
 import FacilityCountReducer from './FacilityCountReducer';
 import FeatureFlagsReducer from './FeatureFlagsReducer';
 import ClientInfoReducer from './ClientInfoReducer';
+import ClaimFacilityReducer from './ClaimFacilityReducer';
+import ClaimFacilityDashboardReducer from './ClaimFacilityDashboardReducer';
+import ClaimedFacilityDetailsReducer from './ClaimedFacilityDetailsReducer';
+import ClaimedFacilitesReducer from './ClaimedFacilitesReducer';
+import DashboardListsReducer from './DashboardListsReducer';
+import DeleteFacilityReducer from './DeleteFacilityReducer';
+import MergeFacilitiesReducer from './MergeFacilitiesReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -32,4 +39,11 @@ export default combineReducers({
     facilityCount: FacilityCountReducer,
     featureFlags: FeatureFlagsReducer,
     clientInfo: ClientInfoReducer,
+    claimFacility: ClaimFacilityReducer,
+    claimFacilityDashboard: ClaimFacilityDashboardReducer,
+    claimedFacilityDetails: ClaimedFacilityDetailsReducer,
+    claimedFacilities: ClaimedFacilitesReducer,
+    dashboardLists: DashboardListsReducer,
+    deleteFacility: DeleteFacilityReducer,
+    mergeFacilities: MergeFacilitiesReducer,
 });

@@ -1,6 +1,8 @@
 import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
 import mapValues from 'lodash/mapValues';
 import omitBy from 'lodash/omitBy';
+import includes from 'lodash/includes';
+import partial from 'lodash/partial';
 
 import {
     registrationFieldsEnum,
@@ -11,6 +13,7 @@ import {
     POINT,
     facilityMatchStatusChoicesEnum,
     CLAIM_A_FACILITY,
+    facilityClaimStatusChoicesEnum,
 } from './constants';
 
 export const registrationFormValuesPropType = shape({
@@ -35,6 +38,7 @@ export const userPropType = shape({
     email: string.isRequired,
     id: number.isRequired,
     contributor_id: number,
+    is_superuser: bool.isRequired,
 });
 
 export const profileFormValuesPropType = shape(Object
@@ -106,6 +110,7 @@ export const facilityListPropType = shape({
     id: number.isRequired,
     name: string,
     description: string,
+    contributor_id: number,
     file_name: string.isRequired,
     is_active: bool.isRequired,
     is_public: bool.isRequired,
@@ -115,16 +120,28 @@ export const facilityListPropType = shape({
     status_counts: shape(mapValues(
         omitBy(
             facilityListItemStatusChoicesEnum,
-            status => status === facilityListItemStatusChoicesEnum.NEW_FACILITY,
+            partial(
+                includes,
+                [
+                    facilityListItemStatusChoicesEnum.NEW_FACILITY,
+                    facilityListItemStatusChoicesEnum.REMOVED,
+
+                ],
+            ),
         ),
         () => number.isRequired,
     )).isRequired,
+    created_at: string.isRequired,
 });
 
-export const contributorOptionsPropType = arrayOf(shape({
+export const contributorOptionPropType = shape({
     value: oneOfType([number, string]).isRequired,
     label: string.isRequired,
-}));
+});
+
+export const contributorOptionsPropType = arrayOf(
+    contributorOptionPropType,
+);
 
 export const contributorTypeOptionsPropType = arrayOf(shape({
     value: string.isRequired,
@@ -151,6 +168,12 @@ export const facilityPropType = shape({
     }).isRequired,
 });
 
+export const facilityDetailsContributorPropType = shape({
+    id: number.isRequired,
+    name: string.isRequired,
+    is_verified: bool.isRequired,
+});
+
 export const facilityDetailsPropType = shape({
     id: string.isRequired,
     type: oneOf([FEATURE]).isRequired,
@@ -165,10 +188,7 @@ export const facilityDetailsPropType = shape({
         country_name: string.isRequired,
         other_names: arrayOf(string),
         other_addresses: arrayOf(string),
-        contributors: arrayOf(arrayOf(oneOfType([
-            string,
-            number,
-        ]).isRequired).isRequired),
+        contributors: arrayOf(facilityDetailsContributorPropType),
     }).isRequired,
 });
 
@@ -193,3 +213,63 @@ export const facilityListItemStatusPropType =
     oneOf(Object.values(facilityListItemStatusChoicesEnum).concat('Status'));
 
 export const featureFlagPropType = oneOf([CLAIM_A_FACILITY]);
+
+export const facilityClaimsListPropType = arrayOf(shape({
+    created_at: string.isRequired,
+    updated_at: string.isRequired,
+    id: number.isRequired,
+    oar_id: string.isRequired,
+    facility_name: string.isRequired,
+    contributor_id: number.isRequired,
+    contributor_name: string.isRequired,
+    status: oneOf(Object.values(facilityClaimStatusChoicesEnum)).isRequired,
+}).isRequired);
+
+export const facilityClaimNotePropType = shape({
+    id: number.isRequired,
+    created_at: string.isRequired,
+    updated_at: string.isRequired,
+    note: string.isRequired,
+});
+
+export const facilityClaimPropType = shape({
+    id: number.isRequired,
+    created_at: string.isRequired,
+    updated_at: string.isRequired,
+    contact_person: string.isRequired,
+    email: string.isRequired,
+    phone_number: string.isRequired,
+    company_name: string.isRequired,
+    website: string.isRequired,
+    facility_description: string.isRequired,
+    preferred_contact_method: string.isRequired,
+    status: oneOf(Object.values(facilityClaimStatusChoicesEnum)).isRequired,
+    contributor: shape({}).isRequired,
+    facility: facilityPropType.isRequired,
+    status_change: shape({
+        status_change_by: string,
+        status_change_date: string,
+        status_change_reason: string,
+    }).isRequired,
+    notes: arrayOf(facilityClaimNotePropType).isRequired,
+});
+
+export const approvedFacilityClaimPropType = shape({
+    id: number.isRequired,
+    facility_description: string.isRequired,
+    facility_name: string.isRequired,
+    facility_address: string.isRequired,
+    facility_phone_number: string.isRequired,
+    facility_phone_number_publicly_visible: bool.isRequired,
+    facility_website: string.isRequired,
+    facility_minimum_order_quantity: string.isRequired,
+    facility_average_lead_time: string.isRequired,
+    point_of_contact_person_name: string.isRequired,
+    point_of_contact_email: string.isRequired,
+    point_of_contact_publicly_visible: bool.isRequired,
+    office_official_name: string.isRequired,
+    office_country_code: string.isRequired,
+    office_phone_number: string.isRequired,
+    office_info_publicly_visible: bool.isRequired,
+    facility: facilityDetailsPropType.isRequired,
+});

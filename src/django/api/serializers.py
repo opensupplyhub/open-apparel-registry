@@ -22,9 +22,12 @@ from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
                         FacilityMatch,
+                        FacilityClaim,
+                        FacilityClaimReviewNote,
                         User,
                         Contributor)
-from api.countries import COUNTRY_NAMES
+from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
+from waffle import switch_is_active
 
 
 class UserSerializer(ModelSerializer):
@@ -35,6 +38,7 @@ class UserSerializer(ModelSerializer):
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
     contributor_id = SerializerMethodField()
+    claimed_facility_ids = SerializerMethodField()
 
     class Meta:
         model = User
@@ -63,45 +67,69 @@ class UserSerializer(ModelSerializer):
 
     def get_name(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.name
+            return user.contributor.name
         except Contributor.DoesNotExist:
             return None
 
     def get_description(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.description
+            return user.contributor.description
         except Contributor.DoesNotExist:
             return None
 
     def get_website(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.website
+            return user.contributor.website
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.contrib_type
+            return user.contributor.contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_other_contributor_type(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.other_contrib_type
+            return user.contributor.other_contrib_type
         except Contributor.DoesNotExist:
             return None
 
     def get_contributor_id(self, user):
         try:
-            user_contributor = Contributor.objects.get(admin=user)
-            return user_contributor.id
+            return user.contributor.id
         except Contributor.DoesNotExist:
             return None
+
+    def get_claimed_facility_ids(self, user):
+        if not switch_is_active('claim_a_facility'):
+            return {
+                'approved': None,
+                'pending': None,
+            }
+
+        try:
+            approved = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .filter(contributor=user.contributor) \
+                .values_list('facility__id', flat=True)
+
+            pending = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.PENDING) \
+                .filter(contributor=user.contributor) \
+                .values_list('facility__id', flat=True)
+
+            return {
+                'pending': pending,
+                'approved': approved,
+            }
+        except Contributor.DoesNotExist:
+            return {
+                'approved': None,
+                'pending': None,
+            }
 
 
 class UserProfileSerializer(ModelSerializer):
@@ -111,11 +139,12 @@ class UserProfileSerializer(ModelSerializer):
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
     facility_lists = SerializerMethodField()
+    is_verified = SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'description', 'website', 'contributor_type',
-                  'other_contributor_type', 'facility_lists')
+                  'other_contributor_type', 'facility_lists', 'is_verified')
 
     def get_name(self, user):
         try:
@@ -164,6 +193,12 @@ class UserProfileSerializer(ModelSerializer):
         except Contributor.DoesNotExist:
             return []
 
+    def get_is_verified(self, user):
+        try:
+            return user.contributor.is_verified
+        except Contributor.DoesNotExist:
+            return False
+
 
 class FacilityListSummarySerializer(ModelSerializer):
     class Meta:
@@ -181,7 +216,7 @@ class FacilityListSerializer(ModelSerializer):
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
                   'is_public', 'item_count', 'items_url', 'statuses',
-                  'status_counts')
+                  'status_counts', 'contributor_id', 'created_at')
 
     def get_item_count(self, facility_list):
         return facility_list.facilitylistitem_set.count()
@@ -263,6 +298,11 @@ class FacilityListSerializer(ModelSerializer):
             0
         )
 
+        deleted = status_counts_dictionary.get(
+            FacilityListItem.DELETED,
+            0
+        )
+
         return {
             FacilityListItem.UPLOADED: uploaded,
             FacilityListItem.PARSED: parsed,
@@ -275,6 +315,7 @@ class FacilityListSerializer(ModelSerializer):
             FacilityListItem.ERROR_PARSING: error_parsing,
             FacilityListItem.ERROR_GEOCODING: error_geocoding,
             FacilityListItem.ERROR_MATCHING: error_matching,
+            FacilityListItem.DELETED: deleted,
         }
 
 
@@ -296,6 +337,10 @@ class FacilityQueryParamsSerializer(Serializer):
     pageSize = IntegerField(required=False)
 
 
+class FacilityListQueryParamsSerializer(Serializer):
+    contributor = IntegerField(required=False)
+
+
 class FacilityListItemsQueryParamsSerializer(Serializer):
     search = CharField(required=False)
     status = ListField(
@@ -305,7 +350,8 @@ class FacilityListItemsQueryParamsSerializer(Serializer):
 
     def validate_status(self, value):
         valid_statuses = ([c[0] for c in FacilityListItem.STATUS_CHOICES]
-                          + [FacilityListItem.NEW_FACILITY])
+                          + [FacilityListItem.NEW_FACILITY,
+                             FacilityListItem.REMOVED])
         for item in value:
             if item not in valid_statuses:
                 raise ValidationError(
@@ -337,12 +383,13 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     other_addresses = SerializerMethodField()
     contributors = SerializerMethodField()
     country_name = SerializerMethodField()
+    claim_info = SerializerMethodField()
 
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
-                  'country_name')
+                  'country_name', 'claim_info')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -357,13 +404,205 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
 
     def get_contributors(self, facility):
         return [
-            (id, display_name)
-            for (display_name, id)
-            in facility.contributors().items()
+            {
+                'id': facility_list.contributor.admin.id,
+                'name': '{} ({})'.format(
+                    facility_list.contributor.name,
+                    facility_list.name),
+                'is_verified': facility_list.contributor.is_verified,
+            }
+            for facility_list
+            in facility.contributors()
         ]
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')
+
+    def get_claim_info(self, facility):
+        if not switch_is_active('claim_a_facility'):
+            return None
+
+        try:
+            claim = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .get(facility=facility)
+
+            if claim.parent_company:
+                parent_company = {
+                    'id': claim.parent_company.admin.id,
+                    'name': claim.parent_company.name,
+                }
+            else:
+                parent_company = None
+
+            return {
+                'id': claim.id,
+                'facility': {
+                    'description': claim.facility_description,
+                    'name': claim.facility_name,
+                    'address': claim.facility_address,
+                    'website': claim.facility_website,
+                    'parent_company': parent_company,
+                    'phone_number': claim.facility_phone_number
+                    if claim.facility_phone_number_publicly_visible else None,
+                    'minimum_order': claim.facility_minimum_order_quantity,
+                    'average_lead_time': claim.facility_average_lead_time,
+                },
+                'contact': {
+                    'name': claim.point_of_contact_person_name,
+                    'email': claim.point_of_contact_email,
+                } if claim.point_of_contact_publicly_visible else None,
+                'office': {
+                    'name': claim.office_official_name,
+                    'address': claim.office_address,
+                    'country': claim.office_country_code,
+                    'phone_number': claim.office_phone_number,
+                } if claim.office_info_publicly_visible else None,
+            }
+        except FacilityClaim.DoesNotExist:
+            return None
+
+
+class FacilityClaimSerializer(ModelSerializer):
+    facility_name = SerializerMethodField()
+    oar_id = SerializerMethodField()
+    contributor_name = SerializerMethodField()
+    contributor_id = SerializerMethodField()
+    facility_address = SerializerMethodField()
+    facility_country_name = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaim
+        fields = ('id', 'created_at', 'updated_at', 'contributor_id', 'oar_id',
+                  'contributor_name', 'facility_name', 'facility_address',
+                  'facility_country_name', 'status')
+
+    def get_facility_name(self, claim):
+        return claim.facility.name
+
+    def get_oar_id(self, claim):
+        return claim.facility_id
+
+    def get_contributor_name(self, claim):
+        return claim.contributor.name
+
+    def get_contributor_id(self, claim):
+        return claim.contributor.admin.id
+
+    def get_facility_address(self, claim):
+        return claim.facility.address
+
+    def get_facility_country_name(self, claim):
+        return COUNTRY_NAMES.get(claim.facility.country_code, '')
+
+
+class FacilityClaimDetailsSerializer(ModelSerializer):
+    contributor = SerializerMethodField()
+    facility = SerializerMethodField()
+    status_change = SerializerMethodField()
+    notes = SerializerMethodField()
+    facility_parent_company = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaim
+        fields = ('id', 'created_at', 'updated_at', 'contact_person', 'email',
+                  'phone_number', 'company_name', 'website',
+                  'facility_description', 'preferred_contact_method', 'status',
+                  'contributor', 'facility', 'verification_method',
+                  'status_change', 'notes', 'facility_parent_company')
+
+    def get_contributor(self, claim):
+        return UserProfileSerializer(claim.contributor.admin).data
+
+    def get_facility(self, claim):
+        return FacilitySerializer(claim.facility).data
+
+    def get_status_change(self, claim):
+        if claim.status == FacilityClaim.PENDING:
+            return {
+                'status_change_by': None,
+                'status_change_date': None,
+                'status_change_reason': None,
+            }
+
+        return {
+            'status_change_by': claim.status_change_by.email,
+            'status_change_date': claim.status_change_date,
+            'status_change_reason': claim.status_change_reason,
+        }
+
+    def get_notes(self, claim):
+        notes = FacilityClaimReviewNote \
+            .objects \
+            .filter(claim=claim) \
+            .order_by('id')
+        data = FacilityClaimReviewNoteSerializer(notes, many=True).data
+        return data
+
+    def get_facility_parent_company(self, claim):
+        if not claim.parent_company:
+            return None
+
+        return {
+            'id': claim.parent_company.id,
+            'name': claim.parent_company.name,
+        }
+
+
+class FacilityClaimReviewNoteSerializer(ModelSerializer):
+    author = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaimReviewNote
+        fields = ('id', 'created_at', 'updated_at', 'note', 'author')
+
+    def get_author(self, note):
+        return note.author.email
+
+
+class ApprovedFacilityClaimSerializer(ModelSerializer):
+    facility = SerializerMethodField()
+    countries = SerializerMethodField()
+    contributors = SerializerMethodField()
+    facility_parent_company = SerializerMethodField()
+
+    class Meta:
+        model = FacilityClaim
+        fields = ('id', 'facility_description', 'facility_name',
+                  'facility_address', 'facility_phone_number',
+                  'facility_phone_number_publicly_visible',
+                  'facility_website', 'facility_minimum_order_quantity',
+                  'facility_average_lead_time', 'point_of_contact_person_name',
+                  'point_of_contact_email',
+                  'point_of_contact_publicly_visible',
+                  'office_official_name', 'office_address',
+                  'office_country_code', 'office_phone_number',
+                  'office_info_publicly_visible',
+                  'facility', 'countries', 'facility_parent_company',
+                  'contributors')
+
+    def get_facility(self, claim):
+        return FacilityDetailsSerializer(claim.facility).data
+
+    def get_countries(self, claim):
+        return COUNTRY_CHOICES
+
+    def get_contributors(self, claim):
+        return [
+            (contributor.id, contributor.name)
+            for contributor
+            in Contributor.objects.all().order_by('name')
+        ]
+
+    def get_facility_parent_company(self, claim):
+        if not claim.parent_company:
+            return None
+
+        return {
+            'id': claim.parent_company.id,
+            'name': claim.parent_company.name,
+        }
 
 
 class FacilityMatchSerializer(ModelSerializer):
@@ -375,7 +614,8 @@ class FacilityMatchSerializer(ModelSerializer):
     class Meta:
         model = FacilityMatch
         fields = ('id', 'status', 'confidence', 'results',
-                  'oar_id', 'name', 'address', 'location')
+                  'oar_id', 'name', 'address', 'location',
+                  'is_active')
 
     def get_oar_id(self, match):
         return match.facility.id
@@ -494,3 +734,18 @@ class UserPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
         self.user.save()
 
         return self.set_password_form.save()
+
+
+class FacilityMergeQueryParamsSerializer(Serializer):
+    target = CharField(required=True)
+    merge = CharField(required=True)
+
+    def validate_target(self, target_id):
+        if not Facility.objects.filter(id=target_id).exists():
+            raise ValidationError(
+                'Facility {} does not exist.'.format(target_id))
+
+    def validate_merge(self, merge_id):
+        if not Facility.objects.filter(id=merge_id).exists():
+            raise ValidationError(
+                'Facility {} does not exist.'.format(merge_id))

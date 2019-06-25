@@ -7,7 +7,10 @@ import logo from '../styles/images/OpenApparelRegistry_logo.png';
 import NavbarDropdown from './NavbarDropdown';
 import NavbarLoginButtonGroup from './NavbarLoginButtonGroup';
 
-import { contributeRoute } from '../util/constants';
+import {
+    contributeRoute,
+    aboutClaimedFacilitiesRoute,
+} from '../util/constants';
 
 const apiDocumentationURL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:8081/api/docs/'
@@ -28,6 +31,11 @@ export default function Navbar() {
         {
             text: 'Processing',
             url: '/about/processing',
+            type: 'link',
+        },
+        {
+            text: 'Claimed Facilities',
+            url: aboutClaimedFacilitiesRoute,
             type: 'link',
         },
     ];

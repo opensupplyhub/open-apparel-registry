@@ -1,29 +1,35 @@
 import operator
 import os
+import sys
 
 from datetime import datetime
 from functools import reduce
 
+from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
 from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
+from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
-from rest_framework import viewsets, status
+from django.utils import timezone
+from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
                                        NotFound,
-                                       AuthenticationFailed)
+                                       AuthenticationFailed,
+                                       PermissionDenied,
+                                       NotAuthenticated)
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
-                                       action)
-from rest_framework.permissions import AllowAny
+                                       action,
+                                       schema)
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.schemas.inspectors import AutoSchema
 from rest_auth.views import LoginView, LogoutView
@@ -36,12 +42,17 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilitiesQueryParams,
+                           FacilityListQueryParams,
                            FacilityListItemsQueryParams,
+                           FacilityMergeQueryParams,
                            ProcessingAction)
 from api.models import (FacilityList,
                         FacilityListItem,
+                        FacilityClaim,
+                        FacilityClaimReviewNote,
                         Facility,
                         FacilityMatch,
+                        FacilityAlias,
                         Contributor,
                         User)
 from api.processing import parse_csv_line, parse_csv, parse_excel
@@ -49,14 +60,39 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
                              FacilityQueryParamsSerializer,
+                             FacilityListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              UserSerializer,
-                             UserProfileSerializer)
+                             UserProfileSerializer,
+                             FacilityClaimSerializer,
+                             FacilityClaimDetailsSerializer,
+                             ApprovedFacilityClaimSerializer,
+                             FacilityMergeQueryParamsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
 from api.pagination import FacilitiesGeoJSONPagination
+from api.mail import (send_claim_facility_confirmation_email,
+                      send_claim_facility_approval_email,
+                      send_claim_facility_denial_email,
+                      send_claim_facility_revocation_email,
+                      send_approved_claim_notice_to_list_contributors,
+                      send_claim_update_notice_to_list_contributors)
+from api.exceptions import BadRequestException
+
+
+def _report_facility_claim_email_error_to_rollbar(claim):
+    ROLLBAR = getattr(settings, 'ROLLBAR', {})
+
+    if ROLLBAR:
+        import rollbar
+        rollbar.report_exc_info(
+            sys.exc_info(),
+            extra_data={
+                'claim_id': claim.id,
+            }
+        )
 
 
 @permission_classes((AllowAny,))
@@ -387,7 +423,25 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
         return []
 
 
-class FacilitiesViewSet(ReadOnlyModelViewSet):
+class FacilitiesAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        if method == 'DELETE':
+            return None
+        if 'merge' in path:
+            return None
+
+        if 'claim' in path:
+            return None
+
+        return super(FacilitiesAutoSchema, self).get_link(
+            path, method, base_url)
+
+
+@schema(FacilitiesAutoSchema())
+class FacilitiesViewSet(mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin,
+                        mixins.DestroyModelMixin,
+                        viewsets.GenericViewSet):
     """
     Get facilities in GeoJSON format.
     """
@@ -471,6 +525,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .objects
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
+                .filter(is_active=True)
                 .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
                 .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
@@ -486,6 +541,7 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                 .objects
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
+                .filter(is_active=True)
                 .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
                 .filter(facility_list_item__facility_list__is_active=True)
                 .values('facility__id')
@@ -522,7 +578,13 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
                     "oar_id": "OAR_ID",
                     "other_names": [],
                     "other_addresses": [],
-                    "contributors": [[1, "Contributor One"]]
+                    "contributors": [
+                        {
+                            "id": 1,
+                            "name": "Brand A (2019 Q1 List)",
+                            "is_verified": true
+                        }
+                    ]
                 }
             }
         """
@@ -532,6 +594,146 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
             return Response(response_data)
         except Facility.DoesNotExist:
             raise NotFound()
+
+    @transaction.atomic
+    def destroy(self, request, pk=None):
+        if request.user.is_anonymous:
+            raise NotAuthenticated()
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            raise NotFound()
+
+        if facility.get_approved_claim():
+            raise BadRequestException(
+                'Facilities with approved claims cannot be deleted'
+            )
+
+        now = str(datetime.utcnow())
+        list_item = facility.created_from
+        list_item.status = FacilityListItem.DELETED
+        list_item.processing_results.append({
+            'action': ProcessingAction.DELETE_FACILITY,
+            'started_at': now,
+            'error': False,
+            'finished_at': now,
+            'deleted_oar_id': facility.id,
+        })
+        list_item.facility = None
+        list_item.save()
+
+        match = facility.get_created_from_match()
+        match.changeReason = 'Deleted {}'.format(facility.id)
+        match.delete()
+
+        other_matches = facility.get_other_matches()
+        if other_matches.count() > 0:
+            try:
+                best_match = max(
+                    other_matches.filter(
+                        status__in=(FacilityMatch.AUTOMATIC,
+                                    FacilityMatch.CONFIRMED)),
+                    key=lambda m: m.confidence)
+            except ValueError:
+                # Raised when there are no AUTOMATIC or CONFIRMED matches
+                best_match = None
+            if best_match:
+                best_item = best_match.facility_list_item
+
+                promoted_facility = Facility.objects.create(
+                    name=best_item.name,
+                    address=best_item.address,
+                    country_code=best_item.country_code,
+                    location=best_item.geocoded_point,
+                    created_from=best_item)
+                FacilityAlias.objects.create(
+                    oar_id=facility.id,
+                    facility=promoted_facility,
+                    reason=FacilityAlias.DELETE
+                )
+
+                best_match.facility = promoted_facility
+                best_match.changeReason = (
+                    'Deleted {} and promoted {}'.format(
+                        facility.id,
+                        promoted_facility.id
+                    )
+                )
+                best_match.save()
+
+                best_item.facility = promoted_facility
+                best_item.processing_results.append({
+                    'action': ProcessingAction.PROMOTE_MATCH,
+                    'started_at': now,
+                    'error': False,
+                    'finished_at': now,
+                    'promoted_oar_id': promoted_facility.id,
+                })
+                best_item.save()
+
+                for other_match in other_matches:
+                    if other_match.id != best_match.id:
+                        other_match.facility = promoted_facility
+                        other_match.changeReason = (
+                            'Deleted {} and promoted {}'.format(
+                                facility.id,
+                                promoted_facility.id
+                            )
+                        )
+                        other_match.save()
+
+                        other_item = other_match.facility_list_item
+                        other_item.facility = promoted_facility
+                        other_item.processing_results.append({
+                            'action': ProcessingAction.PROMOTE_MATCH,
+                            'started_at': now,
+                            'error': False,
+                            'finished_at': now,
+                            'promoted_oar_id': promoted_facility.id,
+                        })
+                        other_item.save()
+
+                for alias in FacilityAlias.objects.filter(facility=facility):
+                    oar_id = alias.oar_id
+                    alias.changeReason = 'Deleted {} and promoted {}'.format(
+                        facility.id,
+                        promoted_facility.id)
+                    alias.delete()
+                    FacilityAlias.objects.create(
+                        facility=promoted_facility,
+                        oar_id=oar_id,
+                        reason=FacilityAlias.DELETE)
+            else:
+                for other_match in other_matches:
+                    other_match.changeReason = 'Deleted {}'.format(facility.id)
+                    other_match.delete()
+
+                    other_item = other_match.facility_list_item
+                    other_item.status = FacilityListItem.DELETED
+                    other_item.processing_results.append({
+                        'action': ProcessingAction.DELETE_FACILITY,
+                        'started_at': now,
+                        'error': False,
+                        'finished_at': now,
+                        'deleted_oar_id': facility.id,
+                    })
+                    other_item.facility = None
+                    other_item.save()
+
+        for claim in FacilityClaim.objects.filter(facility=facility):
+            claim.changeReason = 'Deleted {}'.format(facility.id)
+            claim.delete()
+
+        for alias in FacilityAlias.objects.filter(facility=facility):
+            alias.changeReason = 'Deleted {}'.format(facility.id)
+            alias.delete()
+
+        facility.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'])
     def count(self, request):
@@ -544,6 +746,197 @@ class FacilitiesViewSet(ReadOnlyModelViewSet):
         """
         count = Facility.objects.count()
         return Response({"count": count})
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            return NotFound()
+
+        try:
+            facility = Facility.objects.get(pk=pk)
+            contributor = request.user.contributor
+
+            contact_person = request.data.get('contact_person')
+            email = request.data.get('email')
+            phone_number = request.data.get('phone_number')
+            company_name = request.data.get('company_name')
+            parent_company = request.data.get('parent_company')
+            website = request.data.get('website')
+            facility_description = request.data.get('facility_description')
+            verification_method = request.data.get('verification_method')
+            preferred_contact_method = request \
+                .data \
+                .get('preferred_contact_method', '')
+
+            try:
+                validate_email(email)
+            except core_exceptions.ValidationError:
+                raise ValidationError('Valid email is required')
+
+            if not company_name:
+                raise ValidationError('Company name is required')
+
+            if parent_company:
+                parent_company_contributor = Contributor \
+                    .objects \
+                    .get(pk=parent_company)
+            else:
+                parent_company_contributor = None
+
+            user_has_pending_claims = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.PENDING) \
+                .filter(facility=facility) \
+                .filter(contributor=contributor) \
+                .count() > 0
+
+            if user_has_pending_claims:
+                raise BadRequestException(
+                    'User already has a pending claim on this facility'
+                )
+
+            facility_claim = FacilityClaim.objects.create(
+                facility=facility,
+                contributor=contributor,
+                contact_person=contact_person,
+                email=email,
+                phone_number=phone_number,
+                company_name=company_name,
+                parent_company=parent_company_contributor,
+                website=website,
+                facility_description=facility_description,
+                verification_method=verification_method,
+                preferred_contact_method=preferred_contact_method)
+
+            send_claim_facility_confirmation_email(request, facility_claim)
+
+            approved = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .filter(contributor=contributor) \
+                .values_list('facility__id', flat=True)
+
+            pending = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.PENDING) \
+                .filter(contributor=contributor) \
+                .values_list('facility__id', flat=True)
+
+            return Response({
+                'pending': pending,
+                'approved': approved,
+            })
+        except Facility.DoesNotExist:
+            raise NotFound()
+        except Contributor.DoesNotExist:
+            raise NotFound()
+
+    @action(detail=False, methods=['GET'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def claimed(self, request):
+        """
+        Returns a list of facility claims made by the authenticated user that
+        have been approved.
+         ### Sample Response
+            [
+                {
+                    "id": 1,
+                    "created_at": "2019-06-10T17:28:17.155025Z",
+                    "updated_at": "2019-06-10T17:28:17.155042Z",
+                    "contributor_id": 1,
+                    "oar_id": "US2019161ABC123",
+                    "contributor_name": "A Contributor",
+                    "facility_name": "Clothing, Inc.",
+                    "facility_address": "1234 Main St",
+                    "facility_country": "United States",
+                    "status": "APPROVED"
+                }
+            ]
+        """
+
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+        try:
+            claims = FacilityClaim.objects.filter(
+                contributor=request.user.contributor,
+                status=FacilityClaim.APPROVED)
+        except Contributor.DoesNotExist:
+            raise NotFound(
+                'The current User does not have an associated Contributor')
+        return Response(FacilityClaimSerializer(claims, many=True).data)
+
+    @action(detail=False, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def merge(self, request):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        params = FacilityMergeQueryParamsSerializer(data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+        target_id = request.query_params.get(FacilityMergeQueryParams.TARGET,
+                                             None)
+        merge_id = request.query_params.get(FacilityMergeQueryParams.MERGE,
+                                            None)
+        if target_id == merge_id:
+            raise ValidationError({
+                FacilityMergeQueryParams.TARGET: [
+                    'Cannot be the same as {}.'.format(
+                        FacilityMergeQueryParams.MERGE)],
+                FacilityMergeQueryParams.MERGE: [
+                    'Cannot be the same as {}.'.format(
+                        FacilityMergeQueryParams.TARGET)]
+            })
+
+        target = Facility.objects.get(id=target_id)
+        merge = Facility.objects.get(id=merge_id)
+
+        now = str(datetime.utcnow())
+        for merge_match in merge.facilitymatch_set.all():
+            merge_match.facility = target
+            merge_match.status = FacilityMatch.MERGED
+            merge_match.changeReason = 'Merged {} into {}'.format(
+                merge.id, target.id)
+            merge_match.save()
+
+            merge_item = merge_match.facility_list_item
+            merge_item.facility = target
+            merge_item.processing_results.append({
+                'action': ProcessingAction.MERGE_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'merged_oar_id': merge.id,
+            })
+            merge_item.save()
+
+        for alias in FacilityAlias.objects.filter(facility=merge):
+            oar_id = alias.oar_id
+            alias.changeReason = 'Merging {} into {}'.format(
+                merge.id,
+                target.id)
+            alias.delete()
+            FacilityAlias.objects.create(
+                facility=target,
+                oar_id=oar_id,
+                reason=FacilityAlias.MERGE)
+
+        FacilityAlias.objects.create(
+            oar_id=merge.id,
+            facility=target,
+            reason=FacilityAlias.MERGE)
+
+        merge.changeReason = 'Merged with {}'.format(target.id)
+        merge.delete()
+
+        target.refresh_from_db()
+        response_data = FacilityDetailsSerializer(target).data
+        return Response(response_data)
 
 
 class FacilityListViewSetSchema(AutoSchema):
@@ -728,9 +1121,29 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             ]
         """
         try:
-            contributor = request.user.contributor
-            queryset = FacilityList.objects.filter(contributor=contributor)
-            response_data = self.serializer_class(queryset, many=True).data
+            if request.user.is_superuser:
+                params = FacilityListQueryParamsSerializer(
+                    data=request.query_params)
+                if not params.is_valid():
+                    raise ValidationError(params.errors)
+
+                contributor = params.data.get(
+                    FacilityListQueryParams.CONTRIBUTOR)
+
+                if contributor is not None:
+                    facility_lists = FacilityList.objects.filter(
+                        contributor=contributor)
+                else:
+                    facility_lists = FacilityList.objects.filter(
+                        contributor=request.user.contributor)
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
+
+            facility_lists = facility_lists.order_by('-created_at')
+
+            response_data = self.serializer_class(facility_lists,
+                                                  many=True).data
             return Response(response_data)
         except Contributor.DoesNotExist:
             raise ValidationError('User contributor cannot be None')
@@ -752,11 +1165,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             }
         """
         try:
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(contributor=user_contributor) \
-                .get(pk=pk)
+            if request.user.is_superuser:
+                facility_lists = FacilityList.objects.all()
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
+
+            facility_list = facility_lists.get(pk=pk)
             response_data = self.serializer_class(facility_list).data
 
             return Response(response_data)
@@ -796,13 +1211,17 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         special_case_q_statements = {
             FacilityListItem.NEW_FACILITY: Q(
                         Q(status__in=('MATCHED', 'CONFIRMED_MATCH')) &
-                        Q(facility__created_from_id=F('id'))),
+                        Q(facility__created_from_id=F('id')) &
+                        ~Q(facilitymatch__is_active=False)),
             FacilityListItem.MATCHED: Q(
                         Q(status='MATCHED') &
-                        ~Q(facility__created_from_id=F('id'))),
+                        ~Q(facility__created_from_id=F('id')) &
+                        ~Q(facilitymatch__is_active=False)),
             FacilityListItem.CONFIRMED_MATCH: Q(
                         Q(status='CONFIRMED_MATCH') &
-                        ~Q(facility__created_from_id=F('id')))
+                        ~Q(facility__created_from_id=F('id')) &
+                        ~Q(facilitymatch__is_active=False)),
+            FacilityListItem.REMOVED: Q(facilitymatch__is_active=False),
         }
 
         def make_q_from_status(status):
@@ -826,34 +1245,39 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             search = search.strip()
 
         try:
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(contributor=user_contributor) \
-                .get(pk=pk)
-            queryset = FacilityListItem \
-                .objects \
-                .filter(facility_list=facility_list)
-            if search is not None and len(search) > 0:
-                queryset = queryset.filter(
-                    Q(facility__name__icontains=search) |
-                    Q(facility__address__icontains=search))
-            if status is not None and len(status) > 0:
-                q_statements = [make_q_from_status(s) for s in status]
-                queryset = queryset.filter(reduce(operator.or_, q_statements))
+            if request.user.is_superuser:
+                facility_lists = FacilityList.objects.all()
+            else:
+                facility_lists = FacilityList.objects.filter(
+                    contributor=request.user.contributor)
 
-            queryset = queryset.order_by('row_index')
-
-            page_queryset = self.paginate_queryset(queryset)
-            if page_queryset is not None:
-                serializer = FacilityListItemSerializer(page_queryset,
-                                                        many=True)
-                return self.get_paginated_response(serializer.data)
-
-            serializer = FacilityListItemSerializer(queryset, many=True)
-            return Response(serializer.data)
+            facility_list = facility_lists.get(pk=pk)
         except FacilityList.DoesNotExist:
             raise NotFound()
+
+        queryset = FacilityListItem \
+            .objects \
+            .filter(facility_list=facility_list)
+        if search is not None and len(search) > 0:
+            queryset = queryset.filter(
+                Q(facility__name__icontains=search) |
+                Q(facility__address__icontains=search) |
+                Q(name__icontains=search) |
+                Q(address__icontains=search))
+        if status is not None and len(status) > 0:
+            q_statements = [make_q_from_status(s) for s in status]
+            queryset = queryset.filter(reduce(operator.or_, q_statements))
+
+        queryset = queryset.order_by('row_index')
+
+        page_queryset = self.paginate_queryset(queryset)
+        if page_queryset is not None:
+            serializer = FacilityListItemSerializer(page_queryset,
+                                                    many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = FacilityListItemSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     @transaction.atomic
     @action(detail=True,
@@ -909,7 +1333,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 1,
                             "lng": 1
-                        }
+                        },
+                        "is_active": true
                     },
                     {
                         "id": 2,
@@ -929,7 +1354,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 2,
                             "lng": 2
-                        }
+                        },
+                        "is_active": true
                     }
                 ],
                 "row_index": 1,
@@ -1071,7 +1497,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 1,
                             "lng": 1
-                        }
+                        },
+                        "is_active": true
                     },
                     {
                         "id": 2,
@@ -1091,7 +1518,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         "location": {
                             "lat": 2,
                             "lng": 2
-                        }
+                        },
+                        "is_active": true
                     }
                 ]
                 "row_index": 1,
@@ -1212,6 +1640,43 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         except FacilityMatch.DoesNotExist:
             raise NotFound()
 
+    @transaction.atomic
+    @action(detail=True, methods=['post'],
+            url_path='remove')
+    def remove_item(self, request, pk=None):
+        try:
+            facility_list = FacilityList \
+                .objects \
+                .filter(contributor=request.user.contributor) \
+                .get(pk=pk)
+
+            facility_list_item = FacilityListItem \
+                .objects \
+                .filter(facility_list=facility_list) \
+                .get(pk=request.data.get('list_item_id'))
+
+            FacilityMatch \
+                .objects \
+                .filter(facility_list_item=facility_list_item) \
+                .update(is_active=False)
+
+            facility_list_item.refresh_from_db()
+
+            response_data = FacilityListItemSerializer(facility_list_item).data
+
+            response_data['list_statuses'] = (facility_list
+                                              .facilitylistitem_set
+                                              .values_list('status', flat=True)
+                                              .distinct())
+
+            return Response(response_data)
+        except FacilityList.DoesNotExist:
+            raise NotFound()
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
+            raise NotFound()
+
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
@@ -1221,3 +1686,315 @@ def api_feature_flags(request):
     }
 
     return Response(response_data)
+
+
+class FacilityClaimsAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+@schema(FacilityClaimsAutoSchema())
+class FacilityClaimViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for admin operations on FacilityClaims.
+    """
+    queryset = FacilityClaim.objects.all()
+    serializer_class = FacilityClaimSerializer
+    permission_classes = [IsAdminUser]
+
+    def create(self, request):
+        pass
+
+    def delete(self, request):
+        pass
+
+    def list(self, request):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        response_data = FacilityClaimSerializer(
+            FacilityClaim.objects.all().order_by('-id'),
+            many=True
+        ).data
+
+        return Response(response_data)
+
+    def retrieve(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+            response_data = FacilityClaimDetailsSerializer(claim).data
+
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='approve')
+    def approve_claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            if claim.status != FacilityClaim.PENDING:
+                raise BadRequestException(
+                    'Only PENDING claims can be approved.',
+                )
+
+            approved_claims_for_facility_count = FacilityClaim \
+                .objects \
+                .filter(status=FacilityClaim.APPROVED) \
+                .filter(facility=claim.facility) \
+                .count()
+
+            if approved_claims_for_facility_count > 0:
+                raise BadRequestException(
+                    'A facility may have at most one approved facility claim'
+                )
+
+            claim.status_change_reason = request.data.get('reason', '')
+            claim.status_change_by = request.user
+            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status = FacilityClaim.APPROVED
+            claim.save()
+
+            note = 'Status was updated to {} for reason: {}'.format(
+                FacilityClaim.APPROVED,
+                claim.status_change_reason,
+            )
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=note,
+            )
+
+            send_claim_facility_approval_email(request, claim)
+
+            try:
+                send_approved_claim_notice_to_list_contributors(request,
+                                                                claim)
+            except Exception:
+                _report_facility_claim_email_error_to_rollbar(claim)
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='deny')
+    def deny_claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            if claim.status != FacilityClaim.PENDING:
+                raise BadRequestException(
+                    'Only PENDING claims can be denied.',
+                )
+
+            claim.status_change_reason = request.data.get('reason', '')
+            claim.status_change_by = request.user
+            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status = FacilityClaim.DENIED
+            claim.save()
+
+            note = 'Status was updated to {} for reason: {}'.format(
+                FacilityClaim.DENIED,
+                claim.status_change_reason,
+            )
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=note,
+            )
+
+            send_claim_facility_denial_email(request, claim)
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='revoke')
+    def revoke_claim(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            if claim.status != FacilityClaim.APPROVED:
+                raise BadRequestException(
+                    'Only APPROVED claims can be revoked.',
+                )
+
+            claim.status_change_reason = request.data.get('reason', '')
+            claim.status_change_by = request.user
+            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status = FacilityClaim.REVOKED
+            claim.save()
+
+            note = 'Status was updated to {} for reason: {}'.format(
+                FacilityClaim.REVOKED,
+                claim.status_change_reason,
+            )
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=note,
+            )
+
+            send_claim_facility_revocation_email(request, claim)
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['post'],
+            url_path='note')
+    def add_note(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            claim = FacilityClaim.objects.get(pk=pk)
+
+            FacilityClaimReviewNote.objects.create(
+                claim=claim,
+                author=request.user,
+                note=request.data.get('note')
+            )
+
+            response_data = FacilityClaimDetailsSerializer(claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+
+    @transaction.atomic
+    @action(detail=True,
+            methods=['GET', 'PUT'],
+            url_path='claimed',
+            permission_classes=(IsRegisteredAndConfirmed,))
+    def get_claimed_details(self, request, pk=None):
+        if not switch_is_active('claim_a_facility'):
+            raise NotFound()
+
+        try:
+            claim = FacilityClaim \
+                .objects \
+                .filter(contributor=request.user.contributor) \
+                .filter(status=FacilityClaim.APPROVED) \
+                .get(pk=pk)
+
+            if request.user.contributor != claim.contributor:
+                raise NotFound()
+
+            if request.method == 'GET':
+                response_data = ApprovedFacilityClaimSerializer(claim).data
+                return Response(response_data)
+
+            parent_company_data = request.data.get('facility_parent_company')
+
+            if not parent_company_data:
+                parent_company = None
+            elif 'id' not in parent_company_data:
+                parent_company = None
+            else:
+                parent_company = Contributor \
+                    .objects \
+                    .get(pk=parent_company_data['id'])
+
+            FacilityClaim.objects.filter(pk=pk).update(
+                facility_description=request.data.get('facility_description'),
+                facility_name=request.data.get('facility_name'),
+                facility_address=request.data.get('facility_address'),
+                facility_phone_number=request.data
+                .get('facility_phone_number'),
+                facility_phone_number_publicly_visible=request.data
+                .get('facility_phone_number_publicly_visible'),
+                facility_website=request.data.get('facility_website'),
+                facility_minimum_order_quantity=request.data
+                .get('facility_minimum_order_quantity'),
+                facility_average_lead_time=request.data
+                .get('facility_average_lead_time'),
+                parent_company=parent_company,
+                point_of_contact_person_name=request.data
+                .get('point_of_contact_person_name'),
+                point_of_contact_email=request.data
+                .get('point_of_contact_email'),
+                point_of_contact_publicly_visible=request.data
+                .get('point_of_contact_publicly_visible'),
+                office_official_name=request.data
+                .get('office_official_name'),
+                office_address=request.data.get('office_address'),
+                office_country_code=request.data.get('office_country_code'),
+                office_phone_number=request.data.get('office_phone_number'),
+                office_info_publicly_visible=request.data
+                .get('office_info_publicly_visible')
+            )
+
+            updated_claim = FacilityClaim.objects.get(pk=pk)
+
+            try:
+                send_claim_update_notice_to_list_contributors(request,
+                                                              updated_claim)
+            except Exception:
+                _report_facility_claim_email_error_to_rollbar(updated_claim)
+
+            response_data = ApprovedFacilityClaimSerializer(updated_claim).data
+            return Response(response_data)
+        except FacilityClaim.DoesNotExist:
+            raise NotFound()
+        except Contributor.DoesNotExist:
+            raise NotFound('No contributor found for that user')
+
+    @action(detail=False,
+            methods=['GET'],
+            url_path='parent-company-options',
+            permission_classes=(IsRegisteredAndConfirmed,))
+    def get_parent_company_options(self, request):
+        response_data = [
+            (contributor.id, contributor.name)
+            for contributor
+            in Contributor.objects.all().order_by('name')
+        ]
+
+        return Response(response_data)

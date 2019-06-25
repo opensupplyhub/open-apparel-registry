@@ -15,6 +15,15 @@ export const contributorTypeOptions = Object.freeze([
     OTHER,
 ]);
 
+// These choices must be kept in sync with the identical list
+// kept in the Django API's models.py file
+export const facilityClaimStatusChoicesEnum = Object.freeze({
+    PENDING: 'PENDING',
+    APPROVED: 'APPROVED',
+    DENIED: 'DENIED',
+    REVOKED: 'REVOKED',
+});
+
 export const inputTypesEnum = Object.freeze({
     text: 'text',
     password: 'password',
@@ -66,9 +75,10 @@ const accountNameField = Object.freeze({
     label: 'Contributor Name',
     type: inputTypesEnum.text,
     required: true,
-    hint: `Your contributor name will appear publicly on all
-facilities that you upload as the data source for each facility
-contributed.`,
+    hint: `If you are uploading a supplier list on behalf of the organisation
+you work for, you should add the organisation name here, not your personal name.
+Your contributor name will appear publicly on all facilities that you upload as
+the data source for each facility contributed.`,
     modelFieldName: 'name',
 });
 
@@ -208,11 +218,18 @@ export const listsRoute = '/lists';
 export const facilityListItemsRoute = '/lists/:listID';
 export const facilitiesRoute = '/facilities';
 export const facilityDetailsRoute = '/facilities/:oarID';
+export const claimFacilityRoute = '/facilities/:oarID/claim';
 export const profileRoute = '/profile/:id';
 export const aboutProcessingRoute = '/about/processing';
 export const dashboardRoute = '/dashboard';
 export const dashboardListsRoute = '/dashboard/lists';
 export const dashboardClaimsRoute = '/dashboard/claims';
+export const dashboardDeleteFacilityRoute = '/dashboard/deletefacility';
+export const dashboardMergeFacilitiesRoute = '/dashboard/mergefacilities';
+export const claimedFacilitiesRoute = '/claimed';
+export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
+export const dashboardClaimsDetailsRoute = '/dashboard/claims/:claimID';
+export const aboutClaimedFacilitiesRoute = '/about/claimedfacilities';
 
 export const contributeCSVTemplate =
     'country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt';
@@ -285,6 +302,8 @@ export const facilityListItemStatusChoicesEnum = Object.freeze({
     ERROR_PARSING: 'ERROR_PARSING',
     ERROR_GEOCODING: 'ERROR_GEOCODING',
     ERROR_MATCHING: 'ERROR_MATCHING',
+    DELETED: 'DELETED',
+    REMOVED: 'REMOVED', // This is not a status that appears in the database
 });
 
 export const facilityListItemErrorStatuses = Object.freeze([
@@ -343,6 +362,14 @@ export const facilityListStatusFilterChoices = Object.freeze([
         label: facilityListItemStatusChoicesEnum.ERROR_MATCHING,
         value: facilityListItemStatusChoicesEnum.ERROR_MATCHING,
     },
+    {
+        label: facilityListItemStatusChoicesEnum.DELETED,
+        value: facilityListItemStatusChoicesEnum.DELETED,
+    },
+    {
+        label: facilityListItemStatusChoicesEnum.REMOVED,
+        value: facilityListItemStatusChoicesEnum.REMOVED,
+    },
 ]);
 
 export const facilityListSummaryStatusMessages = Object.freeze({
@@ -371,6 +398,7 @@ export const facilityMatchStatusChoicesEnum = Object.freeze({
     AUTOMATIC: 'AUTOMATIC',
     CONFIRMED: 'CONFIRMED',
     REJECTED: 'REJECTED',
+    MERGED: 'MERGED',
 });
 
 export const emptyFeatureCollection = Object.freeze({
@@ -388,6 +416,7 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
     matched: 'Number of items that have been matched with an existing facility or created a new facility.',
     error: 'Number of items that have encountered errors during processing',
     potentialMatch: 'Number of items with potential matches to confirm or reject.',
+    deleted: 'Number of items where the related facility has been deleted.',
 });
 
 export const CLAIM_A_FACILITY = 'claim_a_facility';
@@ -396,3 +425,55 @@ export const COUNTRY_CODES = Object.freeze({
     default: 'IE',
     china: 'CN',
 });
+
+export const claimAFacilityFormFields = Object.freeze({
+    contactName: Object.freeze({
+        id: 'contact-full-name',
+        label: 'Contact person full name',
+    }),
+    contactEmail: Object.freeze({
+        id: 'contact-email-address',
+        label: 'Email',
+    }),
+    contactPhone: Object.freeze({
+        id: 'contact-phone-number',
+        label: 'Phone number',
+    }),
+    companyName: Object.freeze({
+        id: 'company-name',
+        label: 'Official name of LLC or company registered',
+    }),
+    parentCompany: Object.freeze({
+        id: 'parent-company',
+        label: 'Parent company',
+        aside: `If you cannot find the parent company in this list consider
+inviting them to register with the Open Apparel Registry.`,
+    }),
+    website: Object.freeze({
+        id: 'website',
+        label: 'Facility website',
+    }),
+    facilityDescription: Object.freeze({
+        id: 'facility-description',
+        label: 'Facility bio/description',
+    }),
+    verificationMethod: Object.freeze({
+        id: 'verification-method',
+        label: 'Any additional details?',
+    }),
+    preferredContactMethod: Object.freeze({
+        id: 'preferred-contact',
+        label: 'Preferred method of contact',
+    }),
+});
+
+export const claimAFacilityPreferredContactOptions = Object.freeze([
+    Object.freeze({
+        value: 'email',
+        label: 'Email',
+    }),
+    Object.freeze({
+        value: 'phone',
+        label: 'Phone',
+    }),
+]);

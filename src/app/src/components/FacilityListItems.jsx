@@ -24,6 +24,7 @@ import {
     facilityListItemsRoute,
     aboutProcessingRoute,
     authLoginFormRoute,
+    dashboardListsRoute,
 } from '../util/constants';
 
 import { facilityListPropType } from '../util/propTypes';
@@ -94,6 +95,7 @@ class FacilityListItems extends Component {
             downloadingCSV,
             csvDownloadingError,
             userHasSignedIn,
+            readOnly,
         } = this.props;
 
         if (fetchingList) {
@@ -164,6 +166,8 @@ class FacilityListItems extends Component {
                     Download CSV
                 </Button>);
 
+        const backRoute = readOnly ? dashboardListsRoute : listsRoute;
+
         return (
             <AppOverflow>
                 <Grid
@@ -194,8 +198,8 @@ class FacilityListItems extends Component {
                                     <Button
                                         variant="outlined"
                                         component={Link}
-                                        to={listsRoute}
-                                        href={listsRoute}
+                                        to={backRoute}
+                                        href={backRoute}
                                         style={facilityListItemsStyles.buttonStyles}
                                     >
                                         Back to lists
@@ -230,6 +234,7 @@ FacilityListItems.defaultProps = {
     list: null,
     error: null,
     csvDownloadingError: null,
+    readOnly: false,
 };
 
 FacilityListItems.propTypes = {
@@ -243,6 +248,7 @@ FacilityListItems.propTypes = {
     downloadingCSV: bool.isRequired,
     csvDownloadingError: arrayOf(string),
     userHasSignedIn: bool.isRequired,
+    readOnly: bool,
 };
 
 function mapStateToProps({
@@ -273,6 +279,7 @@ function mapStateToProps({
         downloadingCSV,
         csvDownloadingError,
         userHasSignedIn: !!user,
+        readOnly: user && user.is_superuser && list && user.contributor_id !== list.contributor_id,
     };
 }
 

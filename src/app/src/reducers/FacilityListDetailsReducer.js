@@ -19,6 +19,9 @@ import {
     startAssembleAndDownloadFacilityListCSV,
     failAssembleAndDownloadFacilityListCSV,
     completeAssembleAndDownloadFacilityListCSV,
+    startRemoveFacilityListItem,
+    failRemoveFacilityListItem,
+    completeRemoveFacilityListItem,
 } from '../actions/facilityListDetails';
 
 import { completeSubmitLogOut } from '../actions/auth';
@@ -37,7 +40,7 @@ const initialState = Object.freeze({
         error: null,
     },
     filteredCount: 0,
-    confirmOrRejectMatch: Object.freeze({
+    confirmOrRejectMatchOrRemoveItem: Object.freeze({
         fetching: false,
         error: null,
     }),
@@ -49,15 +52,15 @@ const initialState = Object.freeze({
     }),
 });
 
-const startConfirmOrRejectMatch = state => update(state, {
-    confirmOrRejectMatch: {
+const startConfirmOrRejectMatchOrRemoveItem = state => update(state, {
+    confirmOrRejectMatchOrRemoveItem: {
         fetching: { $set: true },
         error: { $set: null },
     },
 });
 
-const failConfirmOrRejectMatch = (state, payload) => update(state, {
-    confirmOrRejectMatch: {
+const failConfirmOrRejectMatchOrRemoveItem = (state, payload) => update(state, {
+    confirmOrRejectMatchOrRemoveItem: {
         fetching: { $set: false },
         error: { $set: payload },
     },
@@ -75,7 +78,7 @@ const toggleSelectedRowIndex = (state, payload) => {
     });
 };
 
-const completeConfirmMatch = (state, payload) => {
+const completeConfirmOrRejectMatchOrRemoveItem = (state, payload) => {
     const indexForListItemToUpdate = state
         .items
         .data
@@ -100,7 +103,7 @@ const completeConfirmMatch = (state, payload) => {
                 },
             },
         },
-        confirmOrRejectMatch: {
+        confirmOrRejectMatchOrRemoveItem: {
             fetching: { $set: false },
             error: { $set: null },
         },
@@ -192,12 +195,15 @@ export default createReducer({
         },
     }),
     [resetFacilityListItems]: () => initialState,
-    [startConfirmFacilityListItemPotentialMatch]: startConfirmOrRejectMatch,
-    [startRejectFacilityListItemPotentialMatch]: startConfirmOrRejectMatch,
-    [failConfirmFacilityListItemPotentialMatch]: failConfirmOrRejectMatch,
-    [failRejectFacilityListItemPotentialMatch]: failConfirmOrRejectMatch,
-    [completeConfirmFacilityListItemPotentialMatch]: completeConfirmMatch,
-    [completeRejectFacilityListItemPotentialMatch]: completeConfirmMatch,
+    [startConfirmFacilityListItemPotentialMatch]: startConfirmOrRejectMatchOrRemoveItem,
+    [startRejectFacilityListItemPotentialMatch]: startConfirmOrRejectMatchOrRemoveItem,
+    [startRemoveFacilityListItem]: startConfirmOrRejectMatchOrRemoveItem,
+    [failConfirmFacilityListItemPotentialMatch]: failConfirmOrRejectMatchOrRemoveItem,
+    [failRejectFacilityListItemPotentialMatch]: failConfirmOrRejectMatchOrRemoveItem,
+    [failRemoveFacilityListItem]: failConfirmOrRejectMatchOrRemoveItem,
+    [completeConfirmFacilityListItemPotentialMatch]: completeConfirmOrRejectMatchOrRemoveItem,
+    [completeRejectFacilityListItemPotentialMatch]: completeConfirmOrRejectMatchOrRemoveItem,
+    [completeRemoveFacilityListItem]: completeConfirmOrRejectMatchOrRemoveItem,
     [setSelectedFacilityListItemsRowIndex]: toggleSelectedRowIndex,
     [completeSubmitLogOut]: () => initialState,
 }, initialState);

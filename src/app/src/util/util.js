@@ -25,6 +25,8 @@ import ceil from 'lodash/ceil';
 import toInteger from 'lodash/toInteger';
 import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
+import every from 'lodash/every';
+import { isEmail } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -81,6 +83,8 @@ export const makeFacilityListsURL = () => '/api/facility-lists/';
 export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 export const makeSingleFacilityListItemsURL = id => `/api/facility-lists/${id}/items/`;
 
+export const makeDashboardFacilityListsURL = contributorID => `/api/facility-lists/?contributor=${contributorID}`;
+
 export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeGetContributorsURL = () => '/api/contributors/';
@@ -90,10 +94,25 @@ export const makeGetCountriesURL = () => '/api/countries/';
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
 export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
+export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/`;
+
+export const makeMergeTwoFacilitiesAPIURL = (targetOARID, toMergeOARID) =>
+    `/api/facilities/merge/?target=${targetOARID}&merge=${toMergeOARID}`;
 
 export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
 export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
+export const makeGetFacilityClaimsURL = () => '/api/facility-claims/';
+export const makeGetFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/`;
+export const makeApproveFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/approve/`;
+export const makeDenyFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/deny/`;
+export const makeRevokeFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/revoke/`;
+export const makeAddNewFacilityClaimReviewNoteURL = claimID => `/api/facility-claims/${claimID}/note/`;
+
+export const makeGetOrUpdateApprovedFacilityClaimURL = claimID => `/api/facility-claims/${claimID}/claimed/`;
+export const makeParentCompanyOptionsAPIURL = () => '/api/facility-claims/parent-company-options/';
+export const makeGetClaimedFacilitiesURL = () => '/api/facilities/claimed/';
+export const makeClaimedFacilityDetailsLink = claimID => `/claimed/${claimID}/`;
 
 const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
 // NOTE: We only use an API key for ipgeolocation.io in development. On staging
@@ -239,6 +258,18 @@ export const getTokenFromQueryString = (qs) => {
         : token;
 };
 
+export const getContributorFromQueryString = (qs) => {
+    const qsToParse = startsWith(qs, '?')
+        ? qs.slice(1)
+        : qs;
+
+    const {
+        contributor = null,
+    } = querystring.parse(qsToParse);
+
+    return parseInt(contributor, 10);
+};
+
 export const allFiltersAreEmpty = filters => values(filters)
     .reduce((acc, next) => {
         if (!isEmpty(next)) {
@@ -305,6 +336,8 @@ export function logErrorAndDispatchFailure(error, defaultMessage, failureAction)
 
 export const getValueFromEvent = ({ target: { value } }) => value;
 
+export const getIDFromEvent = ({ target: { id } }) => id;
+
 export const getCheckedFromEvent = ({ target: { checked } }) => checked;
 
 export const getFileFromInputRef = inputRef =>
@@ -364,6 +397,14 @@ export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 
 export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
 
+export const makeClaimFacilityLink = oarID => `${facilitiesRoute}/${oarID}/claim`;
+
+export const makeApprovedClaimDetailsLink = claimID => `/claimed/${claimID}`;
+
+export const makeFacilityClaimDetailsLink = claimID => `/dashboard/claims/${claimID}`;
+
+export const makeDashboardContributorListLink = contributorID => `/dashboard/lists/?contributor=${contributorID}`;
+
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
 
 export const getBBoxForArrayOfGeoJSONPoints = flow(
@@ -385,6 +426,9 @@ export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) => Objec
 export const makeReportADataIssueEmailLink = oarId =>
     `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${oarId}`;
 
+export const makeDisputeClaimEmailLink = oarId =>
+    `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${oarId}`;
+
 export const makeFeatureCollectionFromSingleFeature = feature => Object.freeze({
     type: FEATURE_COLLECTION,
     features: Object.freeze([
@@ -402,6 +446,9 @@ export const createConfirmFacilityListItemMatchURL = listID =>
 
 export const createRejectFacilityListItemMatchURL = listID =>
     `/api/facility-lists/${listID}/reject/`;
+
+export const createRemoveFacilityListItemURL = listID =>
+    `/api/facility-lists/${listID}/remove/`;
 
 export const makeMyFacilitiesRoute = contributorID =>
     `/facilities/?contributors=${contributorID}`;
@@ -541,3 +588,31 @@ export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
     keys(pickBy(featureFlags, identity));
 
 export const checkWhetherUserHasDashboardAccess = user => get(user, 'is_superuser', false);
+
+export const claimAFacilityFormIsValid = ({
+    email,
+    companyName,
+    contactPerson,
+    phoneNumber,
+    preferredContactMethod,
+}) => every([
+    isEmail(email),
+    !isEmpty(companyName),
+    !isEmpty(contactPerson),
+    !isEmpty(phoneNumber),
+    !isEmpty(preferredContactMethod),
+], identity);
+
+export const claimFacilityContactInfoStepIsValid = ({
+    email,
+    contactPerson,
+    phoneNumber,
+}) => every([
+    isEmail(email),
+    !isEmpty(contactPerson),
+    !isEmpty(phoneNumber),
+]);
+
+export const claimFacilityFacilityInfoStepIsValid = ({ companyName }) => !isEmpty(companyName);
+
+export const anyListItemMatchesAreInactive = ({ matches }) => some(matches, ['is_active', false]);

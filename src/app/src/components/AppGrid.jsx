@@ -6,6 +6,7 @@ export default function AppGrid({
     style,
     title,
     children,
+    backButtonComponent,
 }) {
     return (
         <Grid container>
@@ -27,7 +28,7 @@ export default function AppGrid({
                                 fontSize: '32px',
                             }}
                         >
-                            {title}
+                            {backButtonComponent} {title}
                         </h2>
                     </Grid>
                     {children}
@@ -39,10 +40,12 @@ export default function AppGrid({
 
 AppGrid.defaultProps = {
     style: {},
+    backButtonComponent: null,
 };
 
 AppGrid.propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.node.isRequired,
     style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node.isRequired,
+    backButtonComponent: PropTypes.node,
 };

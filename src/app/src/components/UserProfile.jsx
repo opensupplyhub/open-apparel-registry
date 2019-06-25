@@ -11,6 +11,10 @@ import Button from './Button';
 import FacilityListSummary from './FacilityListSummary';
 import UserProfileField from './UserProfileField';
 import UserAPITokens from './UserAPITokens';
+import BadgeVerified from './BadgeVerified';
+import ShowOnly from './ShowOnly';
+import RouteNotFound from './RouteNotFound';
+import COLOURS from '../util/COLOURS';
 
 import '../styles/css/specialStates.css';
 
@@ -64,6 +68,13 @@ const profileStyles = Object.freeze({
         color: 'red',
         padding: '1rem',
     }),
+    titleStyles: Object.freeze({
+        fontWeight: 'normal',
+        fontSize: '32px',
+    }),
+    badgeVerifiedStyles: Object.freeze({
+        padding: '10px',
+    }),
 });
 
 class UserProfile extends Component {
@@ -114,6 +125,7 @@ class UserProfile extends Component {
             updatingProfile,
             errorsUpdatingProfile,
             submitFormOnEnterKeyPress,
+            errorFetchingProfile,
             match: {
                 params: {
                     id,
@@ -129,10 +141,17 @@ class UserProfile extends Component {
             return null;
         }
 
+        if (errorFetchingProfile) {
+            return <RouteNotFound />;
+        }
+
         const isEditableProfile =
             (user && [profile.id, Number(id)].every(val => val === user.id));
 
         const profileInputs = profileFormFields
+            // Only show the name field on the profile page of the current user.
+            // On other profile pages the name is the title of the page.
+            .filter(field => isEditableProfile || field.id !== 'name')
             .map((field, index) => (
                 <UserProfileField
                     autoFocus={index === 1} // the first field is email & isn't an input
@@ -155,9 +174,16 @@ class UserProfile extends Component {
                     submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
                 />));
 
-        const title = isEditableProfile
-            ? 'My Profile'
-            : 'Profile';
+
+        const title = (
+            <React.Fragment>
+                {isEditableProfile ? 'My Profile' : profile.name}
+                <ShowOnly when={profile.isVerified}>
+                    <span title="Verified" style={profileStyles.badgeVerifiedStyles}>
+                        <BadgeVerified color={COLOURS.NAVY_BLUE} />
+                    </span>
+                </ShowOnly>
+            </React.Fragment>);
 
         const showErrorMessages = isEditableProfile
             && errorsUpdatingProfile
@@ -228,6 +254,7 @@ class UserProfile extends Component {
 UserProfile.defaultProps = {
     user: null,
     errorsUpdatingProfile: null,
+    errorFetchingProfile: null,
 };
 
 UserProfile.propTypes = {
@@ -246,6 +273,7 @@ UserProfile.propTypes = {
     updatingProfile: bool.isRequired,
     errorsUpdatingProfile: arrayOf(string),
     submitFormOnEnterKeyPress: func.isRequired,
+    errorFetchingProfile: arrayOf(string),
 };
 
 function mapStateToProps({
@@ -261,6 +289,7 @@ function mapStateToProps({
     profile: {
         profile,
         fetching,
+        error: errorFetchingProfile,
         formSubmission: {
             fetching: updatingProfile,
             error: errorsUpdatingProfile,
@@ -273,6 +302,7 @@ function mapStateToProps({
         profile,
         updatingProfile,
         errorsUpdatingProfile,
+        errorFetchingProfile,
     };
 }
 
