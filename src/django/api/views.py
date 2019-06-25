@@ -433,6 +433,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'claim' in path:
             return None
 
+        if 'split' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -937,6 +940,41 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         target.refresh_from_db()
         response_data = FacilityDetailsSerializer(target).data
         return Response(response_data)
+
+    @action(detail=True, methods=['GET'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def split(self, request, pk=None):
+        if not request.user.is_superuser:
+            return NotFound()
+
+        try:
+            facility = Facility.objects.get(pk=pk)
+
+            facility_data = FacilityDetailsSerializer(facility).data
+
+            facility_data['properties']['matches'] = [
+                {
+                    'name': m.facility_list_item.name,
+                    'address': m.facility_list_item.address,
+                    'country_code': m.facility_list_item.country_code,
+                    'list_id': m.facility_list_item.facility_list.id,
+                    'list_name': m.facility_list_item.facility_list.name,
+                    'list_description': m.facility_list_item.facility_list
+                    .description,
+                    'list_contributor_name': m.facility_list_item.facility_list
+                    .contributor.name,
+                    'list_contributor_id': m.facility_list_item.facility_list
+                    .contributor.id,
+                    'match_id': m.id,
+                }
+                for m
+                in facility.get_other_matches()
+            ]
+
+            return Response(facility_data)
+        except Facility.DoesNotExist:
+            raise NotFound()
 
 
 class FacilityListViewSetSchema(AutoSchema):
