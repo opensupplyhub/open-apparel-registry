@@ -702,12 +702,12 @@ class Facility(models.Model):
     def get_created_from_match(self):
         return self.facilitymatch_set.filter(
             facility_list_item=self.created_from
-        ).filter(is_active=True).first()
+        ).first()
 
     def get_other_matches(self):
         return self.facilitymatch_set.exclude(
             facility_list_item=self.created_from
-        ).filter(is_active=True).all()
+        ).all()
 
     def get_approved_claim(self):
         return self.facilityclaim_set.filter(
