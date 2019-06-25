@@ -10,6 +10,7 @@ import {
     updateClaimAFacilityEmail,
     updateClaimAFacilityPhoneNumber,
     updateClaimAFacilityCompany,
+    updateClaimAFacilityParentCompany,
     updateClaimAFacilityWebsite,
     updateClaimAFacilityDescription,
     updateClaimAFacilityVerificationMethod,
@@ -17,6 +18,10 @@ import {
     startSubmitClaimAFacilityData,
     failSubmitClaimAFacilityData,
     completeSubmitClaimAFacilityData,
+    startFetchParentCompanyOptions,
+    failFetchParentCompanyOptions,
+    completeFetchParentCompanyOptions,
+    resetParentCompanyOptions,
 } from '../actions/claimFacility';
 
 const initialState = Object.freeze({
@@ -35,7 +40,13 @@ const initialState = Object.freeze({
             facilityDescription: '',
             verificationMethod: '',
             preferredContactMethod: null,
+            parentCompany: null,
         }),
+        fetching: false,
+        error: null,
+    }),
+    parentCompanyOptions: Object.freeze({
+        data: null,
         fetching: false,
         error: null,
     }),
@@ -64,6 +75,33 @@ export default createReducer(
                     data: { $set: data },
                     fetching: { $set: false },
                     error: { $set: initialState.facilityData.error },
+                },
+            }),
+        [startFetchParentCompanyOptions]: state =>
+            update(state, {
+                parentCompanyOptions: {
+                    fetching: { $set: true },
+                    error: { $set: initialState.parentCompanyOptions.error },
+                },
+            }),
+        [failFetchParentCompanyOptions]: (state, error) =>
+            update(state, {
+                parentCompanyOptions: {
+                    fetching: { $set: initialState.parentCompanyOptions.fetching },
+                    error: { $set: error },
+                },
+            }),
+        [completeFetchParentCompanyOptions]: (state, data) =>
+            update(state, {
+                parentCompanyOptions: {
+                    data: { $set: data },
+                    fetching: { $set: initialState.parentCompanyOptions.fetching },
+                },
+            }),
+        [resetParentCompanyOptions]: state =>
+            update(state, {
+                parentCompanyOptions: {
+                    $set: initialState.parentCompanyOptions,
                 },
             }),
         [updateClaimAFacilityContactPerson]: (state, payload) =>
@@ -96,6 +134,14 @@ export default createReducer(
                 claimData: {
                     formData: {
                         companyName: { $set: payload },
+                    },
+                },
+            }),
+        [updateClaimAFacilityParentCompany]: (state, payload) =>
+            update(state, {
+                claimData: {
+                    formData: {
+                        parentCompany: { $set: payload },
                     },
                 },
             }),

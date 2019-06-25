@@ -442,6 +442,12 @@ export const claimAFacilityFormFields = Object.freeze({
         id: 'company-name',
         label: 'Official name of LLC or company registered',
     }),
+    parentCompany: Object.freeze({
+        id: 'parent-company',
+        label: 'Parent company',
+        aside: `If you cannot find the parent company in this list consider
+inviting them to register with the Open Apparel Registry.`,
+    }),
     website: Object.freeze({
         id: 'website',
         label: 'Facility website',

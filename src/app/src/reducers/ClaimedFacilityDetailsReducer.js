@@ -25,6 +25,7 @@ import {
     updateClaimedFacilityOfficeAddress,
     updateClaimedFacilityOfficeCountry,
     updateClaimedFacilityOfficePhone,
+    updateClaimedFacilityParentCompany,
 } from '../actions/claimedFacilityDetails';
 
 const initialState = Object.freeze({
@@ -107,6 +108,14 @@ export default createReducer({
         },
         data: {
             facility_phone_number_publicly_visible: { $set: visible },
+        },
+    }),
+    [updateClaimedFacilityParentCompany]: (state, parentCompany) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_parent_company: { $set: parentCompany },
         },
     }),
     [updateClaimedFacilityPointOfContactVisibility]: (state, visible) => update(state, {

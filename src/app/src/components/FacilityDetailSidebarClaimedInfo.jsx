@@ -3,8 +3,11 @@ import { number, string, shape } from 'prop-types';
 import trim from 'lodash/trim';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
+import get from 'lodash/get';
 
 import { aboutClaimedFacilitiesRoute } from '../util/constants';
+
+import { makeProfileRouteLink } from '../util/util';
 
 const ClaimInfoSection = ({ label, value }) =>
     trim(value) && (
@@ -75,6 +78,24 @@ export default function FacilityDetailsSidebarClaimedInfo({
                 label="Phone Number"
             />
             <ClaimInfoSection
+                label="Parent Company"
+                value={
+                    facility.parent_company
+                        ? (
+                            <Link
+                                to={
+                                    makeProfileRouteLink(get(facility, 'parent_company.id', null))
+                                }
+                                href={
+                                    makeProfileRouteLink(get(facility, 'parent_company.id', null))
+                                }
+                            >
+                                {get(facility, 'parent_company.name', null)}
+                            </Link>)
+                        : null
+                }
+            />
+            <ClaimInfoSection
                 value={facility.facility_minimum_order_quantity}
                 label="Minimum Order"
             />
@@ -141,6 +162,10 @@ FacilityDetailsSidebarClaimedInfo.propTypes = {
             phone_number: string,
             minimum_order: string,
             average_lead_time: string.isRequired,
+            parent_company: shape({
+                id: number.isRequired,
+                name: string.isRequired,
+            }),
         }).isRequired,
         contact: shape({
             name: string.isRequired,
@@ -149,7 +174,7 @@ FacilityDetailsSidebarClaimedInfo.propTypes = {
         office: shape({
             name: string.isRequired,
             address: string.isRequired,
-            country: string.isRequired,
+            country: string,
             phone_number: string.isRequired,
         }),
     }),

@@ -27,6 +27,19 @@ const {
     preferredContactMethod: preferredContactMethodFormField,
 } = claimAFacilityFormFields;
 
+const selectStyles = Object.freeze({
+    input: provided =>
+        Object.freeze({
+            ...provided,
+            padding: '10px',
+        }),
+    menu: provided =>
+        Object.freeze({
+            ...provided,
+            zIndex: '2',
+        }),
+});
+
 function ClaimFacilityVerificationInfoStep({
     verificationMethod,
     updateVerification,
@@ -50,6 +63,7 @@ function ClaimFacilityVerificationInfoStep({
                         value={preferredContactMethod}
                         onChange={updateContactPreference}
                         disabled={fetching}
+                        styles={selectStyles}
                     />
                 </div>
             </div>

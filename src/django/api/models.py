@@ -530,6 +530,13 @@ class FacilityClaim(models.Model):
         null=False,
         default=False,
         help_text='Is the office info publicly visible?')
+    parent_company = models.ForeignKey(
+        'Contributor',
+        related_name='parent_company',
+        null=True,
+        default=None,
+        on_delete=models.PROTECT,
+        help_text='The parent company of this facility claim.')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
