@@ -11,8 +11,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
-import map from 'lodash/map';
-import includes from 'lodash/includes';
 import find from 'lodash/find';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -122,6 +120,9 @@ export default function DashboardSplitMatchCard({
 
     const matches = get(data, 'properties.matches', []);
 
+    const getNewOARIDFromSplitData = ({ match_id: matchID }) =>
+        get(find(splitData, { match_id: matchID }), 'new_oar_id', null);
+
     return (
         <>
             <Card style={splitMatchCardStyles.cardStyles}>
@@ -147,40 +148,29 @@ export default function DashboardSplitMatchCard({
                                 <Typography variant="title">
                                     Match {match.match_id}
                                 </Typography>
-                                {
-                                    !includes(map(splitData, 'matchID'), match.match_id)
-                                        ? (
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                disabled={splitting}
-                                                onClick={() =>
-                                                    openDialogForMatchToSplit(match)
-                                                }
-                                            >
-                                                Split
-                                            </Button>)
-                                        : (
-                                            <Link
-                                                to={makeFacilityDetailLink(
-                                                    find(splitData, {
-                                                        matchID: match.match_id,
-                                                    }).newOARID,
-                                                )}
-                                                href={makeFacilityDetailLink(
-                                                    find(splitData, {
-                                                        matchID: match.match_id,
-                                                    }).newOARID,
-                                                )}
-                                            >
-                                                {
-                                                    find(splitData, {
-                                                        matchID: match.match_id,
-                                                    }).newOARID
-                                                }
-                                            </Link>
-                                        )
-                                }
+                                {!getNewOARIDFromSplitData(match) ? (
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        disabled={splitting}
+                                        onClick={() =>
+                                            openDialogForMatchToSplit(match)
+                                        }
+                                    >
+                                        Split
+                                    </Button>
+                                ) : (
+                                    <Link
+                                        to={makeFacilityDetailLink(
+                                            getNewOARIDFromSplitData(match),
+                                        )}
+                                        href={makeFacilityDetailLink(
+                                            getNewOARIDFromSplitData(match),
+                                        )}
+                                    >
+                                        {getNewOARIDFromSplitData(match)}
+                                    </Link>
+                                )}
                             </div>
                             <div style={splitMatchCardStyles.nameRowStyles}>
                                 <MatchDetailItem
@@ -211,7 +201,7 @@ export default function DashboardSplitMatchCard({
                     ))}
                 </CardContent>
             </Card>
-            <Dialog open={matchToSplit}>
+            <Dialog open={Boolean(matchToSplit)}>
                 {matchToSplit ? (
                     <>
                         <DialogTitle>
@@ -222,10 +212,14 @@ export default function DashboardSplitMatchCard({
                             <Typography style={{ fontSize: '20px' }}>
                                 This will create a new facility from:
                             </Typography>
-                            <Typography style={{ fontSize: '20px', padding: '10px 0' }}>
+                            <Typography
+                                style={{ fontSize: '20px', padding: '10px 0' }}
+                            >
                                 {get(matchToSplit, 'name', '')}
                             </Typography>
-                            <Typography style={{ fontSize: '20px', padding: '10px 0' }}>
+                            <Typography
+                                style={{ fontSize: '20px', padding: '10px 0' }}
+                            >
                                 {get(matchToSplit, 'address', '')}
                             </Typography>
                         </DialogContent>
@@ -265,8 +259,8 @@ DashboardSplitMatchCard.propTypes = {
     data: facilityDetailsPropType,
     splitData: arrayOf(
         shape({
-            matchID: number.isRequired,
-            newOARID: number.isRequired,
+            match_id: number.isRequired,
+            new_oar_id: string.isRequired,
         }),
     ).isRequired,
     splitting: bool.isRequired,

@@ -77,8 +77,8 @@ DashboardSplitFacilityMatches.propTypes = {
     fetching: bool.isRequired,
     error: arrayOf(string),
     splitData: arrayOf(shape({
-        matchID: number.isRequired,
-        newOARID: number.isRequired,
+        match_id: number.isRequired,
+        new_oar_id: string.isRequired,
     })).isRequired,
     splitting: bool.isRequired,
     errorSplitting: arrayOf(string),

@@ -1,5 +1,4 @@
 import { createAction } from 'redux-act';
-import random from 'lodash/random';
 
 import csrfRequest from '../util/csrfRequest';
 
@@ -62,8 +61,8 @@ export function splitFacilityMatch(matchID) {
 
         dispatch(startSplitFacilityMatch());
 
-        return Promise
-            .resolve(({ data: Object.freeze({ matchID, newOARID: random(100000, 999999) }) }))
+        return csrfRequest
+            .post(makeSplitFacilityAPIURL(oarID), { match_id: matchID })
             .then(({ data }) => dispatch(completeSplitFacilityMatch(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,

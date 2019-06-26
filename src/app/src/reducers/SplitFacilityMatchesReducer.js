@@ -32,20 +32,18 @@ const initialState = Object.freeze({
 });
 
 const handleCompleteSplitFacilityMatch = (state, data) => {
-    const {
-        matchID,
-    } = data;
-
     const existingMatches = get(
         state,
         'facility.data.properties.matches',
         [],
     );
 
+    const matchIDFromData = get(data, 'match_id', null);
+
     const {
         list_contributor_id = null, // eslint-disable-line camelcase
         // eslint-disable-next-line camelcase
-    } = find(existingMatches, ({ match_id }) => match_id === matchID);
+    } = find(existingMatches, ({ match_id }) => match_id === matchIDFromData);
 
     return update(state, {
         splitFacilities: {
