@@ -15,6 +15,7 @@ class ProcessingAction:
     DELETE_FACILITY = 'delete_facility'
     PROMOTE_MATCH = 'promote_match'
     MERGE_FACILITY = 'merge_facility'
+    SPLIT_FACILITY = 'split_facility'
 
 
 class FacilitiesQueryParams:

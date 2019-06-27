@@ -985,6 +985,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 .objects \
                 .get(pk=match_id)
 
+            old_facility_id = match_for_new_facility.facility.id
+
             list_item_for_match = match_for_new_facility.facility_list_item
 
             new_facility = Facility \
@@ -1005,7 +1007,17 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             match_for_new_facility.save()
 
+            now = str(datetime.utcnow())
+
             list_item_for_match.facility = new_facility
+            list_item_for_match.processing_results.append({
+                'action': ProcessingAction.SPLIT_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'previous_facility_oar_id': old_facility_id,
+            })
+
             list_item_for_match.save()
 
             return Response({
