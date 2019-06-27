@@ -433,6 +433,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'claim' in path:
             return None
 
+        if 'split' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -937,6 +940,96 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         target.refresh_from_db()
         response_data = FacilityDetailsSerializer(target).data
         return Response(response_data)
+
+    @action(detail=True, methods=['GET', 'POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def split(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            if request.method == 'GET':
+                facility = Facility.objects.get(pk=pk)
+
+                facility_data = FacilityDetailsSerializer(facility).data
+
+                facility_data['properties']['matches'] = [
+                    {
+                        'name': m.facility_list_item.name,
+                        'address': m.facility_list_item.address,
+                        'country_code': m.facility_list_item.country_code,
+                        'list_id': m.facility_list_item.facility_list.id,
+                        'list_name': m.facility_list_item.facility_list.name,
+                        'list_description': m.facility_list_item.facility_list
+                        .description,
+                        'list_contributor_name': m.facility_list_item
+                        .facility_list
+                        .contributor.name,
+                        'list_contributor_id': m.facility_list_item
+                        .facility_list.contributor.id,
+                        'match_id': m.id,
+                    }
+                    for m
+                    in facility.get_other_matches()
+                ]
+
+                return Response(facility_data)
+
+            match_id = request.data.get('match_id')
+
+            if match_id is None:
+                raise BadRequestException('Missing required param match_id')
+
+            match_for_new_facility = FacilityMatch \
+                .objects \
+                .get(pk=match_id)
+
+            old_facility_id = match_for_new_facility.facility.id
+
+            list_item_for_match = match_for_new_facility.facility_list_item
+
+            new_facility = Facility \
+                .objects \
+                .create(name=list_item_for_match.name,
+                        address=list_item_for_match.address,
+                        country_code=list_item_for_match.country_code,
+                        location=list_item_for_match.geocoded_point,
+                        created_from=list_item_for_match)
+
+            match_for_new_facility.facility = new_facility
+            match_for_new_facility.confidence = 1.0
+            match_for_new_facility.status = FacilityMatch.CONFIRMED
+            match_for_new_facility.results = {
+                'match_type': 'split_by_administator',
+                'split_from_oar_id': match_for_new_facility.facility.id,
+            }
+
+            match_for_new_facility.save()
+
+            now = str(datetime.utcnow())
+
+            list_item_for_match.facility = new_facility
+            list_item_for_match.processing_results.append({
+                'action': ProcessingAction.SPLIT_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'previous_facility_oar_id': old_facility_id,
+            })
+
+            list_item_for_match.save()
+
+            return Response({
+                'match_id': match_for_new_facility.id,
+                'new_oar_id': new_facility.id,
+            })
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
+            raise NotFound()
+        except Facility.DoesNotExist:
+            raise NotFound()
 
 
 class FacilityListViewSetSchema(AutoSchema):

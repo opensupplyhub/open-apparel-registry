@@ -9,6 +9,7 @@ import DashboardClaims from './DashboardClaims';
 import DashboardClaimsDetails from './DashboardClaimsDetails';
 import DashboardDeleteFacility from './DashboardDeleteFacility';
 import DashboardMergeFacilities from './DashboardMergeFacilities';
+import DashboardSplitFacilityMatches from './DashboardSplitFacilityMatches';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
 
@@ -21,6 +22,7 @@ import {
     dashboardClaimsDetailsRoute,
     dashboardDeleteFacilityRoute,
     dashboardMergeFacilitiesRoute,
+    dashboardSplitFacilityMatchesRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -70,6 +72,9 @@ function Dashboard({
             <Link to={dashboardMergeFacilitiesRoute}>
                 Merge two facilities
             </Link>
+            <Link to={dashboardSplitFacilityMatchesRoute}>
+                Split facility matches
+            </Link>
         </div>
     );
 
@@ -118,6 +123,10 @@ function Dashboard({
                                 path={dashboardMergeFacilitiesRoute}
                                 render={() => 'Dashboard / Merge Facilities'}
                             />
+                            <Route
+                                path={dashboardSplitFacilityMatchesRoute}
+                                render={() => 'Dashboard / Split Facility Matches'}
+                            />
                             <Route render={() => DASHBOARD_TITLE} />
                         </Switch>
                     )
@@ -135,6 +144,10 @@ function Dashboard({
                     <Route
                         path={dashboardMergeFacilitiesRoute}
                         component={DashboardMergeFacilities}
+                    />
+                    <Route
+                        path={dashboardSplitFacilityMatchesRoute}
+                        component={DashboardSplitFacilityMatches}
                     />
                     <Route
                         path={dashboardClaimsDetailsRoute}
