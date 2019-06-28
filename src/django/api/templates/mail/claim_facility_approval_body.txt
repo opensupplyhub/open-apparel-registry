@@ -12,7 +12,7 @@ Here's the reason for the approval:
 {{ approval_reason }}
 {% endif %}
 
-Sincerely,
+Best wishes,
 
 {% include "mail/signature_block.txt" %}
 {% endblock content %}

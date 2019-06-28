@@ -440,6 +440,9 @@ function ClaimedFacilitiesDetails({
                         Publicly visible
                     </span>
                 </Typography>
+                <aside style={claimedFacilitiesDetailsStyles.asideStyles}>
+                    If different from facility address
+                </aside>
                 <InputSection
                     label="Office name"
                     value={data.office_official_name}
