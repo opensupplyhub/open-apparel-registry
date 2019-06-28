@@ -1,4 +1,20 @@
+from django.conf import settings
 from rest_framework import permissions
+
+
+class IsAuthenticatedOrWebClient(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user and request.user.is_authenticated:
+            return True
+
+        if settings.OAR_CLIENT_KEY == '':
+            return True
+
+        client_key = request.META.get('HTTP_X_OAR_CLIENT_KEY')
+        if client_key == settings.OAR_CLIENT_KEY:
+            return True
+
+        return False
 
 
 class IsRegisteredAndConfirmed(permissions.BasePermission):
