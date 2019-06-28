@@ -15,6 +15,7 @@ RUN set -ex \
 COPY . /usr/local/src
 
 RUN GOOGLE_SERVER_SIDE_API_KEY="" \
+    OAR_CLIENT_KEY="" \
     python manage.py collectstatic --no-input
 
 CMD ["-b :8080", \
