@@ -1,5 +1,17 @@
+from urllib.parse import urlparse
+
 from django.conf import settings
+from django.utils.http import is_same_domain
 from rest_framework import permissions
+
+
+def is_referer_allowed(request):
+    referer = urlparse(request.META.get('HTTP_REFERER', ''))
+    host = referer.netloc.split(':')[0]
+    for pattern in settings.ALLOWED_HOSTS:
+        if is_same_domain(host, pattern):
+            return True
+    return False
 
 
 class IsAuthenticatedOrWebClient(permissions.BasePermission):
@@ -12,7 +24,7 @@ class IsAuthenticatedOrWebClient(permissions.BasePermission):
 
         client_key = request.META.get('HTTP_X_OAR_CLIENT_KEY')
         if client_key == settings.OAR_CLIENT_KEY:
-            return True
+            return is_referer_allowed(request)
 
         return False
 
