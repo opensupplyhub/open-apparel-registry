@@ -44,10 +44,12 @@ GIT_COMMIT = os.getenv('GIT_COMMIT', 'UNKNOWN')
 DEBUG = (ENVIRONMENT == 'Development')
 
 ALLOWED_HOSTS = [
-    'localhost',
-    'django',
     '.openapparel.org'
 ]
+
+if ENVIRONMENT == 'Development':
+    ALLOWED_HOSTS.append('localhost')
+    ALLOWED_HOSTS.append('django')
 
 if ENVIRONMENT in ['Production', 'Staging'] and BATCH_MODE == '':
     # Within EC2, the Elastic Load Balancer HTTP health check will use the
