@@ -343,6 +343,7 @@ if not DEBUG:
         'access_token': os.getenv('ROLLBAR_SERVER_SIDE_ACCESS_TOKEN'),
         'environment': ENVIRONMENT.lower(),
         'root': BASE_DIR,
+        'suppress_reinit_warning': True,
     }
     import rollbar
     rollbar.init(**ROLLBAR)
