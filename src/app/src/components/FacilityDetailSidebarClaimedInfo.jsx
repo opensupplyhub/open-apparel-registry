@@ -7,7 +7,10 @@ import get from 'lodash/get';
 
 import { aboutClaimedFacilitiesRoute } from '../util/constants';
 
-import { makeProfileRouteLink } from '../util/util';
+import {
+    makeProfileRouteLink,
+    addProtocolToWebsiteURLIfMissing,
+} from '../util/util';
 
 const ClaimInfoSection = ({ label, value }) =>
     trim(value) && (
@@ -70,7 +73,21 @@ export default function FacilityDetailsSidebarClaimedInfo({
                 value={facility.description}
             />
             <ClaimInfoSection
-                value={facility.website}
+                value={
+                    facility.website
+                        ? (
+                            <a
+                                href={
+                                    addProtocolToWebsiteURLIfMissing(
+                                        facility.website,
+                                    )}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {facility.website}
+                            </a>)
+                        : null
+                }
                 label="Website"
             />
             <ClaimInfoSection
