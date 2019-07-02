@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -29,7 +29,7 @@ export function fetchFacilities() {
 
         const qs = createQueryStringFromSearchFilters(filters);
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilitiesURLWithQueryString(qs))
             .then(({ data }) => dispatch(completeFetchFacilities(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -52,7 +52,7 @@ export function fetchSingleFacility(oarID = null) {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilityByOARIdURL(oarID))
             .then(({ data }) => dispatch(completeFetchSingleFacility(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

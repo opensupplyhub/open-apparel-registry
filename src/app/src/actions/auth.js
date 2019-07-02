@@ -2,7 +2,7 @@ import { createAction } from 'redux-act';
 import isEmail from 'validator/lib/isEmail';
 import { toast } from 'react-toastify';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -96,7 +96,7 @@ export function submitSignUpForm() {
         const { confirmPassword, ...dataForAPI } = form;
         const signupData = createSignupRequestData(dataForAPI);
 
-        return csrfRequest
+        return apiRequest
             .post(makeUserSignupURL(), signupData)
             .then(({ data }) => dispatch(completeSubmitSignUpForm(data)))
             .catch(e => dispatch(logErrorAndDispatchFailure(
@@ -130,7 +130,7 @@ export function submitLoginForm() {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(makeUserLoginURL(), { email, password })
             .then(({ data }) => dispatch(completeSubmitLoginForm(data)))
             .catch(e => dispatch(logErrorAndDispatchFailure(
@@ -145,7 +145,7 @@ export function sessionLogin() {
     return (dispatch) => {
         dispatch(startSessionLogin());
 
-        return csrfRequest
+        return apiRequest
             .get(makeUserLoginURL())
             .then(({ data }) => dispatch(completeSessionLogin(data)))
             .catch(e => dispatch(logErrorAndDispatchFailure(
@@ -186,7 +186,7 @@ export function requestForgotPasswordEmail() {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(makeResetPasswordEmailURL(), { email })
             .then(() => {
                 toast('Check your email for password reset instructions');
@@ -204,7 +204,7 @@ export function submitLogOut() {
     return (dispatch) => {
         dispatch(startSubmitLogOut());
 
-        return csrfRequest
+        return apiRequest
             .post(makeUserLogoutURL())
             .then(({ data }) => dispatch(completeSubmitLogOut(data)))
             .catch(e => dispatch(logErrorAndDispatchFailure(
@@ -254,7 +254,7 @@ export function submitResetPassword() {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(
                 makeResetPasswordConfirmURL(),
                 {
@@ -285,7 +285,7 @@ export function confirmAccountRegistration(key) {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(makeUserConfirmEmailURL(), { key })
             .then(() => dispatch(completeConfirmAccountRegistration()))
             .catch(err => dispatch(logErrorAndDispatchFailure(

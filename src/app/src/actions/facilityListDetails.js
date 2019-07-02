@@ -1,7 +1,7 @@
 import { createAction } from 'redux-act';
 import querystring from 'querystring';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -59,7 +59,7 @@ export function fetchFacilityList(listID = null) {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .get(makeSingleFacilityListURL(listID))
             .then(({ data }) => dispatch(completeFetchFacilityList(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -89,7 +89,7 @@ export function fetchFacilityListItems(
             ? { page, pageSize: rowsPerPage }
             : null;
         const qs = `?${querystring.stringify(Object.assign({}, params, pageParams))}`;
-        return csrfRequest
+        return apiRequest
             .get(`${url}${qs}`)
             .then(({ data }) => dispatch(completeFetchFacilityListItems(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -112,7 +112,7 @@ export function confirmFacilityListItemMatch(facilityMatchID, listID, listItemID
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(
                 createConfirmFacilityListItemMatchURL(listID),
                 createConfirmOrRejectMatchData(listItemID, facilityMatchID),
@@ -138,7 +138,7 @@ export function rejectFacilityListItemMatch(facilityMatchID, listID, listItemID)
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(
                 createRejectFacilityListItemMatchURL(listID),
                 createConfirmOrRejectMatchData(listItemID, facilityMatchID),
@@ -177,7 +177,7 @@ export function assembleAndDownloadFacilityListCSV() {
                     data: {
                         results,
                     },
-                } = await csrfRequest.get(dataURLs[i]); // eslint-disable-line no-await-in-loop
+                } = await apiRequest.get(dataURLs[i]); // eslint-disable-line no-await-in-loop
                 csvData = csvData.concat(results);
             }
             downloadListItemCSV(data, csvData);
@@ -209,7 +209,7 @@ export function removeFacilityListItem(listID, listItemID) {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(
                 createRemoveFacilityListItemURL(listID),
                 { list_item_id: listItemID },

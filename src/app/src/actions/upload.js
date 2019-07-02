@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -58,7 +58,7 @@ export function uploadFile(file = null, redirectToListDetail) {
             formData.append('replaces', replaces);
         }
 
-        return csrfRequest
+        return apiRequest
             .post(makeFacilityListsURL(), formData)
             .then(({ data: { id } }) => {
                 dispatch(completeUploadFile());

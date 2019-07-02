@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -30,7 +30,7 @@ export function fetchFacilityToSplit() {
 
         dispatch(startFetchFacilityToSplit());
 
-        return csrfRequest
+        return apiRequest
             .get(makeSplitFacilityAPIURL(oarID))
             .then(({ data }) => dispatch(completeFetchFacilityToSplit(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -61,7 +61,7 @@ export function splitFacilityMatch(matchID) {
 
         dispatch(startSplitFacilityMatch());
 
-        return csrfRequest
+        return apiRequest
             .post(makeSplitFacilityAPIURL(oarID), { match_id: matchID })
             .then(({ data }) => dispatch(completeSplitFacilityMatch(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

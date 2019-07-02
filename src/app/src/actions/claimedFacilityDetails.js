@@ -2,7 +2,7 @@ import { createAction } from 'redux-act';
 import mapValues from 'lodash/mapValues';
 import isNull from 'lodash/isNull';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -26,7 +26,7 @@ export function fetchClaimedFacilityDetails(claimID) {
 
         dispatch(startFetchClaimedFacilityDetails());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetOrUpdateApprovedFacilityClaimURL(claimID))
             .then(({ data }) => mapValues(data, (v) => {
                 if (isNull(v)) {
@@ -65,7 +65,7 @@ export function submitClaimedFacilityDetailsUpdate(claimID) {
 
         dispatch(startUpdateClaimedFacilityDetails());
 
-        return csrfRequest
+        return apiRequest
             .put(makeGetOrUpdateApprovedFacilityClaimURL(claimID), data)
             .then(({ data: responseData }) => mapValues(responseData, (v) => {
                 if (isNull(v)) {
