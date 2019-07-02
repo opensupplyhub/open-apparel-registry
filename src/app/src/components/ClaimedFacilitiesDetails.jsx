@@ -16,7 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 import isNull from 'lodash/isNull';
 import Select from 'react-select';
-import { isEmail } from 'validator';
+import { isEmail, isURL } from 'validator';
 import { toast } from 'react-toastify';
 
 import ClaimedFacilitiesDetailsSidebar from './ClaimedFacilitiesDetailsSidebar';
@@ -221,6 +221,8 @@ const createCountrySelectOptions = memoize(
     mapDjangoChoiceTuplesToSelectOptions,
 );
 
+const isValidFacilityURL = url => isURL(url, { protocols: ['http', 'https'] });
+
 function ClaimedFacilitiesDetails({
     fetching,
     error,
@@ -334,6 +336,15 @@ function ClaimedFacilitiesDetails({
                     value={data.facility_website}
                     onChange={updateFacilityWebsite}
                     disabled={updating}
+                    hasValidationErrorFn={
+                        () => {
+                            if (isEmpty(data.facility_website)) {
+                                return false;
+                            }
+
+                            return !isValidFacilityURL(data.facility_website);
+                        }
+                    }
                 />
                 <InputSection
                     label="Description"
@@ -481,6 +492,8 @@ function ClaimedFacilitiesDetails({
                         disabled={
                             updating || (!isEmpty(data.point_of_contact_email)
                                          && !isEmail(data.point_of_contact_email))
+                                     || (!isEmpty(data.facility_website)
+                                         && !isValidFacilityURL(data.facility_website))
                         }
                     >
                         Save
