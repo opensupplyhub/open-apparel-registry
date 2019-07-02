@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -32,7 +32,7 @@ export function fetchContributorOptions() {
     return (dispatch) => {
         dispatch(startFetchContributorOptions());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetContributorsURL())
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
             .then(data => dispatch(completeFetchContributorOptions(data)))
@@ -48,7 +48,7 @@ export function fetchContributorTypeOptions() {
     return (dispatch) => {
         dispatch(startFetchContributorTypeOptions());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetContributorTypesURL())
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
             .then(data => dispatch(completeFetchContributorTypeOptions(data)))
@@ -64,7 +64,7 @@ export function fetchCountryOptions() {
     return (dispatch) => {
         dispatch(startFetchCountryOptions());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetCountriesURL())
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
             .then(data => dispatch(completeFetchCountryOptions(data)))

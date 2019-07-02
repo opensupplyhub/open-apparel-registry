@@ -25,6 +25,7 @@ services:
         - DJANGO_SECRET_KEY=secret
         - DJANGO_LOG_LEVEL=INFO
         - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
+        - OAR_CLIENT_KEY=
     build:
       context: ./src/django
       dockerfile: Dockerfile

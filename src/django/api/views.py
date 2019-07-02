@@ -95,7 +95,6 @@ def _report_facility_claim_email_error_to_rollbar(claim):
         )
 
 
-@permission_classes((AllowAny,))
 class SubmitNewUserForm(CreateAPIView):
     serializer_class = UserSerializer
 
@@ -146,7 +145,6 @@ class SubmitNewUserForm(CreateAPIView):
 
 class LoginToOARClient(LoginView):
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
@@ -326,7 +324,6 @@ class APIAuthToken(ObtainAuthToken):
 
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
 def all_contributors(request):
     """
     Returns list contributors as a list of tuples of contributor IDs and names.
@@ -350,7 +347,6 @@ def all_contributors(request):
 
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
 def all_contributor_types(request):
     """
     Returns a list of contributor type choices as tuples of values and display
@@ -369,7 +365,6 @@ def all_contributor_types(request):
 
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
 def all_countries(request):
     """
     Returns a list of country choices as tuples of country codes and names.
@@ -450,7 +445,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     """
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
-    permission_classes = (AllowAny,)
     pagination_class = FacilitiesGeoJSONPagination
     filter_backends = (FacilitiesAPIFilterBackend,)
 

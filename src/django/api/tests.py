@@ -4,7 +4,7 @@ import xlrd
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib import auth
 from django.conf import settings
@@ -27,6 +27,7 @@ from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
 from api.test_data import parsed_city_hall_data
+from api.permissions import referring_host_is_allowed, referring_host
 
 
 class FacilityListCreateTest(APITestCase):
@@ -2854,3 +2855,29 @@ class FacilitySplitTest(APITestCase):
             self.match_two.facility.id,
             data['new_oar_id'],
         )
+
+
+class PermissionsTests(TestCase):
+    class MockRequest(object):
+        def __init__(self, referer):
+            self.META = {}
+            if referer is not None:
+                self.META['HTTP_REFERER'] = referer
+
+    @override_settings(ALLOWED_HOSTS=['.allowed.org'])
+    def test_is_referer_allowed(self):
+        def check_host(url):
+            return referring_host_is_allowed(
+                referring_host(
+                    PermissionsTests.MockRequest(url)))
+
+        self.assertTrue(check_host('http://allowed.org'))
+        self.assertTrue(check_host('http://subdomain.allowed.org'))
+        self.assertTrue(check_host('http://allowed.org:6543'))
+        self.assertTrue(check_host('http://allowed.org:6543/api/countries'))
+
+        self.assertFalse(check_host('http://notallowed.org'))
+        self.assertFalse(check_host('http://allowed.com'))
+        self.assertFalse(check_host(''))
+        self.assertFalse(check_host(None))
+        self.assertFalse(check_host('foo'))

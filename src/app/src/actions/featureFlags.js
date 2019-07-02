@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     makeGetAPIFeatureFlagsURL,
@@ -16,7 +16,7 @@ export function fetchFeatureFlags() {
     return (dispatch) => {
         dispatch(startFetchFeatureFlags());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetAPIFeatureFlagsURL())
             .then(({ data }) => dispatch(completeFetchFeatureFlags(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

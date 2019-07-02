@@ -1,7 +1,7 @@
 import { createAction } from 'redux-act';
 import get from 'lodash/get';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     makeAPITokenURL,
@@ -39,7 +39,7 @@ export function fetchAPIToken() {
     return (dispatch) => {
         dispatch(startFetchAPIToken());
 
-        return csrfRequest
+        return apiRequest
             .get(makeAPITokenURL())
             // Return a list here to afford potentially retrieving and displaying
             // multiple API tokens per user.
@@ -57,7 +57,7 @@ export function deleteAPIToken() {
     return (dispatch) => {
         dispatch(startDeleteAPIToken());
 
-        return csrfRequest
+        return apiRequest
             .delete(makeAPITokenURL())
             .then(() => dispatch(completeDeleteAPIToken()))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -72,7 +72,7 @@ export function createAPIToken() {
     return (dispatch) => {
         dispatch(startCreateAPIToken());
 
-        return csrfRequest
+        return apiRequest
             .post(makeAPITokenURL())
             // Return a list here to afford potentially retrieving and displaying
             // multiple API tokens per user.
@@ -107,7 +107,7 @@ export function fetchUserProfile(userID) {
         const email = get(user, 'user.email', null);
         const id = get(user, 'user.id', null);
 
-        return csrfRequest
+        return apiRequest
             .get(makeUserProfileURL(userID))
             .then(({ data }) => {
                 if (id === userID && id === data.id) {
@@ -152,7 +152,7 @@ export function updateUserProfile(userID) {
 
         const profileUpdateData = createProfileUpdateRequestData(profile);
 
-        return csrfRequest
+        return apiRequest
             .put(makeUserProfileURL(userID), profileUpdateData)
             .then(({ data }) => dispatch(completeUpdateUserProfile(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

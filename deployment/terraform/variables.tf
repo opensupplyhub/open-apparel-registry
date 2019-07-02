@@ -256,3 +256,5 @@ variable "spot_fleet_service_role_policy_arn" {
 variable "aws_lambda_service_role_policy_arn" {
   default = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+
+variable "oar_client_key" {}
