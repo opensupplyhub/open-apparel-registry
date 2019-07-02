@@ -5,9 +5,19 @@ from django.utils.http import is_same_domain
 from rest_framework import permissions
 
 
-def is_referer_allowed(request):
+def _report_warning_to_rollbar(message, extra_data=None):
+    ROLLBAR = getattr(settings, 'ROLLBAR', {})
+    if ROLLBAR:
+        import rollbar
+        rollbar.report_message(message, level='warning', extra_data=extra_data)
+
+
+def referring_host(request):
     referer = urlparse(request.META.get('HTTP_REFERER', ''))
-    host = referer.netloc.split(':')[0]
+    return referer.netloc.split(':')[0]
+
+
+def referring_host_is_allowed(host):
     for pattern in settings.ALLOWED_HOSTS:
         if is_same_domain(host, pattern):
             return True
@@ -24,7 +34,17 @@ class IsAuthenticatedOrWebClient(permissions.BasePermission):
 
         client_key = request.META.get('HTTP_X_OAR_CLIENT_KEY')
         if client_key == settings.OAR_CLIENT_KEY:
-            return is_referer_allowed(request)
+            host = referring_host(request)
+            if referring_host_is_allowed(host):
+                return True
+            else:
+                _report_warning_to_rollbar(
+                    'Unallowed referring host passed with API request',
+                    extra_data={'host': host})
+        else:
+            _report_warning_to_rollbar(
+                'Incorrect client key submitted with API request',
+                extra_data={'client_key': client_key})
 
         return False
 

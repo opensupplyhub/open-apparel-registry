@@ -27,7 +27,7 @@ from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
 from api.test_data import parsed_city_hall_data
-from api.permissions import is_referer_allowed
+from api.permissions import referring_host_is_allowed, referring_host
 
 
 class FacilityListCreateTest(APITestCase):
@@ -2866,23 +2866,18 @@ class PermissionsTests(TestCase):
 
     @override_settings(ALLOWED_HOSTS=['.allowed.org'])
     def test_is_referer_allowed(self):
-        self.assertTrue(is_referer_allowed(
-            PermissionsTests.MockRequest('http://allowed.org')))
-        self.assertTrue(is_referer_allowed(
-            PermissionsTests.MockRequest('http://subdomain.allowed.org')))
-        self.assertTrue(is_referer_allowed(
-            PermissionsTests.MockRequest('http://allowed.org:6543')))
-        self.assertTrue(is_referer_allowed(
-            PermissionsTests.MockRequest(
-                'http://allowed.org:6543/api/countries')))
+        def check_host(url):
+            return referring_host_is_allowed(
+                referring_host(
+                    PermissionsTests.MockRequest(url)))
 
-        self.assertFalse(is_referer_allowed(
-            PermissionsTests.MockRequest('http://notallowed.org')))
-        self.assertFalse(is_referer_allowed(
-            PermissionsTests.MockRequest('http://allowed.com')))
-        self.assertFalse(is_referer_allowed(
-            PermissionsTests.MockRequest('')))
-        self.assertFalse(is_referer_allowed(
-            PermissionsTests.MockRequest(None)))
-        self.assertFalse(is_referer_allowed(
-            PermissionsTests.MockRequest('foo')))
+        self.assertTrue(check_host('http://allowed.org'))
+        self.assertTrue(check_host('http://subdomain.allowed.org'))
+        self.assertTrue(check_host('http://allowed.org:6543'))
+        self.assertTrue(check_host('http://allowed.org:6543/api/countries'))
+
+        self.assertFalse(check_host('http://notallowed.org'))
+        self.assertFalse(check_host('http://allowed.com'))
+        self.assertFalse(check_host(''))
+        self.assertFalse(check_host(None))
+        self.assertFalse(check_host('foo'))
