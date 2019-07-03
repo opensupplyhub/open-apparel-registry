@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib.auth.models import (AbstractBaseUser,
                                         BaseUserManager,
                                         PermissionsMixin)
@@ -655,6 +657,84 @@ class FacilityClaim(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     history = HistoricalRecords()
+
+    default_change_includes = (
+        'facility_name_english',
+        'facility_name_native_language',
+        'facility_address',
+        'facility_phone_number',
+        'facility_website',
+        'facility_minimum_order_quantity',
+        'facility_average_lead_time',
+        'facility_workers_count',
+        'facility_female_workers_percentage',
+        'facility_type',
+        'other_facility_type',
+        'facility_description',
+        'facility_minimum_order_quantity',
+        'facility_average_lead_time',
+        'point_of_contact_person_name',
+        'point_of_contact_email',
+        'office_official_name',
+        'office_address',
+        'office_country_code',
+        'office_phone_number',
+        'parent_company',
+    )
+
+    # A dictionary where the keys are field names and the values are predicate
+    # functions that will be passed a FacilityClaim instance and should return
+    # a boolean.
+    change_conditions = defaultdict(
+        lambda: lambda c: True,
+        facility_phone_number=(
+            lambda c: c.facility_phone_number_publicly_visible),
+        facility_website=(
+            lambda c: c.facility_website_publicly_visible),
+        point_of_contact_person_name=(
+            lambda c: c.point_of_contact_publicly_visible),
+        point_of_contact_email=(
+            lambda c: c.point_of_contact_publicly_visible),
+        office_official_name=(
+            lambda c: c.office_info_publicly_visible),
+        office_address=(
+            lambda c: c.office_info_publicly_visible),
+        office_country_code=(
+            lambda c: c.office_info_publicly_visible),
+        office_phone_number=(
+            lambda c: c.office_info_publicly_visible),
+    )
+
+    # A dictionary where the keys are field_names and the values are functions
+    # that will be passed a FacilityClaim and should return a string
+    change_value_serializers = defaultdict(
+        lambda: lambda v: v,
+        parent_company=lambda v: v and v.name
+    )
+
+    def get_changes(self, include=list(default_change_includes)):
+        latest = self.history.latest()
+        previous = latest.prev_record
+        changes = None
+        if previous is not None:
+            for field in FacilityClaim._meta.fields:
+                should_report_change_publicly = \
+                    self.change_conditions[field.name](self)
+                if field.name in include and should_report_change_publicly:
+                    curr_value = self.change_value_serializers[field.name](
+                        getattr(self, field.name))
+                    prev_value = self.change_value_serializers[field.name](
+                        getattr(previous.instance, field.name))
+                    if curr_value != prev_value:
+                        if changes is None:
+                            changes = []
+                        changes.append({
+                            'name': field.name,
+                            'verbose_name': field.verbose_name,
+                            'previous': prev_value,
+                            'current': curr_value,
+                        })
+        return changes
 
 
 class FacilityClaimReviewNote(models.Model):
