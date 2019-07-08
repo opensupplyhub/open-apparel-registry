@@ -756,6 +756,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             contributor = request.user.contributor
 
             contact_person = request.data.get('contact_person')
+            job_title = request.data.get('job_title')
             email = request.data.get('email')
             phone_number = request.data.get('phone_number')
             company_name = request.data.get('company_name')
@@ -766,6 +767,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             preferred_contact_method = request \
                 .data \
                 .get('preferred_contact_method', '')
+            linkedin_profile = request.data.get('linkedin_profile', '')
 
             try:
                 validate_email(email)
@@ -798,6 +800,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 facility=facility,
                 contributor=contributor,
                 contact_person=contact_person,
+                job_title=job_title,
                 email=email,
                 phone_number=phone_number,
                 company_name=company_name,
@@ -805,7 +808,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 website=website,
                 facility_description=facility_description,
                 verification_method=verification_method,
-                preferred_contact_method=preferred_contact_method)
+                preferred_contact_method=preferred_contact_method,
+                linkedin_profile=linkedin_profile)
 
             send_claim_facility_confirmation_email(request, facility_claim)
 
@@ -2037,44 +2041,72 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                     .objects \
                     .get(pk=parent_company_data['id'])
 
-            FacilityClaim.objects.filter(pk=pk).update(
-                facility_description=request.data.get('facility_description'),
-                facility_name=request.data.get('facility_name'),
-                facility_address=request.data.get('facility_address'),
-                facility_phone_number=request.data
-                .get('facility_phone_number'),
-                facility_phone_number_publicly_visible=request.data
-                .get('facility_phone_number_publicly_visible'),
-                facility_website=request.data.get('facility_website'),
-                facility_minimum_order_quantity=request.data
-                .get('facility_minimum_order_quantity'),
-                facility_average_lead_time=request.data
-                .get('facility_average_lead_time'),
-                parent_company=parent_company,
-                point_of_contact_person_name=request.data
-                .get('point_of_contact_person_name'),
-                point_of_contact_email=request.data
-                .get('point_of_contact_email'),
-                point_of_contact_publicly_visible=request.data
-                .get('point_of_contact_publicly_visible'),
-                office_official_name=request.data
-                .get('office_official_name'),
-                office_address=request.data.get('office_address'),
-                office_country_code=request.data.get('office_country_code'),
-                office_phone_number=request.data.get('office_phone_number'),
-                office_info_publicly_visible=request.data
-                .get('office_info_publicly_visible')
-            )
-
-            updated_claim = FacilityClaim.objects.get(pk=pk)
+            claim.parent_company = parent_company
 
             try:
-                send_claim_update_notice_to_list_contributors(request,
-                                                              updated_claim)
-            except Exception:
-                _report_facility_claim_email_error_to_rollbar(updated_claim)
+                workers_count = int(request.data.get('facility_workers_count'))
+            except ValueError:
+                workers_count = None
+            except TypeError:
+                workers_count = None
 
-            response_data = ApprovedFacilityClaimSerializer(updated_claim).data
+            claim.facility_workers_count = workers_count
+
+            try:
+                female_workers_percentage = int(
+                    request.data.get('facility_female_workers_percentage')
+                )
+            except ValueError:
+                female_workers_percentage = None
+            except TypeError:
+                female_workers_percentage = None
+
+            claim \
+                .facility_female_workers_percentage = female_workers_percentage
+
+            facility_type = request.data.get('facility_type')
+
+            claim.facility_type = facility_type
+
+            if facility_type == FacilityClaim.OTHER:
+                other_facility_type = request.data.get('other_facility_type')
+            else:
+                other_facility_type = None
+
+            claim.other_facility_type = other_facility_type
+
+            field_names = (
+                'facility_description',
+                'facility_name_english',
+                'facility_name_native_language',
+                'facility_address',
+                'facility_phone_number',
+                'facility_phone_number_publicly_visible',
+                'facility_website',
+                'facility_website_publicly_visible',
+                'facility_minimum_order_quantity',
+                'facility_average_lead_time',
+                'point_of_contact_person_name',
+                'point_of_contact_email',
+                'point_of_contact_publicly_visible',
+                'office_official_name',
+                'office_address',
+                'office_country_code',
+                'office_phone_number',
+                'office_info_publicly_visible',
+            )
+
+            for field_name in field_names:
+                setattr(claim, field_name, request.data.get(field_name))
+
+            claim.save()
+
+            try:
+                send_claim_update_notice_to_list_contributors(request, claim)
+            except Exception:
+                _report_facility_claim_email_error_to_rollbar(claim)
+
+            response_data = ApprovedFacilityClaimSerializer(claim).data
             return Response(response_data)
         except FacilityClaim.DoesNotExist:
             raise NotFound()

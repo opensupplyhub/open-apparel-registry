@@ -608,10 +608,12 @@ export const claimFacilityContactInfoStepIsValid = ({
     email,
     contactPerson,
     phoneNumber,
+    jobTitle,
 }) => every([
     isEmail(email),
     !isEmpty(contactPerson),
     !isEmpty(phoneNumber),
+    !isEmpty(jobTitle),
 ]);
 
 export const isValidFacilityURL = url => isEmpty(url) || isURL(url, { protocols: ['http', 'https'] });

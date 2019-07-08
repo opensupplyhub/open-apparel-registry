@@ -5,12 +5,15 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from 'react-select';
+import isEmpty from 'lodash/isEmpty';
+import { isURL } from 'validator';
 
 import RequiredAsterisk from './RequiredAsterisk';
 
 import {
     updateClaimAFacilityVerificationMethod,
     updateClaimAFacilityPreferredContactMethod,
+    updateClaimAFacilityLinkedinProfile,
 } from '../actions/claimFacility';
 
 import { getValueFromEvent } from '../util/util';
@@ -25,6 +28,7 @@ import {
 const {
     verificationMethod: verificationMethodFormField,
     preferredContactMethod: preferredContactMethodFormField,
+    linkedinProfile: linkedinProfileFormField,
 } = claimAFacilityFormFields;
 
 const selectStyles = Object.freeze({
@@ -46,6 +50,8 @@ function ClaimFacilityVerificationInfoStep({
     preferredContactMethod,
     updateContactPreference,
     fetching,
+    linkedinProfile,
+    updateLinkedinProfile,
 }) {
     return (
         <>
@@ -58,6 +64,7 @@ function ClaimFacilityVerificationInfoStep({
                 </InputLabel>
                 <div style={claimAFacilityFormStyles.textFieldStyles}>
                     <Select
+                        autoFocus
                         options={claimAFacilityPreferredContactOptions}
                         id={preferredContactMethodFormField.id}
                         value={preferredContactMethod}
@@ -66,6 +73,22 @@ function ClaimFacilityVerificationInfoStep({
                         styles={selectStyles}
                     />
                 </div>
+            </div>
+            <div style={claimAFacilityFormStyles.inputGroupStyles}>
+                <InputLabel htmlFor={linkedinProfileFormField.id}>
+                    <Typography variant="title">
+                        {linkedinProfileFormField.label}
+                    </Typography>
+                </InputLabel>
+                <TextField
+                    id={linkedinProfileFormField.id}
+                    error={!isEmpty(linkedinProfile) && !isURL(linkedinProfile)}
+                    variant="outlined"
+                    style={claimAFacilityFormStyles.textFieldStyles}
+                    value={linkedinProfile}
+                    onChange={updateLinkedinProfile}
+                    disabled={fetching}
+                />
             </div>
             <div style={claimAFacilityFormStyles.inputGroupStyles}>
                 <InputLabel htmlFor={verificationMethodFormField.id}>
@@ -101,12 +124,18 @@ ClaimFacilityVerificationInfoStep.propTypes = {
     fetching: bool.isRequired,
     updateVerification: func.isRequired,
     updateContactPreference: func.isRequired,
+    linkedinProfile: string.isRequired,
+    updateLinkedinProfile: func.isRequired,
 };
 
 function mapStateToProps({
     claimFacility: {
         claimData: {
-            formData: { verificationMethod, preferredContactMethod },
+            formData: {
+                verificationMethod,
+                preferredContactMethod,
+                linkedinProfile,
+            },
             fetching,
         },
     },
@@ -115,6 +144,7 @@ function mapStateToProps({
         verificationMethod,
         preferredContactMethod,
         fetching,
+        linkedinProfile,
     };
 }
 
@@ -126,6 +156,8 @@ function mapDispatchToProps(dispatch) {
             ),
         updateContactPreference: v =>
             dispatch(updateClaimAFacilityPreferredContactMethod(v)),
+        updateLinkedinProfile: e =>
+            dispatch(updateClaimAFacilityLinkedinProfile(getValueFromEvent(e))),
     };
 }
 

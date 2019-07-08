@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import isEmpty from 'lodash/isEmpty';
+import { isURL } from 'validator';
 import Select from 'react-select';
 
 import RequiredAsterisk from './RequiredAsterisk';
@@ -108,6 +109,7 @@ function ClaimFacilityFacilityInfoStep({
                 </InputLabel>
                 <TextField
                     id={websiteFormField.id}
+                    error={!isEmpty(website) && !isURL(website)}
                     variant="outlined"
                     style={claimAFacilityFormStyles.textFieldStyles}
                     value={website}

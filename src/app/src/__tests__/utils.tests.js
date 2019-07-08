@@ -1205,6 +1205,7 @@ it('checks whether the claim a facility form is valid', () => {
             label: 'label',
             value: 'value',
         },
+        jobTitle: 'computer programmer',
     };
 
     expect(isEqual(

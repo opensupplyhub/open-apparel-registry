@@ -22,6 +22,7 @@ import { facilityClaimPropType } from '../util/propTypes';
 import {
     makeProfileRouteLink,
     makeFacilityDetailLink,
+    addProtocolToWebsiteURLIfMissing,
 } from '../util/util';
 
 const dashboardClaimsDetailsStyles = Object.freeze({
@@ -132,6 +133,10 @@ function DashboardClaimsDetails({
                     value={data.contact_person}
                 />
                 <InfoSection
+                    label="Job Title"
+                    value={data.job_title}
+                />
+                <InfoSection
                     label="Email"
                     value={data.email}
                 />
@@ -145,11 +150,17 @@ function DashboardClaimsDetails({
                 />
                 <InfoSection
                     label="Website"
-                    value={data.website}
-                />
-                <InfoSection
-                    label="Preferred Contact Method"
-                    value={data.preferred_contact_method}
+                    value={
+                        data.website && (
+                            <a
+                                href={addProtocolToWebsiteURLIfMissing(data.website)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {data.website}
+                            </a>
+                        )
+                    }
                 />
                 <InfoSection
                     label="Facility Parent Company"
@@ -158,7 +169,7 @@ function DashboardClaimsDetails({
                             const parentCompanyName = get(data, 'facility_parent_company.name', null);
 
                             if (!parentCompanyName) {
-                                return null;
+                                return '';
                             }
 
                             const profileLink = makeProfileRouteLink(
@@ -174,6 +185,24 @@ function DashboardClaimsDetails({
                                 </Link>
                             );
                         })()
+                    }
+                />
+                <InfoSection
+                    label="Preferred Contact Method"
+                    value={data.preferred_contact_method}
+                />
+                <InfoSection
+                    label="LinkedIn Profile"
+                    value={
+                        data.linkedin_profile && (
+                            <a
+                                href={addProtocolToWebsiteURLIfMissing(data.linkedin_profile)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {data.linkedin_profile}
+                            </a>
+                        )
                     }
                 />
                 <InfoSection

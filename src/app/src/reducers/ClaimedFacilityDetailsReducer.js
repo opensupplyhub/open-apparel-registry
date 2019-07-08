@@ -9,14 +9,18 @@ import {
     startUpdateClaimedFacilityDetails,
     failUpdateClaimedFacilityDetails,
     completeUpdateClaimedFacilityDetails,
-    updateClaimedFacilityName,
+    updateClaimedFacilityNameEnglish,
+    updateClaimedFacilityNameNativeLanguage,
     updateClaimedFacilityAddress,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
     updateClaimedFacilityWebsite,
+    updateClaimedFacilityWebsiteVisibility,
     updateClaimedFacilityDescription,
     updateClaimedFacilityMinimumOrder,
     updateClaimedFacilityAverageLeadTime,
+    updateClaimedFacilityWorkersCount,
+    updateClaimedFacilityFemaleWorkersPercentage,
     updateClaimedFacilityPointOfContactVisibility,
     updateClaimedFacilityContactPersonName,
     updateClaimedFacilityContactEmail,
@@ -26,6 +30,8 @@ import {
     updateClaimedFacilityOfficeCountry,
     updateClaimedFacilityOfficePhone,
     updateClaimedFacilityParentCompany,
+    updateClaimedFacilityFacilityType,
+    updateClaimedFacilityOtherFacilityType,
 } from '../actions/claimedFacilityDetails';
 
 const initialState = Object.freeze({
@@ -78,12 +84,38 @@ export default createReducer({
         },
         data: { $set: data },
     }),
-    [updateClaimedFacilityName]: (state, name) => update(state, {
+    [updateClaimedFacilityNameEnglish]: (state, name) => update(state, {
         updateData: {
             error: { $set: initialState.updateData.error },
         },
         data: {
-            facility_name: { $set: name },
+            facility_name_english: { $set: name },
+        },
+    }),
+    [updateClaimedFacilityNameNativeLanguage]: (state, name) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_name_native_language: { $set: name },
+        },
+    }),
+    [updateClaimedFacilityWorkersCount]: (state, workersCount) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_workers_count: { $set: workersCount },
+        },
+    }),
+    [updateClaimedFacilityFemaleWorkersPercentage]: (state, percentage) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_female_workers_percentage: {
+                $set: percentage,
+            },
         },
     }),
     [updateClaimedFacilityAddress]: (state, address) => update(state, {
@@ -142,6 +174,14 @@ export default createReducer({
             facility_website: { $set: website },
         },
     }),
+    [updateClaimedFacilityWebsiteVisibility]: (state, visible) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_website_publicly_visible: { $set: visible },
+        },
+    }),
     [updateClaimedFacilityDescription]: (state, description) => update(state, {
         updateData: {
             error: { $set: initialState.updateData.error },
@@ -165,6 +205,22 @@ export default createReducer({
         },
         data: {
             facility_average_lead_time: { $set: avgLeadTime },
+        },
+    }),
+    [updateClaimedFacilityFacilityType]: (state, type) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_type: { $set: type },
+        },
+    }),
+    [updateClaimedFacilityOtherFacilityType]: (state, otherType) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            other_facility_type: { $set: otherType },
         },
     }),
     [updateClaimedFacilityContactPersonName]: (state, person) => update(state, {

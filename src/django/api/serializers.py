@@ -440,14 +440,22 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                 'id': claim.id,
                 'facility': {
                     'description': claim.facility_description,
-                    'name': claim.facility_name,
+                    'name_english': claim.facility_name_english,
+                    'name_native_language': claim
+                    .facility_name_native_language,
                     'address': claim.facility_address,
-                    'website': claim.facility_website,
+                    'website': claim.facility_website
+                    if claim.facility_website_publicly_visible else None,
                     'parent_company': parent_company,
                     'phone_number': claim.facility_phone_number
                     if claim.facility_phone_number_publicly_visible else None,
                     'minimum_order': claim.facility_minimum_order_quantity,
                     'average_lead_time': claim.facility_average_lead_time,
+                    'workers_count': claim.facility_workers_count,
+                    'female_workers_percentage': claim
+                    .facility_female_workers_percentage,
+                    'facility_type': claim.facility_type,
+                    'other_facility_type': claim.other_facility_type,
                 },
                 'contact': {
                     'name': claim.point_of_contact_person_name,
@@ -510,7 +518,8 @@ class FacilityClaimDetailsSerializer(ModelSerializer):
                   'phone_number', 'company_name', 'website',
                   'facility_description', 'preferred_contact_method', 'status',
                   'contributor', 'facility', 'verification_method',
-                  'status_change', 'notes', 'facility_parent_company')
+                  'status_change', 'notes', 'facility_parent_company',
+                  'job_title', 'linkedin_profile')
 
     def get_contributor(self, claim):
         return UserProfileSerializer(claim.contributor.admin).data
@@ -565,22 +574,26 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
     facility = SerializerMethodField()
     countries = SerializerMethodField()
     contributors = SerializerMethodField()
+    facility_types = SerializerMethodField()
     facility_parent_company = SerializerMethodField()
 
     class Meta:
         model = FacilityClaim
-        fields = ('id', 'facility_description', 'facility_name',
+        fields = ('id', 'facility_description',
+                  'facility_name_english', 'facility_name_native_language',
                   'facility_address', 'facility_phone_number',
                   'facility_phone_number_publicly_visible',
                   'facility_website', 'facility_minimum_order_quantity',
                   'facility_average_lead_time', 'point_of_contact_person_name',
-                  'point_of_contact_email',
+                  'point_of_contact_email', 'facility_workers_count',
+                  'facility_female_workers_percentage',
                   'point_of_contact_publicly_visible',
                   'office_official_name', 'office_address',
                   'office_country_code', 'office_phone_number',
                   'office_info_publicly_visible',
                   'facility', 'countries', 'facility_parent_company',
-                  'contributors')
+                  'contributors', 'facility_website_publicly_visible',
+                  'facility_types', 'facility_type', 'other_facility_type')
 
     def get_facility(self, claim):
         return FacilityDetailsSerializer(claim.facility).data
@@ -594,6 +607,9 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
             for contributor
             in Contributor.objects.all().order_by('name')
         ]
+
+    def get_facility_types(self, claim):
+        return FacilityClaim.FACILITY_TYPE_CHOICES
 
     def get_facility_parent_company(self, claim):
         if not claim.parent_company:

@@ -1,6 +1,9 @@
 import { createAction } from 'redux-act';
 import mapValues from 'lodash/mapValues';
 import isNull from 'lodash/isNull';
+import omit from 'lodash/omit';
+import isInteger from 'lodash/isInteger';
+import { isInt } from 'validator';
 
 import apiRequest from '../util/apiRequest';
 
@@ -65,8 +68,31 @@ export function submitClaimedFacilityDetailsUpdate(claimID) {
 
         dispatch(startUpdateClaimedFacilityDetails());
 
+        const updateData = Object.assign(
+            {},
+            omit(
+                data,
+                [
+                    'contributors',
+                    'countries',
+                    'facility_types',
+                ],
+            ),
+            {
+                facility_workers_count:
+                    (isInteger(data.facility_workers_count) || isInt(data.facility_workers_count))
+                        ? data.facility_workers_count
+                        : null,
+                facility_female_workers_percentage:
+                    (isInteger(data.facility_female_workers_percentage) ||
+                     isInt(data.facility_female_workers_percentage))
+                        ? data.facility_female_workers_percentage
+                        : null,
+            },
+        );
+
         return apiRequest
-            .put(makeGetOrUpdateApprovedFacilityClaimURL(claimID), data)
+            .put(makeGetOrUpdateApprovedFacilityClaimURL(claimID), updateData)
             .then(({ data: responseData }) => mapValues(responseData, (v) => {
                 if (isNull(v)) {
                     return '';
@@ -83,8 +109,10 @@ export function submitClaimedFacilityDetailsUpdate(claimID) {
     };
 }
 
-export const updateClaimedFacilityName =
-    createAction('UPDATE_CLAIMED_FACILITY_NAME');
+export const updateClaimedFacilityNameEnglish =
+    createAction('UPDATE_CLAIMED_FACILITY_NAME_ENGLISH');
+export const updateClaimedFacilityNameNativeLanguage =
+    createAction('UPDATE_CLAIMED_FACILITY_NAME_NATIVE_LANGUAGE');
 export const updateClaimedFacilityAddress =
     createAction('UPDATE_CLAIMED_FACILITY_ADDRESS');
 export const updateClaimedFacilityPhone =
@@ -93,12 +121,18 @@ export const updateClaimedFacilityPhoneVisibility =
     createAction('UPDATE_CLAIMED_FACILITY_PHONE_VISIBILITY');
 export const updateClaimedFacilityWebsite =
     createAction('UPDATE_CLAIMED_FACILITY_WEBSITE');
+export const updateClaimedFacilityWebsiteVisibility =
+    createAction('UPDATE_CLAIMED_FACILITY_WEBSITE_VISIBILITY');
 export const updateClaimedFacilityDescription =
     createAction('UPDATE_CLAIMED_FACILITY_DESCRIPTION');
 export const updateClaimedFacilityMinimumOrder =
     createAction('UPDATE_CLAIMED_FACILITY_MINIMUM_ORDER');
 export const updateClaimedFacilityAverageLeadTime =
     createAction('UPDATE_CLAIMED_FACILITY_AVERAGE_LEAD_TIME');
+export const updateClaimedFacilityWorkersCount =
+    createAction('UPDATE_CLAIMED_FACILITY_WORKERS_COUNT');
+export const updateClaimedFacilityFemaleWorkersPercentage =
+    createAction('UPDATE_CLAIMED_FACILITY_FEMALE_WORKERS_PERCENTAGE');
 export const updateClaimedFacilityPointOfContactVisibility =
     createAction('UPDATE_CLAIMED_FACILITY_POINT_OF_CONTACT_VISIBILITY');
 export const updateClaimedFacilityContactPersonName =
@@ -117,3 +151,7 @@ export const updateClaimedFacilityOfficePhone =
     createAction('UPDATE_CLAIMED_FACILITY_OFFICE_PHONE');
 export const updateClaimedFacilityParentCompany =
     createAction('UPDATE_CLAIMED_FACILITY_PARENT_COMPANY');
+export const updateClaimedFacilityFacilityType =
+    createAction('UPDATE_CLAIMED_FACILITY_FACILITY_TYPE');
+export const updateClaimedFacilityOtherFacilityType =
+    createAction('UPDATE_CLAIMED_FACILITY_OTHER_FACILITY_TYPE');

@@ -13,10 +13,11 @@ import memoize from 'lodash/memoize';
 import find from 'lodash/find';
 import stubFalse from 'lodash/stubFalse';
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import get from 'lodash/get';
 import isNull from 'lodash/isNull';
 import Select from 'react-select';
-import { isEmail } from 'validator';
+import { isEmail, isInt } from 'validator';
 import { toast } from 'react-toastify';
 
 import ClaimedFacilitiesDetailsSidebar from './ClaimedFacilitiesDetailsSidebar';
@@ -27,15 +28,21 @@ import COLOURS from '../util/COLOURS';
 import {
     fetchClaimedFacilityDetails,
     clearClaimedFacilityDetails,
-    updateClaimedFacilityName,
+    updateClaimedFacilityNameEnglish,
+    updateClaimedFacilityNameNativeLanguage,
+    updateClaimedFacilityWorkersCount,
+    updateClaimedFacilityFemaleWorkersPercentage,
     updateClaimedFacilityAddress,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
     updateClaimedFacilityParentCompany,
     updateClaimedFacilityWebsite,
+    updateClaimedFacilityWebsiteVisibility,
     updateClaimedFacilityDescription,
     updateClaimedFacilityMinimumOrder,
     updateClaimedFacilityAverageLeadTime,
+    updateClaimedFacilityFacilityType,
+    updateClaimedFacilityOtherFacilityType,
     updateClaimedFacilityContactPersonName,
     updateClaimedFacilityContactEmail,
     updateClaimedFacilityPointOfContactVisibility,
@@ -228,13 +235,17 @@ function ClaimedFacilitiesDetails({
     data,
     getDetails,
     clearDetails,
-    updateFacilityName,
+    updateFacilityNameEnglish,
+    updateFacilityNameNativeLanguage,
     updateFacilityAddress,
     updateFacilityPhone,
     updateFacilityWebsite,
+    updateFacilityWebsiteVisibility,
     updateFacilityDescription,
     updateFacilityMinimumOrder,
     updateFacilityAverageLeadTime,
+    updateFacilityWorkersCount,
+    updateFacilityFemaleWorkersPercentage,
     updateContactPerson,
     updateContactEmail,
     updateOfficeName,
@@ -249,6 +260,8 @@ function ClaimedFacilitiesDetails({
     errorUpdating,
     updateParentCompany,
     contributorOptions,
+    updateFacilityType,
+    updateFacilityOtherType,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -310,9 +323,15 @@ function ClaimedFacilitiesDetails({
                     Facility Details
                 </Typography>
                 <InputSection
-                    label="Facility name"
-                    value={data.facility_name}
-                    onChange={updateFacilityName}
+                    label="Facility name (English language)"
+                    value={data.facility_name_english}
+                    onChange={updateFacilityNameEnglish}
+                    disabled={updating}
+                />
+                <InputSection
+                    label="Facility name (native language)"
+                    value={data.facility_name_native_language}
+                    onChange={updateFacilityNameNativeLanguage}
                     disabled={updating}
                 />
                 <InputSection
@@ -344,6 +363,9 @@ function ClaimedFacilitiesDetails({
                             return !isValidFacilityURL(data.facility_website);
                         }
                     }
+                    hasSwitch
+                    switchValue={data.facility_website_publicly_visible}
+                    onSwitchChange={updateFacilityWebsiteVisibility}
                 />
                 <InputSection
                     label="Description"
@@ -372,6 +394,22 @@ function ClaimedFacilitiesDetails({
                     </Typography>
                 </ShowOnly>
                 <InputSection
+                    label="Facility Type"
+                    value={get(data, 'facility_type', null)}
+                    onChange={updateFacilityType}
+                    disabled={updating}
+                    isSelect
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.facility_types)}
+                />
+                <ShowOnly when={isEqual(get(data, 'facility_type', null), 'Other')}>
+                    <InputSection
+                        label="Other Facility Type"
+                        value={get(data, 'other_facility_type', null)}
+                        onChange={updateFacilityOtherType}
+                        disabled={updating}
+                    />
+                </ShowOnly>
+                <InputSection
                     label="Minimum order quantity"
                     value={data.facility_minimum_order_quantity}
                     onChange={updateFacilityMinimumOrder}
@@ -382,6 +420,42 @@ function ClaimedFacilitiesDetails({
                     value={data.facility_average_lead_time}
                     onChange={updateFacilityAverageLeadTime}
                     disabled={updating}
+                />
+                <InputSection
+                    label="Number of workers"
+                    value={data.facility_workers_count}
+                    onChange={updateFacilityWorkersCount}
+                    disabled={updating}
+                    hasValidationErrorFn={
+                        () => {
+                            if (isEmpty(data.facility_workers_count)) {
+                                return false;
+                            }
+
+                            return !isInt(
+                                data.facility_workers_count,
+                                { min: 0 },
+                            );
+                        }
+                    }
+                />
+                <InputSection
+                    label="Percentage of female workers"
+                    value={data.facility_female_workers_percentage}
+                    onChange={updateFacilityFemaleWorkersPercentage}
+                    disabled={updating}
+                    hasValidationErrorFn={
+                        () => {
+                            if (isEmpty(data.facility_female_workers_percentage)) {
+                                return false;
+                            }
+
+                            return !isInt(
+                                data.facility_female_workers_percentage,
+                                { min: 0, max: 100 },
+                            );
+                        }
+                    }
                 />
                 <Typography
                     variant="title"
@@ -521,10 +595,14 @@ ClaimedFacilitiesDetails.propTypes = {
     data: approvedFacilityClaimPropType,
     getDetails: func.isRequired,
     clearDetails: func.isRequired,
-    updateFacilityName: func.isRequired,
+    updateFacilityNameEnglish: func.isRequired,
+    updateFacilityNameNativeLanguage: func.isRequired,
+    updateFacilityWorkersCount: func.isRequired,
+    updateFacilityFemaleWorkersPercentage: func.isRequired,
     updateFacilityAddress: func.isRequired,
     updateFacilityPhone: func.isRequired,
     updateFacilityWebsite: func.isRequired,
+    updateFacilityWebsiteVisibility: func.isRequired,
     updateFacilityDescription: func.isRequired,
     updateFacilityMinimumOrder: func.isRequired,
     updateFacilityAverageLeadTime: func.isRequired,
@@ -541,6 +619,8 @@ ClaimedFacilitiesDetails.propTypes = {
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
     contributorOptions: contributorOptionsPropType,
+    updateFacilityType: func.isRequired,
+    updateFacilityOtherType: func.isRequired,
 };
 
 function mapStateToProps({
@@ -589,7 +669,12 @@ function mapDispatchToProps(
     return {
         getDetails: () => dispatch(fetchClaimedFacilityDetails(claimID)),
         clearDetails: () => dispatch(clearClaimedFacilityDetails()),
-        updateFacilityName: makeDispatchValueFn(updateClaimedFacilityName),
+        updateFacilityNameEnglish: makeDispatchValueFn(
+            updateClaimedFacilityNameEnglish,
+        ),
+        updateFacilityNameNativeLanguage: makeDispatchValueFn(
+            updateClaimedFacilityNameNativeLanguage,
+        ),
         updateFacilityAddress: makeDispatchValueFn(
             updateClaimedFacilityAddress,
         ),
@@ -611,14 +696,28 @@ function mapDispatchToProps(
         updateFacilityWebsite: makeDispatchValueFn(
             updateClaimedFacilityWebsite,
         ),
+        updateFacilityWebsiteVisibility: makeDispatchCheckedFn(
+            updateClaimedFacilityWebsiteVisibility,
+        ),
         updateFacilityDescription: makeDispatchValueFn(
             updateClaimedFacilityDescription,
+        ),
+        updateFacilityType: ({ value }) =>
+            dispatch(updateClaimedFacilityFacilityType(value)),
+        updateFacilityOtherType: makeDispatchValueFn(
+            updateClaimedFacilityOtherFacilityType,
         ),
         updateFacilityMinimumOrder: makeDispatchValueFn(
             updateClaimedFacilityMinimumOrder,
         ),
         updateFacilityAverageLeadTime: makeDispatchValueFn(
             updateClaimedFacilityAverageLeadTime,
+        ),
+        updateFacilityWorkersCount: makeDispatchValueFn(
+            updateClaimedFacilityWorkersCount,
+        ),
+        updateFacilityFemaleWorkersPercentage: makeDispatchValueFn(
+            updateClaimedFacilityFemaleWorkersPercentage,
         ),
         updateContactPerson: makeDispatchValueFn(
             updateClaimedFacilityContactPersonName,
