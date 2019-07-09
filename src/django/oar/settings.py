@@ -170,6 +170,7 @@ MIDDLEWARE = [
     'rollbar.contrib.django.middleware.RollbarNotifierMiddlewareExcluding404',
     'simple_history.middleware.HistoryRequestMiddleware',
     'waffle.middleware.WaffleMiddleware',
+    'api.middleware.RequestLogMiddleware',
 ]
 
 ROOT_URLCONF = 'oar.urls'
