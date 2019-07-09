@@ -296,7 +296,7 @@ class FacilityDetailSidebar extends Component {
                                             href={makeApprovedClaimDetailsLink(facilityClaimID)}
                                             style={detailsSidebarStyles.linkStyle}
                                         >
-                                            Update claimed facility profile
+                                            Update facility details
                                         </Link>
                                     </FeatureFlag>
                                 </ShowOnly>

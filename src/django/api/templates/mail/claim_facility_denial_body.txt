@@ -12,7 +12,9 @@ Here's the reason for the denial:
 {{ denial_reason }}
 {% endif %}
 
-Sincerely,
+The claim information is inaccurate. If you believe this denial to be inaccurate, you can reach out to the OAR team to provide additional, clarifying information at: info@openapparel.org The team will review your claim and get back to you.
+
+Best wishes,
 
 {% include "mail/signature_block.txt" %}
 {% endblock content %}
