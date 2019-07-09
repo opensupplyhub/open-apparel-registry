@@ -1503,11 +1503,15 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             facility_match.status = FacilityMatch.CONFIRMED
             facility_match.save()
 
-            FacilityMatch \
+            matches_to_reject = FacilityMatch \
                 .objects \
                 .filter(facility_list_item=facility_list_item) \
-                .exclude(pk=facility_match_id) \
-                .update(status=FacilityMatch.REJECTED)
+                .exclude(pk=facility_match_id)
+            # Call `save` in a loop rather than use `update` to make sure that
+            # django-simple-history can log the changes
+            for match in matches_to_reject:
+                match.status = FacilityMatch.REJECTED
+                match.save()
 
             facility_list_item.status = FacilityListItem.CONFIRMED_MATCH
             facility_list_item.facility = facility_match.facility
@@ -1742,10 +1746,14 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .filter(facility_list=facility_list) \
                 .get(pk=request.data.get('list_item_id'))
 
-            FacilityMatch \
+            matches_to_deactivate = FacilityMatch \
                 .objects \
-                .filter(facility_list_item=facility_list_item) \
-                .update(is_active=False)
+                .filter(facility_list_item=facility_list_item)
+            # Call `save` in a loop rather than use `update` to make sure that
+            # django-simple-history can log the changes
+            for item in matches_to_deactivate:
+                item.is_active = False
+                item.save()
 
             facility_list_item.refresh_from_db()
 
