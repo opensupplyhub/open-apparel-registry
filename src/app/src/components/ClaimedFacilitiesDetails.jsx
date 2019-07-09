@@ -16,7 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 import isNull from 'lodash/isNull';
 import Select from 'react-select';
-import { isEmail, isURL } from 'validator';
+import { isEmail } from 'validator';
 import { toast } from 'react-toastify';
 
 import ClaimedFacilitiesDetailsSidebar from './ClaimedFacilitiesDetailsSidebar';
@@ -56,6 +56,7 @@ import {
     getValueFromEvent,
     getCheckedFromEvent,
     mapDjangoChoiceTuplesToSelectOptions,
+    isValidFacilityURL,
 } from '../util/util';
 
 import { claimAFacilityFormFields } from '../util/constants';
@@ -220,8 +221,6 @@ const InputSection = ({
 const createCountrySelectOptions = memoize(
     mapDjangoChoiceTuplesToSelectOptions,
 );
-
-const isValidFacilityURL = url => isURL(url, { protocols: ['http', 'https'] });
 
 function ClaimedFacilitiesDetails({
     fetching,

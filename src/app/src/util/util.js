@@ -26,7 +26,7 @@ import toInteger from 'lodash/toInteger';
 import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
 import every from 'lodash/every';
-import { isEmail } from 'validator';
+import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -614,6 +614,12 @@ export const claimFacilityContactInfoStepIsValid = ({
     !isEmpty(phoneNumber),
 ]);
 
-export const claimFacilityFacilityInfoStepIsValid = ({ companyName }) => !isEmpty(companyName);
+export const isValidFacilityURL = url => isEmpty(url) || isURL(url, { protocols: ['http', 'https'] });
+
+export const claimFacilityFacilityInfoStepIsValid = ({ companyName, website }) =>
+    every([
+        !isEmpty(companyName),
+        isValidFacilityURL(website),
+    ]);
 
 export const anyListItemMatchesAreInactive = ({ matches }) => some(matches, ['is_active', false]);
