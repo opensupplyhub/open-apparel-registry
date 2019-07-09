@@ -477,8 +477,7 @@ class FacilityClaim(models.Model):
         null=False,
         default=False,
         help_text='Is the editable facility phone number publicly visible?')
-    facility_website = models.CharField(
-        max_length=200,
+    facility_website = models.URLField(
         null=True,
         blank=True,
         help_text='The editable facility website for this claim.')

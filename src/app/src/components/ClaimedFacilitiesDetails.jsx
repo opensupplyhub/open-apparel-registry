@@ -56,6 +56,7 @@ import {
     getValueFromEvent,
     getCheckedFromEvent,
     mapDjangoChoiceTuplesToSelectOptions,
+    isValidFacilityURL,
 } from '../util/util';
 
 import { claimAFacilityFormFields } from '../util/constants';
@@ -334,6 +335,15 @@ function ClaimedFacilitiesDetails({
                     value={data.facility_website}
                     onChange={updateFacilityWebsite}
                     disabled={updating}
+                    hasValidationErrorFn={
+                        () => {
+                            if (isEmpty(data.facility_website)) {
+                                return false;
+                            }
+
+                            return !isValidFacilityURL(data.facility_website);
+                        }
+                    }
                 />
                 <InputSection
                     label="Description"
@@ -481,6 +491,8 @@ function ClaimedFacilitiesDetails({
                         disabled={
                             updating || (!isEmpty(data.point_of_contact_email)
                                          && !isEmail(data.point_of_contact_email))
+                                     || (!isEmpty(data.facility_website)
+                                         && !isValidFacilityURL(data.facility_website))
                         }
                     >
                         Save
