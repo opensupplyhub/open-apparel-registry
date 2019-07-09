@@ -18,7 +18,7 @@
                 Facility: {{ facility_name }}, {{ facility_address }}, {{ facility_country }}
             </li>
             <li>
-                Facility URL: {{ facility_url }}
+                Facility URL: <a href="{{ facility_url }}">{{ facility_url }}</a>
             </li>
         </ul>
         {% if denial_reason|length %}
@@ -29,6 +29,12 @@
             {{ denial_reason }}
         </p>
         {% endif %}
+        <p>
+            The claim information is inaccurate. If you believe this denial to be inaccurate,
+            you can reach out to the OAR team to provide additional, clarifying information at:
+            <a href="mailto:info@openapparel.org">info@openapparel.org</a> The team will review
+            your claim and get back to you.
+        </p>
         <p>
             Best wishes,
         </p>
