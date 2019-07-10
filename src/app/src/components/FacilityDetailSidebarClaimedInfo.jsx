@@ -45,9 +45,12 @@ export default function FacilityDetailsSidebarClaimedInfo({
             </Typography>
             <div className="control-panel__group">
                 <p>
-                    OAR staff has verified that the claimant is connected to the
-                    facility but has not verified the claimed facility details
-                    displayed below.
+                    Please note: The OAR team <strong>has only</strong> verified that the person
+                    claiming a facility profile is connected to that facility.
+                    The OAR team <strong>has not</strong> verified any additional details added
+                    to a facility profile, e.g. certifications, production
+                    capabilities etc. Users interested in those details will
+                    need to carry out their own due diligence checks.
                 </p>
                 <Link
                     to={aboutClaimedFacilitiesRoute}
