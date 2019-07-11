@@ -22,6 +22,8 @@ import {
     failFetchParentCompanyOptions,
     completeFetchParentCompanyOptions,
     resetParentCompanyOptions,
+    updateClaimAFacilityJobTitle,
+    updateClaimAFacilityLinkedinProfile,
 } from '../actions/claimFacility';
 
 const initialState = Object.freeze({
@@ -33,6 +35,7 @@ const initialState = Object.freeze({
     claimData: Object.freeze({
         formData: Object.freeze({
             contactPerson: '',
+            jobTitle: '',
             email: '',
             phoneNumber: '',
             companyName: '',
@@ -41,6 +44,7 @@ const initialState = Object.freeze({
             verificationMethod: '',
             preferredContactMethod: null,
             parentCompany: null,
+            linkedinProfile: '',
         }),
         fetching: false,
         error: null,
@@ -174,6 +178,22 @@ export default createReducer(
                 claimData: {
                     formData: {
                         preferredContactMethod: { $set: payload },
+                    },
+                },
+            }),
+        [updateClaimAFacilityJobTitle]: (state, payload) =>
+            update(state, {
+                claimData: {
+                    formData: {
+                        jobTitle: { $set: payload },
+                    },
+                },
+            }),
+        [updateClaimAFacilityLinkedinProfile]: (state, payload) =>
+            update(state, {
+                claimData: {
+                    formData: {
+                        linkedinProfile: { $set: payload },
                     },
                 },
             }),

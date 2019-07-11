@@ -36,6 +36,8 @@ export function fetchClaimFacilityData(oarID) {
 
 export const updateClaimAFacilityContactPerson =
     createAction('UPDATE_CLAIM_A_FACILITY_CONTACT_PERSON');
+export const updateClaimAFacilityJobTitle =
+    createAction('UPDATE_CLAIM_A_FACILITY_JOB_TITLE');
 export const updateClaimAFacilityEmail =
     createAction('UPDATE_CLAIM_A_FACILITY_EMAIL');
 export const updateClaimAFacilityPhoneNumber =
@@ -52,6 +54,8 @@ export const updateClaimAFacilityVerificationMethod =
     createAction('UPDATE_CLAIM_A_FACILITY_VERIFICATION_METHOD');
 export const updateClaimAFacilityPreferredContactMethod =
     createAction('UPDATE_CLAIM_A_FACILITY_PREFERRED_CONTACT_METHOD');
+export const updateClaimAFacilityLinkedinProfile =
+    createAction('UPDATE_CLAIM_A_FACILITY_LINKEDIN_PROFILE');
 
 export const startSubmitClaimAFacilityData =
     createAction('START_SUBMIT_CLAIM_A_FACILITY_DATA');

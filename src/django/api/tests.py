@@ -1824,6 +1824,7 @@ class ApprovedFacilityClaimTests(APITestCase):
                 'facility_phone_number_publicly_visible': False,
                 'point_of_contact_publicly_visible': False,
                 'office_info_publicly_visible': False,
+                'facility_website_publicly_visible': False,
             }
         )
 
@@ -1870,6 +1871,17 @@ class ApprovedFacilityClaimTests(APITestCase):
         ).json()['properties']['claim_info']
 
         self.assertIsNone(response_data['office'])
+
+    @override_switch('claim_a_facility', active=True)
+    def test_non_visible_website_is_not_in_details_response(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response_data = self.client.get(
+            '/api/facilities/{}/'.format(self.facility_claim.facility.id)
+        ).json()['properties']['claim_info']['facility']
+
+        self.assertIsNone(response_data['website'])
 
 
 class FacilityClaimTest(APITestCase):

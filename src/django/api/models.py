@@ -392,6 +392,42 @@ class FacilityClaim(models.Model):
         (REVOKED, REVOKED),
     )
 
+    CUT_AND_SEW = 'Cut and Sew / RMG'
+    DYEHOUSE = 'Dyehouse'
+    EMBELLISHMENTS = 'Embellishments'
+    FABRIC_MILL = 'Fabric Mill'
+    FINISHING = 'Finishing'
+    GINNING = 'Ginning'
+    KNITTING = 'Knitting'
+    LAUNDRY = 'Laundry'
+    PACKING = 'Packing'
+    SCOURING = 'Scouring'
+    SCREENPRINTING = 'Screenprinting'
+    STITCHING = 'Stitching (Shoes)'
+    TANNERY = 'Tannery'
+    WAREHOUSE = 'Warehouse'
+    WEAVING = 'Weaving'
+    OTHER = 'Other'
+
+    FACILITY_TYPE_CHOICES = (
+        (CUT_AND_SEW, CUT_AND_SEW),
+        (DYEHOUSE, DYEHOUSE),
+        (EMBELLISHMENTS, EMBELLISHMENTS),
+        (FABRIC_MILL, FABRIC_MILL),
+        (FINISHING, FINISHING),
+        (GINNING, GINNING),
+        (KNITTING, KNITTING),
+        (LAUNDRY, LAUNDRY),
+        (PACKING, PACKING),
+        (SCOURING, SCOURING),
+        (SCREENPRINTING, SCREENPRINTING),
+        (STITCHING, STITCHING),
+        (TANNERY, TANNERY),
+        (WAREHOUSE, WAREHOUSE),
+        (WEAVING, WEAVING),
+        (OTHER, OTHER),
+    )
+
     contributor = models.ForeignKey(
         'Contributor',
         null=False,
@@ -407,6 +443,13 @@ class FacilityClaim(models.Model):
         null=False,
         blank=False,
         help_text='The contact person for the facility claim')
+    job_title = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The contact person\'s job title',
+        verbose_name='contact person\'s job title',
+        default='')
     email = models.EmailField(
         null=False,
         blank=False,
@@ -430,6 +473,11 @@ class FacilityClaim(models.Model):
         null=False,
         blank=True,
         help_text='A description of the facility')
+    linkedin_profile = models.URLField(
+        null=False,
+        blank=True,
+        help_text='A LinkedIn profile for verifying the facility claim',
+        verbose_name='verification LinkedIn profile')
     verification_method = models.TextField(
         null=False,
         blank=True,
@@ -458,11 +506,18 @@ class FacilityClaim(models.Model):
         help_text='The user who changed the status of this facility claim',
         related_name='approver_of_claim')
     status_change_date = models.DateTimeField(null=True)
-    facility_name = models.CharField(
+    facility_name_english = models.CharField(
         max_length=200,
         null=True,
         blank=True,
-        help_text='The editable facility name for this claim.')
+        help_text='The editable official English facility name for the claim.',
+        verbose_name='facility name in English')
+    facility_name_native_language = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The editable official native language facility name.',
+        verbose_name='facility name in native language')
     facility_address = models.CharField(
         max_length=200,
         null=True,
@@ -481,6 +536,11 @@ class FacilityClaim(models.Model):
         null=True,
         blank=True,
         help_text='The editable facility website for this claim.')
+    facility_website_publicly_visible = models.BooleanField(
+        null=False,
+        default=False,
+        help_text='Is the website publicly visible?',
+        verbose_name='facility website visible')
     facility_minimum_order_quantity = models.CharField(
         max_length=200,
         null=True,
@@ -491,6 +551,31 @@ class FacilityClaim(models.Model):
         null=True,
         blank=True,
         help_text='The editable facilty avg lead time for this claim.')
+    facility_workers_count = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text='The editable facility workers count for this claim.',
+        verbose_name='facility workers count')
+    facility_female_workers_percentage = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=[(i, i) for i in range(0, 101)],
+        help_text=('Integer value indicating the facility\'s percentage of '
+                   'female workers.'),
+        verbose_name='percentage of female workers')
+    facility_type = models.CharField(
+        max_length=len(CUT_AND_SEW),
+        null=True,
+        blank=True,
+        choices=FACILITY_TYPE_CHOICES,
+        help_text='The editable facility type for this claim.',
+        verbose_name='facility type')
+    other_facility_type = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='Editable alternate text when facility type is OTHER.',
+        verbose_name='description of other facility type')
     point_of_contact_person_name = models.CharField(
         max_length=200,
         null=True,

@@ -62,40 +62,16 @@ export default function FacilityDetailsSidebarClaimedInfo({
                 </Link>
             </div>
             <ClaimInfoSection
-                label="Name"
-                value={facility.name}
+                label="Name (English language)"
+                value={facility.name_english}
             />
-
+            <ClaimInfoSection
+                label="Name (native language)"
+                value={facility.name_native_language}
+            />
             <ClaimInfoSection
                 label="Address"
                 value={facility.address}
-            />
-
-            <ClaimInfoSection
-                label="Description"
-                value={facility.description}
-            />
-            <ClaimInfoSection
-                value={
-                    facility.website
-                        ? (
-                            <a
-                                href={
-                                    addProtocolToWebsiteURLIfMissing(
-                                        facility.website,
-                                    )}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {facility.website}
-                            </a>)
-                        : null
-                }
-                label="Website"
-            />
-            <ClaimInfoSection
-                value={facility.phone_number}
-                label="Phone Number"
             />
             <ClaimInfoSection
                 label="Parent Company"
@@ -116,25 +92,69 @@ export default function FacilityDetailsSidebarClaimedInfo({
                 }
             />
             <ClaimInfoSection
-                value={facility.facility_minimum_order_quantity}
+                label="Description"
+                value={facility.description}
+            />
+            <ClaimInfoSection
+                label="Facility Type"
+                value={facility.facility_type}
+            />
+            <ClaimInfoSection
+                label="Other Facility Type"
+                value={facility.other_facility_type}
+            />
+            <ClaimInfoSection
+                label="Website"
+                value={
+                    facility.website
+                        ? (
+                            <a
+                                href={
+                                    addProtocolToWebsiteURLIfMissing(
+                                        facility.website,
+                                    )
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {facility.website}
+                            </a>)
+                        : null
+                }
+            />
+            {
+                contact && (
+                    <>
+                        <ClaimInfoSection
+                            value={contact.name}
+                            label="Contact Person"
+                        />
+                        <ClaimInfoSection
+                            value={contact.email}
+                            label="Contact Email"
+                        />
+                    </>
+                )
+            }
+            <ClaimInfoSection
+                value={facility.phone_number}
+                label="Phone Number"
+            />
+            <ClaimInfoSection
+                value={facility.minimum_order}
                 label="Minimum Order"
             />
             <ClaimInfoSection
-                value={facility.facility_average_lead_time}
+                value={facility.average_lead}
                 label="Average Lead Time"
             />
-        </>
-    );
-
-    const contactSection = contact && (
-        <>
             <ClaimInfoSection
-                value={contact.name}
-                label="Contact Person"
+                value={facility.workers_count}
+                label="Number of workers"
             />
             <ClaimInfoSection
-                value={contact.email}
-                label="Contact Email"
+                value={facility.female_workers_percentage}
+                label="Percentage of female workers"
             />
         </>
     );
@@ -160,7 +180,6 @@ export default function FacilityDetailsSidebarClaimedInfo({
         <>
             <hr />
             {facilitySection}
-            {contactSection}
             {officeSection}
         </>
     );
