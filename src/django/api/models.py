@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib.auth.models import (AbstractBaseUser,
                                         BaseUserManager,
                                         PermissionsMixin)
@@ -442,6 +444,7 @@ class FacilityClaim(models.Model):
         max_length=200,
         null=False,
         blank=False,
+        verbose_name='contact person',
         help_text='The contact person for the facility claim')
     job_title = models.CharField(
         max_length=200,
@@ -453,25 +456,30 @@ class FacilityClaim(models.Model):
     email = models.EmailField(
         null=False,
         blank=False,
+        verbose_name='email',
         help_text='The contact email for the facility claim')
     phone_number = models.CharField(
         max_length=200,
         null=False,
         blank=False,
+        verbose_name='phone number',
         help_text='The contact phone number for the facility claim')
     company_name = models.CharField(
         max_length=200,
         null=False,
         blank=True,
+        verbose_name='company name',
         help_text='The company name for the facility')
     website = models.CharField(
         max_length=200,
         null=False,
         blank=True,
+        verbose_name='website',
         help_text='The website for the facility')
     facility_description = models.TextField(
         null=False,
         blank=True,
+        verbose_name='description',
         help_text='A description of the facility')
     linkedin_profile = models.URLField(
         null=False,
@@ -481,12 +489,14 @@ class FacilityClaim(models.Model):
     verification_method = models.TextField(
         null=False,
         blank=True,
+        verbose_name='verification method',
         help_text='An explanation of how the facility can be verified')
     preferred_contact_method = models.CharField(
         max_length=200,
         null=False,
         blank=False,
         choices=PREFERRED_CONTACT_CHOICES,
+        verbose_name='preferred contact method',
         help_text='The preferred contact method: email or phone')
     status = models.CharField(
         max_length=200,
@@ -494,18 +504,24 @@ class FacilityClaim(models.Model):
         blank=False,
         choices=STATUS_CHOICES,
         default=PENDING,
+        verbose_name='status',
         help_text='The current status of this facility claim')
     status_change_reason = models.TextField(
         null=True,
         blank=True,
+        verbose_name='status change reason',
         help_text='The reason entered when changing the status of this claim.')
     status_change_by = models.ForeignKey(
         'User',
         null=True,
         on_delete=models.PROTECT,
+        verbose_name='status changed by',
         help_text='The user who changed the status of this facility claim',
         related_name='approver_of_claim')
-    status_change_date = models.DateTimeField(null=True)
+    status_change_date = models.DateTimeField(
+        null=True,
+        verbose_name='status change date',
+    )
     facility_name_english = models.CharField(
         max_length=200,
         null=True,
@@ -522,19 +538,23 @@ class FacilityClaim(models.Model):
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='address',
         help_text='The editable facility address for this claim.')
     facility_phone_number = models.CharField(
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='facility phone number',
         help_text='The editable facility phone number for this claim.')
     facility_phone_number_publicly_visible = models.BooleanField(
         null=False,
         default=False,
+        verbose_name='is facility phone number publicly visible',
         help_text='Is the editable facility phone number publicly visible?')
     facility_website = models.URLField(
         null=True,
         blank=True,
+        verbose_name='facility website',
         help_text='The editable facility website for this claim.')
     facility_website_publicly_visible = models.BooleanField(
         null=False,
@@ -545,11 +565,13 @@ class FacilityClaim(models.Model):
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='minimum order quantity',
         help_text='The editable facility min order quantity for this claim.')
     facility_average_lead_time = models.CharField(
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='average lead time',
         help_text='The editable facilty avg lead time for this claim.')
     facility_workers_count = models.IntegerField(
         null=True,
@@ -580,39 +602,47 @@ class FacilityClaim(models.Model):
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='contact person',
         help_text='The editable point of contact person name')
     point_of_contact_email = models.EmailField(
         null=True,
         blank=True,
+        verbose_name='contact email',
         help_text='The editable point of contact email')
     point_of_contact_publicly_visible = models.BooleanField(
         null=False,
         default=False,
+        verbose_name='is contact visible',
         help_text='Is the point of contact info publicly visible?')
     office_official_name = models.CharField(
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='office official name',
         help_text='The editable office name for this claim.')
     office_address = models.CharField(
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='office address',
         help_text='The editable office address for this claim.')
     office_country_code = models.CharField(
         max_length=2,
         null=True,
         blank=True,
         choices=COUNTRY_CHOICES,
+        verbose_name='office country code',
         help_text='The editable office country code for this claim.')
     office_phone_number = models.CharField(
         max_length=200,
         null=True,
         blank=True,
+        verbose_name='office phone number',
         help_text='The editable office phone number for this claim.')
     office_info_publicly_visible = models.BooleanField(
         null=False,
         default=False,
+        verbose_name='is office publicly visible',
         help_text='Is the office info publicly visible?')
     parent_company = models.ForeignKey(
         'Contributor',
@@ -620,12 +650,91 @@ class FacilityClaim(models.Model):
         null=True,
         default=None,
         on_delete=models.PROTECT,
+        verbose_name='parent company',
         help_text='The parent company of this facility claim.')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     history = HistoricalRecords()
+
+    default_change_includes = (
+        'facility_name_english',
+        'facility_name_native_language',
+        'facility_address',
+        'facility_phone_number',
+        'facility_website',
+        'facility_minimum_order_quantity',
+        'facility_average_lead_time',
+        'facility_workers_count',
+        'facility_female_workers_percentage',
+        'facility_type',
+        'other_facility_type',
+        'facility_description',
+        'facility_minimum_order_quantity',
+        'facility_average_lead_time',
+        'point_of_contact_person_name',
+        'point_of_contact_email',
+        'office_official_name',
+        'office_address',
+        'office_country_code',
+        'office_phone_number',
+        'parent_company',
+    )
+
+    # A dictionary where the keys are field names and the values are predicate
+    # functions that will be passed a FacilityClaim instance and should return
+    # a boolean.
+    change_conditions = defaultdict(
+        lambda: lambda c: True,
+        facility_phone_number=(
+            lambda c: c.facility_phone_number_publicly_visible),
+        facility_website=(
+            lambda c: c.facility_website_publicly_visible),
+        point_of_contact_person_name=(
+            lambda c: c.point_of_contact_publicly_visible),
+        point_of_contact_email=(
+            lambda c: c.point_of_contact_publicly_visible),
+        office_official_name=(
+            lambda c: c.office_info_publicly_visible),
+        office_address=(
+            lambda c: c.office_info_publicly_visible),
+        office_country_code=(
+            lambda c: c.office_info_publicly_visible),
+        office_phone_number=(
+            lambda c: c.office_info_publicly_visible),
+    )
+
+    # A dictionary where the keys are field_names and the values are functions
+    # that will be passed a FacilityClaim and should return a string
+    change_value_serializers = defaultdict(
+        lambda: lambda v: v,
+        parent_company=lambda v: v and v.name
+    )
+
+    def get_changes(self, include=list(default_change_includes)):
+        latest = self.history.latest()
+        previous = latest.prev_record
+        changes = None
+        if previous is not None:
+            for field in FacilityClaim._meta.fields:
+                should_report_change_publicly = \
+                    self.change_conditions[field.name](self)
+                if field.name in include and should_report_change_publicly:
+                    curr_value = self.change_value_serializers[field.name](
+                        getattr(self, field.name))
+                    prev_value = self.change_value_serializers[field.name](
+                        getattr(previous.instance, field.name))
+                    if curr_value != prev_value:
+                        if changes is None:
+                            changes = []
+                        changes.append({
+                            'name': field.name,
+                            'verbose_name': field.verbose_name,
+                            'previous': prev_value,
+                            'current': curr_value,
+                        })
+        return changes
 
 
 class FacilityClaimReviewNote(models.Model):

@@ -180,11 +180,21 @@ def send_claim_update_note_to_one_contributor(request, claim, contributor):
 
     facility_country = COUNTRY_NAMES[claim.facility.country_code]
 
+    changes = claim.get_changes()
+    if changes:
+        changes = [
+            '{}: {}'.format(
+                c['verbose_name'][:1].upper() + c['verbose_name'][1:],
+                c['current'])
+            for c in changes
+        ]
+
     notice_dictionary = {
         'facility_name': claim.facility.name,
         'facility_address': claim.facility.address,
         'facility_country': facility_country,
         'facility_url': make_facility_url(request, claim.facility),
+        'changes': changes,
     }
 
     send_mail(
