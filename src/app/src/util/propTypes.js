@@ -281,4 +281,6 @@ export const approvedFacilityClaimPropType = shape({
     facility_type: string.isRequired,
     other_facility_type: string.isRequired,
     facility_types: arrayOf(arrayOf(string)).isRequired,
+    affiliation_choices: arrayOf(arrayOf(string)).isRequired,
+    certification_choices: arrayOf(arrayOf(string)).isRequired,
 });
