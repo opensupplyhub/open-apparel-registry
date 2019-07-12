@@ -2075,6 +2075,21 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.other_facility_type = other_facility_type
 
+            facility_affiliations = request.data.get('facility_affiliations')
+
+            if facility_affiliations:
+                claim.facility_affiliations = facility_affiliations
+            else:
+                claim.facility_affiliations = None
+
+            facility_certifications = request.data \
+                                             .get('facility_certifications')
+
+            if facility_certifications:
+                claim.facility_certifications = facility_certifications
+            else:
+                claim.facility_certifications = None
+
             field_names = (
                 'facility_description',
                 'facility_name_english',

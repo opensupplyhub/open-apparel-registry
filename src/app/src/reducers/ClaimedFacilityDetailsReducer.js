@@ -1,5 +1,7 @@
 import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
+import orderBy from 'lodash/orderBy';
+import identity from 'lodash/identity';
 
 import {
     startFetchClaimedFacilityDetails,
@@ -32,6 +34,8 @@ import {
     updateClaimedFacilityParentCompany,
     updateClaimedFacilityFacilityType,
     updateClaimedFacilityOtherFacilityType,
+    updateClaimedFacilityAffiliations,
+    updateClaimedFacilityCertifications,
 } from '../actions/claimedFacilityDetails';
 
 const initialState = Object.freeze({
@@ -115,6 +119,26 @@ export default createReducer({
         data: {
             facility_female_workers_percentage: {
                 $set: percentage,
+            },
+        },
+    }),
+    [updateClaimedFacilityAffiliations]: (state, affiliations) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_affiliations: {
+                $set: orderBy(affiliations, identity),
+            },
+        },
+    }),
+    [updateClaimedFacilityCertifications]: (state, certifications) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_certifications: {
+                $set: orderBy(certifications, identity),
             },
         },
     }),

@@ -4,6 +4,8 @@ import trim from 'lodash/trim';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
 import get from 'lodash/get';
+import orderBy from 'lodash/orderBy';
+import identity from 'lodash/identity';
 
 import { aboutClaimedFacilitiesRoute } from '../util/constants';
 
@@ -155,6 +157,44 @@ export default function FacilityDetailsSidebarClaimedInfo({
             <ClaimInfoSection
                 value={facility.female_workers_percentage}
                 label="Percentage of female workers"
+            />
+            <ClaimInfoSection
+                label="Affiliations"
+                value={
+                    facility.affiliations && facility.affiliations.length
+                        && (
+                            <ul>
+                                {
+                                    orderBy(facility.affiliations, identity)
+                                        .map(affiliation => (
+                                            <li key={affiliation}>
+                                                {affiliation}
+                                            </li>
+                                        ))
+                                }
+                            </ul>
+                        )
+
+                }
+            />
+            <ClaimInfoSection
+                label="Certifications/Standards/Regulations"
+                value={
+                    facility.certifications && facility.certifications.length
+                        && (
+                            <ul>
+                                {
+                                    orderBy(facility.certifications, identity)
+                                        .map(certification => (
+                                            <li key={certification}>
+                                                {certification}
+                                            </li>
+                                        ))
+                                }
+                            </ul>
+                        )
+
+                }
             />
         </>
     );

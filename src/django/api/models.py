@@ -11,6 +11,7 @@ from simple_history.models import HistoricalRecords
 
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
+from api.constants import Affiliations, Certifications
 
 
 class EmailAsUsernameUserManager(BaseUserManager):
@@ -430,6 +431,57 @@ class FacilityClaim(models.Model):
         (OTHER, OTHER),
     )
 
+    AFFILIATION_CHOICES = [
+        (choice, choice)
+        for choice in
+        [
+            Affiliations.BENEFITS_BUSINESS_WORKERS,
+            Affiliations.BETTER_MILLS_PROGRAM,
+            Affiliations.BETTER_WORK,
+            Affiliations.CANOPY,
+            Affiliations.ETHICAL_TRADING_INITIATIVE,
+            Affiliations.FAIR_LABOR_ASSOCIATION,
+            Affiliations.FAIR_WEAR_FOUNDATION,
+            Affiliations.SEDEX,
+            Affiliations.SOCIAL_LABOR_CONVERGENCE_PLAN,
+            Affiliations.SUSTAINABLE_APPAREL_COALITION,
+            Affiliations.SWEATFREE_PURCHASING_CONSORTIUM,
+        ]
+    ]
+
+    CERTIFICATION_CHOICES = [
+        (choice, choice)
+        for choice in
+        [
+            Certifications.BCI,
+            Certifications.B_CORP,
+            Certifications.BLUESIGN,
+            Certifications.CANOPY,
+            Certifications.CRADLE_TO_CRADLE,
+            Certifications.EU_ECOLABEL,
+            Certifications.FSC,
+            Certifications.GLOBAL_RECYCLING_STANDARD,
+            Certifications.GOTS,
+            Certifications.GREEN_SCREEN,
+            Certifications.HIGG_INDEX,
+            Certifications.IMO_CONTROL,
+            Certifications.INTERNATIONAL_WOOL_TEXTILE,
+            Certifications.ISO_9000,
+            Certifications.IVN_LEATHER,
+            Certifications.LEATHER_WORKING_GROUP,
+            Certifications.NORDIC_SWAN,
+            Certifications.OEKO_TEX_STANDARD,
+            Certifications.OEKO_TEX_STEP,
+            Certifications.OEKO_TEX_ECO_PASSPORT,
+            Certifications.OEKO_TEX_MADE_IN_GREEN,
+            Certifications.PEFC,
+            Certifications.REACH,
+            Certifications.RESPONSIBLE_DOWN_STANDARD,
+            Certifications.RESPONSIBLE_WOOL_STANDARD,
+            Certifications.SAB8000,
+        ]
+    ]
+
     contributor = models.ForeignKey(
         'Contributor',
         null=False,
@@ -585,6 +637,34 @@ class FacilityClaim(models.Model):
         help_text=('Integer value indicating the facility\'s percentage of '
                    'female workers.'),
         verbose_name='percentage of female workers')
+    facility_affiliations = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            choices=AFFILIATION_CHOICES,
+            max_length=50,
+            help_text='A group the facility is affiliated with',
+            verbose_name='facility affiliation',
+        ),
+        null=True,
+        blank=True,
+        help_text='The facility\'s affiliations',
+        verbose_name='facility affilations',
+    )
+    facility_certifications = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            choices=CERTIFICATION_CHOICES,
+            max_length=50,
+            help_text='A certification the facility has achieved',
+            verbose_name='facility certification',
+        ),
+        null=True,
+        blank=True,
+        help_text='The facility\'s certifications',
+        verbose_name='facility certifications',
+    )
     facility_type = models.CharField(
         max_length=len(CUT_AND_SEW),
         null=True,
@@ -668,6 +748,8 @@ class FacilityClaim(models.Model):
         'facility_average_lead_time',
         'facility_workers_count',
         'facility_female_workers_percentage',
+        'facility_affiliations',
+        'facility_certifications',
         'facility_type',
         'other_facility_type',
         'facility_description',
@@ -709,7 +791,10 @@ class FacilityClaim(models.Model):
     # that will be passed a FacilityClaim and should return a string
     change_value_serializers = defaultdict(
         lambda: lambda v: v,
-        parent_company=lambda v: v and v.name
+        parent_company=lambda v: v and v.name,
+        facility_affiliations=lambda v: ', '.join(v) if v is not None else '',
+        facility_certifications=lambda v: ', '.join(v)
+        if v is not None else '',
     )
 
     def get_changes(self, include=list(default_change_includes)):

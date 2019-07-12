@@ -456,6 +456,8 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                     .facility_female_workers_percentage,
                     'facility_type': claim.facility_type,
                     'other_facility_type': claim.other_facility_type,
+                    'affiliations': claim.facility_affiliations,
+                    'certifications': claim.facility_certifications,
                 },
                 'contact': {
                     'name': claim.point_of_contact_person_name,
@@ -576,6 +578,8 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
     contributors = SerializerMethodField()
     facility_types = SerializerMethodField()
     facility_parent_company = SerializerMethodField()
+    affiliation_choices = SerializerMethodField()
+    certification_choices = SerializerMethodField()
 
     class Meta:
         model = FacilityClaim
@@ -593,7 +597,9 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'office_info_publicly_visible',
                   'facility', 'countries', 'facility_parent_company',
                   'contributors', 'facility_website_publicly_visible',
-                  'facility_types', 'facility_type', 'other_facility_type')
+                  'facility_types', 'facility_type', 'other_facility_type',
+                  'affiliation_choices', 'certification_choices',
+                  'facility_affiliations', 'facility_certifications')
 
     def get_facility(self, claim):
         return FacilityDetailsSerializer(claim.facility).data
@@ -619,6 +625,12 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
             'id': claim.parent_company.id,
             'name': claim.parent_company.name,
         }
+
+    def get_affiliation_choices(self, claim):
+        return FacilityClaim.AFFILIATION_CHOICES
+
+    def get_certification_choices(self, claim):
+        return FacilityClaim.CERTIFICATION_CHOICES
 
 
 class FacilityMatchSerializer(ModelSerializer):

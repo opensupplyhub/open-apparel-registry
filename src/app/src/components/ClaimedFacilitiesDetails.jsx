@@ -15,6 +15,9 @@ import stubFalse from 'lodash/stubFalse';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import get from 'lodash/get';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
+import includes from 'lodash/includes';
 import isNull from 'lodash/isNull';
 import Select from 'react-select';
 import { isEmail, isInt } from 'validator';
@@ -32,6 +35,8 @@ import {
     updateClaimedFacilityNameNativeLanguage,
     updateClaimedFacilityWorkersCount,
     updateClaimedFacilityFemaleWorkersPercentage,
+    updateClaimedFacilityAffiliations,
+    updateClaimedFacilityCertifications,
     updateClaimedFacilityAddress,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
@@ -154,6 +159,7 @@ const InputSection = ({
     onSwitchChange = noop,
     disabled = false,
     isSelect = false,
+    isMultiSelect = false,
     selectOptions = null,
     hasValidationErrorFn = stubFalse,
     aside = null,
@@ -167,6 +173,10 @@ const InputSection = ({
     );
 
     if (isSelect) {
+        const selectValue = isMultiSelect
+            ? filter(selectOptions, ({ value: option }) => includes(value, option))
+            : find(selectOptions, ['value', value]);
+
         return (
             <div style={claimedFacilitiesDetailsStyles.inputSectionStyles}>
                 <InputLabel
@@ -179,10 +189,11 @@ const InputSection = ({
                 {asideNode}
                 <Select
                     onChange={onChange}
-                    value={find(selectOptions, ['value', value])}
+                    value={selectValue}
                     options={selectOptions}
                     disabled={disabled}
                     styles={selectStyles}
+                    isMulti={isMultiSelect}
                 />
             </div>
         );
@@ -246,6 +257,8 @@ function ClaimedFacilitiesDetails({
     updateFacilityAverageLeadTime,
     updateFacilityWorkersCount,
     updateFacilityFemaleWorkersPercentage,
+    updateFacilityAffiliations,
+    updateFacilityCertifications,
     updateContactPerson,
     updateContactEmail,
     updateOfficeName,
@@ -457,6 +470,24 @@ function ClaimedFacilitiesDetails({
                         }
                     }
                 />
+                <InputSection
+                    label="Affiliations"
+                    value={get(data, 'facility_affiliations', [])}
+                    onChange={updateFacilityAffiliations}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.affiliation_choices)}
+                />
+                <InputSection
+                    label="Certifications/Standards/Regulations"
+                    value={get(data, 'facility_certifications', [])}
+                    onChange={updateFacilityCertifications}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.certification_choices)}
+                />
                 <Typography
                     variant="title"
                     style={claimedFacilitiesDetailsStyles.headingStyles}
@@ -666,6 +697,13 @@ function mapDispatchToProps(
             dispatch,
         );
 
+    const makeDispatchMultiSelectFn = updateFn =>
+        flow(
+            selection => map(selection, 'value'),
+            updateFn,
+            dispatch,
+        );
+
     return {
         getDetails: () => dispatch(fetchClaimedFacilityDetails(claimID)),
         clearDetails: () => dispatch(clearClaimedFacilityDetails()),
@@ -718,6 +756,12 @@ function mapDispatchToProps(
         ),
         updateFacilityFemaleWorkersPercentage: makeDispatchValueFn(
             updateClaimedFacilityFemaleWorkersPercentage,
+        ),
+        updateFacilityAffiliations: makeDispatchMultiSelectFn(
+            updateClaimedFacilityAffiliations,
+        ),
+        updateFacilityCertifications: makeDispatchMultiSelectFn(
+            updateClaimedFacilityCertifications,
         ),
         updateContactPerson: makeDispatchValueFn(
             updateClaimedFacilityContactPersonName,
