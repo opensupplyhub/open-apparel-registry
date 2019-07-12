@@ -776,6 +776,8 @@ class FacilityClaim(models.Model):
         'facility_female_workers_percentage',
         'facility_affiliations',
         'facility_certifications',
+        'facility_product_types',
+        'facility_production_types',
         'facility_type',
         'other_facility_type',
         'facility_description',
@@ -820,6 +822,10 @@ class FacilityClaim(models.Model):
         parent_company=lambda v: v and v.name,
         facility_affiliations=lambda v: ', '.join(v) if v is not None else '',
         facility_certifications=lambda v: ', '.join(v)
+        if v is not None else '',
+        facility_product_types=lambda v: ', '.join(v)
+        if v is not None else '',
+        facility_production_types=lambda v: ', '.join(v)
         if v is not None else '',
     )
 

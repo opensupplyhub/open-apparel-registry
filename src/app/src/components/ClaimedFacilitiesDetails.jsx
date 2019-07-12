@@ -19,7 +19,9 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import includes from 'lodash/includes';
 import isNull from 'lodash/isNull';
-import Select from 'react-select';
+import partition from 'lodash/partition';
+import concat from 'lodash/concat';
+import Select, { Creatable } from 'react-select';
 import { isEmail, isInt } from 'validator';
 import { toast } from 'react-toastify';
 
@@ -37,6 +39,8 @@ import {
     updateClaimedFacilityFemaleWorkersPercentage,
     updateClaimedFacilityAffiliations,
     updateClaimedFacilityCertifications,
+    updateClaimedFacilityProductTypes,
+    updateClaimedFacilityProductionTypes,
     updateClaimedFacilityAddress,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
@@ -160,6 +164,7 @@ const InputSection = ({
     disabled = false,
     isSelect = false,
     isMultiSelect = false,
+    isCreatable = false,
     selectOptions = null,
     hasValidationErrorFn = stubFalse,
     aside = null,
@@ -173,9 +178,39 @@ const InputSection = ({
     );
 
     if (isSelect) {
-        const selectValue = isMultiSelect
-            ? filter(selectOptions, ({ value: option }) => includes(value, option))
-            : find(selectOptions, ['value', value]);
+        const selectValue = (() => {
+            if (!isCreatable && !isMultiSelect) {
+                return find(selectOptions, ['value', value]);
+            }
+
+            if (!isCreatable && isMultiSelect) {
+                return filter(
+                    selectOptions,
+                    ({ value: option }) => includes(value, option),
+                );
+            }
+
+            if (isCreatable && isMultiSelect) {
+                const [
+                    optionsInExistingSet,
+                    newlyCreatedOptionsPrime,
+                ] = partition(
+                    value,
+                    v => includes(map(selectOptions, 'value'), v),
+                );
+
+                const mapStringToOption = s => ({ value: s, label: s });
+
+                return concat(
+                    map(optionsInExistingSet, mapStringToOption),
+                    map(newlyCreatedOptionsPrime, mapStringToOption),
+                );
+            }
+
+            window.console.warn('isCreatable && !isMultiSelect case is not yet implemented');
+
+            return [];
+        })();
 
         return (
             <div style={claimedFacilitiesDetailsStyles.inputSectionStyles}>
@@ -187,14 +222,25 @@ const InputSection = ({
                     {label}
                 </InputLabel>
                 {asideNode}
-                <Select
-                    onChange={onChange}
-                    value={selectValue}
-                    options={selectOptions}
-                    disabled={disabled}
-                    styles={selectStyles}
-                    isMulti={isMultiSelect}
-                />
+                { isCreatable ? (
+                    <Creatable
+                        onChange={onChange}
+                        value={selectValue}
+                        options={selectOptions}
+                        disabled={disabled}
+                        styles={selectStyles}
+                        isMulti={isMultiSelect}
+                    />
+                ) : (
+                    <Select
+                        onChange={onChange}
+                        value={selectValue}
+                        options={selectOptions}
+                        disabled={disabled}
+                        styles={selectStyles}
+                        isMulti={isMultiSelect}
+                    />
+                )}
             </div>
         );
     }
@@ -259,6 +305,8 @@ function ClaimedFacilitiesDetails({
     updateFacilityFemaleWorkersPercentage,
     updateFacilityAffiliations,
     updateFacilityCertifications,
+    updateFacilityProductTypes,
+    updateFacilityProductionTypes,
     updateContactPerson,
     updateContactEmail,
     updateOfficeName,
@@ -487,6 +535,28 @@ function ClaimedFacilitiesDetails({
                     isSelect
                     isMultiSelect
                     selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.certification_choices)}
+                />
+                <InputSection
+                    label="Product Types"
+                    value={get(data, 'facility_product_types', [])}
+                    onChange={updateFacilityProductTypes}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    isCreatable
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.product_type_choices)}
+                />
+                <InputSection
+                    label="Production Types"
+                    value={get(data, 'facility_production_types', [])}
+                    onChange={updateFacilityProductionTypes}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    isCreatable
+                    selectOptions={
+                        mapDjangoChoiceTuplesToSelectOptions(data.production_type_choices)
+                    }
                 />
                 <Typography
                     variant="title"
@@ -762,6 +832,12 @@ function mapDispatchToProps(
         ),
         updateFacilityCertifications: makeDispatchMultiSelectFn(
             updateClaimedFacilityCertifications,
+        ),
+        updateFacilityProductTypes: makeDispatchMultiSelectFn(
+            updateClaimedFacilityProductTypes,
+        ),
+        updateFacilityProductionTypes: makeDispatchMultiSelectFn(
+            updateClaimedFacilityProductionTypes,
         ),
         updateContactPerson: makeDispatchValueFn(
             updateClaimedFacilityContactPersonName,

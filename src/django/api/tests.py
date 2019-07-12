@@ -29,6 +29,7 @@ from api.geocoding import (create_geocoding_params,
                            geocode_address)
 from api.test_data import parsed_city_hall_data
 from api.permissions import referring_host_is_allowed, referring_host
+from api.serializers import ApprovedFacilityClaimSerializer
 
 
 class FacilityListCreateTest(APITestCase):
@@ -3033,3 +3034,75 @@ class FacilityClaimChangesTest(TestCase):
         change = changes[0]
         self.assertEqual(change['name'], 'parent_company')
         self.assertEqual(change['current'], self.name)
+
+
+class FacilityClaimSerializerTests(TestCase):
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'password'
+        self.name = 'Test User'
+        self.user = User(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor.objects.create(
+            name=self.name, admin=self.user)
+
+        self.facility_list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='one',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.facility_list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility = Facility \
+            .objects \
+            .create(name=self.list_item.name,
+                    address=self.list_item.address,
+                    country_code=self.list_item.country_code,
+                    location=Point(0, 0),
+                    created_from=self.list_item)
+
+        self.claim = FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=self.facility,
+            status=FacilityClaim.APPROVED,
+        )
+
+    def test_product_and_production_options_are_serialized(self):
+        data = ApprovedFacilityClaimSerializer(self.claim).data
+
+        self.assertIn('product_type_choices', data)
+        self.assertIsNotNone(data['product_type_choices'])
+        self.assertNotEqual([], data['product_type_choices'])
+
+        self.assertIn('production_type_choices', data)
+        self.assertIsNotNone(data['production_type_choices'])
+        self.assertNotEqual([], data['production_type_choices'])
+
+    def test_product_and_production_values_from_claims_are_included(self):
+        self.claim.facility_product_types = ['A', 'B']
+        self.claim.facility_production_types = ['C', 'D']
+        self.claim.save()
+        data = ApprovedFacilityClaimSerializer(self.claim).data
+
+        product_types = data['product_type_choices']
+        self.assertIn(('A', 'A'), product_types)
+        self.assertEqual(('A', 'A'), product_types[0])
+        self.assertIn(('B', 'B'), product_types)
+
+        production_types = data['production_type_choices']
+        self.assertIn(('C', 'C'), production_types)
+        self.assertEqual(('C', 'C'), production_types[0])
+        self.assertIn(('D', 'D'), production_types)

@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.conf import settings
 from django.core import exceptions
 from django.db import transaction
@@ -25,7 +27,9 @@ from api.models import (FacilityList,
                         FacilityClaim,
                         FacilityClaimReviewNote,
                         User,
-                        Contributor)
+                        Contributor,
+                        ProductType,
+                        ProductionType)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from waffle import switch_is_active
 
@@ -458,6 +462,8 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                     'other_facility_type': claim.other_facility_type,
                     'affiliations': claim.facility_affiliations,
                     'certifications': claim.facility_certifications,
+                    'product_types': claim.facility_product_types,
+                    'production_types': claim.facility_production_types,
                 },
                 'contact': {
                     'name': claim.point_of_contact_person_name,
@@ -580,6 +586,8 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
     facility_parent_company = SerializerMethodField()
     affiliation_choices = SerializerMethodField()
     certification_choices = SerializerMethodField()
+    product_type_choices = SerializerMethodField()
+    production_type_choices = SerializerMethodField()
 
     class Meta:
         model = FacilityClaim
@@ -599,7 +607,9 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'contributors', 'facility_website_publicly_visible',
                   'facility_types', 'facility_type', 'other_facility_type',
                   'affiliation_choices', 'certification_choices',
-                  'facility_affiliations', 'facility_certifications')
+                  'facility_affiliations', 'facility_certifications',
+                  'facility_product_types', 'facility_production_types',
+                  'product_type_choices', 'production_type_choices')
 
     def get_facility(self, claim):
         return FacilityDetailsSerializer(claim.facility).data
@@ -631,6 +641,66 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
 
     def get_certification_choices(self, claim):
         return FacilityClaim.CERTIFICATION_CHOICES
+
+    def get_product_type_choices(self, claim):
+        seeds = [
+            seed
+            for seed
+            in ProductType.objects.all().values_list('value', flat=True)
+            or []
+        ]
+
+        new_values = FacilityClaim \
+            .objects \
+            .all() \
+            .values_list('facility_product_types', flat=True)
+
+        values = [
+            new_value
+            for new_value
+            in new_values if new_value is not None
+        ]
+
+        # Using `chain` flattens nested lists
+        union_of_seeds_and_values = list(
+            set(chain.from_iterable(values)).union(seeds))
+        union_of_seeds_and_values.sort()
+
+        return [
+            (choice, choice)
+            for choice
+            in union_of_seeds_and_values
+        ]
+
+    def get_production_type_choices(self, claim):
+        seeds = [
+            seed
+            for seed
+            in ProductionType.objects.all().values_list('value', flat=True)
+            or []
+        ]
+
+        new_values = FacilityClaim \
+            .objects \
+            .all() \
+            .values_list('facility_production_types', flat=True)
+
+        values = [
+            new_value
+            for new_value
+            in new_values if new_value is not None
+        ]
+
+        # Using `chain` flattens nested lists
+        union_of_seeds_and_values = list(
+            set(chain.from_iterable(values)).union(seeds))
+        union_of_seeds_and_values.sort()
+
+        return [
+            (choice, choice)
+            for choice
+            in union_of_seeds_and_values
+        ]
 
 
 class FacilityMatchSerializer(ModelSerializer):

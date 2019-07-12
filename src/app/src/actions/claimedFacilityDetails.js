@@ -78,6 +78,8 @@ export function submitClaimedFacilityDetailsUpdate(claimID) {
                     'facility_types',
                     'affiliation_choices',
                     'certification_choices',
+                    'product_type_choices',
+                    'production_type_choices',
                 ],
             ),
             {
@@ -161,3 +163,7 @@ export const updateClaimedFacilityAffiliations =
     createAction('UPDATE_CLAIMED_FACILITY_AFFILIATIONS');
 export const updateClaimedFacilityCertifications =
     createAction('UPDATE_CLAIMED_FACILITY_CERTIFICATIONS');
+export const updateClaimedFacilityProductTypes =
+    createAction('UPDATE_CLAIMED_FACILITY_PRODUCT_TYPES');
+export const updateClaimedFacilityProductionTypes =
+    createAction('UPDATE_CLAIMED_FACILITY_PRODUCTION_TYPES');

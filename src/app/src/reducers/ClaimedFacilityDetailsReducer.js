@@ -36,6 +36,8 @@ import {
     updateClaimedFacilityOtherFacilityType,
     updateClaimedFacilityAffiliations,
     updateClaimedFacilityCertifications,
+    updateClaimedFacilityProductTypes,
+    updateClaimedFacilityProductionTypes,
 } from '../actions/claimedFacilityDetails';
 
 const initialState = Object.freeze({
@@ -139,6 +141,26 @@ export default createReducer({
         data: {
             facility_certifications: {
                 $set: orderBy(certifications, identity),
+            },
+        },
+    }),
+    [updateClaimedFacilityProductTypes]: (state, productTypes) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_product_types: {
+                $set: orderBy(productTypes, identity),
+            },
+        },
+    }),
+    [updateClaimedFacilityProductionTypes]: (state, productionTypes) => update(state, {
+        updateData: {
+            error: { $set: initialState.updateData.error },
+        },
+        data: {
+            facility_production_types: {
+                $set: orderBy(productionTypes, identity),
             },
         },
     }),
