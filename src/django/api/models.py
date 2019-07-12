@@ -678,6 +678,32 @@ class FacilityClaim(models.Model):
         blank=True,
         help_text='Editable alternate text when facility type is OTHER.',
         verbose_name='description of other facility type')
+    facility_product_types = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            max_length=50,
+            help_text='A product produced at the facility',
+            verbose_name='product type',
+        ),
+        null=True,
+        blank=True,
+        help_text='The products produced at the facility',
+        verbose_name='product types',
+    )
+    facility_production_types = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            max_length=50,
+            help_text='A production type associated with the facility',
+            verbose_name='production type',
+        ),
+        null=True,
+        blank=True,
+        help_text='The production types associated with the facility',
+        verbose_name='production types',
+    )
     point_of_contact_person_name = models.CharField(
         max_length=200,
         null=True,
