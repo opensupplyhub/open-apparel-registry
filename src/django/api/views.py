@@ -386,11 +386,18 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
         if view.action == 'list':
             return [
                 coreapi.Field(
+                    name='q',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Facility Name or OAR ID',
+                ),
+                coreapi.Field(
                     name='name',
                     location='query',
                     type='string',
                     required=False,
-                    description='Facility Name',
+                    description='Facility Name (DEPRECATED; use `q` instead)'
                 ),
                 coreapi.Field(
                     name='contributors',
@@ -495,8 +502,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if not params.is_valid():
             raise ValidationError(params.errors)
 
-        name = request.query_params.get(FacilitiesQueryParams.NAME,
-                                        None)
+        free_text_query = request.query_params.get(FacilitiesQueryParams.Q,
+                                                   None)
+        name = request.query_params.get(FacilitiesQueryParams.NAME, None)
+
         contributors = request.query_params \
                               .getlist(FacilitiesQueryParams.CONTRIBUTORS)
 
@@ -508,8 +517,15 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         queryset = Facility.objects.all()
 
+        if free_text_query is not None:
+            queryset = queryset.filter(Q(name__icontains=free_text_query) |
+                                       Q(id__icontains=free_text_query))
+
+        # `name` is deprecated in favor of `q`. We keep `name` available for
+        # backward compatibility.
         if name is not None:
-            queryset = queryset.filter(name__icontains=name)
+            queryset = queryset.filter(Q(name__icontains=name) |
+                                       Q(id__icontains=name))
 
         if countries is not None and len(countries):
             queryset = queryset.filter(country_code__in=countries)

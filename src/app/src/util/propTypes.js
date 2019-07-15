@@ -203,7 +203,7 @@ export const reactSelectOptionPropType = shape({
 });
 
 export const filtersPropType = shape({
-    facilityName: string.isRequired,
+    facilityFreeTextQuery: string.isRequired,
     contributors: arrayOf(reactSelectOptionPropType).isRequired,
     contributorTypes: arrayOf(reactSelectOptionPropType).isRequired,
     countries: arrayOf(reactSelectOptionPropType).isRequired,

@@ -2,7 +2,7 @@ import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
 
 import {
-    updateFacilityNameFilter,
+    updateFacilityFreeTextQueryFilter,
     updateContributorFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
@@ -23,7 +23,7 @@ import {
 } from '../util/util';
 
 const initialState = Object.freeze({
-    facilityName: '',
+    facilityFreeTextQuery: '',
     contributors: Object.freeze([]),
     contributorTypes: Object.freeze([]),
     countries: Object.freeze([]),
@@ -44,8 +44,8 @@ export const maybeSetFromQueryString = field => (state, payload) => {
 };
 
 export default createReducer({
-    [updateFacilityNameFilter]: (state, payload) => update(state, {
-        facilityName: { $set: payload },
+    [updateFacilityFreeTextQueryFilter]: (state, payload) => update(state, {
+        facilityFreeTextQuery: { $set: payload },
     }),
     [updateContributorFilter]: (state, payload) => update(state, {
         contributors: { $set: payload },

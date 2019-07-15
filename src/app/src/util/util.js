@@ -129,13 +129,13 @@ export const makeGetClientInfoURL = () => {
 export const getValueFromObject = ({ value }) => value;
 
 export const createQueryStringFromSearchFilters = ({
-    facilityName = '',
+    facilityFreeTextQuery = '',
     contributors = [],
     contributorTypes = [],
     countries = [],
 }) => {
     const inputForQueryString = Object.freeze({
-        name: facilityName,
+        q: facilityFreeTextQuery,
         contributors: compact(contributors.map(getValueFromObject)),
         contributor_types: compact(contributorTypes.map(getValueFromObject)),
         countries: compact(countries.map(getValueFromObject)),
@@ -177,14 +177,14 @@ export const createFiltersFromQueryString = (qs) => {
         : qs;
 
     const {
-        name = '',
+        q: facilityFreeTextQuery = '',
         contributors = [],
         contributor_types: contributorTypes = [],
         countries = [],
     } = querystring.parse(qsToParse);
 
     return Object.freeze({
-        facilityName: name,
+        facilityFreeTextQuery,
         contributors: createSelectOptionsFromParams(contributors),
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),

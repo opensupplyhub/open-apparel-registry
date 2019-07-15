@@ -10,7 +10,7 @@ import ReactSelect from 'react-select';
 import FacilitySidebarSearchTabFacilitiesCount from './FacilitySidebarSearchTabFacilitiesCount';
 
 import {
-    updateFacilityNameFilter,
+    updateFacilityFreeTextQueryFilter,
     updateContributorFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
@@ -59,8 +59,8 @@ function FilterSidebarSearchTab({
     contributorTypeOptions,
     countryOptions,
     resetFilters,
-    facilityName,
-    updateFacilityName,
+    facilityFreeTextQuery,
+    updateFacilityFreeTextQuery,
     contributors,
     updateContributor,
     contributorTypes,
@@ -114,14 +114,14 @@ function FilterSidebarSearchTab({
                         htmlFor={FACILITIES}
                         className="form__label"
                     >
-                        Search a Facility Name
+                        Search a Facility Name or OAR ID
                     </InputLabel>
                     <TextField
                         id={FACILITIES}
-                        placeholder="Facility Name"
+                        placeholder="Facility Name or OAR ID"
                         className="full-width margin-bottom-16 form__text-input"
-                        value={facilityName}
-                        onChange={updateFacilityName}
+                        value={facilityFreeTextQuery}
+                        onChange={updateFacilityFreeTextQuery}
                         onKeyPress={submitFormOnEnterKeyPress}
                     />
                 </div>
@@ -243,11 +243,11 @@ FilterSidebarSearchTab.propTypes = {
     contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
     countryOptions: countryOptionsPropType.isRequired,
     resetFilters: func.isRequired,
-    updateFacilityName: func.isRequired,
+    updateFacilityFreeTextQuery: func.isRequired,
     updateContributor: func.isRequired,
     updateContributorType: func.isRequired,
     updateCountry: func.isRequired,
-    facilityName: string.isRequired,
+    facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
@@ -273,7 +273,7 @@ function mapStateToProps({
         },
     },
     filters: {
-        facilityName,
+        facilityFreeTextQuery,
         contributors,
         contributorTypes,
         countries,
@@ -289,7 +289,7 @@ function mapStateToProps({
         contributorOptions,
         contributorTypeOptions,
         countryOptions,
-        facilityName,
+        facilityFreeTextQuery,
         contributors,
         contributorTypes,
         countries,
@@ -303,7 +303,8 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateFacilityName: e => dispatch(updateFacilityNameFilter(getValueFromEvent(e))),
+        updateFacilityFreeTextQuery: e =>
+            dispatch(updateFacilityFreeTextQueryFilter(getValueFromEvent(e))),
         updateContributor: v => dispatch(updateContributorFilter(v)),
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
