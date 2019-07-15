@@ -1,4 +1,4 @@
-FROM quay.io/azavea/django:2.0-python3.7-slim
+FROM quay.io/azavea/django:2.2-python3.7-slim
 
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src
