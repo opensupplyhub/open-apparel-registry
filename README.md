@@ -88,6 +88,14 @@ Because the frontend uses [Create React App](https://github.com/facebook/create-
 
 In development, the [Django](https://www.djangoproject.com) app sits behind a [Gunicorn](https://www.gunicorn.org) worker that is passed the [`--reload` flag](https://docs.gunicorn.org/en/stable/settings.html#reload).
 
+### Development Data
+
+To destroy any existing development database and load fresh fixture data including users, facility lists, facility matches, and facilities run:
+
+```bash
+vagrant@vagrant:/vagrant$ ./scripts/resetdb
+```
+
 ### Ports
 
 | Service                    | Port                            |
@@ -103,6 +111,7 @@ In development, the [Django](https://www.djangoproject.com) app sits behind a [G
 | `bootstrap`                                            | Pull `.env` files from S3                                                                                                                                                                    |
 | `generate_fixed_dumps`                                 | Import database dumps from Sourcemap, run `create_master_account_api_key.js`, and export new database dumps                                                                                  |
 | `infra`                                                | Plan and apply remote infrastructure changes                                                                                                                                                 |
+| `resetdb`                                              | Clear development database & load fixture data including users, facility lists, matches, and facilities                                                                                      |
 | `server`                                               | Run `docker-compose.yml` services                                                                                                                                                            |
 | `setup`                                                | Provision Vagrant VM and run `update`                                                                                                                                                        |
 | `test`                                                 | Run tests                                                                                                                                                                                    |
