@@ -301,7 +301,11 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, {
+    history: {
+        push,
+    },
+}) {
     return {
         updateFacilityFreeTextQuery: e =>
             dispatch(updateFacilityFreeTextQueryFilter(getValueFromEvent(e))),
@@ -312,9 +316,9 @@ function mapDispatchToProps(dispatch) {
             dispatch(recordSearchTabResetButtonClick());
             return dispatch(resetAllFilters());
         },
-        searchForFacilities: () => dispatch(fetchFacilities()),
+        searchForFacilities: () => dispatch(fetchFacilities(push)),
         submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
-            () => dispatch(fetchFacilities()),
+            () => dispatch(fetchFacilities(push)),
         ),
     };
 }

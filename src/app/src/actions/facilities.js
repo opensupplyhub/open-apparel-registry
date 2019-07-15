@@ -1,4 +1,6 @@
 import { createAction } from 'redux-act';
+import noop from 'lodash/noop';
+import get from 'lodash/get';
 
 import apiRequest from '../util/apiRequest';
 
@@ -6,6 +8,7 @@ import {
     logErrorAndDispatchFailure,
     makeGetFacilitiesURLWithQueryString,
     makeGetFacilityByOARIdURL,
+    makeFacilityDetailLink,
     createQueryStringFromSearchFilters,
 } from '../util/util';
 
@@ -19,7 +22,7 @@ export const failFetchSingleFacility = createAction('FAIL_FETCH_SINGLE_FACILITY'
 export const completeFetchSingleFacility = createAction('COMPLETE_FETCH_SINGLE_FACILITY');
 export const resetSingleFacility = createAction('RESET_SINGLE_FACILITY');
 
-export function fetchFacilities() {
+export function fetchFacilities(pushNewRoute = noop) {
     return (dispatch, getState) => {
         dispatch(startFetchFacilities());
 
@@ -31,7 +34,26 @@ export function fetchFacilities() {
 
         return apiRequest
             .get(makeGetFacilitiesURLWithQueryString(qs))
-            .then(({ data }) => dispatch(completeFetchFacilities(data)))
+            .then(({ data }) => {
+                const responseHasOnlyOneFacility = get(
+                    data,
+                    'features',
+                    [],
+                ).length === 1;
+
+                if (responseHasOnlyOneFacility) {
+                    const facilityID = get(data, 'features[0].id', null);
+
+                    if (!facilityID) {
+                        throw new Error('No facility ID was found');
+                    }
+
+                    pushNewRoute(makeFacilityDetailLink(facilityID));
+                }
+
+                return data;
+            })
+            .then(data => dispatch(completeFetchFacilities(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching facilities',
