@@ -618,10 +618,14 @@ export const claimFacilityContactInfoStepIsValid = ({
 
 export const isValidFacilityURL = url => isEmpty(url) || isURL(url, { protocols: ['http', 'https'] });
 
-export const claimFacilityFacilityInfoStepIsValid = ({ companyName, website }) =>
-    every([
-        !isEmpty(companyName),
-        isValidFacilityURL(website),
-    ]);
+export const claimFacilityFacilityInfoStepIsValid = ({
+    companyName,
+    website,
+    facilityDescription,
+}) => every([
+    !isEmpty(companyName),
+    isValidFacilityURL(website),
+    !isEmpty(facilityDescription),
+]);
 
 export const anyListItemMatchesAreInactive = ({ matches }) => some(matches, ['is_active', false]);
