@@ -196,6 +196,42 @@ export default function FacilityDetailsSidebarClaimedInfo({
 
                 }
             />
+            <ClaimInfoSection
+                label="Product Types"
+                value={
+                    facility.product_types && facility.product_types.length
+                        && (
+                            <ul>
+                                {
+                                    orderBy(facility.product_types, identity)
+                                        .map(productType => (
+                                            <li key={productType}>
+                                                {productType}
+                                            </li>
+                                        ))
+                                }
+                            </ul>
+                        )
+                }
+            />
+            <ClaimInfoSection
+                label="Production Types"
+                value={
+                    facility.production_types && facility.production_types.length
+                        && (
+                            <ul>
+                                {
+                                    orderBy(facility.production_types, identity)
+                                        .map(productionType => (
+                                            <li key={productionType}>
+                                                {productionType}
+                                            </li>
+                                        ))
+                                }
+                            </ul>
+                        )
+                }
+            />
         </>
     );
 

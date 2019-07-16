@@ -2090,6 +2090,21 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             else:
                 claim.facility_certifications = None
 
+            facility_product_types = request.data.get('facility_product_types')
+
+            if facility_product_types:
+                claim.facility_product_types = facility_product_types
+            else:
+                claim.facility_product_types = None
+
+            facility_production_types = \
+                request.data.get('facility_production_types')
+
+            if facility_production_types:
+                claim.facility_production_types = facility_production_types
+            else:
+                claim.facility_production_types = None
+
             field_names = (
                 'facility_description',
                 'facility_name_english',

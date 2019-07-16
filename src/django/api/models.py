@@ -678,6 +678,32 @@ class FacilityClaim(models.Model):
         blank=True,
         help_text='Editable alternate text when facility type is OTHER.',
         verbose_name='description of other facility type')
+    facility_product_types = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            max_length=50,
+            help_text='A product produced at the facility',
+            verbose_name='product type',
+        ),
+        null=True,
+        blank=True,
+        help_text='The products produced at the facility',
+        verbose_name='product types',
+    )
+    facility_production_types = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            max_length=50,
+            help_text='A production type associated with the facility',
+            verbose_name='production type',
+        ),
+        null=True,
+        blank=True,
+        help_text='The production types associated with the facility',
+        verbose_name='production types',
+    )
     point_of_contact_person_name = models.CharField(
         max_length=200,
         null=True,
@@ -750,6 +776,8 @@ class FacilityClaim(models.Model):
         'facility_female_workers_percentage',
         'facility_affiliations',
         'facility_certifications',
+        'facility_product_types',
+        'facility_production_types',
         'facility_type',
         'other_facility_type',
         'facility_description',
@@ -794,6 +822,10 @@ class FacilityClaim(models.Model):
         parent_company=lambda v: v and v.name,
         facility_affiliations=lambda v: ', '.join(v) if v is not None else '',
         facility_certifications=lambda v: ', '.join(v)
+        if v is not None else '',
+        facility_product_types=lambda v: ', '.join(v)
+        if v is not None else '',
+        facility_production_types=lambda v: ', '.join(v)
         if v is not None else '',
     )
 
@@ -1138,3 +1170,23 @@ class RequestLog(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class ProductType(models.Model):
+    value = models.CharField(
+        primary_key=True,
+        max_length=50,
+        null=False,
+        blank=False,
+        help_text='A suggested value for product type'
+    )
+
+
+class ProductionType(models.Model):
+    value = models.CharField(
+        primary_key=True,
+        max_length=50,
+        null=False,
+        blank=False,
+        help_text='A suggested value for production type'
+    )
