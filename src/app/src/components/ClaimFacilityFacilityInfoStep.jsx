@@ -121,10 +121,12 @@ function ClaimFacilityFacilityInfoStep({
                 <InputLabel htmlFor={descriptionFormField.id}>
                     <Typography variant="title">
                         {descriptionFormField.label}
+                        <RequiredAsterisk />
                     </Typography>
                 </InputLabel>
                 <TextField
                     id={descriptionFormField.label}
+                    error={isEmpty(facilityDescription)}
                     variant="outlined"
                     style={claimAFacilityFormStyles.textFieldStyles}
                     multiline

@@ -1201,6 +1201,7 @@ it('checks whether the claim a facility form is valid', () => {
         companyName: 'companyName',
         contactPerson: 'contactPerson',
         phoneNumber: 'phoneNumber',
+        facilityDescription: 'facilityDescription',
         preferredContactMethod: {
             label: 'label',
             value: 'value',
