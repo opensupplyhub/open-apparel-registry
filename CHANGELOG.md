@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.7.0] - 2019-07-17
+### Added
 - Enable administrators to split facility matches into new facilities [#633](https://github.com/open-apparel-registry/open-apparel-registry/pull/633)
 - Log requests made with token authentication [#646](https://github.com/open-apparel-registry/open-apparel-registry/pull/646)
 - `./scripts/resetdb` to expedite refreshing application data during development [#672](https://github.com/open-apparel-registry/open-apparel-registry/pull/672)
@@ -26,14 +39,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Make facility description required on claim a facility form [#679](https://github.com/open-apparel-registry/open-apparel-registry/pull/679)
 - Adjust how product and production type options are set for claimed details profile form [#684](https://github.com/open-apparel-registry/open-apparel-registry/pull/684)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
-Use a loop and `save` rather than `update` [#666](https://github.com/open-apparel-registry/open-apparel-registry/pull/666)
-
-### Security
+- Use a loop and `save` rather than `update` [#666](https://github.com/open-apparel-registry/open-apparel-registry/pull/666)
 
 ## [2.6.0] - 2019-06-25
 ### Added
@@ -157,7 +164,8 @@ Use a loop and `save` rather than `update` [#666](https://github.com/open-appare
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.6.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.7.0...HEAD
+[2.7.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.7.0
 [2.6.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.6.0
 [2.5.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.5.0
 [2.4.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.4.0
