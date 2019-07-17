@@ -15,7 +15,7 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
-from rest_framework import viewsets, status, mixins
+from rest_framework import viewsets, status, mixins, schemas
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
@@ -26,18 +26,21 @@ from rest_framework.exceptions import (ValidationError,
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
+                                       renderer_classes,
                                        action,
                                        schema)
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.schemas.inspectors import AutoSchema
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
 import coreapi
 from waffle import switch_is_active
 
+from oar import urls
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
@@ -93,6 +96,15 @@ def _report_facility_claim_email_error_to_rollbar(claim):
                 'claim_id': claim.id,
             }
         )
+
+
+@api_view()
+@permission_classes([AllowAny])
+@renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
+def schema_view(request):
+    generator = schemas.SchemaGenerator(title='API Docs',
+                                        patterns=urls.public_apis)
+    return Response(generator.get_schema())
 
 
 class SubmitNewUserForm(CreateAPIView):
@@ -1063,6 +1075,11 @@ class FacilityListViewSetSchema(AutoSchema):
             ]
 
         return []
+
+    # This suppresses the FacilityList documentation altogether. See:
+    # https://github.com/open-apparel-registry/open-apparel-registry/issues/349
+    def get_link(self, path, method, base_url):
+        return None
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):
