@@ -19,8 +19,6 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import includes from 'lodash/includes';
 import isNull from 'lodash/isNull';
-import partition from 'lodash/partition';
-import concat from 'lodash/concat';
 import Select, { Creatable } from 'react-select';
 import { isEmail, isInt } from 'validator';
 import { toast } from 'react-toastify';
@@ -191,26 +189,17 @@ const InputSection = ({
             }
 
             if (isCreatable && isMultiSelect) {
-                const [
-                    optionsInExistingSet,
-                    newlyCreatedOptionsPrime,
-                ] = partition(
-                    value,
-                    v => includes(map(selectOptions, 'value'), v),
-                );
-
-                const mapStringToOption = s => ({ value: s, label: s });
-
-                return concat(
-                    map(optionsInExistingSet, mapStringToOption),
-                    map(newlyCreatedOptionsPrime, mapStringToOption),
-                );
+                return map(value, s => ({ value: s, label: s }));
             }
 
-            window.console.warn('isCreatable && !isMultiSelect case is not yet implemented');
-
-            return [];
+            // isCreatable && !isMultiSelect creates an option object from the value
+            return {
+                value,
+                label: value,
+            };
         })();
+
+        const SelectComponent = isCreatable ? Creatable : Select;
 
         return (
             <div style={claimedFacilitiesDetailsStyles.inputSectionStyles}>
@@ -222,25 +211,14 @@ const InputSection = ({
                     {label}
                 </InputLabel>
                 {asideNode}
-                { isCreatable ? (
-                    <Creatable
-                        onChange={onChange}
-                        value={selectValue}
-                        options={selectOptions}
-                        disabled={disabled}
-                        styles={selectStyles}
-                        isMulti={isMultiSelect}
-                    />
-                ) : (
-                    <Select
-                        onChange={onChange}
-                        value={selectValue}
-                        options={selectOptions}
-                        disabled={disabled}
-                        styles={selectStyles}
-                        isMulti={isMultiSelect}
-                    />
-                )}
+                <SelectComponent
+                    onChange={onChange}
+                    value={selectValue}
+                    options={selectOptions}
+                    disabled={disabled}
+                    styles={selectStyles}
+                    isMulti={isMultiSelect}
+                />
             </div>
         );
     }
