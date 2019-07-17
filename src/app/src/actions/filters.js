@@ -6,7 +6,8 @@ import {
     updateListWithLabels,
 } from '../util/util';
 
-export const updateFacilityNameFilter = createAction('UPDATE_FACILITY_NAME_FILTER');
+export const updateFacilityFreeTextQueryFilter =
+    createAction('UPDATE_FACILITY_FREE_TEXT_QUERY_FILTER');
 export const updateContributorFilter = createAction('UPDATE_CONTRIBUTOR_FILTER');
 export const updateContributorTypeFilter = createAction('UPDATE_CONTRIBUTOR_TYPE_FILTER');
 export const updateCountryFilter = createAction('UPDATE_COUNTRY_FILTER');

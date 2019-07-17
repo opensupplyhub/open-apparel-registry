@@ -99,13 +99,17 @@ export default function withQueryStringSync(WrappedComponent) {
         };
     }
 
-    function mapDispatchToProps(dispatch) {
+    function mapDispatchToProps(dispatch, {
+        history: {
+            push,
+        },
+    }) {
         return {
             hydrateFiltersFromQueryString: (qs, fetch = true) => {
                 dispatch(setFiltersFromQueryString(qs));
 
                 return fetch
-                    ? dispatch(fetchFacilities())
+                    ? dispatch(fetchFacilities(push))
                     : null;
             },
             clearFacilities: () => dispatch(resetFacilities()),

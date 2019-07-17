@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import { Route } from 'react-router-dom';
 
 import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
@@ -131,7 +132,9 @@ class FilterSidebar extends Component {
                 case filterSidebarTabsEnum.guide:
                     return <FilterSidebarGuideTab />;
                 case filterSidebarTabsEnum.search:
-                    return <FilterSidebarSearchTab />;
+                    // We wrap this component in a `Route` to give it access to `history.push`
+                    // in its `mapDispatchToProps` function.
+                    return <Route component={FilterSidebarSearchTab} />;
                 case filterSidebarTabsEnum.facilities:
                     return <FilterSidebarFacilitiesTab />;
                 default:

@@ -19,6 +19,7 @@ class ProcessingAction:
 
 
 class FacilitiesQueryParams:
+    Q = 'q'
     NAME = 'name'
     CONTRIBUTORS = 'contributors'
     CONTRIBUTOR_TYPES = 'contributor_types'
