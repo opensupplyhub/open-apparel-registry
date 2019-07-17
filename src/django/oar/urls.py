@@ -48,7 +48,7 @@ schema_view = get_swagger_view(title='Open Apparel Registry API Documentation',
 internal_apis = [
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^web/environment\.js', environment, name='environment'),
-    url(r'^api/docs/', schema_view),
+    url(r'^api/docs/', views.schema_view),
     path('admin/', admin.site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
