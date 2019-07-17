@@ -1,7 +1,7 @@
 import { createAction } from 'redux-act';
 import get from 'lodash/get';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -48,7 +48,7 @@ export function fetchMergeTargetFacility() {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilityByOARIdURL(oarID))
             .then(({ data }) => dispatch(completeFetchMergeTargetFacility(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -94,7 +94,7 @@ export function fetchFacilityToMerge() {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilityByOARIdURL(oarID))
             .then(({ data }) => dispatch(completeFetchFacilityToMerge(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -136,7 +136,7 @@ export function mergeFacilities() {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .post(makeMergeTwoFacilitiesAPIURL(targetOARID, toMergeOARID))
             .then(({ data }) => dispatch(completeMergeFacilities(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

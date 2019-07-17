@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -20,7 +20,7 @@ export function fetchDashboardListContributors() {
     return (dispatch) => {
         dispatch(startFetchDashboardListContributors());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetContributorsURL())
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
             .then(data => dispatch(completeFetchDashboardListContributors(data)))
@@ -48,7 +48,7 @@ export function fetchDashboardFacilityLists(contributor) {
     return (dispatch) => {
         dispatch(startFetchDashboardFacilityLists());
 
-        return csrfRequest
+        return apiRequest
             .get(makeDashboardFacilityListsURL(contributor))
             .then(({ data }) => dispatch(completeFetchDashboardFacilityLists(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

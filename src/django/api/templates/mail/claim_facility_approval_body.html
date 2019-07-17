@@ -18,7 +18,7 @@
                 Facility: {{ facility_name }}, {{ facility_address }}, {{ facility_country }}
             </li>
             <li>
-                Facility URL: {{ facility_url }}
+                Facility URL: <a href="{{ facility_url }}">{{ facility_url }}</a>
             </li>
         </ul>
         {% if approval_reason|length %}
@@ -30,7 +30,13 @@
         </p>
         {% endif %}
         <p>
-            Sincerely,
+            You are approved! You can now complete your profile, adding business information
+            including production capabilities, certifications, MOQs and more. Visit
+            <a href="{{ claimed_url }}">{{ claimed_url }}</a> to view your approved
+            facility and complete your profile.
+        </p>
+        <p>
+            Best wishes,
         </p>
         {% include "mail/signature_block.html" %}
     </body>

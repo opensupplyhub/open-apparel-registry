@@ -21,14 +21,11 @@ const checkIconStyles = Object.freeze({
 export default function ClaimFacilityConfirmationStep() {
     return (
         <div style={claimAFacilityFormStyles.inputGroupStyles}>
-            <Typography
-                variant="headline"
-                style={confirmationMessageStyles}
-            >
+            <Typography variant="headline" style={confirmationMessageStyles}>
                 Your request to claim the facility was submitted successfully!
-                To manage your facility, we&#39;ll need to verify your
-                connection with the facility. Once verified you will be able
-                to:
+                To manage the profile information for your facility, we&#39;ll
+                need to verify your connection with the facility. Once verified
+                you will be able to:
             </Typography>
             <List>
                 <ListItem>
@@ -57,7 +54,7 @@ export default function ClaimFacilityConfirmationStep() {
                     </ListItemIcon>
                     <ListItemText>
                         <Typography variant="headline">
-                            Manage more facility and office information
+                            Share order minimums and average lead times
                         </Typography>
                     </ListItemText>
                 </ListItem>
@@ -67,7 +64,8 @@ export default function ClaimFacilityConfirmationStep() {
                     </ListItemIcon>
                     <ListItemText>
                         <Typography variant="headline">
-                            Highlight order minimums and average lead time
+                            Add information about your head office and parent
+                            company
                         </Typography>
                     </ListItemText>
                 </ListItem>

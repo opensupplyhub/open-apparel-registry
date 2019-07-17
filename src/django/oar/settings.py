@@ -44,10 +44,12 @@ GIT_COMMIT = os.getenv('GIT_COMMIT', 'UNKNOWN')
 DEBUG = (ENVIRONMENT == 'Development')
 
 ALLOWED_HOSTS = [
-    'localhost',
-    'django',
     '.openapparel.org'
 ]
+
+if ENVIRONMENT == 'Development':
+    ALLOWED_HOSTS.append('localhost')
+    ALLOWED_HOSTS.append('django')
 
 if ENVIRONMENT in ['Production', 'Staging'] and BATCH_MODE == '':
     # Within EC2, the Elastic Load Balancer HTTP health check will use the
@@ -130,6 +132,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'api.permissions.IsAuthenticatedOrWebClient',
+    ),
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.PageAndSizePagination',
     'PAGE_SIZE': 20,
 }
@@ -165,6 +170,7 @@ MIDDLEWARE = [
     'rollbar.contrib.django.middleware.RollbarNotifierMiddlewareExcluding404',
     'simple_history.middleware.HistoryRequestMiddleware',
     'waffle.middleware.WaffleMiddleware',
+    'api.middleware.RequestLogMiddleware',
 ]
 
 ROOT_URLCONF = 'oar.urls'
@@ -338,6 +344,12 @@ if not DEBUG:
         'access_token': os.getenv('ROLLBAR_SERVER_SIDE_ACCESS_TOKEN'),
         'environment': ENVIRONMENT.lower(),
         'root': BASE_DIR,
+        'suppress_reinit_warning': True,
     }
     import rollbar
     rollbar.init(**ROLLBAR)
+
+OAR_CLIENT_KEY = os.getenv('OAR_CLIENT_KEY')
+if OAR_CLIENT_KEY is None:
+    raise ImproperlyConfigured(
+        'Invalid OAR_CLIENT_KEY provided, must be set')

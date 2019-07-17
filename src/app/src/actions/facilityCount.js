@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -26,7 +26,7 @@ export function fetchFacilityCount() {
             return dispatch(completeFetchFacilityCount(data));
         }
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilitiesCountURL())
             .then(({ data: { count } }) => dispatch(completeFetchFacilityCount(count)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

@@ -25,8 +25,16 @@
                 Facility URL: {{ facility_url }}
             </li>
         </ul>
+        {% if changes %}
+        <p>The following details have been changed:</p>
+        <ul>
+            {% for change in changes %}
+            <li>{{ change }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         <p>
-            Sincerely,
+            Best wishes,
         </p>
         {% include "mail/signature_block.html" %}
     </body>

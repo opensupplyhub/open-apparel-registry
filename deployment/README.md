@@ -73,6 +73,8 @@ rds_database_identifier = "openapparelregistry"
 rds_database_name = "openapparelregistry"
 rds_database_username = "openapparelregistry"
 rds_database_password = "password"
+
+oar_client_key = ""
 ```
 
 This file lives at `s3://openapparelregistry-staging-config-eu-west-1/terraform/terraform.tfvars`.

@@ -152,7 +152,7 @@ it('gets the value from a React Select option object', () => {
 
 it('creates a querystring from a set of filter selection', () => {
     const emptyFilterSelections = {
-        facilityName: '',
+        facilityFreeTextQuery: '',
         contributors: [],
         contributorTypes: [],
         countries: [],
@@ -163,7 +163,7 @@ it('creates a querystring from a set of filter selection', () => {
         .toEqual(expectedEmptySelectionQSMatch);
 
     const multipleFilterSelections = {
-        facilityName: '',
+        facilityFreeTextQuery: '',
         contributors: [
             { value: 'foo', label: 'foo' },
             { value: 'bar', label: 'bar' },
@@ -181,7 +181,7 @@ it('creates a querystring from a set of filter selection', () => {
         .toEqual(expectedMultipleFilterSelectionsMatch);
 
     const allFilters = {
-        facilityName: 'hello',
+        facilityFreeTextQuery: 'hello',
         contributors: [
             { value: 'hello', label: 'hello' },
             { value: 'world', label: 'hello' },
@@ -195,7 +195,7 @@ it('creates a querystring from a set of filter selection', () => {
     };
 
     const expectedAllFiltersMatch =
-        'name=hello&contributors=hello&contributors=world'
+        'q=hello&contributors=hello&contributors=world'
             .concat('&contributor_types=foo&countries=bar');
     expect(createQueryStringFromSearchFilters(allFilters))
         .toEqual(expectedAllFiltersMatch);
@@ -230,7 +230,7 @@ it('checks whether the filters object has only empty values', () => {
 it('creates a set of filters from a querystring', () => {
     const contributorsString = '?contributors=1&contributors=2';
     const expectedContributorsMatch = {
-        facilityName: '',
+        facilityFreeTextQuery: '',
         contributors: [
             {
                 value: 1,
@@ -252,7 +252,7 @@ it('creates a set of filters from a querystring', () => {
 
     const typesString = '?contributor_types=Union&contributor_types=Service Provider';
     const expectedTypesMatch = {
-        facilityName: '',
+        facilityFreeTextQuery: '',
         contributors: [],
         contributorTypes: [
             {
@@ -274,7 +274,7 @@ it('creates a set of filters from a querystring', () => {
 
     const countriesString = '?countries=US&countries=CN';
     const expectedCountriesMatch = {
-        facilityName: '',
+        facilityFreeTextQuery: '',
         contributors: [],
         contributorTypes: [],
         countries: [
@@ -296,7 +296,7 @@ it('creates a set of filters from a querystring', () => {
 
     const stringWithCountriesMissing = '?contributor_types=Union&countries=';
     const expectedMissingCountriesMatch = {
-        facilityName: '',
+        facilityFreeTextQuery: '',
         contributors: [],
         contributorTypes: [
             {
@@ -1201,10 +1201,12 @@ it('checks whether the claim a facility form is valid', () => {
         companyName: 'companyName',
         contactPerson: 'contactPerson',
         phoneNumber: 'phoneNumber',
+        facilityDescription: 'facilityDescription',
         preferredContactMethod: {
             label: 'label',
             value: 'value',
         },
+        jobTitle: 'computer programmer',
     };
 
     expect(isEqual(

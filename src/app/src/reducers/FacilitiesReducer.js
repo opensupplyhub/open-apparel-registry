@@ -16,7 +16,7 @@ import {
 } from '../actions/facilities';
 
 import {
-    updateFacilityNameFilter,
+    updateFacilityFreeTextQueryFilter,
     updateContributorFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
@@ -122,7 +122,7 @@ export default createReducer({
     [resetSingleFacility]: state => update(state, {
         singleFacility: { $set: initialState.singleFacility },
     }),
-    [updateFacilityNameFilter]: clearFacilitiesDataOnFilterChange,
+    [updateFacilityFreeTextQueryFilter]: clearFacilitiesDataOnFilterChange,
     [updateContributorFilter]: clearFacilitiesDataOnFilterChange,
     [updateContributorTypeFilter]: clearFacilitiesDataOnFilterChange,
     [updateCountryFilter]: clearFacilitiesDataOnFilterChange,

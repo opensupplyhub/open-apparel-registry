@@ -15,7 +15,7 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
-from rest_framework import viewsets, status, mixins
+from rest_framework import viewsets, status, mixins, schemas
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
@@ -26,18 +26,21 @@ from rest_framework.exceptions import (ValidationError,
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
+                                       renderer_classes,
                                        action,
                                        schema)
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.schemas.inspectors import AutoSchema
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
 import coreapi
 from waffle import switch_is_active
 
+from oar import urls
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
@@ -95,7 +98,15 @@ def _report_facility_claim_email_error_to_rollbar(claim):
         )
 
 
-@permission_classes((AllowAny,))
+@api_view()
+@permission_classes([AllowAny])
+@renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
+def schema_view(request):
+    generator = schemas.SchemaGenerator(title='API Docs',
+                                        patterns=urls.public_apis)
+    return Response(generator.get_schema())
+
+
 class SubmitNewUserForm(CreateAPIView):
     serializer_class = UserSerializer
 
@@ -146,7 +157,6 @@ class SubmitNewUserForm(CreateAPIView):
 
 class LoginToOARClient(LoginView):
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
@@ -326,7 +336,6 @@ class APIAuthToken(ObtainAuthToken):
 
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
 def all_contributors(request):
     """
     Returns list contributors as a list of tuples of contributor IDs and names.
@@ -350,7 +359,6 @@ def all_contributors(request):
 
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
 def all_contributor_types(request):
     """
     Returns a list of contributor type choices as tuples of values and display
@@ -369,7 +377,6 @@ def all_contributor_types(request):
 
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
 def all_countries(request):
     """
     Returns a list of country choices as tuples of country codes and names.
@@ -391,11 +398,18 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
         if view.action == 'list':
             return [
                 coreapi.Field(
+                    name='q',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Facility Name or OAR ID',
+                ),
+                coreapi.Field(
                     name='name',
                     location='query',
                     type='string',
                     required=False,
-                    description='Facility Name',
+                    description='Facility Name (DEPRECATED; use `q` instead)'
                 ),
                 coreapi.Field(
                     name='contributors',
@@ -433,6 +447,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'claim' in path:
             return None
 
+        if 'split' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -447,7 +464,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     """
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
-    permission_classes = (AllowAny,)
     pagination_class = FacilitiesGeoJSONPagination
     filter_backends = (FacilitiesAPIFilterBackend,)
 
@@ -498,8 +514,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if not params.is_valid():
             raise ValidationError(params.errors)
 
-        name = request.query_params.get(FacilitiesQueryParams.NAME,
-                                        None)
+        free_text_query = request.query_params.get(FacilitiesQueryParams.Q,
+                                                   None)
+        name = request.query_params.get(FacilitiesQueryParams.NAME, None)
+
         contributors = request.query_params \
                               .getlist(FacilitiesQueryParams.CONTRIBUTORS)
 
@@ -511,8 +529,15 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         queryset = Facility.objects.all()
 
+        if free_text_query is not None:
+            queryset = queryset.filter(Q(name__icontains=free_text_query) |
+                                       Q(id__icontains=free_text_query))
+
+        # `name` is deprecated in favor of `q`. We keep `name` available for
+        # backward compatibility.
         if name is not None:
-            queryset = queryset.filter(name__icontains=name)
+            queryset = queryset.filter(Q(name__icontains=name) |
+                                       Q(id__icontains=name))
 
         if countries is not None and len(countries):
             queryset = queryset.filter(country_code__in=countries)
@@ -759,6 +784,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             contributor = request.user.contributor
 
             contact_person = request.data.get('contact_person')
+            job_title = request.data.get('job_title')
             email = request.data.get('email')
             phone_number = request.data.get('phone_number')
             company_name = request.data.get('company_name')
@@ -769,6 +795,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             preferred_contact_method = request \
                 .data \
                 .get('preferred_contact_method', '')
+            linkedin_profile = request.data.get('linkedin_profile', '')
 
             try:
                 validate_email(email)
@@ -801,6 +828,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 facility=facility,
                 contributor=contributor,
                 contact_person=contact_person,
+                job_title=job_title,
                 email=email,
                 phone_number=phone_number,
                 company_name=company_name,
@@ -808,7 +836,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 website=website,
                 facility_description=facility_description,
                 verification_method=verification_method,
-                preferred_contact_method=preferred_contact_method)
+                preferred_contact_method=preferred_contact_method,
+                linkedin_profile=linkedin_profile)
 
             send_claim_facility_confirmation_email(request, facility_claim)
 
@@ -938,6 +967,96 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         response_data = FacilityDetailsSerializer(target).data
         return Response(response_data)
 
+    @action(detail=True, methods=['GET', 'POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def split(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            if request.method == 'GET':
+                facility = Facility.objects.get(pk=pk)
+
+                facility_data = FacilityDetailsSerializer(facility).data
+
+                facility_data['properties']['matches'] = [
+                    {
+                        'name': m.facility_list_item.name,
+                        'address': m.facility_list_item.address,
+                        'country_code': m.facility_list_item.country_code,
+                        'list_id': m.facility_list_item.facility_list.id,
+                        'list_name': m.facility_list_item.facility_list.name,
+                        'list_description': m.facility_list_item.facility_list
+                        .description,
+                        'list_contributor_name': m.facility_list_item
+                        .facility_list
+                        .contributor.name,
+                        'list_contributor_id': m.facility_list_item
+                        .facility_list.contributor.id,
+                        'match_id': m.id,
+                    }
+                    for m
+                    in facility.get_other_matches()
+                ]
+
+                return Response(facility_data)
+
+            match_id = request.data.get('match_id')
+
+            if match_id is None:
+                raise BadRequestException('Missing required param match_id')
+
+            match_for_new_facility = FacilityMatch \
+                .objects \
+                .get(pk=match_id)
+
+            old_facility_id = match_for_new_facility.facility.id
+
+            list_item_for_match = match_for_new_facility.facility_list_item
+
+            new_facility = Facility \
+                .objects \
+                .create(name=list_item_for_match.name,
+                        address=list_item_for_match.address,
+                        country_code=list_item_for_match.country_code,
+                        location=list_item_for_match.geocoded_point,
+                        created_from=list_item_for_match)
+
+            match_for_new_facility.facility = new_facility
+            match_for_new_facility.confidence = 1.0
+            match_for_new_facility.status = FacilityMatch.CONFIRMED
+            match_for_new_facility.results = {
+                'match_type': 'split_by_administator',
+                'split_from_oar_id': match_for_new_facility.facility.id,
+            }
+
+            match_for_new_facility.save()
+
+            now = str(datetime.utcnow())
+
+            list_item_for_match.facility = new_facility
+            list_item_for_match.processing_results.append({
+                'action': ProcessingAction.SPLIT_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'previous_facility_oar_id': old_facility_id,
+            })
+
+            list_item_for_match.save()
+
+            return Response({
+                'match_id': match_for_new_facility.id,
+                'new_oar_id': new_facility.id,
+            })
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
+            raise NotFound()
+        except Facility.DoesNotExist:
+            raise NotFound()
+
 
 class FacilityListViewSetSchema(AutoSchema):
     def get_serializer_fields(self, path, method):
@@ -956,6 +1075,11 @@ class FacilityListViewSetSchema(AutoSchema):
             ]
 
         return []
+
+    # This suppresses the FacilityList documentation altogether. See:
+    # https://github.com/open-apparel-registry/open-apparel-registry/issues/349
+    def get_link(self, path, method, base_url):
+        return None
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):
@@ -1416,11 +1540,15 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             facility_match.status = FacilityMatch.CONFIRMED
             facility_match.save()
 
-            FacilityMatch \
+            matches_to_reject = FacilityMatch \
                 .objects \
                 .filter(facility_list_item=facility_list_item) \
-                .exclude(pk=facility_match_id) \
-                .update(status=FacilityMatch.REJECTED)
+                .exclude(pk=facility_match_id)
+            # Call `save` in a loop rather than use `update` to make sure that
+            # django-simple-history can log the changes
+            for match in matches_to_reject:
+                match.status = FacilityMatch.REJECTED
+                match.save()
 
             facility_list_item.status = FacilityListItem.CONFIRMED_MATCH
             facility_list_item.facility = facility_match.facility
@@ -1655,10 +1783,14 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 .filter(facility_list=facility_list) \
                 .get(pk=request.data.get('list_item_id'))
 
-            FacilityMatch \
+            matches_to_deactivate = FacilityMatch \
                 .objects \
-                .filter(facility_list_item=facility_list_item) \
-                .update(is_active=False)
+                .filter(facility_list_item=facility_list_item)
+            # Call `save` in a loop rather than use `update` to make sure that
+            # django-simple-history can log the changes
+            for item in matches_to_deactivate:
+                item.is_active = False
+                item.save()
 
             facility_list_item.refresh_from_db()
 
@@ -1942,44 +2074,102 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                     .objects \
                     .get(pk=parent_company_data['id'])
 
-            FacilityClaim.objects.filter(pk=pk).update(
-                facility_description=request.data.get('facility_description'),
-                facility_name=request.data.get('facility_name'),
-                facility_address=request.data.get('facility_address'),
-                facility_phone_number=request.data
-                .get('facility_phone_number'),
-                facility_phone_number_publicly_visible=request.data
-                .get('facility_phone_number_publicly_visible'),
-                facility_website=request.data.get('facility_website'),
-                facility_minimum_order_quantity=request.data
-                .get('facility_minimum_order_quantity'),
-                facility_average_lead_time=request.data
-                .get('facility_average_lead_time'),
-                parent_company=parent_company,
-                point_of_contact_person_name=request.data
-                .get('point_of_contact_person_name'),
-                point_of_contact_email=request.data
-                .get('point_of_contact_email'),
-                point_of_contact_publicly_visible=request.data
-                .get('point_of_contact_publicly_visible'),
-                office_official_name=request.data
-                .get('office_official_name'),
-                office_address=request.data.get('office_address'),
-                office_country_code=request.data.get('office_country_code'),
-                office_phone_number=request.data.get('office_phone_number'),
-                office_info_publicly_visible=request.data
-                .get('office_info_publicly_visible')
-            )
-
-            updated_claim = FacilityClaim.objects.get(pk=pk)
+            claim.parent_company = parent_company
 
             try:
-                send_claim_update_notice_to_list_contributors(request,
-                                                              updated_claim)
-            except Exception:
-                _report_facility_claim_email_error_to_rollbar(updated_claim)
+                workers_count = int(request.data.get('facility_workers_count'))
+            except ValueError:
+                workers_count = None
+            except TypeError:
+                workers_count = None
 
-            response_data = ApprovedFacilityClaimSerializer(updated_claim).data
+            claim.facility_workers_count = workers_count
+
+            try:
+                female_workers_percentage = int(
+                    request.data.get('facility_female_workers_percentage')
+                )
+            except ValueError:
+                female_workers_percentage = None
+            except TypeError:
+                female_workers_percentage = None
+
+            claim \
+                .facility_female_workers_percentage = female_workers_percentage
+
+            facility_type = request.data.get('facility_type')
+
+            claim.facility_type = facility_type
+
+            if facility_type == FacilityClaim.OTHER:
+                other_facility_type = request.data.get('other_facility_type')
+            else:
+                other_facility_type = None
+
+            claim.other_facility_type = other_facility_type
+
+            facility_affiliations = request.data.get('facility_affiliations')
+
+            if facility_affiliations:
+                claim.facility_affiliations = facility_affiliations
+            else:
+                claim.facility_affiliations = None
+
+            facility_certifications = request.data \
+                                             .get('facility_certifications')
+
+            if facility_certifications:
+                claim.facility_certifications = facility_certifications
+            else:
+                claim.facility_certifications = None
+
+            facility_product_types = request.data.get('facility_product_types')
+
+            if facility_product_types:
+                claim.facility_product_types = facility_product_types
+            else:
+                claim.facility_product_types = None
+
+            facility_production_types = \
+                request.data.get('facility_production_types')
+
+            if facility_production_types:
+                claim.facility_production_types = facility_production_types
+            else:
+                claim.facility_production_types = None
+
+            field_names = (
+                'facility_description',
+                'facility_name_english',
+                'facility_name_native_language',
+                'facility_address',
+                'facility_phone_number',
+                'facility_phone_number_publicly_visible',
+                'facility_website',
+                'facility_website_publicly_visible',
+                'facility_minimum_order_quantity',
+                'facility_average_lead_time',
+                'point_of_contact_person_name',
+                'point_of_contact_email',
+                'point_of_contact_publicly_visible',
+                'office_official_name',
+                'office_address',
+                'office_country_code',
+                'office_phone_number',
+                'office_info_publicly_visible',
+            )
+
+            for field_name in field_names:
+                setattr(claim, field_name, request.data.get(field_name))
+
+            claim.save()
+
+            try:
+                send_claim_update_notice_to_list_contributors(request, claim)
+            except Exception:
+                _report_facility_claim_email_error_to_rollbar(claim)
+
+            response_data = ApprovedFacilityClaimSerializer(claim).data
             return Response(response_data)
         except FacilityClaim.DoesNotExist:
             raise NotFound()

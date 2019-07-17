@@ -13,6 +13,7 @@ import {
     updateClaimAFacilityContactPerson,
     updateClaimAFacilityEmail,
     updateClaimAFacilityPhoneNumber,
+    updateClaimAFacilityJobTitle,
 } from '../actions/claimFacility.js';
 
 import { getValueFromEvent } from '../util/util';
@@ -21,7 +22,12 @@ import { claimAFacilityFormStyles } from '../util/styles';
 
 import { claimAFacilityFormFields } from '../util/constants';
 
-const { contactName, contactEmail, contactPhone } = claimAFacilityFormFields;
+const {
+    contactName,
+    contactEmail,
+    contactPhone,
+    contactJobTitle,
+} = claimAFacilityFormFields;
 
 function ClaimFacilityContactInfoStep({
     contactPerson,
@@ -31,6 +37,8 @@ function ClaimFacilityContactInfoStep({
     phoneNumber,
     updatePhoneNumber,
     fetching,
+    jobTitle,
+    updateJobTitle,
 }) {
     return (
         <>
@@ -49,6 +57,23 @@ function ClaimFacilityContactInfoStep({
                     style={claimAFacilityFormStyles.textFieldStyles}
                     value={contactPerson}
                     onChange={updateContactPerson}
+                    disabled={fetching}
+                />
+            </div>
+            <div style={claimAFacilityFormStyles.inputGroupStyles}>
+                <InputLabel htmlFor={contactJobTitle.id}>
+                    <Typography variant="title">
+                        {contactJobTitle.label}
+                        <RequiredAsterisk />
+                    </Typography>
+                </InputLabel>
+                <TextField
+                    error={isEmpty(jobTitle)}
+                    id={contactJobTitle.id}
+                    variant="outlined"
+                    style={claimAFacilityFormStyles.textFieldStyles}
+                    value={jobTitle}
+                    onChange={updateJobTitle}
                     disabled={fetching}
                 />
             </div>
@@ -101,12 +126,14 @@ ClaimFacilityContactInfoStep.propTypes = {
     updateContactPerson: func.isRequired,
     updateEmail: func.isRequired,
     updatePhoneNumber: func.isRequired,
+    jobTitle: string.isRequired,
+    updateJobTitle: func.isRequired,
 };
 
 function mapStateToProps({
     claimFacility: {
         claimData: {
-            formData: { contactPerson, email, phoneNumber },
+            formData: { contactPerson, email, phoneNumber, jobTitle },
             fetching,
         },
     },
@@ -116,6 +143,7 @@ function mapStateToProps({
         email,
         phoneNumber,
         fetching,
+        jobTitle,
     };
 }
 
@@ -127,6 +155,8 @@ function mapDispatchToProps(dispatch) {
             dispatch(updateClaimAFacilityEmail(getValueFromEvent(e))),
         updatePhoneNumber: e =>
             dispatch(updateClaimAFacilityPhoneNumber(getValueFromEvent(e))),
+        updateJobTitle: e =>
+            dispatch(updateClaimAFacilityJobTitle(getValueFromEvent(e))),
     };
 }
 

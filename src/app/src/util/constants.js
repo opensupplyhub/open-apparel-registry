@@ -226,6 +226,7 @@ export const dashboardListsRoute = '/dashboard/lists';
 export const dashboardClaimsRoute = '/dashboard/claims';
 export const dashboardDeleteFacilityRoute = '/dashboard/deletefacility';
 export const dashboardMergeFacilitiesRoute = '/dashboard/mergefacilities';
+export const dashboardSplitFacilityMatchesRoute = '/dashboard/splitfacilitymatches';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
 export const dashboardClaimsDetailsRoute = '/dashboard/claims/:claimID';
@@ -439,6 +440,10 @@ export const claimAFacilityFormFields = Object.freeze({
         id: 'contact-phone-number',
         label: 'Phone number',
     }),
+    contactJobTitle: Object.freeze({
+        id: 'contact-job-title',
+        label: 'Job title',
+    }),
     companyName: Object.freeze({
         id: 'company-name',
         label: 'Official name of LLC or company registered',
@@ -464,6 +469,10 @@ inviting them to register with the Open Apparel Registry.`,
     preferredContactMethod: Object.freeze({
         id: 'preferred-contact',
         label: 'Preferred method of contact',
+    }),
+    linkedinProfile: Object.freeze({
+        id: 'linkedin-profile',
+        label: 'LinkedIn profile URL',
     }),
 });
 

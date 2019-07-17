@@ -62,6 +62,7 @@ data "template_file" "default_job_definition" {
     environment                = "${var.environment}"
     django_secret_key          = "${var.django_secret_key}"
     google_server_side_api_key = "${var.google_server_side_api_key}"
+    oar_client_key             = "${var.oar_client_key}"
 
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
 

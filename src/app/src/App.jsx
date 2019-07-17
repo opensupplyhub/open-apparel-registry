@@ -86,11 +86,6 @@ class App extends Component {
                             <Switch>
                                 <Route
                                     exact
-                                    path={mainRoute}
-                                    component={MapAndSidebar}
-                                />
-                                <Route
-                                    exact
                                     path={claimFacilityRoute}
                                     render={() => (
                                         <FeatureFlag
@@ -117,26 +112,32 @@ class App extends Component {
                                     component={MapAndSidebar}
                                 />
                                 <Route
+                                    exact
                                     path={authRegisterFormRoute}
                                     component={RegisterForm}
                                 />
                                 <Route
+                                    exact
                                     path={authLoginFormRoute}
                                     component={LoginForm}
                                 />
                                 <Route
+                                    exact
                                     path={authResetPasswordFormRoute}
                                     component={ResetPasswordForm}
                                 />
                                 <Route
+                                    exact
                                     path={authConfirmRegistrationRoute}
                                     component={ConfirmRegistration}
                                 />
                                 <Route
+                                    exact
                                     path={profileRoute}
                                     component={UserProfile}
                                 />
                                 <Route
+                                    exact
                                     path={contributeRoute}
                                     component={Contribute}
                                 />
@@ -153,10 +154,12 @@ class App extends Component {
                                     component={FacilityLists}
                                 />
                                 <Route
+                                    exact
                                     path={aboutProcessingRoute}
                                     component={AboutProcessing}
                                 />
                                 <Route
+                                    exact
                                     path={aboutClaimedFacilitiesRoute}
                                     render={() => (
                                         <FeatureFlag
@@ -166,6 +169,11 @@ class App extends Component {
                                             <AboutClaimedFacilities />
                                         </FeatureFlag>
                                     )}
+                                />
+                                <Route
+                                    exact
+                                    path={mainRoute}
+                                    component={MapAndSidebar}
                                 />
                                 <Route render={() => <RouteNotFound />} />
                             </Switch>

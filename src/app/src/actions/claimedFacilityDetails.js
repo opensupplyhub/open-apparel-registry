@@ -1,8 +1,11 @@
 import { createAction } from 'redux-act';
 import mapValues from 'lodash/mapValues';
 import isNull from 'lodash/isNull';
+import omit from 'lodash/omit';
+import isInteger from 'lodash/isInteger';
+import { isInt } from 'validator';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -26,7 +29,7 @@ export function fetchClaimedFacilityDetails(claimID) {
 
         dispatch(startFetchClaimedFacilityDetails());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetOrUpdateApprovedFacilityClaimURL(claimID))
             .then(({ data }) => mapValues(data, (v) => {
                 if (isNull(v)) {
@@ -65,8 +68,35 @@ export function submitClaimedFacilityDetailsUpdate(claimID) {
 
         dispatch(startUpdateClaimedFacilityDetails());
 
-        return csrfRequest
-            .put(makeGetOrUpdateApprovedFacilityClaimURL(claimID), data)
+        const updateData = Object.assign(
+            {},
+            omit(
+                data,
+                [
+                    'contributors',
+                    'countries',
+                    'facility_types',
+                    'affiliation_choices',
+                    'certification_choices',
+                    'product_type_choices',
+                    'production_type_choices',
+                ],
+            ),
+            {
+                facility_workers_count:
+                    (isInteger(data.facility_workers_count) || isInt(data.facility_workers_count))
+                        ? data.facility_workers_count
+                        : null,
+                facility_female_workers_percentage:
+                    (isInteger(data.facility_female_workers_percentage) ||
+                     isInt(data.facility_female_workers_percentage))
+                        ? data.facility_female_workers_percentage
+                        : null,
+            },
+        );
+
+        return apiRequest
+            .put(makeGetOrUpdateApprovedFacilityClaimURL(claimID), updateData)
             .then(({ data: responseData }) => mapValues(responseData, (v) => {
                 if (isNull(v)) {
                     return '';
@@ -83,8 +113,10 @@ export function submitClaimedFacilityDetailsUpdate(claimID) {
     };
 }
 
-export const updateClaimedFacilityName =
-    createAction('UPDATE_CLAIMED_FACILITY_NAME');
+export const updateClaimedFacilityNameEnglish =
+    createAction('UPDATE_CLAIMED_FACILITY_NAME_ENGLISH');
+export const updateClaimedFacilityNameNativeLanguage =
+    createAction('UPDATE_CLAIMED_FACILITY_NAME_NATIVE_LANGUAGE');
 export const updateClaimedFacilityAddress =
     createAction('UPDATE_CLAIMED_FACILITY_ADDRESS');
 export const updateClaimedFacilityPhone =
@@ -93,12 +125,18 @@ export const updateClaimedFacilityPhoneVisibility =
     createAction('UPDATE_CLAIMED_FACILITY_PHONE_VISIBILITY');
 export const updateClaimedFacilityWebsite =
     createAction('UPDATE_CLAIMED_FACILITY_WEBSITE');
+export const updateClaimedFacilityWebsiteVisibility =
+    createAction('UPDATE_CLAIMED_FACILITY_WEBSITE_VISIBILITY');
 export const updateClaimedFacilityDescription =
     createAction('UPDATE_CLAIMED_FACILITY_DESCRIPTION');
 export const updateClaimedFacilityMinimumOrder =
     createAction('UPDATE_CLAIMED_FACILITY_MINIMUM_ORDER');
 export const updateClaimedFacilityAverageLeadTime =
     createAction('UPDATE_CLAIMED_FACILITY_AVERAGE_LEAD_TIME');
+export const updateClaimedFacilityWorkersCount =
+    createAction('UPDATE_CLAIMED_FACILITY_WORKERS_COUNT');
+export const updateClaimedFacilityFemaleWorkersPercentage =
+    createAction('UPDATE_CLAIMED_FACILITY_FEMALE_WORKERS_PERCENTAGE');
 export const updateClaimedFacilityPointOfContactVisibility =
     createAction('UPDATE_CLAIMED_FACILITY_POINT_OF_CONTACT_VISIBILITY');
 export const updateClaimedFacilityContactPersonName =
@@ -117,3 +155,15 @@ export const updateClaimedFacilityOfficePhone =
     createAction('UPDATE_CLAIMED_FACILITY_OFFICE_PHONE');
 export const updateClaimedFacilityParentCompany =
     createAction('UPDATE_CLAIMED_FACILITY_PARENT_COMPANY');
+export const updateClaimedFacilityFacilityType =
+    createAction('UPDATE_CLAIMED_FACILITY_FACILITY_TYPE');
+export const updateClaimedFacilityOtherFacilityType =
+    createAction('UPDATE_CLAIMED_FACILITY_OTHER_FACILITY_TYPE');
+export const updateClaimedFacilityAffiliations =
+    createAction('UPDATE_CLAIMED_FACILITY_AFFILIATIONS');
+export const updateClaimedFacilityCertifications =
+    createAction('UPDATE_CLAIMED_FACILITY_CERTIFICATIONS');
+export const updateClaimedFacilityProductTypes =
+    createAction('UPDATE_CLAIMED_FACILITY_PRODUCT_TYPES');
+export const updateClaimedFacilityProductionTypes =
+    createAction('UPDATE_CLAIMED_FACILITY_PRODUCTION_TYPES');

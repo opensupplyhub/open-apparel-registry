@@ -26,7 +26,7 @@ import toInteger from 'lodash/toInteger';
 import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
 import every from 'lodash/every';
-import { isEmail } from 'validator';
+import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 
@@ -95,6 +95,7 @@ export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
 export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
 export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/`;
+export const makeSplitFacilityAPIURL = oarID => `/api/facilities/${oarID}/split/`;
 
 export const makeMergeTwoFacilitiesAPIURL = (targetOARID, toMergeOARID) =>
     `/api/facilities/merge/?target=${targetOARID}&merge=${toMergeOARID}`;
@@ -128,13 +129,13 @@ export const makeGetClientInfoURL = () => {
 export const getValueFromObject = ({ value }) => value;
 
 export const createQueryStringFromSearchFilters = ({
-    facilityName = '',
+    facilityFreeTextQuery = '',
     contributors = [],
     contributorTypes = [],
     countries = [],
 }) => {
     const inputForQueryString = Object.freeze({
-        name: facilityName,
+        q: facilityFreeTextQuery,
         contributors: compact(contributors.map(getValueFromObject)),
         contributor_types: compact(contributorTypes.map(getValueFromObject)),
         countries: compact(countries.map(getValueFromObject)),
@@ -176,14 +177,14 @@ export const createFiltersFromQueryString = (qs) => {
         : qs;
 
     const {
-        name = '',
+        q: facilityFreeTextQuery = '',
         contributors = [],
         contributor_types: contributorTypes = [],
         countries = [],
     } = querystring.parse(qsToParse);
 
     return Object.freeze({
-        facilityName: name,
+        facilityFreeTextQuery,
         contributors: createSelectOptionsFromParams(contributors),
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),
@@ -607,12 +608,24 @@ export const claimFacilityContactInfoStepIsValid = ({
     email,
     contactPerson,
     phoneNumber,
+    jobTitle,
 }) => every([
     isEmail(email),
     !isEmpty(contactPerson),
     !isEmpty(phoneNumber),
+    !isEmpty(jobTitle),
 ]);
 
-export const claimFacilityFacilityInfoStepIsValid = ({ companyName }) => !isEmpty(companyName);
+export const isValidFacilityURL = url => isEmpty(url) || isURL(url, { protocols: ['http', 'https'] });
+
+export const claimFacilityFacilityInfoStepIsValid = ({
+    companyName,
+    website,
+    facilityDescription,
+}) => every([
+    !isEmpty(companyName),
+    isValidFacilityURL(website),
+    !isEmpty(facilityDescription),
+]);
 
 export const anyListItemMatchesAreInactive = ({ matches }) => some(matches, ['is_active', false]);

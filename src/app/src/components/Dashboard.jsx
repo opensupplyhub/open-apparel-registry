@@ -9,6 +9,7 @@ import DashboardClaims from './DashboardClaims';
 import DashboardClaimsDetails from './DashboardClaimsDetails';
 import DashboardDeleteFacility from './DashboardDeleteFacility';
 import DashboardMergeFacilities from './DashboardMergeFacilities';
+import DashboardSplitFacilityMatches from './DashboardSplitFacilityMatches';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
 
@@ -16,11 +17,13 @@ import { checkWhetherUserHasDashboardAccess } from '../util/util';
 
 import {
     CLAIM_A_FACILITY,
+    dashboardRoute,
     dashboardListsRoute,
     dashboardClaimsRoute,
     dashboardClaimsDetailsRoute,
     dashboardDeleteFacilityRoute,
     dashboardMergeFacilitiesRoute,
+    dashboardSplitFacilityMatchesRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -70,7 +73,19 @@ function Dashboard({
             <Link to={dashboardMergeFacilitiesRoute}>
                 Merge two facilities
             </Link>
+            <Link to={dashboardSplitFacilityMatchesRoute}>
+                Split facility matches
+            </Link>
         </div>
+    );
+
+    const makeClickableDashboardLinkFn = screenTitle => () => (
+        <span>
+            <Link to={dashboardRoute} href={dashboardRoute}>
+                Dashboard
+            </Link>
+            {` / ${screenTitle}`}
+        </span>
     );
 
     return (
@@ -81,10 +96,12 @@ function Dashboard({
                     (
                         <Switch>
                             <Route
+                                exact
                                 path={dashboardListsRoute}
-                                render={() => 'Dashboard / Contributor Lists'}
+                                render={makeClickableDashboardLinkFn('Contributor Lists')}
                             />
                             <Route
+                                exact
                                 path={dashboardClaimsDetailsRoute}
                                 render={
                                     () => (
@@ -92,12 +109,13 @@ function Dashboard({
                                             flag={CLAIM_A_FACILITY}
                                             alternative={DASHBOARD_TITLE}
                                         >
-                                            Dashboard / Facility Claim Details
+                                            {makeClickableDashboardLinkFn('Facility Claim Details')}
                                         </FeatureFlag>
                                     )
                                 }
                             />
                             <Route
+                                exact
                                 path={dashboardClaimsRoute}
                                 render={
                                     () => (
@@ -105,38 +123,58 @@ function Dashboard({
                                             flag={CLAIM_A_FACILITY}
                                             alternative={DASHBOARD_TITLE}
                                         >
-                                            Dashboard / Facility Claims
+                                            {makeClickableDashboardLinkFn('Facility Claims')}
                                         </FeatureFlag>
                                     )
                                 }
                             />
                             <Route
+                                exact
                                 path={dashboardDeleteFacilityRoute}
-                                render={() => 'Dashboard / Delete Facility'}
+                                render={makeClickableDashboardLinkFn('Delete Facility')}
                             />
                             <Route
+                                exact
                                 path={dashboardMergeFacilitiesRoute}
-                                render={() => 'Dashboard / Merge Facilities'}
+                                render={makeClickableDashboardLinkFn('Merge Facilities')}
                             />
-                            <Route render={() => DASHBOARD_TITLE} />
+                            <Route
+                                exact
+                                path={dashboardSplitFacilityMatchesRoute}
+                                render={makeClickableDashboardLinkFn('Split Facility Matches')}
+                            />
+                            <Route
+                                exact
+                                path={dashboardRoute}
+                                render={() => 'Dashboard'}
+                            />
                         </Switch>
                     )
                 }
             >
                 <Switch>
                     <Route
+                        exact
                         path={dashboardListsRoute}
                         component={DashboardLists}
                     />
                     <Route
+                        exact
                         path={dashboardDeleteFacilityRoute}
                         component={DashboardDeleteFacility}
                     />
                     <Route
+                        exact
                         path={dashboardMergeFacilitiesRoute}
                         component={DashboardMergeFacilities}
                     />
                     <Route
+                        exact
+                        path={dashboardSplitFacilityMatchesRoute}
+                        component={DashboardSplitFacilityMatches}
+                    />
+                    <Route
+                        exact
                         path={dashboardClaimsDetailsRoute}
                         render={
                             () => (
@@ -150,6 +188,7 @@ function Dashboard({
                         }
                     />
                     <Route
+                        exact
                         path={dashboardClaimsRoute}
                         render={
                             () => (
@@ -162,7 +201,12 @@ function Dashboard({
                             )
                         }
                     />
-                    <Route render={() => linkSection} />
+                    <Route
+                        exact
+                        path={dashboardRoute}
+                        render={() => linkSection}
+                    />
+                    <Route render={() => <RouteNotFound />} />
                 </Switch>
             </AppGrid>
         </AppOverflow>

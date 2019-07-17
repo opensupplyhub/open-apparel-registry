@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, Switch, Route } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -215,12 +215,10 @@ class FacilityListItems extends Component {
                         {
                             list.item_count
                                 ? (
-                                    <Switch>
-                                        <Route
-                                            path={facilityListItemsRoute}
-                                            component={FacilityListItemsTable}
-                                        />
-                                    </Switch>)
+                                    <Route
+                                        path={facilityListItemsRoute}
+                                        component={FacilityListItemsTable}
+                                    />)
                                 : <FacilityListItemsEmpty />
                         }
                     </Grid>

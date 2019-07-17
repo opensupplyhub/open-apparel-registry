@@ -237,15 +237,6 @@ class FacilityDetailSidebar extends Component {
                             <div style={detailsSidebarStyles.linkSectionStyle}>
                                 <ShowOnly when={!facilityIsClaimedByCurrentUser}>
                                     <>
-                                        <a
-                                            className="link-underline small"
-                                            href={makeReportADataIssueEmailLink(
-                                                data.properties.oar_id,
-                                            )}
-                                            style={detailsSidebarStyles.linkStyle}
-                                        >
-                                            Suggest a data edit
-                                        </a>
                                         <FeatureFlag flag={CLAIM_A_FACILITY}>
                                             {data.properties.claim_info ? (
                                                 <a
@@ -286,6 +277,15 @@ class FacilityDetailSidebar extends Component {
                                                 </>
                                             )}
                                         </FeatureFlag>
+                                        <a
+                                            className="link-underline small"
+                                            href={makeReportADataIssueEmailLink(
+                                                data.properties.oar_id,
+                                            )}
+                                            style={detailsSidebarStyles.linkStyle}
+                                        >
+                                                Suggest a data edit
+                                        </a>
                                     </>
                                 </ShowOnly>
                                 <ShowOnly when={facilityIsClaimedByCurrentUser}>
@@ -296,7 +296,7 @@ class FacilityDetailSidebar extends Component {
                                             href={makeApprovedClaimDetailsLink(facilityClaimID)}
                                             style={detailsSidebarStyles.linkStyle}
                                         >
-                                            Update claimed facility profile
+                                            Update facility details
                                         </Link>
                                     </FeatureFlag>
                                 </ShowOnly>

@@ -4,7 +4,7 @@ import xlrd
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib import auth
 from django.conf import settings
@@ -18,7 +18,8 @@ from waffle.testutils import override_switch
 from api.constants import ProcessingAction
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
-                        FacilityMatch, FacilityAlias, Contributor, User)
+                        FacilityMatch, FacilityAlias, Contributor, User,
+                        RequestLog)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
@@ -27,6 +28,8 @@ from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
 from api.test_data import parsed_city_hall_data
+from api.permissions import referring_host_is_allowed, referring_host
+from api.serializers import ApprovedFacilityClaimSerializer
 
 
 class FacilityListCreateTest(APITestCase):
@@ -1822,6 +1825,7 @@ class ApprovedFacilityClaimTests(APITestCase):
                 'facility_phone_number_publicly_visible': False,
                 'point_of_contact_publicly_visible': False,
                 'office_info_publicly_visible': False,
+                'facility_website_publicly_visible': False,
             }
         )
 
@@ -1868,6 +1872,17 @@ class ApprovedFacilityClaimTests(APITestCase):
         ).json()['properties']['claim_info']
 
         self.assertIsNone(response_data['office'])
+
+    @override_switch('claim_a_facility', active=True)
+    def test_non_visible_website_is_not_in_details_response(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        response_data = self.client.get(
+            '/api/facilities/{}/'.format(self.facility_claim.facility.id)
+        ).json()['properties']['claim_info']['facility']
+
+        self.assertIsNone(response_data['website'])
 
 
 class FacilityClaimTest(APITestCase):
@@ -2650,3 +2665,444 @@ class FacilityMergeTest(APITestCase):
         data = json.loads(response.content)
         self.assertIn('target', data)
         self.assertIn('merge', data)
+
+
+class FacilitySplitTest(APITestCase):
+    def setUp(self):
+        self.user_one_email = 'one@example.com'
+        self.user_one_password = 'example123'
+        self.user_one = User.objects.create(email=self.user_one_email)
+        self.user_one.set_password(self.user_one_password)
+        self.user_one.save()
+
+        self.user_two_email = 'two@example.com'
+        self.user_two_password = 'example123'
+        self.user_two = User.objects.create(email=self.user_two_email)
+        self.user_two.set_password(self.user_two_password)
+        self.user_two.save()
+
+        self.superuser_email = 'super@example.com'
+        self.superuser_password = 'example123'
+        self.superuser = User.objects.create_superuser(
+            email=self.superuser_email,
+            password=self.superuser_password)
+
+        self.contributor_one = Contributor \
+            .objects \
+            .create(admin=self.user_one,
+                    name='test contributor 1',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_one = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='First List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_one)
+
+        self.list_item_one = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list_one,
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility_one = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item_one)
+
+        self.match_one = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility_one,
+                    facility_list_item=self.list_item_one,
+                    confidence=0.85,
+                    results='')
+
+        self.list_item_one.facility = self.facility_one
+        self.list_item_one.save()
+
+        self.contributor_two = Contributor \
+            .objects \
+            .create(admin=self.user_two,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_two = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_two)
+
+        self.list_item_two = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list_two,
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.match_two = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility_one,
+                    facility_list_item=self.list_item_two,
+                    confidence=0.85,
+                    results='')
+
+        self.list_item_two.facility = self.facility_one
+        self.list_item_two.save()
+
+        self.split_url = '/api/facilities/{}/split/'.format(
+            self.facility_one.id,
+        )
+
+    def test_split_is_unauthorized_for_anonymous_users(self):
+        get_response = self.client.get(self.split_url)
+        self.assertEqual(get_response.status_code, 401)
+
+        post_response = self.client.post(self.split_url)
+        self.assertEqual(post_response.status_code, 401)
+
+    def test_split_is_unauthorized_for_non_administrators(self):
+        self.client.login(email=self.user_one_email,
+                          password=self.user_one_password)
+        get_response = self.client.get(self.split_url)
+        self.assertEqual(get_response.status_code, 403)
+
+        post_response = self.client.post(self.split_url)
+        self.assertEqual(post_response.status_code, 403)
+
+    def test_get_returns_facility_details_with_match_data(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        get_response = self.client.get(self.split_url)
+        self.assertEqual(get_response.status_code, 200)
+
+        data = json.loads(get_response.content)
+        self.assertEqual(
+            len(data['properties']['matches']),
+            1,
+        )
+
+        self.assertEqual(
+            data['properties']['matches'][0]['match_id'],
+            self.match_two.id,
+        )
+
+    def test_post_returns_bad_request_without_match_id(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url, {})
+        self.assertEqual(post_response.status_code, 400)
+
+    def test_post_creates_a_new_facility(self):
+        initial_facility_count = Facility \
+            .objects \
+            .all() \
+            .count()
+        self.assertEqual(initial_facility_count, 1)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url,
+                                         {'match_id': self.match_two.id})
+        self.assertEqual(post_response.status_code, 200)
+
+        updated_facility_count = Facility \
+            .objects \
+            .all() \
+            .count()
+
+        self.assertEqual(updated_facility_count, 2)
+
+    def test_post_decrements_prior_facility_matches(self):
+        self.assertEqual(
+            self.facility_one.facilitymatch_set.count(),
+            2,
+        )
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url,
+                                         {'match_id': self.match_two.id})
+        self.assertEqual(post_response.status_code, 200)
+
+        self.facility_one.refresh_from_db()
+
+        self.assertEqual(
+            self.facility_one.facilitymatch_set.count(),
+            1,
+        )
+
+    def test_post_returns_match_id_and_new_oar_id(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url,
+                                         {'match_id': self.match_two.id})
+        self.assertEqual(post_response.status_code, 200)
+
+        data = json.loads(post_response.content)
+
+        self.assertEqual(
+            self.match_two.id,
+            data['match_id'],
+        )
+
+        self.match_two.refresh_from_db()
+
+        self.assertEqual(
+            self.match_two.facility.id,
+            data['new_oar_id'],
+        )
+
+
+class PermissionsTests(TestCase):
+    class MockRequest(object):
+        def __init__(self, referer):
+            self.META = {}
+            if referer is not None:
+                self.META['HTTP_REFERER'] = referer
+
+    @override_settings(ALLOWED_HOSTS=['.allowed.org'])
+    def test_is_referer_allowed(self):
+        def check_host(url):
+            return referring_host_is_allowed(
+                referring_host(
+                    PermissionsTests.MockRequest(url)))
+
+        self.assertTrue(check_host('http://allowed.org'))
+        self.assertTrue(check_host('http://subdomain.allowed.org'))
+        self.assertTrue(check_host('http://allowed.org:6543'))
+        self.assertTrue(check_host('http://allowed.org:6543/api/countries'))
+
+        self.assertFalse(check_host('http://notallowed.org'))
+        self.assertFalse(check_host('http://allowed.com'))
+        self.assertFalse(check_host(''))
+        self.assertFalse(check_host(None))
+        self.assertFalse(check_host('foo'))
+
+
+class RequestLogMiddlewareTest(APITestCase):
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'password'
+        self.name = 'Test User'
+        self.user = User(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        Contributor.objects.create(name=self.name, admin=self.user)
+
+    def test_request_without_token_is_not_logged(self):
+        self.client.login(email=self.email, password=self.password)
+        response = self.client.get(reverse('facility-list-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(0, RequestLog.objects.filter(user=self.user).count())
+
+    def test_request_with_token_is_logged(self):
+        token = Token.objects.create(user=self.user)
+        path = reverse('facility-list-list')
+        response = self.client.get(
+            path,
+            HTTP_AUTHORIZATION='Token {0}'.format(token))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(1, RequestLog.objects.filter(user=self.user).count())
+
+        log = RequestLog.objects.first()
+        self.assertEqual(self.user, log.user)
+        self.assertEqual(str(token), log.token)
+        self.assertEqual('GET', log.method)
+        self.assertEqual(path, log.path)
+        self.assertEqual(200, log.response_code)
+
+
+class FacilityClaimChangesTest(TestCase):
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'password'
+        self.name = 'Test User'
+        self.user = User(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor.objects.create(
+            name=self.name, admin=self.user)
+
+        self.facility_list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='one',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.facility_list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility = Facility \
+            .objects \
+            .create(name=self.list_item.name,
+                    address=self.list_item.address,
+                    country_code=self.list_item.country_code,
+                    location=Point(0, 0),
+                    created_from=self.list_item)
+
+        self.claim = FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=self.facility,
+            facility_name_english='Facility Name',
+            facility_name_native_language='Објекат Име'
+        )
+
+    def test_no_changes(self):
+        self.assertIsNone(self.claim.get_changes())
+
+    def test_changes(self):
+        prev_name = self.claim.facility_name_english
+        new_name = 'Changed'
+        self.claim.facility_name_english = new_name
+        self.claim.save()
+        changes = self.claim.get_changes()
+        self.assertIsNotNone(changes)
+        self.assertEqual(1, len(changes))
+        self.assertEqual('facility_name_english', changes[0]['name'])
+        self.assertEqual(prev_name, changes[0]['previous'])
+        self.assertEqual(new_name, changes[0]['current'])
+        self.assertEqual(
+            'facility name in English', changes[0]['verbose_name'])
+
+    def test_do_not_include_field_change(self):
+        self.claim.facility_name = 'Changed'
+        self.claim.save()
+        changes = self.claim.get_changes(include='foo')
+        self.assertIsNone(changes)
+
+    def test_non_public_changes(self):
+        self.claim.facility_phone_number = 'Changed'
+        self.claim.point_of_contact_person_name = 'Changed'
+        self.claim.office_official_name = 'Changed'
+        self.claim.office_address = 'Changed'
+        self.claim.office_country_code = 'CN'
+        self.claim.office_phone_number = 'Changed'
+        self.claim.save()
+        self.assertIsNone(self.claim.get_changes())
+
+        self.claim.office_info_publicly_visible = True
+        self.claim.office_official_name = 'Changed again'
+        self.claim.office_address = 'Changed again'
+        self.claim.office_country_code = 'GB'
+        self.claim.office_phone_number = 'Changed again'
+        self.claim.save()
+        changes = self.claim.get_changes()
+        self.assertIsNotNone(changes)
+        field_names = [c['name'] for c in changes]
+        self.assertIn('office_official_name', field_names)
+        self.assertIn('office_address', field_names)
+        self.assertIn('office_country_code', field_names)
+        self.assertIn('office_phone_number', field_names)
+        self.assertNotIn('facility_phone_number', field_names)
+        self.assertNotIn('point_of_contact_person_name', field_names)
+
+    def test_change_serializers(self):
+        self.claim.parent_company = self.contributor
+        self.claim.save()
+        changes = self.claim.get_changes()
+        self.assertIsNotNone(changes)
+        self.assertEqual(1, len(changes))
+        change = changes[0]
+        self.assertEqual(change['name'], 'parent_company')
+        self.assertEqual(change['current'], self.name)
+
+
+class FacilityClaimSerializerTests(TestCase):
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'password'
+        self.name = 'Test User'
+        self.user = User(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor.objects.create(
+            name=self.name, admin=self.user)
+
+        self.facility_list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='one',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.facility_list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility = Facility \
+            .objects \
+            .create(name=self.list_item.name,
+                    address=self.list_item.address,
+                    country_code=self.list_item.country_code,
+                    location=Point(0, 0),
+                    created_from=self.list_item)
+
+        self.claim = FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=self.facility,
+            status=FacilityClaim.APPROVED,
+        )
+
+    def test_product_and_production_options_are_serialized(self):
+        data = ApprovedFacilityClaimSerializer(self.claim).data
+
+        self.assertIn('product_type_choices', data)
+        self.assertIsNotNone(data['product_type_choices'])
+        self.assertNotEqual([], data['product_type_choices'])
+
+        self.assertIn('production_type_choices', data)
+        self.assertIsNotNone(data['production_type_choices'])
+        self.assertNotEqual([], data['production_type_choices'])
+
+    def test_product_and_production_values_from_claims_are_included(self):
+        self.claim.facility_product_types = ['A', 'B']
+        self.claim.facility_production_types = ['C', 'D']
+        self.claim.save()
+        data = ApprovedFacilityClaimSerializer(self.claim).data
+
+        product_types = data['product_type_choices']
+        self.assertIn(('A', 'A'), product_types)
+        self.assertEqual(('A', 'A'), product_types[0])
+        self.assertIn(('B', 'B'), product_types)
+
+        production_types = data['production_type_choices']
+        self.assertIn(('C', 'C'), production_types)
+        self.assertEqual(('C', 'C'), production_types[0])
+        self.assertIn(('D', 'D'), production_types)

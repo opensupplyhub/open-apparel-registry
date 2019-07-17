@@ -1,6 +1,6 @@
 import { createAction } from 'redux-act';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     makeGetFacilityClaimsURL,
@@ -21,7 +21,7 @@ export function fetchFacilityClaims() {
     return (dispatch) => {
         dispatch(startFetchFacilityClaims());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilityClaimsURL())
             .then(({ data }) => dispatch(completeFetchFacilityClaims(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -46,7 +46,7 @@ export function fetchSingleFacilityClaim(claimID) {
 
         dispatch(startFetchSingleFacilityClaim());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilityClaimByClaimIDURL(claimID))
             .then(({ data }) => dispatch(completeFetchSingleFacilityClaim(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -76,7 +76,7 @@ export function approveFacilityClaim(claimID, reason = '') {
 
         dispatch(startApproveFacilityClaim());
 
-        return csrfRequest
+        return apiRequest
             .post(makeApproveFacilityClaimByClaimIDURL(claimID), { reason })
             .then(({ data }) => dispatch(completeApproveFacilityClaim(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -95,7 +95,7 @@ export function denyFacilityClaim(claimID, reason = '') {
 
         dispatch(startDenyFacilityClaim());
 
-        return csrfRequest
+        return apiRequest
             .post(makeDenyFacilityClaimByClaimIDURL(claimID), { reason })
             .then(({ data }) => dispatch(completeDenyFacilityClaim(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -114,7 +114,7 @@ export function revokeFacilityClaim(claimID, reason = '') {
 
         dispatch(startRevokeFacilityClaim());
 
-        return csrfRequest
+        return apiRequest
             .post(makeRevokeFacilityClaimByClaimIDURL(claimID), { reason })
             .then(({ data }) => dispatch(completeRevokeFacilityClaim(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -150,7 +150,7 @@ export function addNewFacilityClaimReviewNote(claimID) {
 
         dispatch(startAddNewFacilityClaimReviewNote());
 
-        return csrfRequest
+        return apiRequest
             .post(makeAddNewFacilityClaimReviewNoteURL(claimID), { note })
             .then(({ data }) => dispatch(completeAddNewFacilityClaimReviewNote(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

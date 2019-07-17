@@ -20,20 +20,27 @@ export default function ClaimedFacilities() {
                     (
                         <Switch>
                             <Route
+                                exact
                                 path={claimedFacilitiesDetailRoute}
                                 render={() => 'Claimed Facility Details'}
                             />
-                            <Route render={() => 'My Facilities'} />
+                            <Route
+                                exact
+                                path={claimedFacilitiesRoute}
+                                render={() => 'My Claimed Facilities'}
+                            />
                         </Switch>
                     )
                 }
             >
                 <Switch>
                     <Route
+                        exact
                         path={claimedFacilitiesDetailRoute}
                         render={() => <Route component={ClaimedFacilitiesDetails} />}
                     />
                     <Route
+                        exact
                         path={claimedFacilitiesRoute}
                         component={ClaimedFacilitiesList}
                     />

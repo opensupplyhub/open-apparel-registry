@@ -12,7 +12,9 @@ Here's the reason it was revoked:
 {{ revocation_reason }}
 {% endif %}
 
-Sincerely,
+We have discovered your claim is actually inaccurate. If you believe your claim should not have been revoked, you can reach out to the OAR team to provide additional, clarifying information at: info@openapparel.org The team will review your claim and get back to you.
+
+Best wishes,
 
 {% include "mail/signature_block.txt" %}
 {% endblock content %}

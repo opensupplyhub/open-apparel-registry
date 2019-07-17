@@ -132,6 +132,23 @@ export default function DashboardFacilityCard({
             return null;
         }
 
+        const contributorContent =
+            get(data, 'properties.contributors', []).length && (
+                <ul style={dashboardFacilityCardStyles.listStyles}>
+                    {data.properties.contributors.map(({ name }) => (
+                        <li key={name}>
+                            <Typography
+                                style={
+                                    dashboardFacilityCardStyles.fieldStyles
+                                }
+                            >
+                                {name}
+                            </Typography>
+                        </li>
+                    ))}
+                </ul>
+            );
+
         return (
             <>
                 <div style={dashboardFacilityCardStyles.mapStyles}>
@@ -159,21 +176,9 @@ export default function DashboardFacilityCard({
                     <Typography style={dashboardFacilityCardStyles.labelStyles}>
                         Contributors
                     </Typography>
-                    {get(data, 'properties.contributors', []).length && (
-                        <ul style={dashboardFacilityCardStyles.listStyles}>
-                            {data.properties.contributors.map(({ name }) => (
-                                <li key={name}>
-                                    <Typography
-                                        style={
-                                            dashboardFacilityCardStyles.fieldStyles
-                                        }
-                                    >
-                                        {name}
-                                    </Typography>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                    <div style={dashboardFacilityCardStyles.fieldStyles}>
+                        {contributorContent}
+                    </div>
                 </div>
             </>
         );

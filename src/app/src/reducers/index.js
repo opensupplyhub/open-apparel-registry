@@ -25,6 +25,7 @@ import ClaimedFacilitesReducer from './ClaimedFacilitesReducer';
 import DashboardListsReducer from './DashboardListsReducer';
 import DeleteFacilityReducer from './DeleteFacilityReducer';
 import MergeFacilitiesReducer from './MergeFacilitiesReducer';
+import SplitFacilityMatchesReducer from './SplitFacilityMatchesReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -46,4 +47,5 @@ export default combineReducers({
     dashboardLists: DashboardListsReducer,
     deleteFacility: DeleteFacilityReducer,
     mergeFacilities: MergeFacilitiesReducer,
+    splitFacilityMatches: SplitFacilityMatchesReducer,
 });

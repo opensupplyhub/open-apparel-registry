@@ -9,8 +9,10 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import clamp from 'lodash/clamp';
 import last from 'lodash/last';
+import stubTrue from 'lodash/stubTrue';
 
 import BadgeClaimed from './BadgeClaimed';
+import ClaimFacilityIntroStep from './ClaimFacilityIntroStep';
 import ClaimFacilityContactInfoStep from './ClaimFacilityContactInfoStep';
 import ClaimFacilityFacilityInfoStep from './ClaimFacilityFacilityInfoStep';
 import ClaimFacilityVerificationInfoStep from './ClaimFacilityVerificationInfoStep';
@@ -54,10 +56,18 @@ const SUBMIT_FORM = 'SUBMIT_FORM';
 
 const steps = Object.freeze([
     Object.freeze({
+        name: 'Claim this facility',
+        component: ClaimFacilityIntroStep,
+        next: 'Contact Information',
+        hasBackButton: false,
+        hasNextButton: true,
+        stepInputIsValid: stubTrue,
+    }),
+    Object.freeze({
         name: 'Contact Information',
         component: ClaimFacilityContactInfoStep,
         next: 'Facility Information',
-        hasBackButton: false,
+        hasBackButton: true,
         hasNextButton: true,
         stepInputIsValid: claimFacilityContactInfoStepIsValid,
     }),

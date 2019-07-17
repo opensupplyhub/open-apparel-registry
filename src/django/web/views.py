@@ -12,6 +12,8 @@ environment = {k: v
 # One of `development`, `testing`, `staging`, `production`
 environment['ENVIRONMENT'] = settings.ENVIRONMENT.lower()
 
+environment['OAR_CLIENT_KEY'] = settings.OAR_CLIENT_KEY
+
 context = {'environment': environment}
 
 

@@ -7,7 +7,10 @@ import Button from '@material-ui/core/Button';
 
 import ClaimedFacilitiesListTable from './ClaimedFacilitiesListTable';
 
-import { fetchClaimedFacilities, clearClaimedFacilities } from '../actions/claimedFacilities';
+import {
+    fetchClaimedFacilities,
+    clearClaimedFacilities,
+} from '../actions/claimedFacilities';
 
 import { facilityClaimsListPropType } from '../util/propTypes';
 
@@ -35,11 +38,7 @@ function ClaimedFacilitiesList({
     }
 
     if (error) {
-        return (
-            <Typography>
-                {error}
-            </Typography>
-        );
+        return <Typography>{error}</Typography>;
     }
 
     if (data === null) {
@@ -50,9 +49,12 @@ function ClaimedFacilitiesList({
         window.console.log(fetching, data);
         return (
             <div>
-                <Typography>
-                    You do not have any approved facility claims.
-                    Search for your facility and make a request to claim it.
+                <Typography variant="body" style={{ padding: '10px 0' }}>
+                    You do not have any approved facility claims. Search for
+                    your facility and make a request to claim it. Claiming your
+                    facility will enable you to add business information,
+                    including production details, certifications, minimum order
+                    quantities and lead times.
                 </Typography>
                 <Button
                     variant="contained"
@@ -83,13 +85,7 @@ ClaimedFacilitiesList.propTypes = {
     clearClaimed: func.isRequired,
 };
 
-function mapStateToProps({
-    claimedFacilities: {
-        data,
-        fetching,
-        error,
-    },
-}) {
+function mapStateToProps({ claimedFacilities: { data, fetching, error } }) {
     return {
         data,
         fetching,
@@ -104,4 +100,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClaimedFacilitiesList);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(ClaimedFacilitiesList);

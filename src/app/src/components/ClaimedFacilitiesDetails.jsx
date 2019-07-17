@@ -13,10 +13,14 @@ import memoize from 'lodash/memoize';
 import find from 'lodash/find';
 import stubFalse from 'lodash/stubFalse';
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import get from 'lodash/get';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
+import includes from 'lodash/includes';
 import isNull from 'lodash/isNull';
-import Select from 'react-select';
-import { isEmail } from 'validator';
+import Select, { Creatable } from 'react-select';
+import { isEmail, isInt } from 'validator';
 import { toast } from 'react-toastify';
 
 import ClaimedFacilitiesDetailsSidebar from './ClaimedFacilitiesDetailsSidebar';
@@ -27,15 +31,25 @@ import COLOURS from '../util/COLOURS';
 import {
     fetchClaimedFacilityDetails,
     clearClaimedFacilityDetails,
-    updateClaimedFacilityName,
+    updateClaimedFacilityNameEnglish,
+    updateClaimedFacilityNameNativeLanguage,
+    updateClaimedFacilityWorkersCount,
+    updateClaimedFacilityFemaleWorkersPercentage,
+    updateClaimedFacilityAffiliations,
+    updateClaimedFacilityCertifications,
+    updateClaimedFacilityProductTypes,
+    updateClaimedFacilityProductionTypes,
     updateClaimedFacilityAddress,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
     updateClaimedFacilityParentCompany,
     updateClaimedFacilityWebsite,
+    updateClaimedFacilityWebsiteVisibility,
     updateClaimedFacilityDescription,
     updateClaimedFacilityMinimumOrder,
     updateClaimedFacilityAverageLeadTime,
+    updateClaimedFacilityFacilityType,
+    updateClaimedFacilityOtherFacilityType,
     updateClaimedFacilityContactPersonName,
     updateClaimedFacilityContactEmail,
     updateClaimedFacilityPointOfContactVisibility,
@@ -56,6 +70,7 @@ import {
     getValueFromEvent,
     getCheckedFromEvent,
     mapDjangoChoiceTuplesToSelectOptions,
+    isValidFacilityURL,
 } from '../util/util';
 
 import { claimAFacilityFormFields } from '../util/constants';
@@ -146,6 +161,8 @@ const InputSection = ({
     onSwitchChange = noop,
     disabled = false,
     isSelect = false,
+    isMultiSelect = false,
+    isCreatable = false,
     selectOptions = null,
     hasValidationErrorFn = stubFalse,
     aside = null,
@@ -159,6 +176,31 @@ const InputSection = ({
     );
 
     if (isSelect) {
+        const selectValue = (() => {
+            if (!isCreatable && !isMultiSelect) {
+                return find(selectOptions, ['value', value]);
+            }
+
+            if (!isCreatable && isMultiSelect) {
+                return filter(
+                    selectOptions,
+                    ({ value: option }) => includes(value, option),
+                );
+            }
+
+            if (isCreatable && isMultiSelect) {
+                return map(value, s => ({ value: s, label: s }));
+            }
+
+            // isCreatable && !isMultiSelect creates an option object from the value
+            return {
+                value,
+                label: value,
+            };
+        })();
+
+        const SelectComponent = isCreatable ? Creatable : Select;
+
         return (
             <div style={claimedFacilitiesDetailsStyles.inputSectionStyles}>
                 <InputLabel
@@ -169,12 +211,13 @@ const InputSection = ({
                     {label}
                 </InputLabel>
                 {asideNode}
-                <Select
+                <SelectComponent
                     onChange={onChange}
-                    value={find(selectOptions, ['value', value])}
+                    value={selectValue}
                     options={selectOptions}
                     disabled={disabled}
                     styles={selectStyles}
+                    isMulti={isMultiSelect}
                 />
             </div>
         );
@@ -227,13 +270,21 @@ function ClaimedFacilitiesDetails({
     data,
     getDetails,
     clearDetails,
-    updateFacilityName,
+    updateFacilityNameEnglish,
+    updateFacilityNameNativeLanguage,
     updateFacilityAddress,
     updateFacilityPhone,
     updateFacilityWebsite,
+    updateFacilityWebsiteVisibility,
     updateFacilityDescription,
     updateFacilityMinimumOrder,
     updateFacilityAverageLeadTime,
+    updateFacilityWorkersCount,
+    updateFacilityFemaleWorkersPercentage,
+    updateFacilityAffiliations,
+    updateFacilityCertifications,
+    updateFacilityProductTypes,
+    updateFacilityProductionTypes,
     updateContactPerson,
     updateContactEmail,
     updateOfficeName,
@@ -248,6 +299,8 @@ function ClaimedFacilitiesDetails({
     errorUpdating,
     updateParentCompany,
     contributorOptions,
+    updateFacilityType,
+    updateFacilityOtherType,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -309,9 +362,15 @@ function ClaimedFacilitiesDetails({
                     Facility Details
                 </Typography>
                 <InputSection
-                    label="Facility name"
-                    value={data.facility_name}
-                    onChange={updateFacilityName}
+                    label="Facility name (English language)"
+                    value={data.facility_name_english}
+                    onChange={updateFacilityNameEnglish}
+                    disabled={updating}
+                />
+                <InputSection
+                    label="Facility name (native language)"
+                    value={data.facility_name_native_language}
+                    onChange={updateFacilityNameNativeLanguage}
                     disabled={updating}
                 />
                 <InputSection
@@ -334,6 +393,18 @@ function ClaimedFacilitiesDetails({
                     value={data.facility_website}
                     onChange={updateFacilityWebsite}
                     disabled={updating}
+                    hasValidationErrorFn={
+                        () => {
+                            if (isEmpty(data.facility_website)) {
+                                return false;
+                            }
+
+                            return !isValidFacilityURL(data.facility_website);
+                        }
+                    }
+                    hasSwitch
+                    switchValue={data.facility_website_publicly_visible}
+                    onSwitchChange={updateFacilityWebsiteVisibility}
                 />
                 <InputSection
                     label="Description"
@@ -362,6 +433,22 @@ function ClaimedFacilitiesDetails({
                     </Typography>
                 </ShowOnly>
                 <InputSection
+                    label="Facility Type"
+                    value={get(data, 'facility_type', null)}
+                    onChange={updateFacilityType}
+                    disabled={updating}
+                    isSelect
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.facility_types)}
+                />
+                <ShowOnly when={isEqual(get(data, 'facility_type', null), 'Other')}>
+                    <InputSection
+                        label="Other Facility Type"
+                        value={get(data, 'other_facility_type', null)}
+                        onChange={updateFacilityOtherType}
+                        disabled={updating}
+                    />
+                </ShowOnly>
+                <InputSection
                     label="Minimum order quantity"
                     value={data.facility_minimum_order_quantity}
                     onChange={updateFacilityMinimumOrder}
@@ -372,6 +459,82 @@ function ClaimedFacilitiesDetails({
                     value={data.facility_average_lead_time}
                     onChange={updateFacilityAverageLeadTime}
                     disabled={updating}
+                />
+                <InputSection
+                    label="Number of workers"
+                    value={data.facility_workers_count}
+                    onChange={updateFacilityWorkersCount}
+                    disabled={updating}
+                    hasValidationErrorFn={
+                        () => {
+                            if (isEmpty(data.facility_workers_count)) {
+                                return false;
+                            }
+
+                            return !isInt(
+                                data.facility_workers_count,
+                                { min: 0 },
+                            );
+                        }
+                    }
+                />
+                <InputSection
+                    label="Percentage of female workers"
+                    value={data.facility_female_workers_percentage}
+                    onChange={updateFacilityFemaleWorkersPercentage}
+                    disabled={updating}
+                    hasValidationErrorFn={
+                        () => {
+                            if (isEmpty(data.facility_female_workers_percentage)) {
+                                return false;
+                            }
+
+                            return !isInt(
+                                data.facility_female_workers_percentage,
+                                { min: 0, max: 100 },
+                            );
+                        }
+                    }
+                />
+                <InputSection
+                    label="Affiliations"
+                    value={get(data, 'facility_affiliations', [])}
+                    onChange={updateFacilityAffiliations}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.affiliation_choices)}
+                />
+                <InputSection
+                    label="Certifications/Standards/Regulations"
+                    value={get(data, 'facility_certifications', [])}
+                    onChange={updateFacilityCertifications}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.certification_choices)}
+                />
+                <InputSection
+                    label="Product Types"
+                    value={get(data, 'facility_product_types', [])}
+                    onChange={updateFacilityProductTypes}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    isCreatable
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.product_type_choices)}
+                />
+                <InputSection
+                    label="Production Types"
+                    value={get(data, 'facility_production_types', [])}
+                    onChange={updateFacilityProductionTypes}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    isCreatable
+                    selectOptions={
+                        mapDjangoChoiceTuplesToSelectOptions(data.production_type_choices)
+                    }
                 />
                 <Typography
                     variant="title"
@@ -430,6 +593,9 @@ function ClaimedFacilitiesDetails({
                         Publicly visible
                     </span>
                 </Typography>
+                <aside style={claimedFacilitiesDetailsStyles.asideStyles}>
+                    If different from facility address
+                </aside>
                 <InputSection
                     label="Office name"
                     value={data.office_official_name}
@@ -481,6 +647,8 @@ function ClaimedFacilitiesDetails({
                         disabled={
                             updating || (!isEmpty(data.point_of_contact_email)
                                          && !isEmail(data.point_of_contact_email))
+                                     || (!isEmpty(data.facility_website)
+                                         && !isValidFacilityURL(data.facility_website))
                         }
                     >
                         Save
@@ -506,10 +674,14 @@ ClaimedFacilitiesDetails.propTypes = {
     data: approvedFacilityClaimPropType,
     getDetails: func.isRequired,
     clearDetails: func.isRequired,
-    updateFacilityName: func.isRequired,
+    updateFacilityNameEnglish: func.isRequired,
+    updateFacilityNameNativeLanguage: func.isRequired,
+    updateFacilityWorkersCount: func.isRequired,
+    updateFacilityFemaleWorkersPercentage: func.isRequired,
     updateFacilityAddress: func.isRequired,
     updateFacilityPhone: func.isRequired,
     updateFacilityWebsite: func.isRequired,
+    updateFacilityWebsiteVisibility: func.isRequired,
     updateFacilityDescription: func.isRequired,
     updateFacilityMinimumOrder: func.isRequired,
     updateFacilityAverageLeadTime: func.isRequired,
@@ -526,6 +698,8 @@ ClaimedFacilitiesDetails.propTypes = {
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
     contributorOptions: contributorOptionsPropType,
+    updateFacilityType: func.isRequired,
+    updateFacilityOtherType: func.isRequired,
 };
 
 function mapStateToProps({
@@ -571,10 +745,22 @@ function mapDispatchToProps(
             dispatch,
         );
 
+    const makeDispatchMultiSelectFn = updateFn =>
+        flow(
+            selection => map(selection, 'value'),
+            updateFn,
+            dispatch,
+        );
+
     return {
         getDetails: () => dispatch(fetchClaimedFacilityDetails(claimID)),
         clearDetails: () => dispatch(clearClaimedFacilityDetails()),
-        updateFacilityName: makeDispatchValueFn(updateClaimedFacilityName),
+        updateFacilityNameEnglish: makeDispatchValueFn(
+            updateClaimedFacilityNameEnglish,
+        ),
+        updateFacilityNameNativeLanguage: makeDispatchValueFn(
+            updateClaimedFacilityNameNativeLanguage,
+        ),
         updateFacilityAddress: makeDispatchValueFn(
             updateClaimedFacilityAddress,
         ),
@@ -596,14 +782,40 @@ function mapDispatchToProps(
         updateFacilityWebsite: makeDispatchValueFn(
             updateClaimedFacilityWebsite,
         ),
+        updateFacilityWebsiteVisibility: makeDispatchCheckedFn(
+            updateClaimedFacilityWebsiteVisibility,
+        ),
         updateFacilityDescription: makeDispatchValueFn(
             updateClaimedFacilityDescription,
+        ),
+        updateFacilityType: ({ value }) =>
+            dispatch(updateClaimedFacilityFacilityType(value)),
+        updateFacilityOtherType: makeDispatchValueFn(
+            updateClaimedFacilityOtherFacilityType,
         ),
         updateFacilityMinimumOrder: makeDispatchValueFn(
             updateClaimedFacilityMinimumOrder,
         ),
         updateFacilityAverageLeadTime: makeDispatchValueFn(
             updateClaimedFacilityAverageLeadTime,
+        ),
+        updateFacilityWorkersCount: makeDispatchValueFn(
+            updateClaimedFacilityWorkersCount,
+        ),
+        updateFacilityFemaleWorkersPercentage: makeDispatchValueFn(
+            updateClaimedFacilityFemaleWorkersPercentage,
+        ),
+        updateFacilityAffiliations: makeDispatchMultiSelectFn(
+            updateClaimedFacilityAffiliations,
+        ),
+        updateFacilityCertifications: makeDispatchMultiSelectFn(
+            updateClaimedFacilityCertifications,
+        ),
+        updateFacilityProductTypes: makeDispatchMultiSelectFn(
+            updateClaimedFacilityProductTypes,
+        ),
+        updateFacilityProductionTypes: makeDispatchMultiSelectFn(
+            updateClaimedFacilityProductionTypes,
         ),
         updateContactPerson: makeDispatchValueFn(
             updateClaimedFacilityContactPersonName,

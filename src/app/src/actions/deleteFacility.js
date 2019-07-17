@@ -1,7 +1,7 @@
 import { createAction } from 'redux-act';
 import get from 'lodash/get';
 
-import csrfRequest from '../util/csrfRequest';
+import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
@@ -30,7 +30,7 @@ export function fetchFacilityToDelete() {
 
         dispatch(startFetchFacilityToDelete());
 
-        return csrfRequest
+        return apiRequest
             .get(makeGetFacilityByOARIdURL(oarID))
             .then(({ data }) => dispatch(completeFetchFacilityToDelete(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -68,7 +68,7 @@ export function deleteFacility() {
             ));
         }
 
-        return csrfRequest
+        return apiRequest
             .delete(makeGetFacilityByOARIdURL(oarID))
             .then(() => dispatch(completeDeleteFacility()))
             .catch(err => dispatch(logErrorAndDispatchFailure(
