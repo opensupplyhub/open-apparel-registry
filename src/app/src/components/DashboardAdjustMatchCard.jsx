@@ -68,6 +68,9 @@ const adjustMatchCardStyles = Object.freeze({
         padding: '10px 20px 0',
         color: 'red',
     }),
+    buttonStyles: Object.freeze({
+        margin: '0 5px',
+    }),
 });
 
 const MatchDetailItem = ({ label, value = null, style = {} }) =>
@@ -88,40 +91,196 @@ const MatchDetailItem = ({ label, value = null, style = {} }) =>
         </div>
     );
 
+const dialogTypesEnum = Object.freeze({
+    split: 'split',
+    promote: 'promote',
+});
+
 export default function DashboardAdjustMatchCard({
     data,
     adjustData,
     adjusting,
     errorAdjusting,
     splitMatch,
+    promoteMatch,
 }) {
-    const [matchToAdjust, setMatchToAdjust] = useState(null);
+    const [matchToSplit, setMatchToSplit] = useState(null);
+    const [matchToPromote, setMatchToPromote] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const closeDialog = () => setMatchToAdjust(null);
+    const closeDialog = () => {
+        setMatchToSplit(null);
+        setMatchToPromote(null);
+    };
 
-    const openDialogForMatchToAdjust = match => setMatchToAdjust(match);
+    const openDialogForMatchToAdjust = (match, dialogType) => {
+        if (dialogType === dialogTypesEnum.split) {
+            return setMatchToSplit(match);
+        }
+
+        return setMatchToPromote(match);
+    };
 
     const handleSplitMatch = () => {
         setLoading(true);
-        splitMatch(matchToAdjust.match_id);
+        splitMatch(matchToSplit.match_id);
+    };
+
+    const handlePromoteMatch = () => {
+        setLoading(true);
+        promoteMatch(matchToPromote.match_id);
     };
 
     useEffect(() => {
         if (!adjusting && loading) {
-            setMatchToAdjust(null);
+            const toastMessage = matchToSplit
+                ? 'New facility was created'
+                : 'Match was promoted';
+
+            setMatchToSplit(null);
+            setMatchToPromote(null);
             setLoading(false);
 
             if (!errorAdjusting) {
-                toast('New facility was created');
+                toast(toastMessage);
             }
         }
-    }, [adjusting, loading, setMatchToAdjust, setLoading, errorAdjusting]);
+    }, [
+        adjusting,
+        loading,
+        matchToSplit,
+        setMatchToSplit,
+        matchToPromote,
+        setMatchToPromote,
+        setLoading,
+        errorAdjusting,
+    ]);
 
     const matches = get(data, 'properties.matches', []);
 
     const getNewOARIDFromAdjustData = ({ match_id: matchID }) =>
         get(find(adjustData, { match_id: matchID }), 'new_oar_id', null);
+
+    const createButtonControls = (match) => {
+        if (getNewOARIDFromAdjustData(match)) {
+            return (
+                <Link
+                    to={makeFacilityDetailLink(
+                        getNewOARIDFromAdjustData(match),
+                    )}
+                    href={makeFacilityDetailLink(
+                        getNewOARIDFromAdjustData(match),
+                    )}
+                >
+                    {getNewOARIDFromAdjustData(match)}
+                </Link>
+            );
+        }
+
+        return (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={adjusting}
+                    onClick={() =>
+                        openDialogForMatchToAdjust(match, dialogTypesEnum.split)
+                    }
+                    style={adjustMatchCardStyles.buttonStyles}
+                >
+                    Split
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={adjusting}
+                    onClick={() =>
+                        openDialogForMatchToAdjust(
+                            match,
+                            dialogTypesEnum.promote,
+                        )
+                    }
+                    style={adjustMatchCardStyles.buttonStyles}
+                >
+                    Promote
+                </Button>
+            </div>
+        );
+    };
+
+    const dialogContent = (() => {
+        if (!matchToSplit && !matchToPromote) {
+            return <div style={{ display: 'none' }} />;
+        }
+
+        const {
+            title,
+            subtitle,
+            name,
+            address,
+            actionLabel,
+            action,
+        } = matchToSplit
+            ? {
+                title: `Create a new facility from Match ${get(
+                    matchToSplit,
+                    'match_id',
+                    '',
+                )}?`,
+                subtitle: 'This will create a new facility from:',
+                name: get(matchToSplit, 'name', ''),
+                address: get(matchToSplit, 'address', ''),
+                actionLabel: 'Create facility',
+                action: handleSplitMatch,
+            }
+            : {
+                title: `Promote Match ${get(
+                    matchToPromote,
+                    'match_id',
+                    '',
+                )}?`,
+                subtitle: 'This will set the canonical facility info to:',
+                name: get(matchToPromote, 'name', ''),
+                address: get(matchToPromote, 'address', ''),
+                actionLabel: 'Promote match',
+                action: handlePromoteMatch,
+            };
+
+        return (
+            <>
+                <DialogTitle>{title}</DialogTitle>
+                <DialogContent>
+                    <Typography style={{ fontSize: '20px' }}>
+                        {subtitle}
+                    </Typography>
+                    <Typography style={{ fontSize: '20px', padding: '10px 0' }}>
+                        {name}
+                    </Typography>
+                    <Typography style={{ fontSize: '20px', padding: '10px 0' }}>
+                        {address}
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={closeDialog}
+                        disabled={adjusting}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={action}
+                        disabled={adjusting}
+                    >
+                        {actionLabel}
+                    </Button>
+                </DialogActions>
+            </>
+        );
+    })();
 
     return (
         <>
@@ -144,33 +303,13 @@ export default function DashboardAdjustMatchCard({
                             key={`${match.list_id}${match.list_contributor_id}${match.address}`}
                             style={adjustMatchCardStyles.matchContainerStyles}
                         >
-                            <div style={adjustMatchCardStyles.matchHeaderStyles}>
+                            <div
+                                style={adjustMatchCardStyles.matchHeaderStyles}
+                            >
                                 <Typography variant="title">
                                     Match {match.match_id}
                                 </Typography>
-                                {!getNewOARIDFromAdjustData(match) ? (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        disabled={adjusting}
-                                        onClick={() =>
-                                            openDialogForMatchToAdjust(match)
-                                        }
-                                    >
-                                        Split
-                                    </Button>
-                                ) : (
-                                    <Link
-                                        to={makeFacilityDetailLink(
-                                            getNewOARIDFromAdjustData(match),
-                                        )}
-                                        href={makeFacilityDetailLink(
-                                            getNewOARIDFromAdjustData(match),
-                                        )}
-                                    >
-                                        {getNewOARIDFromAdjustData(match)}
-                                    </Link>
-                                )}
+                                {createButtonControls(match)}
                             </div>
                             <div style={adjustMatchCardStyles.nameRowStyles}>
                                 <MatchDetailItem
@@ -201,50 +340,8 @@ export default function DashboardAdjustMatchCard({
                     ))}
                 </CardContent>
             </Card>
-            <Dialog open={Boolean(matchToAdjust)}>
-                {matchToAdjust ? (
-                    <>
-                        <DialogTitle>
-                            Create a new facility from Match{' '}
-                            {get(matchToAdjust, 'match_id', '')}?
-                        </DialogTitle>
-                        <DialogContent>
-                            <Typography style={{ fontSize: '20px' }}>
-                                This will create a new facility from:
-                            </Typography>
-                            <Typography
-                                style={{ fontSize: '20px', padding: '10px 0' }}
-                            >
-                                {get(matchToAdjust, 'name', '')}
-                            </Typography>
-                            <Typography
-                                style={{ fontSize: '20px', padding: '10px 0' }}
-                            >
-                                {get(matchToAdjust, 'address', '')}
-                            </Typography>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                onClick={closeDialog}
-                                disabled={adjusting}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                color="secondary"
-                                onClick={handleSplitMatch}
-                                disabled={adjusting}
-                            >
-                                Create facility
-                            </Button>
-                        </DialogActions>
-                    </>
-                ) : (
-                    <div style={{ display: 'none' }} />
-                )}
+            <Dialog open={Boolean(matchToSplit) || Boolean(matchToPromote)}>
+                {dialogContent}
             </Dialog>
         </>
     );
@@ -266,4 +363,5 @@ DashboardAdjustMatchCard.propTypes = {
     adjusting: bool.isRequired,
     errorAdjusting: arrayOf(string),
     splitMatch: func.isRequired,
+    promoteMatch: func.isRequired,
 };

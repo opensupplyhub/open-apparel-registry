@@ -1057,6 +1057,15 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
+    @action(detail=True, methods=['GET', 'POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def promote(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        return Response('ok')
+
 
 class FacilityListViewSetSchema(AutoSchema):
     def get_serializer_fields(self, path, method):

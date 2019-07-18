@@ -5,6 +5,7 @@ import apiRequest from '../util/apiRequest';
 import {
     logErrorAndDispatchFailure,
     makeSplitFacilityAPIURL,
+    makePromoteFacilityMatchAPIURL,
 } from '../util/util';
 
 export const startFetchFacilityToAdjust = createAction('START_FETCH_FACILITY_TO_ADJUST');
@@ -68,6 +69,37 @@ export function splitFacilityMatch(matchID) {
                 err,
                 'An error prevented splitting that facility match',
                 failSplitFacilityMatch,
+            )));
+    };
+}
+
+export const startPromoteFacilityMatch = createAction('START_PROMOTE_FACILITY_MATCH');
+export const failPromoteFacilityMatch = createAction('FAIL_PROMOTE_FACILITY_MATCH');
+export const completePromoteFacilityMatch = createAction('COMPLETE_PROMOTE_FACILITY_MATCH');
+
+export function promoteFacilityMatch(matchID) {
+    return (dispatch, getState) => {
+        const {
+            adjustFacilityMatches: {
+                facility: {
+                    oarID,
+                },
+            },
+        } = getState();
+
+        if (!oarID || !matchID) {
+            return null;
+        }
+
+        dispatch(startPromoteFacilityMatch());
+
+        return apiRequest
+            .post(makePromoteFacilityMatchAPIURL(oarID), { match_id: matchID })
+            .then(({ data }) => dispatch(completePromoteFacilityMatch(data)))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented promoting that facility match',
+                failPromoteFacilityMatch,
             )));
     };
 }

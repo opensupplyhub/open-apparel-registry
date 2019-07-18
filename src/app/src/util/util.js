@@ -96,6 +96,7 @@ export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
 export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
 export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/`;
 export const makeSplitFacilityAPIURL = oarID => `/api/facilities/${oarID}/split/`;
+export const makePromoteFacilityMatchAPIURL = oarID => `/api/facilities/${oarID}/promote/`;
 
 export const makeMergeTwoFacilitiesAPIURL = (targetOARID, toMergeOARID) =>
     `/api/facilities/merge/?target=${targetOARID}&merge=${toMergeOARID}`;

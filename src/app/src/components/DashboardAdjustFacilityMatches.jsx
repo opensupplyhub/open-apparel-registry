@@ -8,6 +8,7 @@ import {
     fetchFacilityToAdjust,
     resetAdjustFacilityState,
     splitFacilityMatch,
+    promoteFacilityMatch,
 } from '../actions/adjustFacilityMatches';
 
 import {
@@ -31,6 +32,7 @@ function DashboardAdjustFacilityMatches({
     fetchFacilityOnEnterKeyPress,
     resetAdjustState,
     splitMatch,
+    promoteMatch,
     adjustData,
     adjusting,
     errorAdjusting,
@@ -59,6 +61,7 @@ function DashboardAdjustFacilityMatches({
                     adjusting={adjusting}
                     errorAdjusting={errorAdjusting}
                     splitMatch={splitMatch}
+                    promoteMatch={promoteMatch}
                 />
             )}
         </div>
@@ -88,6 +91,7 @@ DashboardAdjustFacilityMatches.propTypes = {
     fetchFacilityOnEnterKeyPress: func.isRequired,
     resetAdjustState: func.isRequired,
     splitMatch: func.isRequired,
+    promoteMatch: func.isRequired,
 };
 
 function mapStateToProps({
@@ -122,6 +126,7 @@ function mapDispatchToProps(dispatch) {
         ),
         resetAdjustState: () => dispatch(resetAdjustFacilityState()),
         splitMatch: matchID => dispatch(splitFacilityMatch(matchID)),
+        promoteMatch: matchID => dispatch(promoteFacilityMatch(matchID)),
     };
 }
 
