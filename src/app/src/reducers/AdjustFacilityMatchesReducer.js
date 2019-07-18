@@ -15,6 +15,9 @@ import {
     startSplitFacilityMatch,
     failSplitFacilityMatch,
     completeSplitFacilityMatch,
+    startPromoteFacilityMatch,
+    failPromoteFacilityMatch,
+    completePromoteFacilityMatch,
 } from '../actions/adjustFacilityMatches';
 
 const initialState = Object.freeze({
@@ -108,5 +111,25 @@ export default createReducer({
         },
     }),
     [completeSplitFacilityMatch]: handleCompleteSplitFacilityMatch,
+    [startPromoteFacilityMatch]: state => update(state, {
+        adjustFacilities: {
+            fetching: { $set: true },
+            error: { $set: initialState.adjustFacilities.error },
+        },
+    }),
+    [failPromoteFacilityMatch]: (state, error) => update(state, {
+        adjustFacilities: {
+            fetching: { $set: initialState.adjustFacilities.fetching },
+            error: { $set: error },
+        },
+    }),
+    [completePromoteFacilityMatch]: (state, data) => update(state, {
+        adjustFacilities: {
+            fetching: { $set: initialState.adjustFacilities.fetching },
+        },
+        facility: {
+            data: { $set: data },
+        },
+    }),
     [resetAdjustFacilityState]: constant(initialState),
 }, initialState);

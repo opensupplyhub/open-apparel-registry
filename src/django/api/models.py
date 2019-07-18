@@ -1017,7 +1017,7 @@ class Facility(models.Model):
     def get_other_matches(self):
         return self.facilitymatch_set.exclude(
             facility_list_item=self.created_from
-        ).all()
+        ).all().order_by('id')
 
     def get_approved_claim(self):
         return self.facilityclaim_set.filter(
