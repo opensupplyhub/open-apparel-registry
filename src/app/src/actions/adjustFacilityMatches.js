@@ -7,17 +7,17 @@ import {
     makeSplitFacilityAPIURL,
 } from '../util/util';
 
-export const startFetchFacilityToSplit = createAction('START_FETCH_FACILITY_TO_SPLIT');
-export const failFetchFacilityToSplit = createAction('FAIL_FETCH_FACILITY_TO_SPLIT');
-export const completeFetchFacilityToSplit = createAction('COMPLETE_FETCH_FACILITY_TO_SPLIT');
-export const clearFacilityToSplit = createAction('CLEAR_FACILITY_TO_SPLIT');
-export const resetSplitFacilityState = createAction('RESET_CLEAR_FACILITY_STATE');
-export const updateFacilityToSplitOARID = createAction('UPDATE_FACILITY_TO_SPLIT_OAR_ID');
+export const startFetchFacilityToAdjust = createAction('START_FETCH_FACILITY_TO_ADJUST');
+export const failFetchFacilityToAdjust = createAction('FAIL_FETCH_FACILITY_TO_ADJUST');
+export const completeFetchFacilityToAdjust = createAction('COMPLETE_FETCH_FACILITY_TO_ADJUST');
+export const clearFacilityToAdjust = createAction('CLEAR_FACILITY_TO_ADJUST');
+export const resetAdjustFacilityState = createAction('RESET_ADJUST_FACILITY_STATE');
+export const updateFacilityToAdjustOARID = createAction('UPDATE_FACILITY_TO_ADJUST_OAR_ID');
 
-export function fetchFacilityToSplit() {
+export function fetchFacilityToAdjust() {
     return (dispatch, getState) => {
         const {
-            splitFacilityMatches: {
+            adjustFacilityMatches: {
                 facility: {
                     oarID,
                 },
@@ -28,15 +28,15 @@ export function fetchFacilityToSplit() {
             return null;
         }
 
-        dispatch(startFetchFacilityToSplit());
+        dispatch(startFetchFacilityToAdjust());
 
         return apiRequest
             .get(makeSplitFacilityAPIURL(oarID))
-            .then(({ data }) => dispatch(completeFetchFacilityToSplit(data)))
+            .then(({ data }) => dispatch(completeFetchFacilityToAdjust(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching that facility',
-                failFetchFacilityToSplit,
+                failFetchFacilityToAdjust,
             )));
     };
 }
@@ -48,7 +48,7 @@ export const completeSplitFacilityMatch = createAction('COMPLETE_SPLIT_FACILITY_
 export function splitFacilityMatch(matchID) {
     return (dispatch, getState) => {
         const {
-            splitFacilityMatches: {
+            adjustFacilityMatches: {
                 facility: {
                     oarID,
                 },

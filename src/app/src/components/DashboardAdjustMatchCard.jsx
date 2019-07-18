@@ -19,7 +19,7 @@ import { makeFacilityDetailLink } from '../util/util';
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
-const splitMatchCardStyles = Object.freeze({
+const adjustMatchCardStyles = Object.freeze({
     cardStyles: Object.freeze({
         width: '45%',
         margin: '0 20px',
@@ -75,86 +75,86 @@ const MatchDetailItem = ({ label, value = null, style = {} }) =>
         <div
             style={merge(
                 {},
-                splitMatchCardStyles.detailItemContainerStyles,
+                adjustMatchCardStyles.detailItemContainerStyles,
                 style,
             )}
         >
-            <Typography style={splitMatchCardStyles.labelStyles}>
+            <Typography style={adjustMatchCardStyles.labelStyles}>
                 {label}
             </Typography>
-            <Typography style={splitMatchCardStyles.fieldStyles}>
+            <Typography style={adjustMatchCardStyles.fieldStyles}>
                 {value}
             </Typography>
         </div>
     );
 
-export default function DashboardSplitMatchCard({
+export default function DashboardAdjustMatchCard({
     data,
-    splitData,
-    splitting,
-    errorSplitting,
+    adjustData,
+    adjusting,
+    errorAdjusting,
     splitMatch,
 }) {
-    const [matchToSplit, setMatchToSplit] = useState(null);
+    const [matchToAdjust, setMatchToAdjust] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const closeDialog = () => setMatchToSplit(null);
+    const closeDialog = () => setMatchToAdjust(null);
 
-    const openDialogForMatchToSplit = match => setMatchToSplit(match);
+    const openDialogForMatchToAdjust = match => setMatchToAdjust(match);
 
     const handleSplitMatch = () => {
         setLoading(true);
-        splitMatch(matchToSplit.match_id);
+        splitMatch(matchToAdjust.match_id);
     };
 
     useEffect(() => {
-        if (!splitting && loading) {
-            setMatchToSplit(null);
+        if (!adjusting && loading) {
+            setMatchToAdjust(null);
             setLoading(false);
 
-            if (!errorSplitting) {
+            if (!errorAdjusting) {
                 toast('New facility was created');
             }
         }
-    }, [splitting, loading, setMatchToSplit, setLoading, errorSplitting]);
+    }, [adjusting, loading, setMatchToAdjust, setLoading, errorAdjusting]);
 
     const matches = get(data, 'properties.matches', []);
 
-    const getNewOARIDFromSplitData = ({ match_id: matchID }) =>
-        get(find(splitData, { match_id: matchID }), 'new_oar_id', null);
+    const getNewOARIDFromAdjustData = ({ match_id: matchID }) =>
+        get(find(adjustData, { match_id: matchID }), 'new_oar_id', null);
 
     return (
         <>
-            <Card style={splitMatchCardStyles.cardStyles}>
+            <Card style={adjustMatchCardStyles.cardStyles}>
                 <Typography
                     variant="title"
-                    style={splitMatchCardStyles.titleStyles}
+                    style={adjustMatchCardStyles.titleStyles}
                 >
-                    Matches to split
-                    {splitting && <CircularProgress />}
+                    Matches to adjust
+                    {adjusting && <CircularProgress />}
                 </Typography>
-                {errorSplitting && (
-                    <Typography style={splitMatchCardStyles.errorStyles}>
-                        An error prevented splitting that facility match
+                {errorAdjusting && (
+                    <Typography style={adjustMatchCardStyles.errorStyles}>
+                        An error prevented adjusting that facility match
                     </Typography>
                 )}
-                <CardContent style={splitMatchCardStyles.contentStyles}>
+                <CardContent style={adjustMatchCardStyles.contentStyles}>
                     {matches.map(match => (
                         <div
-                            key={`${match.list_id}${match.list_item_id}`}
-                            style={splitMatchCardStyles.matchContainerStyles}
+                            key={`${match.list_id}${match.list_contributor_id}${match.address}`}
+                            style={adjustMatchCardStyles.matchContainerStyles}
                         >
-                            <div style={splitMatchCardStyles.matchHeaderStyles}>
+                            <div style={adjustMatchCardStyles.matchHeaderStyles}>
                                 <Typography variant="title">
                                     Match {match.match_id}
                                 </Typography>
-                                {!getNewOARIDFromSplitData(match) ? (
+                                {!getNewOARIDFromAdjustData(match) ? (
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        disabled={splitting}
+                                        disabled={adjusting}
                                         onClick={() =>
-                                            openDialogForMatchToSplit(match)
+                                            openDialogForMatchToAdjust(match)
                                         }
                                     >
                                         Split
@@ -162,17 +162,17 @@ export default function DashboardSplitMatchCard({
                                 ) : (
                                     <Link
                                         to={makeFacilityDetailLink(
-                                            getNewOARIDFromSplitData(match),
+                                            getNewOARIDFromAdjustData(match),
                                         )}
                                         href={makeFacilityDetailLink(
-                                            getNewOARIDFromSplitData(match),
+                                            getNewOARIDFromAdjustData(match),
                                         )}
                                     >
-                                        {getNewOARIDFromSplitData(match)}
+                                        {getNewOARIDFromAdjustData(match)}
                                     </Link>
                                 )}
                             </div>
-                            <div style={splitMatchCardStyles.nameRowStyles}>
+                            <div style={adjustMatchCardStyles.nameRowStyles}>
                                 <MatchDetailItem
                                     label="Contributor Name"
                                     value={match.list_contributor_name}
@@ -201,12 +201,12 @@ export default function DashboardSplitMatchCard({
                     ))}
                 </CardContent>
             </Card>
-            <Dialog open={Boolean(matchToSplit)}>
-                {matchToSplit ? (
+            <Dialog open={Boolean(matchToAdjust)}>
+                {matchToAdjust ? (
                     <>
                         <DialogTitle>
                             Create a new facility from Match{' '}
-                            {get(matchToSplit, 'match_id', '')}?
+                            {get(matchToAdjust, 'match_id', '')}?
                         </DialogTitle>
                         <DialogContent>
                             <Typography style={{ fontSize: '20px' }}>
@@ -215,12 +215,12 @@ export default function DashboardSplitMatchCard({
                             <Typography
                                 style={{ fontSize: '20px', padding: '10px 0' }}
                             >
-                                {get(matchToSplit, 'name', '')}
+                                {get(matchToAdjust, 'name', '')}
                             </Typography>
                             <Typography
                                 style={{ fontSize: '20px', padding: '10px 0' }}
                             >
-                                {get(matchToSplit, 'address', '')}
+                                {get(matchToAdjust, 'address', '')}
                             </Typography>
                         </DialogContent>
                         <DialogActions>
@@ -228,7 +228,7 @@ export default function DashboardSplitMatchCard({
                                 variant="outlined"
                                 color="primary"
                                 onClick={closeDialog}
-                                disabled={splitting}
+                                disabled={adjusting}
                             >
                                 Cancel
                             </Button>
@@ -236,7 +236,7 @@ export default function DashboardSplitMatchCard({
                                 variant="outlined"
                                 color="secondary"
                                 onClick={handleSplitMatch}
-                                disabled={splitting}
+                                disabled={adjusting}
                             >
                                 Create facility
                             </Button>
@@ -250,20 +250,20 @@ export default function DashboardSplitMatchCard({
     );
 }
 
-DashboardSplitMatchCard.defaultProps = {
+DashboardAdjustMatchCard.defaultProps = {
     data: null,
-    errorSplitting: null,
+    errorAdjusting: null,
 };
 
-DashboardSplitMatchCard.propTypes = {
+DashboardAdjustMatchCard.propTypes = {
     data: facilityDetailsPropType,
-    splitData: arrayOf(
+    adjustData: arrayOf(
         shape({
             match_id: number.isRequired,
             new_oar_id: string.isRequired,
         }),
     ).isRequired,
-    splitting: bool.isRequired,
-    errorSplitting: arrayOf(string),
+    adjusting: bool.isRequired,
+    errorAdjusting: arrayOf(string),
     splitMatch: func.isRequired,
 };
