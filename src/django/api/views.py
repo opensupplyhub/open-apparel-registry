@@ -102,7 +102,7 @@ def _report_facility_claim_email_error_to_rollbar(claim):
 @permission_classes([AllowAny])
 @renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
 def schema_view(request):
-    generator = schemas.SchemaGenerator(title='API Docs',
+    generator = schemas.SchemaGenerator(title='Open Apparel Registry API',
                                         patterns=urls.public_apis)
     return Response(generator.get_schema())
 
