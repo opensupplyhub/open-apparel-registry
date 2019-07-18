@@ -32,7 +32,7 @@ from rest_framework.decorators import (api_view,
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
-from rest_framework.schemas.inspectors import AutoSchema
+from rest_framework.schemas.coreapi import AutoSchema
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
