@@ -847,3 +847,8 @@ class FacilityMergeQueryParamsSerializer(Serializer):
         if not Facility.objects.filter(id=merge_id).exists():
             raise ValidationError(
                 'Facility {} does not exist.'.format(merge_id))
+
+
+class LogDownloadQueryParamsSerializer(Serializer):
+    path = CharField(required=True)
+    record_count = IntegerField(required=True)
