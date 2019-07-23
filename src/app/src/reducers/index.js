@@ -26,6 +26,7 @@ import DashboardListsReducer from './DashboardListsReducer';
 import DeleteFacilityReducer from './DeleteFacilityReducer';
 import MergeFacilitiesReducer from './MergeFacilitiesReducer';
 import AdjustFacilityMatchesReducer from './AdjustFacilityMatchesReducer';
+import LogDownloadReducer from './LogDownloadReducer';
 
 export default combineReducers((({
     auth: AuthReducer,
@@ -48,4 +49,5 @@ export default combineReducers((({
     deleteFacility: DeleteFacilityReducer,
     mergeFacilities: MergeFacilitiesReducer,
     adjustFacilityMatches: AdjustFacilityMatchesReducer,
+    logDownload: LogDownloadReducer,
 })));
