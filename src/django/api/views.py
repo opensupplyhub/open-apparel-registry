@@ -1057,6 +1057,104 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def promote(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+        match_id = request.data.get('match_id')
+
+        if match_id is None:
+            raise BadRequestException('Missing required param match_id')
+
+        try:
+            facility = Facility \
+                .objects \
+                .get(pk=pk)
+
+            match = FacilityMatch \
+                .objects \
+                .get(pk=match_id)
+
+            matched_statuses = [
+                FacilityListItem.MATCHED,
+                FacilityListItem.CONFIRMED_MATCH,
+            ]
+
+            if match.facility_list_item.status not in matched_statuses:
+                raise BadRequestException('Incorrect list item status')
+
+            if match.facility.id != facility.id:
+                raise BadRequestException('Match is not to facility')
+
+            if facility.created_from.id == match.facility_list_item.id:
+                raise BadRequestException('Facility is created from item.')
+
+            previous_created_from_id = facility.created_from.id
+
+            previous_list_id = facility.created_from.facility_list.id
+
+            reason = 'Promoted item {} in list {} over item {} in list {}' \
+                .format(
+                    match.facility_list_item.id,
+                    match.facility_list_item.facility_list.id,
+                    previous_created_from_id,
+                    previous_list_id,
+                )
+
+            facility.name = match.facility_list_item.name
+            facility.address = match.facility_list_item.address
+            facility.country_code = match.facility_list_item.country_code
+            facility.location = match.facility_list_item.geocoded_point
+            facility.created_from = match.facility_list_item
+            facility.changeReason = reason
+            facility.save()
+
+            now = str(datetime.utcnow())
+
+            match.facility_list_item.processing_results.append({
+                'action': ProcessingAction.PROMOTE_MATCH,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'previous_created_from_id': previous_created_from_id,
+            })
+
+            match.facility_list_item.save()
+
+            facility.refresh_from_db()
+
+            facility_data = FacilityDetailsSerializer(facility).data
+
+            facility_data['properties']['matches'] = [
+                {
+                    'name': m.facility_list_item.name,
+                    'address': m.facility_list_item.address,
+                    'country_code': m.facility_list_item.country_code,
+                    'list_id': m.facility_list_item.facility_list.id,
+                    'list_name': m.facility_list_item.facility_list.name,
+                    'list_description': m.facility_list_item.facility_list
+                    .description,
+                    'list_contributor_name': m.facility_list_item
+                    .facility_list
+                    .contributor.name,
+                    'list_contributor_id': m.facility_list_item
+                    .facility_list.contributor.id,
+                    'match_id': m.id,
+                }
+                for m
+                in facility.get_other_matches()
+            ]
+
+            return Response(facility_data)
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
+            raise NotFound()
+        except Facility.DoesNotExist:
+            raise NotFound()
+
 
 class FacilityListViewSetSchema(AutoSchema):
     def get_serializer_fields(self, path, method):

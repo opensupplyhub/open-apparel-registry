@@ -3,12 +3,13 @@ import { arrayOf, bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 
 import {
-    clearFacilityToSplit,
-    updateFacilityToSplitOARID,
-    fetchFacilityToSplit,
-    resetSplitFacilityState,
+    clearFacilityToAdjust,
+    updateFacilityToAdjustOARID,
+    fetchFacilityToAdjust,
+    resetAdjustFacilityState,
     splitFacilityMatch,
-} from '../actions/splitFacilityMatches';
+    promoteFacilityMatch,
+} from '../actions/adjustFacilityMatches';
 
 import {
     getValueFromEvent,
@@ -18,9 +19,9 @@ import {
 import { facilityDetailsPropType } from '../util/propTypes';
 
 import DashboardFacilityCard from './DashboardFacilityCard';
-import DashboardSplitMatchCard from './DashboardSplitMatchCard';
+import DashboardAdjustMatchCard from './DashboardAdjustMatchCard';
 
-function DashboardSplitFacilityMatches({
+function DashboardAdjustFacilityMatches({
     oarID,
     data,
     fetching,
@@ -29,14 +30,15 @@ function DashboardSplitFacilityMatches({
     clearFacility,
     fetchFacility,
     fetchFacilityOnEnterKeyPress,
-    resetSplitState,
+    resetAdjustState,
     splitMatch,
-    splitData,
-    splitting,
-    errorSplitting,
+    promoteMatch,
+    adjustData,
+    adjusting,
+    errorAdjusting,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
-    useEffect(() => resetSplitState, []);
+    useEffect(() => resetAdjustState, []);
     /* eslint-disable react-books/exhaustive-deps */
 
     return (
@@ -50,53 +52,55 @@ function DashboardSplitFacilityMatches({
                 fetching={fetching}
                 error={error}
                 handleEnterKeyPress={fetchFacilityOnEnterKeyPress}
-                title="Facility to split"
+                title="Facility to adjust"
             />
             {data && (
-                <DashboardSplitMatchCard
+                <DashboardAdjustMatchCard
                     data={data}
-                    splitData={splitData}
-                    splitting={splitting}
-                    errorSplitting={errorSplitting}
+                    adjustData={adjustData}
+                    adjusting={adjusting}
+                    errorAdjusting={errorAdjusting}
                     splitMatch={splitMatch}
+                    promoteMatch={promoteMatch}
                 />
             )}
         </div>
     );
 }
 
-DashboardSplitFacilityMatches.defaultProps = {
+DashboardAdjustFacilityMatches.defaultProps = {
     data: null,
     error: null,
-    errorSplitting: null,
+    errorAdjusting: null,
 };
 
-DashboardSplitFacilityMatches.propTypes = {
+DashboardAdjustFacilityMatches.propTypes = {
     oarID: string.isRequired,
     data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
-    splitData: arrayOf(shape({
+    adjustData: arrayOf(shape({
         match_id: number.isRequired,
         new_oar_id: string.isRequired,
     })).isRequired,
-    splitting: bool.isRequired,
-    errorSplitting: arrayOf(string),
+    adjusting: bool.isRequired,
+    errorAdjusting: arrayOf(string),
     updateOARID: func.isRequired,
     clearFacility: func.isRequired,
     fetchFacility: func.isRequired,
     fetchFacilityOnEnterKeyPress: func.isRequired,
-    resetSplitState: func.isRequired,
+    resetAdjustState: func.isRequired,
     splitMatch: func.isRequired,
+    promoteMatch: func.isRequired,
 };
 
 function mapStateToProps({
-    splitFacilityMatches: {
+    adjustFacilityMatches: {
         facility: { oarID, data, fetching, error },
-        splitFacilities: {
-            data: splitData,
-            fetching: splitting,
-            error: errorSplitting,
+        adjustFacilities: {
+            data: adjustData,
+            fetching: adjusting,
+            error: errorAdjusting,
         },
     },
 }) {
@@ -105,27 +109,28 @@ function mapStateToProps({
         data,
         fetching,
         error,
-        splitData,
-        splitting,
-        errorSplitting,
+        adjustData,
+        adjusting,
+        errorAdjusting,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         updateOARID: e =>
-            dispatch(updateFacilityToSplitOARID(getValueFromEvent(e))),
-        clearFacility: () => dispatch(clearFacilityToSplit()),
-        fetchFacility: () => dispatch(fetchFacilityToSplit()),
+            dispatch(updateFacilityToAdjustOARID(getValueFromEvent(e))),
+        clearFacility: () => dispatch(clearFacilityToAdjust()),
+        fetchFacility: () => dispatch(fetchFacilityToAdjust()),
         fetchFacilityOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
-            () => dispatch(fetchFacilityToSplit()),
+            () => dispatch(fetchFacilityToAdjust()),
         ),
-        resetSplitState: () => dispatch(resetSplitFacilityState()),
+        resetAdjustState: () => dispatch(resetAdjustFacilityState()),
         splitMatch: matchID => dispatch(splitFacilityMatch(matchID)),
+        promoteMatch: matchID => dispatch(promoteFacilityMatch(matchID)),
     };
 }
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(DashboardSplitFacilityMatches);
+)(DashboardAdjustFacilityMatches);

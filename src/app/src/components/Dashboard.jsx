@@ -9,7 +9,7 @@ import DashboardClaims from './DashboardClaims';
 import DashboardClaimsDetails from './DashboardClaimsDetails';
 import DashboardDeleteFacility from './DashboardDeleteFacility';
 import DashboardMergeFacilities from './DashboardMergeFacilities';
-import DashboardSplitFacilityMatches from './DashboardSplitFacilityMatches';
+import DashboardAdjustFacilityMatches from './DashboardAdjustFacilityMatches';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
 
@@ -23,7 +23,7 @@ import {
     dashboardClaimsDetailsRoute,
     dashboardDeleteFacilityRoute,
     dashboardMergeFacilitiesRoute,
-    dashboardSplitFacilityMatchesRoute,
+    dashboardAdjustFacilityMatchesRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -73,8 +73,8 @@ function Dashboard({
             <Link to={dashboardMergeFacilitiesRoute}>
                 Merge two facilities
             </Link>
-            <Link to={dashboardSplitFacilityMatchesRoute}>
-                Split facility matches
+            <Link to={dashboardAdjustFacilityMatchesRoute}>
+                Adjust facility matches
             </Link>
         </div>
     );
@@ -140,8 +140,8 @@ function Dashboard({
                             />
                             <Route
                                 exact
-                                path={dashboardSplitFacilityMatchesRoute}
-                                render={makeClickableDashboardLinkFn('Split Facility Matches')}
+                                path={dashboardAdjustFacilityMatchesRoute}
+                                render={makeClickableDashboardLinkFn('Adjust Facility Matches')}
                             />
                             <Route
                                 exact
@@ -170,8 +170,8 @@ function Dashboard({
                     />
                     <Route
                         exact
-                        path={dashboardSplitFacilityMatchesRoute}
-                        component={DashboardSplitFacilityMatches}
+                        path={dashboardAdjustFacilityMatchesRoute}
+                        component={DashboardAdjustFacilityMatches}
                     />
                     <Route
                         exact
