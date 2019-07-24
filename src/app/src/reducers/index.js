@@ -28,7 +28,7 @@ import MergeFacilitiesReducer from './MergeFacilitiesReducer';
 import AdjustFacilityMatchesReducer from './AdjustFacilityMatchesReducer';
 import LogDownloadReducer from './LogDownloadReducer';
 
-export default combineReducers((({
+export default combineReducers({
     auth: AuthReducer,
     profile: ProfileReducer,
     upload: UploadReducer,
@@ -50,4 +50,4 @@ export default combineReducers((({
     mergeFacilities: MergeFacilitiesReducer,
     adjustFacilityMatches: AdjustFacilityMatchesReducer,
     logDownload: LogDownloadReducer,
-})));
+});
