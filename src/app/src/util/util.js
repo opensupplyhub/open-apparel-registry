@@ -127,6 +127,8 @@ export const makeGetClientInfoURL = () => {
     return `${clientInfoURL}${clientInfoURLSuffix}`;
 };
 
+export const makeLogDownloadUrl = (path, recordCount) => `/api/log-download/?path=${path}&record_count=${recordCount}`;
+
 export const getValueFromObject = ({ value }) => value;
 
 export const createQueryStringFromSearchFilters = ({

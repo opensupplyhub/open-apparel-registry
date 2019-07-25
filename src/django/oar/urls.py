@@ -40,6 +40,7 @@ public_apis = [
     url(r'^api/contributor-types/', views.all_contributor_types,
         name='all_contributor_types'),
     url(r'^api/countries/', views.all_countries, name='all_countries'),
+    url(r'^api/log-download/', views.log_download, name='log_download'),
 ]
 
 schema_view = get_swagger_view(title='Open Apparel Registry API Documentation',

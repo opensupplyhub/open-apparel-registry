@@ -48,7 +48,8 @@ from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
-                           ProcessingAction)
+                           ProcessingAction,
+                           LogDownloadQueryParams)
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -57,7 +58,8 @@ from api.models import (FacilityList,
                         FacilityMatch,
                         FacilityAlias,
                         Contributor,
-                        User)
+                        User,
+                        DownloadLog)
 from api.processing import parse_csv_line, parse_csv, parse_excel
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
@@ -71,7 +73,8 @@ from api.serializers import (FacilityListSerializer,
                              FacilityClaimSerializer,
                              FacilityClaimDetailsSerializer,
                              ApprovedFacilityClaimSerializer,
-                             FacilityMergeQueryParamsSerializer)
+                             FacilityMergeQueryParamsSerializer,
+                             LogDownloadQueryParamsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed
@@ -391,6 +394,36 @@ def all_countries(request):
 
     """
     return Response(COUNTRY_CHOICES)
+
+
+class RootAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        if 'log-download' in path:
+            return None
+
+        return super(RootAutoSchema, self).get_link(
+            path, method, base_url)
+
+
+@api_view(['POST'])
+@permission_classes([IsRegisteredAndConfirmed])
+@schema(RootAutoSchema())
+def log_download(request):
+    params = LogDownloadQueryParamsSerializer(data=request.query_params)
+    if not params.is_valid():
+        raise ValidationError(params.errors)
+
+    path = request.query_params.get(LogDownloadQueryParams.PATH)
+    record_count = request.query_params.get(
+        LogDownloadQueryParams.RECORD_COUNT)
+
+    DownloadLog.objects.create(
+        user=request.user,
+        path=path,
+        record_count=record_count,
+    )
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FacilitiesAPIFilterBackend(BaseFilterBackend):
