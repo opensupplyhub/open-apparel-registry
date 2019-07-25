@@ -18,6 +18,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.8.0] - 2019-07-24
+### Added
+- Enable admins to promote matches to become the canonical facility [#695](https://github.com/open-apparel-registry/open-apparel-registry/pull/695)
+
+### Changed
+- Upgrade Django to 2.2, along with upgrading some related libraries [#676](https://github.com/open-apparel-registry/open-apparel-registry/pull/676)
+
+### Deprecated
+
+### Removed
+
+### Fixed
+- Set Swagger API docs header [#694](https://github.com/open-apparel-registry/open-apparel-registry/pull/694)
+
+### Security
+
 ## [2.7.0] - 2019-07-17
 ### Added
 - Enable administrators to split facility matches into new facilities [#633](https://github.com/open-apparel-registry/open-apparel-registry/pull/633)
@@ -165,7 +181,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.7.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.8.0...HEAD
+[2.8.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.8.0
 [2.7.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.7.0
 [2.6.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.6.0
 [2.5.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.5.0
