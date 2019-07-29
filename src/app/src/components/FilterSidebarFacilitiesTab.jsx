@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { arrayOf, bool, func, string } from 'prop-types';
+import { arrayOf, bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -15,6 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import get from 'lodash/get';
 import { toast } from 'react-toastify';
+import Infinite from 'react-infinite';
 
 import ControlledTextInput from './ControlledTextInput';
 
@@ -55,6 +56,7 @@ const facilitiesTabStyles = Object.freeze({
     }),
     listItemStyles: Object.freeze({
         wordWrap: 'anywhere',
+        height: '120px', // TODO: Remove this and dynamically determine item height
     }),
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
@@ -90,6 +92,7 @@ function FilterSidebarFacilitiesTab({
     fetching,
     data,
     error,
+    windowHeight,
     logDownloadError,
     user,
     returnToSearchTab,
@@ -212,7 +215,7 @@ function FilterSidebarFacilitiesTab({
     const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
 
     const listHeaderInsetComponent = (
-        <div style={facilitiesTabStyles.listHeaderStyles}>
+        <div style={facilitiesTabStyles.listHeaderStyles} className="results-height-subtract">
             <Typography
                 variant="subheading"
                 align="center"
@@ -256,40 +259,53 @@ function FilterSidebarFacilitiesTab({
         </div>
     );
 
+    const nonResultListComponentHeight = (
+        Array.from(document.getElementsByClassName('results-height-subtract'))
+            .reduce((sum, x) => sum + x.offsetHeight, 0)
+    );
+
+    const resultListHeight = windowHeight - nonResultListComponentHeight;
+
     return (
         <Fragment>
             {listHeaderInsetComponent}
             <div style={filterSidebarStyles.controlPanelContentStyles}>
                 <List style={facilitiesTabStyles.listStyles}>
-                    {
-                        orderedFacilities
-                            .map(({
-                                properties: {
-                                    address,
-                                    name,
-                                    country_name: countryName,
-                                    oar_id: oarID,
-                                },
-                            }) => (
-                                <Fragment key={oarID}>
-                                    <Divider />
-                                    <ListItem
-                                        key={oarID}
-                                        style={facilitiesTabStyles.listItemStyles}
-                                    >
-                                        <Link
-                                            to={makeFacilityDetailLink(oarID)}
-                                            href={makeFacilityDetailLink(oarID)}
-                                            style={facilitiesTabStyles.linkStyles}
+                    <Infinite
+                        containerHeight={resultListHeight}
+                        // TODO: Remove 120 and set to an array of actual item heights
+                        elementHeight={120}
+                    >
+                        {
+                            orderedFacilities
+                                .map(({
+                                    properties: {
+                                        address,
+                                        name,
+                                        country_name: countryName,
+                                        oar_id: oarID,
+                                    },
+                                }) => (
+                                    <Fragment key={oarID}>
+                                        <Divider />
+                                        <ListItem
+                                            key={oarID}
+                                            style={facilitiesTabStyles.listItemStyles}
                                         >
-                                            <ListItemText
-                                                primary={`${name} - ${countryName}`}
-                                                secondary={address}
-                                            />
-                                        </Link>
-                                    </ListItem>
-                                </Fragment>))
-                    }
+                                            <Link
+                                                to={makeFacilityDetailLink(oarID)}
+                                                href={makeFacilityDetailLink(oarID)}
+                                                style={facilitiesTabStyles.linkStyles}
+                                            >
+                                                <ListItemText
+                                                    primary={`${name} - ${countryName}`}
+                                                    secondary={address}
+                                                />
+                                            </Link>
+                                        </ListItem>
+                                    </Fragment>))
+                        }
+                    </Infinite>
                 </List>
             </div>
             <Dialog open={loginRequiredDialogIsOpen}>
@@ -348,6 +364,7 @@ FilterSidebarFacilitiesTab.propTypes = {
     data: facilityCollectionPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
+    windowHeight: number.isRequired,
     logDownloadError: arrayOf(string),
     returnToSearchTab: func.isRequired,
     filterText: string.isRequired,
@@ -372,6 +389,9 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: {
             filterText,
         },
+        window: {
+            innerHeight: windowHeight,
+        },
     },
     logDownload: {
         error: logDownloadError,
@@ -384,6 +404,7 @@ function mapStateToProps({
         filterText,
         user,
         logDownloadError,
+        windowHeight,
     };
 }
 
