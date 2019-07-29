@@ -1,16 +1,28 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import { arrayOf, func, shape, string } from 'prop-types';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import LinkIcon from '@material-ui/icons/Link';
 import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import CloseIcon from '@material-ui/icons/Close';
 
 import COLOURS from '../util/COLOURS';
 
 const PopupStyles = Object.freeze({
+    containerStyles: Object.freeze({
+        padding: '0.5rem',
+        width: '500px',
+        fontSize: '15px',
+    }),
+    controlStyles: Object.freeze({
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginLeft: '15px',
+    }),
     selectedListItemStyles: Object.freeze({
         backgroundColor: COLOURS.NAVY_BLUE,
         maxWidth: '500px',
@@ -59,78 +71,72 @@ const PopupStyles = Object.freeze({
 
 export default function FacilitiesMapPopup({
     facilities,
-    domNodeID,
-    popupContentElementID,
     selectedFacilityID,
     selectFacilityOnClick,
+    closePopup,
 }) {
-    if (!facilities || !facilities.length || !domNodeID || !popupContentElementID) {
+    if (!facilities || !facilities.length) {
         return null;
     }
 
-    const domElement = document.getElementById(domNodeID);
-
-    if (!domElement) {
-        return null;
-    }
-
-    return createPortal(
-        (
-            <div id={popupContentElementID} className="notranslate">
-                <List subheader={<ListSubheader component="div">Multiple Facilities at Point</ListSubheader>}>
-                    {
-                        facilities
-                            .map(({
-                                properties: {
-                                    address,
-                                    name,
-                                    oar_id: oarID,
-                                },
-                            }) => (
-                                <ListItem
-                                    className="popup-item display-flex notranslate"
-                                    key={oarID}
+    return (
+        <div className="notranslate" style={PopupStyles.containerStyles}>
+            <div style={PopupStyles.controlStyles}>
+                <Typography variant="body1">
+                    Multiple Facilities At Point
+                </Typography>
+                <Button onClick={closePopup}>
+                    <CloseIcon />
+                </Button>
+            </div>
+            <List>
+                {facilities.map(
+                    ({ properties: { address, name, oar_id: oarID } }) => (
+                        <ListItem
+                            className="popup-item display-flex notranslate"
+                            key={oarID}
+                            style={
+                                oarID === selectedFacilityID
+                                    ? PopupStyles.selectedListItemStyles
+                                    : PopupStyles.unselectedListItemStyles
+                            }
+                        >
+                            <button
+                                type="button"
+                                onClick={() => selectFacilityOnClick(oarID)}
+                                style={PopupStyles.linkStyles}
+                            >
+                                <ListItemIcon
                                     style={
-                                        (oarID === selectedFacilityID)
-                                            ? PopupStyles.selectedListItemStyles
-                                            : PopupStyles.unselectedListItemStyles
+                                        oarID === selectedFacilityID
+                                            ? PopupStyles.selectedItemTextStyles
+                                            : PopupStyles.unselectedItemTextStyles
                                     }
                                 >
-                                    <button
-                                        type="button"
-                                        onClick={() => selectFacilityOnClick(oarID)}
-                                        style={PopupStyles.linkStyles}
-                                    >
-                                        <ListItemIcon
-                                            style={
-                                                (oarID === selectedFacilityID)
-                                                    ? PopupStyles.selectedItemTextStyles
-                                                    : PopupStyles.unselectedItemTextStyles
-                                            }
-                                        >
-                                            <LinkIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={name}
-                                            secondary={address}
-                                            primaryTypographyProps={{
-                                                style: (oarID === selectedFacilityID)
-                                                    ? PopupStyles.selectedPrimaryTextStyles
-                                                    : PopupStyles.unselectedPrimaryTextStyles,
-                                            }}
-                                            secondaryTypographyProps={{
-                                                style: (oarID === selectedFacilityID)
-                                                    ? PopupStyles.selectedSecondaryTextStyles
-                                                    : PopupStyles.unselectedSecondaryTextStyles,
-                                            }}
-                                        />
-                                    </button>
-                                </ListItem>))
-                    }
-                </List>
-            </div>
-        ),
-        domElement,
+                                    <LinkIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={name}
+                                    secondary={address}
+                                    primaryTypographyProps={{
+                                        style:
+                                            oarID === selectedFacilityID
+                                                ? PopupStyles.selectedPrimaryTextStyles
+                                                : PopupStyles.unselectedPrimaryTextStyles,
+                                    }}
+                                    secondaryTypographyProps={{
+                                        style:
+                                            oarID === selectedFacilityID
+                                                ? PopupStyles.selectedSecondaryTextStyles
+                                                : PopupStyles.unselectedSecondaryTextStyles,
+                                    }}
+                                />
+                            </button>
+                        </ListItem>
+                    ),
+                )}
+            </List>
+        </div>
     );
 }
 
@@ -140,14 +146,15 @@ FacilitiesMapPopup.defaultProps = {
 };
 
 FacilitiesMapPopup.propTypes = {
-    facilities: arrayOf(shape({
-        properties: shape({
-            address: string.isRequired,
-            oar_id: string.isRequired,
-        }).isRequired,
-    })),
-    domNodeID: string.isRequired,
-    popupContentElementID: string.isRequired,
+    facilities: arrayOf(
+        shape({
+            properties: shape({
+                address: string.isRequired,
+                oar_id: string.isRequired,
+            }).isRequired,
+        }),
+    ),
     selectedFacilityID: string,
     selectFacilityOnClick: func.isRequired,
+    closePopup: func.isRequired,
 };

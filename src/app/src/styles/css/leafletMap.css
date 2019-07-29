@@ -1,0 +1,83 @@
+.cluster-icon {
+    font-family: ff-tisa-sans-web-pro, sans-serif;
+}
+
+.cluster-icon-one {
+    width: 53px;
+    height: 53px;
+    line-height: 53px;
+    background-image: url('/images/m1.png');
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+}
+
+.cluster-icon-two {
+    width: 55px;
+    height: 55px;
+    line-height: 55px;
+    background-image: url('/images/m2.png');
+    color: #fff;
+    text-align: center;
+    font-size: 18px;;
+}
+
+.cluster-icon-three {
+    width: 65px;
+    height: 65px;
+    line-height: 65px;
+    background-image: url('/images/m3.png');
+    color: #fff;
+    text-align: center;
+    font-size: 18px;;
+}
+
+.cluster-icon-four {
+    width: 78px;
+    height: 78px;
+    line-height: 78px;
+    background-image: url('/images/m4.png');
+    color: #fff;
+    text-align: center;
+    font-size: 18px;;
+}
+
+.cluster-icon-five {
+    width: 90px;
+    height: 90px;
+    line-height: 90px;
+    background-image: url('/images/m5.png');
+    color: #fff;
+    text-align: center;
+    font-size: 18px;;
+}
+
+.leaflet-popup {
+    bottom: 30px !important;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: unset;
+}
+
+.leaflet-popup-content {
+    width: unset !important;
+    margin: unset;
+}
+
+.leaflet-popup-content p {
+    margin: unset;
+}
+
+.leaflet-popup-close-button {
+    display: none;
+}
+
+.popup-item {
+    cursor: pointer;
+    padding: 7px 15px;
+}
+
+.popup-item:hover {
+    background: #ddd;
+}
