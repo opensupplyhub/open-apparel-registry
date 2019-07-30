@@ -14,13 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf.urls import url
 
 from api import views
+from api.admin import admin_site
 from web.views import environment
-
 
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
@@ -50,7 +49,7 @@ internal_apis = [
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^web/environment\.js', environment, name='environment'),
     url(r'^api/docs/', views.schema_view),
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^rest-auth/', include('rest_auth.urls')),

@@ -1,0 +1,22 @@
+{% load reports %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>OAR Reports</title>
+        <style>
+            body {
+                padding: 0 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Reports</h1>
+        <ul>
+            {% for name in names %}
+                <li><a href="{{ name }}">{{ name|pretty_report_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
