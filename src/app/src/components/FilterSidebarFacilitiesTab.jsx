@@ -15,7 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import get from 'lodash/get';
 import { toast } from 'react-toastify';
-import Infinite from 'react-infinite';
+import InfiniteAnyHeight from 'react-infinite-any-height';
 
 import ControlledTextInput from './ControlledTextInput';
 
@@ -56,7 +56,6 @@ const facilitiesTabStyles = Object.freeze({
     }),
     listItemStyles: Object.freeze({
         wordWrap: 'anywhere',
-        height: '120px', // TODO: Remove this and dynamically determine item height
     }),
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
@@ -271,12 +270,9 @@ function FilterSidebarFacilitiesTab({
             {listHeaderInsetComponent}
             <div style={filterSidebarStyles.controlPanelContentStyles}>
                 <List style={facilitiesTabStyles.listStyles}>
-                    <Infinite
+                    <InfiniteAnyHeight
                         containerHeight={resultListHeight}
-                        // TODO: Remove 120 and set to an array of actual item heights
-                        elementHeight={120}
-                    >
-                        {
+                        list={
                             orderedFacilities
                                 .map(({
                                     properties: {
@@ -305,7 +301,7 @@ function FilterSidebarFacilitiesTab({
                                         </ListItem>
                                     </Fragment>))
                         }
-                    </Infinite>
+                    />
                 </List>
             </div>
             <Dialog open={loginRequiredDialogIsOpen}>

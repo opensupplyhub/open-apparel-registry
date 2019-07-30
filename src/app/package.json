@@ -26,6 +26,7 @@
         "react-dom": "16.8.6",
         "react-hot-loader": "4.9.0",
         "react-infinite": "0.13.0",
+        "react-infinite-any-height": "2.3.0",
         "react-redux": "5.1.0",
         "react-router": "4.3.1",
         "react-router-dom": "4.3.1",
