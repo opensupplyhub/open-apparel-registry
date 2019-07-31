@@ -41,7 +41,7 @@ export default function Navbar() {
     ];
 
     return (
-        <AppBar position="static" className="App-header">
+        <AppBar position="static" className="App-header results-height-subtract">
             <Toolbar style={{ padding: 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'middle' }}>
                     <Link

@@ -35,6 +35,7 @@ import './App.css';
 import { sessionLogin } from './actions/auth';
 import { fetchFeatureFlags } from './actions/featureFlags';
 import { fetchClientInfo } from './actions/clientInfo';
+import { reportWindowResize } from './actions/ui';
 
 import {
     mainRoute,
@@ -70,6 +71,11 @@ const appStyles = Object.freeze({
 
 class App extends Component {
     componentDidMount() {
+        window.addEventListener('resize', () => this.props.handleWindowResize({
+            innerHeight: window.innerHeight,
+            innerWidth: window.innerWidth,
+        }));
+
         this.props.getFeatureFlags();
         this.props.getClientInfo();
         return this.props.logIn();
@@ -200,6 +206,7 @@ function mapDispatchToProps(dispatch) {
         getFeatureFlags: () => dispatch(fetchFeatureFlags()),
         getClientInfo: () => dispatch(fetchClientInfo()),
         logIn: () => dispatch(sessionLogin()),
+        handleWindowResize: data => dispatch(reportWindowResize(data)),
     };
 }
 
