@@ -158,17 +158,20 @@ function FacilitiesMap({
                         null,
                     );
 
-                    // Check whether the viewport's map bounds intersects a new bounds object
-                    // made from the facility point
-                    const mapBoundsContainsFacility = leafletMap
-                        .getBounds()
-                        .intersects([facilityLocation, facilityLocation]);
-
-                    if (!mapBoundsContainsFacility) {
-                        leafletMap.setView({
+                    if (facilityLocation) {
+                        const facilityLatLng = {
                             lat: last(facilityLocation),
                             lng: head(facilityLocation),
-                        });
+                        };
+
+                        // Check whether the viewport's map bounds contains the facility point
+                        const mapBoundsContainsFacility = leafletMap
+                            .getBounds()
+                            .contains(facilityLatLng);
+
+                        if (!mapBoundsContainsFacility) {
+                            leafletMap.setView(facilityLatLng);
+                        }
                     }
                 }
             }
