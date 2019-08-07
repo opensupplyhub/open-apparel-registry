@@ -11,3 +11,6 @@ export const resetSidebarFacilitiesTabTextFilter =
 
 export const recordSearchTabResetButtonClick =
     createAction('RECORD_SEARCH_TAB_RESET_BUTTON_CLICK');
+
+export const reportWindowResize =
+    createAction('REPORT_WINDOW_RESIZE');

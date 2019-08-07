@@ -1,5 +1,6 @@
 import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
+import isObject from 'lodash/isObject';
 
 import {
     makeSidebarGuideTabActive,
@@ -8,6 +9,7 @@ import {
     updateSidebarFacilitiesTabTextFilter,
     resetSidebarFacilitiesTabTextFilter,
     recordSearchTabResetButtonClick,
+    reportWindowResize,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
@@ -19,6 +21,10 @@ const initialState = Object.freeze({
     facilitiesSidebarTabSearch: Object.freeze({
         filterText: '',
         resetButtonClickCount: 0,
+    }),
+    window: Object.freeze({
+        innerHeight: isObject(window) ? window.innerHeight : null,
+        innerWidth: isObject(window) ? window.innerWidth : null,
     }),
 });
 
@@ -73,5 +79,8 @@ export default createReducer({
                 $set: initialState.facilitiesSidebarTabSearch.filterText,
             },
         },
+    }),
+    [reportWindowResize]: (state, payload) => update(state, {
+        window: { $merge: payload },
     }),
 }, initialState);

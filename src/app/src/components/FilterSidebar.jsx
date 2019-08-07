@@ -83,7 +83,7 @@ class FilterSidebar extends Component {
         } = this.props;
 
         const header = (
-            <div className="panel-header">
+            <div className="panel-header results-height-subtract">
                 <h3 className="panel-header__title">
                     Open Apparel Registry
                 </h3>
@@ -106,7 +106,7 @@ class FilterSidebar extends Component {
         };
 
         const tabBar = (
-            <AppBar position="static">
+            <AppBar position="static" className="results-height-subtract">
                 <Tabs
                     value={activeTabIndex}
                     onChange={handleTabChange}

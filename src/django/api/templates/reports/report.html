@@ -1,0 +1,54 @@
+{% load reports %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>OAR Reports | {{ name|pretty_report_name }}</title>
+        <style>
+            body {
+                padding: 1rem;
+            }
+            table {
+                border-collapse: collapse;
+            }
+
+            table, th, td {
+                border: 1px solid #aaa;
+            }
+
+            tr:nth-child(even) {
+                background-color: #eee
+            }
+
+            td {
+               padding: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="{% url 'admin:reports' %}">Reports</a>
+        <h1>{{ name|pretty_report_name }}</h1>
+        <table>
+            <thead>
+                <tr>
+                    {% for val in columns %}
+                        <td>{{ val|pretty_report_name }}</td>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        {% for val in row %}
+                            <td>{{ val }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Query</h2>
+        <pre>{{ sql }}</pre>
+    </body>
+</html>

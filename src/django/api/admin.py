@@ -1,11 +1,42 @@
 import json
 
 from django.contrib import admin
+from django.contrib.admin import AdminSite
 from django.contrib.auth.admin import UserAdmin
+from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 
 from api import models
+
+from api.reports import get_report_names, run_report
+
+
+class ApiAdminSite(AdminSite):
+    site_header = 'Open Apparel Registry Admin'
+
+    def get_urls(self):
+        from django.conf.urls import url
+        base_urls = super(ApiAdminSite, self).get_urls()
+        urls = [
+            url(r'^reports/(?P<name>[\w-]+)/$',
+                self.admin_view(self.report_view)),
+            url(r'^reports/$', self.admin_view(self.reports_list_view),
+                name='reports')
+        ]
+        return base_urls + urls
+
+    def report_view(self, request, name):
+        context = run_report(name)
+        return render(request, 'reports/report.html', context)
+
+    def reports_list_view(self, request):
+        return render(request, 'reports/reports.html', {
+            'names': get_report_names()
+        })
+
+
+admin_site = ApiAdminSite()
 
 
 class OarUserAdmin(UserAdmin):
@@ -74,13 +105,13 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
     readonly_fields = ('oar_id', 'facility', 'reason')
 
 
-admin.site.register(models.User, OarUserAdmin)
-admin.site.register(models.Contributor, ContributorAdmin)
-admin.site.register(models.FacilityList)
-admin.site.register(models.FacilityListItem, FacilityListItemAdmin)
-admin.site.register(models.Facility, FacilityHistoryAdmin)
-admin.site.register(models.FacilityMatch, FacilityMatchAdmin)
-admin.site.register(models.FacilityClaim, FacilityClaimAdmin)
-admin.site.register(models.FacilityClaimReviewNote,
+admin_site.register(models.User, OarUserAdmin)
+admin_site.register(models.Contributor, ContributorAdmin)
+admin_site.register(models.FacilityList)
+admin_site.register(models.FacilityListItem, FacilityListItemAdmin)
+admin_site.register(models.Facility, FacilityHistoryAdmin)
+admin_site.register(models.FacilityMatch, FacilityMatchAdmin)
+admin_site.register(models.FacilityClaim, FacilityClaimAdmin)
+admin_site.register(models.FacilityClaimReviewNote,
                     FacilityClaimReviewNoteAdmin)
-admin.site.register(models.FacilityAlias, FacilityAliasAdmin)
+admin_site.register(models.FacilityAlias, FacilityAliasAdmin)

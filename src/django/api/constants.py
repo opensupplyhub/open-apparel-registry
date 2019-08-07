@@ -83,3 +83,8 @@ class Certifications:
     RESPONSIBLE_DOWN_STANDARD = 'Responsible Down Standard (RDS)'
     RESPONSIBLE_WOOL_STANDARD = 'Responsible Wool Standard (RWS)'
     SAB8000 = 'SA8000'
+
+
+class LogDownloadQueryParams:
+    PATH = 'path'
+    RECORD_COUNT = 'record_count'

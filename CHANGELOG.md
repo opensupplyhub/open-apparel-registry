@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.9.0] - 2019-08-07
+### Added
+- Add admin reports [#709](https://github.com/open-apparel-registry/open-apparel-registry/pull/709)
+
+### Changed
+- Require authentication for facility CSV downloads and log requests [#697](https://github.com/open-apparel-registry/open-apparel-registry/pull/697)
+- Wrap facility search results with react-infinite via react-infininte-any-height [#711](https://github.com/open-apparel-registry/open-apparel-registry/pull/711)
+- Replace Google Map component with a React Leaflet component using a Google basemap [#710](https://github.com/open-apparel-registry/open-apparel-registry/pull/710)
+
+### Fixed
+- Pan map on selecting a new facility only when the selected facility is off-screen [#719](https://github.com/open-apparel-registry/open-apparel-registry/pull/719)
+
 ## [2.8.0] - 2019-07-24
 ### Added
 - Enable admins to promote matches to become the canonical facility [#695](https://github.com/open-apparel-registry/open-apparel-registry/pull/695)
@@ -181,7 +193,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.8.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.9.0...HEAD
+[2.9.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.9.0
 [2.8.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.8.0
 [2.7.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.7.0
 [2.6.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.6.0
