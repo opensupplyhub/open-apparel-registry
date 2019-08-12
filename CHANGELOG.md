@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Add vector tile ADR [#723](https://github.com/open-apparel-registry/open-apparel-registry/pull/723)
 
 ### Changed
 
