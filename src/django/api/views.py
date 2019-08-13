@@ -1946,6 +1946,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 def api_feature_flags(request):
     response_data = {
         'claim_a_facility': switch_is_active('claim_a_facility'),
+        'vector_tile': switch_is_active('vector_tile'),
     }
 
     return Response(response_data)
