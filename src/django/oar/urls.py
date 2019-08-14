@@ -66,6 +66,8 @@ internal_apis = [
         name='api_token_auth'),
     url(r'^api-feature-flags', views.api_feature_flags,
         name='api_feature_flags'),
+    path(r'tile/<layer>/<int:z>/<int:x>/<int:y>/', views.get_tile,
+         name='tile'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns = public_apis + internal_apis

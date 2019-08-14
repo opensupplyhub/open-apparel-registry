@@ -39,6 +39,8 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
 import coreapi
 from waffle import switch_is_active
+from waffle.decorators import waffle_switch
+
 
 from oar import urls
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
@@ -86,6 +88,7 @@ from api.mail import (send_claim_facility_confirmation_email,
                       send_approved_claim_notice_to_list_contributors,
                       send_claim_update_notice_to_list_contributors)
 from api.exceptions import BadRequestException
+from api.tiler import handle_tile_request
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -2320,3 +2323,13 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         ]
 
         return Response(response_data)
+
+
+@permission_classes([AllowAny])
+@waffle_switch('vector_tile')
+def get_tile(request, layer, z, x, y):
+    if layer != 'facilities':
+        raise BadRequestException('invalid layer name: {}'.format(layer))
+
+    params = FacilityQueryParamsSerializer(data=request.query_params)
+    return handle_tile_request(request, layer, z, x, y, params)
