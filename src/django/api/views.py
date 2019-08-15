@@ -46,7 +46,6 @@ from oar import urls
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
-                           FacilitiesQueryParams,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
@@ -90,6 +89,7 @@ from api.mail import (send_claim_facility_confirmation_email,
 from api.exceptions import BadRequestException
 from api.tiler import get_facilities_vector_tile
 from api.renderers import MvtRenderer
+from api.querysets import get_facility_queryset_from_query_params
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -551,65 +551,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if not params.is_valid():
             raise ValidationError(params.errors)
 
-        free_text_query = request.query_params.get(FacilitiesQueryParams.Q,
-                                                   None)
-        name = request.query_params.get(FacilitiesQueryParams.NAME, None)
-
-        contributors = request.query_params \
-                              .getlist(FacilitiesQueryParams.CONTRIBUTORS)
-
-        contributor_types = request \
-            .query_params \
-            .getlist(FacilitiesQueryParams.CONTRIBUTOR_TYPES)
-        countries = request.query_params \
-                           .getlist(FacilitiesQueryParams.COUNTRIES)
-
-        queryset = Facility.objects.all()
-
-        if free_text_query is not None:
-            queryset = queryset.filter(Q(name__icontains=free_text_query) |
-                                       Q(id__icontains=free_text_query))
-
-        # `name` is deprecated in favor of `q`. We keep `name` available for
-        # backward compatibility.
-        if name is not None:
-            queryset = queryset.filter(Q(name__icontains=name) |
-                                       Q(id__icontains=name))
-
-        if countries is not None and len(countries):
-            queryset = queryset.filter(country_code__in=countries)
-
-        if len(contributor_types):
-            type_match_facility_ids = [
-                match['facility__id']
-                for match
-                in FacilityMatch
-                .objects
-                .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED])
-                .filter(is_active=True)
-                .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
-                .filter(facility_list_item__facility_list__is_active=True)
-                .values('facility__id')
-            ]
-
-            queryset = queryset.filter(id__in=type_match_facility_ids)
-
-        if len(contributors):
-            name_match_facility_ids = [
-                match['facility__id']
-                for match
-                in FacilityMatch
-                .objects
-                .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED])
-                .filter(is_active=True)
-                .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
-                .filter(facility_list_item__facility_list__is_active=True)
-                .values('facility__id')
-            ]
-
-            queryset = queryset.filter(id__in=name_match_facility_ids)
+        queryset = get_facility_queryset_from_query_params(request
+                                                           .query_params)
 
         page_queryset = self.paginate_queryset(queryset)
 
@@ -2338,5 +2281,9 @@ def get_tile(request, layer, z, x, y, ext):
         raise BadRequestException('invalid extension: {}'.format(ext))
 
     params = FacilityQueryParamsSerializer(data=request.query_params)
-    tile = get_facilities_vector_tile(layer, z, x, y, params)
+
+    if not params.is_valid():
+        raise ValidationError(params.errors)
+
+    tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
     return Response(tile.tobytes())

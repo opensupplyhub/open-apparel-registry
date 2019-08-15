@@ -33,11 +33,7 @@ const mapComponentStyles = Object.freeze({
     }),
 });
 
-function VectorTileFacilitiesMap({
-    resetButtonClickCount,
-    clientInfoFetched,
-    countryCode,
-}) {
+function useUpdateLeafletMapImperatively(resetButtonClickCount) {
     const mapRef = useRef(null);
 
     // Reset the map state when the reset button is clicked
@@ -61,6 +57,16 @@ function VectorTileFacilitiesMap({
         currentResetButtonClickCount,
         setCurrentResetButtonClickCount,
     ]);
+
+    return mapRef;
+}
+
+function VectorTileFacilitiesMap({
+    resetButtonClickCount,
+    clientInfoFetched,
+    countryCode,
+}) {
+    const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount);
 
     if (!clientInfoFetched) {
         return null;
