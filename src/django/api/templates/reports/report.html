@@ -29,6 +29,11 @@
     <body>
         <a href="{% url 'admin:reports' %}">Reports</a>
         <h1>{{ name|pretty_report_name }}</h1>
+
+        <p>
+            <a href="data:text/csv;charset=utf-8,{{csv_data}}" download="{{name}}.csv">Download</a>
+        </p>
+
         <table>
             <thead>
                 <tr>
