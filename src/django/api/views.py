@@ -88,7 +88,8 @@ from api.mail import (send_claim_facility_confirmation_email,
                       send_approved_claim_notice_to_list_contributors,
                       send_claim_update_notice_to_list_contributors)
 from api.exceptions import BadRequestException
-from api.tiler import handle_tile_request
+from api.tiler import get_facilities_vector_tile
+from api.renderers import MvtRenderer
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -2325,11 +2326,17 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         return Response(response_data)
 
 
+@api_view(['GET'])
 @permission_classes([AllowAny])
+@renderer_classes([MvtRenderer])
 @waffle_switch('vector_tile')
-def get_tile(request, layer, z, x, y):
+def get_tile(request, layer, z, x, y, ext):
     if layer != 'facilities':
         raise BadRequestException('invalid layer name: {}'.format(layer))
 
+    if ext != 'pbf':
+        raise BadRequestException('invalid extension: {}'.format(ext))
+
     params = FacilityQueryParamsSerializer(data=request.query_params)
-    return handle_tile_request(request, layer, z, x, y, params)
+    tile = get_facilities_vector_tile(layer, z, x, y, params)
+    return Response(tile.tobytes())

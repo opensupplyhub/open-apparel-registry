@@ -11,34 +11,25 @@ import { createQueryStringFromSearchFilters } from '../util/util';
 
 const VectorGrid = withLeaflet(VectorGridDefault);
 
-const esriStyles = new Proxy(
-    {},
-    {
-        get(_, prop) {
-            if (prop !== 'Urban area') {
-                return [];
-            }
-
-            return {
-                fill: true,
-                weight: 1,
-                fillColor: '#800000',
-                color: '#800000',
-                fillOpacity: 0.2,
-                opacity: 0.4,
-            };
-        },
-    },
-);
-
 const VectorTileFacilitiesLayer = ({ tileURL, handleClick }) => (
     <VectorGrid
         url={tileURL}
         type="protobuf"
-        attribution="© ESRI"
-        rendererFactory={L.canvas.tile}
-        vectorTileLayerStyles={esriStyles}
-        subdomains="abcd"
+        rendererFactory={L.svg.tile}
+        vectorTileLayerStyles={{
+            facilities: {
+                icon: L.icon({
+                    iconUrl: '/images/marker.png',
+                    iconSize: [30, 40],
+                    iconAnchor: [30, 40],
+                    popupAnchor: null,
+                    shadowUrl: null,
+                    shadowSize: null,
+                    shadowAnchor: null,
+                }),
+            },
+        }}
+        subdomains=""
         zIndex={100}
         interactive
         onClick={handleClick}
@@ -51,7 +42,7 @@ VectorTileFacilitiesLayer.propTypes = {
 };
 
 const createURLWithQueryString = qs =>
-    'https://basemaps.arcgis.com/v1/arcgis/rest/services/World_Basemap/VectorTileServer/tile/{z}/{y}/{x}.pbf'.concat(
+    '/tile/facilities/{z}/{x}/{y}.pbf'.concat(
         isEmpty(qs) ? '' : `?${qs}`,
     );
 
