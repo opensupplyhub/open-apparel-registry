@@ -920,7 +920,7 @@ class Facility(models.Model):
         help_text=('The original uploaded list item from which this facility '
                    'was created.'))
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
 
     history = HistoricalRecords()
 
