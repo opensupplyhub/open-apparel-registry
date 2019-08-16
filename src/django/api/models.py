@@ -6,6 +6,7 @@ from django.contrib.auth.models import (AbstractBaseUser,
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
+from django.utils.dateformat import format
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
 
@@ -1022,6 +1023,9 @@ class Facility(models.Model):
     def get_approved_claim(self):
         return self.facilityclaim_set.filter(
             status=FacilityClaim.APPROVED).count() > 0
+
+    def current_tile_cache_key():
+        return format(Facility.objects.latest('updated_at').updated_at, 'U')
 
 
 class FacilityMatch(models.Model):

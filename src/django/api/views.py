@@ -400,6 +400,11 @@ def all_countries(request):
     return Response(COUNTRY_CHOICES)
 
 
+@api_view(['GET'])
+def current_tile_cache_key(request):
+    return Response(Facility.current_tile_cache_key())
+
+
 class RootAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
         if 'log-download' in path:
@@ -2273,7 +2278,10 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 @permission_classes([AllowAny])
 @renderer_classes([MvtRenderer])
 @waffle_switch('vector_tile')
-def get_tile(request, layer, z, x, y, ext):
+def get_tile(request, layer, cachekey, z, x, y, ext):
+    if cachekey is None:
+        raise BadRequestException('missing cache key')
+
     if layer != 'facilities':
         raise BadRequestException('invalid layer name: {}'.format(layer))
 
