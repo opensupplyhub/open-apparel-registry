@@ -23,24 +23,22 @@ def get_facilities_vector_tile(params, layer, z, x, y):
     A vector tile.
     """
     tile_bounds = bounds(x, y, z)
-    tile_width = tile_bounds.east - tile_bounds.west
-    buffer_distance = tile_width * 0.2
 
     mvt_geom_query = """
         ST_AsMVTGeom(
             location,
-            ST_Expand(
-                ST_MakeEnvelope({xmin}, {ymin}, {xmax}, {ymax}, 4326),
-                {buffer_distance}
-            )
+            ST_MakeEnvelope({xmin}, {ymin}, {xmax}, {ymax}, 4326),
+            4096,
+            1000,
+            true
         ) """
 
+    filter_polygon = Polygon.from_bbox((
+        tile_bounds.west, tile_bounds.south,
+        tile_bounds.east, tile_bounds.north)).buffer(1000)
+
     query, params_for_sql = get_facility_queryset_from_query_params(params) \
-        .filter(
-            location__within=Polygon.from_bbox((
-                tile_bounds.west, tile_bounds.south,
-                tile_bounds.east, tile_bounds.north))
-        ) \
+        .filter(location__within=filter_polygon) \
         .extra(
             select={
                 'location': mvt_geom_query.format(
@@ -48,7 +46,6 @@ def get_facilities_vector_tile(params, layer, z, x, y):
                     ymin=tile_bounds.south,
                     xmax=tile_bounds.east,
                     ymax=tile_bounds.north,
-                    buffer_distance=buffer_distance
                 )
             }
         ) \

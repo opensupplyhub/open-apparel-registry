@@ -79,11 +79,7 @@ const VectorTileFacilitiesLayer = ({
                     icon: L.icon({
                         iconUrl: '/images/marker.png',
                         iconSize: [30, 40],
-                        iconAnchor: [30, 40],
-                        popupAnchor: null,
-                        shadowUrl: null,
-                        shadowSize: null,
-                        shadowAnchor: null,
+                        iconAnchor: [15, 40],
                     }),
                 },
             }}
