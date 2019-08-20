@@ -33,9 +33,17 @@ def get_facilities_vector_tile(params, layer, z, x, y):
             true
         ) """
 
+    filter_buffer_percent = 0.2
+    ew_buffer = \
+        abs(tile_bounds.east - tile_bounds.west) * filter_buffer_percent
+    ns_buffer = \
+        abs(tile_bounds.north - tile_bounds.south) * filter_buffer_percent
+
     filter_polygon = Polygon.from_bbox((
-        tile_bounds.west, tile_bounds.south,
-        tile_bounds.east, tile_bounds.north)).buffer(1000)
+        tile_bounds.west - ew_buffer,
+        tile_bounds.south - ns_buffer,
+        tile_bounds.east + ew_buffer,
+        tile_bounds.north + ns_buffer))
 
     query, params_for_sql = Facility \
         .objects \
