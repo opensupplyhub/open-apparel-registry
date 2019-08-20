@@ -89,7 +89,6 @@ from api.mail import (send_claim_facility_confirmation_email,
 from api.exceptions import BadRequestException
 from api.tiler import get_facilities_vector_tile
 from api.renderers import MvtRenderer
-from api.querysets import get_facility_queryset_from_query_params
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -556,8 +555,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if not params.is_valid():
             raise ValidationError(params.errors)
 
-        queryset = get_facility_queryset_from_query_params(request
-                                                           .query_params)
+        queryset = Facility \
+            .objects \
+            .filter_by_query_params(request.query_params)
 
         page_queryset = self.paginate_queryset(queryset)
 

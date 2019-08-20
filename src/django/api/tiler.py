@@ -2,7 +2,7 @@ from django.contrib.gis.geos import Polygon
 from django.db import connection
 from mercantile import bounds
 
-from api.querysets import get_facility_queryset_from_query_params
+from api.models import Facility
 
 
 def get_facilities_vector_tile(params, layer, z, x, y):
@@ -37,7 +37,9 @@ def get_facilities_vector_tile(params, layer, z, x, y):
         tile_bounds.west, tile_bounds.south,
         tile_bounds.east, tile_bounds.north)).buffer(1000)
 
-    query, params_for_sql = get_facility_queryset_from_query_params(params) \
+    query, params_for_sql = Facility \
+        .objects \
+        .filter_by_query_params(params) \
         .filter(location__within=filter_polygon) \
         .extra(
             select={
