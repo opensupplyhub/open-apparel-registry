@@ -29,7 +29,7 @@ def get_facilities_vector_tile(params, layer, z, x, y):
             location,
             ST_MakeEnvelope({xmin}, {ymin}, {xmax}, {ymax}, 4326),
             4096,
-            1000,
+            1024,
             true
         ) """
 
