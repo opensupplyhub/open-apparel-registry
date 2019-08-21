@@ -60,7 +60,8 @@ from api.models import (FacilityList,
                         FacilityAlias,
                         Contributor,
                         User,
-                        DownloadLog)
+                        DownloadLog,
+                        Version)
 from api.processing import parse_csv_line, parse_csv, parse_excel
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
@@ -742,6 +743,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             alias.delete()
 
         facility.delete()
+
+        try:
+            tile_version = Version.objects.get(name='tile_version')
+            tile_version.version = F('version') + 1
+            tile_version.save()
+        except Version.DoesNotExist:
+            pass
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

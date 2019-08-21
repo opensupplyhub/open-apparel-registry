@@ -107,6 +107,7 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
     readonly_fields = ('oar_id', 'facility', 'reason')
 
 
+admin_site.register(models.Version)
 admin_site.register(models.User, OarUserAdmin)
 admin_site.register(models.Contributor, ContributorAdmin)
 admin_site.register(models.FacilityList)

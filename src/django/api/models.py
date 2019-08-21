@@ -16,6 +16,24 @@ from api.oar_id import make_oar_id
 from api.constants import Affiliations, Certifications, FacilitiesQueryParams
 
 
+class Version(models.Model):
+    """
+    A table storing feature version numbers.
+    """
+    name = models.CharField(
+        max_length=100,
+        null=False,
+        blank=False,
+        primary_key=True,
+        help_text='The name of a feature with versions.')
+    version = models.IntegerField(
+        null=False,
+        blank=False,
+        help_text='The version number of the feature.')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class EmailAsUsernameUserManager(BaseUserManager):
     """
     A custom user manager which uses emails as unique identifiers for auth
@@ -1105,7 +1123,20 @@ class Facility(models.Model):
             status=FacilityClaim.APPROVED).count() > 0
 
     def current_tile_cache_key():
-        return format(Facility.objects.latest('updated_at').updated_at, 'U')
+        timestamp = format(
+            Facility.objects.latest('updated_at').updated_at,
+            'U',
+        )
+
+        try:
+            tile_version = Version \
+                .objects \
+                .get(name='tile_version') \
+                .version
+        except Version.DoesNotExist:
+            tile_version = 0
+
+        return '{}-{}'.format(timestamp, tile_version)
 
 
 class FacilityMatch(models.Model):
