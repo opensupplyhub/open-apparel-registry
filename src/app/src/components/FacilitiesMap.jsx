@@ -61,7 +61,7 @@ const createIcon = iconUrl =>
     L.icon({
         iconUrl,
         iconSize: [30, 40],
-        iconAnchor: [30, 40],
+        iconAnchor: [15, 40],
         popupAnchor: null,
         shadowUrl: null,
         shadowSize: null,
