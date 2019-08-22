@@ -39,12 +39,13 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
 import coreapi
 from waffle import switch_is_active
+from waffle.decorators import waffle_switch
+
 
 from oar import urls
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
-                           FacilitiesQueryParams,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
@@ -59,7 +60,8 @@ from api.models import (FacilityList,
                         FacilityAlias,
                         Contributor,
                         User,
-                        DownloadLog)
+                        DownloadLog,
+                        Version)
 from api.processing import parse_csv_line, parse_csv, parse_excel
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
@@ -86,6 +88,8 @@ from api.mail import (send_claim_facility_confirmation_email,
                       send_approved_claim_notice_to_list_contributors,
                       send_claim_update_notice_to_list_contributors)
 from api.exceptions import BadRequestException
+from api.tiler import get_facilities_vector_tile
+from api.renderers import MvtRenderer
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -396,6 +400,11 @@ def all_countries(request):
     return Response(COUNTRY_CHOICES)
 
 
+@api_view(['GET'])
+def current_tile_cache_key(request):
+    return Response(Facility.current_tile_cache_key())
+
+
 class RootAutoSchema(AutoSchema):
     def get_link(self, path, method, base_url):
         if 'log-download' in path:
@@ -547,65 +556,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if not params.is_valid():
             raise ValidationError(params.errors)
 
-        free_text_query = request.query_params.get(FacilitiesQueryParams.Q,
-                                                   None)
-        name = request.query_params.get(FacilitiesQueryParams.NAME, None)
-
-        contributors = request.query_params \
-                              .getlist(FacilitiesQueryParams.CONTRIBUTORS)
-
-        contributor_types = request \
-            .query_params \
-            .getlist(FacilitiesQueryParams.CONTRIBUTOR_TYPES)
-        countries = request.query_params \
-                           .getlist(FacilitiesQueryParams.COUNTRIES)
-
-        queryset = Facility.objects.all()
-
-        if free_text_query is not None:
-            queryset = queryset.filter(Q(name__icontains=free_text_query) |
-                                       Q(id__icontains=free_text_query))
-
-        # `name` is deprecated in favor of `q`. We keep `name` available for
-        # backward compatibility.
-        if name is not None:
-            queryset = queryset.filter(Q(name__icontains=name) |
-                                       Q(id__icontains=name))
-
-        if countries is not None and len(countries):
-            queryset = queryset.filter(country_code__in=countries)
-
-        if len(contributor_types):
-            type_match_facility_ids = [
-                match['facility__id']
-                for match
-                in FacilityMatch
-                .objects
-                .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED])
-                .filter(is_active=True)
-                .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
-                .filter(facility_list_item__facility_list__is_active=True)
-                .values('facility__id')
-            ]
-
-            queryset = queryset.filter(id__in=type_match_facility_ids)
-
-        if len(contributors):
-            name_match_facility_ids = [
-                match['facility__id']
-                for match
-                in FacilityMatch
-                .objects
-                .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED])
-                .filter(is_active=True)
-                .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
-                .filter(facility_list_item__facility_list__is_active=True)
-                .values('facility__id')
-            ]
-
-            queryset = queryset.filter(id__in=name_match_facility_ids)
+        queryset = Facility \
+            .objects \
+            .filter_by_query_params(request.query_params)
 
         page_queryset = self.paginate_queryset(queryset)
 
@@ -790,6 +743,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             alias.delete()
 
         facility.delete()
+
+        try:
+            tile_version = Version.objects.get(name='tile_version')
+            tile_version.version = F('version') + 1
+            tile_version.save()
+        except Version.DoesNotExist:
+            pass
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -1946,6 +1906,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 def api_feature_flags(request):
     response_data = {
         'claim_a_facility': switch_is_active('claim_a_facility'),
+        'vector_tile': switch_is_active('vector_tile'),
     }
 
     return Response(response_data)
@@ -2319,3 +2280,26 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         ]
 
         return Response(response_data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@renderer_classes([MvtRenderer])
+@waffle_switch('vector_tile')
+def get_tile(request, layer, cachekey, z, x, y, ext):
+    if cachekey is None:
+        raise BadRequestException('missing cache key')
+
+    if layer != 'facilities':
+        raise BadRequestException('invalid layer name: {}'.format(layer))
+
+    if ext != 'pbf':
+        raise BadRequestException('invalid extension: {}'.format(ext))
+
+    params = FacilityQueryParamsSerializer(data=request.query_params)
+
+    if not params.is_valid():
+        raise ValidationError(params.errors)
+
+    tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
+    return Response(tile.tobytes())

@@ -17,6 +17,7 @@ djangorestframework-gis==0.14
 djangorestframework==3.10.1
 flake8==3.6.0
 mccabe==0.6.1
+mercantile==1.1.2
 pycodestyle==2.4.0
 pyflakes==2.0.0
 pytz==2018.7
