@@ -61,7 +61,7 @@ const createIcon = iconUrl =>
     L.icon({
         iconUrl,
         iconSize: [30, 40],
-        iconAnchor: [30, 40],
+        iconAnchor: [15, 40],
         popupAnchor: null,
         shadowUrl: null,
         shadowSize: null,
@@ -214,7 +214,11 @@ function FacilitiesMap({
     const handleMultipleFacilitiesClusterMarkerClick = coordinates =>
         setFacilitiesToDisambiguate(
             data.features.reduce((acc, nextFeature) => {
-                const pointsIntersect = !distance(nextFeature, coordinates);
+                // If the distance between points is less than the size of an
+                // individual person it is likely a precision error, not a
+                // distinct geocoded point.
+                // https://en.wikipedia.org/wiki/Decimal_degrees#Precision
+                const pointsIntersect = distance(nextFeature, coordinates) < 0.000001;
                 return pointsIntersect ? acc.concat(nextFeature) : acc;
             }, []),
         );

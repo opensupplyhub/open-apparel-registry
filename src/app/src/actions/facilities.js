@@ -4,6 +4,8 @@ import get from 'lodash/get';
 
 import apiRequest from '../util/apiRequest';
 
+import { fetchCurrentTileCacheKey } from './vectorTileLayer';
+
 import {
     logErrorAndDispatchFailure,
     makeGetFacilitiesURLWithQueryString,
@@ -24,6 +26,7 @@ export const resetSingleFacility = createAction('RESET_SINGLE_FACILITY');
 
 export function fetchFacilities(pushNewRoute = noop) {
     return (dispatch, getState) => {
+        dispatch(fetchCurrentTileCacheKey());
         dispatch(startFetchFacilities());
 
         const {

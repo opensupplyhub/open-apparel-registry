@@ -12,6 +12,7 @@ const pathsToProxy = Object.freeze([
     '/user-profile',
     '/api-token-auth',
     '/api-feature-flags',
+    '/tile',
 ]);
 
 const djangoProxyTarget = Object.freeze({ target: 'http://django:8081' });

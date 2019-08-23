@@ -6,12 +6,32 @@ from django.contrib.auth.models import (AbstractBaseUser,
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
+from django.db.models import Q
+from django.utils.dateformat import format
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
 
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
-from api.constants import Affiliations, Certifications
+from api.constants import Affiliations, Certifications, FacilitiesQueryParams
+
+
+class Version(models.Model):
+    """
+    A table storing feature version numbers.
+    """
+    name = models.CharField(
+        max_length=100,
+        null=False,
+        blank=False,
+        primary_key=True,
+        help_text='The name of a feature with versions.')
+    version = models.IntegerField(
+        null=False,
+        blank=False,
+        help_text='The version number of the feature.')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class EmailAsUsernameUserManager(BaseUserManager):
@@ -881,6 +901,84 @@ class FacilityClaimReviewNote(models.Model):
     history = HistoricalRecords()
 
 
+class FacilityManager(models.Manager):
+    def filter_by_query_params(self, params):
+        """
+        Create a Facility queryset filtered by a list of request query params.
+
+        Arguments:
+        self (queryset) -- A queryset on the Facility model
+        params (dict) -- Request query parameters whose potential choices are
+                        enumerated in `api.constants.FacilitiesQueryParams`.
+
+        Returns:
+        A queryset on the Facility model
+        """
+        free_text_query = params.get(FacilitiesQueryParams.Q, None)
+
+        name = params.get(FacilitiesQueryParams.NAME, None)
+
+        contributors = params.getlist(FacilitiesQueryParams.CONTRIBUTORS)
+
+        contributor_types = params \
+            .getlist(FacilitiesQueryParams.CONTRIBUTOR_TYPES)
+
+        countries = params.getlist(FacilitiesQueryParams.COUNTRIES)
+
+        facilities_qs = Facility.objects.all()
+
+        if free_text_query is not None:
+            facilities_qs = facilities_qs \
+                .filter(Q(name__icontains=free_text_query) |
+                        Q(id__icontains=free_text_query))
+
+        # `name` is deprecated in favor of `q`. We keep `name` available for
+        # backward compatibility.
+        if name is not None:
+            facilities_qs = facilities_qs.filter(Q(name__icontains=name) |
+                                                 Q(id__icontains=name))
+
+        if countries is not None and len(countries):
+            facilities_qs = facilities_qs \
+                .filter(country_code__in=countries)
+
+        if len(contributor_types):
+            type_match_facility_ids = [
+                match['facility__id']
+                for match
+                in FacilityMatch
+                .objects
+                .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                    FacilityMatch.CONFIRMED])
+                .filter(is_active=True)
+                .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
+                .filter(facility_list_item__facility_list__is_active=True)
+                .values('facility__id')
+            ]
+
+            facilities_qs = facilities_qs \
+                .filter(id__in=type_match_facility_ids)
+
+        if len(contributors):
+            name_match_facility_ids = [
+                match['facility__id']
+                for match
+                in FacilityMatch
+                .objects
+                .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                    FacilityMatch.CONFIRMED])
+                .filter(is_active=True)
+                .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
+                .filter(facility_list_item__facility_list__is_active=True)
+                .values('facility__id')
+            ]
+
+            facilities_qs = facilities_qs \
+                .filter(id__in=name_match_facility_ids)
+
+        return facilities_qs
+
+
 class Facility(models.Model):
     """
     An official OAR facility. Search results are returned from this table.
@@ -920,9 +1018,10 @@ class Facility(models.Model):
         help_text=('The original uploaded list item from which this facility '
                    'was created.'))
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
 
     history = HistoricalRecords()
+    objects = FacilityManager()
 
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)
@@ -1022,6 +1121,22 @@ class Facility(models.Model):
     def get_approved_claim(self):
         return self.facilityclaim_set.filter(
             status=FacilityClaim.APPROVED).count() > 0
+
+    def current_tile_cache_key():
+        timestamp = format(
+            Facility.objects.latest('updated_at').updated_at,
+            'U',
+        )
+
+        try:
+            tile_version = Version \
+                .objects \
+                .get(name='tile_version') \
+                .version
+        except Version.DoesNotExist:
+            tile_version = 0
+
+        return '{}-{}'.format(timestamp, tile_version)
 
 
 class FacilityMatch(models.Model):

@@ -6,6 +6,8 @@ import FilterSidebar from './FilterSidebar';
 import FacilityDetailsSidebar from './FacilityDetailSidebar';
 import FacilitiesMap from './FacilitiesMap';
 import FacilitiesMapErrorMessage from './FacilitiesMapErrorMessage';
+import FeatureFlag from './FeatureFlag';
+import VectorTileFacilitiesMap from './VectorTileFacilitiesMap';
 
 import '../styles/css/Map.css';
 
@@ -15,6 +17,7 @@ import {
     mainRoute,
     facilitiesRoute,
     facilityDetailsRoute,
+    VECTOR_TILE,
 } from '../util/constants';
 
 class MapAndSidebar extends Component {
@@ -61,17 +64,38 @@ class MapAndSidebar extends Component {
                                 <Route
                                     exact
                                     path={facilityDetailsRoute}
-                                    component={FacilitiesMap}
+                                    render={() => (
+                                        <FeatureFlag
+                                            flag={VECTOR_TILE}
+                                            alternative={<Route component={FacilitiesMap} />}
+                                        >
+                                            <Route component={VectorTileFacilitiesMap} />
+                                        </FeatureFlag>
+                                    )}
                                 />
                                 <Route
                                     exact
                                     path={facilitiesRoute}
-                                    component={FacilitiesMap}
+                                    render={() => (
+                                        <FeatureFlag
+                                            flag={VECTOR_TILE}
+                                            alternative={<Route component={FacilitiesMap} />}
+                                        >
+                                            <Route component={VectorTileFacilitiesMap} />
+                                        </FeatureFlag>
+                                    )}
                                 />
                                 <Route
                                     exact
                                     path={mainRoute}
-                                    component={FacilitiesMap}
+                                    render={() => (
+                                        <FeatureFlag
+                                            flag={VECTOR_TILE}
+                                            alternative={<Route component={FacilitiesMap} />}
+                                        >
+                                            <Route component={VectorTileFacilitiesMap} />
+                                        </FeatureFlag>
+                                    )}
                                 />
                             </Switch>
                         )}

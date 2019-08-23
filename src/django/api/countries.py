@@ -253,6 +253,8 @@ COUNTRY_CHOICES = [
 
 COUNTRY_NAMES = dict(COUNTRY_CHOICES)
 
+COUNTRY_CODES_LIST = [code for code, _ in COUNTRY_CHOICES]
+
 COUNTRY_CODES = {
     'afghanistan': 'AF',
     'albania': 'AL',

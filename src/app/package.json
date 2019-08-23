@@ -31,6 +31,7 @@
         "react-leaflet-control": "2.1.1",
         "react-leaflet-google-layer": "1.1.4",
         "react-leaflet-markercluster": "2.0.0-rc3",
+        "react-leaflet-vectorgrid": "2.2.1",
         "react-redux": "5.1.0",
         "react-router": "4.3.1",
         "react-router-dom": "4.3.1",

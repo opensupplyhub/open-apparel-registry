@@ -6,6 +6,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
+from waffle.models import Flag, Sample, Switch
+from waffle.admin import FlagAdmin, SampleAdmin, SwitchAdmin
 
 from api import models
 
@@ -105,6 +107,7 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
     readonly_fields = ('oar_id', 'facility', 'reason')
 
 
+admin_site.register(models.Version)
 admin_site.register(models.User, OarUserAdmin)
 admin_site.register(models.Contributor, ContributorAdmin)
 admin_site.register(models.FacilityList)
@@ -115,3 +118,6 @@ admin_site.register(models.FacilityClaim, FacilityClaimAdmin)
 admin_site.register(models.FacilityClaimReviewNote,
                     FacilityClaimReviewNoteAdmin)
 admin_site.register(models.FacilityAlias, FacilityAliasAdmin)
+admin_site.register(Flag, FlagAdmin)
+admin_site.register(Sample, SampleAdmin)
+admin_site.register(Switch, SwitchAdmin)
