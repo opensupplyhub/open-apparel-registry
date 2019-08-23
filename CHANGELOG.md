@@ -7,9 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Add vector tile ADR [#723](https://github.com/open-apparel-registry/open-apparel-registry/pull/723)
-- Add contributor and mailing list admin reports and the ability to download admin reports [#726](https://github.com/open-apparel-registry/open-apparel-registry/pull/726)
-- Create `/tile` endpoint to return all facilities as vector tiles, along with React components for displaying the vector tiles [#730](https://github.com/open-apparel-registry/open-apparel-registry/pull/730)
 
 ### Changed
 
@@ -18,11 +15,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+
+## [2.10.0] - 2019-08-22
+### Added
+- Add vector tile ADR [#723](https://github.com/open-apparel-registry/open-apparel-registry/pull/723)
+- Add contributor and mailing list admin reports and the ability to download admin reports [#726](https://github.com/open-apparel-registry/open-apparel-registry/pull/726)
+- Create `/tile` endpoint to return all facilities as vector tiles, along with React components for displaying the vector tiles [#730](https://github.com/open-apparel-registry/open-apparel-registry/pull/730)
+
+### Fixed
 - Restore django-waffle admin pages [#732](https://github.com/open-apparel-registry/open-apparel-registry/pull/732)
 - Prevent map crash by not using strict equality when comparing point coordinates [#737](https://github.com/open-apparel-registry/open-apparel-registry/pull/737)
 - Fix map marker anchor location [#745](https://github.com/open-apparel-registry/open-apparel-registry/pull/745)
-
-### Security
 
 ## [2.9.0] - 2019-08-07
 ### Added
@@ -199,7 +202,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.9.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.10.0...HEAD
+[2.10.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.10.0
 [2.9.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.9.0
 [2.8.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.8.0
 [2.7.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.7.0
