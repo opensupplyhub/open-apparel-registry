@@ -13,6 +13,9 @@ import {
     failFetchSingleFacility,
     completeFetchSingleFacility,
     resetSingleFacility,
+    startFetchNextPageOfFacilities,
+    failFetchNextPageOfFacilities,
+    completeFetchNextPageOfFacilities,
 } from '../actions/facilities';
 
 import {
@@ -33,6 +36,8 @@ const initialState = Object.freeze({
         data: null,
         fetching: false,
         error: null,
+        nextPageURL: null,
+        isInfiniteLoading: false,
     }),
     singleFacility: Object.freeze({
         data: null,
@@ -100,6 +105,30 @@ export default createReducer({
             fetching: { $set: false },
             error: { $set: null },
             data: { $set: payload },
+            nextPageURL: { $set: get(payload, 'next', null) },
+        },
+    }),
+    [startFetchNextPageOfFacilities]: state => update(state, {
+        facilities: {
+            isInfiniteLoading: { $set: true },
+        },
+    }),
+    [failFetchNextPageOfFacilities]: state => update(state, {
+        facilities: {
+            isInfiniteLoading: { $set: false },
+        },
+    }),
+    [completeFetchNextPageOfFacilities]: (state, payload) => update(state, {
+        facilities: {
+            fetching: { $set: false },
+            error: { $set: null },
+            data: {
+                features: {
+                    $push: get(payload, 'features', []),
+                },
+            },
+            nextPageURL: { $set: get(payload, 'next', null) },
+            isInfiniteLoading: { $set: false },
         },
     }),
     [resetFacilities]: state => update(state, {

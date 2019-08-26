@@ -6,8 +6,6 @@ import {
     makeSidebarGuideTabActive,
     makeSidebarSearchTabActive,
     makeSidebarFacilitiesTabActive,
-    updateSidebarFacilitiesTabTextFilter,
-    resetSidebarFacilitiesTabTextFilter,
     recordSearchTabResetButtonClick,
     reportWindowResize,
 } from '../actions/ui';
@@ -19,7 +17,6 @@ import { filterSidebarTabsEnum } from '../util/constants';
 const initialState = Object.freeze({
     activeFilterSidebarTab: filterSidebarTabsEnum.search,
     facilitiesSidebarTabSearch: Object.freeze({
-        filterText: '',
         resetButtonClickCount: 0,
     }),
     window: Object.freeze({
@@ -63,20 +60,6 @@ export default createReducer({
         facilitiesSidebarTabSearch: {
             searchTerm: {
                 $set: initialState.facilitiesSidebarTabSearch.searchTerm,
-            },
-        },
-    }),
-    [updateSidebarFacilitiesTabTextFilter]: (state, payload) => update(state, {
-        facilitiesSidebarTabSearch: {
-            filterText: {
-                $set: payload,
-            },
-        },
-    }),
-    [resetSidebarFacilitiesTabTextFilter]: state => update(state, {
-        facilitiesSidebarTabSearch: {
-            filterText: {
-                $set: initialState.facilitiesSidebarTabSearch.filterText,
             },
         },
     }),

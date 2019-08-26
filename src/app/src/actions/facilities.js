@@ -65,6 +65,37 @@ export function fetchFacilities(pushNewRoute = noop) {
     };
 }
 
+export const startFetchNextPageOfFacilities = createAction('START_FETCH_NEXT_PAGE_OF_FACILITIES');
+export const failFetchNextPageOfFacilities = createAction('FAIL_FETCH_NEXT_PAGE_OF_FACILITIES');
+export const completeFetchNextPageOfFacilities = createAction('COMPLETE_FETCH_NEXT_PAGE_OF_FACILITIES');
+
+export function fetchNextPageOfFacilities() {
+    return (dispatch, getState) => {
+        const {
+            facilities: {
+                facilities: {
+                    nextPageURL,
+                },
+            },
+        } = getState();
+
+        if (!nextPageURL) {
+            return noop();
+        }
+
+        dispatch(startFetchNextPageOfFacilities());
+
+        return apiRequest
+            .get(nextPageURL)
+            .then(({ data }) => dispatch(completeFetchNextPageOfFacilities(data)))
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented fetching the next page of facilities',
+                failFetchNextPageOfFacilities,
+            )));
+    };
+}
+
 export function fetchSingleFacility(oarID = null) {
     return (dispatch) => {
         dispatch(startFetchSingleFacility());

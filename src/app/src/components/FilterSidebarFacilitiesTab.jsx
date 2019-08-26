@@ -17,12 +17,11 @@ import get from 'lodash/get';
 import { toast } from 'react-toastify';
 import InfiniteAnyHeight from 'react-infinite-any-height';
 
-import ControlledTextInput from './ControlledTextInput';
-
 import {
     makeSidebarSearchTabActive,
-    updateSidebarFacilitiesTabTextFilter,
 } from '../actions/ui';
+
+import { fetchNextPageOfFacilities } from '../actions/facilities';
 
 import { logDownload } from '../actions/logDownload';
 
@@ -35,16 +34,12 @@ import {
 
 import {
     makeFacilityDetailLink,
-    getValueFromEvent,
-    caseInsensitiveIncludes,
-    sortFacilitiesAlphabeticallyByName,
+    pluralizeResultsCount,
 } from '../util/util';
 
 import COLOURS from '../util/COLOURS';
 
 import { filterSidebarStyles } from '../util/styles';
-
-const SEARCH_TERM_INPUT = 'SEARCH_TERM_INPUT';
 
 const facilitiesTabStyles = Object.freeze({
     noResultsTextStyles: Object.freeze({
@@ -95,9 +90,9 @@ function FilterSidebarFacilitiesTab({
     logDownloadError,
     user,
     returnToSearchTab,
-    filterText,
-    updateFilterText,
     handleDownload,
+    fetchNextPage,
+    isInfiniteLoading,
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(false);
     const [requestedDownload, setRequestedDownload] = useState(false);
@@ -188,27 +183,9 @@ function FilterSidebarFacilitiesTab({
         );
     }
 
-    const filteredFacilities = filterText
-        ? facilities
-            .filter(({
-                properties: {
-                    address,
-                    name,
-                    country_name: countryName,
-                },
-            }) => caseInsensitiveIncludes(address, filterText)
-                || caseInsensitiveIncludes(name, filterText)
-                || caseInsensitiveIncludes(countryName, filterText))
-        : facilities;
-
-    const orderedFacilities =
-        sortFacilitiesAlphabeticallyByName(filteredFacilities);
-
     const facilitiesCount = get(data, 'count', null);
 
-    const headerDisplayString = facilitiesCount && (facilitiesCount !== filteredFacilities.length)
-        ? `Displaying ${filteredFacilities.length} facilities of ${facilitiesCount} results`
-        : `Displaying ${filteredFacilities.length} facilities`;
+    const headerDisplayString = pluralizeResultsCount(facilitiesCount);
 
     const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
     const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
@@ -242,19 +219,6 @@ function FilterSidebarFacilitiesTab({
                     </Button>
                 </div>
             </Typography>
-            <div style={facilitiesTabStyles.listHeaderTextSearchStyles}>
-                <label
-                    htmlFor={SEARCH_TERM_INPUT}
-                >
-                    Filter results
-                </label>
-                <ControlledTextInput
-                    id={SEARCH_TERM_INPUT}
-                    value={filterText}
-                    onChange={updateFilterText}
-                    placeholder="Filter by name, address, or country"
-                />
-            </div>
         </div>
     );
 
@@ -265,6 +229,15 @@ function FilterSidebarFacilitiesTab({
 
     const resultListHeight = windowHeight - nonResultListComponentHeight;
 
+    const loadingElement = (facilities.length !== facilitiesCount) && (
+        <Fragment>
+            <Divider />
+            <ListItem style={facilitiesTabStyles.listItemStyles}>
+                <ListItemText primary="Loading more facilities..." />
+            </ListItem>
+        </Fragment>
+    );
+
     return (
         <Fragment>
             {listHeaderInsetComponent}
@@ -272,8 +245,12 @@ function FilterSidebarFacilitiesTab({
                 <List style={facilitiesTabStyles.listStyles}>
                     <InfiniteAnyHeight
                         containerHeight={resultListHeight}
+                        infiniteLoadBeginEdgeOffset={100}
+                        isInfiniteLoading={fetching || isInfiniteLoading}
+                        onInfiniteLoad={fetchNextPage}
+                        loadingSpinnerDelegate={loadingElement}
                         list={
-                            orderedFacilities
+                            facilities
                                 .map(({
                                     properties: {
                                         address,
@@ -363,9 +340,9 @@ FilterSidebarFacilitiesTab.propTypes = {
     windowHeight: number.isRequired,
     logDownloadError: arrayOf(string),
     returnToSearchTab: func.isRequired,
-    filterText: string.isRequired,
-    updateFilterText: func.isRequired,
     handleDownload: func.isRequired,
+    fetchNextPage: func.isRequired,
+    isInfiniteLoading: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -379,6 +356,7 @@ function mapStateToProps({
             data,
             error,
             fetching,
+            isInfiniteLoading,
         },
     },
     ui: {
@@ -401,15 +379,15 @@ function mapStateToProps({
         user,
         logDownloadError,
         windowHeight,
+        isInfiniteLoading,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         returnToSearchTab: () => dispatch(makeSidebarSearchTabActive()),
-        updateFilterText: e =>
-            dispatch((updateSidebarFacilitiesTabTextFilter(getValueFromEvent(e)))),
         handleDownload: () => dispatch(logDownload()),
+        fetchNextPage: () => dispatch(fetchNextPageOfFacilities()),
     };
 }
 
