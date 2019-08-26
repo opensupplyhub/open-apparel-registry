@@ -1,14 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import VectorGridDefault from 'react-leaflet-vectorgrid';
 import { withLeaflet } from 'react-leaflet';
 import L from 'leaflet';
 import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 
 import { createQueryStringFromSearchFilters } from '../util/util';
 
 const VectorGrid = withLeaflet(VectorGridDefault);
+
+const createMarkerIcon = iconUrl => L.icon({
+    iconUrl,
+    iconSize: [30, 40],
+    iconAnchor: [15, 40],
+});
+
+const selectedMarkerIcon = createMarkerIcon('/images/selectedmarker.png');
+const unselectedMarkerIcon = createMarkerIcon('/images/marker.png');
 
 function useUpdateTileURL(tileURL, performingNewSearch, resetButtonClickCount) {
     const [
@@ -46,13 +56,41 @@ function useUpdateTileURL(tileURL, performingNewSearch, resetButtonClickCount) {
     return vectorTileURLWithQueryParams;
 }
 
+const useUpdateTileLayerWithMarkerForSelectedOARID = (oarID) => {
+    const tileLayerRef = useRef(null);
+
+    const [currentSelectedMarkerID, setCurrentSelectedMarkerID] = useState(oarID);
+
+    useEffect(() => {
+        if (tileLayerRef && (oarID !== currentSelectedMarkerID)) {
+            const tileLayer = get(
+                tileLayerRef,
+                'current.leafletElement',
+            );
+
+            tileLayer.setFeatureStyle(currentSelectedMarkerID, {
+                icon: unselectedMarkerIcon,
+            });
+
+            tileLayer.setFeatureStyle(oarID, {
+                icon: selectedMarkerIcon,
+            });
+
+            setCurrentSelectedMarkerID(oarID);
+        }
+    }, [oarID, currentSelectedMarkerID, setCurrentSelectedMarkerID, tileLayerRef]);
+
+    return tileLayerRef;
+};
+
 const VectorTileFacilitiesLayer = ({
     tileURL,
-    handleClick,
+    handleMarkerClick,
     fetching,
     resetButtonClickCount,
     tileCacheKey,
     getNewCacheKey,
+    oarID,
 }) => {
     const vectorTileURL = useUpdateTileURL(
         tileURL,
@@ -60,6 +98,8 @@ const VectorTileFacilitiesLayer = ({
         resetButtonClickCount,
         getNewCacheKey,
     );
+
+    const vectorTileLayerRef = useUpdateTileLayerWithMarkerForSelectedOARID(oarID);
 
     if (!tileCacheKey) {
         // We throw an error here if the tile cache key is missing.
@@ -70,33 +110,42 @@ const VectorTileFacilitiesLayer = ({
 
     return (
         <VectorGrid
+            ref={vectorTileLayerRef}
             key={vectorTileURL}
             url={vectorTileURL}
             type="protobuf"
             rendererFactory={L.canvas.tile}
             vectorTileLayerStyles={{
-                facilities: {
-                    icon: L.icon({
-                        iconUrl: '/images/marker.png',
-                        iconSize: [30, 40],
-                        iconAnchor: [15, 40],
-                    }),
+                facilities(properties) {
+                    const facilityID = get(properties, 'id', null);
+
+                    return {
+                        icon: (oarID && facilityID === oarID)
+                            ? selectedMarkerIcon
+                            : unselectedMarkerIcon,
+                    };
                 },
             }}
             subdomains=""
             zIndex={100}
             interactive
-            onClick={handleClick}
+            onClick={handleMarkerClick}
+            getFeatureId={f => get(f, 'properties.id', null)}
         />
     );
 };
 
+VectorTileFacilitiesLayer.defaultProps = {
+    oarID: null,
+};
+
 VectorTileFacilitiesLayer.propTypes = {
-    handleClick: func.isRequired,
+    handleMarkerClick: func.isRequired,
     tileURL: string.isRequired,
     tileCacheKey: string.isRequired,
     fetching: bool.isRequired,
     resetButtonClickCount: number.isRequired,
+    oarID: string,
 };
 
 const createURLWithQueryString = (qs, key) =>
@@ -127,13 +176,6 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps() {
-    return {
-        handleClick: ({ layer }) => window.console.log(layer),
-    };
-}
-
 export default connect(
     mapStateToProps,
-    mapDispatchToProps,
 )(VectorTileFacilitiesLayer);

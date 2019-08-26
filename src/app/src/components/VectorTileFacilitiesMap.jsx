@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { bool, number, string } from 'prop-types';
+import { bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Map as ReactLeafletMap, ZoomControl } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
@@ -14,6 +14,8 @@ import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 
 import { COUNTRY_CODES } from '../util/constants';
+
+import { makeFacilityDetailLink } from '../util/util';
 
 import {
     initialCenter,
@@ -65,6 +67,10 @@ function VectorTileFacilitiesMap({
     resetButtonClickCount,
     clientInfoFetched,
     countryCode,
+    handleMarkerClick,
+    match: {
+        params: { oarID },
+    },
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount);
 
@@ -108,7 +114,10 @@ function VectorTileFacilitiesMap({
                 </CopyToClipboard>
             </Control>
             <ZoomControl position="bottomright" />
-            <VectorTileFacilitiesLayer />
+            <VectorTileFacilitiesLayer
+                handleMarkerClick={handleMarkerClick}
+                oarID={oarID}
+            />
         </ReactLeafletMap>
     );
 }
@@ -117,6 +126,12 @@ VectorTileFacilitiesMap.propTypes = {
     resetButtonClickCount: number.isRequired,
     clientInfoFetched: bool.isRequired,
     countryCode: string.isRequired,
+    handleMarkerClick: func.isRequired,
+    match: shape({
+        params: shape({
+            oarID: string,
+        }),
+    }).isRequired,
 };
 
 function mapStateToProps({
@@ -132,4 +147,17 @@ function mapStateToProps({
     };
 }
 
-export default connect(mapStateToProps)(VectorTileFacilitiesMap);
+function mapDispatchToProps(_, { history: { push } }) {
+    return {
+        handleMarkerClick: (e) => {
+            const oarID = get(e, 'layer.properties.id', null);
+
+            return oarID ? push(makeFacilityDetailLink(oarID)) : noop();
+        },
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(VectorTileFacilitiesMap);
