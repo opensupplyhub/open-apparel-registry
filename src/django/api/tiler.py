@@ -1,8 +1,66 @@
+import mercantile
+
 from django.contrib.gis.geos import Polygon
 from django.db import connection
-from mercantile import bounds
 
 from api.models import Facility
+
+GRID_ZOOM_FACTOR = 3
+
+
+def latlng_bounds_to_grid_table_values(llb, tile_bounds):
+    geom = 'ST_MakeEnvelope({xmin}, {ymin}, {xmax}, {ymax}, 4326)'.format(
+        xmin=llb.west, ymin=llb.south, xmax=llb.east, ymax=llb.north
+    )
+    mvt_geom = (
+        'ST_AsMVTGeom({geom}, ST_MakeEnvelope('
+        '{xmin}, {ymin}, {xmax}, {ymax}, 4326))').format(
+            geom=geom, xmin=tile_bounds.west, ymin=tile_bounds.south,
+            xmax=tile_bounds.east, ymax=tile_bounds.north)
+
+    return '({geom}, {mvt_geom})'.format(geom=geom, mvt_geom=mvt_geom)
+
+
+def get_facilities_grid_vector_tile(params, layer, z, x, y):
+    tile_bounds = mercantile.bounds(x, y, z)
+    grid_tiles = mercantile.children((x, y, z), zoom=z+GRID_ZOOM_FACTOR)
+    tile_values = [
+        latlng_bounds_to_grid_table_values(mercantile.bounds(t), tile_bounds)
+        for t in grid_tiles]
+
+    grid_query = 'grid (geom, mvt_geom) AS (VALUES {})'.format(
+        ','.join(tile_values)
+    )
+
+    location_query, location_params = Facility \
+        .objects \
+        .filter_by_query_params(params) \
+        .values('location') \
+        .query \
+        .sql_with_params()
+
+    with_location_query = 'facilities(location) AS ({})'.format(
+        location_query)
+
+    with_clause = 'WITH {}'.format(
+        '\n,'.join([grid_query, with_location_query]))
+
+    join_query = (
+        'SELECT grid.mvt_geom, count(location) '
+        'FROM grid '
+        'LEFT JOIN facilities ON ST_Contains(grid.geom, location) '
+        'GROUP BY grid.mvt_geom')
+
+    st_asmvt_query = \
+        'SELECT ST_AsMVT(q, \'{}\') FROM ({}) AS q'.format(layer, join_query)
+
+    full_query = '\n'.join([with_clause, st_asmvt_query])
+    # print(full_query)
+
+    with connection.cursor() as cursor:
+        cursor.execute(full_query, location_params)
+        rows = cursor.fetchall()
+        return rows[0][0]
 
 
 def get_facilities_vector_tile(params, layer, z, x, y):
@@ -22,7 +80,7 @@ def get_facilities_vector_tile(params, layer, z, x, y):
     Returns:
     A vector tile.
     """
-    tile_bounds = bounds(x, y, z)
+    tile_bounds = mercantile.bounds(x, y, z)
 
     mvt_geom_query = """
         ST_AsMVTGeom(
