@@ -15,6 +15,7 @@ import delay from 'lodash/delay';
 
 import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
+import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -221,6 +222,12 @@ function VectorTileFacilitiesMap({
                 handleMarkerClick={handleMarkerClick}
                 oarID={oarID}
                 pushRoute={push}
+                minZoom={12}
+                maxZoom={22}
+            />
+            <VectorTileFacilityGridLayer
+                minZoom={1}
+                maxZoom={11}
             />
         </ReactLeafletMap>
     );

@@ -21,7 +21,7 @@ def latlng_bounds_to_grid_table_values(llb, tile_bounds):
     return '({geom}, {mvt_geom})'.format(geom=geom, mvt_geom=mvt_geom)
 
 
-def get_facilities_grid_vector_tile(params, layer, z, x, y):
+def get_facility_grid_vector_tile(params, layer, z, x, y):
     tile_bounds = mercantile.bounds(x, y, z)
     grid_tiles = mercantile.children((x, y, z), zoom=z+GRID_ZOOM_FACTOR)
     tile_values = [
