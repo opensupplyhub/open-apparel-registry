@@ -141,7 +141,8 @@ it('creates an API URL for getting a single facility by OAR ID', () => {
 it('creates an API URL for getting facilities with a query string', () => {
     const qs = 'hello=world';
     const expectedMatch = `/api/facilities/?hello=world&pageSize=${FACILITIES_REQUEST_PAGE_SIZE}`;
-    expect(makeGetFacilitiesURLWithQueryString(qs)).toEqual(expectedMatch);
+    expect(makeGetFacilitiesURLWithQueryString(qs, FACILITIES_REQUEST_PAGE_SIZE))
+        .toEqual(expectedMatch);
 });
 
 it('gets the value from a React Select option object', () => {

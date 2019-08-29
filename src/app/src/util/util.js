@@ -33,7 +33,6 @@ import env from './env';
 
 import {
     OTHER,
-    FACILITIES_REQUEST_PAGE_SIZE,
     FEATURE_COLLECTION,
     inputTypesEnum,
     registrationFieldsEnum,
@@ -93,7 +92,7 @@ export const makeGetCountriesURL = () => '/api/countries/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
-export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}&pageSize=${FACILITIES_REQUEST_PAGE_SIZE}`;
+export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) => `/api/facilities/?${qs}&pageSize=${pageSize}`;
 export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/`;
 export const makeSplitFacilityAPIURL = oarID => `/api/facilities/${oarID}/split/`;
 export const makePromoteFacilityMatchAPIURL = oarID => `/api/facilities/${oarID}/promote/`;

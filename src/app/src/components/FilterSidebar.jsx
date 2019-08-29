@@ -9,10 +9,13 @@ import { Route } from 'react-router-dom';
 import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
+import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
+import FeatureFlag from './FeatureFlag';
 
 import {
     filterSidebarTabsEnum,
     filterSidebarTabs,
+    VECTOR_TILE,
 } from '../util/constants';
 
 import {
@@ -136,7 +139,14 @@ class FilterSidebar extends Component {
                     // in its `mapDispatchToProps` function.
                     return <Route component={FilterSidebarSearchTab} />;
                 case filterSidebarTabsEnum.facilities:
-                    return <FilterSidebarFacilitiesTab />;
+                    return (
+                        <FeatureFlag
+                            flag={VECTOR_TILE}
+                            alternative={<NonVectorTileFilterSidebarFacilitiesTab />}
+                        >
+                            <FilterSidebarFacilitiesTab />
+                        </FeatureFlag>
+                    );
                 default:
                     window.console.warn('invalid tab selection', activeFilterSidebarTab);
                     return null;

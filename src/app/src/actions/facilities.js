@@ -6,6 +6,8 @@ import apiRequest from '../util/apiRequest';
 
 import { fetchCurrentTileCacheKey } from './vectorTileLayer';
 
+import { FACILITIES_REQUEST_PAGE_SIZE } from '../util/constants';
+
 import {
     logErrorAndDispatchFailure,
     makeGetFacilitiesURLWithQueryString,
@@ -24,7 +26,10 @@ export const failFetchSingleFacility = createAction('FAIL_FETCH_SINGLE_FACILITY'
 export const completeFetchSingleFacility = createAction('COMPLETE_FETCH_SINGLE_FACILITY');
 export const resetSingleFacility = createAction('RESET_SINGLE_FACILITY');
 
-export function fetchFacilities(pushNewRoute = noop) {
+export function fetchFacilities({
+    pageSize = FACILITIES_REQUEST_PAGE_SIZE,
+    pushNewRoute = noop,
+}) {
     return (dispatch, getState) => {
         dispatch(fetchCurrentTileCacheKey());
         dispatch(startFetchFacilities());
@@ -36,7 +41,7 @@ export function fetchFacilities(pushNewRoute = noop) {
         const qs = createQueryStringFromSearchFilters(filters);
 
         return apiRequest
-            .get(makeGetFacilitiesURLWithQueryString(qs))
+            .get(makeGetFacilitiesURLWithQueryString(qs, pageSize))
             .then(({ data }) => {
                 const responseHasOnlyOneFacility = get(
                     data,

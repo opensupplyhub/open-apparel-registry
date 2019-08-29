@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSelect from 'react-select';
+import get from 'lodash/get';
 
 import FacilitySidebarSearchTabFacilitiesCount from './FacilitySidebarSearchTabFacilitiesCount';
 
@@ -34,6 +35,8 @@ import {
     getValueFromEvent,
     makeSubmitFormOnEnterKeyPressFunction,
 } from '../util/util';
+
+import { FACILITIES_REQUEST_PAGE_SIZE } from '../util/constants';
 
 const filterSidebarSearchTabStyles = Object.freeze({
     formStyle: Object.freeze({
@@ -72,6 +75,7 @@ function FilterSidebarSearchTab({
     facilities,
     fetchingOptions,
     submitFormOnEnterKeyPress,
+    vectorTileFlagIsActive,
 }) {
     if (fetchingOptions) {
         return (
@@ -219,7 +223,7 @@ function FilterSidebarSearchTab({
                                         color="primary"
                                         className="margin-left-16 blue-background"
                                         style={{ boxShadow: 'none' }}
-                                        onClick={searchForFacilities}
+                                        onClick={() => searchForFacilities(vectorTileFlagIsActive)}
                                         disabled={fetchingOptions}
                                     >
                                         Search
@@ -255,6 +259,7 @@ FilterSidebarSearchTab.propTypes = {
     searchForFacilities: func.isRequired,
     facilities: facilityCollectionPropType,
     fetchingOptions: bool.isRequired,
+    vectorTileFlagIsActive: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -284,8 +289,12 @@ function mapStateToProps({
             fetching: fetchingFacilities,
         },
     },
+    featureFlags,
 }) {
+    const vectorTileFlagIsActive = get(featureFlags, 'flags.vector_tile', false);
+
     return {
+        vectorTileFlagIsActive,
         contributorOptions,
         contributorTypeOptions,
         countryOptions,
@@ -316,7 +325,10 @@ function mapDispatchToProps(dispatch, {
             dispatch(recordSearchTabResetButtonClick());
             return dispatch(resetAllFilters());
         },
-        searchForFacilities: () => dispatch(fetchFacilities(push)),
+        searchForFacilities: vectorTilesAreActive => dispatch(fetchFacilities({
+            pageSize: vectorTilesAreActive ? FACILITIES_REQUEST_PAGE_SIZE : 500,
+            pushNewRoute: push,
+        })),
         submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
             () => dispatch(fetchFacilities(push)),
         ),
