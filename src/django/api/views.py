@@ -558,7 +558,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         queryset = Facility \
             .objects \
-            .filter_by_query_params(request.query_params)
+            .filter_by_query_params(request.query_params) \
+            .order_by('name')
 
         page_queryset = self.paginate_queryset(queryset)
 
