@@ -8,7 +8,8 @@ from api.models import Facility
 GRID_ZOOM_FACTOR = 3
 
 
-def latlng_bounds_to_grid_table_values(llb, tile_bounds):
+def tile_to_grid_table_values(tile, tile_bounds):
+    llb = mercantile.bounds(tile)
     geom = 'ST_MakeEnvelope({xmin}, {ymin}, {xmax}, {ymax}, 4326)'.format(
         xmin=llb.west, ymin=llb.south, xmax=llb.east, ymax=llb.north
     )
@@ -18,17 +19,18 @@ def latlng_bounds_to_grid_table_values(llb, tile_bounds):
             geom=geom, xmin=tile_bounds.west, ymin=tile_bounds.south,
             xmax=tile_bounds.east, ymax=tile_bounds.north)
 
-    return '({geom}, {mvt_geom})'.format(geom=geom, mvt_geom=mvt_geom)
+    return '({geom}, {mvt_geom}, {z}, {x}, {y})'.format(
+        geom=geom, mvt_geom=mvt_geom, z=tile.z, x=tile.x, y=tile.y)
 
 
 def get_facility_grid_vector_tile(params, layer, z, x, y):
     tile_bounds = mercantile.bounds(x, y, z)
     grid_tiles = mercantile.children((x, y, z), zoom=z+GRID_ZOOM_FACTOR)
     tile_values = [
-        latlng_bounds_to_grid_table_values(mercantile.bounds(t), tile_bounds)
+        tile_to_grid_table_values(t, tile_bounds)
         for t in grid_tiles]
 
-    grid_query = 'grid (geom, mvt_geom) AS (VALUES {})'.format(
+    grid_query = 'grid (geom, mvt_geom, z, x, y) AS (VALUES {})'.format(
         ','.join(tile_values)
     )
 
@@ -46,10 +48,10 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         '\n,'.join([grid_query, with_location_query]))
 
     join_query = (
-        'SELECT grid.mvt_geom, count(location) '
+        'SELECT grid.mvt_geom, count(location), grid.z, grid.x, grid.y '
         'FROM grid '
         'LEFT JOIN facilities ON ST_Contains(grid.geom, location) '
-        'GROUP BY grid.mvt_geom')
+        'GROUP BY grid.mvt_geom, grid.z, grid.x, grid.y')
 
     st_asmvt_query = \
         'SELECT ST_AsMVT(q, \'{}\') FROM ({}) AS q'.format(layer, join_query)

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { bool, number, string } from 'prop-types';
+import { bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import VectorGridDefault from 'react-leaflet-vectorgrid';
 import { withLeaflet } from 'react-leaflet';
@@ -53,6 +53,7 @@ const VectorTileFacilityGridLayer = ({
     resetButtonClickCount,
     tileCacheKey,
     getNewCacheKey,
+    handleCellClick,
     minZoom,
     maxZoom,
 }) => {
@@ -124,13 +125,13 @@ const VectorTileFacilityGridLayer = ({
             subdomains=""
             zIndex={100}
             interactive
-            /* onClick={handleCellClick} */
+            onClick={handleCellClick}
         />
     );
 };
 
 VectorTileFacilityGridLayer.propTypes = {
-    // handleCellClick: func.isRequired,
+    handleCellClick: func.isRequired,
     tileURL: string.isRequired,
     tileCacheKey: string.isRequired,
     fetching: bool.isRequired,
