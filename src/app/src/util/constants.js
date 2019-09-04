@@ -1,6 +1,6 @@
 export const OTHER = 'Other';
 
-export const FACILITIES_REQUEST_PAGE_SIZE = 25;
+export const FACILITIES_REQUEST_PAGE_SIZE = 100;
 
 // This choices must be kept in sync with the identical list
 // kept in the Django API's models.py file

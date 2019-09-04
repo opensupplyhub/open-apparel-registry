@@ -80,6 +80,10 @@ const facilitiesTabStyles = Object.freeze({
         justifyContent: 'space-between',
         alignItems: 'center',
     }),
+    listHeaderButtonStyles: Object.freeze({
+        height: '45px',
+        margin: '5px 0',
+    }),
 });
 
 function FilterSidebarFacilitiesTab({
@@ -88,6 +92,7 @@ function FilterSidebarFacilitiesTab({
     error,
     windowHeight,
     logDownloadError,
+    downloadingCSV,
     user,
     returnToSearchTab,
     handleDownload,
@@ -200,23 +205,32 @@ function FilterSidebarFacilitiesTab({
                     style={facilitiesTabStyles.titleRowStyles}
                 >
                     {headerDisplayString}
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        styles={facilitiesTabStyles.listHeaderButtonStyles}
-                        onClick={
-                            () => {
-                                if (user) {
-                                    setRequestedDownload(true);
-                                    handleDownload();
-                                } else {
-                                    setLoginRequiredDialogIsOpen(true);
-                                }
-                            }
-                        }
-                    >
-                        Download CSV
-                    </Button>
+                    {
+                        downloadingCSV
+                            ? (
+                                <div style={facilitiesTabStyles.listHeaderButtonStyles}>
+                                    <CircularProgress />
+                                </div>)
+                            : (
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    style={facilitiesTabStyles.listHeaderButtonStyles}
+                                    disabled={downloadingCSV}
+                                    onClick={
+                                        () => {
+                                            if (user) {
+                                                setRequestedDownload(true);
+                                                handleDownload();
+                                            } else {
+                                                setLoginRequiredDialogIsOpen(true);
+                                            }
+                                        }
+                                    }
+                                >
+                                    Download CSV
+                                </Button>)
+                    }
                 </div>
             </Typography>
         </div>
@@ -339,6 +353,7 @@ FilterSidebarFacilitiesTab.propTypes = {
     error: arrayOf(string),
     windowHeight: number.isRequired,
     logDownloadError: arrayOf(string),
+    downloadingCSV: bool.isRequired,
     returnToSearchTab: func.isRequired,
     handleDownload: func.isRequired,
     fetchNextPage: func.isRequired,
@@ -368,6 +383,7 @@ function mapStateToProps({
         },
     },
     logDownload: {
+        fetching: downloadingCSV,
         error: logDownloadError,
     },
 }) {
@@ -378,6 +394,7 @@ function mapStateToProps({
         filterText,
         user,
         logDownloadError,
+        downloadingCSV,
         windowHeight,
         isInfiniteLoading,
     };
