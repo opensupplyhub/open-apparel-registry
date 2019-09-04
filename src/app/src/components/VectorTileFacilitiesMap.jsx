@@ -163,6 +163,9 @@ function VectorTileFacilitiesMap({
     match: {
         params: { oarID },
     },
+    history: {
+        push,
+    },
     facilityDetailsData,
     errorFetchingFacilityDetailsData,
     fetchingDetailsData,
@@ -217,6 +220,7 @@ function VectorTileFacilitiesMap({
             <VectorTileFacilitiesLayer
                 handleMarkerClick={handleMarkerClick}
                 oarID={oarID}
+                pushRoute={push}
             />
         </ReactLeafletMap>
     );
@@ -236,6 +240,9 @@ VectorTileFacilitiesMap.propTypes = {
         params: shape({
             oarID: string,
         }),
+    }).isRequired,
+    history: shape({
+        push: func.isRequired,
     }).isRequired,
     facilityDetailsData: facilityDetailsPropType,
     errorFetchingFacilityDetailsData: arrayOf(string),

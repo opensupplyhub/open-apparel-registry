@@ -56,10 +56,13 @@ def get_facilities_vector_tile(params, layer, z, x, y):
                     ymin=tile_bounds.south,
                     xmax=tile_bounds.east,
                     ymax=tile_bounds.north,
-                )
+                ),
+                'x': x,
+                'y': y,
+                'z': z,
             }
         ) \
-        .values('location', 'id') \
+        .values('location', 'id', 'name', 'address', 'x', 'y', 'z') \
         .query \
         .sql_with_params()
 
