@@ -30,9 +30,14 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         tile_to_grid_table_values(t, tile_bounds)
         for t in grid_tiles]
 
-    grid_query = 'grid (geom, mvt_geom, z, x, y) AS (VALUES {})'.format(
+    grid_query = (
+        'CREATE TEMP TABLE grid (geom, mvt_geom, z, x, y) '
+        'AS (VALUES {})')
+    grid_query = grid_query.format(
         ','.join(tile_values)
     )
+
+    grid_idx_query = 'CREATE INDEX grid_idx ON grid USING gist (geom)'
 
     location_query, location_params = Facility \
         .objects \
@@ -41,23 +46,23 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         .query \
         .sql_with_params()
 
-    with_location_query = 'facilities(location) AS ({})'.format(
-        location_query)
-
-    with_clause = 'WITH {}'.format(
-        '\n,'.join([grid_query, with_location_query]))
+    if location_query.find('WHERE') >= 0:
+        where_clause = location_query[location_query.find('WHERE'):]
+    else:
+        where_clause = ''
 
     join_query = (
         'SELECT grid.mvt_geom, count(location), grid.z, grid.x, grid.y '
         'FROM grid '
-        'LEFT JOIN facilities ON ST_Contains(grid.geom, location) '
+        'JOIN api_facility ON ST_Contains(grid.geom, location) '
+        ' {where_clause} '
         'GROUP BY grid.mvt_geom, grid.z, grid.x, grid.y')
+    join_query = join_query.format(where_clause=where_clause)
 
     st_asmvt_query = \
         'SELECT ST_AsMVT(q, \'{}\') FROM ({}) AS q'.format(layer, join_query)
 
-    full_query = '\n'.join([with_clause, st_asmvt_query])
-    # print(full_query)
+    full_query = ';\n'.join([grid_query, grid_idx_query, st_asmvt_query])
 
     with connection.cursor() as cursor:
         cursor.execute(full_query, location_params)
