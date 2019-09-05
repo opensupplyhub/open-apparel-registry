@@ -18,11 +18,13 @@ import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 
-import { COUNTRY_CODES } from '../util/constants';
+import { COUNTRY_CODES, GRID_COLOR_RAMP } from '../util/constants';
 
 import { makeFacilityDetailLink } from '../util/util';
 
 import { facilityDetailsPropType } from '../util/propTypes';
+
+import COLOURS from '../util/COLOURS';
 
 import {
     initialCenter,
@@ -42,6 +44,24 @@ const mapComponentStyles = Object.freeze({
         right: '24px',
         top: '20px',
         fontSize: '12px',
+    }),
+    legendStyle: Object.freeze({
+        background: 'white',
+        border: `1px solid ${COLOURS.NAVY_BLUE}`,
+        padding: '6px',
+        margin: '20px',
+        height: '22px',
+        fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
+    }),
+    legendLabelStyle: Object.freeze({
+        width: '6.5rem',
+        padding: '0.08rem',
+        textAlign: 'center',
+    }),
+    legendCellStyle: Object.freeze({
+        width: '20px',
+        opacity: '0.8',
+        background: 'red',
     }),
 });
 
@@ -194,6 +214,15 @@ function VectorTileFacilitiesMap({
         }
     };
 
+    const legendCell = (background) => {
+        const style = Object.assign({}, mapComponentStyles.legendCellStyle, {
+            background,
+        });
+        return (
+            <td key={background} style={style}>&nbsp;</td>
+        );
+    };
+
     return (
         <ReactLeafletMap
             id="oar-leaflet-map"
@@ -217,6 +246,23 @@ function VectorTileFacilitiesMap({
                 minZoom={1}
                 zIndex={1}
             />
+            <Control position="bottomleft">
+                <div id="map-legend" style={mapComponentStyles.legendStyle}>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style={mapComponentStyles.legendLabelStyle}>
+                                    FEWER FACILITIES
+                                </td>
+                                {GRID_COLOR_RAMP.map(colorDef => legendCell(colorDef[1]))}
+                                <td style={mapComponentStyles.legendLabelStyle}>
+                                    MORE FACILITIES
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </Control>
             <Control position="topright">
                 <CopyToClipboard
                     text={window.location.href}

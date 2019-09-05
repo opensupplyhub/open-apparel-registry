@@ -8,6 +8,7 @@ import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 
 import { createQueryStringFromSearchFilters } from '../util/util';
+import { GRID_COLOR_RAMP } from '../util/constants';
 
 const VectorGrid = withLeaflet(VectorGridDefault);
 
@@ -99,17 +100,9 @@ const VectorTileFacilityGridLayer = ({
                             stroke: false,
                         };
                     }
-                    const colors = [
-                        [0, '#009EE6'],
-                        [10, '#0086D8'],
-                        [20, '#016ECB'],
-                        [40, '#0256BE'],
-                        [80, '#033EB1'],
-                        [160, '#0427A4'],
-                    ];
-                    const fillColor = colors.reduce(
+                    const fillColor = GRID_COLOR_RAMP.reduce(
                         // eslint-disable-next-line no-confusing-arrow
-                        (color, [val, c]) => count + factor > val ? c : color, colors[0],
+                        (color, [val, c]) => count + factor > val ? c : color, GRID_COLOR_RAMP[0],
                     );
 
                     return {
