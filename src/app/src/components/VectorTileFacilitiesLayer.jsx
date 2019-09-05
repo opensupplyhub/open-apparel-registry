@@ -205,6 +205,8 @@ const VectorTileFacilitiesLayer = ({
     tileCacheKey,
     oarID,
     pushRoute,
+    minZoom,
+    maxZoom,
 }) => {
     const [multipleFacilitiesAtPoint, setMultipleFacilitiesAtPoint] = useState(
         null,
@@ -272,6 +274,8 @@ const VectorTileFacilitiesLayer = ({
                 url={vectorTileURL}
                 type="protobuf"
                 rendererFactory={L.canvas.tile}
+                minZoom={minZoom}
+                maxZoom={maxZoom}
                 vectorTileLayerStyles={{
                     facilities(properties) {
                         const facilityID = get(properties, 'id', null);

@@ -88,7 +88,8 @@ from api.mail import (send_claim_facility_confirmation_email,
                       send_approved_claim_notice_to_list_contributors,
                       send_claim_update_notice_to_list_contributors)
 from api.exceptions import BadRequestException
-from api.tiler import get_facilities_vector_tile
+from api.tiler import (get_facilities_vector_tile,
+                       get_facility_grid_vector_tile)
 from api.renderers import MvtRenderer
 
 
@@ -2291,7 +2292,7 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
     if cachekey is None:
         raise BadRequestException('missing cache key')
 
-    if layer != 'facilities':
+    if layer not in ['facilities', 'facilitygrid']:
         raise BadRequestException('invalid layer name: {}'.format(layer))
 
     if ext != 'pbf':
@@ -2302,5 +2303,9 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
     if not params.is_valid():
         raise ValidationError(params.errors)
 
-    tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
+    if layer == 'facilities':
+        tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
+    elif layer == 'facilitygrid':
+        tile = get_facility_grid_vector_tile(
+            request.query_params, layer, z, x, y)
     return Response(tile.tobytes())
