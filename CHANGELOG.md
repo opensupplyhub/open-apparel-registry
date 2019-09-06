@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Enable signed-in users to download all facilities results as CSV [#752](https://github.com/open-apparel-registry/open-apparel-registry/pull/752)
 - Add disambiguation marker to work with vector tile layer [#760](https://github.com/open-apparel-registry/open-apparel-registry/pull/760)
 - Make facilities tab primary & load all facilities by default when vector tile feature is switched on [#771](https://github.com/open-apparel-registry/open-apparel-registry/pull/771)
+- Add facility grid layer [#755](https://github.com/open-apparel-registry/open-apparel-registry/pull/755)
 
 ### Changed
 - Use PostgreSQL 10.9 in development [#751](https://github.com/open-apparel-registry/open-apparel-registry/pull/751)
