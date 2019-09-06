@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { func, oneOf } from 'prop-types';
+import { bool, func, oneOf } from 'prop-types';
 import { connect } from 'react-redux';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { Route } from 'react-router-dom';
+import get from 'lodash/get';
 
 import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
@@ -83,7 +85,13 @@ class FilterSidebar extends Component {
             makeGuideTabActive,
             makeSearchTabActive,
             makeFacilitiesTabActive,
+            vectorTileFeatureIsActive,
+            fetchingFeatureFlags,
         } = this.props;
+
+        if (fetchingFeatureFlags) {
+            return <CircularProgress />;
+        }
 
         const header = (
             <div className="panel-header results-height-subtract">
@@ -95,15 +103,27 @@ class FilterSidebar extends Component {
                 </p>
             </div>);
 
-        const activeTabIndex = filterSidebarTabs
+        const orderedTabsForSidebar = vectorTileFeatureIsActive
+            ? filterSidebarTabs.slice().reverse()
+            : filterSidebarTabs;
+
+        const activeTabIndex = orderedTabsForSidebar
             .findIndex(({ tab }) => tab === activeFilterSidebarTab);
 
         const handleTabChange = (_, value) => {
-            const changeTab = [
-                makeGuideTabActive,
-                makeSearchTabActive,
-                makeFacilitiesTabActive,
-            ][value];
+            const changeTabFunctionsList = vectorTileFeatureIsActive
+                ? [
+                    makeFacilitiesTabActive,
+                    makeSearchTabActive,
+                    makeGuideTabActive,
+                ]
+                : [
+                    makeGuideTabActive,
+                    makeSearchTabActive,
+                    makeFacilitiesTabActive,
+                ];
+
+            const changeTab = changeTabFunctionsList[value];
 
             return changeTab();
         };
@@ -119,7 +139,7 @@ class FilterSidebar extends Component {
                     }}
                 >
                     {
-                        filterSidebarTabs
+                        orderedTabsForSidebar
                             .map(sidebarTab => (
                                 <Tab
                                     key={sidebarTab.tab}
@@ -178,6 +198,8 @@ FilterSidebar.propTypes = {
     contributorsData: contributorOptionsPropType.isRequired,
     contributorTypesData: contributorTypeOptionsPropType.isRequired,
     countriesData: countryOptionsPropType.isRequired,
+    vectorTileFeatureIsActive: bool.isRequired,
+    fetchingFeatureFlags: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -195,12 +217,18 @@ function mapStateToProps({
             data: countriesData,
         },
     },
+    featureFlags: {
+        flags,
+        fetching: fetchingFeatureFlags,
+    },
 }) {
     return {
         activeFilterSidebarTab,
         contributorsData,
         contributorTypesData,
         countriesData,
+        vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
+        fetchingFeatureFlags,
     };
 }
 
