@@ -177,7 +177,7 @@ it('creates a querystring from a set of filter selection', () => {
     };
 
     const expectedMultipleFilterSelectionsMatch =
-        'contributors=foo&contributors=bar&contributors=baz&countries=country';
+        'contributors=bar&contributors=baz&contributors=foo&countries=country';
     expect(createQueryStringFromSearchFilters(multipleFilterSelections))
         .toEqual(expectedMultipleFilterSelectionsMatch);
 

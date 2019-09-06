@@ -4,10 +4,14 @@ import { connect } from 'react-redux';
 import VectorGridDefault from 'react-leaflet-vectorgrid';
 import { withLeaflet } from 'react-leaflet';
 import L from 'leaflet';
-import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 
-import { createQueryStringFromSearchFilters } from '../util/util';
+import {
+    createQueryStringFromSearchFilters,
+    createTileURLWithQueryString,
+    createTileCacheKeyWithEncodedFilters,
+} from '../util/util';
+
 import { GRID_COLOR_RAMP } from '../util/constants';
 
 const VectorGrid = withLeaflet(VectorGridDefault);
@@ -131,9 +135,6 @@ VectorTileFacilityGridLayer.propTypes = {
     resetButtonClickCount: number.isRequired,
 };
 
-const createURLWithQueryString = (qs, key) =>
-    `/tile/facilitygrid/${key}/{z}/{x}/{y}.pbf`.concat(isEmpty(qs) ? '' : `?${qs}`);
-
 function mapStateToProps({
     filters,
     facilities: {
@@ -146,14 +147,13 @@ function mapStateToProps({
         key,
     },
 }) {
-    const tileURL = createURLWithQueryString(
-        createQueryStringFromSearchFilters(filters),
-        key,
-    );
+    const querystring = createQueryStringFromSearchFilters(filters);
+    const tileCacheKey = createTileCacheKeyWithEncodedFilters(filters, key);
+    const tileURL = createTileURLWithQueryString(querystring, tileCacheKey);
 
     return {
         tileURL,
-        tileCacheKey: key,
+        tileCacheKey,
         fetching,
         resetButtonClickCount,
     };
