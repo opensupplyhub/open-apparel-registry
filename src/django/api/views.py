@@ -15,6 +15,7 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
+from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -2287,6 +2288,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @renderer_classes([MvtRenderer])
+@cache_control(max_age=settings.TILE_CACHE_MAX_AGE_IN_SECONDS)
 @waffle_switch('vector_tile')
 def get_tile(request, layer, cachekey, z, x, y, ext):
     if cachekey is None:
