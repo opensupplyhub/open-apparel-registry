@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import VectorGridDefault from 'react-leaflet-vectorgrid';
 import { withLeaflet, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
 import noop from 'lodash/noop';
 import filter from 'lodash/filter';
@@ -15,7 +14,11 @@ import sortBy from 'lodash/sortBy';
 
 import FacilitiesMapPopup from './FacilitiesMapPopup';
 
-import { createQueryStringFromSearchFilters } from '../util/util';
+import {
+    createQueryStringFromSearchFilters,
+    createTileURLWithQueryString,
+    createTileCacheKeyWithEncodedFilters,
+} from '../util/util';
 
 const VectorGrid = withLeaflet(VectorGridDefault);
 
@@ -334,11 +337,6 @@ VectorTileFacilitiesLayer.propTypes = {
     pushRoute: func.isRequired,
 };
 
-const createURLWithQueryString = (qs, key) =>
-    `/tile/facilities/${key}/{z}/{x}/{y}.pbf`.concat(
-        isEmpty(qs) ? '' : `?${qs}`,
-    );
-
 function mapStateToProps({
     filters,
     facilities: {
@@ -349,14 +347,13 @@ function mapStateToProps({
     },
     vectorTileLayer: { key },
 }) {
-    const tileURL = createURLWithQueryString(
-        createQueryStringFromSearchFilters(filters),
-        key,
-    );
+    const querystring = createQueryStringFromSearchFilters(filters);
+    const tileCacheKey = createTileCacheKeyWithEncodedFilters(querystring, key);
+    const tileURL = createTileURLWithQueryString(filters, tileCacheKey);
 
     return {
         tileURL,
-        tileCacheKey: key,
+        tileCacheKey,
         fetching,
         resetButtonClickCount,
     };

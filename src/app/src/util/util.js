@@ -28,6 +28,7 @@ import every from 'lodash/every';
 import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
+import hash from 'object-hash';
 
 import env from './env';
 
@@ -130,6 +131,9 @@ export const makeLogDownloadUrl = (path, recordCount) => `/api/log-download/?pat
 
 export const getValueFromObject = ({ value }) => value;
 
+const createCompactSortedQuerystringInputObject = (inputObject = []) =>
+    compact(inputObject.map(getValueFromObject).slice().sort());
+
 export const createQueryStringFromSearchFilters = ({
     facilityFreeTextQuery = '',
     contributors = [],
@@ -138,9 +142,9 @@ export const createQueryStringFromSearchFilters = ({
 }) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
-        contributors: compact(contributors.map(getValueFromObject)),
-        contributor_types: compact(contributorTypes.map(getValueFromObject)),
-        countries: compact(countries.map(getValueFromObject)),
+        contributors: createCompactSortedQuerystringInputObject(contributors),
+        contributor_types: createCompactSortedQuerystringInputObject(contributorTypes),
+        countries: createCompactSortedQuerystringInputObject(countries),
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
@@ -272,6 +276,12 @@ export const getContributorFromQueryString = (qs) => {
 
     return parseInt(contributor, 10);
 };
+
+export const createTileURLWithQueryString = (qs, key) =>
+    `/tile/facilitygrid/${key}/{z}/{x}/{y}.pbf`.concat(isEmpty(qs) ? '' : `?${qs}`);
+
+export const createTileCacheKeyWithEncodedFilters = (filters, key) =>
+    `${key}-${hash(filters).slice(0, 8)}`;
 
 export const allFiltersAreEmpty = filters => values(filters)
     .reduce((acc, next) => {
