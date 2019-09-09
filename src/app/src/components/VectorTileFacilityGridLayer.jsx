@@ -117,7 +117,7 @@ const VectorTileFacilityGridLayer = ({
                         fillOpacity: 0.8,
                         stroke: true,
                         weight: 0.25,
-                        radius: 14,
+                        radius: 14 - (3 / count),
                         color: gridColorRamp[gridColorRamp.length - 1],
                     };
                 },
