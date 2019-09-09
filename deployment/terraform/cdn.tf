@@ -61,6 +61,28 @@ resource "aws_cloudfront_distribution" "cdn" {
     max_ttl                = 300
   }
 
+  ordered_cache_behavior {
+    path_pattern     = "tile/*"
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id = "originAlb"
+
+    forwarded_values {
+      query_string = true
+      headers      = ["Referer"] # To discourage hotlinking to cached tiles
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    compress               = true
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 31536000 # 1 year. Same as TILE_CACHE_MAX_AGE_IN_SECONDS in src/django/oar/settings.py
+  }
+
   logging_config {
     include_cookies = false
     bucket          = "${aws_s3_bucket.logs.id}.s3.amazonaws.com"
