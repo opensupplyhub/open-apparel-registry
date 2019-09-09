@@ -493,8 +493,6 @@ export const claimAFacilityPreferredContactOptions = Object.freeze([
 export const GRID_COLOR_RAMP = Object.freeze([
     [0, '#009EE6'],
     [10, '#0086D8'],
-    [20, '#016ECB'],
     [40, '#0256BE'],
-    [80, '#033EB1'],
     [160, '#0427A4'],
 ]);
