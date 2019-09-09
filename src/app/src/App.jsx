@@ -38,6 +38,8 @@ import { fetchFeatureFlags } from './actions/featureFlags';
 import { fetchClientInfo } from './actions/clientInfo';
 import { reportWindowResize } from './actions/ui';
 
+import { setFacilityGridRamp } from './actions/vectorTileLayer';
+
 import {
     mainRoute,
     authLoginFormRoute,
@@ -76,6 +78,8 @@ class App extends Component {
             innerHeight: window.innerHeight,
             innerWidth: window.innerWidth,
         }));
+
+        window.setGridColorRamp = this.props.setRamp;
 
         this.props.getFeatureFlags();
         this.props.getClientInfo();
@@ -237,6 +241,7 @@ function mapDispatchToProps(dispatch) {
         getClientInfo: () => dispatch(fetchClientInfo()),
         logIn: () => dispatch(sessionLogin()),
         handleWindowResize: data => dispatch(reportWindowResize(data)),
+        setRamp: ramp => dispatch(setFacilityGridRamp(ramp)),
     };
 }
 

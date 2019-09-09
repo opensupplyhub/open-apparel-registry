@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { arrayOf, bool, func, number, shape, string } from 'prop-types';
+import { array, arrayOf, bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Map as ReactLeafletMap, ZoomControl } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
@@ -18,7 +18,7 @@ import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 
-import { COUNTRY_CODES, GRID_COLOR_RAMP } from '../util/constants';
+import { COUNTRY_CODES } from '../util/constants';
 
 import { makeFacilityDetailLink } from '../util/util';
 
@@ -193,6 +193,7 @@ function VectorTileFacilitiesMap({
     facilityDetailsData,
     errorFetchingFacilityDetailsData,
     fetchingDetailsData,
+    gridColorRamp,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -254,7 +255,7 @@ function VectorTileFacilitiesMap({
                                 <td style={mapComponentStyles.legendLabelStyle}>
                                     FEWER FACILITIES
                                 </td>
-                                {GRID_COLOR_RAMP.map(colorDef => legendCell(colorDef[1]))}
+                                {gridColorRamp.map(colorDef => legendCell(colorDef[1]))}
                                 <td style={mapComponentStyles.legendLabelStyle}>
                                     MORE FACILITIES
                                 </td>
@@ -313,6 +314,7 @@ VectorTileFacilitiesMap.propTypes = {
     facilityDetailsData: facilityDetailsPropType,
     errorFetchingFacilityDetailsData: arrayOf(string),
     fetchingDetailsData: bool.isRequired,
+    gridColorRamp: arrayOf(array).isRequired,
 };
 
 function mapStateToProps({
@@ -323,6 +325,9 @@ function mapStateToProps({
     facilities: {
         singleFacility: { data, error, fetching },
     },
+    vectorTileLayer: {
+        gridColorRamp,
+    },
 }) {
     return {
         resetButtonClickCount,
@@ -331,6 +336,7 @@ function mapStateToProps({
         facilityDetailsData: data,
         errorFetchingFacilityDetailsData: error,
         fetchingDetailsData: fetching,
+        gridColorRamp,
     };
 }
 
