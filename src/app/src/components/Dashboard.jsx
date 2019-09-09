@@ -109,7 +109,7 @@ function Dashboard({
                                             flag={CLAIM_A_FACILITY}
                                             alternative={DASHBOARD_TITLE}
                                         >
-                                            {makeClickableDashboardLinkFn('Facility Claim Details')}
+                                            {makeClickableDashboardLinkFn('Facility Claim Details')()}
                                         </FeatureFlag>
                                     )
                                 }
@@ -123,7 +123,7 @@ function Dashboard({
                                             flag={CLAIM_A_FACILITY}
                                             alternative={DASHBOARD_TITLE}
                                         >
-                                            {makeClickableDashboardLinkFn('Facility Claims')}
+                                            {makeClickableDashboardLinkFn('Facility Claims')()}
                                         </FeatureFlag>
                                     )
                                 }
