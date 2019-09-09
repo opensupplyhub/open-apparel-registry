@@ -49,6 +49,17 @@ class IsAuthenticatedOrWebClient(permissions.BasePermission):
         return False
 
 
+class IsAllowedHost(permissions.BasePermission):
+    def has_permission(self, request, view):
+        host = referring_host(request)
+        if referring_host_is_allowed(host):
+            return True
+        else:
+            _report_warning_to_rollbar(
+                'Unallowed referring host passed with API request',
+                extra_data={'host': host})
+
+
 class IsRegisteredAndConfirmed(permissions.BasePermission):
     message = 'Insufficient permissions'
 
