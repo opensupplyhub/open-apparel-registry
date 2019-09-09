@@ -277,8 +277,10 @@ export const getContributorFromQueryString = (qs) => {
     return parseInt(contributor, 10);
 };
 
-export const createTileURLWithQueryString = (qs, key) =>
-    `/tile/facilitygrid/${key}/{z}/{x}/{y}.pbf`.concat(isEmpty(qs) ? '' : `?${qs}`);
+export const createTileURLWithQueryString = (qs, key, grid = true) =>
+    `/tile/${grid ? 'facilitygrid' : 'facilities'}/${key}/{z}/{x}/{y}.pbf`.concat(
+        isEmpty(qs) ? '' : `?${qs}`,
+    );
 
 export const createTileCacheKeyWithEncodedFilters = (filters, key) =>
     `${key}-${hash(filters).slice(0, 8)}`;
