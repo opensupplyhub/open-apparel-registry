@@ -12,7 +12,6 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import delay from 'lodash/delay';
-import SphericalMercator from '@mapbox/sphericalmercator';
 
 import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
@@ -32,8 +31,6 @@ import {
     detailsZoomLevel,
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
-
-const sm = new SphericalMercator();
 
 const mapComponentStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
@@ -207,11 +204,10 @@ function VectorTileFacilitiesMap({
     }
 
     const handleCellClick = (event) => {
-        const { x, y, z, count } = get(event, 'layer.properties', {});
+        const { xmin, ymin, xmax, ymax, count } = get(event, 'layer.properties', {});
         const leafletMap = get(mapRef, 'current.leafletElement', null);
         if (count && leafletMap) {
-            const [w, s, e, n] = sm.bbox(x, y, z);
-            leafletMap.fitBounds([[s, w], [n, e]]);
+            leafletMap.fitBounds([[ymin, xmin], [ymax, xmax]]);
         }
     };
 
