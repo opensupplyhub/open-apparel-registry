@@ -348,8 +348,8 @@ function mapStateToProps({
     vectorTileLayer: { key },
 }) {
     const querystring = createQueryStringFromSearchFilters(filters);
-    const tileCacheKey = createTileCacheKeyWithEncodedFilters(querystring, key);
-    const tileURL = createTileURLWithQueryString(filters, tileCacheKey);
+    const tileCacheKey = createTileCacheKeyWithEncodedFilters(filters, key);
+    const tileURL = createTileURLWithQueryString(querystring, tileCacheKey, false);
 
     return {
         tileURL,
