@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix a bug which prevented the facility claims dashboard page header from loading [#778](https://github.com/open-apparel-registry/open-apparel-registry/pull/778)
 - Fix a bug which prevented the vector tile marker layer from rendering [#782](https://github.com/open-apparel-registry/open-apparel-registry/pull/782)
 
+### Security
+- Fix several npm security vulnerabilities via GitHub dependabot [#792](https://github.com/open-apparel-registry/open-apparel-registry/pull/792)
+
 ## [2.10.0] - 2019-08-22
 ### Added
 - Add vector tile ADR [#723](https://github.com/open-apparel-registry/open-apparel-registry/pull/723)
