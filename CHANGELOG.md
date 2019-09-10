@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Deprecated
 
 ### Removed
+- Drop undocumented endpoint from Swagger docs [#803](https://github.com/open-apparel-registry/open-apparel-registry/pull/803)
 
 ### Fixed
 - Fix a bug which prevented the facility claims dashboard page header from loading [#778](https://github.com/open-apparel-registry/open-apparel-registry/pull/778)
