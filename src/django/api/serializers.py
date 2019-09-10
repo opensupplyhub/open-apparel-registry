@@ -34,6 +34,16 @@ from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from waffle import switch_is_active
 
 
+def _get_parent_company(claim):
+    if not claim or not claim.parent_company:
+        return None
+
+    return {
+        'id': claim.parent_company.admin.id,
+        'name': claim.parent_company.name,
+    }
+
+
 class UserSerializer(ModelSerializer):
     password = CharField(write_only=True)
     name = SerializerMethodField()
@@ -432,14 +442,6 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                 .filter(status=FacilityClaim.APPROVED) \
                 .get(facility=facility)
 
-            if claim.parent_company:
-                parent_company = {
-                    'id': claim.parent_company.admin.id,
-                    'name': claim.parent_company.name,
-                }
-            else:
-                parent_company = None
-
             return {
                 'id': claim.id,
                 'facility': {
@@ -450,7 +452,7 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                     'address': claim.facility_address,
                     'website': claim.facility_website
                     if claim.facility_website_publicly_visible else None,
-                    'parent_company': parent_company,
+                    'parent_company': _get_parent_company(claim),
                     'phone_number': claim.facility_phone_number
                     if claim.facility_phone_number_publicly_visible else None,
                     'minimum_order': claim.facility_minimum_order_quantity,
@@ -558,13 +560,7 @@ class FacilityClaimDetailsSerializer(ModelSerializer):
         return data
 
     def get_facility_parent_company(self, claim):
-        if not claim.parent_company:
-            return None
-
-        return {
-            'id': claim.parent_company.id,
-            'name': claim.parent_company.name,
-        }
+        return _get_parent_company(claim)
 
 
 class FacilityClaimReviewNoteSerializer(ModelSerializer):
@@ -628,13 +624,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
         return FacilityClaim.FACILITY_TYPE_CHOICES
 
     def get_facility_parent_company(self, claim):
-        if not claim.parent_company:
-            return None
-
-        return {
-            'id': claim.parent_company.id,
-            'name': claim.parent_company.name,
-        }
+        return _get_parent_company(claim)
 
     def get_affiliation_choices(self, claim):
         return FacilityClaim.AFFILIATION_CHOICES
