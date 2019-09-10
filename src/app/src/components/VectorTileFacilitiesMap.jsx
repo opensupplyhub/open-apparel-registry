@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { arrayOf, bool, func, number, shape, string } from 'prop-types';
+import { array, arrayOf, bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Map as ReactLeafletMap, ZoomControl } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
@@ -12,13 +12,12 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import delay from 'lodash/delay';
-import SphericalMercator from '@mapbox/sphericalmercator';
 
 import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 
-import { COUNTRY_CODES, GRID_COLOR_RAMP } from '../util/constants';
+import { COUNTRY_CODES } from '../util/constants';
 
 import { makeFacilityDetailLink } from '../util/util';
 
@@ -32,8 +31,6 @@ import {
     detailsZoomLevel,
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
-
-const sm = new SphericalMercator();
 
 const mapComponentStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
@@ -193,6 +190,7 @@ function VectorTileFacilitiesMap({
     facilityDetailsData,
     errorFetchingFacilityDetailsData,
     fetchingDetailsData,
+    gridColorRamp,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -206,11 +204,10 @@ function VectorTileFacilitiesMap({
     }
 
     const handleCellClick = (event) => {
-        const { x, y, z, count } = get(event, 'layer.properties', {});
+        const { xmin, ymin, xmax, ymax, count } = get(event, 'layer.properties', {});
         const leafletMap = get(mapRef, 'current.leafletElement', null);
         if (count && leafletMap) {
-            const [w, s, e, n] = sm.bbox(x, y, z);
-            leafletMap.fitBounds([[s, w], [n, e]]);
+            leafletMap.fitBounds([[ymin, xmin], [ymax, xmax]]);
         }
     };
 
@@ -254,7 +251,7 @@ function VectorTileFacilitiesMap({
                                 <td style={mapComponentStyles.legendLabelStyle}>
                                     FEWER FACILITIES
                                 </td>
-                                {GRID_COLOR_RAMP.map(colorDef => legendCell(colorDef[1]))}
+                                {gridColorRamp.map(colorDef => legendCell(colorDef[1]))}
                                 <td style={mapComponentStyles.legendLabelStyle}>
                                     MORE FACILITIES
                                 </td>
@@ -313,6 +310,7 @@ VectorTileFacilitiesMap.propTypes = {
     facilityDetailsData: facilityDetailsPropType,
     errorFetchingFacilityDetailsData: arrayOf(string),
     fetchingDetailsData: bool.isRequired,
+    gridColorRamp: arrayOf(array).isRequired,
 };
 
 function mapStateToProps({
@@ -323,6 +321,9 @@ function mapStateToProps({
     facilities: {
         singleFacility: { data, error, fetching },
     },
+    vectorTileLayer: {
+        gridColorRamp,
+    },
 }) {
     return {
         resetButtonClickCount,
@@ -331,6 +332,7 @@ function mapStateToProps({
         facilityDetailsData: data,
         errorFetchingFacilityDetailsData: error,
         fetchingDetailsData: fetching,
+        gridColorRamp,
     };
 }
 

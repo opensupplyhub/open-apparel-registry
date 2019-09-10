@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { bool, func, number, string } from 'prop-types';
+import { array, arrayOf, bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import VectorGridDefault from 'react-leaflet-vectorgrid';
 import { withLeaflet } from 'react-leaflet';
@@ -11,8 +11,6 @@ import {
     createTileURLWithQueryString,
     createTileCacheKeyWithEncodedFilters,
 } from '../util/util';
-
-import { GRID_COLOR_RAMP } from '../util/constants';
 
 const VectorGrid = withLeaflet(VectorGridDefault);
 
@@ -61,6 +59,7 @@ const VectorTileFacilityGridLayer = ({
     handleCellClick,
     minZoom,
     maxZoom,
+    gridColorRamp,
 }) => {
     const vectorTileURL = useUpdateTileURL(
         tileURL,
@@ -81,7 +80,7 @@ const VectorTileFacilityGridLayer = ({
     return (
         <VectorGrid
             ref={vectorTileLayerRef}
-            key={vectorTileURL}
+            key={vectorTileURL + JSON.stringify(gridColorRamp)}
             url={vectorTileURL}
             type="protobuf"
             rendererFactory={L.canvas.tile}
@@ -101,12 +100,15 @@ const VectorTileFacilityGridLayer = ({
                     if (count === 0) {
                         return {
                             fill: false,
-                            stroke: false,
+                            stroke: true,
+                            weight: 0.1,
+                            color: gridColorRamp[gridColorRamp.length - 1],
                         };
                     }
-                    const fillColor = GRID_COLOR_RAMP.reduce(
+
+                    const fillColor = gridColorRamp.reduce(
                         // eslint-disable-next-line no-confusing-arrow
-                        (color, [val, c]) => count + factor > val ? c : color, GRID_COLOR_RAMP[0],
+                        (color, [val, c]) => count + factor > val ? c : color, gridColorRamp[0],
                     );
 
                     return {
@@ -114,8 +116,9 @@ const VectorTileFacilityGridLayer = ({
                         fillColor,
                         fillOpacity: 0.8,
                         stroke: true,
-                        weight: 0.5,
-                        color: '#0427A4',
+                        weight: 0.25,
+                        radius: 14 - (3 / count),
+                        color: gridColorRamp[gridColorRamp.length - 1],
                     };
                 },
             }}
@@ -133,6 +136,7 @@ VectorTileFacilityGridLayer.propTypes = {
     tileCacheKey: string.isRequired,
     fetching: bool.isRequired,
     resetButtonClickCount: number.isRequired,
+    gridColorRamp: arrayOf(array).isRequired,
 };
 
 function mapStateToProps({
@@ -145,6 +149,7 @@ function mapStateToProps({
     },
     vectorTileLayer: {
         key,
+        gridColorRamp,
     },
 }) {
     const querystring = createQueryStringFromSearchFilters(filters);
@@ -156,6 +161,7 @@ function mapStateToProps({
         tileCacheKey,
         fetching,
         resetButtonClickCount,
+        gridColorRamp,
     };
 }
 

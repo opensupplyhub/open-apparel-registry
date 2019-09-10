@@ -28,3 +28,5 @@ export function fetchCurrentTileCacheKey() {
             )));
     };
 }
+
+export const setFacilityGridRamp = createAction('SET_FACILITY_GRID_RAMP');

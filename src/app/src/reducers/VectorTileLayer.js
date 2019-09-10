@@ -6,12 +6,16 @@ import {
     startFetchCurrentTileCacheKey,
     failFetchCurrentTileCacheKey,
     completeFetchCurrentTileCacheKey,
+    setFacilityGridRamp,
 } from '../actions/vectorTileLayer';
+
+import { GRID_COLOR_RAMP } from '../util/constants';
 
 const initialState = Object.freeze({
     key: get(window, 'ENVIRONMENT.TILE_CACHE_KEY', null),
     fetching: false,
     error: null,
+    gridColorRamp: GRID_COLOR_RAMP,
 });
 
 export default createReducer({
@@ -27,5 +31,8 @@ export default createReducer({
         key: { $set: key },
         fetching: { $set: false },
         error: { $set: null },
+    }),
+    [setFacilityGridRamp]: (state, payload) => update(state, {
+        gridColorRamp: { $set: payload },
     }),
 }, initialState);

@@ -8,36 +8,29 @@ from api.models import Facility
 GRID_ZOOM_FACTOR = 3
 
 
-def tile_to_grid_table_values(tile, tile_bounds):
-    llb = mercantile.bounds(tile)
-    geom = 'ST_MakeEnvelope({xmin}, {ymin}, {xmax}, {ymax}, 4326)'.format(
-        xmin=llb.west, ymin=llb.south, xmax=llb.east, ymax=llb.north
-    )
-    mvt_geom = (
-        'ST_AsMVTGeom({geom}, ST_MakeEnvelope('
-        '{xmin}, {ymin}, {xmax}, {ymax}, 4326))').format(
-            geom=geom, xmin=tile_bounds.west, ymin=tile_bounds.south,
-            xmax=tile_bounds.east, ymax=tile_bounds.north)
-
-    return '({geom}, {mvt_geom}, {z}, {x}, {y})'.format(
-        geom=geom, mvt_geom=mvt_geom, z=tile.z, x=tile.x, y=tile.y)
-
-
 def get_facility_grid_vector_tile(params, layer, z, x, y):
     tile_bounds = mercantile.bounds(x, y, z)
-    grid_tiles = mercantile.children((x, y, z), zoom=z+GRID_ZOOM_FACTOR)
-    tile_values = [
-        tile_to_grid_table_values(t, tile_bounds)
-        for t in grid_tiles]
+    xy_bounds = mercantile.xy_bounds(x, y, z)
 
-    grid_query = (
-        'CREATE TEMP TABLE grid (geom, mvt_geom, z, x, y) '
-        'AS (VALUES {})')
-    grid_query = grid_query.format(
-        ','.join(tile_values)
-    )
+    hex_width = abs(xy_bounds.right - xy_bounds.left) / (2 ** GRID_ZOOM_FACTOR)
+    hex_grid_query = """
+        CREATE TEMP TABLE hex_grid (geom, mvt_geom) AS (
+          SELECT ST_Transform(geom, 4326), ST_AsMVTGeom(
+            ST_Centroid(ST_Transform(geom, 4326)), ST_MakeEnvelope(
+                {tile_xmin}, {tile_ymin}, {tile_xmax}, {tile_ymax}, 4326
+            ))
+          FROM generate_hexgrid({width}, {xmin}, {ymin}, {xmax}, {ymax})
+        )
+    """
+    hex_grid_query = hex_grid_query.format(
+        width=hex_width,
+        xmin=xy_bounds.left, ymin=xy_bounds.bottom, xmax=xy_bounds.right,
+        ymax=xy_bounds.top, tile_xmin=tile_bounds.west,
+        tile_ymin=tile_bounds.south, tile_xmax=tile_bounds.east,
+        tile_ymax=tile_bounds.north)
 
-    grid_idx_query = 'CREATE INDEX grid_idx ON grid USING gist (geom)'
+    hex_grid_idx_query = \
+        'CREATE INDEX hex_grid_idx ON hex_grid USING gist (geom)'
 
     location_query, location_params = Facility \
         .objects \
@@ -52,17 +45,26 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         where_clause = ''
 
     join_query = (
-        'SELECT grid.mvt_geom, count(location), grid.z, grid.x, grid.y '
-        'FROM grid '
-        'JOIN api_facility ON ST_Contains(grid.geom, location) '
+        'SELECT '
+        '  hex_grid.mvt_geom, '
+        '  count(location), '
+        '  ST_XMin(ST_Envelope(hex_grid.geom)) as xmin, '
+        '  ST_YMin(ST_Envelope(hex_grid.geom)) as ymin, '
+        '  ST_XMax(ST_Envelope(hex_grid.geom)) as xmax, '
+        '  ST_YMax(ST_Envelope(hex_grid.geom)) as ymax '
+        'FROM hex_grid '
+        'JOIN api_facility ON ST_Contains(hex_grid.geom, location) '
         ' {where_clause} '
-        'GROUP BY grid.mvt_geom, grid.z, grid.x, grid.y')
+        'GROUP BY hex_grid.mvt_geom, '
+        '  xmin, ymin, xmax, ymax')
     join_query = join_query.format(where_clause=where_clause)
 
     st_asmvt_query = \
         'SELECT ST_AsMVT(q, \'{}\') FROM ({}) AS q'.format(layer, join_query)
 
-    full_query = ';\n'.join([grid_query, grid_idx_query, st_asmvt_query])
+    full_query = ';\n'.join([
+        hex_grid_query, hex_grid_idx_query, st_asmvt_query
+    ])
 
     with connection.cursor() as cursor:
         cursor.execute(full_query, location_params)
