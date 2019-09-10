@@ -2,8 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 
-import FilterSidebar from './FilterSidebar';
-import FacilityDetailsSidebar from './FacilityDetailSidebar';
+import SidebarWithErrorBoundary from './SidebarWithErrorBoundary';
 import FacilitiesMap from './FacilitiesMap';
 import FacilitiesMapErrorMessage from './FacilitiesMapErrorMessage';
 import FeatureFlag from './FeatureFlag';
@@ -40,23 +39,7 @@ class MapAndSidebar extends Component {
             <Fragment>
                 <Grid container className="map-sidebar-container">
                     <Grid item xs={12} sm={4} id="panel-container">
-                        <Switch>
-                            <Route
-                                exact
-                                path={facilityDetailsRoute}
-                                component={FacilityDetailsSidebar}
-                            />
-                            <Route
-                                exact
-                                path={facilitiesRoute}
-                                component={FilterSidebar}
-                            />
-                            <Route
-                                exact
-                                path={mainRoute}
-                                component={FilterSidebar}
-                            />
-                        </Switch>
+                        <Route component={SidebarWithErrorBoundary} />
                     </Grid>
                     <Grid item xs={12} sm={8} style={{ position: 'relative' }}>
                         {!hasError && (

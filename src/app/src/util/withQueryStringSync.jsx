@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bool, func, shape, string } from 'prop-types';
+import { bool, func, number, shape, string } from 'prop-types';
 import get from 'lodash/get';
 
 import { setFiltersFromQueryString } from '../actions/filters';
@@ -104,7 +104,7 @@ export default function withQueryStringSync(WrappedComponent) {
                 search: string.isRequired,
             }),
         }).isRequired,
-        resetButtonClickCount: func.isRequired,
+        resetButtonClickCount: number.isRequired,
         vectorTileFeatureIsActive: bool.isRequired,
         fetchingFeatureFlags: bool.isRequired,
     };
