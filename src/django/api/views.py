@@ -494,6 +494,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'split' in path:
             return None
 
+        if 'promote' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
