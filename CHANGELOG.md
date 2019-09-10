@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add open graph meta tags for social media sharing [#780](https://github.com/open-apparel-registry/open-apparel-registry/pull/780/files)
 - Restrict `/tile` Endpoint to Allowed Hosts Only [#791](https://github.com/open-apparel-registry/open-apparel-registry/pull/791)
 - Redesign facility grid layer [#797](https://github.com/open-apparel-registry/open-apparel-registry/pull/797)
+- Set minimum map zoom level to 2 [#802](https://github.com/open-apparel-registry/open-apparel-registry/pull/802)
 
 ### Deprecated
 

@@ -28,6 +28,7 @@ import COLOURS from '../util/COLOURS';
 import {
     initialCenter,
     initialZoom,
+    minimumZoom,
     detailsZoomLevel,
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
@@ -226,6 +227,7 @@ function VectorTileFacilitiesMap({
             ref={mapRef}
             center={initialCenter}
             zoom={initialZoom}
+            minZoom={minimumZoom}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
             zoomControl={false}
