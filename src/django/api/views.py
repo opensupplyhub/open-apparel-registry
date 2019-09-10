@@ -80,7 +80,7 @@ from api.serializers import (FacilityListSerializer,
                              LogDownloadQueryParamsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
-from api.permissions import IsRegisteredAndConfirmed
+from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
 from api.pagination import FacilitiesGeoJSONPagination
 from api.mail import (send_claim_facility_confirmation_email,
                       send_claim_facility_approval_email,
@@ -2286,7 +2286,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAllowedHost])
 @renderer_classes([MvtRenderer])
 @cache_control(max_age=settings.TILE_CACHE_MAX_AGE_IN_SECONDS)
 @waffle_switch('vector_tile')
