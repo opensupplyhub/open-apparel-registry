@@ -870,11 +870,11 @@ it('joins a 2-d array into a correctly escaped CSV string', () => {
         ],
         [
             'foo, "bar", baz',
-            'hello, world',
+            'hello,\nworld',
         ],
     ];
     const expectedEscapedArrayMatch =
-        '"foo, bar, baz","hello \"world\""\n"foo, \"bar\", baz","hello, world"\n';
+        '"foo, bar, baz","hello ""world"""\n"foo, ""bar"", baz","hello, world"\n';
     expect(joinDataIntoCSVString(escapedArray)).toBe(expectedEscapedArrayMatch);
 });
 

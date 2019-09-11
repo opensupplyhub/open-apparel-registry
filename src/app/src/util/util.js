@@ -476,6 +476,9 @@ export const makeResetPasswordConfirmURL = () =>
 
 export const makeUserProfileURL = userID => `/user-profile/${userID}/`;
 
+export const escapeCSVValue = value =>
+    replace(replace(value, /"/g, '""'), /\n/g, ' ');
+
 export const joinDataIntoCSVString = data => data
     .reduce((csvAccumulator, nextRow) => {
         const joinedColumns = nextRow
@@ -485,7 +488,7 @@ export const joinDataIntoCSVString = data => data
                 }
 
                 return rowAccumulator.concat(
-                    '' + '"' + replace(nextColumn, '"', '\"') + '"', // eslint-disable-line
+                    '' + '"' + escapeCSVValue(nextColumn) + '"', // eslint-disable-line
                     ',',
                 );
             }, '');
