@@ -185,6 +185,23 @@ function FacilitiesMap({
         setLoadedFacilityOARID,
     ]);
 
+    // Show the disambiguation popup menu when appropriate
+    const [facilitiesToDisambiguate, setFacilitiesToDisambiguate] = useState(
+        null,
+    );
+
+    const handleMultipleFacilitiesClusterMarkerClick = coordinates =>
+        setFacilitiesToDisambiguate(
+            data.features.reduce((acc, nextFeature) => {
+                // If the distance between points is less than the size of an
+                // individual person it is likely a precision error, not a
+                // distinct geocoded point.
+                // https://en.wikipedia.org/wiki/Decimal_degrees#Precision
+                const pointsIntersect = distance(nextFeature, coordinates) < 0.000001;
+                return pointsIntersect ? acc.concat(nextFeature) : acc;
+            }, []),
+        );
+
     // Reset the map state when the reset button is clicked
     const [
         currentResetButtonClickCount,
@@ -206,23 +223,6 @@ function FacilitiesMap({
         currentResetButtonClickCount,
         setCurrentResetButtonClickCount,
     ]);
-
-    // Show the disambiguation popup menu when appropriate
-    const [facilitiesToDisambiguate, setFacilitiesToDisambiguate] = useState(
-        null,
-    );
-
-    const handleMultipleFacilitiesClusterMarkerClick = coordinates =>
-        setFacilitiesToDisambiguate(
-            data.features.reduce((acc, nextFeature) => {
-                // If the distance between points is less than the size of an
-                // individual person it is likely a precision error, not a
-                // distinct geocoded point.
-                // https://en.wikipedia.org/wiki/Decimal_degrees#Precision
-                const pointsIntersect = distance(nextFeature, coordinates) < 0.000001;
-                return pointsIntersect ? acc.concat(nextFeature) : acc;
-            }, []),
-        );
 
     if (!clientInfoFetched) {
         return null;
