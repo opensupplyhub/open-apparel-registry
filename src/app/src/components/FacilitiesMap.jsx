@@ -217,11 +217,13 @@ function FacilitiesMap({
             }
 
             setCurrentResetButtonClickCount(resetButtonClickCount);
+            setFacilitiesToDisambiguate(null);
         }
     }, [
         resetButtonClickCount,
         currentResetButtonClickCount,
         setCurrentResetButtonClickCount,
+        setFacilitiesToDisambiguate,
     ]);
 
     if (!clientInfoFetched) {
