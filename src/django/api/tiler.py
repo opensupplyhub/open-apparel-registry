@@ -1,8 +1,75 @@
+import mercantile
+
 from django.contrib.gis.geos import Polygon
 from django.db import connection
-from mercantile import bounds
 
 from api.models import Facility
+
+GRID_ZOOM_FACTOR = 3
+
+
+def get_facility_grid_vector_tile(params, layer, z, x, y):
+    tile_bounds = mercantile.bounds(x, y, z)
+    xy_bounds = mercantile.xy_bounds(x, y, z)
+
+    hex_width = abs(xy_bounds.right - xy_bounds.left) / (2 ** GRID_ZOOM_FACTOR)
+    hex_grid_query = """
+        CREATE TEMP TABLE hex_grid (geom, mvt_geom) AS (
+          SELECT ST_Transform(geom, 4326), ST_AsMVTGeom(
+            ST_Centroid(ST_Transform(geom, 4326)), ST_MakeEnvelope(
+                {tile_xmin}, {tile_ymin}, {tile_xmax}, {tile_ymax}, 4326
+            ))
+          FROM generate_hexgrid({width}, {xmin}, {ymin}, {xmax}, {ymax})
+        )
+    """
+    hex_grid_query = hex_grid_query.format(
+        width=hex_width,
+        xmin=xy_bounds.left, ymin=xy_bounds.bottom, xmax=xy_bounds.right,
+        ymax=xy_bounds.top, tile_xmin=tile_bounds.west,
+        tile_ymin=tile_bounds.south, tile_xmax=tile_bounds.east,
+        tile_ymax=tile_bounds.north)
+
+    hex_grid_idx_query = \
+        'CREATE INDEX hex_grid_idx ON hex_grid USING gist (geom)'
+
+    location_query, location_params = Facility \
+        .objects \
+        .filter_by_query_params(params) \
+        .values('location') \
+        .query \
+        .sql_with_params()
+
+    if location_query.find('WHERE') >= 0:
+        where_clause = location_query[location_query.find('WHERE'):]
+    else:
+        where_clause = ''
+
+    join_query = (
+        'SELECT '
+        '  hex_grid.mvt_geom, '
+        '  count(location), '
+        '  ST_XMin(ST_Envelope(hex_grid.geom)) as xmin, '
+        '  ST_YMin(ST_Envelope(hex_grid.geom)) as ymin, '
+        '  ST_XMax(ST_Envelope(hex_grid.geom)) as xmax, '
+        '  ST_YMax(ST_Envelope(hex_grid.geom)) as ymax '
+        'FROM hex_grid '
+        'JOIN api_facility ON ST_Contains(hex_grid.geom, location) '
+        ' {where_clause} '
+        'GROUP BY hex_grid.mvt_geom, '
+        '  xmin, ymin, xmax, ymax')
+    join_query = join_query.format(where_clause=where_clause)
+
+    st_asmvt_query = \
+        'SELECT ST_AsMVT(q, \'{}\') FROM ({}) AS q'.format(layer, join_query)
+
+    full_query = ';\n'.join([
+        hex_grid_query, hex_grid_idx_query, st_asmvt_query
+    ])
+
+    with connection.cursor() as cursor:
+        cursor.execute(full_query, location_params)
+        rows = cursor.fetchall()
+        return rows[0][0]
 
 
 def get_facilities_vector_tile(params, layer, z, x, y):
@@ -22,7 +89,7 @@ def get_facilities_vector_tile(params, layer, z, x, y):
     Returns:
     A vector tile.
     """
-    tile_bounds = bounds(x, y, z)
+    tile_bounds = mercantile.bounds(x, y, z)
 
     mvt_geom_query = """
         ST_AsMVTGeom(
@@ -56,10 +123,13 @@ def get_facilities_vector_tile(params, layer, z, x, y):
                     ymin=tile_bounds.south,
                     xmax=tile_bounds.east,
                     ymax=tile_bounds.north,
-                )
+                ),
+                'x': x,
+                'y': y,
+                'z': z,
             }
         ) \
-        .values('location', 'id') \
+        .values('location', 'id', 'name', 'address', 'x', 'y', 'z') \
         .query \
         .sql_with_params()
 

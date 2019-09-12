@@ -36,6 +36,7 @@ import {
 import {
     initialCenter,
     initialZoom,
+    minimumZoom,
     detailsZoomLevel,
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
@@ -233,6 +234,7 @@ function FacilitiesMap({
             ref={mapRef}
             center={initialCenter}
             zoom={initialZoom}
+            minZoom={minimumZoom}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
             zoomControl={false}

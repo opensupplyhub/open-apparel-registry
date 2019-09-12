@@ -10,6 +10,7 @@ import negate from 'lodash/negate';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import isNumber from 'lodash/isNumber';
+import isNil from 'lodash/isNil';
 import values from 'lodash/values';
 import flow from 'lodash/flow';
 import noop from 'lodash/noop';
@@ -18,8 +19,6 @@ import startsWith from 'lodash/startsWith';
 import head from 'lodash/head';
 import replace from 'lodash/replace';
 import trimEnd from 'lodash/trimEnd';
-import includes from 'lodash/includes';
-import lowerCase from 'lodash/lowerCase';
 import range from 'lodash/range';
 import ceil from 'lodash/ceil';
 import toInteger from 'lodash/toInteger';
@@ -29,6 +28,7 @@ import every from 'lodash/every';
 import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
+import hash from 'object-hash';
 
 import env from './env';
 
@@ -93,7 +93,7 @@ export const makeGetCountriesURL = () => '/api/countries/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
-export const makeGetFacilitiesURLWithQueryString = qs => `/api/facilities/?${qs}`;
+export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) => `/api/facilities/?${qs}&pageSize=${pageSize}`;
 export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/`;
 export const makeSplitFacilityAPIURL = oarID => `/api/facilities/${oarID}/split/`;
 export const makePromoteFacilityMatchAPIURL = oarID => `/api/facilities/${oarID}/promote/`;
@@ -131,6 +131,9 @@ export const makeLogDownloadUrl = (path, recordCount) => `/api/log-download/?pat
 
 export const getValueFromObject = ({ value }) => value;
 
+const createCompactSortedQuerystringInputObject = (inputObject = []) =>
+    compact(inputObject.map(getValueFromObject).slice().sort());
+
 export const createQueryStringFromSearchFilters = ({
     facilityFreeTextQuery = '',
     contributors = [],
@@ -139,9 +142,9 @@ export const createQueryStringFromSearchFilters = ({
 }) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
-        contributors: compact(contributors.map(getValueFromObject)),
-        contributor_types: compact(contributorTypes.map(getValueFromObject)),
-        countries: compact(countries.map(getValueFromObject)),
+        contributors: createCompactSortedQuerystringInputObject(contributors),
+        contributor_types: createCompactSortedQuerystringInputObject(contributorTypes),
+        countries: createCompactSortedQuerystringInputObject(countries),
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
@@ -273,6 +276,14 @@ export const getContributorFromQueryString = (qs) => {
 
     return parseInt(contributor, 10);
 };
+
+export const createTileURLWithQueryString = (qs, key, grid = true) =>
+    `/tile/${grid ? 'facilitygrid' : 'facilities'}/${key}/{z}/{x}/{y}.pbf`.concat(
+        isEmpty(qs) ? '' : `?${qs}`,
+    );
+
+export const createTileCacheKeyWithEncodedFilters = (filters, key) =>
+    `${key}-${hash(filters).slice(0, 8)}`;
 
 export const allFiltersAreEmpty = filters => values(filters)
     .reduce((acc, next) => {
@@ -465,6 +476,9 @@ export const makeResetPasswordConfirmURL = () =>
 
 export const makeUserProfileURL = userID => `/user-profile/${userID}/`;
 
+export const escapeCSVValue = value =>
+    replace(replace(value, /"/g, '""'), /\n/g, ' ');
+
 export const joinDataIntoCSVString = data => data
     .reduce((csvAccumulator, nextRow) => {
         const joinedColumns = nextRow
@@ -474,7 +488,7 @@ export const joinDataIntoCSVString = data => data
                 }
 
                 return rowAccumulator.concat(
-                    '' + '"' + replace(nextColumn, '"', '\"') + '"', // eslint-disable-line
+                    '' + '"' + escapeCSVValue(nextColumn) + '"', // eslint-disable-line
                     ',',
                 );
             }, '');
@@ -484,33 +498,6 @@ export const joinDataIntoCSVString = data => data
             '\n',
         );
     }, '');
-
-export const caseInsensitiveIncludes = (target, test) =>
-    includes(lowerCase(target), lowerCase(test));
-
-export const sortFacilitiesAlphabeticallyByName = data => data
-    .slice()
-    .sort((
-        {
-            properties: {
-                name: firstFacilityName,
-            },
-        },
-        {
-            properties: {
-                name: secondFacilityName,
-            },
-        },
-    ) => {
-        const a = lowerCase(firstFacilityName);
-        const b = lowerCase(secondFacilityName);
-
-        if (a === b) {
-            return 0;
-        }
-
-        return (a < b) ? -1 : 1;
-    });
 
 // Given a list where each item is like { label: 'ABCD', value: 123 }, and
 // a payload which is a list of items like { label: '123', value: 123 },
@@ -632,3 +619,15 @@ export const claimFacilityFacilityInfoStepIsValid = ({
 ]);
 
 export const anyListItemMatchesAreInactive = ({ matches }) => some(matches, ['is_active', false]);
+
+export const pluralizeResultsCount = (count) => {
+    if (isNil(count)) {
+        return null;
+    }
+
+    if (count === 1) {
+        return '1 result';
+    }
+
+    return `${count} results`;
+};

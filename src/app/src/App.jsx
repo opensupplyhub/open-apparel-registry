@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import { func } from 'prop-types';
+import { bool, func } from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
 import { hot } from 'react-hot-loader/root';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import history from './util/history';
 import Navbar from './components/Navbar';
@@ -36,6 +37,8 @@ import { sessionLogin } from './actions/auth';
 import { fetchFeatureFlags } from './actions/featureFlags';
 import { fetchClientInfo } from './actions/clientInfo';
 import { reportWindowResize } from './actions/ui';
+
+import { setFacilityGridRamp } from './actions/vectorTileLayer';
 
 import {
     mainRoute,
@@ -76,12 +79,16 @@ class App extends Component {
             innerWidth: window.innerWidth,
         }));
 
+        window.setGridColorRamp = this.props.setRamp;
+
         this.props.getFeatureFlags();
         this.props.getClientInfo();
         return this.props.logIn();
     }
 
     render() {
+        const { fetchingFeatureFlags } = this.props;
+
         return (
             <ErrorBoundary>
                 <Router history={history}>
@@ -115,7 +122,15 @@ class App extends Component {
                                 />
                                 <Route
                                     path={facilitiesRoute}
-                                    component={MapAndSidebar}
+                                    render={
+                                        () => {
+                                            if (fetchingFeatureFlags) {
+                                                return <CircularProgress />;
+                                            }
+
+                                            return <Route component={MapAndSidebar} />;
+                                        }
+                                    }
                                 />
                                 <Route
                                     exact
@@ -179,7 +194,15 @@ class App extends Component {
                                 <Route
                                     exact
                                     path={mainRoute}
-                                    component={MapAndSidebar}
+                                    render={
+                                        () => {
+                                            if (fetchingFeatureFlags) {
+                                                return <CircularProgress />;
+                                            }
+
+                                            return <Route component={MapAndSidebar} />;
+                                        }
+                                    }
                                 />
                                 <Route render={() => <RouteNotFound />} />
                             </Switch>
@@ -199,7 +222,18 @@ class App extends Component {
 
 App.propTypes = {
     logIn: func.isRequired,
+    fetchingFeatureFlags: bool.isRequired,
 };
+
+function mapStateToProps({
+    featureFlags: {
+        fetching: fetchingFeatureFlags,
+    },
+}) {
+    return {
+        fetchingFeatureFlags,
+    };
+}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -207,7 +241,8 @@ function mapDispatchToProps(dispatch) {
         getClientInfo: () => dispatch(fetchClientInfo()),
         logIn: () => dispatch(sessionLogin()),
         handleWindowResize: data => dispatch(reportWindowResize(data)),
+        setRamp: ramp => dispatch(setFacilityGridRamp(ramp)),
     };
 }
 
-export default hot(connect(() => ({}), mapDispatchToProps)(withStyles(appStyles)(App)));
+export default hot(connect(mapStateToProps, mapDispatchToProps)(withStyles(appStyles)(App)));

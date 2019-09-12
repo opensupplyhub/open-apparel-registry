@@ -15,6 +15,7 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
+from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -79,7 +80,7 @@ from api.serializers import (FacilityListSerializer,
                              LogDownloadQueryParamsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
-from api.permissions import IsRegisteredAndConfirmed
+from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
 from api.pagination import FacilitiesGeoJSONPagination
 from api.mail import (send_claim_facility_confirmation_email,
                       send_claim_facility_approval_email,
@@ -88,7 +89,8 @@ from api.mail import (send_claim_facility_confirmation_email,
                       send_approved_claim_notice_to_list_contributors,
                       send_claim_update_notice_to_list_contributors)
 from api.exceptions import BadRequestException
-from api.tiler import get_facilities_vector_tile
+from api.tiler import (get_facilities_vector_tile,
+                       get_facility_grid_vector_tile)
 from api.renderers import MvtRenderer
 
 
@@ -492,6 +494,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'split' in path:
             return None
 
+        if 'promote' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -558,7 +563,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         queryset = Facility \
             .objects \
-            .filter_by_query_params(request.query_params)
+            .filter_by_query_params(request.query_params) \
+            .order_by('name')
 
         page_queryset = self.paginate_queryset(queryset)
 
@@ -2283,14 +2289,15 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAllowedHost])
 @renderer_classes([MvtRenderer])
+@cache_control(max_age=settings.TILE_CACHE_MAX_AGE_IN_SECONDS)
 @waffle_switch('vector_tile')
 def get_tile(request, layer, cachekey, z, x, y, ext):
     if cachekey is None:
         raise BadRequestException('missing cache key')
 
-    if layer != 'facilities':
+    if layer not in ['facilities', 'facilitygrid']:
         raise BadRequestException('invalid layer name: {}'.format(layer))
 
     if ext != 'pbf':
@@ -2301,5 +2308,9 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
     if not params.is_valid():
         raise ValidationError(params.errors)
 
-    tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
+    if layer == 'facilities':
+        tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
+    elif layer == 'facilitygrid':
+        tile = get_facility_grid_vector_tile(
+            request.query_params, layer, z, x, y)
     return Response(tile.tobytes())

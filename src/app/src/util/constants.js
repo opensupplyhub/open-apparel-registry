@@ -1,5 +1,7 @@
 export const OTHER = 'Other';
 
+export const FACILITIES_REQUEST_PAGE_SIZE = 100;
+
 // This choices must be kept in sync with the identical list
 // kept in the Django API's models.py file
 export const contributorTypeOptions = Object.freeze([
@@ -486,4 +488,11 @@ export const claimAFacilityPreferredContactOptions = Object.freeze([
         value: 'phone',
         label: 'Phone',
     }),
+]);
+
+export const GRID_COLOR_RAMP = Object.freeze([
+    [0, '#009EE6'],
+    [10, '#0086D8'],
+    [40, '#0256BE'],
+    [160, '#0427A4'],
 ]);

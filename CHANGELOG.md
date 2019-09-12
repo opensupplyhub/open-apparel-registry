@@ -16,6 +16,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+### Security
+
+## [2.11.0] - 2019-09-12
+### Added
+- Adjust marker icon on selecting a new facility on the vector tiles layer [#749](https://github.com/open-apparel-registry/open-apparel-registry/pull/749)
+- Fetch next page of facilities while scrolling through sidebar list [#750](https://github.com/open-apparel-registry/open-apparel-registry/pull/750)
+- Enable signed-in users to download all facilities results as CSV [#752](https://github.com/open-apparel-registry/open-apparel-registry/pull/752)
+- Add disambiguation marker to work with vector tile layer [#760](https://github.com/open-apparel-registry/open-apparel-registry/pull/760)
+- Make facilities tab primary & load all facilities by default when vector tile feature is switched on [#771](https://github.com/open-apparel-registry/open-apparel-registry/pull/771)
+- Add facility grid layer [#755](https://github.com/open-apparel-registry/open-apparel-registry/pull/755)
+- Encode querystring params into tile cache key used by client to request vector tiles [#773](https://github.com/open-apparel-registry/open-apparel-registry/pull/773)
+- Cache vector tiles for a year [#776](https://github.com/open-apparel-registry/open-apparel-registry/pull/776)
+
+### Changed
+- Use PostgreSQL 10.9 in development [#751](https://github.com/open-apparel-registry/open-apparel-registry/pull/751)
+- Add open graph meta tags for social media sharing [#780](https://github.com/open-apparel-registry/open-apparel-registry/pull/780/files)
+- Restrict `/tile` Endpoint to Allowed Hosts Only [#791](https://github.com/open-apparel-registry/open-apparel-registry/pull/791)
+- Redesign facility grid layer [#797](https://github.com/open-apparel-registry/open-apparel-registry/pull/797)
+- Set minimum map zoom level to 2 [#802](https://github.com/open-apparel-registry/open-apparel-registry/pull/802)
+
+### Removed
+- Drop undocumented endpoint from Swagger docs [#803](https://github.com/open-apparel-registry/open-apparel-registry/pull/803)
+
+### Fixed
+- Fix a bug which prevented the facility claims dashboard page header from loading [#778](https://github.com/open-apparel-registry/open-apparel-registry/pull/778)
+- Fix a bug which prevented the vector tile marker layer from rendering [#782](https://github.com/open-apparel-registry/open-apparel-registry/pull/782)
+- Capture infinite-scroll emitted bug in an ErrorBoundary in order not to crash the map component [#777](https://github.com/open-apparel-registry/open-apparel-registry/pull/777)
+- Correct Facility Parent Company link [#772](https://github.com/open-apparel-registry/open-apparel-registry/pull/772)
+- Escape newline and double-quote characters when downloading CSVs [#809](https://github.com/open-apparel-registry/open-apparel-registry/pull/809)
+
+### Security
+- Fix several npm security vulnerabilities via GitHub dependabot [#792](https://github.com/open-apparel-registry/open-apparel-registry/pull/792)
+
 ## [2.10.0] - 2019-08-22
 ### Added
 - Add vector tile ADR [#723](https://github.com/open-apparel-registry/open-apparel-registry/pull/723)
@@ -202,7 +235,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.10.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.11.0...HEAD
+[2.11.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.11.0
 [2.10.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.10.0
 [2.9.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.9.0
 [2.8.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.8.0

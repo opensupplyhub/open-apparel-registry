@@ -61,8 +61,6 @@ const {
     makeUserProfileURL,
     makeProfileRouteLink,
     joinDataIntoCSVString,
-    caseInsensitiveIncludes,
-    sortFacilitiesAlphabeticallyByName,
     updateListWithLabels,
     makeSubmitFormOnEnterKeyPressFunction,
     makeFacilityListItemsRetrieveCSVItemsURL,
@@ -75,6 +73,7 @@ const {
     claimFacilityContactInfoStepIsValid,
     claimFacilityFacilityInfoStepIsValid,
     anyListItemMatchesAreInactive,
+    pluralizeResultsCount,
 } = require('../util/util');
 
 const {
@@ -88,6 +87,7 @@ const {
     ENTER_KEY,
     facilityListItemStatusChoicesEnum,
     facilityListSummaryStatusMessages,
+    FACILITIES_REQUEST_PAGE_SIZE,
 } = require('../util/constants');
 
 it('creates a route for checking facility list items', () => {
@@ -140,8 +140,9 @@ it('creates an API URL for getting a single facility by OAR ID', () => {
 
 it('creates an API URL for getting facilities with a query string', () => {
     const qs = 'hello=world';
-    const expectedMatch = '/api/facilities/?hello=world';
-    expect(makeGetFacilitiesURLWithQueryString(qs)).toEqual(expectedMatch);
+    const expectedMatch = `/api/facilities/?hello=world&pageSize=${FACILITIES_REQUEST_PAGE_SIZE}`;
+    expect(makeGetFacilitiesURLWithQueryString(qs, FACILITIES_REQUEST_PAGE_SIZE))
+        .toEqual(expectedMatch);
 });
 
 it('gets the value from a React Select option object', () => {
@@ -176,7 +177,7 @@ it('creates a querystring from a set of filter selection', () => {
     };
 
     const expectedMultipleFilterSelectionsMatch =
-        'contributors=foo&contributors=bar&contributors=baz&countries=country';
+        'contributors=bar&contributors=baz&contributors=foo&countries=country';
     expect(createQueryStringFromSearchFilters(multipleFilterSelections))
         .toEqual(expectedMultipleFilterSelectionsMatch);
 
@@ -869,89 +870,12 @@ it('joins a 2-d array into a correctly escaped CSV string', () => {
         ],
         [
             'foo, "bar", baz',
-            'hello, world',
+            'hello,\nworld',
         ],
     ];
     const expectedEscapedArrayMatch =
-        '"foo, bar, baz","hello \"world\""\n"foo, \"bar\", baz","hello, world"\n';
+        '"foo, bar, baz","hello ""world"""\n"foo, ""bar"", baz","hello, world"\n';
     expect(joinDataIntoCSVString(escapedArray)).toBe(expectedEscapedArrayMatch);
-});
-
-it('checks whether one string includes another regardless of char case', () => {
-    const uppercaseTarget = 'HELLOWORLD';
-    const lowercaseTest = 'world';
-    const lowercaseTarget = 'helloworld';
-    const uppercaseTest = 'WORLD';
-    const uppercaseNonMatchTest = 'FOO';
-    const lowercaseNonMatchTest = 'foo';
-
-    expect(caseInsensitiveIncludes(uppercaseTarget, lowercaseTest)).toBe(true);
-    expect(caseInsensitiveIncludes(lowercaseTarget, uppercaseTest)).toBe(true);
-    expect(caseInsensitiveIncludes(lowercaseTarget, lowercaseTest)).toBe(true);
-    expect(caseInsensitiveIncludes(uppercaseTarget, uppercaseTest)).toBe(true);
-
-    expect(caseInsensitiveIncludes(uppercaseTarget, lowercaseNonMatchTest)).toBe(false);
-    expect(caseInsensitiveIncludes(lowercaseTarget, uppercaseNonMatchTest)).toBe(false);
-    expect(caseInsensitiveIncludes(lowercaseTarget, lowercaseNonMatchTest)).toBe(false);
-    expect(caseInsensitiveIncludes(uppercaseTarget, uppercaseNonMatchTest)).toBe(false);
-});
-
-it('sorts an array of facilities alphabetically by name without mutating the input', () => {
-    const inputData = [
-        {
-            properties: {
-                name: 'hello World',
-            },
-        },
-        {
-            properties: {
-                name: 'FOO',
-            },
-        },
-        {
-            properties: {
-                name: 'Bar',
-            },
-        },
-        {
-            properties: {
-                name: 'baz',
-            },
-        },
-    ];
-
-    const expectedSortedData = [
-        {
-            properties: {
-                name: 'Bar',
-            },
-        },
-        {
-            properties: {
-                name: 'baz',
-            },
-        },
-        {
-            properties: {
-                name: 'FOO',
-            },
-        },
-        {
-            properties: {
-                name: 'hello World',
-            },
-        },
-    ];
-
-    expect(isEqual(
-        sortFacilitiesAlphabeticallyByName(inputData),
-        expectedSortedData,
-    )).toBe(true);
-
-    expect(isEqual(
-        inputData,
-        expectedSortedData,
-    )).toBe(false);
 });
 
 it('updates a list of unlabeled values with the correct labels from a given source', () => {
@@ -1347,4 +1271,12 @@ it('checks a facility list item to see whether any matches have been set to inac
     };
 
     expect(anyListItemMatchesAreInactive(listItemWithInactiveMatches)).toBe(true);
+});
+
+it('pluralizes a results count correclty, returning null if count is undefined or null', () => {
+    expect(pluralizeResultsCount(undefined)).toBeNull();
+    expect(pluralizeResultsCount(null)).toBeNull();
+    expect(pluralizeResultsCount(1)).toBe('1 result');
+    expect(pluralizeResultsCount(0)).toBe('0 results');
+    expect(pluralizeResultsCount(200)).toBe('200 results');
 });

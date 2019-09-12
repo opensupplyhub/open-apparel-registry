@@ -3378,3 +3378,24 @@ class LogDownloadTests(APITestCase):
         log = DownloadLog.objects.first()
         self.assertEqual(expected_path, log.path)
         self.assertEqual(expected_record_count, log.record_count)
+
+
+class TilePermissionsTest(APITestCase):
+    def setUp(self):
+        self.tile_path = reverse('tile', kwargs={
+            'layer': 'facilitygrid',
+            'cachekey': '1567700347-1-95f951f7',
+            'z': 6, 'x': 15, 'y': 29,
+            'ext': 'pbf',
+        })
+
+    @override_settings(ALLOWED_HOSTS=['testserver', '.allowed.org'])
+    @override_switch('vector_tile', active=True)
+    def test_allowed_hosts_can_fetch_tiles(self):
+        response = self.client.get(self.tile_path, {},
+                                   HTTP_REFERER='http://allowed.org/')
+        self.assertEqual(200, response.status_code)
+
+    def test_disallowed_hosts_cannot_fetch_tiles(self):
+        response = self.client.get(self.tile_path)
+        self.assertEqual(401, response.status_code)

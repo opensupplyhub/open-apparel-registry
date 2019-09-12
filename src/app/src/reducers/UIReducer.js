@@ -1,6 +1,7 @@
 import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
 import isObject from 'lodash/isObject';
+import get from 'lodash/get';
 
 import {
     makeSidebarGuideTabActive,
@@ -13,6 +14,8 @@ import {
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
+
+import { completeFetchFeatureFlags } from '../actions/featureFlags';
 
 import { filterSidebarTabsEnum } from '../util/constants';
 
@@ -29,6 +32,17 @@ const initialState = Object.freeze({
 });
 
 export default createReducer({
+    [completeFetchFeatureFlags]: (state, flags) => {
+        const vectorTileFeatureIsActive = get(flags, 'vector_tile', false);
+
+        return vectorTileFeatureIsActive
+            ? update(state, {
+                activeFilterSidebarTab: {
+                    $set: filterSidebarTabsEnum.facilities,
+                },
+            })
+            : state;
+    },
     [recordSearchTabResetButtonClick]: state => update(state, {
         facilitiesSidebarTabSearch: {
             resetButtonClickCount: {

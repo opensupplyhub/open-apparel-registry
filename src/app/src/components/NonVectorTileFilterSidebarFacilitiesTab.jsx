@@ -16,12 +16,15 @@ import Divider from '@material-ui/core/Divider';
 import get from 'lodash/get';
 import { toast } from 'react-toastify';
 import InfiniteAnyHeight from 'react-infinite-any-height';
+import includes from 'lodash/includes';
+import lowerCase from 'lodash/lowerCase';
+
+import ControlledTextInput from './ControlledTextInput';
 
 import {
     makeSidebarSearchTabActive,
+    updateSidebarFacilitiesTabTextFilter,
 } from '../actions/ui';
-
-import { fetchNextPageOfFacilities } from '../actions/facilities';
 
 import { logDownload } from '../actions/logDownload';
 
@@ -34,12 +37,41 @@ import {
 
 import {
     makeFacilityDetailLink,
-    pluralizeResultsCount,
+    getValueFromEvent,
 } from '../util/util';
 
 import COLOURS from '../util/COLOURS';
 
 import { filterSidebarStyles } from '../util/styles';
+
+const SEARCH_TERM_INPUT = 'SEARCH_TERM_INPUT';
+
+const caseInsensitiveIncludes = (target, test) =>
+    includes(lowerCase(target), lowerCase(test));
+
+const sortFacilitiesAlphabeticallyByName = data => data
+    .slice()
+    .sort((
+        {
+            properties: {
+                name: firstFacilityName,
+            },
+        },
+        {
+            properties: {
+                name: secondFacilityName,
+            },
+        },
+    ) => {
+        const a = lowerCase(firstFacilityName);
+        const b = lowerCase(secondFacilityName);
+
+        if (a === b) {
+            return 0;
+        }
+
+        return (a < b) ? -1 : 1;
+    });
 
 const facilitiesTabStyles = Object.freeze({
     noResultsTextStyles: Object.freeze({
@@ -80,24 +112,19 @@ const facilitiesTabStyles = Object.freeze({
         justifyContent: 'space-between',
         alignItems: 'center',
     }),
-    listHeaderButtonStyles: Object.freeze({
-        height: '45px',
-        margin: '5px 0',
-    }),
 });
 
-function FilterSidebarFacilitiesTab({
+function NonVectorTileFilterSidebarFacilitiesTab({
     fetching,
     data,
     error,
     windowHeight,
     logDownloadError,
-    downloadingCSV,
     user,
     returnToSearchTab,
+    filterText,
+    updateFilterText,
     handleDownload,
-    fetchNextPage,
-    isInfiniteLoading,
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(false);
     const [requestedDownload, setRequestedDownload] = useState(false);
@@ -188,9 +215,27 @@ function FilterSidebarFacilitiesTab({
         );
     }
 
+    const filteredFacilities = filterText
+        ? facilities
+            .filter(({
+                properties: {
+                    address,
+                    name,
+                    country_name: countryName,
+                },
+            }) => caseInsensitiveIncludes(address, filterText)
+                || caseInsensitiveIncludes(name, filterText)
+                || caseInsensitiveIncludes(countryName, filterText))
+        : facilities;
+
+    const orderedFacilities =
+        sortFacilitiesAlphabeticallyByName(filteredFacilities);
+
     const facilitiesCount = get(data, 'count', null);
 
-    const headerDisplayString = pluralizeResultsCount(facilitiesCount);
+    const headerDisplayString = facilitiesCount && (facilitiesCount !== filteredFacilities.length)
+        ? `Displaying ${filteredFacilities.length} facilities of ${facilitiesCount} results`
+        : `Displaying ${filteredFacilities.length} facilities`;
 
     const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
     const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
@@ -205,34 +250,38 @@ function FilterSidebarFacilitiesTab({
                     style={facilitiesTabStyles.titleRowStyles}
                 >
                     {headerDisplayString}
-                    {
-                        downloadingCSV
-                            ? (
-                                <div style={facilitiesTabStyles.listHeaderButtonStyles}>
-                                    <CircularProgress />
-                                </div>)
-                            : (
-                                <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    style={facilitiesTabStyles.listHeaderButtonStyles}
-                                    disabled={downloadingCSV}
-                                    onClick={
-                                        () => {
-                                            if (user) {
-                                                setRequestedDownload(true);
-                                                handleDownload();
-                                            } else {
-                                                setLoginRequiredDialogIsOpen(true);
-                                            }
-                                        }
-                                    }
-                                >
-                                    Download CSV
-                                </Button>)
-                    }
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        styles={facilitiesTabStyles.listHeaderButtonStyles}
+                        onClick={
+                            () => {
+                                if (user) {
+                                    setRequestedDownload(true);
+                                    handleDownload();
+                                } else {
+                                    setLoginRequiredDialogIsOpen(true);
+                                }
+                            }
+                        }
+                    >
+                        Download CSV
+                    </Button>
                 </div>
             </Typography>
+            <div style={facilitiesTabStyles.listHeaderTextSearchStyles}>
+                <label
+                    htmlFor={SEARCH_TERM_INPUT}
+                >
+                    Filter results
+                </label>
+                <ControlledTextInput
+                    id={SEARCH_TERM_INPUT}
+                    value={filterText}
+                    onChange={updateFilterText}
+                    placeholder="Filter by name, address, or country"
+                />
+            </div>
         </div>
     );
 
@@ -243,15 +292,6 @@ function FilterSidebarFacilitiesTab({
 
     const resultListHeight = windowHeight - nonResultListComponentHeight;
 
-    const loadingElement = (facilities.length !== facilitiesCount) && (
-        <Fragment>
-            <Divider />
-            <ListItem style={facilitiesTabStyles.listItemStyles}>
-                <ListItemText primary="Loading more facilities..." />
-            </ListItem>
-        </Fragment>
-    );
-
     return (
         <Fragment>
             {listHeaderInsetComponent}
@@ -259,12 +299,8 @@ function FilterSidebarFacilitiesTab({
                 <List style={facilitiesTabStyles.listStyles}>
                     <InfiniteAnyHeight
                         containerHeight={resultListHeight}
-                        infiniteLoadBeginEdgeOffset={100}
-                        isInfiniteLoading={fetching || isInfiniteLoading}
-                        onInfiniteLoad={fetchNextPage}
-                        loadingSpinnerDelegate={loadingElement}
                         list={
-                            facilities
+                            orderedFacilities
                                 .map(({
                                     properties: {
                                         address,
@@ -341,23 +377,22 @@ function FilterSidebarFacilitiesTab({
     );
 }
 
-FilterSidebarFacilitiesTab.defaultProps = {
+NonVectorTileFilterSidebarFacilitiesTab.defaultProps = {
     data: null,
     error: null,
     logDownloadError: null,
 };
 
-FilterSidebarFacilitiesTab.propTypes = {
+NonVectorTileFilterSidebarFacilitiesTab.propTypes = {
     data: facilityCollectionPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
     windowHeight: number.isRequired,
     logDownloadError: arrayOf(string),
-    downloadingCSV: bool.isRequired,
     returnToSearchTab: func.isRequired,
+    filterText: string.isRequired,
+    updateFilterText: func.isRequired,
     handleDownload: func.isRequired,
-    fetchNextPage: func.isRequired,
-    isInfiniteLoading: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -371,7 +406,6 @@ function mapStateToProps({
             data,
             error,
             fetching,
-            isInfiniteLoading,
         },
     },
     ui: {
@@ -383,7 +417,6 @@ function mapStateToProps({
         },
     },
     logDownload: {
-        fetching: downloadingCSV,
         error: logDownloadError,
     },
 }) {
@@ -394,18 +427,20 @@ function mapStateToProps({
         filterText,
         user,
         logDownloadError,
-        downloadingCSV,
         windowHeight,
-        isInfiniteLoading,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         returnToSearchTab: () => dispatch(makeSidebarSearchTabActive()),
+        updateFilterText: e =>
+            dispatch((updateSidebarFacilitiesTabTextFilter(getValueFromEvent(e)))),
         handleDownload: () => dispatch(logDownload()),
-        fetchNextPage: () => dispatch(fetchNextPageOfFacilities()),
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FilterSidebarFacilitiesTab);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(NonVectorTileFilterSidebarFacilitiesTab);
