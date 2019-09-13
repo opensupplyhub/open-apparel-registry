@@ -185,28 +185,6 @@ function FacilitiesMap({
         setLoadedFacilityOARID,
     ]);
 
-    // Reset the map state when the reset button is clicked
-    const [
-        currentResetButtonClickCount,
-        setCurrentResetButtonClickCount,
-    ] = useState(resetButtonClickCount);
-
-    useEffect(() => {
-        if (resetButtonClickCount !== currentResetButtonClickCount) {
-            const leafletMap = get(mapRef, 'current.leafletElement', null);
-
-            if (leafletMap) {
-                leafletMap.setView(initialCenter, initialZoom);
-            }
-
-            setCurrentResetButtonClickCount(resetButtonClickCount);
-        }
-    }, [
-        resetButtonClickCount,
-        currentResetButtonClickCount,
-        setCurrentResetButtonClickCount,
-    ]);
-
     // Show the disambiguation popup menu when appropriate
     const [facilitiesToDisambiguate, setFacilitiesToDisambiguate] = useState(
         null,
@@ -223,6 +201,30 @@ function FacilitiesMap({
                 return pointsIntersect ? acc.concat(nextFeature) : acc;
             }, []),
         );
+
+    // Reset the map state when the reset button is clicked
+    const [
+        currentResetButtonClickCount,
+        setCurrentResetButtonClickCount,
+    ] = useState(resetButtonClickCount);
+
+    useEffect(() => {
+        if (resetButtonClickCount !== currentResetButtonClickCount) {
+            const leafletMap = get(mapRef, 'current.leafletElement', null);
+
+            if (leafletMap) {
+                leafletMap.setView(initialCenter, initialZoom);
+            }
+
+            setCurrentResetButtonClickCount(resetButtonClickCount);
+            setFacilitiesToDisambiguate(null);
+        }
+    }, [
+        resetButtonClickCount,
+        currentResetButtonClickCount,
+        setCurrentResetButtonClickCount,
+        setFacilitiesToDisambiguate,
+    ]);
 
     if (!clientInfoFetched) {
         return null;
