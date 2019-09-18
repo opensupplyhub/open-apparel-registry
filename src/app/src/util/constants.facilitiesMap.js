@@ -9,5 +9,6 @@ export const initialCenter = Object.freeze({
 
 export const initialZoom = 2;
 export const minimumZoom = 2;
+export const maxVectorTileFacilitiesGridZoom = 11;
 
 export const detailsZoomLevel = 15;

@@ -280,7 +280,12 @@ function FilterSidebarFacilitiesTab({
                                             style={facilitiesTabStyles.listItemStyles}
                                         >
                                             <Link
-                                                to={makeFacilityDetailLink(oarID)}
+                                                to={{
+                                                    pathname: makeFacilityDetailLink(oarID),
+                                                    state: {
+                                                        panMapToFacilityDetails: true,
+                                                    },
+                                                }}
                                                 href={makeFacilityDetailLink(oarID)}
                                                 style={facilitiesTabStyles.linkStyles}
                                             >
