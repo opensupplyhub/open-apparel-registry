@@ -269,6 +269,13 @@ const VectorTileFacilitiesLayer = ({
         }
     };
 
+    useEffect(() => {
+        // Close multiple facilities popup on fresh searches
+        if (fetching) {
+            closeMultipleFacilitiesPopup();
+        }
+    }, [fetching]);
+
     return (
         <>
             <VectorGrid
