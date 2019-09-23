@@ -9,9 +9,11 @@ import head from 'lodash/head';
 import last from 'lodash/last';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
+import partition from 'lodash/partition';
 
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
+import FacilityDetailsSidebarOtherLocations from './FacilityDetailsSidebarOtherLocations';
 import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
 import FeatureFlag from './FeatureFlag';
 import BadgeUnclaimed from './BadgeUnclaimed';
@@ -30,6 +32,7 @@ import {
     makeClaimFacilityLink,
     makeDisputeClaimEmailLink,
     makeApprovedClaimDetailsLink,
+    makeProfileRouteLink,
 } from '../util/util';
 
 import {
@@ -130,6 +133,53 @@ class FacilityDetailSidebar extends Component {
         const facilityLat = last(data.geometry.coordinates);
         const facilityLng = head(data.geometry.coordinates);
 
+        const [
+            canonicalLocationsData,
+            otherLocationsData,
+        ] = partition(
+            data.properties.other_locations || [],
+            ({ lng, lat }) => (lng === facilityLng && lat === facilityLat),
+        );
+
+        const canonicalLocationData = head(canonicalLocationsData);
+
+        const canonicalFacilityLocation = canonicalLocationData
+            ? (
+                <div className="control-panel__group">
+                    <h1 className="control-panel__heading">
+                        GPS Coordinates:
+                    </h1>
+                    <span className="control-panel__body">
+                        {facilityLng}, {facilityLat}
+                    </span>
+                    <br />
+                    {canonicalLocationData.contributor_id &&
+                        canonicalLocationData.contributor_name && (
+                        <span>
+                            Contributed by{' '}
+                            <Link
+                                to={makeProfileRouteLink(
+                                    canonicalLocationData.contributor_id,
+                                )}
+                                href={makeProfileRouteLink(
+                                    canonicalLocationData.contributor_id,
+                                )}
+                            >
+                                {canonicalLocationData.contributor_name}
+                            </Link>
+                        </span>
+                    )}
+                </div>)
+            : (
+                <div className="control-panel__group">
+                    <h1 className="control-panel__heading">
+                        GPS Coordinates:
+                    </h1>
+                    <p className="control-panel__body">
+                        {facilityLng}, {facilityLat}
+                    </p>
+                </div>);
+
         const facilityClaimID = get(data, 'properties.claim_info.id', null);
 
         return (
@@ -205,14 +255,10 @@ class FacilityDetailSidebar extends Component {
                                 {data.properties.oar_id}
                             </p>
                         </div>
-                        <div className="control-panel__group">
-                            <h1 className="control-panel__heading">
-                                GPS Coordinates:
-                            </h1>
-                            <p className="control-panel__body">
-                                {facilityLat}, {facilityLng}
-                            </p>
-                        </div>
+                        {canonicalFacilityLocation}
+                        <FacilityDetailsSidebarOtherLocations
+                            data={otherLocationsData}
+                        />
                         <FacilityDetailSidebarInfo
                             data={data.properties.other_names}
                             label="Also known as:"

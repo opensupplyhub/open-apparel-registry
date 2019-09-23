@@ -24,6 +24,7 @@ from allauth.account.utils import setup_user_email
 from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
+                        FacilityLocation,
                         FacilityMatch,
                         FacilityClaim,
                         FacilityClaimReviewNote,
@@ -396,6 +397,7 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     oar_id = SerializerMethodField()
     other_names = SerializerMethodField()
     other_addresses = SerializerMethodField()
+    other_locations = SerializerMethodField()
     contributors = SerializerMethodField()
     country_name = SerializerMethodField()
     claim_info = SerializerMethodField()
@@ -404,7 +406,7 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
-                  'country_name', 'claim_info')
+                  'country_name', 'claim_info', 'other_locations')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -416,6 +418,45 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
 
     def get_other_addresses(self, facility):
         return facility.other_addresses()
+
+    def get_other_locations(self, facility):
+        facility_locations = [
+            {
+                'lat': l.location.y,
+                'lng': l.location.x,
+                'contributor_id': l.contributor_id,
+                'contributor_name': l.contributor.name if l.contributor
+                else None,
+                'notes': l.notes,
+            }
+            for l
+            in FacilityLocation.objects.filter(facility=facility)
+        ]
+
+        facility_matches = [
+            {
+                'lat': l.facility_list_item.geocoded_point.y,
+                'lng': l.facility_list_item.geocoded_point.x,
+                'contributor_id': l.facility_list_item.facility_list
+                .contributor_id,
+                'contributor_name': l.facility_list_item.facility_list
+                .contributor.name,
+                'notes': None,
+            }
+            for l
+            in FacilityMatch.objects.filter(facility=facility)
+            .filter(status__in=[
+                FacilityMatch.CONFIRMED,
+                FacilityMatch.AUTOMATIC,
+            ])
+            .filter(is_active=True)
+            if l.facility_list_item != facility.created_from
+            if l.facility_list_item.geocoded_point != facility.location
+            if l.facility_list_item.facility_list.is_active
+            if l.facility_list_item.facility_list.is_public
+        ]
+
+        return facility_locations + facility_matches
 
     def get_contributors(self, facility):
         return [
