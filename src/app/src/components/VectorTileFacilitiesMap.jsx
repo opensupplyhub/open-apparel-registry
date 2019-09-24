@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { array, arrayOf, bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Map as ReactLeafletMap, ZoomControl } from 'react-leaflet';
@@ -13,6 +13,7 @@ import get from 'lodash/get';
 import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
+import VectorTileGridLegend from './VectorTileGridLegend';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -20,11 +21,10 @@ import { makeFacilityDetailLink } from '../util/util';
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
-import COLOURS from '../util/COLOURS';
-
 import {
     initialCenter,
     initialZoom,
+    detailsZoomLevel,
     minimumZoom,
     maxVectorTileFacilitiesGridZoom,
     GOOGLE_CLIENT_SIDE_API_KEY,
@@ -41,24 +41,6 @@ const mapComponentStyles = Object.freeze({
         right: '24px',
         top: '20px',
         fontSize: '12px',
-    }),
-    legendStyle: Object.freeze({
-        background: 'white',
-        border: `1px solid ${COLOURS.NAVY_BLUE}`,
-        padding: '6px',
-        margin: '20px',
-        height: '22px',
-        fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
-    }),
-    legendLabelStyle: Object.freeze({
-        width: '6.5rem',
-        padding: '0.08rem',
-        textAlign: 'center',
-    }),
-    legendCellStyle: Object.freeze({
-        width: '20px',
-        opacity: '0.8',
-        background: 'red',
     }),
 });
 
@@ -88,6 +70,18 @@ function VectorTileFacilitiesMap({
         isVectorTileMap: true,
     });
 
+    const [currentMapZoomLevel, setCurrentMapZoomLevel] = useState(
+        oarID ? detailsZoomLevel : initialZoom,
+    );
+
+    const handleZoomEnd = (e) => {
+        const newMapZoomLevel = get(e, 'target._zoom', null);
+
+        return newMapZoomLevel
+            ? setCurrentMapZoomLevel(newMapZoomLevel)
+            : noop();
+    };
+
     if (!clientInfoFetched) {
         return null;
     }
@@ -98,15 +92,6 @@ function VectorTileFacilitiesMap({
         if (count && leafletMap) {
             leafletMap.fitBounds([[ymin, xmin], [ymax, xmax]]);
         }
-    };
-
-    const legendCell = (background) => {
-        const style = Object.assign({}, mapComponentStyles.legendCellStyle, {
-            background,
-        });
-        return (
-            <td key={background} style={style}>&nbsp;</td>
-        );
     };
 
     return (
@@ -121,6 +106,7 @@ function VectorTileFacilitiesMap({
             zoomControl={false}
             maxBounds={[[-90, -180], [90, 180]]}
             worldCopyJump
+            onZoomEnd={handleZoomEnd}
         >
             <ReactLeafletGoogleLayer
                 googleMapsLoaderConf={{
@@ -134,21 +120,10 @@ function VectorTileFacilitiesMap({
                 zIndex={1}
             />
             <Control position="bottomleft">
-                <div id="map-legend" style={mapComponentStyles.legendStyle}>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td style={mapComponentStyles.legendLabelStyle}>
-                                    FEWER FACILITIES
-                                </td>
-                                {gridColorRamp.map(colorDef => legendCell(colorDef[1]))}
-                                <td style={mapComponentStyles.legendLabelStyle}>
-                                    MORE FACILITIES
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <VectorTileGridLegend
+                    currentZoomLevel={currentMapZoomLevel}
+                    gridColorRamp={gridColorRamp}
+                />
             </Control>
             <Control position="topright">
                 <CopyToClipboard
