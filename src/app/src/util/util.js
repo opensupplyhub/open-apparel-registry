@@ -129,6 +129,8 @@ export const makeGetClientInfoURL = () => {
 
 export const makeLogDownloadUrl = (path, recordCount) => `/api/log-download/?path=${path}&record_count=${recordCount}`;
 
+export const makeUpdateFacilityLocationURL = oarID => `/api/facilities/${oarID}/update-location/`;
+
 export const getValueFromObject = ({ value }) => value;
 
 const createCompactSortedQuerystringInputObject = (inputObject = []) =>

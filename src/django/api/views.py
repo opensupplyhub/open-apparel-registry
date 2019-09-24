@@ -14,6 +14,7 @@ from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
+from django.contrib.gis.geos import Point
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
@@ -51,7 +52,8 @@ from api.constants import (CsvHeaderField,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
                            ProcessingAction,
-                           LogDownloadQueryParams)
+                           LogDownloadQueryParams,
+                           UpdateLocationParams)
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -62,7 +64,8 @@ from api.models import (FacilityList,
                         Contributor,
                         User,
                         DownloadLog,
-                        Version)
+                        Version,
+                        FacilityLocation)
 from api.processing import parse_csv_line, parse_csv, parse_excel
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
@@ -77,7 +80,8 @@ from api.serializers import (FacilityListSerializer,
                              FacilityClaimDetailsSerializer,
                              ApprovedFacilityClaimSerializer,
                              FacilityMergeQueryParamsSerializer,
-                             LogDownloadQueryParamsSerializer)
+                             LogDownloadQueryParamsSerializer,
+                             FacilityUpdateLocationParamsSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
@@ -495,6 +499,9 @@ class FacilitiesAutoSchema(AutoSchema):
             return None
 
         if 'promote' in path:
+            return None
+
+        if 'update-location' in path:
             return None
 
         return super(FacilitiesAutoSchema, self).get_link(
@@ -1153,6 +1160,45 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raise NotFound()
         except Facility.DoesNotExist:
             raise NotFound()
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,),
+            url_path='update-location')
+    @transaction.atomic
+    def update_location(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            raise NotFound()
+
+        params = FacilityUpdateLocationParamsSerializer(data=request.data)
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+        facility_location = FacilityLocation(
+            facility=facility,
+            location=Point(float(request.data[UpdateLocationParams.LNG]),
+                           float(request.data[UpdateLocationParams.LAT])),
+            notes=request.data.get('notes', ''),
+            created_by=request.user,
+        )
+        contributor_id = request.data.get(
+            UpdateLocationParams.CONTRIBUTOR_ID, None)
+        if contributor_id is not None:
+            facility_location.contributor = \
+                Contributor.objects.get(id=contributor_id)
+        facility_location.save()
+
+        facility.location = facility_location.location
+        facility.changeReason = \
+            'Submitted a new FacilityLocation ({})'.format(
+                facility_location.id)
+        facility.save()
+
+        facility_data = FacilityDetailsSerializer(facility).data
+        return Response(facility_data)
 
 
 class FacilityListViewSetSchema(AutoSchema):

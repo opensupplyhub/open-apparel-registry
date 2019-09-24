@@ -88,3 +88,10 @@ class Certifications:
 class LogDownloadQueryParams:
     PATH = 'path'
     RECORD_COUNT = 'record_count'
+
+
+class UpdateLocationParams:
+    LAT = 'lat'
+    LNG = 'lng'
+    NOTES = 'notes'
+    CONTRIBUTOR_ID = 'contributor_id'
