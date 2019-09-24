@@ -73,6 +73,7 @@ const unselectedMarkerIcon = createIcon(unselectedMarkerURL);
 const selectedMarkerIcon = createIcon(selectedMarkerURL);
 
 function FacilitiesMap({
+    fetching,
     data,
     navigateToFacilityDetails,
     facilityDetailsData,
@@ -226,6 +227,13 @@ function FacilitiesMap({
         setFacilitiesToDisambiguate,
     ]);
 
+    useEffect(() => {
+        // Close multiple facilities popup on fresh searches
+        if (fetching) {
+            setFacilitiesToDisambiguate(null);
+        }
+    }, [fetching]);
+
     if (!clientInfoFetched) {
         return null;
     }
@@ -358,6 +366,7 @@ FacilitiesMap.defaultProps = {
 };
 
 FacilitiesMap.propTypes = {
+    fetching: bool.isRequired,
     data: facilityCollectionPropType,
     navigateToFacilityDetails: func.isRequired,
     facilityDetailsData: facilityPropType,
@@ -373,7 +382,7 @@ FacilitiesMap.propTypes = {
 
 function mapStateToProps({
     facilities: {
-        facilities: { data },
+        facilities: { fetching, data },
         singleFacility: { data: facilityDetailsData },
     },
     ui: {
@@ -382,6 +391,7 @@ function mapStateToProps({
     clientInfo: { fetched, countryCode },
 }) {
     return {
+        fetching,
         data,
         facilityDetailsData,
         resetButtonClickCount,
