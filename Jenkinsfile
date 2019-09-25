@@ -6,7 +6,7 @@ node {
 
 	    // Checkout the proper revision into the workspace.
 		stage('checkout') {
-			checkout scm 
+			checkout scm
 		}
 
 		env.AWS_PROFILE = 'open-apparel-registry'
@@ -45,7 +45,7 @@ node {
 
 			// Plan and apply the current state of the staging infrastructure
 			// as outlined by whatever branch of the `open-apparel-registry`
-			// repository passes the conditional above (`develop`, 
+			// repository passes the conditional above (`develop`,
 			// `test/*`, `release/*`, `hotfix/*`).
 			stage('infra') {
 				// Use `git` to get the primary repository's current commmit SHA and
@@ -66,6 +66,17 @@ node {
 				}
 			}
 		}
+
+        stage('notify') {
+            if (currentBuild.currentResult == 'SUCCESS' && currentBuild.previousBuild?.result != 'SUCCESS') {
+                def slackMessage = ":jenkins: *Open Apparel Registry (${env.BRANCH_NAME}) #${env.BUILD_NUMBER}*"
+                if (env.CHANGE_TITLE) {
+                    slackMessage += "\n${env.CHANGE_TITLE} - ${env.CHANGE_AUTHOR}"
+                }
+                slackMessage += "\n<${env.BUILD_URL}|View Build>"
+                slackSend channel: '#oar', color: 'good', message: slackMessage
+            }
+        }
 	} catch (err) {
 	    // Some exception was raised in the `try` block above. Assemble
 	    // an appropirate error message for Slack.
