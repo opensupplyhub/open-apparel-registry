@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add update facility location dashboard page [#814](https://github.com/open-apparel-registry/open-apparel-registry/pull/814)
 - Display other locations on facility details page [#827](https://github.com/open-apparel-registry/open-apparel-registry/pull/827)
+- Add reports to count API requests and API token creation [#833](https://github.com/open-apparel-registry/open-apparel-registry/pull/833)
 
 ### Changed
 - Restyle grid layer legend & show conditionally based on zoom level [#826](https://github.com/open-apparel-registry/open-apparel-registry/pull/826)
