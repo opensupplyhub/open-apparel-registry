@@ -3439,6 +3439,7 @@ class FacilityAPITestCaseBase(APITestCase):
                     country_code='US',
                     facility_list=self.list,
                     row_index=1,
+                    geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH)
 
         self.facility = Facility \
@@ -3689,3 +3690,284 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
             data['properties']['other_locations'][0]['contributor_name'],
             None,
         )
+
+
+class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(FacilityHistoryEndpointTest, self).setUp()
+        self.history_url = '/api/facilities/{}/history/'.format(
+            self.facility.id
+        )
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        self.list_two = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item_two = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list_two,
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility_two = Facility \
+            .objects \
+            .create(name='Name Two',
+                    address='Address Two',
+                    country_code='US',
+                    location=Point(5, 5),
+                    created_from=self.list_item_two)
+
+        self.match_two = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility_two,
+                    facility_list_item=self.list_item_two,
+                    confidence=0.85,
+                    results='')
+
+        self.list_item_two.facility = self.facility_two
+        self.list_item_two.save()
+
+        self.facility_two_history_url = '/api/facilities/{}/history/'.format(
+            self.facility_two.id
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_deleted_facility_history(self):
+        delete_facility_url = '/api/facilities/{}/'.format(self.facility.id)
+        delete_response = self.client.delete(delete_facility_url)
+
+        self.assertEqual(
+            delete_response.status_code,
+            204,
+        )
+
+        response = self.client.get(self.history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'DELETE',
+        )
+
+        self.assertIn(
+            'Deleted',
+            data[0]['detail'],
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_location_change(self):
+        location_change_url = '/api/facilities/{}/update-location/' \
+            .format(self.facility.id)
+        location_change_response = self.client.post(
+            location_change_url, {
+                UpdateLocationParams.LAT: 41,
+                UpdateLocationParams.LNG: 43,
+            })
+
+        self.assertEqual(location_change_response.status_code, 200)
+
+        response = self.client.get(self.history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'UPDATE',
+        )
+
+        self.assertIn(
+            'FacilityLocation',
+            data[0]['detail'],
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['new']['coordinates'][0],
+            43,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['old']['coordinates'][0],
+            0,
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_merge(self):
+        merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
+            .format(self.facility_two.id, self.facility.id)
+
+        merge_facilities_response = self.client.post(
+            merge_facilities_url,
+        )
+
+        self.assertEqual(merge_facilities_response.status_code, 200)
+
+        response = self.client.get(self.history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'MERGE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Merged with {}'.format(self.facility_two.id)
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_match_promotion(self):
+        merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
+            .format(self.facility_two.id, self.facility.id)
+
+        merge_facilities_response = self.client.post(
+            merge_facilities_url,
+        )
+
+        self.assertEqual(merge_facilities_response.status_code, 200)
+
+        self.facility_two.refresh_from_db()
+
+        promote_facility_url = '/api/facilities/{}/promote/'.format(
+            self.facility_two.id)
+
+        promote_facility_data = {
+            'match_id': self.match.id,
+        }
+
+        promote_facility_response = self.client.post(
+            promote_facility_url,
+            promote_facility_data,
+        )
+
+        self.assertEqual(promote_facility_response.status_code, 200)
+
+        response = self.client.get(self.facility_two_history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'UPDATE',
+        )
+
+        self.assertIn(
+            'Promoted',
+            data[0]['detail'],
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['new']['coordinates'][0],
+            0,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['old']['coordinates'][0],
+            5,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['name']['new'],
+            self.list_item.name,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['name']['old'],
+            'Name Two',
+        )
+
+        self.assertEqual(
+            data[0]['changes']['address']['new'],
+            self.list_item.address,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['address']['old'],
+            'Address Two',
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_match_split(self):
+        merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
+            .format(self.facility_two.id, self.facility.id)
+
+        merge_facilities_response = self.client.post(
+            merge_facilities_url,
+        )
+
+        self.assertEqual(merge_facilities_response.status_code, 200)
+
+        self.facility_two.refresh_from_db()
+
+        split_facility_url = '/api/facilities/{}/split/'.format(
+            self.facility_two.id)
+
+        split_facility_data = {
+            'match_id': self.match.id,
+        }
+
+        split_facility_response = self.client.post(
+            split_facility_url,
+            split_facility_data,
+        )
+
+        self.assertEqual(split_facility_response.status_code, 200)
+
+        self.match.refresh_from_db()
+
+        response = self.client.get(self.facility_two_history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'SPLIT',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            '{} was split from {}'.format(
+                self.match.facility.id,
+                self.facility_two.id,
+            )
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_handles_request_for_invalid_facility_id(self):
+        invalid_history_url = '/api/facilities/hello/history/'
+        invalid_history_response = self.client.get(invalid_history_url)
+        self.assertEqual(invalid_history_response.status_code, 404)
