@@ -153,7 +153,14 @@ class FilterSidebar extends Component {
         const insetComponent = (() => {
             switch (activeFilterSidebarTab) {
                 case filterSidebarTabsEnum.guide:
-                    return <FilterSidebarGuideTab />;
+                    return (
+                        <FeatureFlag
+                            flag={VECTOR_TILE}
+                            alternative={<FilterSidebarGuideTab />}
+                        >
+                            <FilterSidebarGuideTab vectorTile />
+                        </FeatureFlag>
+                    );
                 case filterSidebarTabsEnum.search:
                     // We wrap this component in a `Route` to give it access to `history.push`
                     // in its `mapDispatchToProps` function.
