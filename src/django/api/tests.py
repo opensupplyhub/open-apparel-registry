@@ -21,7 +21,7 @@ from api.constants import (ProcessingAction,
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
-                        RequestLog, DownloadLog, FacilityLocation)
+                        RequestLog, DownloadLog, FacilityLocation, Source)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
@@ -108,8 +108,19 @@ class FacilityListCreateTest(APITestCase):
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
                          previous_item_count + len(self.test_csv_rows) - 1)
+
+    def test_creates_source(self):
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'file': self.test_file},
+                                    format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_list = FacilityList.objects.last()
+        self.assertTrue(Source.objects.filter(facility_list=new_list).exists())
+        source = Source.objects.filter(facility_list=new_list).first()
         items = list(FacilityListItem.objects.all())
         self.assertEqual(items[0].raw_data, self.test_csv_rows[1])
+        for item in items:
+            self.assertEqual(source, item.source)
 
     def test_creates_list_and_items_xls(self):
         previous_list_count = FacilityList.objects.all().count()

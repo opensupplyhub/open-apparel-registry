@@ -65,7 +65,8 @@ from api.models import (FacilityList,
                         User,
                         DownloadLog,
                         Version,
-                        FacilityLocation)
+                        FacilityLocation,
+                        Source)
 from api.processing import parse_csv_line, parse_csv, parse_excel
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
@@ -1415,13 +1416,19 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             replaces=replaces)
         new_list.save()
 
+        source = Source.objects.create(
+            contributor=contributor,
+            source_type=Source.LIST,
+            facility_list=new_list)
+
         if replaces is not None:
             replaces.is_active = False
             replaces.save()
 
         items = [FacilityListItem(row_index=idx,
                                   facility_list=new_list,
-                                  raw_data=row)
+                                  raw_data=row,
+                                  source=source)
                  for idx, row in enumerate(rows)]
         FacilityListItem.objects.bulk_create(items)
 
