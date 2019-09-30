@@ -267,7 +267,7 @@ class Source(models.Model):
 
     def __str__(self):
         return '{0} ({1})'.format(
-            self.contributor.name, self.id)
+            self.display_name, self.id)
 
 
 class FacilityList(models.Model):
