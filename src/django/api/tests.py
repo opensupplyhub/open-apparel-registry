@@ -384,8 +384,12 @@ class FacilityListItemParseTest(ProcessingTestCase):
     def test_parses_using_header(self):
         facility_list = FacilityList.objects.create(
             header='address,country,name')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
         item = FacilityListItem(raw_data='1234 main st,de,Shirts!',
-                                facility_list=facility_list)
+                                facility_list=facility_list,
+                                source=source)
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
         self.assertEqual('DE', item.country_code)
@@ -395,8 +399,12 @@ class FacilityListItemParseTest(ProcessingTestCase):
     def test_converts_country_name_to_code(self):
         facility_list = FacilityList.objects.create(
             header='address,country,name')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
         item = FacilityListItem(raw_data='1234 main st,ChInA,Shirts!',
-                                facility_list=facility_list)
+                                facility_list=facility_list,
+                                source=source)
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
         self.assertEqual('CN', item.country_code)
@@ -404,9 +412,14 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assertEqual('1234 main st', item.address)
 
     def test_error_status_if_country_is_unknown(self):
-        facility_list = FacilityList(header='address,country,name')
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
         item = FacilityListItem(raw_data='1234 main st,Unknownistan,Shirts!',
-                                facility_list=facility_list)
+                                facility_list=facility_list,
+                                source=source)
         parse_facility_list_item(item)
         self.assert_failed_parse_results(
             item, 'Could not find a country code for "Unknownistan".')
@@ -488,9 +501,12 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
 
     def test_unparsed_item_raises_error(self):
         facility_list = FacilityList(header='address,country,name')
+        source = Source(source_type=Source.LIST,
+                        facility_list=facility_list)
         item = FacilityListItem(
             raw_data='1400 JFK Blvd, Philly,us,Shirts!',
-            facility_list=facility_list
+            facility_list=facility_list,
+            source=source
         )
 
         with self.assertRaises(ValueError) as cm:
@@ -504,9 +520,13 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
     def test_successfully_geocoded_item_has_correct_results(self):
         facility_list = FacilityList.objects.create(
             header='address,country,name')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
         item = FacilityListItem(
             raw_data='"City Hall, Philly, PA",us,Shirts!',
-            facility_list=facility_list
+            facility_list=facility_list,
+            source=source
         )
 
         parse_facility_list_item(item)
@@ -523,9 +543,12 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
     def test_failed_geocoded_item_has_no_resuts_status(self):
         facility_list = FacilityList.objects.create(
             header='address,country,name')
+        source = Source.objects.create(source_type=Source.LIST,
+                                       facility_list=facility_list)
         item = FacilityListItem(
             raw_data='"hello, world, foo, bar, baz",us,Shirts!',
-            facility_list=facility_list
+            facility_list=facility_list,
+            source=source
         )
         parse_facility_list_item(item)
         item.country_code = "$%"
@@ -573,6 +596,14 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     is_public=True,
                     contributor=self.contrib_one)
 
+        self.source_one = Source \
+            .objects \
+            .create(facility_list=self.list_one,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_one)
+
         self.list_item_one = FacilityListItem \
             .objects \
             .create(name=self.name_one,
@@ -580,13 +611,22 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     country_code=self.country_code,
                     facility_list=self.list_one,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_one)
 
         self.list_two = FacilityList \
             .objects \
             .create(header="header",
                     file_name="two",
                     name=self.list_two_name,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_two)
+
+        self.source_two = Source \
+            .objects \
+            .create(facility_list=self.list_two,
+                    source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
                     contributor=self.contrib_two)
@@ -598,7 +638,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     country_code=self.country_code,
                     facility_list=self.list_two,
                     row_index="2",
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_two)
 
         self.facility = Facility \
             .objects \
@@ -623,10 +664,10 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     facility_list_item=self.list_item_two)
 
     def test_returns_contributors(self):
-        contributors = self.facility.contributors()
-        self.assertIn(self.list_one, contributors)
-        self.assertIn(self.list_two, contributors)
-        self.assertEqual(len(contributors), 2)
+        sources = self.facility.sources()
+        self.assertIn(self.source_one, sources)
+        self.assertIn(self.source_two, sources)
+        self.assertEqual(len(sources), 2)
 
     def test_excludes_canonical_name_from_other_names(self):
         other_names = self.facility.other_names()
@@ -641,6 +682,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
     def test_excludes_other_names_from_inactive_lists(self):
         self.list_two.is_active = False
         self.list_two.save()
+        self.source_two.is_active = False
+        self.source_two.save()
         other_names = self.facility.other_names()
         self.assertNotIn(self.name_two, other_names)
         self.assertEqual(len(other_names), 0)
@@ -648,6 +691,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
     def test_excludes_other_addresses_from_inactive_lists(self):
         self.list_two.is_active = False
         self.list_two.save()
+        self.source_two.is_active = False
+        self.source_two.save()
         other_addresses = self.facility.other_addresses()
         self.assertNotIn(self.address_two, other_addresses)
         self.assertEqual(len(other_addresses), 0)
@@ -655,13 +700,17 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
     def test_excludes_contributors_from_inactive_lists(self):
         self.list_two.is_active = False
         self.list_two.save()
-        contributors = self.facility.contributors()
-        self.assertIn(self.list_one, contributors)
-        self.assertNotIn(self.list_two, contributors)
+        self.source_two.is_active = False
+        self.source_two.save()
+        sources = self.facility.sources()
+        self.assertIn(self.source_one, sources)
+        self.assertNotIn(self.source_two, sources)
 
     def test_excludes_other_names_from_non_public_lists(self):
         self.list_two.is_public = False
         self.list_two.save()
+        self.source_two.is_active = False
+        self.source_two.save()
         other_names = self.facility.other_names()
         self.assertNotIn(self.name_two, other_names)
         self.assertEqual(len(other_names), 0)
@@ -669,6 +718,8 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
     def test_excludes_other_addresses_from_non_public_lists(self):
         self.list_two.is_public = False
         self.list_two.save()
+        self.source_two.is_active = False
+        self.source_two.save()
         other_addresses = self.facility.other_addresses()
         self.assertNotIn(self.address_two, other_addresses)
         self.assertEqual(len(other_addresses), 0)
@@ -676,9 +727,11 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
     def test_excludes_contributors_from_non_public_lists(self):
         self.list_two.is_public = False
         self.list_two.save()
-        contributors = self.facility.contributors()
-        self.assertIn(self.list_one, contributors)
-        self.assertNotIn(self.list_two, contributors)
+        self.source_two.is_active = False
+        self.source_two.save()
+        sources = self.facility.sources()
+        self.assertIn(self.source_one, sources)
+        self.assertNotIn(self.source_two, sources)
 
     def test_excludes_unmatched_facilities_from_other_names(self):
         self.facility_match_two.status = FacilityMatch.REJECTED
@@ -697,19 +750,19 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
     def test_excludes_unmatched_facilities_from_contributors(self):
         self.facility_match_two.status = FacilityMatch.REJECTED
         self.facility_match_two.save()
-        contributors = self.facility.contributors()
-        self.assertIn(self.list_one, contributors)
-        self.assertNotIn(self.list_two, contributors)
-        self.assertEqual(len(contributors), 1)
+        sources = self.facility.sources()
+        self.assertIn(self.source_one, sources)
+        self.assertNotIn(self.source_two, sources)
+        self.assertEqual(len(sources), 1)
 
     def test_excludes_inactive_facility_matches_from_details(self):
         self.facility_match_two.is_active = False
         self.facility_match_two.save()
 
-        contributors = self.facility.contributors()
-        self.assertIn(self.list_one, contributors)
-        self.assertNotIn(self.list_two, contributors)
-        self.assertEqual(len(contributors), 1)
+        sources = self.facility.sources()
+        self.assertIn(self.source_one, sources)
+        self.assertNotIn(self.source_two, sources)
+        self.assertEqual(len(sources), 1)
 
         other_names = self.facility.other_names()
         self.assertNotIn(self.name_two, other_names)
@@ -749,7 +802,12 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
                     file_name="one",
                     name=self.prior_list_name,
                     is_active=True,
-                    is_public=True,
+                    is_public=True)
+
+        self.prior_source = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.prior_list,
                     contributor=self.prior_contrib)
 
         self.prior_list_item_one = FacilityListItem \
@@ -759,7 +817,8 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
                     country_code=self.country_code,
                     facility_list=self.prior_list,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.prior_source)
 
         self.prior_facility_one = Facility \
             .objects \
@@ -783,7 +842,8 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
                     country_code=self.country_code,
                     facility_list=self.prior_list,
                     row_index=2,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.prior_source)
 
         self.prior_facility_two = Facility \
             .objects \
@@ -824,7 +884,12 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
                     file_name="one",
                     name=self.current_list_name,
                     is_active=True,
-                    is_public=True,
+                    is_public=True)
+
+        self.current_source = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.current_list,
                     contributor=self.current_contrib)
 
         self.current_list_item = FacilityListItem \
@@ -835,7 +900,8 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
                     facility_list=self.current_list,
                     row_index=1,
                     geocoded_point=Point(0, 0),
-                    status=FacilityListItem.POTENTIAL_MATCH)
+                    status=FacilityListItem.POTENTIAL_MATCH,
+                    source=self.current_source)
 
         self.potential_facility_match_one = FacilityMatch \
             .objects \
@@ -1100,7 +1166,7 @@ def junk_chars(string):
 
 
 class DedupeMatchingTests(TestCase):
-    fixtures = ['users', 'contributors', 'facility_lists',
+    fixtures = ['users', 'contributors', 'facility_lists', 'sources',
                 'facility_list_items', 'facilities', 'facility_matches']
 
     def setUp(self):
@@ -1111,11 +1177,14 @@ class DedupeMatchingTests(TestCase):
             contributor=self.contributor, name='test', description='',
             file_name='test.csv', header='country,name,address')
         facility_list.save()
+        source = Source(source_type=Source.LIST, facility_list=facility_list,
+                        contributor=self.contributor)
+        source.save()
         for index, item in enumerate(items):
             country_code, name, address = item
             list_item = FacilityListItem(
                 facility_list=facility_list, row_index=index, raw_data='',
-                status=status, name=name, address=address,
+                source=source, status=status, name=name, address=address,
                 country_code=country_code, geocoded_address='')
             list_item.save()
         return facility_list
@@ -1127,7 +1196,7 @@ class DedupeMatchingTests(TestCase):
              junk_chars(facility.address.upper()))])
         result = match_facility_list_items(facility_list)
         matches = result['item_matches']
-        item_id = str(facility_list.facilitylistitem_set.all()[0].id)
+        item_id = str(facility_list.source.facilitylistitem_set.all()[0].id)
         self.assertIn(item_id, matches)
         self.assertEqual(1, len(matches[item_id]))
         self.assertEqual(str(facility.id), matches[item_id][0][0])
@@ -1233,7 +1302,12 @@ class ContributorsListAPIEndpointTests(TestCase):
                     file_name="one",
                     name=self.list_one_name,
                     is_active=True,
-                    is_public=True,
+                    is_public=True)
+
+        self.source_one = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_one,
                     contributor=self.contrib_one)
 
         self.list_one_b = FacilityList \
@@ -1242,7 +1316,12 @@ class ContributorsListAPIEndpointTests(TestCase):
                     file_name="one-b",
                     name=self.list_one_b_name,
                     is_active=True,
-                    is_public=True,
+                    is_public=True)
+
+        self.source_one_b = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_one_b,
                     contributor=self.contrib_one)
 
         # Contributor two has no lists
@@ -1252,8 +1331,14 @@ class ContributorsListAPIEndpointTests(TestCase):
             .create(header="header",
                     file_name="three",
                     name=self.list_three_name,
-                    is_active=False,
+                    is_active=False)
+
+        self.source_three = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_three,
                     is_public=True,
+                    is_active=False,
                     contributor=self.contrib_three)
 
         self.list_four = FacilityList \
@@ -1261,8 +1346,14 @@ class ContributorsListAPIEndpointTests(TestCase):
             .create(header="header",
                     file_name="four",
                     name=self.list_four_name,
-                    is_active=True,
+                    is_active=True)
+
+        self.source_four = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_four,
                     is_public=False,
+                    is_active=True,
                     contributor=self.contrib_four)
 
     def test_contributors_list_has_only_contributors_with_active_lists(self):
@@ -1319,6 +1410,11 @@ class FacilityListItemTests(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=self.facility_list,
+            contributor=self.contributor)
+
         statuses = [c[0] for c in FacilityListItem.STATUS_CHOICES]
         for i, possible_status in enumerate(statuses):
             FacilityListItem \
@@ -1327,6 +1423,7 @@ class FacilityListItemTests(APITestCase):
                         address='test address',
                         country_code='US',
                         facility_list=self.facility_list,
+                        source=self.source,
                         row_index=i,
                         status=possible_status)
 
@@ -1393,6 +1490,7 @@ class FacilityListItemTests(APITestCase):
         # Create a facility from the test list item
         list_item = FacilityListItem.objects.filter(
             facility_list=self.facility_list,
+            source=self.source,
             status=FacilityListItem.MATCHED,
         ).first()
         facility = Facility.objects.create(
@@ -1434,6 +1532,14 @@ class FacilityClaimAdminDashboardTests(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source = Source \
+            .objects \
+            .create(facility_list=self.list,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         self.list_item = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -1441,7 +1547,8 @@ class FacilityClaimAdminDashboardTests(APITestCase):
                     country_code='US',
                     facility_list=self.list,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source)
 
         self.facility = Facility \
             .objects \
@@ -1723,6 +1830,14 @@ class ApprovedFacilityClaimTests(APITestCase):
                     is_public=True,
                     contributor=self.list_contributor)
 
+        self.source = Source \
+            .objects \
+            .create(facility_list=self.facility_list,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.list_contributor)
+
         self.list_item = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -1730,7 +1845,8 @@ class ApprovedFacilityClaimTests(APITestCase):
                     country_code='US',
                     facility_list=self.facility_list,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source)
 
         self.facility = Facility \
             .objects \
@@ -1919,12 +2035,21 @@ class FacilityClaimTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source_one = Source \
+            .objects \
+            .create(facility_list=self.list_one,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         self.list_item_one = FacilityListItem \
             .objects \
             .create(name='name',
                     address='address',
                     country_code='US',
                     facility_list=self.list_one,
+                    source=self.source_one,
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH)
 
@@ -1999,7 +2124,12 @@ class DashboardListTests(APITestCase):
                     file_name='one',
                     name='First List',
                     is_active=True,
-                    is_public=True,
+                    is_public=True)
+
+        self.source = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list,
                     contributor=self.contributor)
 
         self.list_item = FacilityListItem \
@@ -2008,6 +2138,7 @@ class DashboardListTests(APITestCase):
                     address='Address',
                     country_code='US',
                     facility_list=self.list,
+                    source=self.source,
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH)
 
@@ -2028,6 +2159,12 @@ class DashboardListTests(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=self.inactive_list,
+            is_active=False,
+            contributor=self.contributor)
+
         self.private_list = FacilityList \
             .objects \
             .create(header='header',
@@ -2036,6 +2173,12 @@ class DashboardListTests(APITestCase):
                     is_active=True,
                     is_public=False,
                     contributor=self.contributor)
+
+        Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=self.private_list,
+            is_public=False,
+            contributor=self.contributor)
 
         self.superuser_email = 'superuser@example.com'
         self.superuser_password = 'superuser'
@@ -2059,6 +2202,11 @@ class DashboardListTests(APITestCase):
                     is_active=True,
                     is_public=True,
                     contributor=self.supercontributor)
+
+        Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=self.superlist,
+            contributor=self.supercontributor)
 
     def test_user_can_list_own_lists(self):
         self.client.login(email=self.user_email,
@@ -2184,7 +2332,12 @@ class FacilityDeleteTest(APITestCase):
             .objects \
             .create(header='header',
                     file_name='one',
-                    name='First List',
+                    name='First List')
+
+        self.source = Source \
+            .objects \
+            .create(facility_list=self.list,
+                    source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
                     contributor=self.contributor)
@@ -2195,6 +2348,7 @@ class FacilityDeleteTest(APITestCase):
                     address='Address',
                     country_code='US',
                     facility_list=self.list,
+                    source=self.source,
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH)
 
@@ -2292,6 +2446,14 @@ class FacilityDeleteTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         list_item_2 = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -2301,7 +2463,8 @@ class FacilityDeleteTest(APITestCase):
                     facility_list=list_2,
                     row_index=1,
                     status=FacilityListItem.MATCHED,
-                    facility=self.facility)
+                    facility=self.facility,
+                    source=source_2)
 
         match_2 = FacilityMatch \
             .objects \
@@ -2315,7 +2478,12 @@ class FacilityDeleteTest(APITestCase):
             .objects \
             .create(header='header',
                     file_name='three',
-                    name='Third List',
+                    name='Third List')
+
+        source_3 = Source \
+            .objects \
+            .create(facility_list=list_3,
+                    source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
                     contributor=self.contributor)
@@ -2327,6 +2495,7 @@ class FacilityDeleteTest(APITestCase):
                     country_code='US',
                     geocoded_point=Point(2, 2),
                     facility_list=list_3,
+                    source=source_3,
                     row_index=1,
                     status=FacilityListItem.MATCHED,
                     facility=self.facility)
@@ -2384,6 +2553,14 @@ class FacilityDeleteTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         list_item_2 = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -2393,7 +2570,8 @@ class FacilityDeleteTest(APITestCase):
                     facility_list=list_2,
                     row_index=1,
                     status=FacilityListItem.MATCHED,
-                    facility=self.facility)
+                    facility=self.facility,
+                    source=source_2)
 
         FacilityMatch \
             .objects \
@@ -2427,6 +2605,14 @@ class FacilityDeleteTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         list_item_2 = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -2435,7 +2621,8 @@ class FacilityDeleteTest(APITestCase):
                     geocoded_point=Point(1, 1),
                     facility_list=list_2,
                     row_index=1,
-                    status=FacilityListItem.MATCHED)
+                    status=FacilityListItem.MATCHED,
+                    source=source_2)
 
         FacilityMatch \
             .objects \
@@ -2513,6 +2700,14 @@ class FacilityMergeTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor_1)
 
+        self.source_1 = Source \
+            .objects \
+            .create(facility_list=self.list_1,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_1)
+
         self.list_item_1 = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -2520,7 +2715,8 @@ class FacilityMergeTest(APITestCase):
                     country_code='US',
                     facility_list=self.list_1,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_1)
 
         self.facility_1 = Facility \
             .objects \
@@ -2556,6 +2752,14 @@ class FacilityMergeTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor_2)
 
+        self.source_2 = Source \
+            .objects \
+            .create(facility_list=self.list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_2)
+
         self.list_item_2 = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -2563,7 +2767,8 @@ class FacilityMergeTest(APITestCase):
                     country_code='US',
                     facility_list=self.list_2,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_2)
 
         self.facility_2 = Facility \
             .objects \
@@ -2632,8 +2837,8 @@ class FacilityMergeTest(APITestCase):
                          self.list_item_2.processing_results[-1]['action'])
 
         self.facility_1.refresh_from_db()
-        self.assertIn(self.list_1, self.facility_1.contributors())
-        self.assertIn(self.list_2, self.facility_1.contributors())
+        self.assertIn(self.source_1, self.facility_1.sources())
+        self.assertIn(self.source_2, self.facility_1.sources())
 
         self.assertEqual(original_alias_count + 1,
                          FacilityAlias.objects.all().count())
@@ -2716,6 +2921,14 @@ class FacilitySplitTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor_one)
 
+        self.source_one = Source \
+            .objects \
+            .create(facility_list=self.list_one,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_one)
+
         self.list_item_one = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -2724,7 +2937,8 @@ class FacilitySplitTest(APITestCase):
                     facility_list=self.list_one,
                     row_index=1,
                     geocoded_point=Point(0, 0),
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_one)
 
         self.facility_one = Facility \
             .objects \
@@ -2760,6 +2974,12 @@ class FacilitySplitTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor_two)
 
+        self.source_two = Source \
+            .objects \
+            .create(facility_list=self.list_two,
+                    source_type=Source.LIST,
+                    contributor=self.contributor_two)
+
         self.list_item_two = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -2768,7 +2988,8 @@ class FacilitySplitTest(APITestCase):
                     facility_list=self.list_two,
                     row_index=1,
                     geocoded_point=Point(0, 0),
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_two)
 
         self.match_two = FacilityMatch \
             .objects \
@@ -2920,6 +3141,14 @@ class FacilityMatchPromoteTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor_one)
 
+        self.source_one = Source \
+            .objects \
+            .create(facility_list=self.list_one,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_one)
+
         self.address_one = 'Address One'
         self.address_two = 'Address Two'
         self.name_one = 'Name One'
@@ -2937,7 +3166,8 @@ class FacilityMatchPromoteTest(APITestCase):
                     facility_list=self.list_one,
                     row_index=1,
                     geocoded_point=self.location_one,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_one)
 
         self.facility_one = Facility \
             .objects \
@@ -2973,6 +3203,14 @@ class FacilityMatchPromoteTest(APITestCase):
                     is_public=True,
                     contributor=self.contributor_two)
 
+        self.source_two = Source \
+            .objects \
+            .create(facility_list=self.list_two,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_two)
+
         self.list_item_two = FacilityListItem \
             .objects \
             .create(name=self.name_two,
@@ -2981,7 +3219,8 @@ class FacilityMatchPromoteTest(APITestCase):
                     facility_list=self.list_two,
                     row_index=1,
                     geocoded_point=self.location_two,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_two)
 
         self.match_two = FacilityMatch \
             .objects \
@@ -2997,6 +3236,7 @@ class FacilityMatchPromoteTest(APITestCase):
                     address='third address',
                     country_code='US',
                     facility_list=self.list_one,
+                    source=self.source_one,
                     row_index=2,
                     geocoded_point=Point(3, 3),
                     status=FacilityListItem.MATCHED)
@@ -3181,6 +3421,14 @@ class FacilityClaimChangesTest(TestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source = Source \
+            .objects \
+            .create(facility_list=self.facility_list,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         self.list_item = FacilityListItem \
             .objects \
             .create(name='Name',
@@ -3188,7 +3436,8 @@ class FacilityClaimChangesTest(TestCase):
                     country_code='US',
                     facility_list=self.facility_list,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source)
 
         self.facility = Facility \
             .objects \
@@ -3286,6 +3535,14 @@ class FacilityClaimSerializerTests(TestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source = Source \
+            .objects \
+            .create(facility_list=self.facility_list,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         self.list_item = FacilityListItem \
             .objects \
             .create(name='Name',
@@ -3293,7 +3550,8 @@ class FacilityClaimSerializerTests(TestCase):
                     country_code='US',
                     facility_list=self.facility_list,
                     row_index=1,
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source)
 
         self.facility = Facility \
             .objects \
@@ -3444,6 +3702,14 @@ class FacilityAPITestCaseBase(APITestCase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source = Source \
+            .objects \
+            .create(facility_list=self.list,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
         self.list_item = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -3452,7 +3718,8 @@ class FacilityAPITestCaseBase(APITestCase):
                     facility_list=self.list,
                     row_index=1,
                     geocoded_point=Point(0, 0),
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source)
 
         self.facility = Facility \
             .objects \
@@ -3572,7 +3839,11 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
             .objects \
             .create(header='header',
                     file_name='two',
-                    name='Second List',
+                    name='Second List')
+
+        self.other_source = Source \
+            .objects \
+            .create(facility_list=self.other_list,
                     is_active=True,
                     is_public=True,
                     contributor=self.other_contributor)
@@ -3585,7 +3856,8 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                     facility_list=self.other_list,
                     row_index=1,
                     geocoded_point=Point(5, 5),
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.other_source)
 
         self.other_match = FacilityMatch \
             .objects \
@@ -3628,8 +3900,8 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         )
 
     def test_does_not_serialize_inactive_list_item_matches(self):
-        self.other_list.is_active = False
-        self.other_list.save()
+        self.other_source.is_active = False
+        self.other_source.save()
         response = self.client.get(
             '/api/facilities/{}/'.format(self.facility.id)
         )
@@ -3641,8 +3913,8 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         )
 
     def test_does_not_serialize_non_public_list_item_matches(self):
-        self.other_list.is_public = False
-        self.other_list.save()
+        self.other_source.is_public = False
+        self.other_source.save()
         response = self.client.get(
             '/api/facilities/{}/'.format(self.facility.id)
         )
@@ -3735,6 +4007,12 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source_two = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_two,
+                    contributor=self.contributor)
+
         self.list_item_two = FacilityListItem \
             .objects \
             .create(name='Item',
@@ -3743,7 +4021,8 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
                     facility_list=self.list_two,
                     row_index=1,
                     geocoded_point=Point(0, 0),
-                    status=FacilityListItem.CONFIRMED_MATCH)
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_two)
 
         self.facility_two = Facility \
             .objects \
@@ -3773,6 +4052,12 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
                     is_public=True,
                     contributor=self.contributor)
 
+        self.source_for_confirm_or_remove = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_for_confirm_or_remove,
+                    contributor=self.contributor)
+
         self.list_item_for_confirm_or_remove = FacilityListItem \
             .objects \
             .create(name='List item for confirmed match',
@@ -3781,7 +4066,8 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
                     facility_list=self.list_for_confirm_or_remove,
                     row_index=2,
                     geocoded_point=Point(12, 34),
-                    status=FacilityListItem.POTENTIAL_MATCH)
+                    status=FacilityListItem.POTENTIAL_MATCH,
+                    source=self.source_for_confirm_or_remove)
 
         self.match_for_confirm_or_remove = FacilityMatch \
             .objects \

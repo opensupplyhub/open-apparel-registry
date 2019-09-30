@@ -109,7 +109,8 @@ def parse_facility_list_item(item):
         raise ValueError('Items to be parsed must be in the UPLOADED status')
     try:
         is_geocoded = False
-        fields = [f.lower() for f in parse_csv_line(item.facility_list.header)]
+        fields = [f.lower()
+                  for f in parse_csv_line(item.source.facility_list.header)]
         values = parse_csv_line(item.raw_data)
         if CsvHeaderField.COUNTRY in fields:
             item.country_code = get_country_code(
@@ -320,7 +321,7 @@ def match_facility_list_items(facility_list, automatic_threshold=0.8,
     canonical = {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
                  for i in facility_set}
 
-    facility_list_item_set = facility_list.facilitylistitem_set.filter(
+    facility_list_item_set = facility_list.source.facilitylistitem_set.filter(
         Q(status=FacilityListItem.GEOCODED)
         | Q(status=FacilityListItem.GEOCODED_NO_RESULTS)).extra(
             select={'country': 'country_code'}).values(

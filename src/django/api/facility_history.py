@@ -15,16 +15,16 @@ def create_associate_match_string(facility_str, contributor_str, list_str):
 def create_associate_match_change_reason(list_item, facility):
     return create_associate_match_string(
         facility.id,
-        list_item.facility_list.contributor.id,
-        list_item.facility_list.id,
+        list_item.source.contributor.id,
+        list_item.source.facility_list.id,
     )
 
 
 def create_associate_match_entry_detail(match, facility_id):
     return create_associate_match_string(
         facility_id,
-        match.facility_list_item.facility_list.contributor.name,
-        match.facility_list_item.facility_list.name,
+        match.facility_list_item.source.contributor.name,
+        match.facility_list_item.source.facility_list.name,
     )
 
 
@@ -39,16 +39,16 @@ def create_dissociate_match_string(facility_str, contributor_str, list_str):
 def create_dissociate_match_change_reason(list_item, facility):
     return create_dissociate_match_string(
         facility.id,
-        list_item.facility_list.contributor.id,
-        list_item.facility_list.id,
+        list_item.source.contributor.id,
+        list_item.source.facility_list.id,
     )
 
 
 def create_dissociate_match_entry_detail(match, facility_id):
     return create_dissociate_match_string(
         facility_id,
-        match.facility_list_item.facility_list.contributor.name,
-        match.facility_list_item.facility_list.name,
+        match.facility_list_item.source.contributor.name,
+        match.facility_list_item.source.facility_list.name,
     )
 
 

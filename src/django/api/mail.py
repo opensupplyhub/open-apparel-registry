@@ -159,9 +159,9 @@ def send_approved_claim_notice_to_one_contributor(request, claim, contributor):
 
 def send_approved_claim_notice_to_list_contributors(request, facility_claim):
     list_contributors = [
-        facility_list.contributor
-        for facility_list in
-        facility_claim.facility.contributors()
+        source.contributor
+        for source in
+        facility_claim.facility.sources()
     ]
 
     for contributor in list_contributors:
@@ -208,9 +208,9 @@ def send_claim_update_note_to_one_contributor(request, claim, contributor):
 
 def send_claim_update_notice_to_list_contributors(request, facility_claim):
     list_contributors = [
-        facility_list.contributor
-        for facility_list in
-        facility_claim.facility.contributors()
+        source.contributor
+        for source in
+        facility_claim.facility.sources()
     ]
 
     for contributor in list_contributors:

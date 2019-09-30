@@ -65,7 +65,8 @@ class Command(BaseCommand):
             self.process_items(facility_list, action, process)
         elif action == ProcessingAction.MATCH:
             facility_list = FacilityList.objects.get(id=list_id)
-            total_item_count = facility_list.facilitylistitem_set.count()
+            total_item_count = \
+                facility_list.source.facilitylistitem_set.count()
 
             result = match_facility_list_items(facility_list)
             success_count = len(result['processed_list_item_ids'])
@@ -89,11 +90,11 @@ class Command(BaseCommand):
         row_index = os.environ.get('AWS_BATCH_JOB_ARRAY_INDEX')
         if row_index:
             items = FacilityListItem.objects.filter(
-                facility_list=facility_list,
+                source=facility_list.source,
                 row_index=row_index)
         else:
             items = FacilityListItem.objects.filter(
-                facility_list=facility_list)
+                source=facility_list.source)
 
         result = {
             'success': 0,

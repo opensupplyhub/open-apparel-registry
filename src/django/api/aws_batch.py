@@ -67,7 +67,7 @@ def submit_jobs(environment, facility_list, skip_parse=False):
         array_properties = {}
         if is_array:
             array_properties = {
-                'size': facility_list.facilitylistitem_set.count()
+                'size': facility_list.source.facilitylistitem_set.count()
             }
         job_name = 'list-{0}-{1}-{2}'.format(
             facility_list.id, action, job_time)
@@ -127,7 +127,7 @@ def submit_jobs(environment, facility_list, skip_parse=False):
 
     # GEOCODE
     started = str(datetime.utcnow())
-    row_count = facility_list.facilitylistitem_set.count()
+    row_count = facility_list.source.facilitylistitem_set.count()
     is_array = row_count > 1
     geocode_job_id = submit_job('geocode',
                                 depends_on=depends_on,
