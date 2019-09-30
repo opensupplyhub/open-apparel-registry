@@ -59,6 +59,7 @@ const VectorTileFacilityGridLayer = ({
     handleCellClick,
     minZoom,
     maxZoom,
+    zoomLevel,
     gridColorRamp,
 }) => {
     const vectorTileURL = useUpdateTileURL(
@@ -89,12 +90,6 @@ const VectorTileFacilityGridLayer = ({
             maxZoom={maxZoom}
             vectorTileLayerStyles={{
                 facilitygrid(properties) {
-                    const layer = get(
-                        vectorTileLayerRef,
-                        'current.leafletElement',
-                    );
-                    // eslint-disable-next-line no-underscore-dangle
-                    const zoomLevel = layer._map.getZoom();
                     const factor = 2 * Math.max(0, zoomLevel - 4);
                     const count = get(properties, 'count', 0);
                     if (count === 0) {
@@ -137,6 +132,7 @@ VectorTileFacilityGridLayer.propTypes = {
     fetching: bool.isRequired,
     resetButtonClickCount: number.isRequired,
     gridColorRamp: arrayOf(array).isRequired,
+    zoomLevel: number.isRequired,
 };
 
 function mapStateToProps({
