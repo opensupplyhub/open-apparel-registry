@@ -36,10 +36,18 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         .query \
         .sql_with_params()
 
+    # Exclude geoms on the edges that wrap around the world
+    wrap_filter = (
+        'abs('
+        '   ST_XMax(ST_Envelope(ST_Transform(hex_grid.geom, 4326)))'
+        ' - ST_XMin(ST_Envelope(ST_Transform(hex_grid.geom, 4326)))'
+        ') < 180')
+
     if location_query.find('WHERE') >= 0:
-        where_clause = location_query[location_query.find('WHERE'):]
+        where_clause = location_query[location_query.find('WHERE'):] \
+            + ' AND {} '.format(wrap_filter)
     else:
-        where_clause = ''
+        where_clause = ' WHERE {} '.format(wrap_filter)
 
     join_query = (
         'SELECT '
