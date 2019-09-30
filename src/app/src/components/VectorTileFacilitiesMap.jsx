@@ -149,6 +149,7 @@ function VectorTileFacilitiesMap({
                 handleCellClick={handleCellClick}
                 minZoom={1}
                 maxZoom={maxVectorTileFacilitiesGridZoom}
+                zoomLevel={currentMapZoomLevel}
             />
         </ReactLeafletMap>
     );
