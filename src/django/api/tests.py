@@ -3740,6 +3740,33 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         self.list_item_two.facility = self.facility_two
         self.list_item_two.save()
 
+        self.list_for_confirm_or_remove = FacilityList \
+            .objects \
+            .create(header='List for confirm or reject',
+                    file_name='list for confirm or reject',
+                    name='List for confirm or reject',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item_for_confirm_or_remove = FacilityListItem \
+            .objects \
+            .create(name='List item for confirmed match',
+                    address='Address for confirmed match',
+                    country_code='US',
+                    facility_list=self.list_for_confirm_or_remove,
+                    row_index=2,
+                    geocoded_point=Point(12, 34),
+                    status=FacilityListItem.POTENTIAL_MATCH)
+
+        self.match_for_confirm_or_remove = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.PENDING,
+                    facility_list_item=self.list_item_for_confirm_or_remove,
+                    facility=self.facility_two,
+                    confidence=0.65,
+                    results='')
+
         self.facility_two_history_url = '/api/facilities/{}/history/'.format(
             self.facility_two.id
         )
@@ -3769,7 +3796,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             len(data),
-            2,
+            4,
         )
 
     @override_switch('facility_history', active=True)
@@ -3809,7 +3836,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             len(data),
-            2,
+            3,
         )
 
     @override_switch('facility_history', active=True)
@@ -3838,7 +3865,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             len(data),
-            2,
+            3,
         )
 
     @override_switch('facility_history', active=True)
@@ -3913,7 +3940,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             len(data),
-            2,
+            3,
         )
 
     @override_switch('facility_history', active=True)
@@ -3963,7 +3990,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             len(data),
-            2,
+            3,
         )
 
     @override_switch('facility_history', active=True)
@@ -3971,3 +3998,148 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         invalid_history_url = '/api/facilities/hello/history/'
         invalid_history_response = self.client.get(invalid_history_url)
         self.assertEqual(invalid_history_response.status_code, 404)
+
+    @override_switch('facility_history', active=True)
+    def test_includes_association_for_automatic_match(self):
+        automatic_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(automatic_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'ASSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Associate facility {} with contributor {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_two.name,
+            ),
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_includes_association_for_confirmed_match(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-lists/{}/confirm/'.format(
+            self.list_for_confirm_or_remove.id,
+        )
+
+        confirm_data = {
+            'list_item_id': self.list_item_for_confirm_or_remove.id,
+            'facility_match_id': self.match_for_confirm_or_remove.id,
+        }
+
+        confirm_response = self.client.post(
+            confirm_url,
+            confirm_data,
+        )
+
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        confirmed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(confirmed_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'ASSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Associate facility {} with contributor {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
+            ),
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_includes_dissociation_record_when_match_is_severed(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-lists/{}/confirm/'.format(
+            self.list_for_confirm_or_remove.id,
+        )
+
+        confirm_data = {
+            'list_item_id': self.list_item_for_confirm_or_remove.id,
+            'facility_match_id': self.match_for_confirm_or_remove.id,
+        }
+
+        confirm_response = self.client.post(
+            confirm_url,
+            confirm_data,
+        )
+
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        remove_item_url = '/api/facility-lists/{}/remove/'.format(
+            self.list_for_confirm_or_remove.id,
+        )
+
+        remove_item_data = {
+            'list_item_id': self.list_item_for_confirm_or_remove.id,
+        }
+
+        remove_item_response = self.client.post(
+            remove_item_url,
+            remove_item_data,
+        )
+
+        self.assertEqual(
+            remove_item_response.status_code,
+            200,
+        )
+
+        removed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(removed_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'DISSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Dissociate facility {} from contributor {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
+            ),
+        )
+
+        self.assertEqual(
+            len(data),
+            4,
+        )

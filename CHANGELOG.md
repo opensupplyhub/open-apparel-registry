@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add facility history API endpoint [#830](https://github.com/open-apparel-registry/open-apparel-registry/pull/830)
 
 ### Changed
+- Include match association records in facility history list [#841](https://github.com/open-apparel-registry/open-apparel-registry/pull/841)
 
 ### Deprecated
 
