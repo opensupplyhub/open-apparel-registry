@@ -96,7 +96,9 @@ from api.exceptions import BadRequestException
 from api.tiler import (get_facilities_vector_tile,
                        get_facility_grid_vector_tile)
 from api.renderers import MvtRenderer
-from api.facility_history import create_facility_history_list
+from api.facility_history import (create_facility_history_list,
+                                  create_associate_match_change_reason,
+                                  create_dissociate_match_change_reason)
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -1747,6 +1749,11 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 raise ValidationError('facility match status must be PENDING')
 
             facility_match.status = FacilityMatch.CONFIRMED
+            facility_match.changeReason = create_associate_match_change_reason(
+                facility_list_item,
+                facility_match.facility,
+            )
+
             facility_match.save()
 
             matches_to_reject = FacilityMatch \
@@ -1999,6 +2006,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             # django-simple-history can log the changes
             for item in matches_to_deactivate:
                 item.is_active = False
+
+                item.changeReason = create_dissociate_match_change_reason(
+                    facility_list_item,
+                    item.facility,
+                )
+
                 item.save()
 
             facility_list_item.refresh_from_db()
