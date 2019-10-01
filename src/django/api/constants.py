@@ -47,6 +47,8 @@ class FacilityHistoryActions:
     MERGE = 'MERGE'
     SPLIT = 'SPLIT'
     OTHER = 'OTHER'
+    ASSOCIATE = 'ASSOCIATE'
+    DISSOCIATE = 'DISSOCIATE'
 
 
 class Affiliations:
