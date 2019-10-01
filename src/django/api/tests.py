@@ -15,11 +15,13 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from waffle.testutils import override_switch
 
-from api.constants import ProcessingAction, LogDownloadQueryParams
+from api.constants import (ProcessingAction,
+                           LogDownloadQueryParams,
+                           UpdateLocationParams)
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
-                        RequestLog, DownloadLog)
+                        RequestLog, DownloadLog, FacilityLocation)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
@@ -3399,3 +3401,291 @@ class TilePermissionsTest(APITestCase):
     def test_disallowed_hosts_cannot_fetch_tiles(self):
         response = self.client.get(self.tile_path)
         self.assertEqual(401, response.status_code)
+
+
+class FacilityAPITestCaseBase(APITestCase):
+    def setUp(self):
+        self.user_email = 'test@example.com'
+        self.user_password = 'example123'
+        self.user = User.objects.create(email=self.user_email)
+        self.user.set_password(self.user_password)
+        self.user.save()
+
+        self.superuser_email = 'super@example.com'
+        self.superuser_password = 'example123'
+        self.superuser = User.objects.create_superuser(
+            email=self.superuser_email,
+            password=self.superuser_password)
+
+        self.contributor = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor 1',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='First List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list,
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item)
+
+        self.match = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=self.list_item,
+                    confidence=0.85,
+                    results='')
+
+        self.list_item.facility = self.facility
+        self.list_item.save()
+
+
+class UpdateLocationTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(UpdateLocationTest, self).setUp()
+        self.url = reverse('facility-update-location',
+                           kwargs={'pk': self.facility.id})
+
+    def test_requires_auth(self):
+        response = self.client.post(self.url)
+        self.assertEqual(401, response.status_code)
+
+    def test_requires_superuser(self):
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+        response = self.client.post(self.url)
+        self.assertEqual(403, response.status_code)
+
+    def test_facility_exisits(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        self.url = reverse('facility-update-location',
+                           kwargs={'pk': 'DOES_NOT_EXIST'})
+        response = self.client.post(self.url)
+        self.assertEqual(404, response.status_code)
+
+    def test_required_arguments(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.url)
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('lat', data)
+        self.assertIn('lng', data)
+
+    def test_valid_arguments(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(self.url, {'lat': 1000, 'lng': 0})
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('lat', data)
+        self.assertNotIn('lng', data)
+
+        response = self.client.post(self.url, {'lat': 0, 'lng': 1000})
+        self.assertEqual(400, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn('lng', data)
+        self.assertNotIn('lat', data)
+
+    def test_updates_location(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            self.url, {
+                UpdateLocationParams.LAT: 41,
+                UpdateLocationParams.LNG: 43,
+                UpdateLocationParams.NOTES: 'A note',
+                UpdateLocationParams.CONTRIBUTOR_ID: self.contributor.id,
+            })
+        self.assertEqual(200, response.status_code)
+        data = json.loads(response.content)
+        self.assertEqual(data['id'], self.facility.id)
+        self.assertEqual(data['geometry']['coordinates'], [43.0, 41.0])
+
+        facility_locations = FacilityLocation.objects.filter(
+            facility=self.facility)
+        self.assertTrue(facility_locations.count() == 1)
+        facility_location = facility_locations.first()
+        self.assertEqual(facility_location.facility, self.facility)
+        self.assertEqual(facility_location.created_by, self.superuser)
+        self.assertEqual(facility_location.location.x, 43.0)
+        self.assertEqual(facility_location.location.y, 41.0)
+        self.assertEqual(facility_location.contributor, self.contributor)
+        self.assertEqual(facility_location.notes, 'A note')
+
+
+class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(SerializeOtherLocationsTest, self).setUp()
+        self.url = '/api/facilities/{}'.format(self.facility.id)
+
+        self.other_user_email = 'hello@example.com'
+        self.other_user_password = 'example123'
+        self.other_user = User.objects.create(email=self.other_user_email)
+        self.other_user.set_password(self.other_user_password)
+        self.other_user.save()
+
+        self.other_contributor = Contributor \
+            .objects \
+            .create(admin=self.other_user,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.other_list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.other_contributor)
+
+        self.other_list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.other_list,
+                    row_index=1,
+                    geocoded_point=Point(5, 5),
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.other_match = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    facility_list_item=self.other_list_item,
+                    confidence=0.85,
+                    results='')
+
+    def test_serializes_other_match_location_in_facility_details(self):
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+
+        data = json.loads(response.content)
+        self.assertEqual(
+            len(data['properties']['other_locations']),
+            1,
+        )
+
+        self.assertIsNone(
+            data['properties']['other_locations'][0]['notes'],
+        )
+
+        self.assertEqual(
+            data['properties']['other_locations'][0]['lat'],
+            5,
+        )
+
+    def test_does_not_serialize_inactive_list_item_matches(self):
+        self.other_list.is_active = False
+        self.other_list.save()
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+
+        data = json.loads(response.content)
+        self.assertEqual(
+            len(data['properties']['other_locations']),
+            0,
+        )
+
+    def test_does_not_serialize_non_public_list_item_matches(self):
+        self.other_list.is_public = False
+        self.other_list.save()
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+
+        data = json.loads(response.content)
+        self.assertEqual(
+            len(data['properties']['other_locations']),
+            0,
+        )
+
+    def test_serializes_other_locations_in_facility_details(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        self.client.post(
+            '/api/facilities/{}/update-location/'.format(self.facility.id), {
+                UpdateLocationParams.LAT: 41,
+                UpdateLocationParams.LNG: 43,
+                UpdateLocationParams.NOTES: 'A note',
+                UpdateLocationParams.CONTRIBUTOR_ID: self.contributor.id,
+            })
+
+        self.client.logout()
+
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+
+        data = json.loads(response.content)
+        self.assertEqual(
+            len(data['properties']['other_locations']),
+            2,
+        )
+
+        self.assertEqual(
+            data['properties']['other_locations'][0]['notes'],
+            'A note',
+        )
+
+    def test_serializes_other_location_without_note_or_contributor(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        self.client.post(
+            '/api/facilities/{}/update-location/'.format(self.facility.id), {
+                UpdateLocationParams.LAT: 41,
+                UpdateLocationParams.LNG: 43,
+                UpdateLocationParams.NOTES: '',
+            })
+
+        self.client.logout()
+
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+
+        data = json.loads(response.content)
+        self.assertEqual(
+            len(data['properties']['other_locations']),
+            2,
+        )
+
+        self.assertEqual(
+            data['properties']['other_locations'][0]['notes'],
+            '',
+        )
+
+        self.assertEqual(
+            data['properties']['other_locations'][0]['contributor_name'],
+            None,
+        )

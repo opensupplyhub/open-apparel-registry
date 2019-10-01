@@ -79,7 +79,7 @@ export default () => (
 
                         <li><p>If one or more potential matches to an existing facility are found, but the
                 application is not confident enough to make the match automatically, the
-                contributor will be asked to &ldquo;Accept&rdquo; or &ldquo;Reject&rdquo; the match using buttons
+                contributor will be asked to &ldquo;Confirm&rdquo; or &ldquo;Reject&rdquo; the match using buttons
                 within the application.</p>
 
                             <p><img src={confirm} alt="Confirm" style={{width: '100%'}} /></p></li>

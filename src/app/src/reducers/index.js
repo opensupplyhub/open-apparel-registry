@@ -28,6 +28,7 @@ import MergeFacilitiesReducer from './MergeFacilitiesReducer';
 import AdjustFacilityMatchesReducer from './AdjustFacilityMatchesReducer';
 import LogDownloadReducer from './LogDownloadReducer';
 import VectorTileLayer from './VectorTileLayer';
+import UpdateFacilityLocationReducer from './UpdateFacilityLocationReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -52,4 +53,5 @@ export default combineReducers({
     adjustFacilityMatches: AdjustFacilityMatchesReducer,
     logDownload: LogDownloadReducer,
     vectorTileLayer: VectorTileLayer,
+    updateFacilityLocation: UpdateFacilityLocationReducer,
 });

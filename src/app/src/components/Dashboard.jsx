@@ -10,6 +10,7 @@ import DashboardClaimsDetails from './DashboardClaimsDetails';
 import DashboardDeleteFacility from './DashboardDeleteFacility';
 import DashboardMergeFacilities from './DashboardMergeFacilities';
 import DashboardAdjustFacilityMatches from './DashboardAdjustFacilityMatches';
+import DashboardUpdateFacilityLocation from './DashboardUpdateFacilityLocation';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
 
@@ -24,6 +25,7 @@ import {
     dashboardDeleteFacilityRoute,
     dashboardMergeFacilitiesRoute,
     dashboardAdjustFacilityMatchesRoute,
+    dashboardUpdateFacilityLocationRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -75,6 +77,9 @@ function Dashboard({
             </Link>
             <Link to={dashboardAdjustFacilityMatchesRoute}>
                 Adjust facility matches
+            </Link>
+            <Link to={dashboardUpdateFacilityLocationRoute}>
+                Update facility location
             </Link>
         </div>
     );
@@ -145,6 +150,11 @@ function Dashboard({
                             />
                             <Route
                                 exact
+                                path={dashboardUpdateFacilityLocationRoute}
+                                render={makeClickableDashboardLinkFn('Update Facility Location')}
+                            />
+                            <Route
+                                exact
                                 path={dashboardRoute}
                                 render={() => 'Dashboard'}
                             />
@@ -172,6 +182,11 @@ function Dashboard({
                         exact
                         path={dashboardAdjustFacilityMatchesRoute}
                         component={DashboardAdjustFacilityMatches}
+                    />
+                    <Route
+                        exact
+                        path={dashboardUpdateFacilityLocationRoute}
+                        component={DashboardUpdateFacilityLocation}
                     />
                     <Route
                         exact

@@ -8,6 +8,7 @@ from django.contrib.auth import password_validation
 from django.urls import reverse
 from django.db.models import Count
 from rest_framework.serializers import (CharField,
+                                        DecimalField,
                                         EmailField,
                                         IntegerField,
                                         ListField,
@@ -23,6 +24,7 @@ from allauth.account.utils import setup_user_email
 from api.models import (FacilityList,
                         FacilityListItem,
                         Facility,
+                        FacilityLocation,
                         FacilityMatch,
                         FacilityClaim,
                         FacilityClaimReviewNote,
@@ -395,6 +397,7 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     oar_id = SerializerMethodField()
     other_names = SerializerMethodField()
     other_addresses = SerializerMethodField()
+    other_locations = SerializerMethodField()
     contributors = SerializerMethodField()
     country_name = SerializerMethodField()
     claim_info = SerializerMethodField()
@@ -403,7 +406,7 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
-                  'country_name', 'claim_info')
+                  'country_name', 'claim_info', 'other_locations')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -415,6 +418,45 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
 
     def get_other_addresses(self, facility):
         return facility.other_addresses()
+
+    def get_other_locations(self, facility):
+        facility_locations = [
+            {
+                'lat': l.location.y,
+                'lng': l.location.x,
+                'contributor_id': l.contributor_id,
+                'contributor_name': l.contributor.name if l.contributor
+                else None,
+                'notes': l.notes,
+            }
+            for l
+            in FacilityLocation.objects.filter(facility=facility)
+        ]
+
+        facility_matches = [
+            {
+                'lat': l.facility_list_item.geocoded_point.y,
+                'lng': l.facility_list_item.geocoded_point.x,
+                'contributor_id': l.facility_list_item.facility_list
+                .contributor_id,
+                'contributor_name': l.facility_list_item.facility_list
+                .contributor.name,
+                'notes': None,
+            }
+            for l
+            in FacilityMatch.objects.filter(facility=facility)
+            .filter(status__in=[
+                FacilityMatch.CONFIRMED,
+                FacilityMatch.AUTOMATIC,
+            ])
+            .filter(is_active=True)
+            if l.facility_list_item != facility.created_from
+            if l.facility_list_item.geocoded_point != facility.location
+            if l.facility_list_item.facility_list.is_active
+            if l.facility_list_item.facility_list.is_public
+        ]
+
+        return facility_locations + facility_matches
 
     def get_contributors(self, facility):
         return [
@@ -842,3 +884,26 @@ class FacilityMergeQueryParamsSerializer(Serializer):
 class LogDownloadQueryParamsSerializer(Serializer):
     path = CharField(required=True)
     record_count = IntegerField(required=True)
+
+
+class FacilityUpdateLocationParamsSerializer(Serializer):
+    # The Google geocoder returns points with 7 decimals of precision, which is
+    # "[the] practical limit of commercial surveying"
+    # https://en.wikipedia.org/wiki/Decimal_degrees
+    lat = DecimalField(max_digits=None, decimal_places=7, required=True)
+    lng = DecimalField(max_digits=None, decimal_places=7, required=True)
+    contributor_id = IntegerField(required=False)
+    notes = CharField(required=False)
+
+    def validate_lat(self, lat):
+        if lat < -90 or lat > 90:
+            raise ValidationError('lat must be between -90 and 90.')
+
+    def validate_lng(self, lat):
+        if lat < -180 or lat > 180:
+            raise ValidationError('lng must be between -180 and 180.')
+
+    def validate_contributor_id(self, contributor_id):
+        if not Contributor.objects.filter(id=contributor_id).exists():
+            raise ValidationError(
+                'Contributor {} does not exist.'.format(contributor_id))

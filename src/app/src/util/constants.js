@@ -229,6 +229,7 @@ export const dashboardClaimsRoute = '/dashboard/claims';
 export const dashboardDeleteFacilityRoute = '/dashboard/deletefacility';
 export const dashboardMergeFacilitiesRoute = '/dashboard/mergefacilities';
 export const dashboardAdjustFacilityMatchesRoute = '/dashboard/adjustfacilitymatches';
+export const dashboardUpdateFacilityLocationRoute = '/dashboard/updatefacilitylocation';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
 export const dashboardClaimsDetailsRoute = '/dashboard/claims/:claimID';

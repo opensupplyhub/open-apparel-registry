@@ -9,15 +9,14 @@ GRID_ZOOM_FACTOR = 3
 
 
 def get_facility_grid_vector_tile(params, layer, z, x, y):
-    tile_bounds = mercantile.bounds(x, y, z)
     xy_bounds = mercantile.xy_bounds(x, y, z)
 
     hex_width = abs(xy_bounds.right - xy_bounds.left) / (2 ** GRID_ZOOM_FACTOR)
     hex_grid_query = """
         CREATE TEMP TABLE hex_grid (geom, mvt_geom) AS (
-          SELECT ST_Transform(geom, 4326), ST_AsMVTGeom(
-            ST_Centroid(ST_Transform(geom, 4326)), ST_MakeEnvelope(
-                {tile_xmin}, {tile_ymin}, {tile_xmax}, {tile_ymax}, 4326
+          SELECT geom, ST_AsMVTGeom(
+            ST_Centroid(geom), ST_MakeEnvelope(
+                {xmin}, {ymin}, {xmax}, {ymax}
             ))
           FROM generate_hexgrid({width}, {xmin}, {ymin}, {xmax}, {ymax})
         )
@@ -25,9 +24,7 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
     hex_grid_query = hex_grid_query.format(
         width=hex_width,
         xmin=xy_bounds.left, ymin=xy_bounds.bottom, xmax=xy_bounds.right,
-        ymax=xy_bounds.top, tile_xmin=tile_bounds.west,
-        tile_ymin=tile_bounds.south, tile_xmax=tile_bounds.east,
-        tile_ymax=tile_bounds.north)
+        ymax=xy_bounds.top)
 
     hex_grid_idx_query = \
         'CREATE INDEX hex_grid_idx ON hex_grid USING gist (geom)'
@@ -39,21 +36,29 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         .query \
         .sql_with_params()
 
+    # Exclude geoms on the edges that wrap around the world
+    wrap_filter = (
+        'abs('
+        '   ST_XMax(ST_Envelope(ST_Transform(hex_grid.geom, 4326)))'
+        ' - ST_XMin(ST_Envelope(ST_Transform(hex_grid.geom, 4326)))'
+        ') < 180')
+
     if location_query.find('WHERE') >= 0:
-        where_clause = location_query[location_query.find('WHERE'):]
+        where_clause = location_query[location_query.find('WHERE'):] \
+            + ' AND {} '.format(wrap_filter)
     else:
-        where_clause = ''
+        where_clause = ' WHERE {} '.format(wrap_filter)
 
     join_query = (
         'SELECT '
         '  hex_grid.mvt_geom, '
         '  count(location), '
-        '  ST_XMin(ST_Envelope(hex_grid.geom)) as xmin, '
-        '  ST_YMin(ST_Envelope(hex_grid.geom)) as ymin, '
-        '  ST_XMax(ST_Envelope(hex_grid.geom)) as xmax, '
-        '  ST_YMax(ST_Envelope(hex_grid.geom)) as ymax '
-        'FROM hex_grid '
-        'JOIN api_facility ON ST_Contains(hex_grid.geom, location) '
+        '  ST_XMin(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as xmin, '
+        '  ST_YMin(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as ymin, '
+        '  ST_XMax(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as xmax, '
+        '  ST_YMax(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as ymax '
+        'FROM hex_grid JOIN api_facility '
+        '  ON ST_Contains(ST_Transform(hex_grid.geom, 4326), location) '
         ' {where_clause} '
         'GROUP BY hex_grid.mvt_geom, '
         '  xmin, ymin, xmax, ymax')

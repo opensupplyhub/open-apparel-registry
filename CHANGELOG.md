@@ -18,6 +18,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.12.0] - 2019-10-01
+### Added
+- Add update facility location dashboard page [#814](https://github.com/open-apparel-registry/open-apparel-registry/pull/814)
+- Display other locations on facility details page [#827](https://github.com/open-apparel-registry/open-apparel-registry/pull/827)
+- Add reports to count API requests and API token creation [#833](https://github.com/open-apparel-registry/open-apparel-registry/pull/833)
+
+### Changed
+- Restyle grid layer legend & show conditionally based on zoom level [#826](https://github.com/open-apparel-registry/open-apparel-registry/pull/826)
+- Update guide tab text along with vector tile feature [#834](https://github.com/open-apparel-registry/open-apparel-registry/pull/834)
+
+### Fixed
+- Close Disambiguation Popup on Reset [#812](https://github.com/open-apparel-registry/open-apparel-registry/pull/812)
+- Close Disambiguation Popup on New Search [#825](https://github.com/open-apparel-registry/open-apparel-registry/pull/825)
+- Change "Accept" to "Confirm" in About/Processing [#815](https://github.com/open-apparel-registry/open-apparel-registry/pull/815)
+- Regularize vector tile map zoom behavior [#799](https://github.com/open-apparel-registry/open-apparel-registry/pull/799)
+- Fix a bug which caused the vector tile map to crash on login/logout [#837](https://github.com/open-apparel-registry/open-apparel-registry/pull/837)
+- Remove Visual Artifacts from the Vector Grid [#839](https://github.com/open-apparel-registry/open-apparel-registry/pull/839)
+
 ## [2.11.0] - 2019-09-12
 ### Added
 - Adjust marker icon on selecting a new facility on the vector tiles layer [#749](https://github.com/open-apparel-registry/open-apparel-registry/pull/749)
@@ -235,7 +253,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.11.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.12.0...HEAD
+[2.12.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.12.0
 [2.11.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.11.0
 [2.10.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.10.0
 [2.9.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.9.0

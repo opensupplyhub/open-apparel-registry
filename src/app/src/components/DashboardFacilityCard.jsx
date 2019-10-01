@@ -174,6 +174,12 @@ export default function DashboardFacilityCard({
                         {get(data, 'properties.country_name', null)}
                     </Typography>
                     <Typography style={dashboardFacilityCardStyles.labelStyles}>
+                        Location
+                    </Typography>
+                    <Typography style={dashboardFacilityCardStyles.fieldStyles}>
+                        {get(data, 'geometry.coordinates', []).join(', ')}
+                    </Typography>
+                    <Typography style={dashboardFacilityCardStyles.labelStyles}>
                         Contributors
                     </Typography>
                     <div style={dashboardFacilityCardStyles.fieldStyles}>
