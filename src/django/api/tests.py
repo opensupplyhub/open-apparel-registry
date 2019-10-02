@@ -4144,3 +4144,295 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             len(data),
             4,
         )
+
+    @override_switch('facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
+    def test_includes_entry_for_claim_approval(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'CLAIM',
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
+    def test_includes_entry_for_claim_revocation(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        revoke_claim_url = '/api/facility-claims/{}/revoke/'.format(
+            claim.id,
+        )
+
+        revoke_claim_response = self.client.post(
+            revoke_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            revoke_claim_response.status_code,
+            200,
+        )
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'CLAIM_REVOKE',
+        )
+
+        self.assertEqual(
+            len(data),
+            4,
+        )
+
+    @override_switch('facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
+    def test_includes_entry_for_public_claimed_facility_data_changes(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        update_claim_url = '/api/facility-claims/{}/claimed/'.format(
+            claim.id,
+        )
+
+        update_claim_data = {
+            'id': claim.id,
+            'facility_name_english': 'facility_name_english',
+            'facility_name_native_language': 'facility_name_native_language',
+            'facility_address': 'facility_address',
+            'facility_description': 'facility_description',
+            'facility_phone_number': 1234567,
+            'facility_phone_number_publicly_visible': True,
+            'facility_website': 'https://openapparel.org',
+            'facility_website_publicly_visible': True,
+            'facility_minimum_order_quantity': 10,
+            'facility_average_lead_time': '2 months',
+            'point_of_contact_person_name': 'point_of_contact_person_name',
+            'point_of_contact_email': 'point_of_contact_email',
+            'facility_workers_count': 20,
+            'facility_female_workers_percentage': 50,
+            'point_of_contact_publicly_visible': True,
+            'office_official_name': 'office_official_name',
+            'office_address': 'office_address',
+            'office_country_code': 'US',
+            'office_phone_number': 2345678,
+            'office_info_publicly_visible': True,
+            'facility_type': 'Cut and Sew / RMG',
+        }
+
+        update_claim_response = self.client.put(
+            update_claim_url,
+            update_claim_data,
+        )
+
+        self.assertEqual(
+            update_claim_response.status_code,
+            200,
+        )
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'CLAIM_UPDATE',
+        )
+
+        self.assertEqual(
+            len(data),
+            4,
+        )
+
+        non_public_keys = [
+            'facility_website',
+            'facility_website_publicly_visible',
+            'point_of_contact_publicly_visible',
+            'point_of_contact_person_name',
+            'point_of_contact_email',
+            'office_info_publicly_visible',
+            'office_official_name',
+            'office_country_code',
+            'office_address',
+            'office_phone_number',
+        ]
+
+        for non_public_key in non_public_keys:
+            self.assertNotIn(
+                non_public_key,
+                data[0]['changes'],
+            )
