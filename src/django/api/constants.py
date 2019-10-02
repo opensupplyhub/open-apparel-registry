@@ -49,6 +49,9 @@ class FacilityHistoryActions:
     OTHER = 'OTHER'
     ASSOCIATE = 'ASSOCIATE'
     DISSOCIATE = 'DISSOCIATE'
+    CLAIMED = 'CLAIMED'
+    CLAIM_UPDATE = 'CLAIM_UPDATE'
+    CLAIM_REVOKE = 'CLAIM_REVOKE'
 
 
 class Affiliations:

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Include match association records in facility history list [#841](https://github.com/open-apparel-registry/open-apparel-registry/pull/841)
+- Include facility claim data in facility history list [#844](https://github.com/open-apparel-registry/open-apparel-registry/pull/844)
 
 ### Deprecated
 
