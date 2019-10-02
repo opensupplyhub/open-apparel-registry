@@ -1409,7 +1409,6 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         header, rows = self._extract_header_rows(csv_file, request)
 
         new_list = FacilityList(
-            contributor=contributor,
             name=name,
             description=description,
             file_name=csv_file.name,
@@ -1428,7 +1427,6 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 replaces_source_qs.update(is_active=False)
 
         items = [FacilityListItem(row_index=idx,
-                                  facility_list=new_list,
                                   raw_data=row,
                                   source=source)
                  for idx, row in enumerate(rows)]

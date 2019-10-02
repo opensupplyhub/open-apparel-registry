@@ -58,8 +58,7 @@ class FacilityHistoryAdmin(SimpleHistoryAdmin):
 
 class FacilityListItemAdmin(admin.ModelAdmin):
     exclude = ('processing_results',)
-    readonly_fields = ('facility_list', 'facility',
-                       'pretty_processing_results')
+    readonly_fields = ('facility', 'pretty_processing_results')
 
     def pretty_processing_results(self, instance):
         # The processing_results field is populated exclusively from processing
