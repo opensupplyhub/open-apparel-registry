@@ -1,7 +1,7 @@
 from django.db.models import F
 
 from api.constants import ProcessingAction, FacilityHistoryActions
-from api.models import FacilityMatch
+from api.models import FacilityMatch, FacilityClaim
 
 
 def create_associate_match_string(facility_str, contributor_str, list_str):
@@ -162,6 +162,65 @@ def processing_results_has_split_action_for_oar_id(list_item, facility_id):
     ]
 
 
+def create_facility_claim_entry(claim):
+    if claim.status == FacilityClaim.REVOKED:
+        return {
+            'updated_at': str(claim.updated_at),
+            'action': FacilityHistoryActions.CLAIM_REVOKE,
+            'detail': 'Claim on facility {} by {} was revoked'.format(
+                claim.facility.id,
+                claim.contributor.name,
+            ),
+        }
+
+    if claim.status == FacilityClaim.APPROVED \
+       and claim.prev_record.status == FacilityClaim.PENDING:
+        return {
+            'updated_at': str(claim.updated_at),
+            'action': FacilityHistoryActions.CLAIM,
+            'detail': 'Facility {} was claimed by {}'.format(
+                claim.facility.id,
+                claim.contributor.name,
+            ),
+        }
+
+    if claim.status == FacilityClaim.APPROVED:
+        public_claim_data_keys = [
+            'facility_description',
+            'facility_name_english',
+            'facility_name_native_language',
+            'facility_minimum_order',
+            'facility_average_lead_time',
+            'facility_workers_count',
+            'facility_female_workers_percentage',
+            'facility_type',
+            'other_facility_type',
+            'facility_affiliations',
+            'facility_product_types',
+            'facility_production_types',
+            'facility_parent_company',
+        ]
+
+        public_changes = {
+            k: v
+            for k, v
+            in get_change_diff_for_history_entry(claim).items()
+            if k in public_claim_data_keys
+        }
+
+        if any(public_changes):
+            return {
+                'updated_at': str(claim.updated_at),
+                'action': FacilityHistoryActions.CLAIM_UPDATE,
+                'detail': 'Facility {} claim public data was updated'.format(
+                    claim.facility.id,
+                ),
+                'changes': public_changes,
+            }
+
+    return None
+
+
 def create_facility_history_list(entries, facility_id):
     facility_split_entries = [
         {
@@ -208,6 +267,19 @@ def create_facility_history_list(entries, facility_id):
         .filter(facility_id=facility_id)
     ]
 
+    facility_claim_entries = [
+        create_facility_claim_entry(c)
+        for c
+        in FacilityClaim
+        .history
+        .filter(status__in=[
+            FacilityClaim.APPROVED,
+            FacilityClaim.REVOKED,
+        ])
+        if c.facility.id == facility_id
+        if create_facility_claim_entry(c) is not None
+    ]
+
     history_entries = [
         create_facility_history_dictionary(entry)
         for entry
@@ -215,5 +287,5 @@ def create_facility_history_list(entries, facility_id):
     ]
 
     return sorted(history_entries + facility_split_entries +
-                  facility_match_entries,
+                  facility_match_entries + facility_claim_entries,
                   key=lambda entry: entry['updated_at'], reverse=True)

@@ -789,7 +789,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     @transaction.atomic
     def claim(self, request, pk=None):
         if not switch_is_active('claim_a_facility'):
-            return NotFound()
+            raise NotFound()
 
         try:
             facility = Facility.objects.get(pk=pk)
