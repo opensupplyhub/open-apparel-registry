@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Add facility list items uploaded report [#865](https://github.com/open-apparel-registry/open-apparel-registry/pull/865)
+- Implement Source model [#856](https://github.com/open-apparel-registry/open-apparel-registry/pull/856)
 
 ### Changed
 
