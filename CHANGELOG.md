@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.13.0] - 2019-10-07
+### Added
 - Add facility history API endpoint [#830](https://github.com/open-apparel-registry/open-apparel-registry/pull/830)
 
 ### Changed
@@ -259,7 +272,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.12.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.13.0...HEAD
+[2.13.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.13.0
 [2.12.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.12.0
 [2.11.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.11.0
 [2.10.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.10.0
