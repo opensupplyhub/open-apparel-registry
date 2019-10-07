@@ -21,11 +21,18 @@ function processfixtures() {
     ./scripts/manage processfixtures
 }
 
+function enableswitches() {
+    ./scripts/manage waffle_switch facility_history on
+    ./scripts/manage waffle_switch vector_tile on
+    ./scripts/manage waffle_switch claim_a_facility on
+}
+
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
         resetdb
+        enableswitches
         processfixtures
     fi
 fi
