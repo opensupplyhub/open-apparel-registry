@@ -452,6 +452,7 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             .filter(is_active=True)
             if l.facility_list_item != facility.created_from
             if l.facility_list_item.geocoded_point != facility.location
+            if l.facility_list_item.geocoded_point is not None
             if l.facility_list_item.facility_list.is_active
             if l.facility_list_item.facility_list.is_public
         ]
