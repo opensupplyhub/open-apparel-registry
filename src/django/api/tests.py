@@ -3584,6 +3584,18 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                     confidence=0.85,
                     results='')
 
+    def test_excludes_match_if_geocoded_point_is_none(self):
+        self.other_list_item.geocoded_point = None
+        self.other_list_item.save()
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        self.assertEqual(
+            len(data['properties']['other_locations']),
+            0,
+        )
+
     def test_serializes_other_match_location_in_facility_details(self):
         response = self.client.get(
             '/api/facilities/{}/'.format(self.facility.id)
