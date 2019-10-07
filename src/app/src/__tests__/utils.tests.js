@@ -74,6 +74,7 @@ const {
     claimFacilityFacilityInfoStepIsValid,
     anyListItemMatchesAreInactive,
     pluralizeResultsCount,
+    removeDuplicatesFromOtherLocationsData,
 } = require('../util/util');
 
 const {
@@ -1279,4 +1280,95 @@ it('pluralizes a results count correclty, returning null if count is undefined o
     expect(pluralizeResultsCount(1)).toBe('1 result');
     expect(pluralizeResultsCount(0)).toBe('0 results');
     expect(pluralizeResultsCount(200)).toBe('200 results');
+});
+
+it('removes duplicate entries from other locations data', () => {
+    const entryWithNoDuplicates = [
+        {
+            lat: 1,
+            lng: 1,
+            contributor_id: 1,
+            contributor_name: 'one',
+        },
+        {
+            lat: 2,
+            lng: 2,
+            contributor_id: 2,
+            contributor_name: 'two',
+        },
+    ];
+
+    expect(removeDuplicatesFromOtherLocationsData(entryWithNoDuplicates)).toHaveLength(2);
+
+    const entryWithDuplicate = [
+        {
+            lat: 1,
+            lng: 1,
+            contributor_id: 1,
+            contributor_name: 'one',
+        },
+        {
+            lat: 1,
+            lng: 1,
+            contributor_id: 1,
+            contributor_name: 'one',
+        },
+    ];
+
+    expect(removeDuplicatesFromOtherLocationsData(entryWithDuplicate)).toHaveLength(1);
+
+    const entryWithDuplicateLocationButDifferentContributor = [
+        {
+            lat: 1,
+            lng: 1,
+            contributor_id: 1,
+            contributor_name: 'one',
+        },
+        {
+            lat: 1,
+            lng: 1,
+            contributor_id: 2,
+            contributor_name: 'two',
+        },
+    ];
+
+    expect(
+        removeDuplicatesFromOtherLocationsData(entryWithDuplicateLocationButDifferentContributor),
+    ).toHaveLength(2);
+
+    const entryWithDuplicateLocationWithNoContributor = [
+        {
+            lat: 1,
+            lng: 1,
+            contributor_id: 1,
+            contributor_name: 'one',
+        },
+        {
+            lat: 1,
+            lng: 1,
+        },
+    ];
+
+    expect(
+        removeDuplicatesFromOtherLocationsData(entryWithDuplicateLocationWithNoContributor),
+    ).toHaveLength(1);
+
+    const entryWithDuplicateContributorWithDifferentLocation = [
+        {
+            lat: 1,
+            lng: 1,
+            contributor_id: 1,
+            contributor_name: 'one',
+        },
+        {
+            lat: 1.1,
+            lng: 1.1,
+            contributor_id: 1,
+            contributor_name: 'one',
+        },
+    ];
+
+    expect(
+        removeDuplicatesFromOtherLocationsData(entryWithDuplicateContributorWithDifferentLocation),
+    ).toHaveLength(2);
 });
