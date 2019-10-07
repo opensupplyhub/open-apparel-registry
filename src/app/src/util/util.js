@@ -25,6 +25,7 @@ import toInteger from 'lodash/toInteger';
 import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
 import every from 'lodash/every';
+import uniqWith from 'lodash/uniqWith';
 import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
@@ -633,3 +634,30 @@ export const pluralizeResultsCount = (count) => {
 
     return `${count} results`;
 };
+
+export const removeDuplicatesFromOtherLocationsData = otherLocationsData => uniqWith(
+    otherLocationsData,
+    (location, otherLocation) => {
+        const lat = get(location, 'lat', null);
+        const lng = get(location, 'lng', null);
+        const id = get(location, 'contributor_id', null);
+
+        const otherLat = get(otherLocation, 'lat', null);
+        const otherLng = get(otherLocation, 'lng', null);
+        const otherID = get(otherLocation, 'contributor_id', null);
+
+        if (lat !== otherLat || lng !== otherLng) {
+            return false;
+        }
+
+        if ((!id && otherID) || (id && !otherID)) {
+            return true;
+        }
+
+        if (id === otherID) {
+            return true;
+        }
+
+        return false;
+    },
+);

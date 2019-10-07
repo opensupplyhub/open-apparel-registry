@@ -40,6 +40,20 @@ class FacilityMergeQueryParams:
     MERGE = 'merge'
 
 
+class FacilityHistoryActions:
+    CREATE = 'CREATE'
+    UPDATE = 'UPDATE'
+    DELETE = 'DELETE'
+    MERGE = 'MERGE'
+    SPLIT = 'SPLIT'
+    OTHER = 'OTHER'
+    ASSOCIATE = 'ASSOCIATE'
+    DISSOCIATE = 'DISSOCIATE'
+    CLAIM = 'CLAIM'
+    CLAIM_UPDATE = 'CLAIM_UPDATE'
+    CLAIM_REVOKE = 'CLAIM_REVOKE'
+
+
 class Affiliations:
     BENEFITS_BUSINESS_WORKERS = 'Benefits for Business and Workers (BBW)'
     BETTER_MILLS_PROGRAM = 'Better Mills Program'

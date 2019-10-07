@@ -126,7 +126,8 @@ class FacilityListCreateTest(APITestCase):
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
                          previous_item_count + sheet.nrows - 1)
-        items = list(FacilityListItem.objects.all())
+
+        items = list(FacilityListItem.objects.all().order_by('row_index'))
         self.assertEqual(items[0].raw_data, '"{}"'.format(
             '","'.join(sheet.row_values(1))))
 
@@ -3439,6 +3440,7 @@ class FacilityAPITestCaseBase(APITestCase):
                     country_code='US',
                     facility_list=self.list,
                     row_index=1,
+                    geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH)
 
         self.facility = Facility \
@@ -3582,6 +3584,18 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                     confidence=0.85,
                     results='')
 
+    def test_excludes_match_if_geocoded_point_is_none(self):
+        self.other_list_item.geocoded_point = None
+        self.other_list_item.save()
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        self.assertEqual(
+            len(data['properties']['other_locations']),
+            0,
+        )
+
     def test_serializes_other_match_location_in_facility_details(self):
         response = self.client.get(
             '/api/facilities/{}/'.format(self.facility.id)
@@ -3689,3 +3703,748 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
             data['properties']['other_locations'][0]['contributor_name'],
             None,
         )
+
+
+class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(FacilityHistoryEndpointTest, self).setUp()
+        self.history_url = '/api/facilities/{}/history/'.format(
+            self.facility.id
+        )
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        self.list_two = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item_two = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    facility_list=self.list_two,
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH)
+
+        self.facility_two = Facility \
+            .objects \
+            .create(name='Name Two',
+                    address='Address Two',
+                    country_code='US',
+                    location=Point(5, 5),
+                    created_from=self.list_item_two)
+
+        self.match_two = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility_two,
+                    facility_list_item=self.list_item_two,
+                    confidence=0.85,
+                    results='')
+
+        self.list_item_two.facility = self.facility_two
+        self.list_item_two.save()
+
+        self.list_for_confirm_or_remove = FacilityList \
+            .objects \
+            .create(header='List for confirm or reject',
+                    file_name='list for confirm or reject',
+                    name='List for confirm or reject',
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.list_item_for_confirm_or_remove = FacilityListItem \
+            .objects \
+            .create(name='List item for confirmed match',
+                    address='Address for confirmed match',
+                    country_code='US',
+                    facility_list=self.list_for_confirm_or_remove,
+                    row_index=2,
+                    geocoded_point=Point(12, 34),
+                    status=FacilityListItem.POTENTIAL_MATCH)
+
+        self.match_for_confirm_or_remove = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.PENDING,
+                    facility_list_item=self.list_item_for_confirm_or_remove,
+                    facility=self.facility_two,
+                    confidence=0.65,
+                    results='')
+
+        self.facility_two_history_url = '/api/facilities/{}/history/'.format(
+            self.facility_two.id
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_deleted_facility_history(self):
+        delete_facility_url = '/api/facilities/{}/'.format(self.facility.id)
+        delete_response = self.client.delete(delete_facility_url)
+
+        self.assertEqual(
+            delete_response.status_code,
+            204,
+        )
+
+        response = self.client.get(self.history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'DELETE',
+        )
+
+        self.assertIn(
+            'Deleted',
+            data[0]['detail'],
+        )
+
+        self.assertEqual(
+            len(data),
+            4,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_location_change(self):
+        location_change_url = '/api/facilities/{}/update-location/' \
+            .format(self.facility.id)
+        location_change_response = self.client.post(
+            location_change_url, {
+                UpdateLocationParams.LAT: 41,
+                UpdateLocationParams.LNG: 43,
+            })
+
+        self.assertEqual(location_change_response.status_code, 200)
+
+        response = self.client.get(self.history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'UPDATE',
+        )
+
+        self.assertIn(
+            'FacilityLocation',
+            data[0]['detail'],
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['new']['coordinates'][0],
+            43,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['old']['coordinates'][0],
+            0,
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_merge(self):
+        merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
+            .format(self.facility_two.id, self.facility.id)
+
+        merge_facilities_response = self.client.post(
+            merge_facilities_url,
+        )
+
+        self.assertEqual(merge_facilities_response.status_code, 200)
+
+        response = self.client.get(self.history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'MERGE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Merged with {}'.format(self.facility_two.id)
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_match_promotion(self):
+        merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
+            .format(self.facility_two.id, self.facility.id)
+
+        merge_facilities_response = self.client.post(
+            merge_facilities_url,
+        )
+
+        self.assertEqual(merge_facilities_response.status_code, 200)
+
+        self.facility_two.refresh_from_db()
+
+        promote_facility_url = '/api/facilities/{}/promote/'.format(
+            self.facility_two.id)
+
+        promote_facility_data = {
+            'match_id': self.match.id,
+        }
+
+        promote_facility_response = self.client.post(
+            promote_facility_url,
+            promote_facility_data,
+        )
+
+        self.assertEqual(promote_facility_response.status_code, 200)
+
+        response = self.client.get(self.facility_two_history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'UPDATE',
+        )
+
+        self.assertIn(
+            'Promoted',
+            data[0]['detail'],
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['new']['coordinates'][0],
+            0,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['location']['old']['coordinates'][0],
+            5,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['name']['new'],
+            self.list_item.name,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['name']['old'],
+            'Name Two',
+        )
+
+        self.assertEqual(
+            data[0]['changes']['address']['new'],
+            self.list_item.address,
+        )
+
+        self.assertEqual(
+            data[0]['changes']['address']['old'],
+            'Address Two',
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_serializes_facility_match_split(self):
+        merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
+            .format(self.facility_two.id, self.facility.id)
+
+        merge_facilities_response = self.client.post(
+            merge_facilities_url,
+        )
+
+        self.assertEqual(merge_facilities_response.status_code, 200)
+
+        self.facility_two.refresh_from_db()
+
+        split_facility_url = '/api/facilities/{}/split/'.format(
+            self.facility_two.id)
+
+        split_facility_data = {
+            'match_id': self.match.id,
+        }
+
+        split_facility_response = self.client.post(
+            split_facility_url,
+            split_facility_data,
+        )
+
+        self.assertEqual(split_facility_response.status_code, 200)
+
+        self.match.refresh_from_db()
+
+        response = self.client.get(self.facility_two_history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'SPLIT',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            '{} was split from {}'.format(
+                self.match.facility.id,
+                self.facility_two.id,
+            )
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_handles_request_for_invalid_facility_id(self):
+        invalid_history_url = '/api/facilities/hello/history/'
+        invalid_history_response = self.client.get(invalid_history_url)
+        self.assertEqual(invalid_history_response.status_code, 404)
+
+    @override_switch('facility_history', active=True)
+    def test_includes_association_for_automatic_match(self):
+        automatic_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(automatic_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'ASSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Associate facility {} with contributor {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_two.name,
+            ),
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_includes_association_for_confirmed_match(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-lists/{}/confirm/'.format(
+            self.list_for_confirm_or_remove.id,
+        )
+
+        confirm_data = {
+            'list_item_id': self.list_item_for_confirm_or_remove.id,
+            'facility_match_id': self.match_for_confirm_or_remove.id,
+        }
+
+        confirm_response = self.client.post(
+            confirm_url,
+            confirm_data,
+        )
+
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        confirmed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(confirmed_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'ASSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Associate facility {} with contributor {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
+            ),
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    def test_includes_dissociation_record_when_match_is_severed(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-lists/{}/confirm/'.format(
+            self.list_for_confirm_or_remove.id,
+        )
+
+        confirm_data = {
+            'list_item_id': self.list_item_for_confirm_or_remove.id,
+            'facility_match_id': self.match_for_confirm_or_remove.id,
+        }
+
+        confirm_response = self.client.post(
+            confirm_url,
+            confirm_data,
+        )
+
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        remove_item_url = '/api/facility-lists/{}/remove/'.format(
+            self.list_for_confirm_or_remove.id,
+        )
+
+        remove_item_data = {
+            'list_item_id': self.list_item_for_confirm_or_remove.id,
+        }
+
+        remove_item_response = self.client.post(
+            remove_item_url,
+            remove_item_data,
+        )
+
+        self.assertEqual(
+            remove_item_response.status_code,
+            200,
+        )
+
+        removed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(removed_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'DISSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Dissociate facility {} from contributor {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
+            ),
+        )
+
+        self.assertEqual(
+            len(data),
+            4,
+        )
+
+    @override_switch('facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
+    def test_includes_entry_for_claim_approval(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'CLAIM',
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_switch('facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
+    def test_includes_entry_for_claim_revocation(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        revoke_claim_url = '/api/facility-claims/{}/revoke/'.format(
+            claim.id,
+        )
+
+        revoke_claim_response = self.client.post(
+            revoke_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            revoke_claim_response.status_code,
+            200,
+        )
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'CLAIM_REVOKE',
+        )
+
+        self.assertEqual(
+            len(data),
+            4,
+        )
+
+    @override_switch('facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
+    def test_includes_entry_for_public_claimed_facility_data_changes(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        update_claim_url = '/api/facility-claims/{}/claimed/'.format(
+            claim.id,
+        )
+
+        update_claim_data = {
+            'id': claim.id,
+            'facility_name_english': 'facility_name_english',
+            'facility_name_native_language': 'facility_name_native_language',
+            'facility_address': 'facility_address',
+            'facility_description': 'facility_description',
+            'facility_phone_number': 1234567,
+            'facility_phone_number_publicly_visible': True,
+            'facility_website': 'https://openapparel.org',
+            'facility_website_publicly_visible': True,
+            'facility_minimum_order_quantity': 10,
+            'facility_average_lead_time': '2 months',
+            'point_of_contact_person_name': 'point_of_contact_person_name',
+            'point_of_contact_email': 'point_of_contact_email',
+            'facility_workers_count': 20,
+            'facility_female_workers_percentage': 50,
+            'point_of_contact_publicly_visible': True,
+            'office_official_name': 'office_official_name',
+            'office_address': 'office_address',
+            'office_country_code': 'US',
+            'office_phone_number': 2345678,
+            'office_info_publicly_visible': True,
+            'facility_type': 'Cut and Sew / RMG',
+        }
+
+        update_claim_response = self.client.put(
+            update_claim_url,
+            update_claim_data,
+        )
+
+        self.assertEqual(
+            update_claim_response.status_code,
+            200,
+        )
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'CLAIM_UPDATE',
+        )
+
+        self.assertEqual(
+            len(data),
+            4,
+        )
+
+        non_public_keys = [
+            'facility_website',
+            'facility_website_publicly_visible',
+            'point_of_contact_publicly_visible',
+            'point_of_contact_person_name',
+            'point_of_contact_email',
+            'office_info_publicly_visible',
+            'office_official_name',
+            'office_country_code',
+            'office_address',
+            'office_phone_number',
+        ]
+
+        for non_public_key in non_public_keys:
+            self.assertNotIn(
+                non_public_key,
+                data[0]['changes'],
+            )

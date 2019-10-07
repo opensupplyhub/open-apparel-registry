@@ -96,6 +96,9 @@ from api.exceptions import BadRequestException
 from api.tiler import (get_facilities_vector_tile,
                        get_facility_grid_vector_tile)
 from api.renderers import MvtRenderer
+from api.facility_history import (create_facility_history_list,
+                                  create_associate_match_change_reason,
+                                  create_dissociate_match_change_reason)
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -504,6 +507,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'update-location' in path:
             return None
 
+        if 'history' in path and not switch_is_active('facility_history'):
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -783,7 +789,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     @transaction.atomic
     def claim(self, request, pk=None):
         if not switch_is_active('claim_a_facility'):
-            return NotFound()
+            raise NotFound()
 
         try:
             facility = Facility.objects.get(pk=pk)
@@ -965,7 +971,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             oar_id=merge.id,
             facility=target,
             reason=FacilityAlias.MERGE)
-
+        # any change to this message will also need to
+        # be made in the `facility_history.py` module's
+        # `create_facility_history_dictionary` function
         merge.changeReason = 'Merged with {}'.format(target.id)
         merge.delete()
 
@@ -1192,6 +1200,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         facility_location.save()
 
         facility.location = facility_location.location
+        # any change to this message will also need to
+        # be made in the `facility_history.py` module's
+        # `create_facility_history_dictionary` function
         facility.changeReason = \
             'Submitted a new FacilityLocation ({})'.format(
                 facility_location.id)
@@ -1199,6 +1210,63 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         facility_data = FacilityDetailsSerializer(facility).data
         return Response(facility_data)
+
+    @waffle_switch('facility_history')
+    @action(detail=True, methods=['GET'],
+            permission_classes=(IsRegisteredAndConfirmed,),
+            url_path='history')
+    def get_facility_history(self, request, pk=None):
+        """
+        Returns the history of changes to a facility as a list of dictionaries
+        describing the changes.
+
+        ### Sample Response
+            [
+                {
+                    "updated_at": "2019-09-12T02:43:19Z",
+                    "action": "DELETE",
+                    "detail": "Deleted facility"
+                },
+                {
+                    "updated_at": "2019-09-05T13:15:30Z",
+                    "action": "UPDATE",
+                    "changes": {
+                        "location": {
+                            "old": {
+                                "type": "Point",
+                                "coordinates": [125.6, 10.1]
+                            },
+                            "new": {
+                                "type": "Point",
+                                "coordinates": [125.62, 10.14]
+                            }
+                        }
+                    },
+                    "detail": "FacilityLocation was changed"
+                },
+                {
+                    "updated_at": "2019-09-02T21:04:30Z",
+                    "action": "MERGE",
+                    "detail": "Merged with US2019123AG4RD"
+                },
+                {
+                    "updated_at": "2019-09-01T21:04:30Z",
+                    "action": "CREATE",
+                    "detail": "Facility was created"
+                }
+            ]
+        """
+        historical_facility_queryset = Facility.history.filter(id=pk)
+
+        if historical_facility_queryset.count() == 0:
+            raise NotFound()
+
+        facility_history = create_facility_history_list(
+            historical_facility_queryset,
+            pk,
+        )
+
+        return Response(facility_history)
 
 
 class FacilityListViewSetSchema(AutoSchema):
@@ -1681,6 +1749,11 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 raise ValidationError('facility match status must be PENDING')
 
             facility_match.status = FacilityMatch.CONFIRMED
+            facility_match.changeReason = create_associate_match_change_reason(
+                facility_list_item,
+                facility_match.facility,
+            )
+
             facility_match.save()
 
             matches_to_reject = FacilityMatch \
@@ -1933,6 +2006,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             # django-simple-history can log the changes
             for item in matches_to_deactivate:
                 item.is_active = False
+
+                item.changeReason = create_dissociate_match_change_reason(
+                    facility_list_item,
+                    item.facility,
+                )
+
                 item.save()
 
             facility_list_item.refresh_from_db()

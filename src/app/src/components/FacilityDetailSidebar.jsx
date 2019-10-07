@@ -33,6 +33,7 @@ import {
     makeDisputeClaimEmailLink,
     makeApprovedClaimDetailsLink,
     makeProfileRouteLink,
+    removeDuplicatesFromOtherLocationsData,
 } from '../util/util';
 
 import {
@@ -257,7 +258,9 @@ class FacilityDetailSidebar extends Component {
                         </div>
                         {canonicalFacilityLocation}
                         <FacilityDetailsSidebarOtherLocations
-                            data={otherLocationsData}
+                            data={
+                                removeDuplicatesFromOtherLocationsData(otherLocationsData)
+                            }
                         />
                         <FacilityDetailSidebarInfo
                             data={data.properties.other_names}
