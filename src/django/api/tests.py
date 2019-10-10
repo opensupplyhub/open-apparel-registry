@@ -4040,6 +4040,34 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         )
 
     @override_switch('facility_history', active=True)
+    def test_associate_appears_after_create_in_history_data(self):
+        history_response = self.client.get(
+            self.history_url,
+        )
+
+        self.assertEqual(
+            history_response.status_code,
+            200,
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'ASSOCIATE',
+        )
+
+        self.assertEqual(
+            data[1]['action'],
+            'CREATE',
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_switch('facility_history', active=True)
     def test_includes_association_for_confirmed_match(self):
         self.client.logout()
         self.client.login(email=self.user_email,

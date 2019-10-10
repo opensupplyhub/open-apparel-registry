@@ -165,7 +165,7 @@ def processing_results_has_split_action_for_oar_id(list_item, facility_id):
 def create_facility_claim_entry(claim):
     if claim.status == FacilityClaim.REVOKED:
         return {
-            'updated_at': str(claim.updated_at),
+            'updated_at': str(claim.history_date),
             'action': FacilityHistoryActions.CLAIM_REVOKE,
             'detail': 'Claim on facility {} by {} was revoked'.format(
                 claim.facility.id,
@@ -176,7 +176,7 @@ def create_facility_claim_entry(claim):
     if claim.status == FacilityClaim.APPROVED \
        and claim.prev_record.status == FacilityClaim.PENDING:
         return {
-            'updated_at': str(claim.updated_at),
+            'updated_at': str(claim.history_date),
             'action': FacilityHistoryActions.CLAIM,
             'detail': 'Facility {} was claimed by {}'.format(
                 claim.facility.id,
@@ -210,7 +210,7 @@ def create_facility_claim_entry(claim):
 
         if any(public_changes):
             return {
-                'updated_at': str(claim.updated_at),
+                'updated_at': str(claim.history_date),
                 'action': FacilityHistoryActions.CLAIM_UPDATE,
                 'detail': 'Facility {} claim public data was updated'.format(
                     claim.facility.id,
@@ -248,7 +248,7 @@ def create_facility_history_list(entries, facility_id):
 
     facility_match_entries = [
         {
-            'updated_at': str(m.updated_at),
+            'updated_at': str(m.history_date),
             'action': FacilityHistoryActions.ASSOCIATE
             if m.is_active else FacilityHistoryActions.DISSOCIATE,
             'detail': create_associate_match_entry_detail(m, facility_id)
