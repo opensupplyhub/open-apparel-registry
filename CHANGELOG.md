@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.14.0] - 2019-10-11
+### Added
+- Add facility list items uploaded report [#865](https://github.com/open-apparel-registry/open-apparel-registry/pull/865)
+- Implement Source model [#856](https://github.com/open-apparel-registry/open-apparel-registry/pull/856)
+
 ## [2.13.0] - 2019-10-07
 ### Added
 - Add facility history API endpoint [#830](https://github.com/open-apparel-registry/open-apparel-registry/pull/830)
@@ -27,13 +32,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Include facility claim data in facility history list [#852](https://github.com/open-apparel-registry/open-apparel-registry/pull/852)
 - Enable Waffle switches when running resetdb [#859](https://github.com/open-apparel-registry/open-apparel-registry/pull/859)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Check geocoded_point is not None when serializing other locations [#861](https://github.com/open-apparel-registry/open-apparel-registry/pull/861)
 - Remove duplicate entries from other locations data [#860](https://github.com/open-apparel-registry/open-apparel-registry/pull/860)
+- Fix facility history entry order [#862](https://github.com/open-apparel-registry/open-apparel-registry/pull/862)
 
 ### Security
 
@@ -272,7 +274,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.13.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.14.0...HEAD
+[2.14.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.14.0
 [2.13.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.13.0
 [2.12.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.12.0
 [2.11.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.11.0
