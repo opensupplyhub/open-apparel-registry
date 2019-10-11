@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Add facility list items uploaded report [#865](https://github.com/open-apparel-registry/open-apparel-registry/pull/865)
-- Implement Source model [#856](https://github.com/open-apparel-registry/open-apparel-registry/pull/856)
 
 ### Changed
 
@@ -19,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [2.14.0] - 2019-10-11
+### Added
+- Add facility list items uploaded report [#865](https://github.com/open-apparel-registry/open-apparel-registry/pull/865)
+- Implement Source model [#856](https://github.com/open-apparel-registry/open-apparel-registry/pull/856)
 
 ## [2.13.0] - 2019-10-07
 ### Added
@@ -271,7 +274,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.13.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.14.0...HEAD
+[2.14.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.14.0
 [2.13.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.13.0
 [2.12.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.12.0
 [2.11.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.11.0
