@@ -1,7 +1,7 @@
 from django.core.management.base import (BaseCommand,
                                          CommandError)
 
-from api.models import Contributor, FacilityMatch, FacilityListItem
+from api.models import Contributor, FacilityMatch, FacilityListItem, Source
 from api.oar_id import make_oar_id
 
 import csv
@@ -250,7 +250,38 @@ def make_facility_lists(max_id=15):
     return [make_facility_list(pk) for pk in range(2, max_id+1)]
 
 
-def make_facility_list_item(list_pk, item_pk, row_index, raw_data):
+def make_source(pk, contributor_pk=None, facility_list_pk=None):
+    (created_at, updated_at) = make_created_updated()
+    if contributor_pk is not None:
+        contributor = contributor_pk
+    else:
+        contributor = pk
+
+    if facility_list_pk is not None:
+        facility_list = facility_list_pk
+    else:
+        facility_list = pk
+
+    return {
+        'model': 'api.source',
+        'pk': pk,
+        'fields': {
+            'source_type': Source.LIST,
+            'facility_list': facility_list,
+            'contributor': contributor,
+            'is_active': True,
+            'is_public': True,
+            'created_at': created_at,
+            'updated_at': updated_at,
+        }
+    }
+
+
+def make_sources(max_id=15):
+    return [make_source(pk) for pk in range(2, max_id+1)]
+
+
+def make_facility_list_item(list_pk, source_pk, item_pk, row_index, raw_data):
     (created_at, updated_at) = make_created_updated()
 
     return {
@@ -258,6 +289,7 @@ def make_facility_list_item(list_pk, item_pk, row_index, raw_data):
         'pk': item_pk,
         'fields': {
             'facility_list': list_pk,
+            'source': source_pk,
             'row_index': row_index,
             'raw_data': raw_data,
             'status': 'UPLOADED',
@@ -272,6 +304,7 @@ def make_facility_list_items(max_list_pk=15):
     item_pk = 1
     items = []
     for list_pk in range(2, max_list_pk+1):
+        source_pk = list_pk
         filename = '{0}.csv'.format(list_pk)
         directory = os.path.dirname(os.path.realpath(__file__))
         with open(os.path.join(directory,
@@ -281,6 +314,7 @@ def make_facility_list_items(max_list_pk=15):
             f.readline()  # discard header
             for row_index, line in enumerate(f):
                 items.append(make_facility_list_item(list_pk,
+                                                     source_pk,
                                                      item_pk,
                                                      row_index,
                                                      line.rstrip()))
@@ -402,6 +436,10 @@ class Command(BaseCommand):
             with open('/usr/local/src/api/fixtures/facility_lists.json',
                       'w') as f:
                 json.dump(make_facility_lists(), f, separators=(',', ': '),
+                          indent=4)
+            with open('/usr/local/src/api/fixtures/sources.json',
+                      'w') as f:
+                json.dump(make_sources(), f, separators=(',', ': '),
                           indent=4)
             with open('/usr/local/src/api/fixtures/facility_list_items.json',
                       'w') as f:
