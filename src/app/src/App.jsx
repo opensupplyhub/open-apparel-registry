@@ -30,6 +30,7 @@ import FeatureFlag from './components/FeatureFlag';
 import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
 import AboutClaimedFacilities from './components/AboutClaimedFacilities';
+import SurveyDialogNotification from './components/SurveyDialogNotification';
 
 import './App.css';
 
@@ -213,6 +214,7 @@ class App extends Component {
                             transition={Slide}
                         />
                         <GDPRNotification />
+                        <SurveyDialogNotification />
                     </div>
                 </Router>
             </ErrorBoundary>
