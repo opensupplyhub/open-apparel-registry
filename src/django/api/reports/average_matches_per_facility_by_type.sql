@@ -11,8 +11,9 @@ FROM (
   FROM api_facilitymatch m
   JOIN api_facility f ON m.facility_id = f.id
   JOIN api_facilitylistitem li ON m.facility_list_item_id = li.id
-  JOIN api_facilitylist l ON li.facility_list_id = l.id
-  JOIN api_contributor c ON c.id = l.contributor_id
+  JOIN api_source s ON li.source_id = s.id
+  JOIN api_facilitylist l ON s.facility_list_id = l.id
+  JOIN api_contributor c ON c.id = s.contributor_id
   JOIN api_user u ON u.id = c.admin_id
   WHERE date_part('month', m.created_at) != date_part('month', now())
   AND m.status not in ('REJECTED', 'PENDING')

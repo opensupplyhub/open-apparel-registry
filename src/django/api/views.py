@@ -65,7 +65,8 @@ from api.models import (FacilityList,
                         User,
                         DownloadLog,
                         Version,
-                        FacilityLocation)
+                        FacilityLocation,
+                        Source)
 from api.processing import parse_csv_line, parse_csv, parse_excel
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
@@ -367,8 +368,8 @@ def all_contributors(request):
         (contributor.id, contributor.name)
         for contributor
         in Contributor.objects.filter(
-            facilitylist__is_active=True,
-            facilitylist__is_public=True).distinct().order_by('name')
+            source__is_active=True,
+            source__is_public=True).distinct().order_by('name')
     ]
 
     return Response(response_data)
@@ -999,15 +1000,16 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         'name': m.facility_list_item.name,
                         'address': m.facility_list_item.address,
                         'country_code': m.facility_list_item.country_code,
-                        'list_id': m.facility_list_item.facility_list.id,
-                        'list_name': m.facility_list_item.facility_list.name,
-                        'list_description': m.facility_list_item.facility_list
-                        .description,
-                        'list_contributor_name': m.facility_list_item
-                        .facility_list
-                        .contributor.name,
-                        'list_contributor_id': m.facility_list_item
-                        .facility_list.contributor.id,
+                        'list_id':
+                        m.facility_list_item.source.facility_list.id,
+                        'list_name':
+                        m.facility_list_item.source.facility_list.name,
+                        'list_description':
+                        m.facility_list_item.source.facility_list.description,
+                        'list_contributor_name':
+                        m.facility_list_item.source.contributor.name,
+                        'list_contributor_id':
+                        m.facility_list_item.source.contributor.id,
                         'match_id': m.id,
                     }
                     for m
@@ -1107,12 +1109,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             previous_created_from_id = facility.created_from.id
 
-            previous_list_id = facility.created_from.facility_list.id
+            previous_list_id = facility.created_from.source.facility_list.id
 
             reason = 'Promoted item {} in list {} over item {} in list {}' \
                 .format(
                     match.facility_list_item.id,
-                    match.facility_list_item.facility_list.id,
+                    match.facility_list_item.source.facility_list.id,
                     previous_created_from_id,
                     previous_list_id,
                 )
@@ -1146,15 +1148,15 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     'name': m.facility_list_item.name,
                     'address': m.facility_list_item.address,
                     'country_code': m.facility_list_item.country_code,
-                    'list_id': m.facility_list_item.facility_list.id,
-                    'list_name': m.facility_list_item.facility_list.name,
-                    'list_description': m.facility_list_item.facility_list
-                    .description,
-                    'list_contributor_name': m.facility_list_item
-                    .facility_list
-                    .contributor.name,
-                    'list_contributor_id': m.facility_list_item
-                    .facility_list.contributor.id,
+                    'list_id': m.facility_list_item.source.facility_list.id,
+                    'list_name':
+                    m.facility_list_item.source.facility_list.name,
+                    'list_description':
+                    m.facility_list_item.source.facility_list.description,
+                    'list_contributor_name':
+                    m.facility_list_item.source.contributor.name,
+                    'list_contributor_id':
+                    m.facility_list_item.source.contributor.id,
                     'match_id': m.id,
                 }
                 for m
@@ -1394,7 +1396,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             except ValueError:
                 raise ValidationError('"replaces" must be an integer ID.')
             old_list_qs = FacilityList.objects.filter(
-                contributor=contributor, pk=replaces)
+                source__contributor=contributor, pk=replaces)
             if old_list_qs.count() == 0:
                 raise ValidationError(
                     '{0} is not a valid FacilityList ID.'.format(replaces))
@@ -1415,13 +1417,20 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             replaces=replaces)
         new_list.save()
 
+        source = Source.objects.create(
+            contributor=contributor,
+            source_type=Source.LIST,
+            facility_list=new_list)
+
         if replaces is not None:
-            replaces.is_active = False
-            replaces.save()
+            replaces_source_qs = Source.objects.filter(facility_list=replaces)
+            if replaces_source_qs.exists():
+                replaces_source_qs.update(is_active=False)
 
         items = [FacilityListItem(row_index=idx,
                                   facility_list=new_list,
-                                  raw_data=row)
+                                  raw_data=row,
+                                  source=source)
                  for idx, row in enumerate(rows)]
         FacilityListItem.objects.bulk_create(items)
 
@@ -1467,13 +1476,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
                 if contributor is not None:
                     facility_lists = FacilityList.objects.filter(
-                        contributor=contributor)
+                        source__contributor=contributor)
                 else:
                     facility_lists = FacilityList.objects.filter(
-                        contributor=request.user.contributor)
+                        source__contributor=request.user.contributor)
             else:
                 facility_lists = FacilityList.objects.filter(
-                    contributor=request.user.contributor)
+                    source__contributor=request.user.contributor)
 
             facility_lists = facility_lists.order_by('-created_at')
 
@@ -1504,7 +1513,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 facility_lists = FacilityList.objects.all()
             else:
                 facility_lists = FacilityList.objects.filter(
-                    contributor=request.user.contributor)
+                    source__contributor=request.user.contributor)
 
             facility_list = facility_lists.get(pk=pk)
             response_data = self.serializer_class(facility_list).data
@@ -1584,7 +1593,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                 facility_lists = FacilityList.objects.all()
             else:
                 facility_lists = FacilityList.objects.filter(
-                    contributor=request.user.contributor)
+                    source__contributor=request.user.contributor)
 
             facility_list = facility_lists.get(pk=pk)
         except FacilityList.DoesNotExist:
@@ -1592,7 +1601,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         queryset = FacilityListItem \
             .objects \
-            .filter(facility_list=facility_list)
+            .filter(source=facility_list.source)
         if search is not None and len(search) > 0:
             queryset = queryset.filter(
                 Q(facility__name__icontains=search) |
@@ -1730,11 +1739,11 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             user_contributor = request.user.contributor
             facility_list = FacilityList \
                 .objects \
-                .filter(contributor=user_contributor) \
+                .filter(source__contributor=user_contributor) \
                 .get(pk=pk)
             facility_list_item = FacilityListItem \
                 .objects \
-                .filter(facility_list=facility_list) \
+                .filter(source=facility_list.source) \
                 .get(pk=list_item_id)
             facility_match = FacilityMatch \
                 .objects \
@@ -1773,6 +1782,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             response_data = FacilityListItemSerializer(facility_list_item).data
 
             response_data['list_statuses'] = (facility_list
+                                              .source
                                               .facilitylistitem_set
                                               .values_list('status', flat=True)
                                               .distinct())
@@ -1894,11 +1904,11 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             user_contributor = request.user.contributor
             facility_list = FacilityList \
                 .objects \
-                .filter(contributor=user_contributor) \
+                .filter(source__contributor=user_contributor) \
                 .get(pk=pk)
             facility_list_item = FacilityListItem \
                 .objects \
-                .filter(facility_list=facility_list) \
+                .filter(source=facility_list.source) \
                 .get(pk=list_item_id)
             facility_match = FacilityMatch \
                 .objects \
@@ -1972,6 +1982,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             response_data = FacilityListItemSerializer(facility_list_item).data
 
             response_data['list_statuses'] = (facility_list
+                                              .source
                                               .facilitylistitem_set
                                               .values_list('status', flat=True)
                                               .distinct())
@@ -1991,12 +2002,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         try:
             facility_list = FacilityList \
                 .objects \
-                .filter(contributor=request.user.contributor) \
+                .filter(source__contributor=request.user.contributor) \
                 .get(pk=pk)
 
             facility_list_item = FacilityListItem \
                 .objects \
-                .filter(facility_list=facility_list) \
+                .filter(source=facility_list.source) \
                 .get(pk=request.data.get('list_item_id'))
 
             matches_to_deactivate = FacilityMatch \
@@ -2019,6 +2030,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             response_data = FacilityListItemSerializer(facility_list_item).data
 
             response_data['list_statuses'] = (facility_list
+                                              .source
                                               .facilitylistitem_set
                                               .values_list('status', flat=True)
                                               .distinct())

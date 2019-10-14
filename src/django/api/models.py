@@ -257,9 +257,17 @@ class Source(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def display_name(self):
+        if self.facility_list:
+            return '{} ({})'.format(
+                self.contributor.name,
+                self.facility_list.name)
+        return self.contributor.name
+
     def __str__(self):
         return '{0} ({1})'.format(
-            self.contributor.name, self.id)
+            self.display_name, self.id)
 
 
 class FacilityList(models.Model):
@@ -314,7 +322,7 @@ class FacilityList(models.Model):
 
     def __str__(self):
         return '{0} - {1} ({2})'.format(
-            self.contributor.name, self.name, self.id)
+            self.source.contributor.name, self.name, self.id)
 
 
 class FacilityListItem(models.Model):
@@ -1011,8 +1019,8 @@ class FacilityManager(models.Manager):
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
                 .filter(is_active=True)
-                .filter(facility_list_item__facility_list__contributor__contrib_type__in=contributor_types) # NOQA
-                .filter(facility_list_item__facility_list__is_active=True)
+                .filter(facility_list_item__source__contributor__contrib_type__in=contributor_types) # NOQA
+                .filter(facility_list_item__source__is_active=True)
                 .values('facility__id')
             ]
 
@@ -1028,8 +1036,8 @@ class FacilityManager(models.Manager):
                 .filter(status__in=[FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED])
                 .filter(is_active=True)
-                .filter(facility_list_item__facility_list__contributor__id__in=contributors) # NOQA
-                .filter(facility_list_item__facility_list__is_active=True)
+                .filter(facility_list_item__source__contributor__id__in=contributors) # NOQA
+                .filter(facility_list_item__source__is_active=True)
                 .values('facility__id')
             ]
 
@@ -1110,14 +1118,14 @@ class Facility(models.Model):
         ]
 
         return {
-            match.name
-            for match
+            item.name
+            for item
             in facility_list_item_matches
-            if len(match.name) != 0
-            and match.name is not None
-            and match.name != self.name
-            and match.facility_list.is_active
-            and match.facility_list.is_public
+            if len(item.name) != 0
+            and item.name is not None
+            and item.name != self.name
+            and item.source.is_active
+            and item.source.is_public
         }
 
     def other_addresses(self):
@@ -1140,11 +1148,11 @@ class Facility(models.Model):
             if len(match.address) != 0
             and match.address is not None
             and match.address != self.address
-            and match.facility_list.is_active
-            and match.facility_list.is_public
+            and match.source.is_active
+            and match.source.is_public
         }
 
-    def contributors(self):
+    def sources(self):
         facility_list_item_matches = [
             FacilityListItem.objects.get(pk=pk)
             for (pk,)
@@ -1160,12 +1168,12 @@ class Facility(models.Model):
 
         # Converting from a list back to a set ensures the items are distinct
         return list(set([
-            match.facility_list
+            match.source
             for match
             in facility_list_item_matches
-            if match.facility_list.is_active
-            and match.facility_list.is_public
-            and match.facility_list.contributor is not None
+            if match.source.is_active
+            and match.source.is_public
+            and match.source.contributor is not None
         ]))
 
     def get_created_from_match(self):

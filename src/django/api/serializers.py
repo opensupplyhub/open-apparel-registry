@@ -202,8 +202,11 @@ class UserProfileSerializer(ModelSerializer):
         try:
             contributor = user.contributor
             return FacilityListSummarySerializer(
-                contributor.facilitylist_set.filter(
-                    is_active=True, is_public=True).order_by('-created_at'),
+                FacilityList.objects.filter(
+                    source__contributor=contributor,
+                    source__is_active=True,
+                    source__is_public=True,
+                ).order_by('-created_at'),
                 many=True,
             ).data
         except Contributor.DoesNotExist:
@@ -223,10 +226,13 @@ class FacilityListSummarySerializer(ModelSerializer):
 
 
 class FacilityListSerializer(ModelSerializer):
+    is_active = SerializerMethodField()
+    is_public = SerializerMethodField()
     item_count = SerializerMethodField()
     items_url = SerializerMethodField()
     statuses = SerializerMethodField()
     status_counts = SerializerMethodField()
+    contributor_id = SerializerMethodField()
 
     class Meta:
         model = FacilityList
@@ -234,22 +240,28 @@ class FacilityListSerializer(ModelSerializer):
                   'is_public', 'item_count', 'items_url', 'statuses',
                   'status_counts', 'contributor_id', 'created_at')
 
+    def get_is_active(self, facility_list):
+        return facility_list.source.is_active
+
+    def get_is_public(self, facility_list):
+        return facility_list.source.is_public
+
     def get_item_count(self, facility_list):
-        return facility_list.facilitylistitem_set.count()
+        return facility_list.source.facilitylistitem_set.count()
 
     def get_items_url(self, facility_list):
         return reverse('facility-list-items',
                        kwargs={'pk': facility_list.pk})
 
     def get_statuses(self, facility_list):
-        return (facility_list.facilitylistitem_set
+        return (facility_list.source.facilitylistitem_set
                 .values_list('status', flat=True)
                 .distinct())
 
     def get_status_counts(self, facility_list):
         statuses = FacilityListItem \
             .objects \
-            .filter(facility_list=facility_list) \
+            .filter(source=facility_list.source) \
             .values('status') \
             .annotate(status_count=Count('status')) \
 
@@ -333,6 +345,9 @@ class FacilityListSerializer(ModelSerializer):
             FacilityListItem.ERROR_MATCHING: error_matching,
             FacilityListItem.DELETED: deleted,
         }
+
+    def get_contributor_id(self, facility_list):
+        return facility_list.source.contributor.id
 
 
 class FacilityQueryParamsSerializer(Serializer):
@@ -437,9 +452,9 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             {
                 'lat': l.facility_list_item.geocoded_point.y,
                 'lng': l.facility_list_item.geocoded_point.x,
-                'contributor_id': l.facility_list_item.facility_list
+                'contributor_id': l.facility_list_item.source
                 .contributor_id,
-                'contributor_name': l.facility_list_item.facility_list
+                'contributor_name': l.facility_list_item.source
                 .contributor.name,
                 'notes': None,
             }
@@ -453,8 +468,8 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             if l.facility_list_item != facility.created_from
             if l.facility_list_item.geocoded_point != facility.location
             if l.facility_list_item.geocoded_point is not None
-            if l.facility_list_item.facility_list.is_active
-            if l.facility_list_item.facility_list.is_public
+            if l.facility_list_item.source.is_active
+            if l.facility_list_item.source.is_public
         ]
 
         return facility_locations + facility_matches
@@ -462,14 +477,12 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     def get_contributors(self, facility):
         return [
             {
-                'id': facility_list.contributor.admin.id,
-                'name': '{} ({})'.format(
-                    facility_list.contributor.name,
-                    facility_list.name),
-                'is_verified': facility_list.contributor.is_verified,
+                'id': source.contributor.admin.id,
+                'name': source.display_name,
+                'is_verified': source.contributor.is_verified,
             }
-            for facility_list
-            in facility.contributors()
+            for source
+            in facility.sources()
         ]
 
     def get_country_name(self, facility):

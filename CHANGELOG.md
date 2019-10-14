@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.15.0] - 2019-10-14
+### Added
+- Implement Source model step 2 [#857](https://github.com/open-apparel-registry/open-apparel-registry/pull/857)
+- Add OAR survey dialog [#869](https://github.com/open-apparel-registry/open-apparel-registry/pull/869)
+- Add People's Republic of China as alternate country name [#876](https://github.com/open-apparel-registry/open-apparel-registry/pull/876)
+
 ## [2.14.0] - 2019-10-11
 ### Added
 - Add facility list items uploaded report [#865](https://github.com/open-apparel-registry/open-apparel-registry/pull/865)
@@ -274,7 +280,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.14.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.15.0...HEAD
+[2.15.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.15.0
 [2.14.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.14.0
 [2.13.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.13.0
 [2.12.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.12.0
