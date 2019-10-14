@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Implement Source model step 2 [#857](https://github.com/open-apparel-registry/open-apparel-registry/pull/857)
 - Add OAR survey dialog [#869](https://github.com/open-apparel-registry/open-apparel-registry/pull/869)
+- Add People's Republic of China as alternate country name [#876](https://github.com/open-apparel-registry/open-apparel-registry/pull/876)
 
 ### Changed
 
