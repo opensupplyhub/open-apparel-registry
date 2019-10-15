@@ -118,6 +118,7 @@ admin_site.register(models.FacilityList)
 admin_site.register(models.Source, SourceAdmin)
 admin_site.register(models.FacilityListItem, FacilityListItemAdmin)
 admin_site.register(models.Facility, FacilityHistoryAdmin)
+admin_site.register(models.FacilityLocation)
 admin_site.register(models.FacilityMatch, FacilityMatchAdmin)
 admin_site.register(models.FacilityClaim, FacilityClaimAdmin)
 admin_site.register(models.FacilityClaimReviewNote,
