@@ -13,7 +13,7 @@ from django.contrib.gis.geos import Point
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from waffle.testutils import override_switch
+from waffle.testutils import override_switch, override_flag
 
 from api.constants import (ProcessingAction,
                            LogDownloadQueryParams,
@@ -3953,7 +3953,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             self.facility_two.id
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_deleted_facility_history(self):
         delete_facility_url = '/api/facilities/{}/'.format(self.facility.id)
         delete_response = self.client.delete(delete_facility_url)
@@ -3981,7 +3981,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             4,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_location_change(self):
         location_change_url = '/api/facilities/{}/update-location/' \
             .format(self.facility.id)
@@ -4021,7 +4021,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_merge(self):
         merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
             .format(self.facility_two.id, self.facility.id)
@@ -4050,7 +4050,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_match_promotion(self):
         merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
             .format(self.facility_two.id, self.facility.id)
@@ -4125,7 +4125,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_match_split(self):
         merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
             .format(self.facility_two.id, self.facility.id)
@@ -4175,13 +4175,13 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_handles_request_for_invalid_facility_id(self):
         invalid_history_url = '/api/facilities/hello/history/'
         invalid_history_response = self.client.get(invalid_history_url)
         self.assertEqual(invalid_history_response.status_code, 404)
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_includes_association_for_automatic_match(self):
         automatic_match_response = self.client.get(
             self.facility_two_history_url,
@@ -4208,7 +4208,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             2,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_associate_appears_after_create_in_history_data(self):
         history_response = self.client.get(
             self.history_url,
@@ -4236,7 +4236,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             2,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_includes_association_for_confirmed_match(self):
         self.client.logout()
         self.client.login(email=self.user_email,
@@ -4286,7 +4286,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_includes_dissociation_record_when_match_is_severed(self):
         self.client.logout()
         self.client.login(email=self.user_email,
@@ -4354,7 +4354,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             4,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_approval(self):
         self.client.logout()
@@ -4426,7 +4426,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_revocation(self):
         self.client.logout()
@@ -4512,7 +4512,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             4,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_public_claimed_facility_data_changes(self):
         self.client.logout()
