@@ -4645,3 +4645,53 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
                 non_public_key,
                 data[0]['changes'],
             )
+
+    def test_unauthenticated_receives_401(self):
+        self.client.logout()
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            401,
+        )
+
+    def test_superuser_can_access_endpoint(self):
+        # superuser is already signed in via `setUp`
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200,
+        )
+
+    def test_not_in_group_receives_403(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            403,
+        )
+
+    def test_in_group_receives_200(self):
+        self.client.logout()
+
+        history_group = auth.models.Group.objects.get(
+            name='can_get_facility_history',
+        )
+
+        self.user.groups.set([history_group.id])
+        self.user.save()
+
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200,
+        )
