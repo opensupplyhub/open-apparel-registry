@@ -59,7 +59,7 @@ def submit_jobs(environment, facility_list, skip_parse=False):
 
     item_table = FacilityListItem.objects.model._meta.db_table
     results_column = 'processing_results'
-    list_id_column = 'facility_list_id'
+    source_id_column = 'source_id'
 
     def submit_job(action, is_array=False, depends_on=None):
         if depends_on is None:
@@ -91,13 +91,13 @@ def submit_jobs(environment, facility_list, skip_parse=False):
     def append_processing_result(result_dict):
         query = ("UPDATE {item_table} "
                  "SET {results_column} = {results_column} || '{dict_json}' "
-                 "WHERE {list_id_column} = {list_id}")
+                 "WHERE {source_id_column} = {source_id}")
         query = query.format(
             item_table=item_table,
             results_column=results_column,
             dict_json=json.dumps(result_dict),
-            list_id_column=list_id_column,
-            list_id=facility_list.id
+            source_id_column=source_id_column,
+            source_id=facility_list.source.id
         )
         with connection.cursor() as cursor:
             cursor.execute(query)
