@@ -274,11 +274,6 @@ class FacilityList(models.Model):
     """
     Metadata for an uploaded list of facilities.
     """
-    contributor = models.ForeignKey(
-        'Contributor',
-        null=True,
-        on_delete=models.SET_NULL,
-        help_text='The contributor that uploaded this list.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -299,16 +294,6 @@ class FacilityList(models.Model):
         blank=False,
         editable=False,
         help_text='The header row of the uploaded CSV.')
-    is_active = models.BooleanField(
-        null=False,
-        default=True,
-        help_text=('True if this list is current and has not been replaced '
-                   'by another list'))
-    is_public = models.BooleanField(
-        null=False,
-        default=True,
-        help_text=('True if the public can see factories from this list '
-                   'are associated with the contributor.'))
     replaces = models.OneToOneField(
         'self',
         null=True,
@@ -373,18 +358,13 @@ class FacilityListItem(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['facility_list', 'row_index'],
+            models.Index(fields=['source', 'row_index'],
                          name='api_fli_facility_list_row_idx'),
         ]
 
-    facility_list = models.ForeignKey(
-        'FacilityList',
-        on_delete=models.CASCADE,
-        help_text='The list that this line item is a part of.')
     source = models.ForeignKey(
         'Source',
-        null=True,
-        blank=True,
+        null=False,
         on_delete=models.PROTECT,
         help_text='The source from which this item was created.'
     )

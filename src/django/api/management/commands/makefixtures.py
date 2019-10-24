@@ -221,25 +221,18 @@ def make_facility_list_description(pk, name):
         return None
 
 
-def make_facility_list(pk, contributor_pk=None):
+def make_facility_list(pk):
     (created_at, updated_at) = make_created_updated()
-    if contributor_pk is not None:
-        contributor = contributor_pk
-    else:
-        contributor = pk
     name = make_facility_list_name()
     description = make_facility_list_description(pk, name)
     return {
         'model': 'api.facilitylist',
         'pk': pk,
         'fields': {
-            'contributor': contributor,
             'name': name,
             'description': description,
             'file_name': name + '.csv',
             'header': 'country,name,address,lat,lng',
-            'is_active': True,
-            'is_public': True,
             'created_at': created_at,
             'updated_at': updated_at,
         }
@@ -281,14 +274,13 @@ def make_sources(max_id=15):
     return [make_source(pk) for pk in range(2, max_id+1)]
 
 
-def make_facility_list_item(list_pk, source_pk, item_pk, row_index, raw_data):
+def make_facility_list_item(source_pk, item_pk, row_index, raw_data):
     (created_at, updated_at) = make_created_updated()
 
     return {
         'model': 'api.facilitylistitem',
         'pk': item_pk,
         'fields': {
-            'facility_list': list_pk,
             'source': source_pk,
             'row_index': row_index,
             'raw_data': raw_data,
@@ -313,8 +305,7 @@ def make_facility_list_items(max_list_pk=15):
                                filename), 'r') as f:
             f.readline()  # discard header
             for row_index, line in enumerate(f):
-                items.append(make_facility_list_item(list_pk,
-                                                     source_pk,
+                items.append(make_facility_list_item(source_pk,
                                                      item_pk,
                                                      row_index,
                                                      line.rstrip()))
