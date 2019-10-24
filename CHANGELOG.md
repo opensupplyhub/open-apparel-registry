@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Implement Source model step 3 [#858](https://github.com/open-apparel-registry/open-apparel-registry/pull/858)
 
+### Fixed
+- Use a decimal value for opacity in App.css rather than percent [#891](https://github.com/open-apparel-registry/open-apparel-registry/pull/891)
+
 ## [2.15.0] - 2019-10-14
 ### Added
 - Implement Source model step 2 [#857](https://github.com/open-apparel-registry/open-apparel-registry/pull/857)

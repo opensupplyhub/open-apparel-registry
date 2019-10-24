@@ -126,7 +126,7 @@ li.dropdown-list-item button {
   margin-bottom: 16px;
 }
 .form__label {
-  opacity: 100%;
+  opacity: 1;
   color: #000 !important;
   font-weight: 500;
   font-size: 16px;
