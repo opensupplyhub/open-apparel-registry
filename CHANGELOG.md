@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Use a decimal value for opacity in App.css rather than percent [#891](https://github.com/open-apparel-registry/open-apparel-registry/pull/891)
+- Fix AWS Batch submission to use Source ID [#893](https://github.com/open-apparel-registry/open-apparel-registry/pull/893)
 
 ## [2.15.0] - 2019-10-14
 ### Added
