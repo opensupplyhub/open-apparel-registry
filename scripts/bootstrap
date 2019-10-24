@@ -6,15 +6,12 @@ if [[ -n "${OAR_DEBUG}" ]]; then
     set -x
 fi
 
-# fail without OAR_SETTINGS_BUCKET
-set -u
-
 DIR="$(dirname "${0}")/../"
 
 function usage() {
     echo -n \
         "Usage: $(basename "$0")
-Pull .env files from S3.
+Update environment variables file.
 "
 }
 
@@ -24,11 +21,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     else
         pushd "${DIR}"
 
-        echo "Pulling .env.backend from s3://${OAR_SETTINGS_BUCKET}"
-        aws s3 cp "s3://${OAR_SETTINGS_BUCKET}/.env.backend" ".env.backend"
-
-        echo "Pulling .env.frontend from s3://${OAR_SETTINGS_BUCKET}"
-        aws s3 cp "s3://${OAR_SETTINGS_BUCKET}/.env.frontend" ".env.frontend"
+        if aws s3 cp "s3://${OAR_SETTINGS_BUCKET}/.env" ".env"; then
+            echo "Updated environment variables file from ${OAR_SETTINGS_BUCKET}"
+        elif [[ ! -f ".env" ]]; then
+            cp .env.sample .env
+            echo "Updated environment variables file from .env.sample"
+        fi
 
         popd
     fi

@@ -1,4 +1,4 @@
-version: '2.3'
+version: '2.4'
 services:
   database:
     image: quay.io/azavea/postgis:2.4-postgres10.9-slim
@@ -14,7 +14,7 @@ services:
 
   django:
     image: openapparelregistry
-    env_file: .env.backend
+    env_file: .env
     environment:
         - POSTGRES_HOST=database
         - POSTGRES_PORT=5432
@@ -54,10 +54,8 @@ services:
       - /var/cache/open-apparel-registry-node-modules:/usr/local/src/node_modules
       - ./src/django/static:/usr/local/src/build
       - $HOME/.aws:/root/.aws:ro
-    env_file: .env.frontend
     environment:
       - REACT_APP_GIT_COMMIT=${REACT_APP_GIT_COMMIT:-latest}
-      - REACT_APP_API_URL=http://localhost:8081
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=2000
       - PORT=6543
