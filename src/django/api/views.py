@@ -40,7 +40,7 @@ from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
 import coreapi
-from waffle import switch_is_active
+from waffle import switch_is_active, flag_is_active
 from waffle.decorators import waffle_switch
 
 
@@ -506,9 +506,6 @@ class FacilitiesAutoSchema(AutoSchema):
             return None
 
         if 'update-location' in path:
-            return None
-
-        if 'history' in path and not switch_is_active('facility_history'):
             return None
 
         return super(FacilitiesAutoSchema, self).get_link(
@@ -1213,7 +1210,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         facility_data = FacilityDetailsSerializer(facility).data
         return Response(facility_data)
 
-    @waffle_switch('facility_history')
     @action(detail=True, methods=['GET'],
             permission_classes=(IsRegisteredAndConfirmed,),
             url_path='history')
@@ -1258,6 +1254,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 }
             ]
         """
+        if not flag_is_active(request._request, 'can_get_facility_history'):
+            raise PermissionDenied()
+
         historical_facility_queryset = Facility.history.filter(id=pk)
 
         if historical_facility_queryset.count() == 0:
