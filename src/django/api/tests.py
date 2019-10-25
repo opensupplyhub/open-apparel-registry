@@ -17,7 +17,8 @@ from waffle.testutils import override_switch, override_flag
 
 from api.constants import (ProcessingAction,
                            LogDownloadQueryParams,
-                           UpdateLocationParams)
+                           UpdateLocationParams,
+                           FeatureGroups)
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
@@ -3954,7 +3955,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             self.facility_two.id
         )
 
-    @override_flag('can_get_facility_history', active=True)
+    @override_flag(FeatureGroups.CAN_GET_FACILITY_HISTORY, active=True)
     def test_serializes_deleted_facility_history(self):
         delete_facility_url = '/api/facilities/{}/'.format(self.facility.id)
         delete_response = self.client.delete(delete_facility_url)
@@ -4711,7 +4712,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
     def join_group_and_login(self):
         self.client.logout()
         group = auth.models.Group.objects.get(
-            name='can_submit_facility',
+            name=FeatureGroups.CAN_SUBMIT_FACILITY,
         )
         self.user.groups.set([group.id])
         self.user.save()

@@ -51,9 +51,11 @@ from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
+                           FacilityCreateQueryParams,
                            ProcessingAction,
                            LogDownloadQueryParams,
-                           UpdateLocationParams)
+                           UpdateLocationParams,
+                           FeatureGroups)
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -632,7 +634,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         # explicitly invoke our custom permission class.
         if not IsRegisteredAndConfirmed().has_permission(request, self):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if not flag_is_active(request._request, 'can_submit_facility'):
+        if not flag_is_active(request._request,
+                              FeatureGroups.CAN_SUBMIT_FACILITY):
             raise PermissionDenied()
 
         body_serializer = FacilityCreateBodySerializer(data=request.data)
@@ -1275,7 +1278,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 }
             ]
         """
-        if not flag_is_active(request._request, 'can_get_facility_history'):
+        if not flag_is_active(request._request,
+                              FeatureGroups.CAN_GET_FACILITY_HISTORY):
             raise PermissionDenied()
 
         historical_facility_queryset = Facility.history.filter(id=pk)
