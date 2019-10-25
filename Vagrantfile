@@ -24,9 +24,6 @@ Vagrant.configure("2") do |config|
   # Gunicorn for Django app
   config.vm.network :forwarded_port, guest: 8081, host: 8081
 
-  # Restify development server
-  config.vm.network :forwarded_port, guest: 8000, host: 8000
-
   config.vm.provision "ansible_local" do |ansible|
     ansible.compatibility_mode = "2.0"
     ansible.install = true

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Deprecated
 
 ### Removed
+- Remove legacy API [#888](https://github.com/open-apparel-registry/open-apparel-registry/pull/888)
 
 ### Fixed
 
