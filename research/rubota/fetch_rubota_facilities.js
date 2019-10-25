@@ -1,13 +1,13 @@
 /*
 
- This is based on /restify/scripts/fetch_from_rubota.js with the following
- modifications:
+This is based on the legacy (now removed from the repo)
+src/restify/scripts/fetch_from_rubota.js with the following modifications:
 
- - Switches to https for API requests to avoid 405 errors.
- - Switches to `require` syntax for loading libraries.
- - Only writes out the country, name, and address to the CSV.
- - Made formatting changes suggested by eslint.
- - Renamed factory to facility.
+- Switches to https for API requests to avoid 405 errors.
+- Switches to `require` syntax for loading libraries.
+- Only writes out the country, name, and address to the CSV.
+- Made formatting changes suggested by eslint.
+- Renamed factory to facility.
 
 */
 
@@ -147,7 +147,7 @@ Promise.all(countries.map(async country => {
             }
         }
     }).then(async res => {
-        if(res.data.message_data) {
+        if (res.data.message_data) {
             console.log('Failed to fetch.');
             console.log(res.data.message_data.error);
             process.exit(0);
