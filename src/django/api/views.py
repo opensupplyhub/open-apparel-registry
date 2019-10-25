@@ -75,6 +75,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
+                             FacilityCreateBodySerializer,
                              UserSerializer,
                              UserProfileSerializer,
                              FacilityClaimSerializer,
@@ -632,6 +633,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         if not flag_is_active(request._request, 'can_submit_facility'):
             raise PermissionDenied()
+
+        body_serializer = FacilityCreateBodySerializer(data=request.data)
+        body_serializer.is_valid(raise_exception=True)
+
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     @transaction.atomic

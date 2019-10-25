@@ -31,7 +31,8 @@ from api.geocoding import (create_geocoding_params,
                            geocode_address)
 from api.test_data import parsed_city_hall_data
 from api.permissions import referring_host_is_allowed, referring_host
-from api.serializers import ApprovedFacilityClaimSerializer
+from api.serializers import (ApprovedFacilityClaimSerializer,
+                             FacilityCreateBodySerializer)
 
 
 class FacilityListCreateTest(APITestCase):
@@ -4701,6 +4702,21 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
     def setUp(self):
         super(FacilitySubmitTest, self).setUp()
         self.url = reverse('facility-list')
+        self.valid_facility = {
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        }
+
+    def join_group_and_login(self):
+        self.client.logout()
+        group = auth.models.Group.objects.get(
+            name='can_submit_facility',
+        )
+        self.user.groups.set([group.id])
+        self.user.save()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
 
     def test_unauthenticated_receives_401(self):
         self.client.logout()
@@ -4716,20 +4732,82 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
 
         self.assertEqual(response.status_code, 403)
 
-    def test_in_group_receives_200(self):
-        self.client.logout()
-
-        group = auth.models.Group.objects.get(
-            name='can_submit_facility',
-        )
-
-        self.user.groups.set([group.id])
-        self.user.save()
-
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
-
+    def test_empty_body_is_invalid(self):
+        self.join_group_and_login()
         response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 400)
+
+    def test_missing_fields_are_invalid(self):
+        self.join_group_and_login()
+
+        response = self.client.post(self.url, {
+            'country': 'US',
+            'name': 'Something',
+        })
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(self.url, {
+            'country': 'US',
+            'address': 'Some street',
+        })
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(self.url, {
+            'name': 'Something',
+            'address': 'Some street',
+        })
+        self.assertEqual(response.status_code, 400)
+
+    def test_valid_request(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, self.valid_facility)
 
         # TODO: Change to 200 when implemented
         self.assertEqual(response.status_code, 501)
+
+
+class FacilityCreateBodySerializerTest(TestCase):
+    def test_valid_data(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertTrue(serializer.is_valid())
+
+    def test_missing_fields(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('country', serializer.errors)
+        self.assertNotIn('name', serializer.errors)
+        self.assertNotIn('address', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'United States',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('name', serializer.errors)
+        self.assertNotIn('country', serializer.errors)
+        self.assertNotIn('address', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'United States',
+            'name': 'Pants Hut',
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('address', serializer.errors)
+        self.assertNotIn('country', serializer.errors)
+        self.assertNotIn('name', serializer.errors)
+
+    def test_invalid_country(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'Notrealia',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('country', serializer.errors)
