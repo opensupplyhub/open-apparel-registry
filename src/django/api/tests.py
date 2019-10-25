@@ -4695,3 +4695,41 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             history_response.status_code,
             200,
         )
+
+
+class FacilitySubmitTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(FacilitySubmitTest, self).setUp()
+        self.url = reverse('facility-list')
+
+    def test_unauthenticated_receives_401(self):
+        self.client.logout()
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 401)
+
+    def test_not_in_group_receives_403(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        response = self.client.post(self.url)
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_in_group_receives_200(self):
+        self.client.logout()
+
+        group = auth.models.Group.objects.get(
+            name='can_submit_facility',
+        )
+
+        self.user.groups.set([group.id])
+        self.user.save()
+
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        response = self.client.post(self.url)
+
+        # TODO: Change to 200 when implemented
+        self.assertEqual(response.status_code, 501)

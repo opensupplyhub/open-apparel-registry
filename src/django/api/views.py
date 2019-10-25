@@ -516,6 +516,7 @@ class FacilitiesAutoSchema(AutoSchema):
 class FacilitiesViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         mixins.DestroyModelMixin,
+                        mixins.CreateModelMixin,
                         viewsets.GenericViewSet):
     """
     Get facilities in GeoJSON format.
@@ -622,6 +623,16 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             return Response(response_data)
         except Facility.DoesNotExist:
             raise NotFound()
+
+    @transaction.atomic
+    def create(self, request):
+        # Adding the @permission_classes decorator was not working so we
+        # explicitly invoke our custom permission class.
+        if not IsRegisteredAndConfirmed().has_permission(request, self):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if not flag_is_active(request._request, 'can_submit_facility'):
+            raise PermissionDenied()
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     @transaction.atomic
     def destroy(self, request, pk=None):
