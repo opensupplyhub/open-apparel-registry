@@ -12,6 +12,7 @@ from rest_framework.serializers import (CharField,
                                         EmailField,
                                         IntegerField,
                                         ListField,
+                                        BooleanField,
                                         ModelSerializer,
                                         SerializerMethodField,
                                         ValidationError,
@@ -549,6 +550,11 @@ class FacilityCreateBodySerializer(Serializer):
             return get_country_code(value)
         except ValueError as ve:
             raise ValidationError(ve)
+
+
+class FacilityCreateQueryParamsSerializer(Serializer):
+    create = BooleanField(default=True, required=False)
+    public = BooleanField(default=True, required=False)
 
 
 class FacilityClaimSerializer(ModelSerializer):

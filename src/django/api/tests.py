@@ -4765,6 +4765,14 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         # TODO: Change to 200 when implemented
         self.assertEqual(response.status_code, 501)
 
+    def test_valid_request_with_params(self):
+        self.join_group_and_login()
+        url_with_query = '{}?create=false&public=false'.format(self.url)
+        response = self.client.post(url_with_query, self.valid_facility)
+
+        # TODO: Change to 200 when implemented
+        self.assertEqual(response.status_code, 501)
+
 
 class FacilityCreateBodySerializerTest(TestCase):
     def test_valid_data(self):

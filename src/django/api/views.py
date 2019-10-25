@@ -76,6 +76,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              FacilityCreateBodySerializer,
+                             FacilityCreateQueryParamsSerializer,
                              UserSerializer,
                              UserProfileSerializer,
                              FacilityClaimSerializer,
@@ -636,6 +637,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         body_serializer = FacilityCreateBodySerializer(data=request.data)
         body_serializer.is_valid(raise_exception=True)
+
+        params_serializer = FacilityCreateQueryParamsSerializer(
+            data=request.query_params)
+        params_serializer.is_valid(raise_exception=True)
 
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
