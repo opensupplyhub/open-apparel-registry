@@ -644,6 +644,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         params_serializer = FacilityCreateQueryParamsSerializer(
             data=request.query_params)
         params_serializer.is_valid(raise_exception=True)
+        public_submission = params_serializer.validated_data[
+            FacilityCreateQueryParams.PUBLIC]
+        private_allowed = flag_is_active(
+            request._request, FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY)
+        if not public_submission and not private_allowed:
+            raise PermissionDenied('Cannot submit a private facility')
 
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 

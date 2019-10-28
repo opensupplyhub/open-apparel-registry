@@ -4768,9 +4768,25 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
 
     def test_valid_request_with_params(self):
         self.join_group_and_login()
-        url_with_query = '{}?create=false&public=false'.format(self.url)
+        url_with_query = '{}?create=false&public=true'.format(self.url)
         response = self.client.post(url_with_query, self.valid_facility)
 
+        # TODO: Change to 200 when implemented
+        self.assertEqual(response.status_code, 501)
+
+    def test_private_permission(self):
+        self.join_group_and_login()
+        url_with_query = '{}?public=false'.format(self.url)
+        response = self.client.post(url_with_query, self.valid_facility)
+        self.assertEqual(response.status_code, 403)
+
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY,
+        )
+        self.user.groups.add(group.id)
+        self.user.save()
+
+        response = self.client.post(url_with_query, self.valid_facility)
         # TODO: Change to 200 when implemented
         self.assertEqual(response.status_code, 501)
 
