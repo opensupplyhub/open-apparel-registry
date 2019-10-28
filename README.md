@@ -6,7 +6,6 @@ The Open Apparel Registry (OAR) is a tool to identify every apparel facility wor
 - [Setup](#setup)
   - [Google Maps Platform](#google-maps-platform)
 - [Development](#development)
-  - [Development Data 📈](#development-data-)
   - [Hot Reloading 🔥](#hot-reloading-)
   - [Ports](#ports)
 - [Scripts 🧰](#scripts-)
@@ -37,7 +36,7 @@ vagrant@vagrant:/vagrant$
 
 The OAR requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API. 
 
-Without an API key, facility detail maps will not load on the client and geocoding will not function on the server. The basemap will also be low-resolution and watermarked with "for development purposes only."
+Without an API key, facility detail maps will not load on the client and geocoding will not function on the server. The basemap will also be low-resolution and watermarked with "for development purposes only." Since geocoding is 
 
 See [Getting Started with Google Maps Platform](https://developers.google.com/maps/gmp-get-started#procedures) and [Get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key#get-the-api-key) for an overview on how to get setup. 
 
@@ -55,22 +54,20 @@ See [Getting Started with Google Maps Platform](https://developers.google.com/ma
 
 ## Development
 
-To start the application, run:
+To destroy the existing development database and load fresh fixture data, including users, facility lists, facility matches, and facilities, run:
 
 ```bash
 # Access the VM console
 $ vagrant ssh
 
-# Start the application
-vagrant@vagrant:/vagrant$ ./scripts/server
+# Load fixtures
+vagrant@vagrant:/vagrant$ ./scripts/resetdb
 ```
 
-### Development Data 📈
-
-To destroy the existing development database and load fresh fixture data including users, facility lists, facility matches, and facilities, run:
+To start the application, run:
 
 ```bash
-vagrant@vagrant:/vagrant$ ./scripts/resetdb
+vagrant@vagrant:/vagrant$ ./scripts/server
 ```
 
 ### Hot Reloading 🔥
