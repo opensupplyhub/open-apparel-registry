@@ -270,8 +270,9 @@ def save_match_details(match_results):
         })
         item.save()
 
-        for m in matches:
-            m.save()
+        if item.source.create:
+            for m in matches:
+                m.save()
 
     unmatched = (FacilityListItem.objects
                  .filter(id__in=processed_list_item_ids)
@@ -288,19 +289,20 @@ def save_match_details(match_results):
                 'finished_at': finished
             })
         else:
-            facility = Facility(name=item.name,
-                                address=item.address,
-                                country_code=item.country_code,
-                                location=item.geocoded_point,
-                                created_from=item)
-            facility.save()
+            if item.source.create:
+                facility = Facility(name=item.name,
+                                    address=item.address,
+                                    country_code=item.country_code,
+                                    location=item.geocoded_point,
+                                    created_from=item)
+                facility.save()
 
-            match = make_pending_match(item.id, facility.id, 1.0)
-            match.results['match_type'] = 'no_gazetteer_match'
-            match.status = FacilityMatch.AUTOMATIC
-            match.save()
+                match = make_pending_match(item.id, facility.id, 1.0)
+                match.results['match_type'] = 'no_gazetteer_match'
+                match.status = FacilityMatch.AUTOMATIC
+                match.save()
 
-            item.facility = facility
+                item.facility = facility
             item.status = FacilityListItem.MATCHED
             item.processing_results.append({
                 'action': ProcessingAction.MATCH,

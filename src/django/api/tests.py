@@ -4762,17 +4762,13 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
     def test_valid_request(self):
         self.join_group_and_login()
         response = self.client.post(self.url, self.valid_facility)
-
-        # TODO: Change to 200 when implemented
-        self.assertEqual(response.status_code, 501)
+        self.assertEqual(response.status_code, 201)
 
     def test_valid_request_with_params(self):
         self.join_group_and_login()
         url_with_query = '{}?create=false&public=true'.format(self.url)
         response = self.client.post(url_with_query, self.valid_facility)
-
-        # TODO: Change to 200 when implemented
-        self.assertEqual(response.status_code, 501)
+        self.assertEqual(response.status_code, 200)
 
     def test_private_permission(self):
         self.join_group_and_login()
@@ -4787,8 +4783,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         self.user.save()
 
         response = self.client.post(url_with_query, self.valid_facility)
-        # TODO: Change to 200 when implemented
-        self.assertEqual(response.status_code, 501)
+        self.assertEqual(response.status_code, 201)
 
 
 class FacilityCreateBodySerializerTest(TestCase):
