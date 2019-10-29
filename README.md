@@ -4,71 +4,77 @@ The Open Apparel Registry (OAR) is a tool to identify every apparel facility wor
 
 - [Requirements](#requirements)
 - [Setup](#setup)
+  - [Google Maps Platform](#google-maps-platform)
 - [Development](#development)
   - [Hot Reloading 🔥](#hot-reloading-)
-  - [Development Data](#development-data)
   - [Ports](#ports)
-- [Scripts](#scripts)
+- [Scripts 🧰](#scripts-)
 
 ## Requirements
 
-- Vagrant 2.1+
-- VirtualBox 5.0+
-- AWS CLI 1.1+
-- IAM credentials (for artifacts, secrets, etc)
+- [Vagrant](https://www.vagrantup.com/docs/installation/) 2.1+
+- [VirtualBox](https://www.virtualbox.org/wiki/Downloads) 5.0+
 
 ## Setup
 
-First, configure a local AWS profile with access to an S3 bucket with files containing project specific environment variables:
+Run `setup` to bring up the development environment:
 
 ```bash
-$ aws configure --profile open-apparel-registry
-AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
-AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-Default region name [None]: eu-west-1
-Default output format [None]:
+./scripts/setup
 ```
 
-Next, use `setup` to bring up the development environment:
+`setup` will provision a virtual machine (VM) that contains the tools needed to get started.
 
-```bash
-$ ./scripts/setup
-```
-
-`setup` will provision a Vagrant VM, using `vboxsf` to mount `./` (relative to `Vagrantfile`) to `/vagrant`, as well as `~/.aws` to `/home/vagrant/.aws`, and execute `update`.
-
-After running `setup`, you can access the VM by running:
+After executing `setup`, you can access the VM with:
 
 ```bash
 $ vagrant ssh
 vagrant@vagrant:/vagrant$
 ```
 
+### Google Maps Platform
+
+The OAR requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API. 
+
+Without an API key, facility detail maps will not load on the client and geocoding will not function on the server. The basemap will also be low-resolution and watermarked with "for development purposes only."
+
+See [Getting Started with Google Maps Platform](https://developers.google.com/maps/gmp-get-started#procedures) and [Get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key#get-the-api-key) for an overview on how to get setup. 
+
+`setup` will stub out an environment variables file (`.env`) in the root of the project. To wire up your API key, simply update `.env`:
+
+```diff
+-GOOGLE_SERVER_SIDE_API_KEY=
+-REACT_APP_GOOGLE_CLIENT_SIDE_API_KEY=
++GOOGLE_SERVER_SIDE_API_KEY=YOUR_API_KEY
++REACT_APP_GOOGLE_CLIENT_SIDE_API_KEY=YOUR_API_KEY
+ REACT_APP_GOOGLE_ANALYTICS_KEY=
+ ```
+
+ _Note: Google Maps Platfom requires creation of a billing account, but [they offer](https://cloud.google.com/maps-platform/pricing/) $200 of free monthly usage, which is enough to support development._
+
 ## Development
 
-To start the application, run:
+To destroy the existing development database and load fresh fixture data, including users, facility lists, facility matches, and facilities, run:
 
 ```bash
 # Access the VM console
 $ vagrant ssh
 
-# Start the application
+# Load fixtures
+vagrant@vagrant:/vagrant$ ./scripts/resetdb
+```
+
+To start the application, run:
+
+```bash
 vagrant@vagrant:/vagrant$ ./scripts/server
 ```
 
 ### Hot Reloading 🔥
 
-Because the frontend uses [Create React App](https://github.com/facebook/create-react-app/), which integrates with webpack, the page will automatically reload if you make changes to the code.
+The frontend uses [Create React App](https://github.com/facebook/create-react-app/). When running `server`, the page will automatically [reload](https://github.com/facebook/create-react-app/#whats-included) if you make changes to the code.
 
-In development, the [Django](https://www.djangoproject.com) app sits behind a [Gunicorn](https://www.gunicorn.org) worker that is passed the [`--reload` flag](https://docs.gunicorn.org/en/stable/settings.html#reload).
-
-### Development Data
-
-To destroy any existing development database and load fresh fixture data including users, facility lists, facility matches, and facilities run:
-
-```bash
-vagrant@vagrant:/vagrant$ ./scripts/resetdb
-```
+The [Django](https://www.djangoproject.com) app runs inside a [Gunicorn](https://www.gunicorn.org) worker. The worker will [restart](https://docs.gunicorn.org/en/stable/settings.html#reload) if you make changes to the code.
 
 ### Ports
 
@@ -77,14 +83,14 @@ vagrant@vagrant:/vagrant$ ./scripts/resetdb
 | React development server   | [`6543`](http://localhost:6543) |
 | Gunicorn for Django app    | [`8081`](http://localhost:8081) |
 
-## Scripts
+## Scripts 🧰
 
 | Name                                                   | Description                                                                                                                                                                                  |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bootstrap`                                            | Pull `.env` files from S3                                                                                                                                                                    |
+| `bootstrap`                                            | Update environment variables file                                                                                                                                                                    |
 | `infra`                                                | Plan and apply remote infrastructure changes                                                                                                                                                 |
 | `resetdb`                                              | Clear development database & load fixture data including users, facility lists, matches, and facilities                                                                                      |
 | `server`                                               | Run `docker-compose.yml` services                                                                                                                                                            |
 | `setup`                                                | Provision Vagrant VM and run `update`                                                                                                                                                        |
 | `test`                                                 | Run tests                                                                                                                                                                                    |
-| `update`                                               | Builds and pulls container images using docker-compose                                                                                                                                       |
+| `update`                                               | Build container images and execute database migrations                                                                                                                                       |

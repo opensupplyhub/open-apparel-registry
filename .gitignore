@@ -31,8 +31,7 @@ yarn-error.log
 .DS_Store
 
 # OAR
-.env.backend
-.env.frontend
+.env
 factories.csv
 *_factories.csv
 src/django/static
