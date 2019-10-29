@@ -1,23 +1,17 @@
 import csv
-import os
 import traceback
-import re
 import sys
 
-import dedupe
 import xlrd
 
-from collections import defaultdict
 from datetime import datetime
-from unidecode import unidecode
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 
 from api.constants import CsvHeaderField, ProcessingAction
-from api.models import Facility, FacilityMatch, FacilityList, FacilityListItem
+from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
 
@@ -215,157 +209,6 @@ def geocode_facility_list_item(item):
             'trace': traceback.format_exc(),
             'finished_at': str(datetime.utcnow()),
         })
-
-
-def clean(column):
-    """
-    Remove punctuation and excess whitespace from a value before using it to
-    find matches. This should be the same function used when developing the
-    training data read from training.json as part of train_gazetteer.
-    """
-    column = unidecode(column)
-    column = re.sub('\n', ' ', column)
-    column = re.sub('-', '', column)
-    column = re.sub('/', ' ', column)
-    column = re.sub("'", '', column)
-    column = re.sub(",", '', column)
-    column = re.sub(":", ' ', column)
-    column = re.sub(' +', ' ', column)
-    column = column.strip().strip('"').strip("'").lower().strip()
-    if not column:
-        column = None
-    return column
-
-
-def train_gazetteer(messy, canonical):
-    """
-    Train and return a dedupe.Gazetteer using the specified messy and canonical
-    dictionaries. The messy and canonical objects should have the same
-    structure:
-      - The key is a unique ID
-      - The value is another dictionary of field:value pairs. This dictionary
-        must contain at least 'country', 'name', and 'address' keys.
-
-    Reads a training.json file containing positive and negative matches.
-    """
-    fields = [
-        {'field': 'country', 'type': 'Exact'},
-        {'field': 'name', 'type': 'String'},
-        {'field': 'address', 'type': 'String'},
-    ]
-
-    gazetteer = dedupe.Gazetteer(fields)
-    gazetteer.sample(messy, canonical, 15000)
-    training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
-                                 'training.json')
-    with open(training_file) as tf:
-        gazetteer.readTraining(tf)
-    gazetteer.train()
-    gazetteer.index(canonical)
-    gazetteer.cleanupTraining()
-    # The gazetteer example in the dedupeio/dedupe-examples repository called
-    # index both after training and after calling cleanupTraining.
-    gazetteer.index(canonical)
-    return gazetteer
-
-
-def match_facility_list_items(facility_list, automatic_threshold=0.8,
-                              gazetteer_threshold=0.5, recall_weight=1.0):
-    """
-    Attempt to match all the items in the specified FacilityList that are in
-    the GEOCODED status with existing facilities.
-
-    This function reads from but does not update the database.
-
-    Arguments:
-    facility_list -- A FacilityList instance
-    automatic_threshold -- A number from 0.0 to 1.0. A match with a confidence
-                           score greater than this value will be assigned
-                           automatically.
-    recall_weight -- Sets the tradeoff between precision and recall. A value of
-                     1.0 give an equal weight to precision and recall.
-                     https://en.wikipedia.org/wiki/Precision_and_recall
-                     https://docs.dedupe.io/en/latest/Choosing-a-good-threshold.html
-
-    Returns:
-    An dict containing the results of the matching process and contains the
-    following keys:
-
-    processed_list_item_ids -- A list of all the FacilityListItem IDs that were
-                               considered for matching.
-    item_matches -- A dictionary where the keys are FacilityListItem IDs and
-                    the values are lists of tuples where the first element is
-                    the ID of a Facility that is a potential match and the
-                    second element is the confidence score of the match.
-    results -- A dictionary containing additional information about the
-               matching process that pertains to all the list items and
-               contains the following keys:
-        gazetteer_threshold -- The threshold computed from the trained model
-        automatic_threshold -- The value of the automatic_threshold parameter
-                               returned for convenience
-        recall_weight -- The value of the recall_weight parameter returned for
-                         convenience.
-        code_version -- The value of the GIT_COMMIT setting.
-    started -- The date and time at which the training and matching was
-               started.
-    finished -- The date and time at which the training and matching was
-                finished.
-    """
-    started = str(datetime.utcnow())
-    if type(facility_list) != FacilityList:
-        raise ValueError('Argument must be a FacilityList')
-
-    facility_set = Facility.objects.all().extra(
-        select={'country': 'country_code'}).values(
-            'id', 'country', 'name', 'address')
-    canonical = {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
-                 for i in facility_set}
-
-    facility_list_item_set = facility_list.source.facilitylistitem_set.filter(
-        Q(status=FacilityListItem.GEOCODED)
-        | Q(status=FacilityListItem.GEOCODED_NO_RESULTS)).extra(
-            select={'country': 'country_code'}).values(
-                'id', 'country', 'name', 'address')
-    messy = {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
-             for i in facility_list_item_set}
-
-    if len(canonical.keys()) > 0 and len(messy.keys()) > 0:
-        no_geocoded_items = False
-        gazetteer = train_gazetteer(messy, canonical)
-        try:
-            gazetteer.threshold(messy, recall_weight=recall_weight)
-            results = gazetteer.match(messy, threshold=gazetteer_threshold,
-                                      n_matches=None, generator=True)
-            no_gazetteer_matches = False
-        except dedupe.core.BlockingError:
-            results = []
-            no_gazetteer_matches = True
-    else:
-        results = []
-        no_gazetteer_matches = len(canonical.keys()) == 0
-        no_geocoded_items = len(messy.keys()) == 0
-
-    finished = str(datetime.utcnow())
-
-    item_matches = defaultdict(list)
-    for matches in results:
-        for (messy_id, canon_id), score in matches:
-            item_matches[messy_id].append((canon_id, score))
-
-    return {
-        'processed_list_item_ids': list(messy.keys()),
-        'item_matches': item_matches,
-        'results': {
-            'no_gazetteer_matches': no_gazetteer_matches,
-            'no_geocoded_items': no_geocoded_items,
-            'gazetteer_threshold': gazetteer_threshold,
-            'automatic_threshold': automatic_threshold,
-            'recall_weight': recall_weight,
-            'code_version': settings.GIT_COMMIT
-        },
-        'started': started,
-        'finished': finished
-    }
 
 
 def save_match_details(match_results):
