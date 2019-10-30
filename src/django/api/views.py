@@ -497,6 +497,29 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                 ),
             ]
 
+        if view.action == 'create':
+            return [
+                coreapi.Field(
+                    name='create',
+                    location='query',
+                    type='boolean',
+                    required=False,
+                    description=(
+                        'If false, match results will be returned, but a new '
+                        'facility or facility match will not be saved'),
+                ),
+                coreapi.Field(
+                    name='public',
+                    location='query',
+                    type='boolean',
+                    required=False,
+                    description=(
+                        'If false and a new facility or facility match is '
+                        'created, the contributor will not be publicly '
+                        'associated with the facility'),
+                ),
+            ]
+
         return []
 
 
@@ -521,6 +544,24 @@ class FacilitiesAutoSchema(AutoSchema):
 
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
+
+    def _allows_filters(self, path, method):
+        return True
+
+    def get_serializer_fields(self, path, method):
+        if method == 'POST':
+            return [
+                coreapi.Field(
+                    name='data',
+                    location='body',
+                    description=(
+                        'The country, name, and address of the facility. See '
+                        'the sample request body above.'),
+                    required=True,
+                )
+            ]
+
+        return []
 
 
 @schema(FacilitiesAutoSchema())
@@ -637,6 +678,154 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @transaction.atomic
     def create(self, request):
+        """
+        Matches submitted facility details to the full list of facilities.
+        By default, creates a new facility if there is no match, or associates
+        the authenticated contributor with the facility if there is a confident
+        match.
+
+        **NOTE** The form below lists the return status code as 201. When
+        POSTing data with `create=false` the return status will be 200, not
+        201.
+
+        ## Sample Request Body
+
+            {
+                "country": "China",
+                "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
+                "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
+            }
+
+        ## Sample Responses
+
+        ### Automatic Match
+
+            {
+              "matches": [
+                {
+                  "id": "CN2019303BQ3FZP",
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                      120.596047,
+                      32.172013
+                    ]
+                  },
+                  "properties": {
+                    "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
+                    "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
+                    "country_code": "CN",
+                    "oar_id": "CN2019303BQ3FZP",
+                    "other_names": [],
+                    "other_addresses": [],
+                    "contributors": [
+                      {
+                        "id": 4,
+                        "name": "Researcher A (Summer 2019 Affiliate List)",
+                        "is_verified": false
+                      },
+                      {
+                        "id": 12,
+                        "name": "Brand B",
+                        "is_verified": false
+                      }
+
+                    ],
+                    "country_name": "China",
+                    "claim_info": null,
+                    "other_locations": []
+                  },
+                  "confidence": 0.8153
+                }
+              ],
+              "item_id": 964,
+              "geocoded_geometry": {
+                "type": "Point",
+                "coordinates": [
+                  120.596047,
+                  32.172013
+                ]
+              },
+              "geocoded_address": "Guoyuanzhen, Rugao, Nantong, Jiangsu, China",
+              "status": "MATCHED",
+              "oar_id": "CN2019303BQ3FZP"
+            }
+
+        ### Potential Match
+
+            {
+              "matches": [
+                {
+                  "id": "CN2019303BQ3FZP",
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                      120.596047,
+                      32.172013
+                    ]
+                  },
+                  "properties": {
+                    "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
+                    "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
+                    "country_code": "CN",
+                    "oar_id": "CN2019303BQ3FZP",
+                    "other_names": [],
+                    "other_addresses": [],
+                    "contributors": [
+                      {
+                        "id": 4,
+                        "name": "Researcher A (Summer 2019 Affiliate List)",
+                        "is_verified": false
+                      }
+                    ],
+                    "country_name": "China",
+                    "claim_info": null,
+                    "other_locations": []
+                  },
+                  "confidence": 0.7686
+                }
+              ],
+              "item_id": 959,
+              "geocoded_geometry": {
+                "type": "Point",
+                "coordinates": [
+                  120.596047,
+                  32.172013
+                ]
+              },
+              "geocoded_address": "Guoyuanzhen, Rugao, Nantong, Jiangsu, China",
+              "status": "POTENTIAL_MATCH"
+            }
+
+
+        ### New Facility
+
+            {
+              "matches": [],
+              "item_id": 954,
+              "geocoded_geometry": {
+                "type": "Point",
+                "coordinates": [
+                  119.2221539,
+                  33.79772
+                ]
+              },
+              "geocoded_address": "30, 32 Yanhuang Ave, Lianshui Xian, Huaian Shi, Jiangsu Sheng, China, 223402",
+              "status": "NEW_FACILITY"
+            }
+
+        ### No Match and Geocoder Returned No Results
+
+            {
+              "matches": [],
+              "item_id": 965,
+              "geocoded_geometry": null,
+              "geocoded_address": null,
+              "status": "ERROR_MATCHING"
+            }
+        """ # noqa
         # Adding the @permission_classes decorator was not working so we
         # explicitly invoke our custom permission class.
         if not IsRegisteredAndConfirmed().has_permission(request, self):
