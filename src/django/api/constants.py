@@ -40,6 +40,17 @@ class FacilityMergeQueryParams:
     MERGE = 'merge'
 
 
+class FacilityCreateQueryParams:
+    CREATE = 'create'
+    PUBLIC = 'public'
+
+
+class FeatureGroups:
+    CAN_GET_FACILITY_HISTORY = 'can_get_facility_history'
+    CAN_SUBMIT_FACILITY = 'can_submit_facility'
+    CAN_SUBMIT_PRIVATE_FACILITY = 'can_submit_private_facility'
+
+
 class FacilityHistoryActions:
     CREATE = 'CREATE'
     UPDATE = 'UPDATE'

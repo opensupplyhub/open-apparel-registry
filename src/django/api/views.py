@@ -1,6 +1,7 @@
 import operator
 import os
 import sys
+import traceback
 
 from datetime import datetime
 from functools import reduce
@@ -51,9 +52,13 @@ from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
+                           FacilityCreateQueryParams,
                            ProcessingAction,
                            LogDownloadQueryParams,
-                           UpdateLocationParams)
+                           UpdateLocationParams,
+                           FeatureGroups)
+from api.geocoding import geocode_address
+from api.matching import match_item
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -67,7 +72,11 @@ from api.models import (FacilityList,
                         Version,
                         FacilityLocation,
                         Source)
-from api.processing import parse_csv_line, parse_csv, parse_excel
+from api.processing import (parse_csv_line,
+                            parse_csv,
+                            parse_excel,
+                            get_country_code,
+                            save_match_details)
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
@@ -75,6 +84,8 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
+                             FacilityCreateBodySerializer,
+                             FacilityCreateQueryParamsSerializer,
                              UserSerializer,
                              UserProfileSerializer,
                              FacilityClaimSerializer,
@@ -486,6 +497,29 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                 ),
             ]
 
+        if view.action == 'create':
+            return [
+                coreapi.Field(
+                    name='create',
+                    location='query',
+                    type='boolean',
+                    required=False,
+                    description=(
+                        'If false, match results will be returned, but a new '
+                        'facility or facility match will not be saved'),
+                ),
+                coreapi.Field(
+                    name='public',
+                    location='query',
+                    type='boolean',
+                    required=False,
+                    description=(
+                        'If false and a new facility or facility match is '
+                        'created, the contributor will not be publicly '
+                        'associated with the facility'),
+                ),
+            ]
+
         return []
 
 
@@ -511,11 +545,30 @@ class FacilitiesAutoSchema(AutoSchema):
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
+    def _allows_filters(self, path, method):
+        return True
+
+    def get_serializer_fields(self, path, method):
+        if method == 'POST':
+            return [
+                coreapi.Field(
+                    name='data',
+                    location='body',
+                    description=(
+                        'The country, name, and address of the facility. See '
+                        'the sample request body above.'),
+                    required=True,
+                )
+            ]
+
+        return []
+
 
 @schema(FacilitiesAutoSchema())
 class FacilitiesViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         mixins.DestroyModelMixin,
+                        mixins.CreateModelMixin,
                         viewsets.GenericViewSet):
     """
     Get facilities in GeoJSON format.
@@ -624,6 +677,325 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raise NotFound()
 
     @transaction.atomic
+    def create(self, request):
+        """
+        Matches submitted facility details to the full list of facilities.
+        By default, creates a new facility if there is no match, or associates
+        the authenticated contributor with the facility if there is a confident
+        match.
+
+        **NOTE** The form below lists the return status code as 201. When
+        POSTing data with `create=false` the return status will be 200, not
+        201.
+
+        ## Sample Request Body
+
+            {
+                "country": "China",
+                "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
+                "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
+            }
+
+        ## Sample Responses
+
+        ### Automatic Match
+
+            {
+              "matches": [
+                {
+                  "id": "CN2019303BQ3FZP",
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                      120.596047,
+                      32.172013
+                    ]
+                  },
+                  "properties": {
+                    "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
+                    "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
+                    "country_code": "CN",
+                    "oar_id": "CN2019303BQ3FZP",
+                    "other_names": [],
+                    "other_addresses": [],
+                    "contributors": [
+                      {
+                        "id": 4,
+                        "name": "Researcher A (Summer 2019 Affiliate List)",
+                        "is_verified": false
+                      },
+                      {
+                        "id": 12,
+                        "name": "Brand B",
+                        "is_verified": false
+                      }
+
+                    ],
+                    "country_name": "China",
+                    "claim_info": null,
+                    "other_locations": []
+                  },
+                  "confidence": 0.8153
+                }
+              ],
+              "item_id": 964,
+              "geocoded_geometry": {
+                "type": "Point",
+                "coordinates": [
+                  120.596047,
+                  32.172013
+                ]
+              },
+              "geocoded_address": "Guoyuanzhen, Rugao, Nantong, Jiangsu, China",
+              "status": "MATCHED",
+              "oar_id": "CN2019303BQ3FZP"
+            }
+
+        ### Potential Match
+
+            {
+              "matches": [
+                {
+                  "id": "CN2019303BQ3FZP",
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                      120.596047,
+                      32.172013
+                    ]
+                  },
+                  "properties": {
+                    "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
+                    "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
+                    "country_code": "CN",
+                    "oar_id": "CN2019303BQ3FZP",
+                    "other_names": [],
+                    "other_addresses": [],
+                    "contributors": [
+                      {
+                        "id": 4,
+                        "name": "Researcher A (Summer 2019 Affiliate List)",
+                        "is_verified": false
+                      }
+                    ],
+                    "country_name": "China",
+                    "claim_info": null,
+                    "other_locations": []
+                  },
+                  "confidence": 0.7686
+                }
+              ],
+              "item_id": 959,
+              "geocoded_geometry": {
+                "type": "Point",
+                "coordinates": [
+                  120.596047,
+                  32.172013
+                ]
+              },
+              "geocoded_address": "Guoyuanzhen, Rugao, Nantong, Jiangsu, China",
+              "status": "POTENTIAL_MATCH"
+            }
+
+
+        ### New Facility
+
+            {
+              "matches": [],
+              "item_id": 954,
+              "geocoded_geometry": {
+                "type": "Point",
+                "coordinates": [
+                  119.2221539,
+                  33.79772
+                ]
+              },
+              "geocoded_address": "30, 32 Yanhuang Ave, Lianshui Xian, Huaian Shi, Jiangsu Sheng, China, 223402",
+              "status": "NEW_FACILITY"
+            }
+
+        ### No Match and Geocoder Returned No Results
+
+            {
+              "matches": [],
+              "item_id": 965,
+              "geocoded_geometry": null,
+              "geocoded_address": null,
+              "status": "ERROR_MATCHING"
+            }
+        """ # noqa
+        # Adding the @permission_classes decorator was not working so we
+        # explicitly invoke our custom permission class.
+        if not IsRegisteredAndConfirmed().has_permission(request, self):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        if not flag_is_active(request._request,
+                              FeatureGroups.CAN_SUBMIT_FACILITY):
+            raise PermissionDenied()
+
+        body_serializer = FacilityCreateBodySerializer(data=request.data)
+        body_serializer.is_valid(raise_exception=True)
+
+        params_serializer = FacilityCreateQueryParamsSerializer(
+            data=request.query_params)
+        params_serializer.is_valid(raise_exception=True)
+        should_create = params_serializer.validated_data[
+            FacilityCreateQueryParams.CREATE]
+        public_submission = params_serializer.validated_data[
+            FacilityCreateQueryParams.PUBLIC]
+        private_allowed = flag_is_active(
+            request._request, FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY)
+        if not public_submission and not private_allowed:
+            raise PermissionDenied('Cannot submit a private facility')
+
+        parse_started = str(datetime.utcnow())
+
+        source = Source.objects.create(
+            contributor=request.user.contributor,
+            source_type=Source.SINGLE,
+            is_public=public_submission,
+            create=should_create
+        )
+
+        country_code = get_country_code(
+            body_serializer.validated_data.get('country'))
+        name = body_serializer.validated_data.get('name')
+        address = body_serializer.validated_data.get('address')
+
+        item = FacilityListItem.objects.create(
+            source=source,
+            row_index=0,
+            raw_data=request.data,
+            status=FacilityListItem.PARSED,
+            name=name,
+            address=address,
+            country_code=country_code,
+            processing_results=[{
+                'action': ProcessingAction.PARSE,
+                'started_at': parse_started,
+                'error': False,
+                'finished_at': str(datetime.utcnow()),
+                'is_geocoded': False,
+            }]
+        )
+
+        result = {
+            'matches': [],
+            'item_id': item.id,
+            'geocoded_geometry': None,
+            'geocoded_address': None,
+            'status': item.status,
+        }
+
+        geocode_started = str(datetime.utcnow())
+        try:
+            geocode_result = geocode_address(address, country_code)
+            if geocode_result['result_count'] > 0:
+                item.status = FacilityListItem.GEOCODED
+                item.geocoded_point = Point(
+                    geocode_result["geocoded_point"]["lng"],
+                    geocode_result["geocoded_point"]["lat"]
+                )
+                item.geocoded_address = geocode_result["geocoded_address"]
+
+                result['geocoded_geometry'] = {
+                    'type': 'Point',
+                    'coordinates': [
+                        geocode_result["geocoded_point"]["lng"],
+                        geocode_result["geocoded_point"]["lat"],
+                    ]
+                }
+                result['geocoded_address'] = item.geocoded_address
+            else:
+                item.status = FacilityListItem.GEOCODED_NO_RESULTS
+
+            item.processing_results.append({
+                'action': ProcessingAction.GEOCODE,
+                'started_at': geocode_started,
+                'error': False,
+                'skipped_geocoder': False,
+                'data': geocode_result['full_response'],
+                'finished_at': str(datetime.utcnow()),
+            })
+
+            item.save()
+        except Exception as e:
+            item.status = FacilityListItem.ERROR_GEOCODING
+            item.processing_results.append({
+                'action': ProcessingAction.GEOCODE,
+                'started_at': geocode_started,
+                'error': True,
+                'message': str(e),
+                'trace': traceback.format_exc(),
+                'finished_at': str(datetime.utcnow()),
+            })
+            item.save()
+            result['status'] = item.status
+            return Response(result,
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        match_started = str(datetime.utcnow())
+        try:
+            match_results = match_item(country_code, name, address, item.id)
+            save_match_details(match_results)
+
+            automatic_threshold = \
+                match_results['results']['automatic_threshold']
+
+            item_matches = match_results['item_matches']
+            for item_id, matches in item_matches.items():
+                result['item_id'] = item_id
+                result['status'] = item.status
+                for facility_id, score in matches:
+                    facility = Facility.objects.get(id=facility_id)
+                    facility_dict = FacilityDetailsSerializer(facility).data
+                    # calling `round` alone was not trimming digits
+                    facility_dict['confidence'] = float(str(round(score, 4)))
+                    if score < automatic_threshold:
+                        if should_create:
+                            # TODO: Move match confirmation out of the
+                            # FacilityListViewSet and set URLs here
+                            facility_dict['confirm_match_url'] = None
+                            facility_dict['reject_match_url'] = None
+                    result['matches'].append(facility_dict)
+        except Exception as e:
+            item.status = FacilityListItem.ERROR_MATCHING
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': match_started,
+                'error': True,
+                'message': str(e),
+                'finished_at': str(datetime.utcnow())
+            })
+            item.save()
+            result['status'] = item.status
+            return Response(result,
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        item.refresh_from_db()
+        result['item_id'] = item.id
+        result['status'] = item.status
+        if item.facility is not None:
+            result['oar_id'] = item.facility.id
+            if item.facility.created_from == item:
+                result['status'] = FacilityListItem.NEW_FACILITY
+        elif (item.status == FacilityListItem.MATCHED
+              and len(item_matches.keys()) == 0):
+            # This branch handles the case where they client has specified
+            # `create=false` but there are no matches, which means that we
+            # would have attempted to create a new `Facility`.
+            if item.geocoded_point is None:
+                result['status'] = FacilityListItem.ERROR_MATCHING
+            else:
+                result['status'] = FacilityListItem.NEW_FACILITY
+
+        if should_create and result['status'] != FacilityListItem.ERROR_MATCHING: # noqa
+            return Response(result, status=status.HTTP_201_CREATED)
+        else:
+            return Response(result, status=status.HTTP_200_OK)
+
+    @transaction.atomic
     def destroy(self, request, pk=None):
         if request.user.is_anonymous:
             raise NotAuthenticated()
@@ -641,17 +1013,21 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             )
 
         now = str(datetime.utcnow())
-        list_item = facility.created_from
-        list_item.status = FacilityListItem.DELETED
-        list_item.processing_results.append({
-            'action': ProcessingAction.DELETE_FACILITY,
-            'started_at': now,
-            'error': False,
-            'finished_at': now,
-            'deleted_oar_id': facility.id,
-        })
-        list_item.facility = None
-        list_item.save()
+        list_items = FacilityListItem \
+            .objects \
+            .filter(facility=facility) \
+            .filter(Q(source__create=False) | Q(id=facility.created_from.id))
+        for list_item in list_items:
+            list_item.status = FacilityListItem.DELETED
+            list_item.processing_results.append({
+                'action': ProcessingAction.DELETE_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'deleted_oar_id': facility.id,
+            })
+            list_item.facility = None
+            list_item.save()
 
         match = facility.get_created_from_match()
         match.changeReason = 'Deleted {}'.format(facility.id)
@@ -1254,7 +1630,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 }
             ]
         """
-        if not flag_is_active(request._request, 'can_get_facility_history'):
+        if not flag_is_active(request._request,
+                              FeatureGroups.CAN_GET_FACILITY_HISTORY):
             raise PermissionDenied()
 
         historical_facility_queryset = Facility.history.filter(id=pk)

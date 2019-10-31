@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Add single facility submission endpoint [#896](https://github.com/open-apparel-registry/open-apparel-registry/pull/896)
 
 ### Changed
 - Replace facility history feature switch with feature flag [#881](https://github.com/open-apparel-registry/open-apparel-registry/pull/881)

@@ -12,6 +12,7 @@ from rest_framework.serializers import (CharField,
                                         EmailField,
                                         IntegerField,
                                         ListField,
+                                        BooleanField,
                                         ModelSerializer,
                                         SerializerMethodField,
                                         ValidationError,
@@ -33,6 +34,7 @@ from api.models import (FacilityList,
                         ProductType,
                         ProductionType)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
+from api.processing import get_country_code
 from waffle import switch_is_active
 
 
@@ -536,6 +538,23 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             }
         except FacilityClaim.DoesNotExist:
             return None
+
+
+class FacilityCreateBodySerializer(Serializer):
+    country = CharField(required=True)
+    name = CharField(required=True, max_length=200)
+    address = CharField(required=True, max_length=200)
+
+    def validate_country(self, value):
+        try:
+            return get_country_code(value)
+        except ValueError as ve:
+            raise ValidationError(ve)
+
+
+class FacilityCreateQueryParamsSerializer(Serializer):
+    create = BooleanField(default=True, required=False)
+    public = BooleanField(default=True, required=False)
 
 
 class FacilityClaimSerializer(ModelSerializer):
