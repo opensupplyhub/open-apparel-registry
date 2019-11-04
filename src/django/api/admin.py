@@ -108,7 +108,7 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
 
 
 class SourceAdmin(admin.ModelAdmin):
-    readonly_fields = ('contributor', 'source_type', 'facility_list', 'create')
+    readonly_fields = ('source_type', 'facility_list', 'create')
 
 
 admin_site.register(models.Version)
