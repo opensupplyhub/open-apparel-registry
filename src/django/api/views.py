@@ -7,7 +7,8 @@ from datetime import datetime
 from functools import reduce
 
 from django.conf import settings
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadedfile import (InMemoryUploadedFile,
+                                            TemporaryUploadedFile)
 from django.db import transaction
 from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
@@ -1747,7 +1748,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if 'file' not in request.data:
             raise ValidationError('No file specified.')
         csv_file = request.data['file']
-        if type(csv_file) is not InMemoryUploadedFile:
+        if type(csv_file) not in (InMemoryUploadedFile, TemporaryUploadedFile):
             raise ValidationError('File not submitted properly.')
         if csv_file.size > MAX_UPLOADED_FILE_SIZE_IN_BYTES:
             mb = MAX_UPLOADED_FILE_SIZE_IN_BYTES / (1024*1024)
