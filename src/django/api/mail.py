@@ -162,6 +162,7 @@ def send_approved_claim_notice_to_list_contributors(request, facility_claim):
         source.contributor
         for source in
         facility_claim.facility.sources()
+        if source.contributor is not None
     ]
 
     for contributor in list_contributors:
@@ -211,6 +212,7 @@ def send_claim_update_notice_to_list_contributors(request, facility_claim):
         source.contributor
         for source in
         facility_claim.facility.sources()
+        if source.contributor is not None
     ]
 
     for contributor in list_contributors:

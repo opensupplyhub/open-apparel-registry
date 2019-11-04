@@ -259,11 +259,11 @@ class Source(models.Model):
 
     @property
     def display_name(self):
+        name = self.contributor.name \
+            if self.contributor else '[Unknown Contributor]'
         if self.facility_list:
-            return '{} ({})'.format(
-                self.contributor.name,
-                self.facility_list.name)
-        return self.contributor.name
+            return '{} ({})'.format(name, self.facility_list.name)
+        return name
 
     def __str__(self):
         return '{0} ({1})'.format(
@@ -306,6 +306,9 @@ class FacilityList(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        if self.source.contributor is None:
+            return '{0} ({1})'.format(self.name, self.id)
+
         return '{0} - {1} ({2})'.format(
             self.source.contributor.name, self.name, self.id)
 
