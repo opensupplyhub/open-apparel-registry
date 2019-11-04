@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Replace facility history feature switch with feature flag [#881](https://github.com/open-apparel-registry/open-apparel-registry/pull/881)
 - Better accommodate outside contributors [#895](https://github.com/open-apparel-registry/open-apparel-registry/pull/895)
+- Allow superusers to change the Contributor of a Source [#901](https://github.com/open-apparel-registry/open-apparel-registry/pull/901)
 
 ### Deprecated
 
