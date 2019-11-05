@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
+- Train persistant Dedupe model on first app request [#905](https://github.com/open-apparel-registry/open-apparel-registry/pull/905/)
 
 ### Deprecated
 
