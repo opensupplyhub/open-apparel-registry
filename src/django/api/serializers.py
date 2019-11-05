@@ -349,7 +349,8 @@ class FacilityListSerializer(ModelSerializer):
         }
 
     def get_contributor_id(self, facility_list):
-        return facility_list.source.contributor.id
+        return facility_list.source.contributor.id \
+            if facility_list.source.contributor else None
 
 
 class FacilityQueryParamsSerializer(Serializer):
@@ -456,8 +457,9 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                 'lng': l.facility_list_item.geocoded_point.x,
                 'contributor_id': l.facility_list_item.source
                 .contributor_id,
-                'contributor_name': l.facility_list_item.source
-                .contributor.name,
+                'contributor_name':
+                l.facility_list_item.source.contributor.name
+                if l.facility_list_item.source.contributor else None,
                 'notes': None,
             }
             for l
@@ -479,9 +481,11 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     def get_contributors(self, facility):
         return [
             {
-                'id': source.contributor.admin.id,
+                'id': source.contributor.admin.id
+                if source.contributor else None,
                 'name': source.display_name,
-                'is_verified': source.contributor.is_verified,
+                'is_verified': source.contributor.is_verified
+                if source.contributor else False,
             }
             for source
             in facility.sources()
