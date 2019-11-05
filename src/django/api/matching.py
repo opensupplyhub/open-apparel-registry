@@ -357,6 +357,10 @@ def facility_to_dedupe_record(facility):
     }
 
 
+class GazetteerCacheTimeoutError(Exception):
+    pass
+
+
 class GazetteerCache:
     """
     A container for holding a single, trained and indexed Gazetteer in memory,
@@ -373,7 +377,11 @@ class GazetteerCache:
     @classmethod
     @transaction.atomic
     def get_latest(cls):
-        with cls._lock:
+        lock_aquired = cls._lock.acquire(timeout=10)
+        if not lock_aquired:
+            raise GazetteerCacheTimeoutError
+
+        try:
             db_version = HistoricalFacility.objects.aggregate(
                 max_id=Max('history_id')).get('max_id')
             if cls._gazetter is None:
@@ -417,5 +425,7 @@ class GazetteerCache:
                             # indexing.
                             pass
                 cls._version = db_version
+        finally:
+            cls._lock.release()
 
         return cls._gazetter

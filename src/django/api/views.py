@@ -7,7 +7,8 @@ from datetime import datetime
 from functools import reduce
 
 from django.conf import settings
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadedfile import (InMemoryUploadedFile,
+                                            TemporaryUploadedFile)
 from django.db import transaction
 from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
@@ -58,7 +59,7 @@ from api.constants import (CsvHeaderField,
                            UpdateLocationParams,
                            FeatureGroups)
 from api.geocoding import geocode_address
-from api.matching import match_item
+from api.matching import match_item, GazetteerCacheTimeoutError
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -959,6 +960,22 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             facility_dict['confirm_match_url'] = None
                             facility_dict['reject_match_url'] = None
                     result['matches'].append(facility_dict)
+        except GazetteerCacheTimeoutError as te:
+            item.status = FacilityListItem.ERROR_MATCHING
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': match_started,
+                'error': True,
+                'message': str(te),
+                'finished_at': str(datetime.utcnow())
+            })
+            item.save()
+            result['status'] = item.status
+            result['message'] = (
+                'A timeout occurred waiting for match results. Training may '
+                'be in progress. Retry your request in a few minutes')
+            return Response(result,
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except Exception as e:
             item.status = FacilityListItem.ERROR_MATCHING
             item.processing_results.append({
@@ -1747,7 +1764,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if 'file' not in request.data:
             raise ValidationError('No file specified.')
         csv_file = request.data['file']
-        if type(csv_file) is not InMemoryUploadedFile:
+        if type(csv_file) not in (InMemoryUploadedFile, TemporaryUploadedFile):
             raise ValidationError('File not submitted properly.')
         if csv_file.size > MAX_UPLOADED_FILE_SIZE_IN_BYTES:
             mb = MAX_UPLOADED_FILE_SIZE_IN_BYTES / (1024*1024)
