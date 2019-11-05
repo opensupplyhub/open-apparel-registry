@@ -13,25 +13,27 @@ from django.contrib.gis.geos import Point
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from waffle.testutils import override_switch
+from waffle.testutils import override_switch, override_flag
 
 from api.constants import (ProcessingAction,
                            LogDownloadQueryParams,
-                           UpdateLocationParams)
+                           UpdateLocationParams,
+                           FeatureGroups)
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
                         RequestLog, DownloadLog, FacilityLocation, Source)
 from api.oar_id import make_oar_id, validate_oar_id
+from api.matching import match_facility_list_items
 from api.processing import (parse_facility_list_item,
-                            geocode_facility_list_item,
-                            match_facility_list_items)
+                            geocode_facility_list_item)
 from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
 from api.test_data import parsed_city_hall_data
 from api.permissions import referring_host_is_allowed, referring_host
-from api.serializers import ApprovedFacilityClaimSerializer
+from api.serializers import (ApprovedFacilityClaimSerializer,
+                             FacilityCreateBodySerializer)
 
 
 class FacilityListCreateTest(APITestCase):
@@ -1129,7 +1131,7 @@ def interspace(string):
 
 
 def junk_chars(string):
-    return string + 'YY'
+    return 'AA' + string + 'YY'
 
 
 class DedupeMatchingTests(TestCase):
@@ -3953,7 +3955,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             self.facility_two.id
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag(FeatureGroups.CAN_GET_FACILITY_HISTORY, active=True)
     def test_serializes_deleted_facility_history(self):
         delete_facility_url = '/api/facilities/{}/'.format(self.facility.id)
         delete_response = self.client.delete(delete_facility_url)
@@ -3981,7 +3983,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             4,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_location_change(self):
         location_change_url = '/api/facilities/{}/update-location/' \
             .format(self.facility.id)
@@ -4021,7 +4023,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_merge(self):
         merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
             .format(self.facility_two.id, self.facility.id)
@@ -4050,7 +4052,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_match_promotion(self):
         merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
             .format(self.facility_two.id, self.facility.id)
@@ -4125,7 +4127,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_serializes_facility_match_split(self):
         merge_facilities_url = '/api/facilities/merge/?target={}&merge={}' \
             .format(self.facility_two.id, self.facility.id)
@@ -4175,13 +4177,13 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_handles_request_for_invalid_facility_id(self):
         invalid_history_url = '/api/facilities/hello/history/'
         invalid_history_response = self.client.get(invalid_history_url)
         self.assertEqual(invalid_history_response.status_code, 404)
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_includes_association_for_automatic_match(self):
         automatic_match_response = self.client.get(
             self.facility_two_history_url,
@@ -4208,7 +4210,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             2,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_associate_appears_after_create_in_history_data(self):
         history_response = self.client.get(
             self.history_url,
@@ -4236,7 +4238,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             2,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_includes_association_for_confirmed_match(self):
         self.client.logout()
         self.client.login(email=self.user_email,
@@ -4286,7 +4288,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     def test_includes_dissociation_record_when_match_is_severed(self):
         self.client.logout()
         self.client.login(email=self.user_email,
@@ -4354,7 +4356,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             4,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_approval(self):
         self.client.logout()
@@ -4426,7 +4428,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             3,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_revocation(self):
         self.client.logout()
@@ -4512,7 +4514,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             4,
         )
 
-    @override_switch('facility_history', active=True)
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_public_claimed_facility_data_changes(self):
         self.client.logout()
@@ -4645,3 +4647,187 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
                 non_public_key,
                 data[0]['changes'],
             )
+
+    def test_unauthenticated_receives_401(self):
+        self.client.logout()
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            401,
+        )
+
+    def test_superuser_can_access_endpoint(self):
+        # superuser is already signed in via `setUp`
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200,
+        )
+
+    def test_not_in_group_receives_403(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            403,
+        )
+
+    def test_in_group_receives_200(self):
+        self.client.logout()
+
+        history_group = auth.models.Group.objects.get(
+            name='can_get_facility_history',
+        )
+
+        self.user.groups.set([history_group.id])
+        self.user.save()
+
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        history_response = self.client.get(self.history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200,
+        )
+
+
+class FacilitySubmitTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(FacilitySubmitTest, self).setUp()
+        self.url = reverse('facility-list')
+        self.valid_facility = {
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        }
+
+    def join_group_and_login(self):
+        self.client.logout()
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_FACILITY,
+        )
+        self.user.groups.set([group.id])
+        self.user.save()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+    def test_unauthenticated_receives_401(self):
+        self.client.logout()
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 401)
+
+    def test_not_in_group_receives_403(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        response = self.client.post(self.url)
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_empty_body_is_invalid(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 400)
+
+    def test_missing_fields_are_invalid(self):
+        self.join_group_and_login()
+
+        response = self.client.post(self.url, {
+            'country': 'US',
+            'name': 'Something',
+        })
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(self.url, {
+            'country': 'US',
+            'address': 'Some street',
+        })
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(self.url, {
+            'name': 'Something',
+            'address': 'Some street',
+        })
+        self.assertEqual(response.status_code, 400)
+
+    def test_valid_request(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, self.valid_facility)
+        self.assertEqual(response.status_code, 201)
+
+    def test_valid_request_with_params(self):
+        self.join_group_and_login()
+        url_with_query = '{}?create=false&public=true'.format(self.url)
+        response = self.client.post(url_with_query, self.valid_facility)
+        self.assertEqual(response.status_code, 200)
+
+    def test_private_permission(self):
+        self.join_group_and_login()
+        url_with_query = '{}?public=false'.format(self.url)
+        response = self.client.post(url_with_query, self.valid_facility)
+        self.assertEqual(response.status_code, 403)
+
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY,
+        )
+        self.user.groups.add(group.id)
+        self.user.save()
+
+        response = self.client.post(url_with_query, self.valid_facility)
+        self.assertEqual(response.status_code, 201)
+
+
+class FacilityCreateBodySerializerTest(TestCase):
+    def test_valid_data(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertTrue(serializer.is_valid())
+
+    def test_missing_fields(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('country', serializer.errors)
+        self.assertNotIn('name', serializer.errors)
+        self.assertNotIn('address', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'United States',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('name', serializer.errors)
+        self.assertNotIn('country', serializer.errors)
+        self.assertNotIn('address', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'United States',
+            'name': 'Pants Hut',
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('address', serializer.errors)
+        self.assertNotIn('country', serializer.errors)
+        self.assertNotIn('name', serializer.errors)
+
+    def test_invalid_country(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'Notrealia',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('country', serializer.errors)

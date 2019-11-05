@@ -3,7 +3,7 @@
 
 Vagrant.require_version ">= 2.1"
 
-ANSIBLE_VERSION = "2.4.*"
+ANSIBLE_VERSION = "2.8.*"
 
 Vagrant.configure("2") do |config|
 
@@ -23,9 +23,6 @@ Vagrant.configure("2") do |config|
 
   # Gunicorn for Django app
   config.vm.network :forwarded_port, guest: 8081, host: 8081
-
-  # Restify development server
-  config.vm.network :forwarded_port, guest: 8000, host: 8000
 
   config.vm.provision "ansible_local" do |ansible|
     ansible.compatibility_mode = "2.0"

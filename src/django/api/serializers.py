@@ -12,6 +12,7 @@ from rest_framework.serializers import (CharField,
                                         EmailField,
                                         IntegerField,
                                         ListField,
+                                        BooleanField,
                                         ModelSerializer,
                                         SerializerMethodField,
                                         ValidationError,
@@ -33,6 +34,7 @@ from api.models import (FacilityList,
                         ProductType,
                         ProductionType)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
+from api.processing import get_country_code
 from waffle import switch_is_active
 
 
@@ -347,7 +349,8 @@ class FacilityListSerializer(ModelSerializer):
         }
 
     def get_contributor_id(self, facility_list):
-        return facility_list.source.contributor.id
+        return facility_list.source.contributor.id \
+            if facility_list.source.contributor else None
 
 
 class FacilityQueryParamsSerializer(Serializer):
@@ -454,8 +457,9 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                 'lng': l.facility_list_item.geocoded_point.x,
                 'contributor_id': l.facility_list_item.source
                 .contributor_id,
-                'contributor_name': l.facility_list_item.source
-                .contributor.name,
+                'contributor_name':
+                l.facility_list_item.source.contributor.name
+                if l.facility_list_item.source.contributor else None,
                 'notes': None,
             }
             for l
@@ -477,9 +481,11 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
     def get_contributors(self, facility):
         return [
             {
-                'id': source.contributor.admin.id,
+                'id': source.contributor.admin.id
+                if source.contributor else None,
                 'name': source.display_name,
-                'is_verified': source.contributor.is_verified,
+                'is_verified': source.contributor.is_verified
+                if source.contributor else False,
             }
             for source
             in facility.sources()
@@ -536,6 +542,23 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             }
         except FacilityClaim.DoesNotExist:
             return None
+
+
+class FacilityCreateBodySerializer(Serializer):
+    country = CharField(required=True)
+    name = CharField(required=True, max_length=200)
+    address = CharField(required=True, max_length=200)
+
+    def validate_country(self, value):
+        try:
+            return get_country_code(value)
+        except ValueError as ve:
+            raise ValidationError(ve)
+
+
+class FacilityCreateQueryParamsSerializer(Serializer):
+    create = BooleanField(default=True, required=False)
+    public = BooleanField(default=True, required=False)
 
 
 class FacilityClaimSerializer(ModelSerializer):

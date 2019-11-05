@@ -3,6 +3,7 @@ import json
 from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
@@ -107,7 +108,7 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
 
 
 class SourceAdmin(admin.ModelAdmin):
-    readonly_fields = ('contributor', 'source_type', 'facility_list', 'create')
+    readonly_fields = ('source_type', 'facility_list', 'create')
 
 
 admin_site.register(models.Version)
@@ -125,3 +126,4 @@ admin_site.register(models.FacilityAlias, FacilityAliasAdmin)
 admin_site.register(Flag, FlagAdmin)
 admin_site.register(Sample, SampleAdmin)
 admin_site.register(Switch, SwitchAdmin)
+admin_site.register(Group)

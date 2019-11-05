@@ -6,9 +6,9 @@ from django.db import transaction
 
 from api.constants import ProcessingAction
 from api.models import FacilityList, FacilityListItem
+from api.matching import match_facility_list_items
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
-                            match_facility_list_items,
                             save_match_details)
 
 LINE_ITEM_ACTIONS = {
