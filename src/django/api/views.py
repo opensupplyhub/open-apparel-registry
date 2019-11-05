@@ -1380,9 +1380,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         'list_description':
                         m.facility_list_item.source.facility_list.description,
                         'list_contributor_name':
-                        m.facility_list_item.source.contributor.name,
+                        m.facility_list_item.source.contributor.name
+                        if m.facility_list_item.source.contributor else None,
                         'list_contributor_id':
-                        m.facility_list_item.source.contributor.id,
+                        m.facility_list_item.source.contributor.id
+                        if m.facility_list_item.source.contributor else None,
                         'match_id': m.id,
                     }
                     for m
@@ -1525,11 +1527,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     'list_name':
                     m.facility_list_item.source.facility_list.name,
                     'list_description':
-                    m.facility_list_item.source.facility_list.description,
+                    m.facility_list_item.source.facility_list.description
+                    if m.facility_list_item.source.facility_list else None,
                     'list_contributor_name':
-                    m.facility_list_item.source.contributor.name,
+                    m.facility_list_item.source.contributor.name
+                    if m.facility_list_item.source.contributor else None,
                     'list_contributor_id':
-                    m.facility_list_item.source.contributor.id,
+                    m.facility_list_item.source.contributor.id
+                    if m.facility_list_item.source.contributor else None,
                     'match_id': m.id,
                 }
                 for m

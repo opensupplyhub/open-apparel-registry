@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.17.0] - 2019-11-04
+### Added
 - Add single facility submission endpoint [#896](https://github.com/open-apparel-registry/open-apparel-registry/pull/896)
 
 ### Changed
@@ -20,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove legacy API [#888](https://github.com/open-apparel-registry/open-apparel-registry/pull/888)
 
 ### Fixed
+- Handle cases when Source contributor or facility_list are None [#903](https://github.com/open-apparel-registry/open-apparel-registry/pull/903)
 
 ### Security
 
@@ -293,7 +307,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.16.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.17.0...HEAD
+[2.17.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.17.0
 [2.16.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.16.0
 [2.15.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.15.0
 [2.14.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.14.0
