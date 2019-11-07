@@ -672,7 +672,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         """
         try:
             queryset = Facility.objects.get(pk=pk)
-            response_data = FacilityDetailsSerializer(queryset).data
+            context = {'request': request}
+            response_data = FacilityDetailsSerializer(
+                queryset, context=context).data
             return Response(response_data)
         except Facility.DoesNotExist:
             raise NotFound()
@@ -950,7 +952,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 result['status'] = item.status
                 for facility_id, score in matches:
                     facility = Facility.objects.get(id=facility_id)
-                    facility_dict = FacilityDetailsSerializer(facility).data
+                    context = {'request': request}
+                    facility_dict = FacilityDetailsSerializer(
+                        facility, context=context).data
                     # calling `round` alone was not trimming digits
                     facility_dict['confidence'] = float(str(round(score, 4)))
                     if score < automatic_threshold:
@@ -1369,7 +1373,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         merge.delete()
 
         target.refresh_from_db()
-        response_data = FacilityDetailsSerializer(target).data
+        context = {'request': request}
+        response_data = FacilityDetailsSerializer(target, context=context).data
         return Response(response_data)
 
     @action(detail=True, methods=['GET', 'POST'],
@@ -1382,8 +1387,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             if request.method == 'GET':
                 facility = Facility.objects.get(pk=pk)
-
-                facility_data = FacilityDetailsSerializer(facility).data
+                context = {'request': request}
+                facility_data = FacilityDetailsSerializer(
+                    facility, context=context).data
 
                 facility_data['properties']['matches'] = [
                     {
@@ -1532,8 +1538,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             match.facility_list_item.save()
 
             facility.refresh_from_db()
-
-            facility_data = FacilityDetailsSerializer(facility).data
+            context = {'request': request}
+            facility_data = FacilityDetailsSerializer(
+                facility, context=context).data
 
             facility_data['properties']['matches'] = [
                 {
@@ -1605,7 +1612,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 facility_location.id)
         facility.save()
 
-        facility_data = FacilityDetailsSerializer(facility).data
+        context = {'request': request}
+        facility_data = FacilityDetailsSerializer(
+            facility, context=context).data
         return Response(facility_data)
 
     @action(detail=True, methods=['GET'],

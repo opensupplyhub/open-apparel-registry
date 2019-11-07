@@ -12,6 +12,7 @@ from django.utils.dateformat import format
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
 
+from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
 from api.constants import Affiliations, Certifications, FacilitiesQueryParams
@@ -234,6 +235,26 @@ class User(AbstractBaseUser, PermissionsMixin):
             return True
         except EmailAddress.DoesNotExist:
             return True
+
+    @property
+    def has_public_sources(self):
+        try:
+            contributor = self.contributor
+        except User.contributor.RelatedObjectDoesNotExist:
+            contributor = None
+
+        return Source.objects \
+                     .exclude(contributor=None) \
+                     .filter(contributor=contributor,
+                             is_public=True,
+                             create=True) \
+                     .exists()
+
+    @property
+    def can_submit_privately(self):
+        return self.groups.filter(
+            name=FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY
+        ).exists()
 
 
 class Source(models.Model):
@@ -1169,7 +1190,7 @@ class Facility(models.Model):
                                 FacilityMatch.CONFIRMED,
                                 FacilityMatch.MERGED])
 
-    def sources(self):
+    def sources(self, user=None):
         sorted_matches = sorted(
             self.complete_matches().prefetch_related(
                 'facility_list_item__source__contributor'
@@ -1178,6 +1199,12 @@ class Facility(models.Model):
             m.source.contributor.id if m.source.contributor else None
         )
 
+        if user is not None and not user.is_anonymous:
+            user_can_see_detail = \
+                user.has_public_sources or not user.can_submit_privately
+        else:
+            user_can_see_detail = True
+
         sources = []
         anonymous_sources = []
         for contributor, matches in groupby(sorted_matches,
@@ -1185,8 +1212,10 @@ class Facility(models.Model):
             # Convert the groupby result to a list to we can iterate over it
             # multiple times
             matches = list(matches)
+            should_display_associations = \
+                any([m.should_display_association for m in matches])
             if contributor is not None:
-                if any([m.should_display_association for m in matches]):
+                if user_can_see_detail and should_display_associations:
                     sources.extend(
                         [m.source
                          for m in matches

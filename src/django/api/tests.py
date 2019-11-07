@@ -4856,6 +4856,13 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
     def setUp(self):
         super(FacilitySearchContributorTest, self).setUp()
         self.url = reverse('facility-list')
+        self.private_user = User.objects.create(email='shh@hush.com')
+        self.private_user_password = 'shhh'
+        self.private_user.set_password(self.private_user_password)
+        self.private_user.groups.set(
+            auth.models.Group.objects.values_list('id', flat=True))
+        self.private_user.save()
+        self.client.logout()
 
     def fetch_facility_contributors(self, facility):
         facility_url = '{}{}/'.format(self.url, facility.id)
@@ -4959,3 +4966,10 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(1, len(contributors))
         self.assertEqual('2 Others', contributors[0].get('name'))
+
+    def test_private_user(self):
+        self.client.login(email=self.private_user.email,
+                          password=self.private_user_password)
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('One Other', contributors[0].get('name'))

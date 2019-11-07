@@ -492,10 +492,13 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             return {
                 'name': source,
             }
+        request = self.context.get('request') \
+            if self.context is not None else None
+        user = request.user if request is not None else None
         return [
             format_source(source)
             for source
-            in facility.sources()
+            in facility.sources(user=user)
         ]
 
     def get_country_name(self, facility):
@@ -694,7 +697,8 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'product_type_choices', 'production_type_choices')
 
     def get_facility(self, claim):
-        return FacilityDetailsSerializer(claim.facility).data
+        return FacilityDetailsSerializer(
+            claim.facility, context=self.context).data
 
     def get_countries(self, claim):
         return COUNTRY_CHOICES
