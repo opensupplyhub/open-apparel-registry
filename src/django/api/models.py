@@ -1,4 +1,5 @@
 from collections import defaultdict
+from itertools import groupby
 
 from django.contrib.auth.models import (AbstractBaseUser,
                                         BaseUserManager,
@@ -14,6 +15,7 @@ from simple_history.models import HistoricalRecords
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
 from api.constants import Affiliations, Certifications, FacilitiesQueryParams
+from api.helpers import prefix_a_an
 
 
 class Version(models.Model):
@@ -89,6 +91,20 @@ class Contributor(models.Model):
         (OTHER_CONTRIB_TYPE, OTHER_CONTRIB_TYPE),
     )
 
+    PLURAL_CONTRIB_TYPE = {
+        'Auditor': 'Auditors',
+        'Brand/Retailer': 'Brands/Retailers',
+        'Civil Society Organization': 'Civil Society Organizations',
+        'Factory / Facility': 'Factories / Facilities',
+        'Manufacturing Group / Supplier / Vendor':
+        'Manufacturing Groups / Suppliers / Vendors',
+        'Multi Stakeholder Initiative': 'Multi Stakeholder Initiatives',
+        'Researcher / Academic': 'Researchers / Academics',
+        'Service Provider': 'Service Providers',
+        'Union': 'Unions',
+        OTHER_CONTRIB_TYPE: 'Others',
+    }
+
     admin = models.OneToOneField(
         'User',
         on_delete=models.PROTECT,
@@ -141,6 +157,17 @@ class Contributor(models.Model):
 
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)
+
+    @classmethod
+    def prefix_with_count(cls, value, count):
+        if count == 1:
+            if value.lower() == 'other':
+                # Special case to avoid returning the awkward "An Other"
+                return 'One {}'.format(value)
+            return prefix_a_an(value)
+        else:
+            return '{} {}'.format(
+                count, cls.PLURAL_CONTRIB_TYPE.get(value, value))
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -1135,29 +1162,43 @@ class Facility(models.Model):
             and match.source.is_public
         }
 
-    def sources(self):
-        facility_list_item_matches = [
-            FacilityListItem.objects.get(pk=pk)
-            for (pk,)
-            in self
-            .facilitymatch_set
+    def complete_matches(self):
+        return self \
+            .facilitymatch_set \
             .filter(status__in=[FacilityMatch.AUTOMATIC,
                                 FacilityMatch.CONFIRMED,
                                 FacilityMatch.MERGED])
-            .filter(is_active=True)
-            .order_by('updated_at')
-            .values_list('facility_list_item')
-        ]
 
-        # Converting from a list back to a set ensures the items are distinct
-        return list(set([
-            match.source
-            for match
-            in facility_list_item_matches
-            if match.source.is_active
-            and match.source.is_public
-            and match.source.contributor is not None
-        ]))
+    def sources(self):
+        sorted_matches = sorted(
+            self.complete_matches().prefetch_related(
+                'facility_list_item__source__contributor'
+            ),
+            key=lambda m:
+            m.source.contributor.id if m.source.contributor else None
+        )
+
+        sources = []
+        anonymous_sources = []
+        for contributor, matches in groupby(sorted_matches,
+                                            lambda m: m.source.contributor):
+            # Convert the groupby result to a list to we can iterate over it
+            # multiple times
+            matches = list(matches)
+            if contributor is not None:
+                if any([m.should_display_association for m in matches]):
+                    sources.extend(
+                        [m.source
+                         for m in matches
+                         if m.should_display_association])
+                else:
+                    anonymous_sources.append(contributor.contrib_type)
+
+        anonymous_sources = [
+            Contributor.prefix_with_count(name, len(list(x)))
+            for name, x in groupby(sorted(anonymous_sources))
+        ]
+        return sources + anonymous_sources
 
     def get_created_from_match(self):
         return self.facilitymatch_set.filter(
@@ -1255,6 +1296,16 @@ class FacilityMatch(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     history = HistoricalRecords()
+
+    @property
+    def source(self):
+        return self.facility_list_item.source
+
+    @property
+    def should_display_association(self):
+        return (self.is_active
+                and self.facility_list_item.source.is_active
+                and self.facility_list_item.source.is_public)
 
     def __str__(self):
         return '{0} - {1} - {2}'.format(self.facility_list_item, self.facility,

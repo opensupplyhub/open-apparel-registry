@@ -738,7 +738,26 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         sources = self.facility.sources()
         self.assertIn(self.source_one, sources)
         self.assertNotIn(self.source_two, sources)
-        self.assertEqual(len(sources), 1)
+        self.assertIn("One Other", sources)
+        self.assertEqual(len(sources), 2)
+
+        other_names = self.facility.other_names()
+        self.assertNotIn(self.name_two, other_names)
+        self.assertEqual(len(other_names), 0)
+
+        other_addresses = self.facility.other_addresses()
+        self.assertNotIn(self.address_two, other_addresses)
+        self.assertEqual(len(other_addresses), 0)
+
+    def test_excludes_private_matches_from_details(self):
+        self.source_two.is_public = False
+        self.source_two.save()
+
+        sources = self.facility.sources()
+        self.assertIn(self.source_one, sources)
+        self.assertNotIn(self.source_two, sources)
+        self.assertIn("One Other", sources)
+        self.assertEqual(len(sources), 2)
 
         other_names = self.facility.other_names()
         self.assertNotIn(self.name_two, other_names)
@@ -4831,3 +4850,112 @@ class FacilityCreateBodySerializerTest(TestCase):
         })
         self.assertFalse(serializer.is_valid())
         self.assertIn('country', serializer.errors)
+
+
+class FacilitySearchContributorTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(FacilitySearchContributorTest, self).setUp()
+        self.url = reverse('facility-list')
+
+    def fetch_facility_contributors(self, facility):
+        facility_url = '{}{}/'.format(self.url, facility.id)
+        response = self.client.get(facility_url)
+        data = json.loads(response.content)
+        return data.get('properties', {}).get('contributors', [])
+
+    def test_names(self):
+        self.source.is_active = False
+        self.source.save()
+
+        self.contributor.contrib_type = 'Auditor'
+        self.contributor.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('An Auditor',
+                         contributors[0].get('name'))
+
+        self.contributor.contrib_type = 'Brand/Retailer'
+        self.contributor.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('A Brand/Retailer',
+                         contributors[0].get('name'))
+
+    def test_inactive_contributor(self):
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('test contributor 1 (First List)',
+                         contributors[0].get('name'))
+
+        self.source.is_active = False
+        self.source.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('One Other', contributors[0].get('name'))
+
+    def test_private_contributor(self):
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('test contributor 1 (First List)',
+                         contributors[0].get('name'))
+
+        self.source.is_public = False
+        self.source.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('One Other', contributors[0].get('name'))
+
+    def test_multiple(self):
+        user_two = User.objects.create(email='2@two.com')
+        user_two.set_password('shhh')
+        user_two.save()
+
+        contributor_two = Contributor \
+            .objects \
+            .create(admin=user_two,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        source_two = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=contributor_two)
+
+        list_item_two = FacilityListItem \
+            .objects \
+            .create(name='Item 2',
+                    address='Address',
+                    country_code='US',
+                    row_index=0,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=source_two,
+                    facility=self.facility)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_two,
+                    confidence=0.85,
+                    results='')
+
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(2, len(contributors))
+
+        source_two.is_active = False
+        source_two.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(2, len(contributors))
+        self.assertEqual('test contributor 1 (First List)',
+                         contributors[0].get('name'))
+        self.assertEqual('One Other',
+                         contributors[1].get('name'))
+
+        self.match.is_active = False
+        self.match.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('2 Others', contributors[0].get('name'))
