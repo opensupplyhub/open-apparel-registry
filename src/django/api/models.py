@@ -1052,6 +1052,7 @@ class FacilityManager(models.Manager):
                 .filter(is_active=True)
                 .filter(facility_list_item__source__contributor__contrib_type__in=contributor_types) # NOQA
                 .filter(facility_list_item__source__is_active=True)
+                .filter(facility_list_item__source__is_public=True)
                 .values('facility__id')
             ]
 
@@ -1069,6 +1070,7 @@ class FacilityManager(models.Manager):
                 .filter(is_active=True)
                 .filter(facility_list_item__source__contributor__id__in=contributors) # NOQA
                 .filter(facility_list_item__source__is_active=True)
+                .filter(facility_list_item__source__is_public=True)
                 .values('facility__id')
             ]
 

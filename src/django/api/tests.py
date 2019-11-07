@@ -4973,3 +4973,23 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(1, len(contributors))
         self.assertEqual('One Other', contributors[0].get('name'))
+
+    def test_inactive_or_private_contributor_omitted(self):
+        def get_facility_count():
+            url = '{}?contributors={}'.format(
+                self.url, self.contributor.id)
+            response = self.client.get(url)
+            data = json.loads(response.content)
+            return int(data.get('count'))
+
+        self.assertEqual(1, get_facility_count())
+
+        self.source.is_public = False
+        self.source.is_active = True
+        self.source.save()
+        self.assertEqual(0, get_facility_count())
+
+        self.source.is_public = True
+        self.source.is_active = False
+        self.source.save()
+        self.assertEqual(0, get_facility_count())
