@@ -1194,11 +1194,12 @@ class Facility(models.Model):
 
     def sources(self, user=None):
         sorted_matches = sorted(
-            self.complete_matches().prefetch_related(
-                'facility_list_item__source__contributor'
-            ),
-            key=lambda m:
-            m.source.contributor.id if m.source.contributor else None
+            self.complete_matches()
+                .exclude(facility_list_item__source__contributor=None)
+                .prefetch_related(
+                    'facility_list_item__source__contributor'
+                ),
+            key=lambda m: m.source.contributor.id
         )
 
         if user is not None and not user.is_anonymous:
@@ -1216,14 +1217,13 @@ class Facility(models.Model):
             matches = list(matches)
             should_display_associations = \
                 any([m.should_display_association for m in matches])
-            if contributor is not None:
-                if user_can_see_detail and should_display_associations:
-                    sources.extend(
-                        [m.source
-                         for m in matches
-                         if m.should_display_association])
-                else:
-                    anonymous_sources.append(contributor.contrib_type)
+            if user_can_see_detail and should_display_associations:
+                sources.extend(
+                    [m.source
+                     for m in matches
+                     if m.should_display_association])
+            else:
+                anonymous_sources.append(contributor.contrib_type)
 
         anonymous_sources = [
             Contributor.prefix_with_count(name, len(list(x)))
