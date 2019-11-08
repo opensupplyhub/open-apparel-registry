@@ -4949,6 +4949,31 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
                     confidence=0.85,
                     results='')
 
+        source_three = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True)
+
+        list_item_three = FacilityListItem \
+            .objects \
+            .create(name='Item 3',
+                    address='Address',
+                    country_code='US',
+                    row_index=0,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=source_three,
+                    facility=self.facility)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_three,
+                    confidence=0.85,
+                    results='')
+
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(2, len(contributors))
 
