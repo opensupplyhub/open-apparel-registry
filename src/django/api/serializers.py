@@ -32,7 +32,8 @@ from api.models import (FacilityList,
                         User,
                         Contributor,
                         ProductType,
-                        ProductionType)
+                        ProductionType,
+                        Source)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code
 from waffle import switch_is_active
@@ -479,16 +480,25 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
         return facility_locations + facility_matches
 
     def get_contributors(self, facility):
-        return [
-            {
-                'id': source.contributor.admin.id
-                if source.contributor else None,
-                'name': source.display_name,
-                'is_verified': source.contributor.is_verified
-                if source.contributor else False,
+        def format_source(source):
+            if type(source) is Source:
+                return {
+                    'id': source.contributor.admin.id
+                    if source.contributor else None,
+                    'name': source.display_name,
+                    'is_verified': source.contributor.is_verified
+                    if source.contributor else False,
+                }
+            return {
+                'name': source,
             }
+        request = self.context.get('request') \
+            if self.context is not None else None
+        user = request.user if request is not None else None
+        return [
+            format_source(source)
             for source
-            in facility.sources()
+            in facility.sources(user=user)
         ]
 
     def get_country_name(self, facility):
@@ -687,7 +697,8 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'product_type_choices', 'production_type_choices')
 
     def get_facility(self, claim):
-        return FacilityDetailsSerializer(claim.facility).data
+        return FacilityDetailsSerializer(
+            claim.facility, context=self.context).data
 
     def get_countries(self, claim):
         return COUNTRY_CHOICES
