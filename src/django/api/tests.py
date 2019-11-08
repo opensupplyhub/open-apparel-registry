@@ -4860,7 +4860,11 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         self.private_user_password = 'shhh'
         self.private_user.set_password(self.private_user_password)
         self.private_user.groups.set(
-            auth.models.Group.objects.values_list('id', flat=True))
+            auth.models.Group.objects.filter(
+                name__in=[
+                    FeatureGroups.CAN_SUBMIT_FACILITY,
+                    FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY
+                ]).values_list('id', flat=True))
         self.private_user.save()
         self.client.logout()
 
@@ -4998,6 +5002,19 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(1, len(contributors))
         self.assertEqual('One Other', contributors[0].get('name'))
+
+        self.private_user.groups.set(
+            auth.models.Group.objects.filter(
+                name__in=[
+                    FeatureGroups.CAN_SUBMIT_FACILITY,
+                    FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY,
+                    FeatureGroups.CAN_VIEW_FULL_CONTRIB_DETAIL
+                ]).values_list('id', flat=True))
+        self.private_user.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('test contributor 1 (First List)',
+                         contributors[0].get('name'))
 
     def test_inactive_or_private_contributor_omitted(self):
         def get_facility_count():

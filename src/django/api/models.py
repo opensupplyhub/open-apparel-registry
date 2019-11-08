@@ -237,24 +237,19 @@ class User(AbstractBaseUser, PermissionsMixin):
             return True
 
     @property
-    def has_public_sources(self):
-        try:
-            contributor = self.contributor
-        except User.contributor.RelatedObjectDoesNotExist:
-            contributor = None
-
-        return Source.objects \
-                     .exclude(contributor=None) \
-                     .filter(contributor=contributor,
-                             is_public=True,
-                             create=True) \
-                     .exists()
-
-    @property
     def can_submit_privately(self):
         return self.groups.filter(
             name=FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY
         ).exists()
+
+    @property
+    def can_view_full_contrib_details(self):
+        if self.can_submit_privately:
+            return self.groups.filter(
+                name=FeatureGroups.CAN_VIEW_FULL_CONTRIB_DETAIL
+            ).exists()
+
+        return True
 
 
 class Source(models.Model):
@@ -1203,8 +1198,7 @@ class Facility(models.Model):
         )
 
         if user is not None and not user.is_anonymous:
-            user_can_see_detail = \
-                user.has_public_sources or not user.can_submit_privately
+            user_can_see_detail = user.can_view_full_contrib_details
         else:
             user_can_see_detail = True
 
