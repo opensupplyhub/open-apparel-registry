@@ -2,10 +2,22 @@ from django.db.models import F
 
 from api.constants import ProcessingAction, FacilityHistoryActions
 from api.models import FacilityMatch, FacilityClaim
+from api.helpers import prefix_a_an
+
+
+def anonymous_source_name(source):
+    s = prefix_a_an(source.contributor.contrib_type)
+    return s[0].lower() + s[1:]
 
 
 def create_associate_match_string(facility_str, contributor_str, list_str):
-    return 'Associate facility {} with contributor {} via list {}'.format(
+    if list_str is None:
+        return 'Associate facility {} with {}'.format(
+            facility_str,
+            contributor_str,
+        )
+
+    return 'Associate facility {} with {} via list {}'.format(
         facility_str,
         contributor_str,
         list_str,
@@ -22,17 +34,29 @@ def create_associate_match_change_reason(list_item, facility):
     )
 
 
-def create_associate_match_entry_detail(match, facility_id):
+def create_associate_match_entry_detail(match, facility_id,
+                                        user_can_see_detail):
     source = match.facility_list_item.source
-    return create_associate_match_string(
-        facility_id,
-        source.contributor.name if source.contributor else '[Unknown]',
-        source.facility_list.name if source.facility_list else '[Unknown]',
-    )
+    if user_can_see_detail:
+        contrib_name = \
+            source.contributor.name if source.contributor else '[Unknown]'
+        list_name = \
+            source.facility_list.name if source.facility_list else None
+    else:
+        contrib_name = anonymous_source_name(source) \
+            if source.contributor else '[Unknown]'
+        list_name = None
+
+    return create_associate_match_string(facility_id, contrib_name, list_name)
 
 
 def create_dissociate_match_string(facility_str, contributor_str, list_str):
-    return 'Dissociate facility {} from contributor {} via list {}'.format(
+    if list_str is None:
+        return 'Dissociate facility {} from {}'.format(
+            facility_str,
+            contributor_str,
+        )
+    return 'Dissociate facility {} from {} via list {}'.format(
         facility_str,
         contributor_str,
         list_str,
@@ -49,12 +73,23 @@ def create_dissociate_match_change_reason(list_item, facility):
     )
 
 
-def create_dissociate_match_entry_detail(match, facility_id):
+def create_dissociate_match_entry_detail(match, facility_id,
+                                         user_can_see_detail):
     source = match.facility_list_item.source
+    if user_can_see_detail:
+        contrib_name = \
+            source.contributor.name if source.contributor else '[Unknown]'
+        list_name = \
+            source.facility_list.name if source.facility_list else None
+    else:
+        contrib_name = anonymous_source_name(source) \
+            if source.contributor else '[Unknown]'
+        list_name = None
+
     return create_dissociate_match_string(
         facility_id,
-        source.contributor.name if source.contributor else '[Unknown]',
-        source.facility_list.name if source.facility_list else '[Unknown]',
+        contrib_name,
+        list_name,
     )
 
 
@@ -227,7 +262,12 @@ def create_facility_claim_entry(claim):
     return None
 
 
-def create_facility_history_list(entries, facility_id):
+def create_facility_history_list(entries, facility_id, user=None):
+    if user is not None and not user.is_anonymous:
+        user_can_see_detail = user.can_view_full_contrib_details
+    else:
+        user_can_see_detail = True
+
     facility_split_entries = [
         {
             'updated_at': maybe_get_split_action_time_from_processing_results(
@@ -257,10 +297,12 @@ def create_facility_history_list(entries, facility_id):
             'updated_at': str(m.history_date),
             'action': FacilityHistoryActions.ASSOCIATE
             if m.is_active else FacilityHistoryActions.DISSOCIATE,
-            'detail': create_associate_match_entry_detail(m, facility_id)
+            'detail': create_associate_match_entry_detail(
+                m, facility_id, user_can_see_detail)
             if m.is_active else create_dissociate_match_entry_detail(
                     m,
                     facility_id,
+                    user_can_see_detail,
             ),
         }
         for m

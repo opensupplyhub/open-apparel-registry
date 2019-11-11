@@ -49,6 +49,7 @@ class FeatureGroups:
     CAN_GET_FACILITY_HISTORY = 'can_get_facility_history'
     CAN_SUBMIT_FACILITY = 'can_submit_facility'
     CAN_SUBMIT_PRIVATE_FACILITY = 'can_submit_private_facility'
+    CAN_VIEW_FULL_CONTRIB_DETAIL = 'can_view_full_contrib_detail'
 
 
 class FacilityHistoryActions:

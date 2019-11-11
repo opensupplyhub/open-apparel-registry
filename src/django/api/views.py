@@ -1673,6 +1673,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         facility_history = create_facility_history_list(
             historical_facility_queryset,
             pk,
+            user=request.user
         )
 
         return Response(facility_history)

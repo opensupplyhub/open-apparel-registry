@@ -8,6 +8,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib import auth
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.contrib.gis.geos import Point
 
 from rest_framework import status
@@ -4217,7 +4218,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             data[0]['detail'],
-            'Associate facility {} with contributor {} via list {}'.format(
+            'Associate facility {} with {} via list {}'.format(
                 self.facility_two.id,
                 self.contributor.name,
                 self.list_two.name,
@@ -4227,6 +4228,23 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         self.assertEqual(
             len(data),
             2,
+        )
+
+        self.superuser.groups.add(
+            Group.objects.get(name=FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY))
+        self.superuser.save()
+
+        automatic_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(automatic_match_response.content)
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Associate facility {} with an Other'.format(
+                self.facility_two.id,
+            ),
         )
 
     @override_flag('can_get_facility_history', active=True)
@@ -4295,7 +4313,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             data[0]['detail'],
-            'Associate facility {} with contributor {} via list {}'.format(
+            'Associate facility {} with {} via list {}'.format(
                 self.facility_two.id,
                 self.contributor.name,
                 self.list_for_confirm_or_remove.name,
@@ -4305,6 +4323,23 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         self.assertEqual(
             len(data),
             3,
+        )
+
+        self.user.groups.add(
+            Group.objects.get(name=FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY))
+        self.user.save()
+
+        confirmed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(confirmed_match_response.content)
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Associate facility {} with an Other'.format(
+                self.facility_two.id,
+            ),
         )
 
     @override_flag('can_get_facility_history', active=True)
@@ -4363,7 +4398,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             data[0]['detail'],
-            'Dissociate facility {} from contributor {} via list {}'.format(
+            'Dissociate facility {} from {} via list {}'.format(
                 self.facility_two.id,
                 self.contributor.name,
                 self.list_for_confirm_or_remove.name,
@@ -4373,6 +4408,23 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         self.assertEqual(
             len(data),
             4,
+        )
+
+        self.user.groups.add(
+            Group.objects.get(name=FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY))
+        self.user.save()
+
+        confirmed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(confirmed_match_response.content)
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Dissociate facility {} from an Other'.format(
+                self.facility_two.id,
+            ),
         )
 
     @override_flag('can_get_facility_history', active=True)
@@ -4860,7 +4912,11 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         self.private_user_password = 'shhh'
         self.private_user.set_password(self.private_user_password)
         self.private_user.groups.set(
-            auth.models.Group.objects.values_list('id', flat=True))
+            auth.models.Group.objects.filter(
+                name__in=[
+                    FeatureGroups.CAN_SUBMIT_FACILITY,
+                    FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY
+                ]).values_list('id', flat=True))
         self.private_user.save()
         self.client.logout()
 
@@ -4998,6 +5054,19 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(1, len(contributors))
         self.assertEqual('One Other', contributors[0].get('name'))
+
+        self.private_user.groups.set(
+            auth.models.Group.objects.filter(
+                name__in=[
+                    FeatureGroups.CAN_SUBMIT_FACILITY,
+                    FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY,
+                    FeatureGroups.CAN_VIEW_FULL_CONTRIB_DETAIL
+                ]).values_list('id', flat=True))
+        self.private_user.save()
+        contributors = self.fetch_facility_contributors(self.facility)
+        self.assertEqual(1, len(contributors))
+        self.assertEqual('test contributor 1 (First List)',
+                         contributors[0].get('name'))
 
     def test_inactive_or_private_contributor_omitted(self):
         def get_facility_count():
