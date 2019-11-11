@@ -2851,9 +2851,13 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
     if not params.is_valid():
         raise ValidationError(params.errors)
 
-    if layer == 'facilities':
-        tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
-    elif layer == 'facilitygrid':
-        tile = get_facility_grid_vector_tile(
-            request.query_params, layer, z, x, y)
-    return Response(tile.tobytes())
+    try:
+        if layer == 'facilities':
+            tile = get_facilities_vector_tile(
+                request.query_params, layer, z, x, y)
+        elif layer == 'facilitygrid':
+            tile = get_facility_grid_vector_tile(
+                request.query_params, layer, z, x, y)
+        return Response(tile.tobytes())
+    except core_exceptions.EmptyResultSet:
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
