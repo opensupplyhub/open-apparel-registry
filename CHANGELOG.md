@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Train persistant Dedupe model on first app request [#905](https://github.com/open-apparel-registry/open-apparel-registry/pull/905/)
 - List inactive or private sources by contributor type [#907](https://github.com/open-apparel-registry/open-apparel-registry/pull/907)
+- Add can view full contributor detail flag/group [#910](https://github.com/open-apparel-registry/open-apparel-registry/pull/910)
 
 ### Deprecated
 
