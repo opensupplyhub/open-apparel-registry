@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+- Handle EmptyResultSet error raised by tile requests [#911](https://github.com/open-apparel-registry/open-apparel-registry/pull/911)
 
 ### Security
 
