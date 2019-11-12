@@ -402,6 +402,10 @@ hr {
   background-color: #fff !important;
 }
 
+.outlined-button--inline {
+    margin-right: 1rem !important;
+}
+
 .outlined-button:hover {
   background-color: rgba(12, 70, 225, 0.15) !important;
 }

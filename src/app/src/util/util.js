@@ -40,7 +40,6 @@ import {
     registrationFieldsEnum,
     registrationFormFields,
     profileFormFields,
-    contributeCSVTemplate,
     facilitiesRoute,
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
@@ -62,9 +61,6 @@ export function DownloadCSV(data, fileName) {
 
     return noop();
 }
-
-export const downloadContributorTemplate = () =>
-    DownloadCSV(contributeCSVTemplate, 'OAR_Contributor_Template.csv');
 
 export const downloadListItemCSV = (list, items) =>
     DownloadCSV(

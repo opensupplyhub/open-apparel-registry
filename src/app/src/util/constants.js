@@ -235,9 +235,6 @@ export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
 export const dashboardClaimsDetailsRoute = '/dashboard/claims/:claimID';
 export const aboutClaimedFacilitiesRoute = '/about/claimedfacilities';
 
-export const contributeCSVTemplate =
-    'country,name,address\nEgypt,Elite Merchandising Corp.,St. 8 El-Amrya Public Free Zone Alexandria Iskandariyah 23512 Egypt';
-
 export const contributeFieldsEnum = Object.freeze({
     name: 'name',
     description: 'description',

@@ -1,8 +1,6 @@
 import React, { Fragment, memo } from 'react';
 import MaterialButton from '@material-ui/core/Button';
 
-import { downloadContributorTemplate } from '../util/util';
-
 const ContributeHeader = memo(() => (
     <Fragment>
         <div className="control-panel__group">
@@ -46,10 +44,19 @@ const ContributeHeader = memo(() => (
                     disableRipple
                     variant="outlined"
                     color="primary"
-                    className="outlined-button"
-                    onClick={downloadContributorTemplate}
+                    className="outlined-button outlined-button--inline"
+                    href="/contributor-templates/OAR_Contributor_Template.xlsx"
                 >
-                    Download OAR Contributor Template
+                    Download Excel (XLSX) Template
+                </MaterialButton>
+                <MaterialButton
+                    disableRipple
+                    variant="outlined"
+                    color="primary"
+                    className="outlined-button"
+                    href="/contributor-templates/OAR_Contributor_Template.csv"
+                >
+                    Download CSV Template
                 </MaterialButton>
             </div>
         </div>
