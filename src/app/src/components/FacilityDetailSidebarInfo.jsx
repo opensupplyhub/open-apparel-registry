@@ -38,12 +38,16 @@ const FacilityDetailSidebarInfo = memo(({
                         />
                     </span>
                 </ShowOnly>
-                <Link
-                    to={makeProfileRouteLink(id)}
-                    href={makeProfileRouteLink(id)}
-                >
-                    {name}
-                </Link>
+                {
+                    id ? (
+                        <Link
+                            to={makeProfileRouteLink(id)}
+                            href={makeProfileRouteLink(id)}
+                        >
+                            {name}
+                        </Link>
+                    ) : name
+                }
             </li>
         );
 

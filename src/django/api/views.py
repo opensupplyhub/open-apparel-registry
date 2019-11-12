@@ -7,7 +7,8 @@ from datetime import datetime
 from functools import reduce
 
 from django.conf import settings
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadedfile import (InMemoryUploadedFile,
+                                            TemporaryUploadedFile)
 from django.db import transaction
 from django.db.models import F, Q
 from django.core import exceptions as core_exceptions
@@ -58,7 +59,7 @@ from api.constants import (CsvHeaderField,
                            UpdateLocationParams,
                            FeatureGroups)
 from api.geocoding import geocode_address
-from api.matching import match_item
+from api.matching import match_item, GazetteerCacheTimeoutError
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -671,7 +672,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         """
         try:
             queryset = Facility.objects.get(pk=pk)
-            response_data = FacilityDetailsSerializer(queryset).data
+            context = {'request': request}
+            response_data = FacilityDetailsSerializer(
+                queryset, context=context).data
             return Response(response_data)
         except Facility.DoesNotExist:
             raise NotFound()
@@ -949,7 +952,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 result['status'] = item.status
                 for facility_id, score in matches:
                     facility = Facility.objects.get(id=facility_id)
-                    facility_dict = FacilityDetailsSerializer(facility).data
+                    context = {'request': request}
+                    facility_dict = FacilityDetailsSerializer(
+                        facility, context=context).data
                     # calling `round` alone was not trimming digits
                     facility_dict['confidence'] = float(str(round(score, 4)))
                     if score < automatic_threshold:
@@ -959,6 +964,22 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             facility_dict['confirm_match_url'] = None
                             facility_dict['reject_match_url'] = None
                     result['matches'].append(facility_dict)
+        except GazetteerCacheTimeoutError as te:
+            item.status = FacilityListItem.ERROR_MATCHING
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': match_started,
+                'error': True,
+                'message': str(te),
+                'finished_at': str(datetime.utcnow())
+            })
+            item.save()
+            result['status'] = item.status
+            result['message'] = (
+                'A timeout occurred waiting for match results. Training may '
+                'be in progress. Retry your request in a few minutes')
+            return Response(result,
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except Exception as e:
             item.status = FacilityListItem.ERROR_MATCHING
             item.processing_results.append({
@@ -1352,7 +1373,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         merge.delete()
 
         target.refresh_from_db()
-        response_data = FacilityDetailsSerializer(target).data
+        context = {'request': request}
+        response_data = FacilityDetailsSerializer(target, context=context).data
         return Response(response_data)
 
     @action(detail=True, methods=['GET', 'POST'],
@@ -1365,8 +1387,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             if request.method == 'GET':
                 facility = Facility.objects.get(pk=pk)
-
-                facility_data = FacilityDetailsSerializer(facility).data
+                context = {'request': request}
+                facility_data = FacilityDetailsSerializer(
+                    facility, context=context).data
 
                 facility_data['properties']['matches'] = [
                     {
@@ -1515,8 +1538,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             match.facility_list_item.save()
 
             facility.refresh_from_db()
-
-            facility_data = FacilityDetailsSerializer(facility).data
+            context = {'request': request}
+            facility_data = FacilityDetailsSerializer(
+                facility, context=context).data
 
             facility_data['properties']['matches'] = [
                 {
@@ -1588,7 +1612,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 facility_location.id)
         facility.save()
 
-        facility_data = FacilityDetailsSerializer(facility).data
+        context = {'request': request}
+        facility_data = FacilityDetailsSerializer(
+            facility, context=context).data
         return Response(facility_data)
 
     @action(detail=True, methods=['GET'],
@@ -1647,6 +1673,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         facility_history = create_facility_history_list(
             historical_facility_queryset,
             pk,
+            user=request.user
         )
 
         return Response(facility_history)
@@ -1747,7 +1774,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if 'file' not in request.data:
             raise ValidationError('No file specified.')
         csv_file = request.data['file']
-        if type(csv_file) is not InMemoryUploadedFile:
+        if type(csv_file) not in (InMemoryUploadedFile, TemporaryUploadedFile):
             raise ValidationError('File not submitted properly.')
         if csv_file.size > MAX_UPLOADED_FILE_SIZE_IN_BYTES:
             mb = MAX_UPLOADED_FILE_SIZE_IN_BYTES / (1024*1024)
@@ -2824,9 +2851,13 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
     if not params.is_valid():
         raise ValidationError(params.errors)
 
-    if layer == 'facilities':
-        tile = get_facilities_vector_tile(request.query_params, layer, z, x, y)
-    elif layer == 'facilitygrid':
-        tile = get_facility_grid_vector_tile(
-            request.query_params, layer, z, x, y)
-    return Response(tile.tobytes())
+    try:
+        if layer == 'facilities':
+            tile = get_facilities_vector_tile(
+                request.query_params, layer, z, x, y)
+        elif layer == 'facilitygrid':
+            tile = get_facility_grid_vector_tile(
+                request.query_params, layer, z, x, y)
+        return Response(tile.tobytes())
+    except core_exceptions.EmptyResultSet:
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
