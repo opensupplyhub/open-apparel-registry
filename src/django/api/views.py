@@ -18,6 +18,7 @@ from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point
 from django.http import Http404
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
@@ -943,7 +944,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         match_started = str(datetime.utcnow())
         try:
             match_results = match_item(country_code, name, address, item.id)
-            save_match_details(match_results)
+            match_objects = save_match_details(match_results)
 
             automatic_threshold = \
                 match_results['results']['automatic_threshold']
@@ -952,7 +953,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for item_id, matches in item_matches.items():
                 result['item_id'] = item_id
                 result['status'] = item.status
-                for facility_id, score in matches:
+                for (facility_id, score), match in zip(matches, match_objects):
                     facility = Facility.objects.get(id=facility_id)
                     context = {'request': request}
                     facility_dict = FacilityDetailsSerializer(
@@ -961,10 +962,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     facility_dict['confidence'] = float(str(round(score, 4)))
                     if score < automatic_threshold:
                         if should_create:
-                            # TODO: Move match confirmation out of the
-                            # FacilityListViewSet and set URLs here
-                            facility_dict['confirm_match_url'] = None
-                            facility_dict['reject_match_url'] = None
+                            facility_dict['confirm_match_url'] = reverse(
+                                'facility-match-confirm',
+                                kwargs={'pk': match.pk})
+                            facility_dict['reject_match_url'] = reverse(
+                                'facility-match-reject',
+                                kwargs={'pk': match.pk})
                     result['matches'].append(facility_dict)
         except GazetteerCacheTimeoutError as te:
             item.status = FacilityListItem.ERROR_MATCHING

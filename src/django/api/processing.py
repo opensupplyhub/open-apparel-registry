@@ -223,6 +223,9 @@ def save_match_details(match_results):
     Arguments:
     match_results -- The dict return value from a call to
                      match_facility_list_items.
+
+    Returns:
+    The list of `FacilityMatch` objects created
     """
     processed_list_item_ids = match_results['processed_list_item_ids']
     item_matches = match_results['item_matches']
@@ -240,6 +243,7 @@ def save_match_details(match_results):
             status=FacilityMatch.PENDING,
             results=results)
 
+    all_matches = []
     for item_id, matches in item_matches.items():
         item = FacilityListItem.objects.get(id=item_id)
         item.status = FacilityListItem.POTENTIAL_MATCH
@@ -273,6 +277,8 @@ def save_match_details(match_results):
         if item.source.create:
             for m in matches:
                 m.save()
+
+        all_matches.extend(matches)
 
     unmatched = (FacilityListItem.objects
                  .filter(id__in=processed_list_item_ids)
@@ -311,3 +317,5 @@ def save_match_details(match_results):
                 'finished_at': finished
             })
         item.save()
+
+    return all_matches
