@@ -17,6 +17,7 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point
+from django.http import Http404
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
@@ -85,6 +86,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
+                             FacilityMatchSerializer,
                              FacilityCreateBodySerializer,
                              FacilityCreateQueryParamsSerializer,
                              UserSerializer,
@@ -2829,6 +2831,70 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         ]
 
         return Response(response_data)
+
+
+class FacilityMatchAutoSchema(AutoSchema):
+    def _allows_filters(self, path, method):
+        return True
+
+    def get_serializer_fields(self, path, method):
+        if method == 'POST':
+            return []
+        return super(FacilityMatchAutoSchema, self).get_serializer_fields(
+            path, method)
+
+
+@schema(FacilityMatchAutoSchema())
+class FacilityMatchViewSet(mixins.RetrieveModelMixin,
+                           viewsets.GenericViewSet):
+    queryset = FacilityMatch.objects.all()
+    serializer_class = FacilityMatchSerializer
+    permission_classes = (IsRegisteredAndConfirmed,)
+
+    def validate_request(self, request, pk):
+        # We only allow retrieving matches to items that the logged in user has
+        # submitted
+        if not self.queryset.filter(
+            pk=pk,
+            facility_list_item__source__contributor=request.user.contributor
+        ).exists():
+            raise Http404
+
+    def retrieve(self, request, pk=None):
+        self.validate_request(request, pk)
+        return super(FacilityMatchViewSet, self).retrieve(request, pk=pk)
+
+    @transaction.atomic
+    @action(detail=True, methods=['POST'])
+    def confirm(self, request, pk=None):
+        """
+        Confirm a potential match between an existing Facility and a Facility
+        List Item from an authenticated Contributor's Facility List.
+
+        Returns an updated Facility List Item with the confirmed match's status
+        changed to `CONFIRMED` and the Facility List Item's status changed to
+        `CONFIRMED_MATCH`. On confirming a potential match, all other
+        potential matches will have their status changed to `REJECTED`.
+        """
+        self.validate_request(request, pk)
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+    @transaction.atomic
+    @action(detail=True, methods=['POST'])
+    def reject(self, request, pk=None):
+        """
+        Reject a potential match between an existing Facility and a Facility
+        List Item from an authenticated Contributor.
+
+        Returns an updated Facility List Item with the potential match's status
+        changed to `REJECTED`.
+
+        If all potential matches have been rejected and the Facility List Item
+        has been successfully geocoded, creates a new Facility from the
+        Facility List Item.
+        """
+        self.validate_request(request, pk)
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
 @api_view(['GET'])

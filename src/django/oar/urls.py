@@ -34,6 +34,8 @@ router.register('facility-lists', views.FacilityListViewSet, 'facility-list')
 router.register('facilities', views.FacilitiesViewSet, 'facility')
 router.register('facility-claims', views.FacilityClaimViewSet,
                 'facility-claim')
+router.register('facility-matches', views.FacilityMatchViewSet,
+                'facility-match')
 
 public_apis = [
     url(r'^api/', include(router.urls)),
