@@ -7,7 +7,6 @@ import {
     logErrorAndDispatchFailure,
     makeSingleFacilityListURL,
     makeSingleFacilityListItemsURL,
-    createConfirmOrRejectMatchData,
     createConfirmFacilityListItemMatchURL,
     createRejectFacilityListItemMatchURL,
     createRemoveFacilityListItemURL,
@@ -100,22 +99,21 @@ export function fetchFacilityListItems(
     };
 }
 
-export function confirmFacilityListItemMatch(facilityMatchID, listID, listItemID) {
+export function confirmFacilityListItemMatch(facilityMatchID) {
     return (dispatch) => {
         dispatch(startConfirmFacilityListItemPotentialMatch());
 
-        if (!listID || !listItemID || !facilityMatchID) {
+        if (!facilityMatchID) {
             return dispatch(logErrorAndDispatchFailure(
                 null,
-                'listID, listItemID, and facilityMatchID are required parameters',
+                'facilityMatchID is a required parameter',
                 failConfirmFacilityListItemPotentialMatch,
             ));
         }
 
         return apiRequest
             .post(
-                createConfirmFacilityListItemMatchURL(listID),
-                createConfirmOrRejectMatchData(listItemID, facilityMatchID),
+                createConfirmFacilityListItemMatchURL(facilityMatchID),
             )
             .then(({ data }) => dispatch(completeConfirmFacilityListItemPotentialMatch(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -126,22 +124,21 @@ export function confirmFacilityListItemMatch(facilityMatchID, listID, listItemID
     };
 }
 
-export function rejectFacilityListItemMatch(facilityMatchID, listID, listItemID) {
+export function rejectFacilityListItemMatch(facilityMatchID) {
     return (dispatch) => {
         dispatch(startRejectFacilityListItemPotentialMatch());
 
-        if (!listID || !listItemID || !facilityMatchID) {
+        if (!facilityMatchID) {
             return dispatch(logErrorAndDispatchFailure(
                 null,
-                'listID, listItemID, and facilityMatchID are required parameters',
+                'facilityMatchID is a required parameter',
                 failRejectFacilityListItemPotentialMatch,
             ));
         }
 
         return apiRequest
             .post(
-                createRejectFacilityListItemMatchURL(listID),
-                createConfirmOrRejectMatchData(listItemID, facilityMatchID),
+                createRejectFacilityListItemMatchURL(facilityMatchID),
             )
             .then(({ data }) => dispatch(completeRejectFacilityListItemPotentialMatch(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(

@@ -450,16 +450,11 @@ export const makeFeatureCollectionFromSingleFeature = feature => Object.freeze({
     ]),
 });
 
-export const createConfirmOrRejectMatchData = (listItemID, facilityMatchID) => Object.freeze({
-    list_item_id: listItemID,
-    facility_match_id: facilityMatchID,
-});
+export const createConfirmFacilityListItemMatchURL = matchID =>
+    `/api/facility-matches/${matchID}/confirm/`;
 
-export const createConfirmFacilityListItemMatchURL = listID =>
-    `/api/facility-lists/${listID}/confirm/`;
-
-export const createRejectFacilityListItemMatchURL = listID =>
-    `/api/facility-lists/${listID}/reject/`;
+export const createRejectFacilityListItemMatchURL = matchID =>
+    `/api/facility-matches/${matchID}/reject/`;
 
 export const createRemoveFacilityListItemURL = listID =>
     `/api/facility-lists/${listID}/remove/`;

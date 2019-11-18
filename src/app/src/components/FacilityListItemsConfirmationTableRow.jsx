@@ -1,5 +1,5 @@
 import React from 'react';
-import { bool, func, string } from 'prop-types';
+import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
@@ -21,7 +21,6 @@ function FacilityListItemsConfirmationTableRow({
     item,
     makeConfirmMatchFunction,
     makeRejectMatchFunction,
-    listID,
     fetching,
     readOnly,
 }) {
@@ -45,8 +44,8 @@ function FacilityListItemsConfirmationTableRow({
                 Object.freeze(names.concat(name)),
                 Object.freeze(addresses.concat(address)),
                 Object.freeze(confirmOrRejectFunctions.concat(Object.freeze({
-                    confirmMatch: makeConfirmMatchFunction(id, listID),
-                    rejectMatch: makeRejectMatchFunction(id, listID),
+                    confirmMatch: makeConfirmMatchFunction(id),
+                    rejectMatch: makeRejectMatchFunction(id),
                     id,
                     status,
                     matchName: name,
@@ -143,7 +142,6 @@ FacilityListItemsConfirmationTableRow.propTypes = {
     item: facilityListItemPropType.isRequired,
     makeConfirmMatchFunction: func.isRequired,
     makeRejectMatchFunction: func.isRequired,
-    listID: string.isRequired,
     fetching: bool.isRequired,
     readOnly: bool,
 };
@@ -160,16 +158,12 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    item: {
-        id: listItemID,
-    },
-}) {
+function mapDispatchToProps(dispatch) {
     return {
-        makeConfirmMatchFunction: (matchID, listID) =>
-            () => dispatch(confirmFacilityListItemMatch(matchID, listID, listItemID)),
-        makeRejectMatchFunction: (matchID, listID) =>
-            () => dispatch(rejectFacilityListItemMatch(matchID, listID, listItemID)),
+        makeConfirmMatchFunction: matchID =>
+            () => dispatch(confirmFacilityListItemMatch(matchID)),
+        makeRejectMatchFunction: matchID =>
+            () => dispatch(rejectFacilityListItemMatch(matchID)),
     };
 }
 
