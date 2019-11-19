@@ -16,6 +16,7 @@ Move the facility match confirm/reject API to allow single-item match handling [
 ### Removed
 
 ### Fixed
+Add a dissociate history event when list item is replaced [#919](https://github.com/open-apparel-registry/open-apparel-registry/pull/919)
 
 ### Security
 
