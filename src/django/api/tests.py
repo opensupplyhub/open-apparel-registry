@@ -4390,6 +4390,54 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         )
 
     @override_flag('can_get_facility_history', active=True)
+    def test_includes_dissociation_record_when_item_removed(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-matches/{}/confirm/'.format(
+            self.match_for_confirm_or_remove.id,
+        )
+
+        confirm_response = self.client.post(confirm_url)
+
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        # Upload replacement
+        csv_file = SimpleUploadedFile('facilities.csv',
+                                      b'country,name,address\n',
+                                      content_type='text/csv')
+        replace_response = self.client.post(
+            reverse('facility-list-list'),
+            {'file': csv_file,
+             'replaces': self.list_for_confirm_or_remove.id},
+            format='multipart')
+        self.assertEqual(replace_response.status_code, status.HTTP_200_OK)
+
+        removed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(removed_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'DISSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Dissociate facility {} from {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
+            ),
+        )
+
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_approval(self):
         self.client.logout()

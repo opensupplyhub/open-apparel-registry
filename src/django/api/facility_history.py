@@ -1,7 +1,10 @@
 from django.db.models import F
 
 from api.constants import ProcessingAction, FacilityHistoryActions
-from api.models import FacilityMatch, FacilityClaim
+from api.models import (FacilityMatch,
+                        FacilityClaim,
+                        FacilityListItem,
+                        FacilityList)
 from api.helpers import prefix_a_an
 
 
@@ -88,6 +91,26 @@ def create_dissociate_match_entry_detail(match, facility_id,
 
     return create_dissociate_match_string(
         facility_id,
+        contrib_name,
+        list_name,
+    )
+
+
+def create_dissociate_inactive_item_detail(facility_list_item,
+                                           user_can_see_detail):
+    source = facility_list_item.source
+    if user_can_see_detail:
+        contrib_name = \
+            source.contributor.name if source.contributor else '[Unknown]'
+        list_name = \
+            source.facility_list.name if source.facility_list else None
+    else:
+        contrib_name = anonymous_source_name(source) \
+            if source.contributor else '[Unknown]'
+        list_name = None
+
+    return create_dissociate_match_string(
+        facility_list_item.facility_id,
         contrib_name,
         list_name,
     )
@@ -315,6 +338,27 @@ def create_facility_history_list(entries, facility_id, user=None):
         .filter(facility_id=facility_id)
     ]
 
+    # We don't have a historical model tracking when the `is_active` property
+    # of a list source switches from True to False, but we want to have a
+    # DISSOCIATE entry in the history when this happens.
+    # We use the `created_at` of the replacing list as the date and time at
+    # which the now inactive item was dissociated.
+    replaced_entries = []
+    inactive_items = FacilityListItem.objects.filter(
+        facility_id=facility_id, source__is_active=False)
+    for item in inactive_items:
+        if item.source.facility_list is not None:
+            replacing_list_filter = \
+                FacilityList.objects.filter(replaces=item.source.facility_list)
+            if replacing_list_filter.exists():
+                replaced_entries.append({
+                    'updated_at':
+                    str(replacing_list_filter.first().created_at),
+                    'action': FacilityHistoryActions.DISSOCIATE,
+                    'detail': create_dissociate_inactive_item_detail(
+                        item, user_can_see_detail)
+                })
+
     facility_claim_entries = [
         create_facility_claim_entry(c)
         for c
@@ -335,5 +379,6 @@ def create_facility_history_list(entries, facility_id, user=None):
     ]
 
     return sorted(history_entries + facility_split_entries +
-                  facility_match_entries + facility_claim_entries,
+                  facility_match_entries + facility_claim_entries +
+                  replaced_entries,
                   key=lambda entry: entry['updated_at'], reverse=True)
