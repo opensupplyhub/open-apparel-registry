@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.19.0] - 2019-11-20
+### Added
+
+### Changed
 Move the facility match confirm/reject API to allow single-item match handling [#918](https://github.com/open-apparel-registry/open-apparel-registry/pull/918/)
 
 ### Deprecated
@@ -327,7 +340,9 @@ Add a dissociate history event when list item is replaced [#919](https://github.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.17.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.19.0...HEAD
+[2.19.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.19.0
+[2.18.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.18.0
 [2.17.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.17.0
 [2.16.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.16.0
 [2.15.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.15.0
