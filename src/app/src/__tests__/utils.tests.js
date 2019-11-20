@@ -50,7 +50,6 @@ const {
     createParamsFromQueryString,
     makeReportADataIssueEmailLink,
     makeFeatureCollectionFromSingleFeature,
-    createConfirmOrRejectMatchData,
     createConfirmFacilityListItemMatchURL,
     createRejectFacilityListItemMatchURL,
     makeMyFacilitiesRoute,
@@ -740,28 +739,13 @@ it('creates a geojson FeatureCollection from a single geojson Feature', () => {
     )).toBe(true);
 });
 
-it('creates POST data for confirming or rejecting a facility list item match', () => {
-    const listItem = 'listItem';
-    const facilityMatch = 'facilityMatch';
-
-    const expectedMatch = {
-        list_item_id: listItem,
-        facility_match_id: facilityMatch,
-    };
-
-    expect(isEqual(
-        createConfirmOrRejectMatchData(listItem, facilityMatch),
-        expectedMatch,
-    )).toBe(true);
-});
-
 it('creates URLs for confirming or rejecting a facility list item match', () => {
-    const list = 'list';
-    const expectedConfirmURL = '/api/facility-lists/list/confirm/';
-    const expectedRejectURL = '/api/facility-lists/list/reject/';
+    const matchId = 'matchid';
+    const expectedConfirmURL = '/api/facility-matches/matchid/confirm/';
+    const expectedRejectURL = '/api/facility-matches/matchid/reject/';
 
-    expect(createConfirmFacilityListItemMatchURL(list)).toBe(expectedConfirmURL);
-    expect(createRejectFacilityListItemMatchURL(list)).toBe(expectedRejectURL);
+    expect(createConfirmFacilityListItemMatchURL(matchId)).toBe(expectedConfirmURL);
+    expect(createRejectFacilityListItemMatchURL(matchId)).toBe(expectedRejectURL);
 });
 
 it('creates a link to see facilities for a contributor ID', () => {

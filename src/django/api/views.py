@@ -17,6 +17,8 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point
+from django.http import Http404
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
@@ -85,6 +87,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
+                             FacilityMatchSerializer,
                              FacilityCreateBodySerializer,
                              FacilityCreateQueryParamsSerializer,
                              UserSerializer,
@@ -941,7 +944,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         match_started = str(datetime.utcnow())
         try:
             match_results = match_item(country_code, name, address, item.id)
-            save_match_details(match_results)
+            match_objects = save_match_details(match_results)
 
             automatic_threshold = \
                 match_results['results']['automatic_threshold']
@@ -950,7 +953,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for item_id, matches in item_matches.items():
                 result['item_id'] = item_id
                 result['status'] = item.status
-                for facility_id, score in matches:
+                for (facility_id, score), match in zip(matches, match_objects):
                     facility = Facility.objects.get(id=facility_id)
                     context = {'request': request}
                     facility_dict = FacilityDetailsSerializer(
@@ -959,10 +962,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     facility_dict['confidence'] = float(str(round(score, 4)))
                     if score < automatic_threshold:
                         if should_create:
-                            # TODO: Move match confirmation out of the
-                            # FacilityListViewSet and set URLs here
-                            facility_dict['confirm_match_url'] = None
-                            facility_dict['reject_match_url'] = None
+                            facility_dict['confirm_match_url'] = reverse(
+                                'facility-match-confirm',
+                                kwargs={'pk': match.pk})
+                            facility_dict['reject_match_url'] = reverse(
+                                'facility-match-reject',
+                                kwargs={'pk': match.pk})
                     result['matches'].append(facility_dict)
         except GazetteerCacheTimeoutError as te:
             item.status = FacilityListItem.ERROR_MATCHING
@@ -2030,378 +2035,6 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @transaction.atomic
-    @action(detail=True,
-            methods=['post'],
-            url_path='confirm')
-    def confirm_match(self, request, pk=None):
-        """
-        Confirm a potential match between an existing Facility and a Facility
-        List Item from an authenticated Contributor's Facility List.
-
-        Returns an updated Facility List Item with the confirmed match's status
-        changed to `CONFIRMED` and the Facility List Item's status changed to
-        `CONFIRMED_MATCH`. On confirming a potential match, all other
-        potential matches will have their status changed to `REJECTED`.
-
-        ## Request Body
-
-        **Required**
-
-        `list_item_id` (`number`): ID for the Facility List Item rejecting a
-                       match with an existing Facility.
-
-        `facility_match_id` (`number`): ID for the potential Facility Match
-                            rejected as a match for the Facility List Item.
-
-        **Example**
-
-            {
-                "list_item_id": 1,
-                "facility_match_id": 1
-            }
-
-        ## Sample Response
-
-            {
-                "id": 1,
-                "matches": [
-                    {
-                        "id": 1,
-                        "status": "CONFIRMED",
-                        "confidence": 0.6,
-                        "results": {
-                            "match_type": "single_gazetteer_match",
-                            "code_version": "12asdf",
-                            "recall_weight": 1,
-                            "automatic_threshold": 0.8,
-                            "gazetteer_threshold": 0.5,
-                            "no_gazetteer_matches": false
-                        }
-                        "oar_id": "oar_id_1",
-                        "name": "facility match name 1",
-                        "address": "facility match address 1",
-                        "location": {
-                            "lat": 1,
-                            "lng": 1
-                        },
-                        "is_active": true
-                    },
-                    {
-                        "id": 2,
-                        "status": "REJECTED",
-                        "confidence": 0.7,
-                        "results": {
-                            "match_type": "single_gazetteer_match",
-                            "code_version": "34asdf",
-                            "recall_weight": 1,
-                            "automatic_threshold": 0.8,
-                            "gazetteer_threshold": 0.5,
-                            "no_gazetteer_matches": false
-                        }
-                        "oar_id": "oar_id_2",
-                        "name": "facility match name 2",
-                        "address": "facility match address 2",
-                        "location": {
-                            "lat": 2,
-                            "lng": 2
-                        },
-                        "is_active": true
-                    }
-                ],
-                "row_index": 1,
-                "address": "facility list item address",
-                "name": "facility list item name",
-                "raw_data": "facility liste item name, facility list item address", # noqa
-                "status": "CONFIRMED_MATCH",
-                "processing_started_at": null,
-                "processing_completed_at": null,
-                "country_code": "US",
-                "facility_list": 1,
-                "country_name": "United States",
-                "processing_errors": null,
-                "list_statuses": ["CONFIRMED_MATCH"],
-                "matched_facility": {
-                    "oar_id": "oar_id_1",
-                    "name": "facility match name 1",
-                    "address": "facility match address 1",
-                    "location": {
-                        "lat": 1,
-                        "lng": 1
-                    },
-                    "created_from_id": 12345
-                }
-            }
-        """
-        try:
-            list_item_id = request.data.get('list_item_id')
-            facility_match_id = request.data.get('facility_match_id')
-
-            if list_item_id is None:
-                raise ValidationError('missing required list_item_id')
-
-            if facility_match_id is None:
-                raise ValidationError('missing required facility_match_id')
-
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(source__contributor=user_contributor) \
-                .get(pk=pk)
-            facility_list_item = FacilityListItem \
-                .objects \
-                .filter(source=facility_list.source) \
-                .get(pk=list_item_id)
-            facility_match = FacilityMatch \
-                .objects \
-                .filter(facility_list_item=facility_list_item) \
-                .get(pk=facility_match_id)
-
-            if facility_list_item.status != FacilityListItem.POTENTIAL_MATCH:
-                raise ValidationError(
-                    'facility list item status must be POTENTIAL_MATCH')
-
-            if facility_match.status != FacilityMatch.PENDING:
-                raise ValidationError('facility match status must be PENDING')
-
-            facility_match.status = FacilityMatch.CONFIRMED
-            facility_match.changeReason = create_associate_match_change_reason(
-                facility_list_item,
-                facility_match.facility,
-            )
-
-            facility_match.save()
-
-            matches_to_reject = FacilityMatch \
-                .objects \
-                .filter(facility_list_item=facility_list_item) \
-                .exclude(pk=facility_match_id)
-            # Call `save` in a loop rather than use `update` to make sure that
-            # django-simple-history can log the changes
-            for match in matches_to_reject:
-                match.status = FacilityMatch.REJECTED
-                match.save()
-
-            facility_list_item.status = FacilityListItem.CONFIRMED_MATCH
-            facility_list_item.facility = facility_match.facility
-            facility_list_item.save()
-
-            response_data = FacilityListItemSerializer(facility_list_item).data
-
-            response_data['list_statuses'] = (facility_list
-                                              .source
-                                              .facilitylistitem_set
-                                              .values_list('status', flat=True)
-                                              .distinct())
-
-            return Response(response_data)
-        except FacilityList.DoesNotExist:
-            raise NotFound()
-        except FacilityListItem.DoesNotExist:
-            raise NotFound()
-        except FacilityMatch.DoesNotExist:
-            raise NotFound()
-
-    @transaction.atomic
-    @action(detail=True,
-            methods=['post'],
-            url_path='reject')
-    def reject_match(self, request, pk=None):
-        """
-        Reject a potential match between an existing Facility and a Facility
-        List Item from an authenticated Contributor's Facility List.
-
-        Returns an updated Facility List Item with the potential match's status
-        changed to `REJECTED`.
-
-        If all potential matches have been rejected and the Facility List Item
-        has been successfully geocoded, creates a new Facility from the
-        Facility List Item.
-
-        ## Request Body
-
-        **Required**
-
-        `list_item_id` (`number`): ID for the Facility List Item rejecting a
-                       match with an existing Facility.
-
-        `facility_match_id` (`number`): ID for the potential Facility Match
-                            rejected as a match for the Facility List Item.
-
-        **Example**
-
-            {
-                "list_item_id": 1,
-                "facility_match_id": 2
-            }
-
-        ## Sample Response
-
-            {
-                "id": 1,
-                "matches": [
-                    {
-                        "id": 1,
-                        "status": "PENDING",
-                        "confidence": 0.6,
-                        "results": {
-                            "match_type": "single_gazetteer_match",
-                            "code_version": "12asdf",
-                            "recall_weight": 1,
-                            "automatic_threshold": 0.8,
-                            "gazetteer_threshold": 0.5,
-                            "no_gazetteer_matches": false
-                        }
-                        "oar_id": "oar_id_1",
-                        "name": "facility match name 1",
-                        "address": "facility match address 1",
-                        "location": {
-                            "lat": 1,
-                            "lng": 1
-                        },
-                        "is_active": true
-                    },
-                    {
-                        "id": 2,
-                        "status": "REJECTED",
-                        "confidence": 0.7,
-                        "results": {
-                            "match_type": "single_gazetteer_match",
-                            "code_version": "34asdf",
-                            "recall_weight": 1,
-                            "automatic_threshold": 0.8,
-                            "gazetteer_threshold": 0.5,
-                            "no_gazetteer_matches": false
-                        }
-                        "oar_id": "oar_id_2",
-                        "name": "facility match name 2",
-                        "address": "facility match address 2",
-                        "location": {
-                            "lat": 2,
-                            "lng": 2
-                        },
-                        "is_active": true
-                    }
-                ]
-                "row_index": 1,
-                "address": "facility list item address",
-                "name": "facility list item name",
-                "raw_data": "facility liste item name, facility list item address", # noqa
-                "status": "POTENTIAL_MATCH",
-                "processing_started_at": null,
-                "processing_completed_at": null,
-                "country_code": "US",
-                "country_name": "United States",
-                "matched_facility": null,
-                "processing_errors": null,
-                "facility_list": 1,
-                "list_statuses": ["POTENTIAL_MATCH"],
-            }
-        """
-        try:
-            list_item_id = request.data.get('list_item_id')
-            facility_match_id = request.data.get('facility_match_id')
-
-            if list_item_id is None:
-                raise ValidationError('missing required list_item_id')
-
-            if facility_match_id is None:
-                raise ValidationError('missing required facility_match_id')
-
-            user_contributor = request.user.contributor
-            facility_list = FacilityList \
-                .objects \
-                .filter(source__contributor=user_contributor) \
-                .get(pk=pk)
-            facility_list_item = FacilityListItem \
-                .objects \
-                .filter(source=facility_list.source) \
-                .get(pk=list_item_id)
-            facility_match = FacilityMatch \
-                .objects \
-                .filter(facility_list_item=facility_list_item) \
-                .get(pk=facility_match_id)
-
-            if facility_list_item.status != FacilityListItem.POTENTIAL_MATCH:
-                raise ValidationError(
-                    'facility list item status must be POTENTIAL_MATCH')
-
-            if facility_match.status != FacilityMatch.PENDING:
-                raise ValidationError('facility match status must be PENDING')
-
-            facility_match.status = FacilityMatch.REJECTED
-            facility_match.save()
-
-            remaining_potential_matches = FacilityMatch \
-                .objects \
-                .filter(facility_list_item=facility_list_item) \
-                .filter(status=FacilityMatch.PENDING)
-
-            # If no potential matches remain:
-            #
-            # - create a new facility for a list item with a geocoded point
-            # - set status to `ERROR_MATCHING` for list item with no point
-            if remaining_potential_matches.count() == 0:
-                no_location = facility_list_item.geocoded_point is None
-                no_geocoding_results = facility_list_item.status == \
-                    FacilityListItem.GEOCODED_NO_RESULTS
-
-                if (no_location or no_geocoding_results):
-                    facility_list_item.status = FacilityListItem.ERROR_MATCHING
-                    timestamp = str(datetime.utcnow())
-                    facility_list_item.processing_results.append({
-                        'action': ProcessingAction.CONFIRM,
-                        'started_at': timestamp,
-                        'error': True,
-                        'message': ('Unable to create a new facility from an '
-                                    'item with no geocoded location'),
-                        'finished_at': timestamp,
-                    })
-                else:
-                    new_facility = Facility \
-                        .objects \
-                        .create(name=facility_list_item.name,
-                                address=facility_list_item.address,
-                                country_code=facility_list_item.country_code,
-                                location=facility_list_item.geocoded_point,
-                                created_from=facility_list_item)
-
-                    # also create a new facility match
-                    match_results = {
-                        "match_type": "all_potential_matches_rejected",
-                    }
-
-                    FacilityMatch \
-                        .objects \
-                        .create(facility_list_item=facility_list_item,
-                                facility=new_facility,
-                                confidence=1.0,
-                                status=FacilityMatch.CONFIRMED,
-                                results=match_results)
-
-                    facility_list_item.facility = new_facility
-
-                    facility_list_item.status = FacilityListItem \
-                        .CONFIRMED_MATCH
-
-                facility_list_item.save()
-
-            response_data = FacilityListItemSerializer(facility_list_item).data
-
-            response_data['list_statuses'] = (facility_list
-                                              .source
-                                              .facilitylistitem_set
-                                              .values_list('status', flat=True)
-                                              .distinct())
-
-            return Response(response_data)
-        except FacilityList.DoesNotExist:
-            raise NotFound()
-        except FacilityListItem.DoesNotExist:
-            raise NotFound()
-        except FacilityMatch.DoesNotExist:
-            raise NotFound()
-
-    @transaction.atomic
     @action(detail=True, methods=['post'],
             url_path='remove')
     def remove_item(self, request, pk=None):
@@ -2827,6 +2460,322 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             for contributor
             in Contributor.objects.all().order_by('name')
         ]
+
+        return Response(response_data)
+
+
+class FacilityMatchAutoSchema(AutoSchema):
+    def _allows_filters(self, path, method):
+        return True
+
+    def get_serializer_fields(self, path, method):
+        if method == 'POST':
+            return []
+        return super(FacilityMatchAutoSchema, self).get_serializer_fields(
+            path, method)
+
+
+@schema(FacilityMatchAutoSchema())
+class FacilityMatchViewSet(mixins.RetrieveModelMixin,
+                           viewsets.GenericViewSet):
+    queryset = FacilityMatch.objects.all()
+    serializer_class = FacilityMatchSerializer
+    permission_classes = (IsRegisteredAndConfirmed,)
+
+    def validate_request(self, request, pk):
+        # We only allow retrieving matches to items that the logged in user has
+        # submitted
+        filter = self.queryset.filter(
+            pk=pk,
+            facility_list_item__source__contributor=request.user.contributor
+        )
+        if not filter.exists():
+            raise Http404
+
+        facility_match = filter.first()
+        facility_list_item = facility_match.facility_list_item
+
+        if facility_list_item.status != FacilityListItem.POTENTIAL_MATCH:
+            raise ValidationError(
+                'facility list item status must be POTENTIAL_MATCH')
+
+        if facility_match.status != FacilityMatch.PENDING:
+            raise ValidationError('facility match status must be PENDING')
+
+        return facility_match
+
+    def retrieve(self, request, pk=None):
+        self.validate_request(request, pk)
+        return super(FacilityMatchViewSet, self).retrieve(request, pk=pk)
+
+    @transaction.atomic
+    @action(detail=True, methods=['POST'])
+    def confirm(self, request, pk=None):
+        """
+        Confirm a potential match between an existing Facility and a Facility
+        List Item from an authenticated Contributor's Facility List.
+
+        Returns an updated Facility List Item with the confirmed match's status
+        changed to `CONFIRMED` and the Facility List Item's status changed to
+        `CONFIRMED_MATCH`. On confirming a potential match, all other
+        potential matches will have their status changed to `REJECTED`.
+
+        ## Sample Response
+
+            {
+                "id": 1,
+                "matches": [
+                    {
+                        "id": 1,
+                        "status": "CONFIRMED",
+                        "confidence": 0.6,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "12asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_1",
+                        "name": "facility match name 1",
+                        "address": "facility match address 1",
+                        "location": {
+                            "lat": 1,
+                            "lng": 1
+                        },
+                        "is_active": true
+                    },
+                    {
+                        "id": 2,
+                        "status": "REJECTED",
+                        "confidence": 0.7,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "34asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_2",
+                        "name": "facility match name 2",
+                        "address": "facility match address 2",
+                        "location": {
+                            "lat": 2,
+                            "lng": 2
+                        },
+                        "is_active": true
+                    }
+                ],
+                "row_index": 1,
+                "address": "facility list item address",
+                "name": "facility list item name",
+                "raw_data": "facility liste item name, facility list item address", # noqa
+                "status": "CONFIRMED_MATCH",
+                "processing_started_at": null,
+                "processing_completed_at": null,
+                "country_code": "US",
+                "facility_list": 1,
+                "country_name": "United States",
+                "processing_errors": null,
+                "list_statuses": ["CONFIRMED_MATCH"],
+                "matched_facility": {
+                    "oar_id": "oar_id_1",
+                    "name": "facility match name 1",
+                    "address": "facility match address 1",
+                    "location": {
+                        "lat": 1,
+                        "lng": 1
+                    },
+                    "created_from_id": 12345
+                }
+            }
+
+        """
+        facility_match = self.validate_request(request, pk)
+        facility_list_item = facility_match.facility_list_item
+
+        facility_match.status = FacilityMatch.CONFIRMED
+        facility_match.changeReason = create_associate_match_change_reason(
+            facility_match.facility_list_item,
+            facility_match.facility,
+        )
+
+        facility_match.save()
+
+        matches_to_reject = FacilityMatch \
+            .objects \
+            .filter(facility_list_item=facility_list_item) \
+            .exclude(pk=facility_match.pk)
+        # Call `save` in a loop rather than use `update` to make sure that
+        # django-simple-history can log the changes
+        for match in matches_to_reject:
+            match.status = FacilityMatch.REJECTED
+            match.save()
+
+        facility_list_item.status = FacilityListItem.CONFIRMED_MATCH
+        facility_list_item.facility = facility_match.facility
+        facility_list_item.save()
+
+        response_data = FacilityListItemSerializer(facility_list_item).data
+
+        if facility_list_item.source.source_type == Source.LIST:
+            response_data['list_statuses'] = (
+                facility_list_item
+                .source
+                .facilitylistitem_set
+                .values_list('status', flat=True)
+                .distinct())
+
+        return Response(response_data)
+
+    @transaction.atomic
+    @action(detail=True, methods=['POST'])
+    def reject(self, request, pk=None):
+        """
+        Reject a potential match between an existing Facility and a Facility
+        List Item from an authenticated Contributor.
+
+        Returns an updated Facility List Item with the potential match's status
+        changed to `REJECTED`.
+
+        If all potential matches have been rejected and the Facility List Item
+        has been successfully geocoded, creates a new Facility from the
+        Facility List Item.
+
+        ## Sample Response
+
+            {
+                "id": 1,
+                "matches": [
+                    {
+                        "id": 1,
+                        "status": "PENDING",
+                        "confidence": 0.6,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "12asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_1",
+                        "name": "facility match name 1",
+                        "address": "facility match address 1",
+                        "location": {
+                            "lat": 1,
+                            "lng": 1
+                        },
+                        "is_active": true
+                    },
+                    {
+                        "id": 2,
+                        "status": "REJECTED",
+                        "confidence": 0.7,
+                        "results": {
+                            "match_type": "single_gazetteer_match",
+                            "code_version": "34asdf",
+                            "recall_weight": 1,
+                            "automatic_threshold": 0.8,
+                            "gazetteer_threshold": 0.5,
+                            "no_gazetteer_matches": false
+                        }
+                        "oar_id": "oar_id_2",
+                        "name": "facility match name 2",
+                        "address": "facility match address 2",
+                        "location": {
+                            "lat": 2,
+                            "lng": 2
+                        },
+                        "is_active": true
+                    }
+                ]
+                "row_index": 1,
+                "address": "facility list item address",
+                "name": "facility list item name",
+                "raw_data": "facility liste item name, facility list item address", # noqa
+                "status": "POTENTIAL_MATCH",
+                "processing_started_at": null,
+                "processing_completed_at": null,
+                "country_code": "US",
+                "country_name": "United States",
+                "matched_facility": null,
+                "processing_errors": null,
+                "facility_list": 1,
+                "list_statuses": ["POTENTIAL_MATCH"],
+            }
+        """
+        facility_match = self.validate_request(request, pk)
+        facility_list_item = facility_match.facility_list_item
+
+        facility_match.status = FacilityMatch.REJECTED
+        facility_match.save()
+
+        remaining_potential_matches = FacilityMatch \
+            .objects \
+            .filter(facility_list_item=facility_list_item) \
+            .filter(status=FacilityMatch.PENDING)
+
+        # If no potential matches remain:
+        #
+        # - create a new facility for a list item with a geocoded point
+        # - set status to `ERROR_MATCHING` for list item with no point
+        if remaining_potential_matches.count() == 0:
+            no_location = facility_list_item.geocoded_point is None
+            no_geocoding_results = facility_list_item.status == \
+                FacilityListItem.GEOCODED_NO_RESULTS
+
+            if (no_location or no_geocoding_results):
+                facility_list_item.status = FacilityListItem.ERROR_MATCHING
+                timestamp = str(datetime.utcnow())
+                facility_list_item.processing_results.append({
+                    'action': ProcessingAction.CONFIRM,
+                    'started_at': timestamp,
+                    'error': True,
+                    'message': ('Unable to create a new facility from an '
+                                'item with no geocoded location'),
+                    'finished_at': timestamp,
+                })
+            else:
+                new_facility = Facility \
+                    .objects \
+                    .create(name=facility_list_item.name,
+                            address=facility_list_item.address,
+                            country_code=facility_list_item.country_code,
+                            location=facility_list_item.geocoded_point,
+                            created_from=facility_list_item)
+
+                # also create a new facility match
+                match_results = {
+                    "match_type": "all_potential_matches_rejected",
+                }
+
+                FacilityMatch \
+                    .objects \
+                    .create(facility_list_item=facility_list_item,
+                            facility=new_facility,
+                            confidence=1.0,
+                            status=FacilityMatch.CONFIRMED,
+                            results=match_results)
+
+                facility_list_item.facility = new_facility
+
+                facility_list_item.status = FacilityListItem \
+                    .CONFIRMED_MATCH
+
+            facility_list_item.save()
+
+        response_data = FacilityListItemSerializer(facility_list_item).data
+
+        if facility_list_item.source.source_type == Source.LIST:
+            response_data['list_statuses'] = (
+                facility_list_item
+                .source
+                .facilitylistitem_set
+                .values_list('status', flat=True)
+                .distinct())
 
         return Response(response_data)
 
