@@ -918,11 +918,13 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
         self.remove_url = '/api/facility-lists/{}/remove/' \
             .format(self.current_list.id)
 
+    def match_url(self, match, action='detail'):
+        return reverse('facility-match-{}'.format(action),
+                       kwargs={'pk': match.pk})
+
     def test_confirming_match_rejects_other_potential_matches(self):
         confirm_response = self.client.post(
-            self.confirm_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='confirm')
         )
 
         confirmed_match = FacilityMatch \
@@ -939,9 +941,7 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_confirming_match_changes_list_item_status(self):
         confirm_response = self.client.post(
-            self.confirm_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='confirm')
         )
 
         updated_list_item = FacilityListItem \
@@ -954,9 +954,7 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_confirming_match_doesnt_create_new_facility(self):
         confirm_response = self.client.post(
-            self.confirm_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='confirm')
         )
 
         facilities = Facility.objects.all()
@@ -966,15 +964,11 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_rejecting_last_potential_match_changes_list_item_status(self):
         reject_response_one = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='reject')
         )
 
         reject_response_two = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_two.id},
+            self.match_url(self.potential_facility_match_two, action='reject')
         )
 
         self.assertEqual(reject_response_one.status_code, 200)
@@ -989,9 +983,7 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_rejecting_one_of_several_matches_changes_match_to_rejected(self):
         reject_response_one = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='reject')
         )
 
         self.assertEqual(reject_response_one.status_code, 200)
@@ -1012,9 +1004,7 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_rejecting_one_of_several_matches_doesnt_change_item_status(self):
         reject_response_one = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='reject')
         )
 
         self.assertEqual(reject_response_one.status_code, 200)
@@ -1028,15 +1018,11 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_rejecting_last_potential_match_creates_new_facility(self):
         reject_response_one = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='reject')
         )
 
         reject_response_two = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_two.id},
+            self.match_url(self.potential_facility_match_two, action='reject')
         )
 
         self.assertEqual(reject_response_one.status_code, 200)
@@ -1049,15 +1035,11 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
         initial_facility_matches_count = FacilityMatch.objects.all().count()
 
         reject_response_one = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='reject')
         )
 
         reject_response_two = self.client.post(
-            self.reject_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_two.id},
+            self.match_url(self.potential_facility_match_two, action='reject')
         )
 
         self.assertEqual(reject_response_one.status_code, 200)
@@ -1074,9 +1056,7 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_removing_a_list_item_sets_its_matches_to_inactive(self):
         confirm_response = self.client.post(
-            self.confirm_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='confirm')
         )
 
         confirmed_match = FacilityMatch \
@@ -1113,9 +1093,7 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
 
     def test_only_list_contribtutor_can_remove_a_list_item(self):
         confirm_response = self.client.post(
-            self.confirm_url,
-            {"list_item_id": self.current_list_item.id,
-             "facility_match_id": self.potential_facility_match_one.id},
+            self.match_url(self.potential_facility_match_one, action='confirm')
         )
 
         confirmed_match = FacilityMatch \
@@ -4281,19 +4259,11 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         self.client.login(email=self.user_email,
                           password=self.user_password)
 
-        confirm_url = '/api/facility-lists/{}/confirm/'.format(
-            self.list_for_confirm_or_remove.id,
+        confirm_url = '/api/facility-matches/{}/confirm/'.format(
+            self.match_for_confirm_or_remove.id,
         )
 
-        confirm_data = {
-            'list_item_id': self.list_item_for_confirm_or_remove.id,
-            'facility_match_id': self.match_for_confirm_or_remove.id,
-        }
-
-        confirm_response = self.client.post(
-            confirm_url,
-            confirm_data,
-        )
+        confirm_response = self.client.post(confirm_url)
 
         self.assertEqual(
             confirm_response.status_code,
@@ -4348,19 +4318,11 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         self.client.login(email=self.user_email,
                           password=self.user_password)
 
-        confirm_url = '/api/facility-lists/{}/confirm/'.format(
-            self.list_for_confirm_or_remove.id,
+        confirm_url = '/api/facility-matches/{}/confirm/'.format(
+            self.match_for_confirm_or_remove.id,
         )
 
-        confirm_data = {
-            'list_item_id': self.list_item_for_confirm_or_remove.id,
-            'facility_match_id': self.match_for_confirm_or_remove.id,
-        }
-
-        confirm_response = self.client.post(
-            confirm_url,
-            confirm_data,
-        )
+        confirm_response = self.client.post(confirm_url)
 
         self.assertEqual(
             confirm_response.status_code,
@@ -4424,6 +4386,54 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             data[0]['detail'],
             'Dissociate facility {} from an Other'.format(
                 self.facility_two.id,
+            ),
+        )
+
+    @override_flag('can_get_facility_history', active=True)
+    def test_includes_dissociation_record_when_item_removed(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-matches/{}/confirm/'.format(
+            self.match_for_confirm_or_remove.id,
+        )
+
+        confirm_response = self.client.post(confirm_url)
+
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        # Upload replacement
+        csv_file = SimpleUploadedFile('facilities.csv',
+                                      b'country,name,address\n',
+                                      content_type='text/csv')
+        replace_response = self.client.post(
+            reverse('facility-list-list'),
+            {'file': csv_file,
+             'replaces': self.list_for_confirm_or_remove.id},
+            format='multipart')
+        self.assertEqual(replace_response.status_code, status.HTTP_200_OK)
+
+        removed_match_response = self.client.get(
+            self.facility_two_history_url,
+        )
+
+        data = json.loads(removed_match_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'DISSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Dissociate facility {} from {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
             ),
         )
 
@@ -5087,3 +5097,89 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         self.source.is_active = False
         self.source.save()
         self.assertEqual(0, get_facility_count())
+
+
+class SingleItemFacilityMatchTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(SingleItemFacilityMatchTest, self).setUp()
+        self.contributor_two = Contributor \
+            .objects \
+            .create(admin=self.superuser,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.source_two = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_two)
+
+        self.list_item_two = FacilityListItem \
+            .objects \
+            .create(name='Item 2',
+                    address='Address',
+                    country_code='US',
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.POTENTIAL_MATCH,
+                    source=self.source_two)
+
+        self.match_two = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.PENDING,
+                    facility=self.facility,
+                    facility_list_item=self.list_item_two,
+                    confidence=0.75,
+                    results='')
+
+        self.list_item_two.facility = self.facility
+        self.list_item_two.save()
+
+    def match_url(self, match, action='detail'):
+        return reverse('facility-match-{}'.format(action),
+                       kwargs={'pk': match.pk})
+
+    def test_get_match_detail(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.get(self.match_url(self.match_two))
+        self.assertEqual(200, response.status_code)
+
+    def test_only_contributor_can_get_match_detail(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.get(self.match_url(self.match))
+        self.assertEqual(404, response.status_code)
+
+    def test_confirm(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            self.match_url(self.match_two, action='confirm'))
+        self.assertEqual(200, response.status_code)
+
+    def test_only_contributor_can_confirm(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            self.match_url(self.match, action='confirm'))
+        self.assertEqual(404, response.status_code)
+
+    def test_reject(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(
+            self.match_url(self.match_two, action='reject'))
+        self.assertEqual(200, response.status_code)
+
+    def test_only_contributor_can_reject(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(
+            self.match_url(self.match, action='reject'))
+        self.assertEqual(404, response.status_code)
