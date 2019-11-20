@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
+Move the facility match confirm/reject API to allow single-item match handling [#918](https://github.com/open-apparel-registry/open-apparel-registry/pull/918/)
 
 ### Deprecated
 
