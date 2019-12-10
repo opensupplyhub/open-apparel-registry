@@ -244,12 +244,37 @@ it('creates a set of filters from a querystring', () => {
         ],
         contributorTypes: [],
         countries: [],
+        combineContributors: '',
     };
 
     expect(isEqual(
         createFiltersFromQueryString(contributorsString),
         expectedContributorsMatch,
     )).toBe(true);
+
+    const combinedContributorsString = '?contributors=1&contributors=2&combine_contributors=AND';
+    const expectedCombinedContributorsMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [
+            {
+                value: 1,
+                label: '1',
+            },
+            {
+                value: 2,
+                label: '2',
+            },
+        ],
+        contributorTypes: [],
+        countries: [],
+        combineContributors: 'AND',
+    };
+
+    expect(isEqual(
+        createFiltersFromQueryString(combinedContributorsString),
+        expectedCombinedContributorsMatch,
+    )).toBe(true);
+
 
     const typesString = '?contributor_types=Union&contributor_types=Service Provider';
     const expectedTypesMatch = {
@@ -266,6 +291,7 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         countries: [],
+        combineContributors: '',
     };
 
     expect(isEqual(
@@ -288,6 +314,7 @@ it('creates a set of filters from a querystring', () => {
                 label: 'CN',
             },
         ],
+        combineContributors: '',
     };
 
     expect(isEqual(
@@ -306,6 +333,7 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         countries: [],
+        combineContributors: '',
     };
 
     expect(isEqual(
