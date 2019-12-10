@@ -7,7 +7,7 @@ from django.contrib.auth.models import (AbstractBaseUser,
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils.dateformat import format
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
@@ -1019,6 +1019,9 @@ class FacilityManager(models.Manager):
 
         countries = params.getlist(FacilitiesQueryParams.COUNTRIES)
 
+        combine_contributors = params.get(
+            FacilitiesQueryParams.COMBINE_CONTRIBUTORS, '')
+
         facilities_qs = Facility.objects.all()
 
         if free_text_query is not None:
@@ -1055,22 +1058,55 @@ class FacilityManager(models.Manager):
                 .filter(id__in=type_match_facility_ids)
 
         if len(contributors):
-            name_match_facility_ids = [
-                match['facility__id']
-                for match
-                in FacilityMatch
-                .objects
-                .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED])
-                .filter(is_active=True)
-                .filter(facility_list_item__source__contributor__id__in=contributors) # NOQA
-                .filter(facility_list_item__source__is_active=True)
-                .filter(facility_list_item__source__is_public=True)
-                .values('facility__id')
-            ]
+            if combine_contributors.upper() == 'AND':
+                # Build an inner query for facility IDs in 4 steps.
+                # First filter sources/matches by flags and status
+                facility_ids = Source.objects.filter(
+                    is_active=True,
+                    is_public=True,
+                    facilitylistitem__facilitymatch__is_active=True,
+                    facilitylistitem__facilitymatch__status__in=[
+                        FacilityMatch.AUTOMATIC,
+                        FacilityMatch.CONFIRMED]).values(
+                            'facilitylistitem__facility')
 
-            facilities_qs = facilities_qs \
-                .filter(id__in=name_match_facility_ids)
+                # Next, count the number of times each specified contributor
+                # appears in the list of sources for each facility. This is
+                # done by annotating a filtered count for each contributor,
+                # which is required because a contributor could submit the same
+                # facility multiple times and we do not want that to throw off
+                # the total count
+                annotate_kwargs = {
+                    'contributor{}_count'.format(index):
+                    Count('contributor', filter=Q(contributor=c))
+                    for (index, c) in enumerate(contributors)}
+                facility_ids = facility_ids.annotate(**annotate_kwargs)
+
+                # Next filter out records where any one of the specified
+                # contributors has zero matches.
+                filter_kwargs = {
+                    'contributor{}_count__gte'.format(index): 1
+                    for (index, c) in enumerate(contributors)}
+                facility_ids = facility_ids.filter(**filter_kwargs)
+
+                # Finally, use key relationships to get a flat list of facility
+                # IDs associated with the filtered sources.
+                facility_ids = facility_ids.values_list(
+                    'facilitylistitem__facility', flat=True)
+
+                facilities_qs = facilities_qs.filter(id__in=facility_ids)
+
+            else:
+                facilities_qs = facilities_qs.filter(
+                    id__in=(Source.objects.filter(
+                        is_active=True,
+                        is_public=True,
+                        facilitylistitem__facilitymatch__is_active=True,
+                        facilitylistitem__facilitymatch__status__in=[
+                            FacilityMatch.AUTOMATIC,
+                            FacilityMatch.CONFIRMED],
+                        contributor__in=contributors).values_list(
+                            'facilitylistitem__facility', flat=True)))
 
         return facilities_qs
 
