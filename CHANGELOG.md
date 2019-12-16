@@ -16,6 +16,7 @@ Add filter option to search for contributor overlap [#925](https://github.com/op
 ### Removed
 
 ### Fixed
+- Fix FacilityList to string and serilization with no Source [#931](https://github.com/open-apparel-registry/open-apparel-registry/pull/931)
 
 ### Security
 

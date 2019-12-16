@@ -244,29 +244,44 @@ class FacilityListSerializer(ModelSerializer):
                   'status_counts', 'contributor_id', 'created_at')
 
     def get_is_active(self, facility_list):
-        return facility_list.source.is_active
+        try:
+            return facility_list.source.is_active
+        except Source.DoesNotExist:
+            return False
 
     def get_is_public(self, facility_list):
-        return facility_list.source.is_public
+        try:
+            return facility_list.source.is_public
+        except Source.DoesNotExist:
+            return False
 
     def get_item_count(self, facility_list):
-        return facility_list.source.facilitylistitem_set.count()
+        try:
+            return facility_list.source.facilitylistitem_set.count()
+        except Source.DoesNotExist:
+            return 0
 
     def get_items_url(self, facility_list):
         return reverse('facility-list-items',
                        kwargs={'pk': facility_list.pk})
 
     def get_statuses(self, facility_list):
-        return (facility_list.source.facilitylistitem_set
-                .values_list('status', flat=True)
-                .distinct())
+        try:
+            return (facility_list.source.facilitylistitem_set
+                    .values_list('status', flat=True)
+                    .distinct())
+        except Source.DoesNotExist:
+            return []
 
     def get_status_counts(self, facility_list):
-        statuses = FacilityListItem \
-            .objects \
-            .filter(source=facility_list.source) \
-            .values('status') \
-            .annotate(status_count=Count('status')) \
+        try:
+            statuses = FacilityListItem \
+                .objects \
+                .filter(source=facility_list.source) \
+                .values('status') \
+                .annotate(status_count=Count('status'))
+        except Source.DoesNotExist:
+            statuses = []
 
         status_counts_dictionary = {
             status_dict.get('status'): status_dict.get('status_count')
@@ -350,8 +365,11 @@ class FacilityListSerializer(ModelSerializer):
         }
 
     def get_contributor_id(self, facility_list):
-        return facility_list.source.contributor.id \
-            if facility_list.source.contributor else None
+        try:
+            return facility_list.source.contributor.id \
+                if facility_list.source.contributor else None
+        except Source.DoesNotExist:
+            return None
 
 
 class FacilityQueryParamsSerializer(Serializer):
