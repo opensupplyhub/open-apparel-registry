@@ -34,7 +34,8 @@ from api.geocoding import (create_geocoding_params,
 from api.test_data import parsed_city_hall_data
 from api.permissions import referring_host_is_allowed, referring_host
 from api.serializers import (ApprovedFacilityClaimSerializer,
-                             FacilityCreateBodySerializer)
+                             FacilityCreateBodySerializer,
+                             FacilityListSerializer)
 
 
 class FacilityListCreateTest(APITestCase):
@@ -5334,3 +5335,16 @@ class FacilitySearchTest(FacilityAPITestCaseBase):
                 self.contributor.id,
                 self.contributor_two.id))
         self.assert_response_count(response, 0)
+
+
+class ListWithoutSourceTest(TestCase):
+    def test_str(self):
+        facility_list = FacilityList()
+        # We are checking that the __str__ method does not raise an exception.
+        str(facility_list)
+
+    def test_serializer(self):
+        facility_list = FacilityList()
+        # Checking the `data` property triggers the serialization. We are
+        # checking that it does not raise an exception.
+        FacilityListSerializer(facility_list).data
