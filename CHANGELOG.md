@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [2.20.0] - 2019-12-18
+### Added
 - Add filter option to search for contributor overlap [#925](https://github.com/open-apparel-registry/open-apparel-registry/pull/925)
 
 ### Changed
