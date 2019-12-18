@@ -16,20 +16,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-### Security
-
-## [2.19.0] - 2019-11-20
+## [2.20.0] - 2019-12-18
 ### Added
+- Add filter option to search for contributor overlap [#925](https://github.com/open-apparel-registry/open-apparel-registry/pull/925)
 
 ### Changed
-Move the facility match confirm/reject API to allow single-item match handling [#918](https://github.com/open-apparel-registry/open-apparel-registry/pull/918/)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-Add a dissociate history event when list item is replaced [#919](https://github.com/open-apparel-registry/open-apparel-registry/pull/919)
+- Fix FacilityList to string and serilization with no Source [#931](https://github.com/open-apparel-registry/open-apparel-registry/pull/931)
+
+### Security
+
+## [2.19.0] - 2019-11-20
+### Added
+
+### Changed
+- Move the facility match confirm/reject API to allow single-item match handling [#918](https://github.com/open-apparel-registry/open-apparel-registry/pull/918/)
+
+### Deprecated
+
+### Removed
+
+### Fixed
+- Add a dissociate history event when list item is replaced [#919](https://github.com/open-apparel-registry/open-apparel-registry/pull/919)
 
 ### Security
 

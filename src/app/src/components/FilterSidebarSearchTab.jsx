@@ -4,17 +4,24 @@ import { connect } from 'react-redux';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
+import Tooltip from '@material-ui/core/Tooltip';
 import ReactSelect from 'react-select';
 import get from 'lodash/get';
 
 import FacilitySidebarSearchTabFacilitiesCount from './FacilitySidebarSearchTabFacilitiesCount';
+import ShowOnly from './ShowOnly';
 
 import {
     updateFacilityFreeTextQueryFilter,
     updateContributorFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    updateCombineContributorsFilterOption,
     resetAllFilters,
 } from '../actions/filters';
 
@@ -70,6 +77,8 @@ function FilterSidebarSearchTab({
     updateContributorType,
     countries,
     updateCountry,
+    combineContributors,
+    updateCombineContributors,
     fetchingFacilities,
     searchForFacilities,
     facilities,
@@ -106,6 +115,48 @@ function FilterSidebarSearchTab({
             </div>
         );
     })();
+
+    const styles = {
+        tooltip: {
+            fontSize: '18px',
+            padding: '10px',
+            lineHeight: '22px',
+        },
+        tooltipLineItem: {
+            marginBottom: '6px',
+        },
+        tooltipHeading: {
+            fontWeight: 'bold',
+        },
+    };
+
+    const tooltipTitle = (
+        <div style={styles.tooltip}>
+            <p style={styles.tooltipHeading}>
+                Do you want to see only facilities which these contributors
+                share? If so, tick this box.
+            </p>
+            <p>There are now two ways to filter a Contributor search on the OAR:</p>
+            <ol>
+                <li style={styles.tooltipLineItem}>
+                    You can search for all the facilities of multiple
+                    contributors. This means that the results would show all of
+                    the facilities contributed to the OAR by, for example, BRAC
+                    University or Clarks. Some facilities might have been
+                    contributed by BRAC University but not by Clarks, or
+                    vice-versa.
+                </li>
+                <li style={styles.tooltipLineItem}>
+                    By checking the “Show only shared facilities” box, this
+                    adjusts the search logic to “AND”. This means that your
+                    results will show only facilities contributed by BOTH BRAC
+                    University AND Clarks (as well as potentially other
+                    contributors). In this way, you can more quickly filter to
+                    show the specific Contributor overlap you are interested in.
+                </li>
+            </ol>
+        </div>
+    );
 
     return (
         <div
@@ -148,6 +199,24 @@ function FilterSidebarSearchTab({
                         onChange={updateContributor}
                         disabled={fetchingOptions || fetchingFacilities}
                     />
+                    <ShowOnly when={contributors && contributors.length > 1}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={!!combineContributors}
+                                    onChange={updateCombineContributors}
+                                    color="primary"
+                                    value={combineContributors}
+                                />
+                            }
+                            label="Show only shared facilities"
+                        />
+                        <Tooltip title={tooltipTitle} placement="right">
+                            <IconButton>
+                                <InfoIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </ShowOnly>
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -251,10 +320,12 @@ FilterSidebarSearchTab.propTypes = {
     updateContributor: func.isRequired,
     updateContributorType: func.isRequired,
     updateCountry: func.isRequired,
+    updateCombineContributors: func.isRequired,
     facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
+    combineContributors: string.isRequired,
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
     facilities: facilityCollectionPropType,
@@ -282,6 +353,7 @@ function mapStateToProps({
         contributors,
         contributorTypes,
         countries,
+        combineContributors,
     },
     facilities: {
         facilities: {
@@ -302,6 +374,7 @@ function mapStateToProps({
         contributors,
         contributorTypes,
         countries,
+        combineContributors,
         fetchingFacilities,
         facilities,
         fetchingOptions: fetchingContributors
@@ -318,9 +391,17 @@ function mapDispatchToProps(dispatch, {
     return {
         updateFacilityFreeTextQuery: e =>
             dispatch(updateFacilityFreeTextQueryFilter(getValueFromEvent(e))),
-        updateContributor: v => dispatch(updateContributorFilter(v)),
+        updateContributor: (v) => {
+            if (!v || v.length < 2) {
+                dispatch(updateCombineContributorsFilterOption(''));
+            }
+            dispatch(updateContributorFilter(v));
+        },
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
+        updateCombineContributors: e => dispatch(
+            updateCombineContributorsFilterOption(e.target.checked ? 'AND' : ''),
+        ),
         resetFilters: () => {
             dispatch(recordSearchTabResetButtonClick());
             return dispatch(resetAllFilters());

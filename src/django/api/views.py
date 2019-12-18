@@ -499,6 +499,16 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                     required=False,
                     description='Country Code',
                 ),
+                coreapi.Field(
+                    name='combine_contributors',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'Set this to "AND" if the results should contain '
+                        'facilities associated with ALL the specified '
+                        'contributors.')
+                ),
             ]
 
         if view.action == 'create':

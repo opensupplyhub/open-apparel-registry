@@ -208,6 +208,7 @@ export const filtersPropType = shape({
     contributors: arrayOf(reactSelectOptionPropType).isRequired,
     contributorTypes: arrayOf(reactSelectOptionPropType).isRequired,
     countries: arrayOf(reactSelectOptionPropType).isRequired,
+    combineContributors: string.isRequired,
 });
 
 export const facilityListItemStatusPropType =
