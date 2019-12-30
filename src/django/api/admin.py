@@ -43,11 +43,12 @@ admin_site = ApiAdminSite()
 
 
 class OarUserAdmin(UserAdmin):
-    exclude = ('last_name', 'date_joined', 'first_name')
+    exclude = ('last_name', 'date_joined', 'first_name', 'username')
     fieldsets = (
-        (None, {'fields': ('email', 'username', 'is_staff', 'is_active',
+        (None, {'fields': ('email', 'is_staff', 'is_active',
                            'should_receive_newsletter',
-                           'has_agreed_to_terms_of_service')}),
+                           'has_agreed_to_terms_of_service',
+                           'groups')}),
     )
 
 
