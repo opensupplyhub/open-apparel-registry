@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Allow groups memberships to be changed in the Django admin [#934](https://github.com/open-apparel-registry/open-apparel-registry/pull/934)
 
 ### Changed
 
