@@ -1,5 +1,5 @@
 SELECT
-  CAST (date_part('month', created_at) AS int) AS month,
+  to_char(created_at, 'YYYY-MM') AS month,
   COUNT(DISTINCT country_code) AS country_count
 FROM (
   SELECT
@@ -8,5 +8,5 @@ FROM (
     FROM api_facility
     GROUP BY country_code
 ) s
-GROUP BY date_part('month', created_at)
-ORDER BY date_part('month', created_at);
+GROUP BY to_char(created_at, 'YYYY-MM')
+ORDER BY to_char(created_at, 'YYYY-MM');
