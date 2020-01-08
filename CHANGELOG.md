@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update reports to properly handle multiple years [#938](https://github.com/open-apparel-registry/open-apparel-registry/pull/938)
 
 ### Security
+- Bump handlebars from 4.1.2 to 4.5.3 [#932](https://github.com/open-apparel-registry/open-apparel-registry/pull/932)
 
 ## [2.20.0] - 2019-12-18
 ### Added
