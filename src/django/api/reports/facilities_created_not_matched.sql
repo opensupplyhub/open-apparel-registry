@@ -1,9 +1,9 @@
 SELECT
-  CAST (date_part('month', f.created_at) AS int) AS month,
+  to_char(f.created_at, 'YYYY-MM') AS month,
   COUNT(*) AS match_count
 FROM api_facilitymatch m
 JOIN api_facility f ON m.facility_id = f.id
 WHERE m.facility_list_item_id = f.created_from_id
-AND date_part('month', f.created_at) < date_part('month', now())
-GROUP BY date_part('month', f.created_at)
-ORDER BY date_part('month', f.created_at);
+AND to_char(f.created_at, 'YYYY-MM') < to_char(now(), 'YYYY-MM')
+GROUP BY to_char(f.created_at, 'YYYY-MM')
+ORDER BY to_char(f.created_at, 'YYYY-MM');

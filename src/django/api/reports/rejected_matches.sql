@@ -1,5 +1,5 @@
 SELECT
-  CAST (date_part('month', created_at) AS int) AS month,
+  to_char(created_at, 'YYYY-MM') AS month,
   COUNT(*) AS match_count
 FROM (
   SELECT
@@ -7,8 +7,8 @@ FROM (
     max(created_at) AS created_at
   FROM api_facilitymatch
   WHERE status = 'REJECTED'
-  AND date_part('month', created_at) < date_part('month', now())
+  AND to_char(created_at, 'YYYY-MM') < to_char(now(), 'YYYY-MM')
   GROUP BY facility_list_item_id
 ) s
-GROUP BY date_part('month', created_at)
-ORDER BY date_part('month', created_at);
+GROUP BY to_char(created_at, 'YYYY-MM')
+ORDER BY to_char(created_at, 'YYYY-MM');
