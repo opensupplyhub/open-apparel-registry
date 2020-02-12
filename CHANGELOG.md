@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.21.1] - 2020-02-11
+
+### Fixed
+Return the contributor admin ID when serializing other locations [#950](https://github.com/open-apparel-registry/open-apparel-registry/pull/950) [#952](https://github.com/open-apparel-registry/open-apparel-registry/pull/952)
+
 ## [2.21.0] - 2020-01-08
 ### Added
 - Allow groups memberships to be changed in the Django admin [#934](https://github.com/open-apparel-registry/open-apparel-registry/pull/934)
@@ -341,7 +346,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.21.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.21.1...HEAD
+[2.21.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.21.1
 [2.21.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.21.0
 [2.20.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.20.0
 [2.19.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.19.0

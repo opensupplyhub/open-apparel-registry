@@ -3717,6 +3717,11 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                     name='test contributor 2',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
+        self.assertFalse(self.other_contributor.id == self.other_user.id,
+                         'We want to verify that we serialize the proper ID '
+                         'and we can only do that if we have distinct '
+                         'Contributor and User ID values.')
+
         self.other_list = FacilityList \
             .objects \
             .create(header='header',
@@ -3780,6 +3785,14 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
             5,
         )
 
+        # The UI needs to build profile page links that use the ID of the User
+        # who is the "admin" of the Contributor, not the ID of the Contributor
+        # itself.
+        self.assertEqual(
+            data['properties']['other_locations'][0]['contributor_id'],
+            self.other_user.id
+        )
+
     def test_does_not_serialize_inactive_list_item_matches(self):
         self.other_source.is_active = False
         self.other_source.save()
@@ -3815,7 +3828,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                 UpdateLocationParams.LAT: 41,
                 UpdateLocationParams.LNG: 43,
                 UpdateLocationParams.NOTES: 'A note',
-                UpdateLocationParams.CONTRIBUTOR_ID: self.contributor.id,
+                UpdateLocationParams.CONTRIBUTOR_ID: self.other_contributor.id,
             })
 
         self.client.logout()
@@ -3833,6 +3846,14 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         self.assertEqual(
             data['properties']['other_locations'][0]['notes'],
             'A note',
+        )
+
+        # The UI needs to build profile page links that use the ID of the User
+        # who is the "admin" of the Contributor, not the ID of the Contributor
+        # itself.
+        self.assertEqual(
+            data['properties']['other_locations'][0]['contributor_id'],
+            self.other_user.id
         )
 
     def test_serializes_other_location_without_note_or_contributor(self):

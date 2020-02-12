@@ -461,7 +461,8 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             {
                 'lat': l.location.y,
                 'lng': l.location.x,
-                'contributor_id': l.contributor_id,
+                'contributor_id': l.contributor.admin.id if l.contributor
+                else None,
                 'contributor_name': l.contributor.name if l.contributor
                 else None,
                 'notes': l.notes,
@@ -474,8 +475,9 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
             {
                 'lat': l.facility_list_item.geocoded_point.y,
                 'lng': l.facility_list_item.geocoded_point.x,
-                'contributor_id': l.facility_list_item.source
-                .contributor_id,
+                'contributor_id':
+                l.facility_list_item.source.contributor.admin.id
+                if l.facility_list_item.source.contributor else None,
                 'contributor_name':
                 l.facility_list_item.source.contributor.name
                 if l.facility_list_item.source.contributor else None,
