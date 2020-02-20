@@ -1043,22 +1043,17 @@ class FacilityManager(models.Manager):
                 .filter(country_code__in=countries)
 
         if len(contributor_types):
-            type_match_facility_ids = [
-                match['facility__id']
-                for match
-                in FacilityMatch
-                .objects
-                .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED])
-                .filter(is_active=True)
-                .filter(facility_list_item__source__contributor__contrib_type__in=contributor_types) # NOQA
-                .filter(facility_list_item__source__is_active=True)
-                .filter(facility_list_item__source__is_public=True)
-                .values('facility__id')
-            ]
-
             facilities_qs = facilities_qs \
-                .filter(id__in=type_match_facility_ids)
+                .filter(id__in=FacilityMatch
+                        .objects
+                        .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                            FacilityMatch.CONFIRMED])
+                        .filter(is_active=True)
+                        .filter(facility_list_item__source__contributor__contrib_type__in=contributor_types) # NOQA
+                        .filter(facility_list_item__source__is_active=True)
+                        .filter(facility_list_item__source__is_public=True)
+                        .values('facility__id')
+                )
 
         if len(contributors):
             if combine_contributors.upper() == 'AND':

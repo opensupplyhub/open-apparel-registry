@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Use a nested query when filtering by contributor type [#954](https://github.com/open-apparel-registry/open-apparel-registry/pull/954)
+
 ### Deprecated
 
 ### Removed
@@ -21,7 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.21.1] - 2020-02-11
 
 ### Fixed
-Return the contributor admin ID when serializing other locations [#950](https://github.com/open-apparel-registry/open-apparel-registry/pull/950) [#952](https://github.com/open-apparel-registry/open-apparel-registry/pull/952)
+
+- Return the contributor admin ID when serializing other locations [#950](https://github.com/open-apparel-registry/open-apparel-registry/pull/950) [#952](https://github.com/open-apparel-registry/open-apparel-registry/pull/952)
 
 ## [2.21.0] - 2020-01-08
 ### Added
