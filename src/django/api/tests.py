@@ -25,7 +25,8 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityMatch, FacilityAlias, Contributor, User,
                         RequestLog, DownloadLog, FacilityLocation, Source)
 from api.oar_id import make_oar_id, validate_oar_id
-from api.matching import match_facility_list_items
+from api.matching import (match_facility_list_items,
+                          get_manual_matches_for_training)
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item)
 from api.geocoding import (create_geocoding_params,
@@ -1188,6 +1189,31 @@ class DedupeMatchingTests(TestCase):
                                          status=FacilityListItem.PARSED)
         result = match_facility_list_items(facility_list)
         self.assertTrue(result['results']['no_geocoded_items'])
+
+    def test_get_manual_matches_for_training(self):
+        # The fixture data only has 'match' items so we manually create a
+        # rejection to ensure we test all code paths.
+        first_match = FacilityMatch.objects.first()
+        first_match.status = FacilityMatch.REJECTED
+        first_match.save()
+
+        result = get_manual_matches_for_training()
+
+        self.assertTrue('match' in result)
+        self.assertTrue(len(result['match']) > 0)
+        for match in result['match']:
+            self.assertTrue(type(match) is tuple)
+            self.assertEqual(2, len(match))
+            self.assertTrue(type(match[0]) is dict)
+            self.assertTrue(type(match[1]) is dict)
+
+        self.assertTrue('distinct' in result)
+        self.assertTrue(len(result['distinct']) > 0)
+        for distict in result['distinct']:
+            self.assertTrue(type(match) is tuple)
+            self.assertEqual(2, len(match))
+            self.assertTrue(type(match[0]) is dict)
+            self.assertTrue(type(match[1]) is dict)
 
 
 class OarIdTests(TestCase):

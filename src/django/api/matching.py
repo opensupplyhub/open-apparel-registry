@@ -14,6 +14,7 @@ from unidecode import unidecode
 from api.models import (Facility,
                         FacilityList,
                         FacilityListItem,
+                        FacilityMatch,
                         HistoricalFacility)
 
 logger = logging.getLogger(__name__)
@@ -110,6 +111,82 @@ def get_messy_items_for_training(mod_factor=5):
             for i in records}
 
 
+def get_manual_matches_for_training():
+    """
+    Fetch facility matches that have been manually confirmed or rejected and
+    create a training data file from them.
+
+    Returns:
+    A dictionary in the dedupe training data format. For example:
+
+    {
+        "match": [
+            (
+                {
+                    "country": "lk",
+                    "address": "lot # f2 seethawaka industrial park",
+                    "name": "hirdaramani mercury seethawaka",
+                    "id": "2035"
+                },
+                {
+                    "country": "lk",
+                    "address": "lot # f2 seethawaka industrial park",
+                    "name": "m e r c u r y appar e l se e th awaka",
+                    "id": "10368"
+                }
+            )
+        ],
+        "distinct": [
+            (
+                {
+                    "country": "th",
+                    "address": "no. 24 6 moo 6 bangna trad km24 tambol",
+                    "name": "bogart lingerie (thailand)",
+                    "id": "3911"
+                },
+                {
+                    "country": "th",
+                    "address": "118 2 moo 6 banpran sawangha 14150 thailand",
+                    "name": "bangkok rubber public co. ltd. (banphet)",
+                    "id": "14660"
+                }
+            )
+        ]
+    }
+    """
+    def match_to_training_object(match):
+        return (
+            {
+                'country': clean(match.facility_list_item.country_code),
+                'address': clean(match.facility_list_item.address),
+                'name': clean(match.facility_list_item.name),
+                'id': str(match.facility_list_item.id)
+            },
+            {
+                'country': clean(match.facility.country_code),
+                'address': clean(match.facility.address),
+                'name': clean(match.facility.name),
+                'id': str(match.facility.id)
+            }
+        )
+
+    active_matches = FacilityMatch.objects.filter(
+        facility_list_item__source__is_active=True,
+        facility_list_item__source__is_public=True,
+        is_active=True)
+
+    return {
+        'match': [
+            match_to_training_object(match)
+            for match
+            in active_matches.filter(status=FacilityMatch.CONFIRMED)],
+        'distinct': [
+            match_to_training_object(match)
+            for match
+            in active_matches.filter(status=FacilityMatch.REJECTED)],
+    }
+
+
 def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
     """
     Train and return a dedupe.Gazetteer using the specified messy and canonical
@@ -136,6 +213,11 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
                                      'training.json')
         with open(training_file) as tf:
             gazetteer.readTraining(tf)
+
+        # Augment the initial training data with confirmations and rejections
+        # from contributors
+        gazetteer.markPairs(get_manual_matches_for_training())
+
         gazetteer.train()
         gazetteer.cleanupTraining()
 
