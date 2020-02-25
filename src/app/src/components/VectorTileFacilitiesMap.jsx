@@ -58,6 +58,7 @@ function VectorTileFacilitiesMap({
     location,
     facilityDetailsData,
     gridColorRamp,
+    extent,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -68,6 +69,7 @@ function VectorTileFacilitiesMap({
             false,
         ),
         isVectorTileMap: true,
+        extent,
     });
 
     const [currentMapZoomLevel, setCurrentMapZoomLevel] = useState(
@@ -188,6 +190,7 @@ function mapStateToProps({
     clientInfo: { fetched, countryCode },
     facilities: {
         singleFacility: { data },
+        facilities: { data: facilitiesData },
     },
     vectorTileLayer: {
         gridColorRamp,
@@ -199,6 +202,7 @@ function mapStateToProps({
         countryCode: countryCode || COUNTRY_CODES.default,
         facilityDetailsData: data,
         gridColorRamp,
+        extent: facilitiesData ? facilitiesData.extent : null,
     };
 }
 
