@@ -14,6 +14,7 @@ import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
+import ZoomToSearchControl from './ZoomToSearchControl';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -59,6 +60,7 @@ function VectorTileFacilitiesMap({
     facilityDetailsData,
     gridColorRamp,
     extent,
+    zoomToSearch,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -70,6 +72,7 @@ function VectorTileFacilitiesMap({
         ),
         isVectorTileMap: true,
         extent,
+        zoomToSearch,
     });
 
     const [currentMapZoomLevel, setCurrentMapZoomLevel] = useState(
@@ -121,6 +124,9 @@ function VectorTileFacilitiesMap({
                 minZoom={1}
                 zIndex={1}
             />
+            <Control position="topleft">
+                <ZoomToSearchControl />
+            </Control>
             <Control position="bottomleft">
                 <VectorTileGridLegend
                     currentZoomLevel={currentMapZoomLevel}
@@ -186,6 +192,7 @@ VectorTileFacilitiesMap.propTypes = {
 function mapStateToProps({
     ui: {
         facilitiesSidebarTabSearch: { resetButtonClickCount },
+        zoomToSearch,
     },
     clientInfo: { fetched, countryCode },
     facilities: {
@@ -203,6 +210,7 @@ function mapStateToProps({
         facilityDetailsData: data,
         gridColorRamp,
         extent: facilitiesData ? facilitiesData.extent : null,
+        zoomToSearch,
     };
 }
 

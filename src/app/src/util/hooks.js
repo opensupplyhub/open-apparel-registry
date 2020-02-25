@@ -19,6 +19,7 @@ export default function useUpdateLeafletMapImperatively(
         shouldPanMapToFacilityDetails,
         isVectorTileMap = false,
         extent,
+        zoomToSearch,
     } = {},
 ) {
     const mapRef = useRef(null);

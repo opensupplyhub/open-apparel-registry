@@ -11,6 +11,7 @@ import {
     resetSidebarFacilitiesTabTextFilter,
     recordSearchTabResetButtonClick,
     reportWindowResize,
+    toggleZoomToSearch,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
@@ -29,6 +30,7 @@ const initialState = Object.freeze({
         innerHeight: isObject(window) ? window.innerHeight : null,
         innerWidth: isObject(window) ? window.innerWidth : null,
     }),
+    zoomToSearch: true,
 });
 
 export default createReducer({
@@ -96,5 +98,8 @@ export default createReducer({
     }),
     [reportWindowResize]: (state, payload) => update(state, {
         window: { $merge: payload },
+    }),
+    [toggleZoomToSearch]: (state, payload) => update(state, {
+        zoomToSearch: { $set: payload },
     }),
 }, initialState);
