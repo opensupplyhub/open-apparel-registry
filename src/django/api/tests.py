@@ -27,7 +27,8 @@ from api.models import (Facility, FacilityList, FacilityListItem,
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items
 from api.processing import (parse_facility_list_item,
-                            geocode_facility_list_item)
+                            geocode_facility_list_item,
+                            reduce_matches)
 from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
@@ -1188,6 +1189,18 @@ class DedupeMatchingTests(TestCase):
                                          status=FacilityListItem.PARSED)
         result = match_facility_list_items(facility_list)
         self.assertTrue(result['results']['no_geocoded_items'])
+
+    def test_reduce_matches(self):
+        matches = [
+            ('US2020052GKF19F', 75),
+            ('US2020052GKF19F_MATCH-23', 88),
+            ('US2020052YDVKBQ', 45)
+        ]
+        expected = [
+            ('US2020052GKF19F', 88),
+            ('US2020052YDVKBQ', 45)
+        ]
+        self.assertEqual(expected, reduce_matches(matches))
 
 
 class OarIdTests(TestCase):
