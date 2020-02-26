@@ -15,6 +15,7 @@ import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
 import ZoomToSearchControl from './ZoomToSearchControl';
+import PolygonalSearchControl from './PolygonalSearchControl';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -159,6 +160,7 @@ function VectorTileFacilitiesMap({
                 maxZoom={maxVectorTileFacilitiesGridZoom}
                 zoomLevel={currentMapZoomLevel}
             />
+            <PolygonalSearchControl />
         </ReactLeafletMap>
     );
 }
