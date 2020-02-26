@@ -7,6 +7,7 @@ import {
     updateContributorTypeFilter,
     updateCountryFilter,
     updateCombineContributorsFilterOption,
+    updateBoundariesFilter,
     resetAllFilters,
     updateAllFilters,
 } from '../actions/filters';
@@ -29,6 +30,7 @@ const initialState = Object.freeze({
     contributorTypes: Object.freeze([]),
     countries: Object.freeze([]),
     combineContributors: '',
+    boundaries: Object.freeze([]),
 });
 
 export const maybeSetFromQueryString = field => (state, payload) => {
@@ -60,6 +62,9 @@ export default createReducer({
     }),
     [updateCombineContributorsFilterOption]: (state, payload) => update(state, {
         combineContributors: { $set: payload },
+    }),
+    [updateBoundariesFilter]: (state, payload) => update(state, {
+        boundaries: { $set: payload },
     }),
     [resetAllFilters]: () => initialState,
     [updateAllFilters]: (_state, payload) => payload,
