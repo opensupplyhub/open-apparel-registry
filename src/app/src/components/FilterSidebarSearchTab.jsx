@@ -22,12 +22,16 @@ import {
     updateContributorTypeFilter,
     updateCountryFilter,
     updateCombineContributorsFilterOption,
+    updateBoundaryFilter,
     resetAllFilters,
 } from '../actions/filters';
 
 import { fetchFacilities } from '../actions/facilities';
 
-import { recordSearchTabResetButtonClick } from '../actions/ui';
+import {
+    recordSearchTabResetButtonClick,
+    showDrawFilter,
+} from '../actions/ui';
 
 import {
     contributorOptionsPropType,
@@ -85,6 +89,9 @@ function FilterSidebarSearchTab({
     fetchingOptions,
     submitFormOnEnterKeyPress,
     vectorTileFlagIsActive,
+    activateDrawFilter,
+    clearDrawFilter,
+    boundary,
 }) {
     if (fetchingOptions) {
         return (
@@ -158,6 +165,28 @@ function FilterSidebarSearchTab({
         </div>
     );
 
+    const boundaryButton = boundary == null ? (
+        <Button
+            variant="outlined"
+            onClick={activateDrawFilter}
+            disableRipple
+            color="primary"
+            className="outlined-button"
+        >
+            Filter by Area
+        </Button>
+    ) : (
+        <Button
+            variant="outlined"
+            onClick={clearDrawFilter}
+            disableRipple
+            color="primary"
+            className="outlined-button"
+        >
+            Remove Area Filter
+        </Button>
+    );
+
     return (
         <div
             className="control-panel__content"
@@ -179,6 +208,9 @@ function FilterSidebarSearchTab({
                         onChange={updateFacilityFreeTextQuery}
                         onKeyPress={submitFormOnEnterKeyPress}
                     />
+                </div>
+                <div className="form__field">
+                    {boundaryButton}
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -354,6 +386,7 @@ function mapStateToProps({
         contributorTypes,
         countries,
         combineContributors,
+        boundary,
     },
     facilities: {
         facilities: {
@@ -377,6 +410,7 @@ function mapStateToProps({
         combineContributors,
         fetchingFacilities,
         facilities,
+        boundary,
         fetchingOptions: fetchingContributors
             || fetchingContributorTypes
             || fetchingCountries,
@@ -413,6 +447,12 @@ function mapDispatchToProps(dispatch, {
         submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
             () => dispatch(fetchFacilities(push)),
         ),
+        activateDrawFilter: () => dispatch(showDrawFilter(true)),
+        clearDrawFilter: () => {
+            dispatch(showDrawFilter(false));
+            dispatch(updateBoundaryFilter(null));
+            return dispatch(fetchFacilities({}));
+        },
     };
 }
 

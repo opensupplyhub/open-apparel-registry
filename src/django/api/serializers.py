@@ -388,10 +388,7 @@ class FacilityQueryParamsSerializer(Serializer):
     )
     page = IntegerField(required=False)
     pageSize = IntegerField(required=False)
-    boundaries=ListField(
-        child=CharField(required=False),
-        required=False,
-    )
+    boundary = CharField(required=False)
 
 
 class FacilityListQueryParamsSerializer(Serializer):

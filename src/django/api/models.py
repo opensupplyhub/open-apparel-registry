@@ -8,7 +8,7 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.db import models
 from django.db.models import Q, Count
-from django.contrib.gis.geos import Polygon, LineString
+from django.contrib.gis.geos import GEOSGeometry
 from django.utils.dateformat import format
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
@@ -1028,8 +1028,8 @@ class FacilityManager(models.Manager):
         combine_contributors = params.get(
             FacilitiesQueryParams.COMBINE_CONTRIBUTORS, '')
 
-        boundaries = params.getlist(
-            FacilitiesQueryParams.BOUNDARIES, None
+        boundary = params.get(
+            FacilitiesQueryParams.BOUNDARY, None
         )
 
         facilities_qs = Facility.objects.all()
@@ -1113,21 +1113,13 @@ class FacilityManager(models.Manager):
                         contributor__in=contributors).values_list(
                             'facilitylistitem__facility', flat=True)))
 
-        if boundaries is not None and len(boundaries) > 2:
-            formatted_boundaries = []
-            for point in boundaries:
-                point_coordinates = point.split(',')
-                formatted_boundaries.append((
-                    float(point_coordinates[1]),
-                    float(point_coordinates[0]),
-                ))
-            boundaries = formatted_boundaries
-            # If the boundaries passed are not closed, close them
-            if not LineString(boundaries).closed:
-                boundaries.append(boundaries[0])
-            facilities_qs = facilities_qs.filter(location__within=Polygon(boundaries))
+        if boundary is not None:
+            facilities_qs = facilities_qs.filter(
+                location__within=GEOSGeometry(boundary)
+            )
 
         return facilities_qs
+
 
 class Facility(models.Model):
     """
