@@ -73,7 +73,8 @@ export default function ClaimFacilityIntroStep() {
                     </ListItemIcon>
                     <ListItemText>
                         <Typography variant="headline">
-                            Add information about your head office and parent company
+                            Add information about your head office
+                            and parent company / supplier group
                         </Typography>
                     </ListItemText>
                 </ListItem>

@@ -873,8 +873,9 @@ class FacilityClaim(models.Model):
         null=True,
         default=None,
         on_delete=models.PROTECT,
-        verbose_name='parent company',
-        help_text='The parent company of this facility claim.')
+        verbose_name='parent company / supplier group',
+        help_text='The parent company / supplier group of this '
+        'facility claim.')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

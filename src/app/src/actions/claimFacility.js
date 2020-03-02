@@ -118,7 +118,7 @@ export function fetchParentCompanyOptions() {
             .then(data => dispatch(completeFetchParentCompanyOptions(data)))
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
-                'An error prevented fetching parent company options',
+                'An error prevented fetching parent company / supplier group options',
                 failFetchParentCompanyOptions,
             )));
     };

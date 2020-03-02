@@ -415,7 +415,7 @@ function ClaimedFacilitiesDetails({
                 />
                 <ShowOnly when={!isEmpty(contributorOptions)}>
                     <InputSection
-                        label="Parent Company"
+                        label="Parent Company / Supplier Group"
                         aside={parentCompanyAside}
                         value={get(data, 'facility_parent_company.id', null)}
                         onChange={updateParentCompany}
@@ -426,7 +426,7 @@ function ClaimedFacilitiesDetails({
                 </ShowOnly>
                 <ShowOnly when={!contributorOptions}>
                     <Typography>
-                        Parent Company
+                        Parent Company / Supplier Group
                     </Typography>
                     <Typography>
                         {get(data, 'facility_parent_company.name', null)}
