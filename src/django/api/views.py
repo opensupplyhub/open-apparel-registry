@@ -17,6 +17,7 @@ from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point
+from django.contrib.gis.db.models import Extent
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
@@ -646,11 +647,16 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         page_queryset = self.paginate_queryset(queryset)
 
+        extent = queryset.aggregate(Extent('location'))['location__extent']
+
         if page_queryset is not None:
             serializer = FacilitySerializer(page_queryset, many=True)
-            return self.get_paginated_response(serializer.data)
+            response = self.get_paginated_response(serializer.data)
+            response.data['extent'] = extent
+            return response
 
         response_data = FacilitySerializer(queryset, many=True).data
+        response_data['extent'] = extent
         return Response(response_data)
 
     def retrieve(self, request, pk=None):
