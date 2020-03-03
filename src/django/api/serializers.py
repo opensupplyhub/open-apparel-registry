@@ -896,7 +896,7 @@ class UserPasswordResetSerializer(PasswordResetSerializer):
         if not self.reset_form.is_valid():
             raise ValidationError("Error")
 
-        if not User.objects.filter(email=user_email).exists():
+        if not User.objects.filter(email__iexact=user_email).exists():
             raise ValidationError("Error")
 
         return user_email
