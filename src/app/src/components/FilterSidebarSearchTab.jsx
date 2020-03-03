@@ -171,9 +171,9 @@ function FilterSidebarSearchTab({
             onClick={activateDrawFilter}
             disableRipple
             color="primary"
-            className="outlined-button"
+            className="outlined-button outlined-button--full-width"
         >
-            Filter by Area
+            DRAW AREA
         </Button>
     ) : (
         <Button
@@ -181,9 +181,9 @@ function FilterSidebarSearchTab({
             onClick={clearDrawFilter}
             disableRipple
             color="primary"
-            className="outlined-button"
+            className="outlined-button outlined-button--full-width"
         >
-            Remove Area Filter
+            REMOVE AREA
         </Button>
     );
 
@@ -208,9 +208,6 @@ function FilterSidebarSearchTab({
                         onChange={updateFacilityFreeTextQuery}
                         onKeyPress={submitFormOnEnterKeyPress}
                     />
-                </div>
-                <div className="form__field">
-                    {boundaryButton}
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -289,6 +286,16 @@ function FilterSidebarSearchTab({
                         onChange={updateCountry}
                         disabled={fetchingOptions || fetchingFacilities}
                     />
+                </div>
+                <div className="form__field">
+                    <InputLabel
+                        shrink={false}
+                        htmlFor={CONTRIBUTORS}
+                        style={filterSidebarSearchTabStyles.inputLabelStyle}
+                    >
+                        Filter by Area
+                    </InputLabel>
+                    {boundaryButton}
                 </div>
                 <div className="form__action">
                     <a

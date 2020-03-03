@@ -76,6 +76,7 @@ function VectorTileFacilitiesMap({
         isVectorTileMap: true,
         extent,
         zoomToSearch,
+        boundary,
     });
 
     const [currentMapZoomLevel, setCurrentMapZoomLevel] = useState(
