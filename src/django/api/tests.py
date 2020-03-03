@@ -1223,22 +1223,26 @@ class ContributorsListAPIEndpointTests(TestCase):
         self.email_two = 'two@example.com'
         self.email_three = 'three@example.com'
         self.email_four = 'four@example.com'
+        self.email_five = 'five@example.com'
 
         self.contrib_one_name = 'contributor that should be included'
         self.contrib_two_name = 'contributor with no lists'
         self.contrib_three_name = 'contributor with an inactive list'
         self.contrib_four_name = 'contributor with a non public list'
+        self.contrib_five_name = 'contributor with only error items'
 
         self.country_code = 'US'
         self.list_one_name = 'one'
         self.list_one_b_name = 'one-b'
         self.list_three_name = 'three'
         self.list_four_name = 'four'
+        self.list_five_name = 'five'
 
         self.user_one = User.objects.create(email=self.email_one)
         self.user_two = User.objects.create(email=self.email_two)
         self.user_three = User.objects.create(email=self.email_three)
         self.user_four = User.objects.create(email=self.email_four)
+        self.user_five = User.objects.create(email=self.email_five)
 
         self.contrib_one = Contributor \
             .objects \
@@ -1262,6 +1266,12 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(admin=self.user_four,
                     name=self.contrib_four_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_five = Contributor \
+            .objects \
+            .create(admin=self.user_five,
+                    name=self.contrib_five_name,
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.list_one = FacilityList \
@@ -1318,6 +1328,24 @@ class ContributorsListAPIEndpointTests(TestCase):
                     is_active=True,
                     contributor=self.contrib_four)
 
+        self.list_five = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name=self.list_five_name)
+
+        self.source_five = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_five,
+                    contributor=self.contrib_five)
+
+        self.list_item_five = FacilityListItem \
+            .objects \
+            .create(row_index=0,
+                    source=self.source_five,
+                    status=FacilityListItem.ERROR_PARSING)
+
     def test_contributors_list_has_only_contributors_with_active_lists(self):
         response = self.client.get('/api/contributors/')
         response_data = response.json()
@@ -1340,6 +1368,11 @@ class ContributorsListAPIEndpointTests(TestCase):
 
         self.assertNotIn(
             self.contrib_four_name,
+            contributor_names,
+        )
+
+        self.assertNotIn(
+            self.contrib_five_name,
             contributor_names,
         )
 
