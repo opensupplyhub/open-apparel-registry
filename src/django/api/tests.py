@@ -3873,7 +3873,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         data = json.loads(response.content)
         self.assertEqual(
             len(data['properties']['other_locations']),
-            2,
+            3,
         )
 
         self.assertEqual(
@@ -3907,9 +3907,10 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         )
 
         data = json.loads(response.content)
+
         self.assertEqual(
             len(data['properties']['other_locations']),
-            2,
+            3,
         )
 
         self.assertEqual(
