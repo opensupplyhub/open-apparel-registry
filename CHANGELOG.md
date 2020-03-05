@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Ignore case for forgot-password email [#970] [https://github.com/open-apparel-registry/open-apparel-registry/pull/970]
 
+- Update 'parent company' label to 'parent company / supplier group' [#971] (https://github.com/open-apparel-registry/open-apparel-registry/pull/971)
+
 ### Security
 
 ## [2.22.0] - 2020-02-20

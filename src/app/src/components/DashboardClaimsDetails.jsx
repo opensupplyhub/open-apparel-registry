@@ -163,7 +163,7 @@ function DashboardClaimsDetails({
                     }
                 />
                 <InfoSection
-                    label="Facility Parent Company"
+                    label="Facility Parent Company / Supplier Group"
                     value={
                         (() => {
                             const parentCompanyName = get(data, 'facility_parent_company.name', null);

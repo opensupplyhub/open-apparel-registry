@@ -76,7 +76,7 @@ export default function FacilityDetailsSidebarClaimedInfo({
                 value={facility.address}
             />
             <ClaimInfoSection
-                label="Parent Company"
+                label="Parent Company / Supplier Group"
                 value={
                     facility.parent_company
                         ? (
