@@ -380,12 +380,14 @@ def all_contributors(request):
             [2, "Contributor Two"]
         ]
     """
+    valid_sources = Source.objects.filter(
+        is_active=True, is_public=True).exclude(
+        facilitylistitem__status__in=FacilityListItem.ERROR_STATUSES)
     response_data = [
         (contributor.id, contributor.name)
         for contributor
         in Contributor.objects.filter(
-            source__is_active=True,
-            source__is_public=True).distinct().order_by('name')
+            source__in=valid_sources).distinct().order_by('name')
     ]
 
     return Response(response_data)

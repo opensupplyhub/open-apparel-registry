@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Update 'parent company' label to 'parent company / supplier group' [#971] (https://github.com/open-apparel-registry/open-apparel-registry/pull/971)
 
+- Hide contributors with only errored facilities [#974] (https://github.com/open-apparel-registry/open-apparel-registry/pull/974)
+
 ### Security
 
 ## [2.22.0] - 2020-02-20
