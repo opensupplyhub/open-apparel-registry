@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import (InMemoryUploadedFile,
                                             TemporaryUploadedFile)
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, Count
 from django.core import exceptions as core_exceptions
 from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
@@ -393,22 +393,39 @@ def all_contributors(request):
     return Response(response_data)
 
 
+def getContributorTypeCount(value, counts):
+    type = counts.get(contrib_type=value)
+    if type:
+        return type['num_type']
+    else:
+        return 0
+
+
 @api_view(['GET'])
 def all_contributor_types(request):
     """
     Returns a list of contributor type choices as tuples of values and display
-    names.
+    names with appended count of contributors per type.
 
     ## Sample Response
 
         [
-            ["Auditor", "Auditor"],
-            ["Brand/Retailer", "Brand/Retailer"],
-            ["Civil Society Organization", "Civil Society Organization"],
-            ["Factory / Facility", "Factory / Facility"]
+            ["Auditor", "Auditor [10]"],
+            ["Brand/Retailer", "Brand/Retailer [12]"],
+            ["Civil Society Organization", "Civil Society Organization [0]"],
+            ["Factory / Facility", "Factory / Facility [1]"]
         ]
     """
-    return Response(Contributor.CONTRIB_TYPE_CHOICES)
+    counts = Contributor.objects.values(
+        'contrib_type').annotate(num_type=Count('contrib_type'))
+
+    types = [
+        (t[0], f'{t[1]} [{getContributorTypeCount(t[0], counts)}]')
+        for t
+        in Contributor.CONTRIB_TYPE_CHOICES
+    ]
+
+    return Response(types)
 
 
 @api_view(['GET'])
