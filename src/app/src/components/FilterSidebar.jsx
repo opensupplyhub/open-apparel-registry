@@ -113,14 +113,14 @@ class FilterSidebar extends Component {
         const handleTabChange = (_, value) => {
             const changeTabFunctionsList = vectorTileFeatureIsActive
                 ? [
-                    makeFacilitiesTabActive,
                     makeSearchTabActive,
+                    makeFacilitiesTabActive,
                     makeGuideTabActive,
                 ]
                 : [
                     makeGuideTabActive,
-                    makeSearchTabActive,
                     makeFacilitiesTabActive,
+                    makeSearchTabActive,
                 ];
 
             const changeTab = changeTabFunctionsList[value];
