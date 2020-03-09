@@ -8,26 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-
-- Add a report that groups facility counts by country [#979] (https://github.com/open-apparel-registry/open-apparel-registry/pull/979)
+- Add a report that groups facility counts by country [#979](https://github.com/open-apparel-registry/open-apparel-registry/pull/979)
 
 ### Changed
-
-- Zoom to search
+- Zoom to search [#966](https://github.com/open-apparel-registry/open-apparel-registry/pull/966)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-
-- Ignore case for forgot-password email [#970] [https://github.com/open-apparel-registry/open-apparel-registry/pull/970]
-
-- Update 'parent company' label to 'parent company / supplier group' [#971] (https://github.com/open-apparel-registry/open-apparel-registry/pull/971)
-
-- Hide contributors with only errored facilities [#974] (https://github.com/open-apparel-registry/open-apparel-registry/pull/974)
-
-- Show automated GPS coordinates after update [#978] (https://github.com/open-apparel-registry/open-apparel-registry/pull/978)
+- Ignore case for forgot-password email [#970](https://github.com/open-apparel-registry/open-apparel-registry/pull/970)
+- Update 'parent company' label to 'parent company / supplier group' [#971](https://github.com/open-apparel-registry/open-apparel-registry/pull/971)
+- Hide contributors with only errored facilities [#974](https://github.com/open-apparel-registry/open-apparel-registry/pull/974)
+- Show automated GPS coordinates after update [#978](https://github.com/open-apparel-registry/open-apparel-registry/pull/978)
 
 ### Security
 
