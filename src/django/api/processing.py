@@ -14,6 +14,7 @@ from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
+from api.matching import normalize_extended_facility_id
 
 
 def _report_error_to_rollbar(file, request):
@@ -211,6 +212,38 @@ def geocode_facility_list_item(item):
         })
 
 
+def reduce_matches(matches):
+    """
+    Process a list of facility match scores to remove duplicate facilities,
+    choosing the highest match score in the case of a duplicate.
+
+    Arguments:
+    matches -- A list of tuples of the format (extended_facility_id, score).
+
+    Returns:
+    A list of tuples in the format (facility_id, score). Extended facility
+
+    Example:
+        Input:
+            [
+                (US2020052GKF19F, 75),
+                (US2020052GKF19F_MATCH-23, 88),
+                (US2020052YDVKBQ, 45)
+            ]
+        Output:
+            [
+                (US2020052GKF19F, 88),
+                (US2020052YDVKBQ, 45)
+            ]
+    """
+    match_dict = {}
+    for extended_id, score in matches:
+        facility_id = normalize_extended_facility_id(extended_id)
+        if facility_id not in match_dict or match_dict[facility_id] < score:
+            match_dict[facility_id] = score
+    return list(match_dict.items())
+
+
 def save_match_details(match_results):
     """
     Save the results of a call to match_facility_list_items by creating
@@ -248,7 +281,7 @@ def save_match_details(match_results):
         item = FacilityListItem.objects.get(id=item_id)
         item.status = FacilityListItem.POTENTIAL_MATCH
         matches = [make_pending_match(item_id, facility_id, score.item())
-                   for facility_id, score in matches]
+                   for facility_id, score in reduce_matches(matches)]
 
         if len(matches) == 1:
             if matches[0].confidence >= automatic_threshold:
