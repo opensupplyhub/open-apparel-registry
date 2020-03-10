@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { array, arrayOf, bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
-import { Map as ReactLeafletMap, ZoomControl } from 'react-leaflet';
+import { Map as ReactLeafletMap, ZoomControl, GeoJSON } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
 import L from 'leaflet';
 import Control from 'react-leaflet-control';
@@ -15,6 +15,7 @@ import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
 import ZoomToSearchControl from './ZoomToSearchControl';
+import PolygonalSearchControl from './PolygonalSearchControl';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -61,6 +62,8 @@ function VectorTileFacilitiesMap({
     gridColorRamp,
     extent,
     zoomToSearch,
+    drawFilterActive,
+    boundary,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -73,6 +76,7 @@ function VectorTileFacilitiesMap({
         isVectorTileMap: true,
         extent,
         zoomToSearch,
+        boundary,
     });
 
     const [currentMapZoomLevel, setCurrentMapZoomLevel] = useState(
@@ -159,6 +163,8 @@ function VectorTileFacilitiesMap({
                 maxZoom={maxVectorTileFacilitiesGridZoom}
                 zoomLevel={currentMapZoomLevel}
             />
+            {drawFilterActive && <PolygonalSearchControl />}
+            {boundary != null && <GeoJSON data={boundary} />}
         </ReactLeafletMap>
     );
 }
@@ -193,6 +199,7 @@ function mapStateToProps({
     ui: {
         facilitiesSidebarTabSearch: { resetButtonClickCount },
         zoomToSearch,
+        drawFilterActive,
     },
     clientInfo: { fetched, countryCode },
     facilities: {
@@ -201,6 +208,9 @@ function mapStateToProps({
     },
     vectorTileLayer: {
         gridColorRamp,
+    },
+    filters: {
+        boundary,
     },
 }) {
     return {
@@ -211,6 +221,8 @@ function mapStateToProps({
         gridColorRamp,
         extent: facilitiesData ? facilitiesData.extent : null,
         zoomToSearch,
+        drawFilterActive,
+        boundary,
     };
 }
 

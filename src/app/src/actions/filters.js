@@ -12,6 +12,7 @@ export const updateContributorFilter = createAction('UPDATE_CONTRIBUTOR_FILTER')
 export const updateContributorTypeFilter = createAction('UPDATE_CONTRIBUTOR_TYPE_FILTER');
 export const updateCountryFilter = createAction('UPDATE_COUNTRY_FILTER');
 export const updateCombineContributorsFilterOption = createAction('UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION');
+export const updateBoundaryFilter = createAction('UPDATE_BOUNDARY_FILTER');
 export const resetAllFilters = createAction('RESET_ALL_FILTERS');
 export const updateAllFilters = createAction('UPDATE_ALL_FILTERS');
 

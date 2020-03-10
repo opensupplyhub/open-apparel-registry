@@ -3,6 +3,7 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import delay from 'lodash/delay';
+import L from 'leaflet';
 
 import {
     detailsZoomLevel,
@@ -20,6 +21,7 @@ export default function useUpdateLeafletMapImperatively(
         isVectorTileMap = false,
         extent,
         zoomToSearch,
+        boundary,
     } = {},
 ) {
     const mapRef = useRef(null);
@@ -32,11 +34,26 @@ export default function useUpdateLeafletMapImperatively(
         if (zoomToSearch && extent != null && currentExtent !== extent) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
 
+            const bounds = L.latLngBounds(
+                [extent[3], extent[2]],
+                [extent[1], extent[0]],
+            );
+
+            if (boundary) {
+                // leaflet takes lat, lng, but geometry.coordinates
+                // is [lng, lat] - we need to explicitly name the lat and lng
+                const latLngs = boundary.coordinates[0].map(lngLat => ({
+                    lng: lngLat[0],
+                    lat: lngLat[1],
+                }));
+                bounds.extend(L.latLngBounds(latLngs));
+            }
+
             if (leafletMap) {
-                leafletMap.fitBounds([
-                    [extent[3], extent[2]],
-                    [extent[1], extent[0]],
-                ], { maxZoom: detailsZoomLevel, padding: [20, 20] });
+                leafletMap.fitBounds(bounds, {
+                    maxZoom: detailsZoomLevel,
+                    padding: [20, 20],
+                });
             }
 
             setCurrentExtent(extent);
@@ -45,6 +62,7 @@ export default function useUpdateLeafletMapImperatively(
         extent,
         currentExtent,
         zoomToSearch,
+        boundary,
     ]);
 
     // Reset the map state when the reset button is clicked.

@@ -512,6 +512,15 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'facilities associated with ALL the specified '
                         'contributors.')
                 ),
+                coreapi.Field(
+                    name='boundary',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'Pass a GeoJSON geometry to filter by '
+                        'facilities within the boundaries of that geometry.')
+                ),
             ]
 
         if view.action == 'create':

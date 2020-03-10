@@ -245,6 +245,7 @@ it('creates a set of filters from a querystring', () => {
         contributorTypes: [],
         countries: [],
         combineContributors: '',
+        boundary: null,
     };
 
     expect(isEqual(
@@ -268,6 +269,7 @@ it('creates a set of filters from a querystring', () => {
         contributorTypes: [],
         countries: [],
         combineContributors: 'AND',
+        boundary: null,
     };
 
     expect(isEqual(
@@ -292,6 +294,7 @@ it('creates a set of filters from a querystring', () => {
         ],
         countries: [],
         combineContributors: '',
+        boundary: null,
     };
 
     expect(isEqual(
@@ -315,6 +318,7 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         combineContributors: '',
+        boundary: null,
     };
 
     expect(isEqual(
@@ -334,6 +338,7 @@ it('creates a set of filters from a querystring', () => {
         ],
         countries: [],
         combineContributors: '',
+        boundary: null,
     };
 
     expect(isEqual(

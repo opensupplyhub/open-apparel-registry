@@ -25,6 +25,7 @@ class FacilitiesQueryParams:
     CONTRIBUTOR_TYPES = 'contributor_types'
     COUNTRIES = 'countries'
     COMBINE_CONTRIBUTORS = 'combine_contributors'
+    BOUNDARY = 'boundary'
 
 
 class FacilityListQueryParams:

@@ -17,3 +17,5 @@ export const resetSidebarFacilitiesTabTextFilter =
 
 export const toggleZoomToSearch =
     createAction('TOGGLE_ZOOM_TO_SEARCH');
+
+export const showDrawFilter = createAction('SHOW_DRAW_FILTER');

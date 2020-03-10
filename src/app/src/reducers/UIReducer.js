@@ -12,6 +12,7 @@ import {
     recordSearchTabResetButtonClick,
     reportWindowResize,
     toggleZoomToSearch,
+    showDrawFilter,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
@@ -31,6 +32,7 @@ const initialState = Object.freeze({
         innerWidth: isObject(window) ? window.innerWidth : null,
     }),
     zoomToSearch: true,
+    drawFilterActive: false,
 });
 
 export default createReducer({
@@ -101,5 +103,8 @@ export default createReducer({
     }),
     [toggleZoomToSearch]: (state, payload) => update(state, {
         zoomToSearch: { $set: payload },
+    }),
+    [showDrawFilter]: (state, payload) => update(state, {
+        drawFilterActive: { $set: payload },
     }),
 }, initialState);
