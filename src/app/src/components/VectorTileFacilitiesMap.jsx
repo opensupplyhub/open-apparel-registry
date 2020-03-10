@@ -164,7 +164,15 @@ function VectorTileFacilitiesMap({
                 zoomLevel={currentMapZoomLevel}
             />
             {drawFilterActive && <PolygonalSearchControl />}
-            {boundary != null && <GeoJSON data={boundary} />}
+            {boundary != null && (
+                <GeoJSON
+                    data={boundary}
+                    style={{
+                        renderer: L.svg({ padding: 0.5 }),
+                        interactive: false,
+                    }}
+                />
+            )}
         </ReactLeafletMap>
     );
 }
