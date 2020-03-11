@@ -38,10 +38,10 @@ class MapAndSidebar extends Component {
         return (
             <Fragment>
                 <Grid container className="map-sidebar-container">
-                    <Grid item xs={12} sm={4} id="panel-container">
+                    <Grid item sm={12} md={4} id="panel-container">
                         <Route component={SidebarWithErrorBoundary} />
                     </Grid>
-                    <Grid item xs={12} sm={8} style={{ position: 'relative' }}>
+                    <Grid item sm={12} md={8} style={{ position: 'relative' }} className="map-container">
                         {!hasError && (
                             <Switch>
                                 <Route

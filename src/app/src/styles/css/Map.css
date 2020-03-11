@@ -7,6 +7,18 @@
   flex-direction: column;
 }
 
+@media (min-width: 775px) {
+  #panel-container {
+    min-width: 450px;
+    flex: none;
+  }
+
+  .map-container {
+    flex: 1 !important;
+    max-width: initial !important;
+  }
+}
+
 .map-sidebar-container {
   height: 100%;
 }
