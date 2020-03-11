@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Zoom to search [#966](https://github.com/open-apparel-registry/open-apparel-registry/pull/966)
+- Display number of contributors per type [#981](https://github.com/open-apparel-registry/open-apparel-registry/pull/981)
 
 ### Deprecated
 
