@@ -65,14 +65,16 @@ export default function useUpdateLeafletMapImperatively(
         boundary,
     ]);
 
-    // Reset the map state when the reset button is clicked.
+    // Reset the map state when the reset button is clicked
+    // while zoom to search is disabled.
     const [
         currentResetButtonClickCount,
         setCurrentResetButtonClickCount,
     ] = useState(resetButtonClickCount);
 
     useEffect(() => {
-        if (resetButtonClickCount !== currentResetButtonClickCount) {
+        if (!zoomToSearch &&
+                resetButtonClickCount !== currentResetButtonClickCount) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
 
             if (leafletMap) {
@@ -88,6 +90,7 @@ export default function useUpdateLeafletMapImperatively(
         resetButtonClickCount,
         currentResetButtonClickCount,
         setCurrentResetButtonClickCount,
+        zoomToSearch,
     ]);
 
     // Set the map view centered on the facility marker, zoomed to level 15

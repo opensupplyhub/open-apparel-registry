@@ -139,7 +139,7 @@ export default function withQueryStringSync(WrappedComponent) {
                 dispatch(setFiltersFromQueryString(qs));
 
                 return fetch
-                    ? dispatch(fetchFacilities(push))
+                    ? dispatch(fetchFacilities({ ...push, activateFacilitiesTab: false }))
                     : null;
             },
             clearFacilities: () => dispatch(resetFacilities()),

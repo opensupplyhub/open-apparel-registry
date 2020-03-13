@@ -13,7 +13,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import ReactSelect from 'react-select';
 import get from 'lodash/get';
 
-import FacilitySidebarSearchTabFacilitiesCount from './FacilitySidebarSearchTabFacilitiesCount';
 import ShowOnly from './ShowOnly';
 
 import {
@@ -341,7 +340,6 @@ function FilterSidebarSearchTab({
                 </div>
                 {noFacilitiesFoundMessage}
             </div>
-            <FacilitySidebarSearchTabFacilitiesCount />
         </div>
     );
 }

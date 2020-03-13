@@ -16,6 +16,8 @@ import {
     createQueryStringFromSearchFilters,
 } from '../util/util';
 
+import { makeSidebarFacilitiesTabActive } from './ui';
+
 export const startFetchFacilities = createAction('START_FETCH_FACILITIES');
 export const failFetchFacilities = createAction('FAIL_FETCH_FACILITIES');
 export const completeFetchFacilities = createAction('COMPLETE_FETCH_FACILITIES');
@@ -29,6 +31,7 @@ export const resetSingleFacility = createAction('RESET_SINGLE_FACILITY');
 export function fetchFacilities({
     pageSize = FACILITIES_REQUEST_PAGE_SIZE,
     pushNewRoute = noop,
+    activateFacilitiesTab = true,
 }) {
     return (dispatch, getState) => {
         dispatch(fetchCurrentTileCacheKey());
@@ -58,10 +61,14 @@ export function fetchFacilities({
 
                     pushNewRoute(makeFacilityDetailLink(facilityID));
                 }
-
                 return data;
             })
-            .then(data => dispatch(completeFetchFacilities(data)))
+            .then((data) => {
+                dispatch(completeFetchFacilities(data));
+                if (activateFacilitiesTab) {
+                    dispatch(makeSidebarFacilitiesTabActive());
+                }
+            })
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching facilities',

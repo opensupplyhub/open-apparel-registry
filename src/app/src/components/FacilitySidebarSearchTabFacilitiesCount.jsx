@@ -1,64 +1,69 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { arrayOf, bool, number, string } from 'prop-types';
 import { connect } from 'react-redux';
+import get from 'lodash/get';
 
-import { fetchFacilityCount } from '../actions/facilityCount';
+import { pluralizeFacilitiesCount } from '../util/util.js';
 
-class FacilitySidebarSearchTabFacilitiesCount extends Component {
-    componentDidMount() {
-        return this.props.fetchCount();
+const FacilitySidebarSearchTabFacilitiesCount = ({
+    facilitiesCount,
+    fetching,
+    error,
+}) => {
+    if (!facilitiesCount || fetching || error) {
+        return null;
     }
 
-    render() {
-        const {
-            data,
-            fetching,
-            error,
-        } = this.props;
-
-        if (!data || fetching || error) {
-            return null;
-        }
-
-        return (
-            <div style={{ textAlign: 'right' }}>
-                {`Total facilities: ${data}`}
-            </div>
-        );
-    }
-}
+    return (
+        <div style={{
+            margin: 0,
+            verticalAlign: 'center',
+        }}
+        >
+            <p style={{
+                backgroundColor: 'rgb(199,209,250)',
+                paddingLeft: '5px',
+                paddingRight: '5px',
+                alignText: 'center',
+                color: 'rgb(9,24,143)',
+                minWidth: '100px',
+                overflow: 'none',
+                margin: '10px 0 0 0',
+            }}
+            >
+                {pluralizeFacilitiesCount(facilitiesCount)}
+            </p>
+        </div>
+    );
+};
 
 FacilitySidebarSearchTabFacilitiesCount.defaultProps = {
-    data: null,
+    facilitiesCount: null,
     error: null,
 };
 
 FacilitySidebarSearchTabFacilitiesCount.propTypes = {
-    data: number,
+    facilitiesCount: number,
     fetching: bool.isRequired,
     error: arrayOf(string),
 };
 
 function mapStateToProps({
-    facilityCount: {
-        data,
-        fetching,
-        error,
+    facilities: {
+        facilities: {
+            data,
+            error,
+            fetching,
+        },
     },
 }) {
     return {
-        data,
-        fetching,
         error,
+        fetching,
+        facilitiesCount: get(data, 'count', null),
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        fetchCount: () => dispatch(fetchFacilityCount()),
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(mapStateToProps)(
     FacilitySidebarSearchTabFacilitiesCount,
 );
