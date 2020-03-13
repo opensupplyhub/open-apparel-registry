@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add a report that groups facility counts by country [#979](https://github.com/open-apparel-registry/open-apparel-registry/pull/979)
 - Add confirmed matches to canonical facility list when matching [#964](https://github.com/open-apparel-registry/open-apparel-registry/pull/964)
 - Add polygonal search [#969](https://github.com/open-apparel-registry/open-apparel-registry/pull/969)
-- Add report that lists contributors with active lists [#990](https://github.com/open-apparel-registry/open-apparel-registry/pull/990)
+- Add report that lists contributors with active lists
+  [#990](https://github.com/open-apparel-registry/open-apparel-registry/pull/990) [#991](https://github.com/open-apparel-registry/open-apparel-registry/pull/991)
 
 ### Changed
 - Zoom to search [#966](https://github.com/open-apparel-registry/open-apparel-registry/pull/966)
