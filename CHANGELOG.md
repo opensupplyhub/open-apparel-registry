@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Hide contributors with only errored facilities [#974](https://github.com/open-apparel-registry/open-apparel-registry/pull/974)
 - Show automated GPS coordinates after update [#978](https://github.com/open-apparel-registry/open-apparel-registry/pull/978)
 - Allow click through polygon after search
+- Fix contributor types when no contributors are found [#989](https://github.com/open-apparel-registry/open-apparel-registry/pull/989)
 
 ### Security
 
