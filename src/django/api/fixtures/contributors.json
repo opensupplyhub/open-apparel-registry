@@ -4,13 +4,13 @@
         "pk": 2,
         "fields": {
             "admin": 2,
-            "name": "Factory A",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Service Provider A",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-14T04:42:50+00:00",
-            "updated_at": "2019-03-14T18:00:57.867617+00:00"
+            "created_at": "2020-03-09T14:25:18+00:00",
+            "updated_at": "2020-03-13T17:47:08.934203+00:00"
         }
     },
     {
@@ -18,13 +18,13 @@
         "pk": 3,
         "fields": {
             "admin": 3,
-            "name": "Service Provider A",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Factory A",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T08:39:21+00:00",
-            "updated_at": "2019-03-14T18:00:57.884202+00:00"
+            "created_at": "2020-03-08T18:27:40+00:00",
+            "updated_at": "2020-03-13T17:47:08.839090+00:00"
         }
     },
     {
@@ -32,13 +32,13 @@
         "pk": 4,
         "fields": {
             "admin": 4,
-            "name": "Researcher A",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Brand A",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T19:51:02+00:00",
-            "updated_at": "2019-03-14T18:00:57.461556+00:00"
+            "created_at": "2020-03-09T14:34:09+00:00",
+            "updated_at": "2020-03-13T17:47:08.847584+00:00"
         }
     },
     {
@@ -46,13 +46,13 @@
         "pk": 5,
         "fields": {
             "admin": 5,
-            "name": "Researcher C",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Factory C",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T17:34:05+00:00",
-            "updated_at": "2019-03-14T18:00:57.717898+00:00"
+            "created_at": "2020-03-09T12:54:27+00:00",
+            "updated_at": "2020-03-13T17:47:08.187347+00:00"
         }
     },
     {
@@ -60,13 +60,13 @@
         "pk": 6,
         "fields": {
             "admin": 6,
-            "name": "Brand A",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Service Provider C",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T07:27:14+00:00",
-            "updated_at": "2019-03-14T18:00:57.361939+00:00"
+            "created_at": "2020-03-08T03:35:38+00:00",
+            "updated_at": "2020-03-13T17:47:08.667328+00:00"
         }
     },
     {
@@ -74,13 +74,13 @@
         "pk": 7,
         "fields": {
             "admin": 7,
-            "name": "Factory C",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Auditor A",
+            "description": "An auditor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Auditor",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T16:02:49+00:00",
-            "updated_at": "2019-03-14T18:00:57.185608+00:00"
+            "created_at": "2020-03-06T21:16:40+00:00",
+            "updated_at": "2020-03-13T17:47:08.179940+00:00"
         }
     },
     {
@@ -88,13 +88,13 @@
         "pk": 8,
         "fields": {
             "admin": 8,
-            "name": "Brand C",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Civil Society Organization A",
+            "description": "A civil society organization dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Civil Society Organization",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T20:25:19+00:00",
-            "updated_at": "2019-03-14T18:00:57.864248+00:00"
+            "created_at": "2020-03-11T15:19:04+00:00",
+            "updated_at": "2020-03-13T17:47:08.385298+00:00"
         }
     },
     {
@@ -102,13 +102,13 @@
         "pk": 9,
         "fields": {
             "admin": 9,
-            "name": "Service Provider C",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group A",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T23:27:09+00:00",
-            "updated_at": "2019-03-14T18:00:57.304267+00:00"
+            "created_at": "2020-03-13T15:09:21+00:00",
+            "updated_at": "2020-03-13T17:47:08.735275+00:00"
         }
     },
     {
@@ -116,13 +116,13 @@
         "pk": 10,
         "fields": {
             "admin": 10,
-            "name": "Multi Stakeholder Initiative A",
-            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
+            "name": "Union A",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Multi Stakeholder Initiative",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-14T02:43:53+00:00",
-            "updated_at": "2019-03-14T18:00:57.522778+00:00"
+            "created_at": "2020-03-09T12:28:03+00:00",
+            "updated_at": "2020-03-13T17:47:08.239366+00:00"
         }
     },
     {
@@ -130,13 +130,13 @@
         "pk": 11,
         "fields": {
             "admin": 11,
-            "name": "Brand E",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Service Provider E",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T17:49:07+00:00",
-            "updated_at": "2019-03-14T18:00:57.092695+00:00"
+            "created_at": "2020-03-06T23:19:59+00:00",
+            "updated_at": "2020-03-13T17:47:08.556681+00:00"
         }
     },
     {
@@ -144,13 +144,13 @@
         "pk": 12,
         "fields": {
             "admin": 12,
-            "name": "Union A",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group C",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T18:48:27+00:00",
-            "updated_at": "2019-03-14T18:00:57.248938+00:00"
+            "created_at": "2020-03-11T05:06:20+00:00",
+            "updated_at": "2020-03-13T17:47:08.613198+00:00"
         }
     },
     {
@@ -158,13 +158,13 @@
         "pk": 13,
         "fields": {
             "admin": 13,
-            "name": "Other A",
-            "description": "A other dedicated to transparency in apparel supply chains",
+            "name": "Researcher A",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Other",
-            "other_contrib_type": "Group",
-            "created_at": "2019-03-14T11:11:59+00:00",
-            "updated_at": "2019-03-14T18:00:57.215745+00:00"
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
+            "created_at": "2020-03-13T04:15:59+00:00",
+            "updated_at": "2020-03-13T17:47:08.913197+00:00"
         }
     },
     {
@@ -172,13 +172,13 @@
         "pk": 14,
         "fields": {
             "admin": 14,
-            "name": "Factory E",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Service Provider G",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T20:37:20+00:00",
-            "updated_at": "2019-03-14T18:00:57.814317+00:00"
+            "created_at": "2020-03-06T10:44:08+00:00",
+            "updated_at": "2020-03-13T17:47:08.625690+00:00"
         }
     },
     {
@@ -186,13 +186,13 @@
         "pk": 15,
         "fields": {
             "admin": 15,
-            "name": "Auditor A",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group E",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T14:09:10+00:00",
-            "updated_at": "2019-03-14T18:00:57.414902+00:00"
+            "created_at": "2020-03-08T07:01:23+00:00",
+            "updated_at": "2020-03-13T17:47:08.679122+00:00"
         }
     },
     {
@@ -200,13 +200,13 @@
         "pk": 16,
         "fields": {
             "admin": 16,
-            "name": "Brand G",
+            "name": "Brand C",
             "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T22:17:30+00:00",
-            "updated_at": "2019-03-14T18:00:57.715722+00:00"
+            "created_at": "2020-03-10T13:19:54+00:00",
+            "updated_at": "2020-03-13T17:47:08.694509+00:00"
         }
     },
     {
@@ -214,13 +214,13 @@
         "pk": 17,
         "fields": {
             "admin": 17,
-            "name": "Factory G",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Researcher C",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-05T19:56:34+00:00",
-            "updated_at": "2019-03-14T18:00:57.512340+00:00"
+            "created_at": "2020-03-06T11:09:17+00:00",
+            "updated_at": "2020-03-13T17:47:08.650227+00:00"
         }
     },
     {
@@ -228,13 +228,13 @@
         "pk": 18,
         "fields": {
             "admin": 18,
-            "name": "Auditor C",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group G",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T21:59:52+00:00",
-            "updated_at": "2019-03-14T18:00:57.517818+00:00"
+            "created_at": "2020-03-07T01:02:59+00:00",
+            "updated_at": "2020-03-13T17:47:08.321450+00:00"
         }
     },
     {
@@ -242,13 +242,13 @@
         "pk": 19,
         "fields": {
             "admin": 19,
-            "name": "Union C",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Brand E",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T12:43:55+00:00",
-            "updated_at": "2019-03-14T18:00:57.212573+00:00"
+            "created_at": "2020-03-08T13:41:46+00:00",
+            "updated_at": "2020-03-13T17:47:08.066004+00:00"
         }
     },
     {
@@ -256,13 +256,13 @@
         "pk": 20,
         "fields": {
             "admin": 20,
-            "name": "Other C",
-            "description": "A other dedicated to transparency in apparel supply chains",
+            "name": "Service Provider I",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Other",
-            "other_contrib_type": "Ltd",
-            "created_at": "2019-03-12T01:57:02+00:00",
-            "updated_at": "2019-03-14T18:00:57.761153+00:00"
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
+            "created_at": "2020-03-12T10:44:04+00:00",
+            "updated_at": "2020-03-13T17:47:08.345140+00:00"
         }
     },
     {
@@ -270,13 +270,13 @@
         "pk": 21,
         "fields": {
             "admin": 21,
-            "name": "Service Provider E",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Researcher E",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T16:16:56+00:00",
-            "updated_at": "2019-03-14T18:00:57.294434+00:00"
+            "created_at": "2020-03-08T15:39:18+00:00",
+            "updated_at": "2020-03-13T17:47:08.981229+00:00"
         }
     },
     {
@@ -284,13 +284,13 @@
         "pk": 22,
         "fields": {
             "admin": 22,
-            "name": "Researcher E",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Service Provider K",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-10T12:08:06+00:00",
-            "updated_at": "2019-03-14T18:00:57.947787+00:00"
+            "created_at": "2020-03-08T22:25:49+00:00",
+            "updated_at": "2020-03-13T17:47:08.052932+00:00"
         }
     },
     {
@@ -298,13 +298,13 @@
         "pk": 23,
         "fields": {
             "admin": 23,
-            "name": "Auditor E",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Factory E",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T12:41:56+00:00",
-            "updated_at": "2019-03-14T18:00:57.202927+00:00"
+            "created_at": "2020-03-06T11:18:01+00:00",
+            "updated_at": "2020-03-13T17:47:08.697916+00:00"
         }
     },
     {
@@ -312,13 +312,13 @@
         "pk": 24,
         "fields": {
             "admin": 24,
-            "name": "Union E",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group I",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-10T00:38:14+00:00",
-            "updated_at": "2019-03-14T18:00:57.021575+00:00"
+            "created_at": "2020-03-07T13:52:27+00:00",
+            "updated_at": "2020-03-13T17:47:08.358903+00:00"
         }
     },
     {
@@ -326,13 +326,13 @@
         "pk": 25,
         "fields": {
             "admin": 25,
-            "name": "Civil Society Organization A",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Factory G",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T12:57:36+00:00",
-            "updated_at": "2019-03-14T18:00:57.696507+00:00"
+            "created_at": "2020-03-12T03:20:32+00:00",
+            "updated_at": "2020-03-13T17:47:08.414803+00:00"
         }
     },
     {
@@ -340,13 +340,13 @@
         "pk": 26,
         "fields": {
             "admin": 26,
-            "name": "Auditor G",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Service Provider M",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T08:43:04+00:00",
-            "updated_at": "2019-03-14T18:00:57.724328+00:00"
+            "created_at": "2020-03-11T22:43:18+00:00",
+            "updated_at": "2020-03-13T17:47:08.603986+00:00"
         }
     },
     {
@@ -354,13 +354,13 @@
         "pk": 27,
         "fields": {
             "admin": 27,
-            "name": "Union G",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Brand G",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T08:19:20+00:00",
-            "updated_at": "2019-03-14T18:00:57.917625+00:00"
+            "created_at": "2020-03-08T02:16:50+00:00",
+            "updated_at": "2020-03-13T17:47:08.088623+00:00"
         }
     },
     {
@@ -368,13 +368,13 @@
         "pk": 28,
         "fields": {
             "admin": 28,
-            "name": "Brand I",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Researcher G",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T16:30:40+00:00",
-            "updated_at": "2019-03-14T18:00:57.399182+00:00"
+            "created_at": "2020-03-09T16:02:13+00:00",
+            "updated_at": "2020-03-13T17:47:08.281395+00:00"
         }
     },
     {
@@ -382,13 +382,13 @@
         "pk": 29,
         "fields": {
             "admin": 29,
-            "name": "Service Provider G",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Factory I",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T10:49:42+00:00",
-            "updated_at": "2019-03-14T18:00:57.611283+00:00"
+            "created_at": "2020-03-07T12:08:56+00:00",
+            "updated_at": "2020-03-13T17:47:08.156909+00:00"
         }
     },
     {
@@ -401,8 +401,8 @@
             "website": "https://info.openapparel.org",
             "contrib_type": "Civil Society Organization",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T20:00:42+00:00",
-            "updated_at": "2019-03-14T18:00:57.580962+00:00"
+            "created_at": "2020-03-10T00:46:52+00:00",
+            "updated_at": "2020-03-13T17:47:08.909589+00:00"
         }
     },
     {
@@ -410,13 +410,13 @@
         "pk": 31,
         "fields": {
             "admin": 31,
-            "name": "Service Provider I",
+            "name": "Service Provider O",
             "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T00:19:11+00:00",
-            "updated_at": "2019-03-14T18:00:57.561774+00:00"
+            "created_at": "2020-03-10T20:29:54+00:00",
+            "updated_at": "2020-03-13T17:47:08.361567+00:00"
         }
     },
     {
@@ -424,13 +424,13 @@
         "pk": 32,
         "fields": {
             "admin": 32,
-            "name": "Multi Stakeholder Initiative C",
+            "name": "Multi Stakeholder Initiative A",
             "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Multi Stakeholder Initiative",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T17:54:20+00:00",
-            "updated_at": "2019-03-14T18:00:57.101025+00:00"
+            "created_at": "2020-03-05T07:23:26+00:00",
+            "updated_at": "2020-03-13T17:47:08.538751+00:00"
         }
     },
     {
@@ -438,13 +438,13 @@
         "pk": 33,
         "fields": {
             "admin": 33,
-            "name": "Brand K",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Union C",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-14T16:20:30+00:00",
-            "updated_at": "2019-03-14T18:00:57.198722+00:00"
+            "created_at": "2020-03-10T06:46:12+00:00",
+            "updated_at": "2020-03-13T17:47:08.590143+00:00"
         }
     },
     {
@@ -452,13 +452,13 @@
         "pk": 34,
         "fields": {
             "admin": 34,
-            "name": "Civil Society Organization E",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Factory K",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T15:28:13+00:00",
-            "updated_at": "2019-03-14T18:00:57.396758+00:00"
+            "created_at": "2020-03-05T17:20:14+00:00",
+            "updated_at": "2020-03-13T17:47:08.358237+00:00"
         }
     },
     {
@@ -466,13 +466,13 @@
         "pk": 35,
         "fields": {
             "admin": 35,
-            "name": "Civil Society Organization G",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Union E",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T03:30:46+00:00",
-            "updated_at": "2019-03-14T18:00:57.842127+00:00"
+            "created_at": "2020-03-11T17:44:08+00:00",
+            "updated_at": "2020-03-13T17:47:08.259904+00:00"
         }
     },
     {
@@ -480,13 +480,13 @@
         "pk": 36,
         "fields": {
             "admin": 36,
-            "name": "Auditor I",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group K",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T23:26:28+00:00",
-            "updated_at": "2019-03-14T18:00:57.478121+00:00"
+            "created_at": "2020-03-06T04:43:12+00:00",
+            "updated_at": "2020-03-13T17:47:08.554256+00:00"
         }
     },
     {
@@ -494,13 +494,13 @@
         "pk": 37,
         "fields": {
             "admin": 37,
-            "name": "Service Provider K",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Civil Society Organization E",
+            "description": "A civil society organization dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Civil Society Organization",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T01:09:03+00:00",
-            "updated_at": "2019-03-14T18:00:57.254090+00:00"
+            "created_at": "2020-03-12T08:29:44+00:00",
+            "updated_at": "2020-03-13T17:47:08.455299+00:00"
         }
     },
     {
@@ -508,13 +508,13 @@
         "pk": 38,
         "fields": {
             "admin": 38,
-            "name": "Service Provider M",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Union G",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T07:20:55+00:00",
-            "updated_at": "2019-03-14T18:00:57.118936+00:00"
+            "created_at": "2020-03-10T00:03:32+00:00",
+            "updated_at": "2020-03-13T17:47:08.883114+00:00"
         }
     },
     {
@@ -522,13 +522,13 @@
         "pk": 39,
         "fields": {
             "admin": 39,
-            "name": "Multi Stakeholder Initiative E",
-            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group M",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Multi Stakeholder Initiative",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T16:15:53+00:00",
-            "updated_at": "2019-03-14T18:00:57.753853+00:00"
+            "created_at": "2020-03-05T01:11:01+00:00",
+            "updated_at": "2020-03-13T17:47:08.924213+00:00"
         }
     },
     {
@@ -536,13 +536,13 @@
         "pk": 40,
         "fields": {
             "admin": 40,
-            "name": "Union I",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Factory M",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T16:49:20+00:00",
-            "updated_at": "2019-03-14T18:00:57.017421+00:00"
+            "created_at": "2020-03-09T00:16:58+00:00",
+            "updated_at": "2020-03-13T17:47:08.799658+00:00"
         }
     },
     {
@@ -550,13 +550,13 @@
         "pk": 41,
         "fields": {
             "admin": 41,
-            "name": "Civil Society Organization I",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Researcher I",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T11:06:18+00:00",
-            "updated_at": "2019-03-14T18:00:57.889902+00:00"
+            "created_at": "2020-03-06T20:39:50+00:00",
+            "updated_at": "2020-03-13T17:47:08.860265+00:00"
         }
     },
     {
@@ -564,13 +564,13 @@
         "pk": 42,
         "fields": {
             "admin": 42,
-            "name": "Civil Society Organization K",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Researcher K",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T16:44:40+00:00",
-            "updated_at": "2019-03-14T18:00:57.051192+00:00"
+            "created_at": "2020-03-05T11:34:30+00:00",
+            "updated_at": "2020-03-13T17:47:08.279711+00:00"
         }
     },
     {
@@ -578,13 +578,13 @@
         "pk": 43,
         "fields": {
             "admin": 43,
-            "name": "Service Provider O",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Researcher M",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T13:29:46+00:00",
-            "updated_at": "2019-03-14T18:00:57.640510+00:00"
+            "created_at": "2020-03-06T01:29:28+00:00",
+            "updated_at": "2020-03-13T17:47:08.327317+00:00"
         }
     },
     {
@@ -592,13 +592,13 @@
         "pk": 44,
         "fields": {
             "admin": 44,
-            "name": "Civil Society Organization M",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Service Provider Q",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T21:29:19+00:00",
-            "updated_at": "2019-03-14T18:00:57.621547+00:00"
+            "created_at": "2020-03-04T20:08:55+00:00",
+            "updated_at": "2020-03-13T17:47:08.425619+00:00"
         }
     },
     {
@@ -606,13 +606,13 @@
         "pk": 45,
         "fields": {
             "admin": 45,
-            "name": "Multi Stakeholder Initiative G",
-            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
+            "name": "Brand I",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Multi Stakeholder Initiative",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T13:55:21+00:00",
-            "updated_at": "2019-03-14T18:00:57.647464+00:00"
+            "created_at": "2020-03-08T04:51:26+00:00",
+            "updated_at": "2020-03-13T17:47:08.841805+00:00"
         }
     },
     {
@@ -620,13 +620,13 @@
         "pk": 46,
         "fields": {
             "admin": 46,
-            "name": "Brand M",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Service Provider S",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-10T04:27:36+00:00",
-            "updated_at": "2019-03-14T18:00:57.431762+00:00"
+            "created_at": "2020-03-09T00:13:14+00:00",
+            "updated_at": "2020-03-13T17:47:08.227842+00:00"
         }
     },
     {
@@ -634,13 +634,13 @@
         "pk": 47,
         "fields": {
             "admin": 47,
-            "name": "Union K",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Service Provider U",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T20:52:48+00:00",
-            "updated_at": "2019-03-14T18:00:57.438252+00:00"
+            "created_at": "2020-03-10T16:13:51+00:00",
+            "updated_at": "2020-03-13T17:47:08.752770+00:00"
         }
     },
     {
@@ -648,13 +648,13 @@
         "pk": 48,
         "fields": {
             "admin": 48,
-            "name": "Union M",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Researcher O",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T18:56:51+00:00",
-            "updated_at": "2019-03-14T18:00:57.857498+00:00"
+            "created_at": "2020-03-09T18:44:33+00:00",
+            "updated_at": "2020-03-13T17:47:08.687950+00:00"
         }
     },
     {
@@ -662,13 +662,13 @@
         "pk": 49,
         "fields": {
             "admin": 49,
-            "name": "Auditor K",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Union I",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-10T04:04:49+00:00",
-            "updated_at": "2019-03-14T18:00:57.449029+00:00"
+            "created_at": "2020-03-13T09:08:37+00:00",
+            "updated_at": "2020-03-13T17:47:08.503443+00:00"
         }
     },
     {
@@ -676,13 +676,13 @@
         "pk": 50,
         "fields": {
             "admin": 50,
-            "name": "Factory I",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Union K",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T01:10:01+00:00",
-            "updated_at": "2019-03-14T18:00:57.207967+00:00"
+            "created_at": "2020-03-10T23:05:08+00:00",
+            "updated_at": "2020-03-13T17:47:08.690951+00:00"
         }
     },
     {
@@ -690,13 +690,13 @@
         "pk": 51,
         "fields": {
             "admin": 51,
-            "name": "Other E",
-            "description": "A other dedicated to transparency in apparel supply chains",
+            "name": "Researcher Q",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Other",
-            "other_contrib_type": "PLC",
-            "created_at": "2019-03-12T18:08:53+00:00",
-            "updated_at": "2019-03-14T18:00:57.695954+00:00"
+            "contrib_type": "Researcher / Academic",
+            "other_contrib_type": null,
+            "created_at": "2020-03-13T07:22:20+00:00",
+            "updated_at": "2020-03-13T17:47:08.036744+00:00"
         }
     },
     {
@@ -704,13 +704,13 @@
         "pk": 52,
         "fields": {
             "admin": 52,
-            "name": "Manufacturing Group A",
-            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
+            "name": "Service Provider W",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T00:57:48+00:00",
-            "updated_at": "2019-03-14T18:00:57.673669+00:00"
+            "created_at": "2020-03-08T08:52:43+00:00",
+            "updated_at": "2020-03-13T17:47:08.776690+00:00"
         }
     },
     {
@@ -718,13 +718,13 @@
         "pk": 53,
         "fields": {
             "admin": 53,
-            "name": "Union O",
-            "description": "A union dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group O",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Union",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T04:21:18+00:00",
-            "updated_at": "2019-03-14T18:00:57.736755+00:00"
+            "created_at": "2020-03-09T20:17:50+00:00",
+            "updated_at": "2020-03-13T17:47:08.458804+00:00"
         }
     },
     {
@@ -732,13 +732,13 @@
         "pk": 54,
         "fields": {
             "admin": 54,
-            "name": "Multi Stakeholder Initiative I",
-            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
+            "name": "Service Provider Y",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Multi Stakeholder Initiative",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T23:42:04+00:00",
-            "updated_at": "2019-03-14T18:00:57.749959+00:00"
+            "created_at": "2020-03-09T13:41:27+00:00",
+            "updated_at": "2020-03-13T17:47:08.847205+00:00"
         }
     },
     {
@@ -746,13 +746,13 @@
         "pk": 55,
         "fields": {
             "admin": 55,
-            "name": "Manufacturing Group C",
-            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
+            "name": "Factory O",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T05:25:57+00:00",
-            "updated_at": "2019-03-14T18:00:57.610269+00:00"
+            "created_at": "2020-03-06T10:53:20+00:00",
+            "updated_at": "2020-03-13T17:47:08.210449+00:00"
         }
     },
     {
@@ -760,13 +760,13 @@
         "pk": 56,
         "fields": {
             "admin": 56,
-            "name": "Factory K",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Union M",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T14:47:47+00:00",
-            "updated_at": "2019-03-14T18:00:57.191389+00:00"
+            "created_at": "2020-03-08T14:06:29+00:00",
+            "updated_at": "2020-03-13T17:47:08.186011+00:00"
         }
     },
     {
@@ -774,13 +774,13 @@
         "pk": 57,
         "fields": {
             "admin": 57,
-            "name": "Researcher G",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Multi Stakeholder Initiative C",
+            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Multi Stakeholder Initiative",
             "other_contrib_type": null,
-            "created_at": "2019-03-14T02:08:49+00:00",
-            "updated_at": "2019-03-14T18:00:57.224014+00:00"
+            "created_at": "2020-03-13T02:56:50+00:00",
+            "updated_at": "2020-03-13T17:47:08.430059+00:00"
         }
     },
     {
@@ -788,13 +788,13 @@
         "pk": 58,
         "fields": {
             "admin": 58,
-            "name": "Brand O",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Factory Q",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T18:57:54+00:00",
-            "updated_at": "2019-03-14T18:00:57.050139+00:00"
+            "created_at": "2020-03-13T06:13:18+00:00",
+            "updated_at": "2020-03-13T17:47:08.448925+00:00"
         }
     },
     {
@@ -802,13 +802,13 @@
         "pk": 59,
         "fields": {
             "admin": 59,
-            "name": "Brand Q",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Civil Society Organization G",
+            "description": "A civil society organization dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Civil Society Organization",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T00:26:52+00:00",
-            "updated_at": "2019-03-14T18:00:57.019415+00:00"
+            "created_at": "2020-03-09T17:55:17+00:00",
+            "updated_at": "2020-03-13T17:47:08.534106+00:00"
         }
     },
     {
@@ -816,13 +816,13 @@
         "pk": 60,
         "fields": {
             "admin": 60,
-            "name": "Factory M",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Civil Society Organization I",
+            "description": "A civil society organization dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Civil Society Organization",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T01:18:08+00:00",
-            "updated_at": "2019-03-14T18:00:57.052495+00:00"
+            "created_at": "2020-03-08T07:16:24+00:00",
+            "updated_at": "2020-03-13T17:47:08.846720+00:00"
         }
     },
     {
@@ -830,13 +830,13 @@
         "pk": 61,
         "fields": {
             "admin": 61,
-            "name": "Auditor M",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Factory S",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T19:30:14+00:00",
-            "updated_at": "2019-03-14T18:00:57.843857+00:00"
+            "created_at": "2020-03-07T19:50:46+00:00",
+            "updated_at": "2020-03-13T17:47:08.602741+00:00"
         }
     },
     {
@@ -844,13 +844,13 @@
         "pk": 62,
         "fields": {
             "admin": 62,
-            "name": "Auditor O",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Union O",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T08:17:50+00:00",
-            "updated_at": "2019-03-14T18:00:57.887074+00:00"
+            "created_at": "2020-03-12T18:57:49+00:00",
+            "updated_at": "2020-03-13T17:47:08.882100+00:00"
         }
     },
     {
@@ -858,13 +858,13 @@
         "pk": 63,
         "fields": {
             "admin": 63,
-            "name": "Brand S",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Factory U",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T20:59:20+00:00",
-            "updated_at": "2019-03-14T18:00:57.575675+00:00"
+            "created_at": "2020-03-13T13:30:31+00:00",
+            "updated_at": "2020-03-13T17:47:08.905296+00:00"
         }
     },
     {
@@ -872,13 +872,13 @@
         "pk": 64,
         "fields": {
             "admin": 64,
-            "name": "Researcher I",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Brand K",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T01:12:04+00:00",
-            "updated_at": "2019-03-14T18:00:57.307255+00:00"
+            "created_at": "2020-03-05T03:16:59+00:00",
+            "updated_at": "2020-03-13T17:47:08.785745+00:00"
         }
     },
     {
@@ -886,13 +886,13 @@
         "pk": 65,
         "fields": {
             "admin": 65,
-            "name": "Factory O",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group Q",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T13:46:35+00:00",
-            "updated_at": "2019-03-14T18:00:57.138543+00:00"
+            "created_at": "2020-03-09T03:41:12+00:00",
+            "updated_at": "2020-03-13T17:47:08.931215+00:00"
         }
     },
     {
@@ -900,13 +900,13 @@
         "pk": 66,
         "fields": {
             "admin": 66,
-            "name": "Auditor Q",
+            "name": "Auditor C",
             "description": "An auditor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Auditor",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T17:51:45+00:00",
-            "updated_at": "2019-03-14T18:00:57.443371+00:00"
+            "created_at": "2020-03-09T08:06:50+00:00",
+            "updated_at": "2020-03-13T17:47:08.372069+00:00"
         }
     },
     {
@@ -914,13 +914,13 @@
         "pk": 67,
         "fields": {
             "admin": 67,
-            "name": "Civil Society Organization O",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Brand M",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T02:34:02+00:00",
-            "updated_at": "2019-03-14T18:00:57.154348+00:00"
+            "created_at": "2020-03-05T04:54:38+00:00",
+            "updated_at": "2020-03-13T17:47:08.823232+00:00"
         }
     },
     {
@@ -928,13 +928,13 @@
         "pk": 68,
         "fields": {
             "admin": 68,
-            "name": "Service Provider Q",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Researcher S",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-14T02:21:23+00:00",
-            "updated_at": "2019-03-14T18:00:57.355715+00:00"
+            "created_at": "2020-03-12T08:05:18+00:00",
+            "updated_at": "2020-03-13T17:47:08.450923+00:00"
         }
     },
     {
@@ -947,8 +947,8 @@
             "website": "https://info.openapparel.org",
             "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T09:47:27+00:00",
-            "updated_at": "2019-03-14T18:00:57.124421+00:00"
+            "created_at": "2020-03-13T05:33:06+00:00",
+            "updated_at": "2020-03-13T17:47:08.347132+00:00"
         }
     },
     {
@@ -956,13 +956,13 @@
         "pk": 70,
         "fields": {
             "admin": 70,
-            "name": "Civil Society Organization Q",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Researcher U",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-05T23:48:23+00:00",
-            "updated_at": "2019-03-14T18:00:57.112042+00:00"
+            "created_at": "2020-03-05T22:46:27+00:00",
+            "updated_at": "2020-03-13T17:47:08.296225+00:00"
         }
     },
     {
@@ -970,13 +970,13 @@
         "pk": 71,
         "fields": {
             "admin": 71,
-            "name": "Auditor S",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Union S",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T17:42:16+00:00",
-            "updated_at": "2019-03-14T18:00:57.672759+00:00"
+            "created_at": "2020-03-06T23:01:01+00:00",
+            "updated_at": "2020-03-13T17:47:08.443571+00:00"
         }
     },
     {
@@ -984,13 +984,13 @@
         "pk": 72,
         "fields": {
             "admin": 72,
-            "name": "Multi Stakeholder Initiative K",
-            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
+            "name": "Union U",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Multi Stakeholder Initiative",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-06T14:27:08+00:00",
-            "updated_at": "2019-03-14T18:00:57.752565+00:00"
+            "created_at": "2020-03-06T18:05:38+00:00",
+            "updated_at": "2020-03-13T17:47:08.939568+00:00"
         }
     },
     {
@@ -998,13 +998,13 @@
         "pk": 73,
         "fields": {
             "admin": 73,
-            "name": "Factory Q",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Auditor E",
+            "description": "An auditor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Auditor",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T13:42:00+00:00",
-            "updated_at": "2019-03-14T18:00:57.563373+00:00"
+            "created_at": "2020-03-05T07:39:46+00:00",
+            "updated_at": "2020-03-13T17:47:08.067499+00:00"
         }
     },
     {
@@ -1012,13 +1012,13 @@
         "pk": 74,
         "fields": {
             "admin": 74,
-            "name": "Brand U",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Multi Stakeholder Initiative E",
+            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Multi Stakeholder Initiative",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T00:39:00+00:00",
-            "updated_at": "2019-03-14T18:00:57.781715+00:00"
+            "created_at": "2020-03-11T10:46:00+00:00",
+            "updated_at": "2020-03-13T17:47:08.172283+00:00"
         }
     },
     {
@@ -1026,13 +1026,13 @@
         "pk": 75,
         "fields": {
             "admin": 75,
-            "name": "Civil Society Organization S",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Researcher W",
+            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Researcher / Academic",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T20:16:04+00:00",
-            "updated_at": "2019-03-14T18:00:57.025530+00:00"
+            "created_at": "2020-03-11T10:36:29+00:00",
+            "updated_at": "2020-03-13T17:47:08.736899+00:00"
         }
     },
     {
@@ -1040,13 +1040,13 @@
         "pk": 76,
         "fields": {
             "admin": 76,
-            "name": "Other G",
-            "description": "A other dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group S",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Other",
-            "other_contrib_type": "Ltd",
-            "created_at": "2019-03-12T04:49:55+00:00",
-            "updated_at": "2019-03-14T18:00:57.429823+00:00"
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
+            "created_at": "2020-03-09T18:06:40+00:00",
+            "updated_at": "2020-03-13T17:47:08.574940+00:00"
         }
     },
     {
@@ -1054,13 +1054,13 @@
         "pk": 77,
         "fields": {
             "admin": 77,
-            "name": "Manufacturing Group E",
-            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
+            "name": "Union W",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T11:37:06+00:00",
-            "updated_at": "2019-03-14T18:00:57.454941+00:00"
+            "created_at": "2020-03-12T23:50:41+00:00",
+            "updated_at": "2020-03-13T17:47:08.563170+00:00"
         }
     },
     {
@@ -1068,13 +1068,13 @@
         "pk": 78,
         "fields": {
             "admin": 78,
-            "name": "Other I",
-            "description": "A other dedicated to transparency in apparel supply chains",
+            "name": "Civil Society Organization K",
+            "description": "A civil society organization dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Other",
-            "other_contrib_type": "PLC",
-            "created_at": "2019-03-07T02:09:20+00:00",
-            "updated_at": "2019-03-14T18:00:57.118997+00:00"
+            "contrib_type": "Civil Society Organization",
+            "other_contrib_type": null,
+            "created_at": "2020-03-06T20:26:04+00:00",
+            "updated_at": "2020-03-13T17:47:08.424001+00:00"
         }
     },
     {
@@ -1082,13 +1082,13 @@
         "pk": 79,
         "fields": {
             "admin": 79,
-            "name": "Factory S",
-            "description": "A factory / facility dedicated to transparency in apparel supply chains",
+            "name": "Multi Stakeholder Initiative G",
+            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Factory / Facility",
+            "contrib_type": "Multi Stakeholder Initiative",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T13:15:56+00:00",
-            "updated_at": "2019-03-14T18:00:57.018735+00:00"
+            "created_at": "2020-03-13T08:05:37+00:00",
+            "updated_at": "2020-03-13T17:47:08.824355+00:00"
         }
     },
     {
@@ -1096,13 +1096,13 @@
         "pk": 80,
         "fields": {
             "admin": 80,
-            "name": "Civil Society Organization U",
-            "description": "A civil society organization dedicated to transparency in apparel supply chains",
+            "name": "Service Provider AA",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Civil Society Organization",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T17:11:31+00:00",
-            "updated_at": "2019-03-14T18:00:57.928173+00:00"
+            "created_at": "2020-03-06T08:50:32+00:00",
+            "updated_at": "2020-03-13T17:47:08.620583+00:00"
         }
     },
     {
@@ -1110,13 +1110,13 @@
         "pk": 81,
         "fields": {
             "admin": 81,
-            "name": "Multi Stakeholder Initiative M",
-            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
+            "name": "Factory W",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Multi Stakeholder Initiative",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T08:28:54+00:00",
-            "updated_at": "2019-03-14T18:00:57.199112+00:00"
+            "created_at": "2020-03-06T06:55:22+00:00",
+            "updated_at": "2020-03-13T17:47:08.320946+00:00"
         }
     },
     {
@@ -1124,13 +1124,13 @@
         "pk": 82,
         "fields": {
             "admin": 82,
-            "name": "Auditor U",
+            "name": "Auditor G",
             "description": "An auditor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Auditor",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T18:15:14+00:00",
-            "updated_at": "2019-03-14T18:00:57.353468+00:00"
+            "created_at": "2020-03-12T06:33:31+00:00",
+            "updated_at": "2020-03-13T17:47:08.521030+00:00"
         }
     },
     {
@@ -1138,13 +1138,13 @@
         "pk": 83,
         "fields": {
             "admin": 83,
-            "name": "Service Provider S",
+            "name": "Service Provider AC",
             "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T00:54:57+00:00",
-            "updated_at": "2019-03-14T18:00:57.411834+00:00"
+            "created_at": "2020-03-05T02:05:58+00:00",
+            "updated_at": "2020-03-13T17:47:08.583357+00:00"
         }
     },
     {
@@ -1152,13 +1152,13 @@
         "pk": 84,
         "fields": {
             "admin": 84,
-            "name": "Brand W",
-            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group U",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Brand/Retailer",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T22:34:46+00:00",
-            "updated_at": "2019-03-14T18:00:57.012908+00:00"
+            "created_at": "2020-03-10T01:55:51+00:00",
+            "updated_at": "2020-03-13T17:47:08.426563+00:00"
         }
     },
     {
@@ -1166,13 +1166,13 @@
         "pk": 85,
         "fields": {
             "admin": 85,
-            "name": "Researcher K",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group W",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-10T08:22:14+00:00",
-            "updated_at": "2019-03-14T18:00:57.625427+00:00"
+            "created_at": "2020-03-08T15:21:25+00:00",
+            "updated_at": "2020-03-13T17:47:08.486376+00:00"
         }
     },
     {
@@ -1180,13 +1180,13 @@
         "pk": 86,
         "fields": {
             "admin": 86,
-            "name": "Researcher M",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Auditor I",
+            "description": "An auditor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Auditor",
             "other_contrib_type": null,
-            "created_at": "2019-03-13T18:20:51+00:00",
-            "updated_at": "2019-03-14T18:00:57.718919+00:00"
+            "created_at": "2020-03-13T13:44:56+00:00",
+            "updated_at": "2020-03-13T17:47:08.473587+00:00"
         }
     },
     {
@@ -1194,13 +1194,13 @@
         "pk": 87,
         "fields": {
             "admin": 87,
-            "name": "Multi Stakeholder Initiative O",
+            "name": "Multi Stakeholder Initiative I",
             "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Multi Stakeholder Initiative",
             "other_contrib_type": null,
-            "created_at": "2019-03-10T21:09:01+00:00",
-            "updated_at": "2019-03-14T18:00:57.522430+00:00"
+            "created_at": "2020-03-06T03:07:23+00:00",
+            "updated_at": "2020-03-13T17:47:08.631812+00:00"
         }
     },
     {
@@ -1208,13 +1208,13 @@
         "pk": 88,
         "fields": {
             "admin": 88,
-            "name": "Manufacturing Group G",
-            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
+            "name": "Service Provider AE",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-14T13:24:21+00:00",
-            "updated_at": "2019-03-14T18:00:57.469414+00:00"
+            "created_at": "2020-03-11T00:44:13+00:00",
+            "updated_at": "2020-03-13T17:47:08.899999+00:00"
         }
     },
     {
@@ -1222,13 +1222,13 @@
         "pk": 89,
         "fields": {
             "admin": 89,
-            "name": "Multi Stakeholder Initiative Q",
-            "description": "A multi stakeholder initiative dedicated to transparency in apparel supply chains",
+            "name": "Brand O",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Multi Stakeholder Initiative",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T08:20:07+00:00",
-            "updated_at": "2019-03-14T18:00:57.002187+00:00"
+            "created_at": "2020-03-05T11:43:52+00:00",
+            "updated_at": "2020-03-13T17:47:08.922553+00:00"
         }
     },
     {
@@ -1236,13 +1236,13 @@
         "pk": 90,
         "fields": {
             "admin": 90,
-            "name": "Researcher O",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Brand Q",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-11T04:48:32+00:00",
-            "updated_at": "2019-03-14T18:00:57.761020+00:00"
+            "created_at": "2020-03-09T20:35:35+00:00",
+            "updated_at": "2020-03-13T17:47:08.181649+00:00"
         }
     },
     {
@@ -1250,13 +1250,13 @@
         "pk": 91,
         "fields": {
             "admin": 91,
-            "name": "Researcher Q",
-            "description": "A researcher / academic dedicated to transparency in apparel supply chains",
+            "name": "Brand S",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Researcher / Academic",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-09T17:50:27+00:00",
-            "updated_at": "2019-03-14T18:00:57.891112+00:00"
+            "created_at": "2020-03-11T12:21:26+00:00",
+            "updated_at": "2020-03-13T17:47:08.313215+00:00"
         }
     },
     {
@@ -1264,13 +1264,13 @@
         "pk": 92,
         "fields": {
             "admin": 92,
-            "name": "Auditor W",
-            "description": "An auditor dedicated to transparency in apparel supply chains",
+            "name": "Union Y",
+            "description": "A union dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Auditor",
+            "contrib_type": "Union",
             "other_contrib_type": null,
-            "created_at": "2019-03-14T04:01:10+00:00",
-            "updated_at": "2019-03-14T18:00:57.580526+00:00"
+            "created_at": "2020-03-08T03:38:46+00:00",
+            "updated_at": "2020-03-13T17:47:08.056164+00:00"
         }
     },
     {
@@ -1278,13 +1278,13 @@
         "pk": 93,
         "fields": {
             "admin": 93,
-            "name": "Service Provider U",
-            "description": "A service provider dedicated to transparency in apparel supply chains",
+            "name": "Brand U",
+            "description": "A brand/retailer dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Service Provider",
+            "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T15:33:09+00:00",
-            "updated_at": "2019-03-14T18:00:57.681686+00:00"
+            "created_at": "2020-03-12T15:06:42+00:00",
+            "updated_at": "2020-03-13T17:47:08.126531+00:00"
         }
     },
     {
@@ -1292,13 +1292,13 @@
         "pk": 94,
         "fields": {
             "admin": 94,
-            "name": "Manufacturing Group I",
+            "name": "Manufacturing Group Y",
             "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Manufacturing Group / Supplier / Vendor",
             "other_contrib_type": null,
-            "created_at": "2019-03-12T11:57:38+00:00",
-            "updated_at": "2019-03-14T18:00:57.074685+00:00"
+            "created_at": "2020-03-07T01:40:12+00:00",
+            "updated_at": "2020-03-13T17:47:08.651509+00:00"
         }
     },
     {
@@ -1306,13 +1306,13 @@
         "pk": 95,
         "fields": {
             "admin": 95,
-            "name": "Manufacturing Group K",
-            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
+            "name": "Factory Y",
+            "description": "A factory / facility dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
-            "created_at": "2019-03-07T11:32:45+00:00",
-            "updated_at": "2019-03-14T18:00:57.313776+00:00"
+            "created_at": "2020-03-10T18:48:13+00:00",
+            "updated_at": "2020-03-13T17:47:08.953629+00:00"
         }
     },
     {
@@ -1320,13 +1320,13 @@
         "pk": 96,
         "fields": {
             "admin": 96,
-            "name": "Other K",
-            "description": "A other dedicated to transparency in apparel supply chains",
+            "name": "Service Provider AG",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Other",
-            "other_contrib_type": "Ltd",
-            "created_at": "2019-03-07T04:19:49+00:00",
-            "updated_at": "2019-03-14T18:00:57.747064+00:00"
+            "contrib_type": "Service Provider",
+            "other_contrib_type": null,
+            "created_at": "2020-03-08T09:34:46+00:00",
+            "updated_at": "2020-03-13T17:47:08.296410+00:00"
         }
     },
     {
@@ -1334,13 +1334,13 @@
         "pk": 97,
         "fields": {
             "admin": 97,
-            "name": "Service Provider W",
+            "name": "Service Provider AI",
             "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
             "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-10T18:56:21+00:00",
-            "updated_at": "2019-03-14T18:00:57.820542+00:00"
+            "created_at": "2020-03-06T13:28:07+00:00",
+            "updated_at": "2020-03-13T17:47:08.386359+00:00"
         }
     },
     {
@@ -1348,13 +1348,13 @@
         "pk": 98,
         "fields": {
             "admin": 98,
-            "name": "Manufacturing Group M",
-            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
+            "name": "Service Provider AK",
+            "description": "A service provider dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "contrib_type": "Service Provider",
             "other_contrib_type": null,
-            "created_at": "2019-03-08T06:17:21+00:00",
-            "updated_at": "2019-03-14T18:00:57.529387+00:00"
+            "created_at": "2020-03-13T07:24:18+00:00",
+            "updated_at": "2020-03-13T17:47:08.559679+00:00"
         }
     },
     {
@@ -1362,13 +1362,13 @@
         "pk": 99,
         "fields": {
             "admin": 99,
-            "name": "Other M",
-            "description": "A other dedicated to transparency in apparel supply chains",
+            "name": "Manufacturing Group AA",
+            "description": "A manufacturing group / supplier / vendor dedicated to transparency in apparel supply chains",
             "website": "https://info.openapparel.org",
-            "contrib_type": "Other",
-            "other_contrib_type": "PLC",
-            "created_at": "2019-03-08T08:43:14+00:00",
-            "updated_at": "2019-03-14T18:00:57.243246+00:00"
+            "contrib_type": "Manufacturing Group / Supplier / Vendor",
+            "other_contrib_type": null,
+            "created_at": "2020-03-10T16:31:53+00:00",
+            "updated_at": "2020-03-13T17:47:08.261903+00:00"
         }
     }
 ]

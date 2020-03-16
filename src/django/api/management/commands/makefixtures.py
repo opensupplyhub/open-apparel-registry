@@ -116,7 +116,9 @@ def make_users(count=100):
 
 
 def make_contrib_type():
-    random_index = random.randint(0, len(Contributor.CONTRIB_TYPE_CHOICES)-1)
+    # We subtract 2 so that the last type is unassigned, which more closely
+    # resembles the real world case of not having contributors for every type.
+    random_index = random.randint(0, len(Contributor.CONTRIB_TYPE_CHOICES)-2)
     return Contributor.CONTRIB_TYPE_CHOICES[random_index][0]
 
 

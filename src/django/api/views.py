@@ -394,10 +394,10 @@ def all_contributors(request):
 
 
 def getContributorTypeCount(value, counts):
-    type = counts.get(contrib_type=value)
-    if type:
+    try:
+        type = counts.get(contrib_type=value)
         return type['num_type']
-    else:
+    except Contributor.DoesNotExist:
         return 0
 
 
