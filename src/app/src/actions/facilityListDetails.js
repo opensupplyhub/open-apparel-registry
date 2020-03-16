@@ -70,10 +70,12 @@ export function fetchFacilityList(listID = null) {
 }
 
 export function fetchFacilityListItems(
-    listID = null, page = undefined, rowsPerPage = undefined, params = null,
+    listID = null, page = undefined, rowsPerPage = undefined, params = null, preventRefresh = false,
 ) {
     return (dispatch) => {
-        dispatch(startFetchFacilityListItems());
+        if (!preventRefresh) {
+            dispatch(startFetchFacilityListItems());
+        }
 
         if (!listID) {
             return dispatch(logErrorAndDispatchFailure(

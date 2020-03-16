@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Show automated GPS coordinates after update [#978](https://github.com/open-apparel-registry/open-apparel-registry/pull/978)
 - Allow click through polygon after search
 - Fix contributor types when no contributors are found [#989](https://github.com/open-apparel-registry/open-apparel-registry/pull/989)
+- Prevent reload of facilities list on confirm [#993](https://github.com/open-apparel-registry/open-apparel-registry/pull/993)
 
 ### Security
 - Bump acorn from 5.7.3 to 5.7.4 in /src/app [#992](https://github.com/open-apparel-registry/open-apparel-registry/pull/992)
