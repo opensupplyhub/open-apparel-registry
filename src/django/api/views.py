@@ -381,8 +381,8 @@ def all_contributors(request):
         ]
     """
     valid_sources = Source.objects.filter(
-        is_active=True, is_public=True).exclude(
-        facilitylistitem__status__in=FacilityListItem.ERROR_STATUSES)
+        is_active=True, is_public=True,
+        facilitylistitem__status__in=FacilityListItem.COMPLETE_STATUSES)
     response_data = [
         (contributor.id, contributor.name)
         for contributor
