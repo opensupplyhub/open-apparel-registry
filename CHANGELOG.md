@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+- Include contributors if they have any active facilities [#999](https://github.com/open-apparel-registry/open-apparel-registry/pull/999)
 
 ### Security
 

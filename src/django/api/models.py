@@ -405,6 +405,7 @@ class FacilityListItem(models.Model):
     )
 
     ERROR_STATUSES = [ERROR, ERROR_PARSING, ERROR_GEOCODING, ERROR_MATCHING]
+    COMPLETE_STATUSES = [MATCHED, CONFIRMED_MATCH]
 
     class Meta:
         indexes = [
