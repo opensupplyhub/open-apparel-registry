@@ -10,13 +10,14 @@ from django.conf import settings
 from django.core.files.uploadedfile import (InMemoryUploadedFile,
                                             TemporaryUploadedFile)
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, Count
 from django.core import exceptions as core_exceptions
 from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point
+from django.contrib.gis.db.models import Extent
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
@@ -379,33 +380,52 @@ def all_contributors(request):
             [2, "Contributor Two"]
         ]
     """
+    valid_sources = Source.objects.filter(
+        is_active=True, is_public=True).exclude(
+        facilitylistitem__status__in=FacilityListItem.ERROR_STATUSES)
     response_data = [
         (contributor.id, contributor.name)
         for contributor
         in Contributor.objects.filter(
-            source__is_active=True,
-            source__is_public=True).distinct().order_by('name')
+            source__in=valid_sources).distinct().order_by('name')
     ]
 
     return Response(response_data)
+
+
+def getContributorTypeCount(value, counts):
+    try:
+        type = counts.get(contrib_type=value)
+        return type['num_type']
+    except Contributor.DoesNotExist:
+        return 0
 
 
 @api_view(['GET'])
 def all_contributor_types(request):
     """
     Returns a list of contributor type choices as tuples of values and display
-    names.
+    names with appended count of contributors per type.
 
     ## Sample Response
 
         [
-            ["Auditor", "Auditor"],
-            ["Brand/Retailer", "Brand/Retailer"],
-            ["Civil Society Organization", "Civil Society Organization"],
-            ["Factory / Facility", "Factory / Facility"]
+            ["Auditor", "Auditor [10]"],
+            ["Brand/Retailer", "Brand/Retailer [12]"],
+            ["Civil Society Organization", "Civil Society Organization [0]"],
+            ["Factory / Facility", "Factory / Facility [1]"]
         ]
     """
-    return Response(Contributor.CONTRIB_TYPE_CHOICES)
+    counts = Contributor.objects.values(
+        'contrib_type').annotate(num_type=Count('contrib_type'))
+
+    types = [
+        (t[0], f'{t[1]} [{getContributorTypeCount(t[0], counts)}]')
+        for t
+        in Contributor.CONTRIB_TYPE_CHOICES
+    ]
+
+    return Response(types)
 
 
 @api_view(['GET'])
@@ -508,6 +528,15 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'Set this to "AND" if the results should contain '
                         'facilities associated with ALL the specified '
                         'contributors.')
+                ),
+                coreapi.Field(
+                    name='boundary',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'Pass a GeoJSON geometry to filter by '
+                        'facilities within the boundaries of that geometry.')
                 ),
             ]
 
@@ -646,11 +675,16 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         page_queryset = self.paginate_queryset(queryset)
 
+        extent = queryset.aggregate(Extent('location'))['location__extent']
+
         if page_queryset is not None:
             serializer = FacilitySerializer(page_queryset, many=True)
-            return self.get_paginated_response(serializer.data)
+            response = self.get_paginated_response(serializer.data)
+            response.data['extent'] = extent
+            return response
 
         response_data = FacilitySerializer(queryset, many=True).data
+        response_data['extent'] = extent
         return Response(response_data)
 
     def retrieve(self, request, pk=None):

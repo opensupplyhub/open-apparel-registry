@@ -140,7 +140,7 @@ class FacilityListItemsTable extends Component {
                     page,
                     rowsPerPage,
                 } = createPaginationOptionsFromQueryString(search);
-                fetchListItems(listID, page, rowsPerPage, params);
+                fetchListItems(listID, page, rowsPerPage, params, true);
             }
         }
     }
@@ -732,8 +732,8 @@ function mapDispatchToProps(dispatch) {
 
             return dispatch(setSelectedFacilityListItemsRowIndex(rowIndex));
         },
-        fetchListItems: (listID, page, rowsPerPage, params) =>
-            dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
+        fetchListItems: (listID, page, rowsPerPage, params, preventRefresh) =>
+            dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params, preventRefresh)),
         makeRemoveFacilityListItemFunction: (listID, listItemID) =>
             () => dispatch(removeFacilityListItem(listID, listItemID)),
     };

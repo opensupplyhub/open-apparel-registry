@@ -388,6 +388,7 @@ class FacilityQueryParamsSerializer(Serializer):
     )
     page = IntegerField(required=False)
     pageSize = IntegerField(required=False)
+    boundary = CharField(required=False)
 
 
 class FacilityListQueryParamsSerializer(Serializer):
@@ -490,7 +491,6 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                 FacilityMatch.AUTOMATIC,
             ])
             .filter(is_active=True)
-            if l.facility_list_item != facility.created_from
             if l.facility_list_item.geocoded_point != facility.location
             if l.facility_list_item.geocoded_point is not None
             if l.facility_list_item.source.is_active
@@ -896,7 +896,7 @@ class UserPasswordResetSerializer(PasswordResetSerializer):
         if not self.reset_form.is_valid():
             raise ValidationError("Error")
 
-        if not User.objects.filter(email=user_email).exists():
+        if not User.objects.filter(email__iexact=user_email).exists():
             raise ValidationError("Error")
 
         return user_email

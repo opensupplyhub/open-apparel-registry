@@ -1,7 +1,6 @@
 import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
 import isObject from 'lodash/isObject';
-import get from 'lodash/get';
 
 import {
     makeSidebarGuideTabActive,
@@ -11,11 +10,11 @@ import {
     resetSidebarFacilitiesTabTextFilter,
     recordSearchTabResetButtonClick,
     reportWindowResize,
+    toggleZoomToSearch,
+    showDrawFilter,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
-
-import { completeFetchFeatureFlags } from '../actions/featureFlags';
 
 import { filterSidebarTabsEnum } from '../util/constants';
 
@@ -29,20 +28,11 @@ const initialState = Object.freeze({
         innerHeight: isObject(window) ? window.innerHeight : null,
         innerWidth: isObject(window) ? window.innerWidth : null,
     }),
+    zoomToSearch: true,
+    drawFilterActive: false,
 });
 
 export default createReducer({
-    [completeFetchFeatureFlags]: (state, flags) => {
-        const vectorTileFeatureIsActive = get(flags, 'vector_tile', false);
-
-        return vectorTileFeatureIsActive
-            ? update(state, {
-                activeFilterSidebarTab: {
-                    $set: filterSidebarTabsEnum.facilities,
-                },
-            })
-            : state;
-    },
     [recordSearchTabResetButtonClick]: state => update(state, {
         facilitiesSidebarTabSearch: {
             resetButtonClickCount: {
@@ -71,9 +61,6 @@ export default createReducer({
         },
     }),
     [completeFetchFacilities]: state => update(state, {
-        activeFilterSidebarTab: {
-            $set: filterSidebarTabsEnum.facilities,
-        },
         facilitiesSidebarTabSearch: {
             searchTerm: {
                 $set: initialState.facilitiesSidebarTabSearch.searchTerm,
@@ -96,5 +83,11 @@ export default createReducer({
     }),
     [reportWindowResize]: (state, payload) => update(state, {
         window: { $merge: payload },
+    }),
+    [toggleZoomToSearch]: (state, payload) => update(state, {
+        zoomToSearch: { $set: payload },
+    }),
+    [showDrawFilter]: (state, payload) => update(state, {
+        drawFilterActive: { $set: payload },
     }),
 }, initialState);

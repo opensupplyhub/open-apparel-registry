@@ -11,6 +11,7 @@ import get from 'lodash/get';
 import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
+import FacilitySidebarSearchTabFacilitiesCount from './FacilitySidebarSearchTabFacilitiesCount';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
 import FeatureFlag from './FeatureFlag';
 
@@ -113,14 +114,14 @@ class FilterSidebar extends Component {
         const handleTabChange = (_, value) => {
             const changeTabFunctionsList = vectorTileFeatureIsActive
                 ? [
-                    makeFacilitiesTabActive,
                     makeSearchTabActive,
+                    makeFacilitiesTabActive,
                     makeGuideTabActive,
                 ]
                 : [
                     makeGuideTabActive,
-                    makeSearchTabActive,
                     makeFacilitiesTabActive,
+                    makeSearchTabActive,
                 ];
 
             const changeTab = changeTabFunctionsList[value];
@@ -147,6 +148,7 @@ class FilterSidebar extends Component {
                                     className="tab-minwidth"
                                 />))
                     }
+                    <FacilitySidebarSearchTabFacilitiesCount />
                 </Tabs>
             </AppBar>);
 

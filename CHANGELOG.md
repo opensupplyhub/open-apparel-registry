@@ -19,6 +19,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.23.0] - 2020-03-18
+
+### Added
+- Add a report that groups facility counts by country [#979](https://github.com/open-apparel-registry/open-apparel-registry/pull/979)
+- Add confirmed matches to canonical facility list when matching [#964](https://github.com/open-apparel-registry/open-apparel-registry/pull/964)
+- Add polygonal search [#969](https://github.com/open-apparel-registry/open-apparel-registry/pull/969)
+- Add report that lists contributors with active lists
+  [#990](https://github.com/open-apparel-registry/open-apparel-registry/pull/990) [#991](https://github.com/open-apparel-registry/open-apparel-registry/pull/991)
+
+### Changed
+- Zoom to search [#966](https://github.com/open-apparel-registry/open-apparel-registry/pull/966)
+- Display number of contributors per type [#981](https://github.com/open-apparel-registry/open-apparel-registry/pull/981)
+- Open to search on page load; show results count in tab bar [#985](https://github.com/open-apparel-registry/open-apparel-registry/pull/985)
+
+### Fixed
+- Ignore case for forgot-password email [#970](https://github.com/open-apparel-registry/open-apparel-registry/pull/970)
+- Update 'parent company' label to 'parent company / supplier group' [#971](https://github.com/open-apparel-registry/open-apparel-registry/pull/971)
+- Hide contributors with only errored facilities [#974](https://github.com/open-apparel-registry/open-apparel-registry/pull/974)
+- Show automated GPS coordinates after update [#978](https://github.com/open-apparel-registry/open-apparel-registry/pull/978)
+- Allow click through polygon after search
+- Fix contributor types when no contributors are found [#989](https://github.com/open-apparel-registry/open-apparel-registry/pull/989)
+- Prevent reload of facilities list on confirm [#993](https://github.com/open-apparel-registry/open-apparel-registry/pull/993)
+
+### Security
+- Bump acorn from 5.7.3 to 5.7.4 in /src/app [#992](https://github.com/open-apparel-registry/open-apparel-registry/pull/992)
+
 ## [2.22.0] - 2020-02-20
 
 ### Changed
@@ -354,7 +380,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.22.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.23.0...HEAD
+[2.23.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.0
 [2.22.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.22.0
 [2.21.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.21.1
 [2.21.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.21.0

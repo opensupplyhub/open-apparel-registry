@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { array, arrayOf, bool, func, number, shape, string } from 'prop-types';
 import { connect } from 'react-redux';
-import { Map as ReactLeafletMap, ZoomControl } from 'react-leaflet';
+import { Map as ReactLeafletMap, ZoomControl, GeoJSON } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
 import L from 'leaflet';
 import Control from 'react-leaflet-control';
@@ -14,6 +14,8 @@ import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
+import ZoomToSearchControl from './ZoomToSearchControl';
+import PolygonalSearchControl from './PolygonalSearchControl';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -58,6 +60,10 @@ function VectorTileFacilitiesMap({
     location,
     facilityDetailsData,
     gridColorRamp,
+    extent,
+    zoomToSearch,
+    drawFilterActive,
+    boundary,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -68,6 +74,9 @@ function VectorTileFacilitiesMap({
             false,
         ),
         isVectorTileMap: true,
+        extent,
+        zoomToSearch,
+        boundary,
     });
 
     const [currentMapZoomLevel, setCurrentMapZoomLevel] = useState(
@@ -119,6 +128,9 @@ function VectorTileFacilitiesMap({
                 minZoom={1}
                 zIndex={1}
             />
+            <Control position="topleft">
+                <ZoomToSearchControl />
+            </Control>
             <Control position="bottomleft">
                 <VectorTileGridLegend
                     currentZoomLevel={currentMapZoomLevel}
@@ -151,6 +163,16 @@ function VectorTileFacilitiesMap({
                 maxZoom={maxVectorTileFacilitiesGridZoom}
                 zoomLevel={currentMapZoomLevel}
             />
+            {drawFilterActive && <PolygonalSearchControl />}
+            {boundary != null && (
+                <GeoJSON
+                    data={boundary}
+                    style={{
+                        renderer: L.svg({ padding: 0.5 }),
+                        interactive: false,
+                    }}
+                />
+            )}
         </ReactLeafletMap>
     );
 }
@@ -184,13 +206,19 @@ VectorTileFacilitiesMap.propTypes = {
 function mapStateToProps({
     ui: {
         facilitiesSidebarTabSearch: { resetButtonClickCount },
+        zoomToSearch,
+        drawFilterActive,
     },
     clientInfo: { fetched, countryCode },
     facilities: {
         singleFacility: { data },
+        facilities: { data: facilitiesData },
     },
     vectorTileLayer: {
         gridColorRamp,
+    },
+    filters: {
+        boundary,
     },
 }) {
     return {
@@ -199,6 +227,10 @@ function mapStateToProps({
         countryCode: countryCode || COUNTRY_CODES.default,
         facilityDetailsData: data,
         gridColorRamp,
+        extent: facilitiesData ? facilitiesData.extent : null,
+        zoomToSearch,
+        drawFilterActive,
+        boundary,
     };
 }
 

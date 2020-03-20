@@ -34,7 +34,6 @@ import {
 
 import {
     makeFacilityDetailLink,
-    pluralizeResultsCount,
 } from '../util/util';
 
 import COLOURS from '../util/COLOURS';
@@ -70,7 +69,6 @@ const facilitiesTabStyles = Object.freeze({
     }),
     titleRowStyles: Object.freeze({
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
         padding: '6px 1rem',
     }),
@@ -190,8 +188,6 @@ function FilterSidebarFacilitiesTab({
 
     const facilitiesCount = get(data, 'count', null);
 
-    const headerDisplayString = pluralizeResultsCount(facilitiesCount);
-
     const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
     const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
 
@@ -204,7 +200,6 @@ function FilterSidebarFacilitiesTab({
                 <div
                     style={facilitiesTabStyles.titleRowStyles}
                 >
-                    {headerDisplayString}
                     {
                         downloadingCSV
                             ? (

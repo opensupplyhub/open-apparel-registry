@@ -3,6 +3,7 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import delay from 'lodash/delay';
+import L from 'leaflet';
 
 import {
     detailsZoomLevel,
@@ -18,18 +19,62 @@ export default function useUpdateLeafletMapImperatively(
         data,
         shouldPanMapToFacilityDetails,
         isVectorTileMap = false,
+        extent,
+        zoomToSearch,
+        boundary,
     } = {},
 ) {
     const mapRef = useRef(null);
 
-    // Reset the map state when the reset button is clicked.
+    const [
+        currentExtent,
+        setCurrentExtent,
+    ] = useState(extent);
+    useEffect(() => {
+        if (zoomToSearch && extent != null && currentExtent !== extent) {
+            const leafletMap = get(mapRef, 'current.leafletElement', null);
+
+            const bounds = L.latLngBounds(
+                [extent[3], extent[2]],
+                [extent[1], extent[0]],
+            );
+
+            if (boundary) {
+                // leaflet takes lat, lng, but geometry.coordinates
+                // is [lng, lat] - we need to explicitly name the lat and lng
+                const latLngs = boundary.coordinates[0].map(lngLat => ({
+                    lng: lngLat[0],
+                    lat: lngLat[1],
+                }));
+                bounds.extend(L.latLngBounds(latLngs));
+            }
+
+            if (leafletMap) {
+                leafletMap.fitBounds(bounds, {
+                    maxZoom: detailsZoomLevel,
+                    padding: [20, 20],
+                });
+            }
+
+            setCurrentExtent(extent);
+        }
+    }, [
+        extent,
+        currentExtent,
+        zoomToSearch,
+        boundary,
+    ]);
+
+    // Reset the map state when the reset button is clicked
+    // while zoom to search is disabled.
     const [
         currentResetButtonClickCount,
         setCurrentResetButtonClickCount,
     ] = useState(resetButtonClickCount);
 
     useEffect(() => {
-        if (resetButtonClickCount !== currentResetButtonClickCount) {
+        if (!zoomToSearch &&
+                resetButtonClickCount !== currentResetButtonClickCount) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
 
             if (leafletMap) {
@@ -45,6 +90,7 @@ export default function useUpdateLeafletMapImperatively(
         resetButtonClickCount,
         currentResetButtonClickCount,
         setCurrentResetButtonClickCount,
+        zoomToSearch,
     ]);
 
     // Set the map view centered on the facility marker, zoomed to level 15

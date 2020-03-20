@@ -14,6 +14,7 @@ from unidecode import unidecode
 from api.models import (Facility,
                         FacilityList,
                         FacilityListItem,
+                        FacilityMatch,
                         HistoricalFacility)
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,27 @@ def clean(column):
     return column
 
 
+def match_to_extended_facility_id(match):
+        """
+        We want manually confirmed matches to influence the matching process.
+        We were not successful when adding them as training data so we add them
+        to our list of canonical items with a synthetic ID. When post
+        processing the matches we will drop the extension using the
+        `normalize_extended_facility_id` function.
+        """
+        return '{}_MATCH-{}'.format(str(match.facility.id), str(match.id))
+
+
+def normalize_extended_facility_id(facility_id):
+        """
+        Manually confirmed matches are added to the list of canonical
+        facilities with a synthetic ID. This function converts one of these
+        extended IDs back to a plain Facility ID. A plain Facility ID will pass
+        through this function unchanged.
+        """
+        return facility_id.split('_')[0]
+
+
 def get_canonical_items():
     """
     Fetch all `Facility` items and create a dictionary suitable for use by a
@@ -52,8 +74,20 @@ def get_canonical_items():
     facility_set = Facility.objects.all().extra(
         select={'country': 'country_code'}).values(
             'id', 'country', 'name', 'address')
-    return {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
-            for i in facility_set}
+
+    items = {str(i['id']):
+             {k: clean(i[k]) for k in i if k != 'id'}
+             for i in facility_set}
+
+    confirmed_items = {match_to_extended_facility_id(m): {
+        'country': clean(m.facility_list_item.country_code),
+        'name': clean(m.facility_list_item.name),
+        'address': clean(m.facility_list_item.address),
+    } for m in FacilityMatch.objects.filter(status=FacilityMatch.CONFIRMED)}
+
+    items.update(confirmed_items)
+
+    return items
 
 
 def get_messy_items_from_facility_list(facility_list):

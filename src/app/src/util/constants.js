@@ -277,12 +277,12 @@ export const filterSidebarTabs = Object.freeze([
         label: 'Guide',
     }),
     Object.freeze({
-        tab: filterSidebarTabsEnum.search,
-        label: 'Search',
-    }),
-    Object.freeze({
         tab: filterSidebarTabsEnum.facilities,
         label: 'Facilities',
+    }),
+    Object.freeze({
+        tab: filterSidebarTabsEnum.search,
+        label: 'Search',
     }),
 ]);
 
@@ -451,9 +451,10 @@ export const claimAFacilityFormFields = Object.freeze({
     }),
     parentCompany: Object.freeze({
         id: 'parent-company',
-        label: 'Parent company',
-        aside: `If you cannot find the parent company in this list consider
-inviting them to register with the Open Apparel Registry.`,
+        label: 'Parent company / supplier group',
+        aside: `If you cannot find the parent company / supplier group
+        in this list consider inviting them to register with the Open Apparel
+        Registry.`,
     }),
     website: Object.freeze({
         id: 'website',

@@ -58,7 +58,7 @@ li.dropdown-list-item a:hover,
 li.dropdown-list-item button:hover {
   background: none !important;
   text-decoration: underline !important;
-} 
+}
 
 li.dropdown-list-item button {
   border-top: 1px solid;
@@ -416,6 +416,10 @@ hr {
   font-size: 0.875rem;
   text-transform: uppercase;
   font-weight: 500;
+}
+
+.outlined-button--full-width {
+    width: 100%;
 }
 
 .blue-background {
