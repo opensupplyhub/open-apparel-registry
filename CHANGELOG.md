@@ -16,9 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
-- Include contributors if they have any active facilities [#999](https://github.com/open-apparel-registry/open-apparel-registry/pull/999)
 
 ### Security
+
+## [2.23.1] - 2020-03-20
+
+### Fixed
+- Include contributors if they have any active facilities [#999](https://github.com/open-apparel-registry/open-apparel-registry/pull/999)
 
 ## [2.23.0] - 2020-03-18
 
@@ -381,7 +385,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.23.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.23.1...HEAD
+[2.23.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.1
 [2.23.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.0
 [2.22.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.22.0
 [2.21.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.21.1
