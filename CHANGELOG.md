@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.23.2] - 2020-03-23
+
+### Fixed
+- Only count contributors with active public items for type count [#1002](https://github.com/open-apparel-registry/open-apparel-registry/pull/1002)
+
 ## [2.23.1] - 2020-03-20
 
 ### Fixed
@@ -385,7 +390,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.23.1...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.23.2...HEAD
+[2.23.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.2
 [2.23.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.1
 [2.23.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.0
 [2.22.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.22.0
