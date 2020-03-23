@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+- Only count contributors with active public items for type count [#1002](https://github.com/open-apparel-registry/open-apparel-registry/pull/1002)
 
 ### Security
 

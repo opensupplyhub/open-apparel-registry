@@ -416,7 +416,11 @@ def all_contributor_types(request):
             ["Factory / Facility", "Factory / Facility [1]"]
         ]
     """
-    counts = Contributor.objects.values(
+    active_contrib_ids = Source.objects.filter(
+        is_active=True, is_public=True,
+        facilitylistitem__status__in=FacilityListItem.COMPLETE_STATUSES
+    ).values('contributor_id')
+    counts = Contributor.objects.filter(id__in=active_contrib_ids).values(
         'contrib_type').annotate(num_type=Count('contrib_type'))
 
     types = [
