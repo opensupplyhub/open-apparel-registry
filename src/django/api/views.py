@@ -646,7 +646,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "address" "facility address_1",
                             "country_code": "US",
                             "country_name": "United States",
-                            "oar_id": "OAR_ID_1"
+                            "oar_id": "OAR_ID_1",
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                }
+                            ]
                         }
                     },
                     {
@@ -662,6 +669,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "country_code": "US",
                             "country_name": "United States",
                             "oar_id": "OAR_ID_2"
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                },
+                                {
+                                    "id": 2,
+                                    "name": "MSI B (2020 List)",
+                                    "is_verified": true
+                                }
+                            ]
                         }
                     }
                 ]

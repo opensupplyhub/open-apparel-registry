@@ -446,7 +446,7 @@ function mapDispatchToProps(dispatch, {
             return dispatch(resetAllFilters());
         },
         searchForFacilities: vectorTilesAreActive => dispatch(fetchFacilities({
-            pageSize: vectorTilesAreActive ? FACILITIES_REQUEST_PAGE_SIZE : 500,
+            pageSize: vectorTilesAreActive ? FACILITIES_REQUEST_PAGE_SIZE : 50,
             pushNewRoute: push,
         })),
         submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
