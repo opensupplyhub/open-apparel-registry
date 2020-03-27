@@ -161,6 +161,9 @@ class SubmitNewUserForm(CreateAPIView):
             if name is None:
                 raise ValidationError('name cannot be blank')
 
+            if '|' in name:
+                raise ValidationError('name cannot contain the "|" character')
+
             if description is None:
                 raise ValidationError('description cannot be blank')
 
@@ -292,6 +295,9 @@ class UserProfile(RetrieveUpdateAPIView):
 
             if name is None:
                 raise ValidationError('name cannot be blank')
+
+            if '|' in name:
+                raise ValidationError('Name cannot contain the "|" character.')
 
             if description is None:
                 raise ValidationError('description cannot be blank')
@@ -1863,6 +1869,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             name = request.data['name']
         else:
             name = os.path.splitext(csv_file.name)[0]
+
+        if '|' in name:
+            raise ValidationError('Name cannot contain the "|" character.')
 
         if 'description' in request.data:
             description = request.data['description']
