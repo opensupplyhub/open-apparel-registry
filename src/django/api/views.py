@@ -161,6 +161,9 @@ class SubmitNewUserForm(CreateAPIView):
             if name is None:
                 raise ValidationError('name cannot be blank')
 
+            if '|' in name:
+                raise ValidationError('name cannot contain the "|" character')
+
             if description is None:
                 raise ValidationError('description cannot be blank')
 
@@ -292,6 +295,9 @@ class UserProfile(RetrieveUpdateAPIView):
 
             if name is None:
                 raise ValidationError('name cannot be blank')
+
+            if '|' in name:
+                raise ValidationError('Name cannot contain the "|" character.')
 
             if description is None:
                 raise ValidationError('description cannot be blank')
@@ -646,7 +652,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "address" "facility address_1",
                             "country_code": "US",
                             "country_name": "United States",
-                            "oar_id": "OAR_ID_1"
+                            "oar_id": "OAR_ID_1",
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                }
+                            ]
                         }
                     },
                     {
@@ -662,6 +675,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "country_code": "US",
                             "country_name": "United States",
                             "oar_id": "OAR_ID_2"
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                },
+                                {
+                                    "id": 2,
+                                    "name": "MSI B (2020 List)",
+                                    "is_verified": true
+                                }
+                            ]
                         }
                     }
                 ]
@@ -1844,6 +1869,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             name = request.data['name']
         else:
             name = os.path.splitext(csv_file.name)[0]
+
+        if '|' in name:
+            raise ValidationError('Name cannot contain the "|" character.')
 
         if 'description' in request.data:
             description = request.data['description']

@@ -11,6 +11,7 @@ export const csvHeaders = Object.freeze([
     'country_name',
     'lat',
     'lng',
+    'contributors',
 ]);
 
 export const createFacilityRowFromFeature = ({
@@ -20,6 +21,7 @@ export const createFacilityRowFromFeature = ({
         country_code,
         country_name,
         oar_id,
+        contributors,
     },
     geometry: {
         coordinates: [
@@ -35,6 +37,7 @@ export const createFacilityRowFromFeature = ({
     country_name,
     lat,
     lng,
+    contributors ? contributors.map(c => c.name).join('|') : '',
 ]);
 
 export const facilityReducer = (acc, next) =>
