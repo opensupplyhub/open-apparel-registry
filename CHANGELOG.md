@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.24.0] - 2020-04-02
+
+### Added
+- Return contributor details from list API and include in CSV download [#1005](https://github.com/open-apparel-registry/open-apparel-registry/pull/1005)
+
 ## [2.23.2] - 2020-03-23
 
 ### Fixed
@@ -390,7 +395,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.23.2...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.24.0...HEAD
+[2.24.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.24.0
 [2.23.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.2
 [2.23.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.1
 [2.23.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.0

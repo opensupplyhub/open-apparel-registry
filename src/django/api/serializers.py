@@ -416,11 +416,12 @@ class FacilityListItemsQueryParamsSerializer(Serializer):
 class FacilitySerializer(GeoFeatureModelSerializer):
     oar_id = SerializerMethodField()
     country_name = SerializerMethodField()
+    contributors = SerializerMethodField()
 
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
-                  'oar_id', 'country_name')
+                  'oar_id', 'country_name', 'contributors')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -430,13 +431,33 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')
 
+    def get_contributors(self, facility):
+        def format_source(source):
+            if type(source) is Source:
+                return {
+                    'id': source.contributor.admin.id
+                    if source.contributor else None,
+                    'name': source.display_name,
+                    'is_verified': source.contributor.is_verified
+                    if source.contributor else False,
+                }
+            return {
+                'name': source,
+            }
+        request = self.context.get('request') \
+            if self.context is not None else None
+        user = request.user if request is not None else None
+        return [
+            format_source(source)
+            for source
+            in facility.sources(user=user)
+        ]
 
-class FacilityDetailsSerializer(GeoFeatureModelSerializer):
-    oar_id = SerializerMethodField()
+
+class FacilityDetailsSerializer(FacilitySerializer):
     other_names = SerializerMethodField()
     other_addresses = SerializerMethodField()
     other_locations = SerializerMethodField()
-    contributors = SerializerMethodField()
     country_name = SerializerMethodField()
     claim_info = SerializerMethodField()
 
@@ -446,10 +467,6 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
                   'country_name', 'claim_info', 'other_locations')
         geo_field = 'location'
-
-    # Added to ensure including the OAR ID in the geojson properties map
-    def get_oar_id(self, facility):
-        return facility.id
 
     def get_other_names(self, facility):
         return facility.other_names()
@@ -498,28 +515,6 @@ class FacilityDetailsSerializer(GeoFeatureModelSerializer):
         ]
 
         return facility_locations + facility_matches
-
-    def get_contributors(self, facility):
-        def format_source(source):
-            if type(source) is Source:
-                return {
-                    'id': source.contributor.admin.id
-                    if source.contributor else None,
-                    'name': source.display_name,
-                    'is_verified': source.contributor.is_verified
-                    if source.contributor else False,
-                }
-            return {
-                'name': source,
-            }
-        request = self.context.get('request') \
-            if self.context is not None else None
-        user = request.user if request is not None else None
-        return [
-            format_source(source)
-            for source
-            in facility.sources(user=user)
-        ]
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')

@@ -15,6 +15,18 @@ it('creates a new facility row array from a feature', () => {
             country_code: 'country_code',
             country_name: 'country_name',
             oar_id: 'oar_id',
+            contributors: [
+                {
+                    id: 1,
+                    name: 'contributor_name (list_name)',
+                    verified: false,
+                },
+                {
+                    id: 2,
+                    name: 'contributor_2_name (list_2_name)',
+                    verified: true,
+                },
+            ],
         },
         geometry: {
             coordinates: [
@@ -32,6 +44,7 @@ it('creates a new facility row array from a feature', () => {
         'country_name',
         'lat',
         'lng',
+        'contributor_name (list_name)|contributor_2_name (list_2_name)',
     ];
 
     expect(isEqual(
@@ -49,6 +62,13 @@ it('creates a 2-d array including headers for exporting as a CSV', () => {
                 country_code: 'country_code',
                 country_name: 'country_name',
                 oar_id: 'oar_id',
+                contributors: [
+                    {
+                        id: 1,
+                        name: 'contributor_name',
+                        verified: false,
+                    },
+                ],
             },
             geometry: {
                 coordinates: [
@@ -69,6 +89,7 @@ it('creates a 2-d array including headers for exporting as a CSV', () => {
             'country_name',
             'lat',
             'lng',
+            'contributor_name',
         ],
     ];
 

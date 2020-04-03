@@ -3,6 +3,7 @@ import { arrayOf, bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -80,6 +81,9 @@ const facilitiesTabStyles = Object.freeze({
     }),
     listHeaderButtonStyles: Object.freeze({
         height: '45px',
+        margin: '5px 0',
+    }),
+    downloadLabelStyles: Object.freeze({
         margin: '5px 0',
     }),
 });
@@ -191,6 +195,10 @@ function FilterSidebarFacilitiesTab({
     const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
     const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
 
+    const progress = facilitiesCount
+        ? get(data, 'features', []).length * 100 / facilitiesCount
+        : 0;
+
     const listHeaderInsetComponent = (
         <div style={facilitiesTabStyles.listHeaderStyles} className="results-height-subtract">
             <Typography
@@ -204,7 +212,10 @@ function FilterSidebarFacilitiesTab({
                         downloadingCSV
                             ? (
                                 <div style={facilitiesTabStyles.listHeaderButtonStyles}>
-                                    <CircularProgress />
+                                    <div style={facilitiesTabStyles.downloadLabelStyles}>
+                                        Downloading...
+                                    </div>
+                                    <LinearProgress variant="determinate" value={progress} />
                                 </div>)
                             : (
                                 <Button
