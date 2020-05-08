@@ -14,7 +14,7 @@ from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
-from api.matching import normalize_extended_facility_id
+from api.matching import normalize_extended_facility_id, clean
 
 
 def _report_error_to_rollbar(file, request):
@@ -244,6 +244,25 @@ def reduce_matches(matches):
     return list(match_dict.items())
 
 
+def is_string_match(item, facility):
+    """
+    Check if a list item is an exact string match to a facility, after
+    processing both through the same string cleaning operations used by the
+    matcher.
+
+    Arguments:
+    item -- A `FacilityListItem` instance being considered as a potential match
+            to the specified facility.
+    facility -- A `Facility` instance.
+
+    Returns:
+    True if the item is a string match to the facility
+    """
+    return (item.country_code == facility.country_code
+            and clean(item.name) == clean(facility.name)
+            and clean(item.address) == clean(facility.address))
+
+
 def save_match_details(match_results):
     """
     Save the results of a call to match_facility_list_items by creating
@@ -298,6 +317,20 @@ def save_match_details(match_results):
                     'one_gazetteer_match_greater_than_threshold'
                 item.status = FacilityListItem.MATCHED
                 item.facility = matches[0].facility
+            elif len(quality_matches) > 1:
+                exact_matches = [m for m in quality_matches
+                                 if is_string_match(item, m.facility)]
+                # We check == 1 because multiple exact matches should not
+                # happen. They are an indication of duplicate facility data
+                # that should be merged through moderation tools. Showing the
+                # multiple potential matches to the contributor increases the
+                # visibility of the issue.
+                if len(exact_matches) == 1:
+                    exact_matches[0].status = FacilityMatch.AUTOMATIC
+                    exact_matches[0].results['match_type'] = \
+                        'multiple_gazetteer_matches_with_one_exact_string_match' # NOQA
+                    item.status = FacilityListItem.MATCHED
+                    item.facility = exact_matches[0].facility
 
         item.processing_results.append({
             'action': ProcessingAction.MATCH,

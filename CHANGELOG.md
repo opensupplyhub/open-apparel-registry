@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
+- If there are multiple high quality matches choose exact string match [#1016](https://github.com/open-apparel-registry/open-apparel-registry/pull/1016)
 
 ### Deprecated
 
