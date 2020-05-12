@@ -28,7 +28,7 @@ from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
-                            reduce_matches)
+                            reduce_matches, is_string_match)
 from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
@@ -1201,6 +1201,29 @@ class DedupeMatchingTests(TestCase):
             ('US2020052YDVKBQ', 45)
         ]
         self.assertEqual(expected, reduce_matches(matches))
+
+    def test_is_string_match(self):
+        # The clean function will remove stray characters
+        item = FacilityListItem(
+            country_code='US',
+            name='Pants Ahoy',
+            address='123 Main St')
+        facility = Facility(
+            country_code='US',
+            name='"PANTS AHOY"',
+            address='123     MAIN     ST')
+        self.assertTrue(is_string_match(item, facility))
+
+        # Needs to be an exact character match
+        item = FacilityListItem(
+            country_code='US',
+            name='Pants Ahoy',
+            address='123 Main St')
+        facility = Facility(
+            country_code='US',
+            name='Pants Ahoy',
+            address='123 Main Street')
+        self.assertFalse(is_string_match(item, facility))
 
 
 class OarIdTests(TestCase):
