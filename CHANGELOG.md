@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
-- If there are multiple high quality matches choose exact string match [#1016](https://github.com/open-apparel-registry/open-apparel-registry/pull/1016)
 
 ### Deprecated
 
@@ -19,6 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [2.25.0] - 2020-05-14
+
+### Changed
+- If there are multiple high quality matches choose exact string match [#1016](https://github.com/open-apparel-registry/open-apparel-registry/pull/1016)
 
 ## [2.24.0] - 2020-04-02
 
@@ -396,7 +400,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.24.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.25.0...HEAD
+[2.25.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.25.0
 [2.24.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.24.0
 [2.23.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.2
 [2.23.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.1
