@@ -49,6 +49,13 @@ const detailsSidebarStyles = Object.freeze({
         marginRight: '14px',
         marginLeft: '8px',
     }),
+    headerClaimButtonStyle: Object.freeze({
+        margin: 0,
+        marginLeft: 'auto',
+        padding: '3px',
+        flex: 'none',
+        alignSelf: 'baseline',
+    }),
     linkSectionStyle: Object.freeze({
         display: 'flex',
         flexDirection: 'column',
@@ -207,7 +214,7 @@ class FacilityDetailSidebar extends Component {
                         {data.properties.claim_info ? (
                             <IconButton
                                 className="color-white"
-                                style={detailsSidebarStyles.headerButtonStyle}
+                                style={detailsSidebarStyles.headerClaimButtonStyle}
                                 onClick={
                                     () => push(
                                         (facilityClaimID && facilityIsClaimedByCurrentUser)
@@ -224,7 +231,7 @@ class FacilityDetailSidebar extends Component {
                             <ShowOnly when={!userHasPendingFacilityClaim}>
                                 <IconButton
                                     className="color-white"
-                                    style={detailsSidebarStyles.headerButtonStyle}
+                                    style={detailsSidebarStyles.headerClaimButtonStyle}
                                     onClick={() =>
                                         push(
                                             makeClaimFacilityLink(

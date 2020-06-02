@@ -9,13 +9,14 @@ import { toggleZoomToSearch } from '../actions/ui';
 const zoomStyles = Object.freeze({
     zoomStyle: Object.freeze({
         background: 'white',
-        border: `1px solid ${COLOURS.NAVY_BLUE}`,
         fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
         fontSize: '13px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '10px',
+        padding: '3px',
+        borderRadius: '2px',
+        boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.2)'
     }),
     zoomLabelStyle: Object.freeze({
         padding: '5px',
@@ -29,17 +30,18 @@ function ZoomToSearchControl({
 }) {
     return (
         <div id="zoom-search" style={zoomStyles.zoomStyle}>
-            <input
-                type="checkbox"
-                name="zoom-checkbox"
-                checked={zoomToSearch}
-                onChange={e => toggleZoom(e.target.checked)}
-            />
-            <label
+             <label
                 htmlFor="zoom-checkbox"
                 style={zoomStyles.zoomLabelStyle}
             >
-                    Zoom to Search
+                <input
+                    type="checkbox"
+                    name="zoom-checkbox"
+                    id="zoom-checkbox"
+                    checked={zoomToSearch}
+                    onChange={e => toggleZoom(e.target.checked)}
+                />
+                Zoom to Search
             </label>
         </div>
     );
