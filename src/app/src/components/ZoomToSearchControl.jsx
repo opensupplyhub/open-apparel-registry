@@ -2,8 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import COLOURS from '../util/COLOURS';
-
 import { toggleZoomToSearch } from '../actions/ui';
 
 const zoomStyles = Object.freeze({
@@ -16,7 +14,7 @@ const zoomStyles = Object.freeze({
         alignItems: 'center',
         padding: '3px',
         borderRadius: '2px',
-        boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.2)'
+        boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.2)',
     }),
     zoomLabelStyle: Object.freeze({
         padding: '5px',
@@ -30,7 +28,7 @@ function ZoomToSearchControl({
 }) {
     return (
         <div id="zoom-search" style={zoomStyles.zoomStyle}>
-             <label
+            <label
                 htmlFor="zoom-checkbox"
                 style={zoomStyles.zoomLabelStyle}
             >

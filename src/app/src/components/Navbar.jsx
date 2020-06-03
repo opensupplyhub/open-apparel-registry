@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, { useState, useRef } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -48,107 +48,107 @@ export default function Navbar() {
 
     const mainNavigation = (
         <>
-        <div
-            className="mainNavigation"
-            style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginLeft: 'auto',
-            }}
-        >
-            <Link
-                to="/"
-                href="/"
-                className="navButton"
+            <div
+                className="mainNavigation"
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginLeft: 'auto',
+                }}
             >
-                HOME
-            </Link>
-            <NavbarDropdown title="ABOUT" links={aboutLinks} />
-            <a
-                target="_blank"
-                className="navButton"
-                rel="noopener noreferrer"
-                href="https://info.openapparel.org/faq/"
-            >
-                FAQs
-            </a>
-            <a
-                target="_blank"
-                className="navButton"
-                rel="noopener noreferrer"
-                href={apiDocumentationURL}
-            >
-                API
-            </a>
-            <Link
-                className="navButton"
-                to={contributeRoute}
-                href={contributeRoute}
-            >
-                CONTRIBUTE
-            </Link>
-        </div>
-        <div id="google_translate_element" />
-        <Route component={NavbarLoginButtonGroup} />
-    </>
+                <Link
+                    to="/"
+                    href="/"
+                    className="navButton"
+                >
+                    HOME
+                </Link>
+                <NavbarDropdown title="ABOUT" links={aboutLinks} />
+                <a
+                    target="_blank"
+                    className="navButton"
+                    rel="noopener noreferrer"
+                    href="https://info.openapparel.org/faq/"
+                >
+                    FAQs
+                </a>
+                <a
+                    target="_blank"
+                    className="navButton"
+                    rel="noopener noreferrer"
+                    href={apiDocumentationURL}
+                >
+                    API
+                </a>
+                <Link
+                    className="navButton"
+                    to={contributeRoute}
+                    href={contributeRoute}
+                >
+                    CONTRIBUTE
+                </Link>
+            </div>
+            <div id="google_translate_element" />
+            <Route component={NavbarLoginButtonGroup} />
+        </>
     );
 
     const mobileNavigation = (
         <>
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                flex: 1,
-                width: '250px'
-            }}
-        >
-            <Link
-                to="/"
-                href="/"
-                className="navButton"
-                onClick={() => setDrawerHandler(false)}
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flex: 1,
+                    width: '250px',
+                }}
             >
-                HOME
-            </Link>
-            <a
-                target="_blank"
-                className="navButton"
-                rel="noopener noreferrer"
-                href="https://info.openapparel.org/"
-                onClick={() => setDrawerHandler(false)}
-            >
-                ABOUT
-            </a>
-            <a
-                target="_blank"
-                className="navButton"
-                rel="noopener noreferrer"
-                href="https://info.openapparel.org/faq/"
-                onClick={() => setDrawerHandler(false)}
-            >
-                FAQs
-            </a>
-            <a
-                target="_blank"
-                className="navButton"
-                rel="noopener noreferrer"
-                href={apiDocumentationURL}
-                onClick={() => setDrawerHandler(false)}
-            >
-                API
-            </a>
-            <Link
-                className="navButton"
-                to={contributeRoute}
-                href={contributeRoute}
-                onClick={() => setDrawerHandler(false)}
-            >
-                CONTRIBUTE
-            </Link>
-            <Button style={{marginTop: 'auto'}} onClick={() => setDrawerHandler(false)}>Close Menu</Button>
-        </div>
-    </>
+                <Link
+                    to="/"
+                    href="/"
+                    className="navButton"
+                    onClick={() => setDrawerHandler(false)}
+                >
+                    HOME
+                </Link>
+                <a
+                    target="_blank"
+                    className="navButton"
+                    rel="noopener noreferrer"
+                    href="https://info.openapparel.org/"
+                    onClick={() => setDrawerHandler(false)}
+                >
+                    ABOUT
+                </a>
+                <a
+                    target="_blank"
+                    className="navButton"
+                    rel="noopener noreferrer"
+                    href="https://info.openapparel.org/faq/"
+                    onClick={() => setDrawerHandler(false)}
+                >
+                    FAQs
+                </a>
+                <a
+                    target="_blank"
+                    className="navButton"
+                    rel="noopener noreferrer"
+                    href={apiDocumentationURL}
+                    onClick={() => setDrawerHandler(false)}
+                >
+                    API
+                </a>
+                <Link
+                    className="navButton"
+                    to={contributeRoute}
+                    href={contributeRoute}
+                    onClick={() => setDrawerHandler(false)}
+                >
+                    CONTRIBUTE
+                </Link>
+                <Button style={{ marginTop: 'auto' }} onClick={() => setDrawerHandler(false)}>Close Menu</Button>
+            </div>
+        </>
     );
 
     const mobileMenu = (
@@ -156,10 +156,10 @@ export default function Navbar() {
         but the appbar has an absurd one as well
         and it'll be difficult to ensure any changes
         to the appbar won't have breaking effects */
-        <Drawer anchor="right" open={drawerHandler} onClose={() => setDrawerHandler(false)} style={{zIndex: 99999999}} className="mobile-navigation-drawer">
+        <Drawer anchor="right" open={drawerHandler} onClose={() => setDrawerHandler(false)} style={{ zIndex: 99999999 }} className="mobile-navigation-drawer">
             {mobileNavigation}
         </Drawer>
-    )
+    );
 
     const mobileMenuToggle = (
         <div className="mobileMenuToggle">
@@ -173,26 +173,26 @@ export default function Navbar() {
                 MENU
             </Button>
         </div>
-    )
+    );
 
     return (
         <>
-        <AppBar position="static" className="App-header results-height-subtract">
-            <Toolbar style={{ padding: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'middle', marginRight: 'auto' }}>
-                    <Link
-                        to="/"
-                        href="/"
-                        style={{ display: 'inline-flex' }}
-                    >
-                        <img src={logo} className="App-logo" alt="logo" />
-                    </Link>
-                </div>
-                {mainNavigation}
-                {mobileMenuToggle}
-            </Toolbar>
-        </AppBar>
-        {mobileMenu}
+            <AppBar position="static" className="App-header results-height-subtract">
+                <Toolbar style={{ padding: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'middle', marginRight: 'auto' }}>
+                        <Link
+                            to="/"
+                            href="/"
+                            style={{ display: 'inline-flex' }}
+                        >
+                            <img src={logo} className="App-logo" alt="logo" />
+                        </Link>
+                    </div>
+                    {mainNavigation}
+                    {mobileMenuToggle}
+                </Toolbar>
+            </AppBar>
+            {mobileMenu}
         </>
     );
 }
