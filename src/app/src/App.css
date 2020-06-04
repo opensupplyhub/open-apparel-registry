@@ -671,6 +671,7 @@ hr {
     display: flex;
     padding: 8px;
     top: -10px;
+    z-index: 10;
   }
 
   .panel-header__title {
