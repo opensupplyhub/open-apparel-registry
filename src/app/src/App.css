@@ -638,17 +638,23 @@ hr {
   .map-sidebar-container {
     flex-direction: column;
     height: auto;
-    position: absolute;
+    position: relative;
     margin: -10px;
+    width: auto !important;
+  }
+
+  .AppOverflow {
+    height: initial !important;
+    overflow: initial !important;
   }
 
   .mainPanel {
     overflow: auto;
     max-width: 100vw;
-    position: relative !important;
-    min-height: calc(100vh - 114px);
     box-sizing: border-box;
     padding: 10px;
+    bottom: 0 !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   .map-container {
@@ -680,11 +686,7 @@ hr {
   }
 
   .footerContainer {
-    padding: 0 5px;
-  }
-
-  .footerContainer .links .link {
-    padding: 0 5px;
+    display: none;
   }
 
   .form__action {
@@ -694,6 +696,10 @@ hr {
   .filter-sidebar-tabgroup {
     position: sticky !important;
     top: -11px;
+  }
+
+  .facility-detail_map {
+    width: auto;
   }
 }
 
