@@ -114,7 +114,7 @@ function NavbarLoginButtonGroup({
 }) {
     if (!user || sessionFetching || featureFlagsFetching) {
         return (
-            <div style={componentStyles.containerStyle}>
+            <div style={componentStyles.containerStyle} className="NavbarLoginButtonGroup">
                 <Link
                     to={authRegisterFormRoute}
                     href={authRegisterFormRoute}

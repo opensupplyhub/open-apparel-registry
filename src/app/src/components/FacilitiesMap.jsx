@@ -52,8 +52,6 @@ const mapComponentStyles = Object.freeze({
         width: '100%',
     }),
     copySearchButtonStyle: Object.freeze({
-        right: '24px',
-        top: '20px',
         fontSize: '12px',
     }),
 });

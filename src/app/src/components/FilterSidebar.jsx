@@ -130,7 +130,7 @@ class FilterSidebar extends Component {
         };
 
         const tabBar = (
-            <AppBar position="static" className="results-height-subtract">
+            <AppBar position="static" className="results-height-subtract filter-sidebar-tabgroup">
                 <Tabs
                     value={activeTabIndex}
                     onChange={handleTabChange}
