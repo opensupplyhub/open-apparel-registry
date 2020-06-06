@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+Bump websocket-extensions from 0.1.3 to 0.1.4 in /src/app [#1026](https://github.com/open-apparel-registry/open-apparel-registry/pull/1026)
+
 ## [2.25.0] - 2020-05-14
 
 ### Changed
