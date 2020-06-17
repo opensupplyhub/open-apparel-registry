@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Mobile optimization for map ui [#1023](https://github.com/open-apparel-registry/open-apparel-registry/pull/1023)
+- Add country first appearance report [#1024](https://github.com/open-apparel-registry/open-apparel-registry/pull/1024)
+
 ### Changed
 
 ### Deprecated
