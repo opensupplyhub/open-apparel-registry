@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.26.0] - 2020-06-25
+
+### Added
+
+- Mobile optimization for map ui [#1023](https://github.com/open-apparel-registry/open-apparel-registry/pull/1023)
+- Add country first appearance report [#1024](https://github.com/open-apparel-registry/open-apparel-registry/pull/1024)
+
+### Security
+
+- Bump websocket-extensions from 0.1.3 to 0.1.4 in /src/app [#1026](https://github.com/open-apparel-registry/open-apparel-registry/pull/1026)
+
 ## [2.25.0] - 2020-05-14
 
 ### Changed
@@ -400,7 +411,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.25.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.26.0...HEAD
+[2.26.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.0
 [2.25.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.25.0
 [2.24.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.24.0
 [2.23.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.23.2

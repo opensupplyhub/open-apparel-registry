@@ -96,7 +96,7 @@ class App extends Component {
                     <div className="App">
                         <Translate />
                         <Navbar />
-                        <main style={appStyles.mainPanelStyle}>
+                        <main style={appStyles.mainPanelStyle} className="mainPanel">
                             <Switch>
                                 <Route
                                     exact
