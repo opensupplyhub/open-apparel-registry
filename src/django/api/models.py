@@ -360,7 +360,43 @@ class FacilityList(models.Model):
             return '{0} [NO SOURCE] ({1})'.format(self.name, self.id)
 
 
-class FacilityListItem(models.Model):
+class PPEMixin(models.Model):
+    class Meta:
+        abstract = True
+
+    ppe_product_types = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            max_length=50,
+            help_text=('A type of personal protective equipment produced at '
+                       'the facility'),
+            verbose_name='ppe product type',
+        ),
+        null=True,
+        blank=True,
+        help_text=('The types of personal protective equipment produced at '
+                   'the facility'),
+        verbose_name='ppe product types')
+    ppe_contact_email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name='ppe contact email',
+        help_text='The contact email for PPE-related discussion')
+    ppe_contact_phone = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        verbose_name='ppe contact phone',
+        help_text='The contact phone number for PPE-related discussion')
+    ppe_website = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name='ppe website',
+        help_text='The website for PPE information')
+
+
+class FacilityListItem(PPEMixin):
     """
     Data, metadata, and workflow status and results for a single line from a
     facility list file.
@@ -1122,7 +1158,7 @@ class FacilityManager(models.Manager):
         return facilities_qs
 
 
-class Facility(models.Model):
+class Facility(PPEMixin):
     """
     An official OAR facility. Search results are returned from this table.
     """
