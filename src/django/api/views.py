@@ -775,6 +775,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
             }
 
+        ## Sample Request Body With PPE Fields
+
+            {
+                "country": "China",
+                "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
+                "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
+                "ppe_product_types": ["Masks", "Gloves"],
+                "ppe_contact_phone": "123-456-7890",
+                "ppe_contact_email": "ppe@example.com",
+                "ppe_website": "https://example.com/ppe"
+            }
+
         ## Sample Responses
 
         ### Automatic Match
@@ -813,7 +825,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ],
                     "country_name": "China",
                     "claim_info": null,
-                    "other_locations": []
+                    "other_locations": [],
+                    "ppe_product_types": [
+                      "Masks",
+                      "Gloves"
+                    ],
+                    "ppe_contact_phone": "123-456-7890",
+                    "ppe_contact_email": "ppe@example.com",
+                    "ppe_website": "https://example.com/ppe"
                   },
                   "confidence": 0.8153
                 }
@@ -941,6 +960,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             body_serializer.validated_data.get('country'))
         name = body_serializer.validated_data.get('name')
         address = body_serializer.validated_data.get('address')
+        ppe_product_types = \
+            body_serializer.validated_data.get('ppe_product_types')
+        ppe_contact_phone = \
+            body_serializer.validated_data.get('ppe_contact_phone')
+        ppe_contact_email = \
+            body_serializer.validated_data.get('ppe_contact_email')
+        ppe_website = body_serializer.validated_data.get('ppe_website')
 
         item = FacilityListItem.objects.create(
             source=source,
@@ -950,6 +976,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             name=name,
             address=address,
             country_code=country_code,
+            ppe_product_types=ppe_product_types,
+            ppe_contact_phone=ppe_contact_phone,
+            ppe_contact_email=ppe_contact_email,
+            ppe_website=ppe_website,
             processing_results=[{
                 'action': ProcessingAction.PARSE,
                 'started_at': parse_started,
@@ -1151,7 +1181,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     address=best_item.address,
                     country_code=best_item.country_code,
                     location=best_item.geocoded_point,
-                    created_from=best_item)
+                    created_from=best_item,
+                    ppe_product_types=best_item.ppe_product_types,
+                    ppe_contact_phone=best_item.ppe_contact_phone,
+                    ppe_contact_email=best_item.ppe_contact_email,
+                    ppe_website=best_item.ppe_website)
+
                 FacilityAlias.objects.create(
                     oar_id=facility.id,
                     facility=promoted_facility,
@@ -1609,6 +1644,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             facility.country_code = match.facility_list_item.country_code
             facility.location = match.facility_list_item.geocoded_point
             facility.created_from = match.facility_list_item
+            facility.ppe_product_types = \
+                match.facility_list_item.ppe_product_types
+            facility.ppe_contact_phone = \
+                match.facility_list_item.ppe_contact_phone
+            facility.ppe_contact_email = \
+                match.facility_list_item.ppe_contact_email
+            facility.ppe_website = match.facility_list_item.ppe_website
             facility.changeReason = reason
             facility.save()
 

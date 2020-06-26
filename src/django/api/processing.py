@@ -384,7 +384,11 @@ def save_match_details(match_results):
                                     address=item.address,
                                     country_code=item.country_code,
                                     location=item.geocoded_point,
-                                    created_from=item)
+                                    created_from=item,
+                                    ppe_product_types=item.ppe_product_types,
+                                    ppe_contact_phone=item.ppe_contact_phone,
+                                    ppe_contact_email=item.ppe_contact_email,
+                                    ppe_website=item.ppe_website)
                 facility.save()
 
                 match = make_pending_match(item.id, facility.id, 1.0)
