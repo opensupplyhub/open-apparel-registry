@@ -4,6 +4,10 @@ class CsvHeaderField:
     ADDRESS = 'address'
     LAT = 'lat'
     LNG = 'lng'
+    PPE_PRODUCT_TYPES = 'ppe_product_types'
+    PPE_CONTACT_PHONE = 'ppe_contact_phone'
+    PPE_CONTACT_EMAIL = 'ppe_contact_email'
+    PPE_WEBSITE = 'ppe_website'
 
 
 class ProcessingAction:

@@ -426,6 +426,39 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assert_failed_parse_results(
             item, 'Could not find a country code for "Unknownistan".')
 
+    def test_ppe_field_parsing(self):
+        facility_list = FacilityList.objects.create(
+            header=('address,country,name,ppe_product_types,ppe_contact_phone,'
+                    'ppe_contact_email,ppe_website'))
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        item = FacilityListItem(
+            raw_data=('1234 main st,de,Shirts!, Mask | Gloves ,123-456-7890,'
+                      'ppe@example.com,https://example.com/ppe'),
+            source=source)
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Mask', 'Gloves'], item.ppe_product_types)
+        self.assertEqual('123-456-7890', item.ppe_contact_phone)
+        self.assertEqual('ppe@example.com', item.ppe_contact_email)
+        self.assertEqual('https://example.com/ppe', item.ppe_website)
+
+    def test_ppe_product_type_empty_values(self):
+        facility_list = FacilityList.objects.create(
+            header='address,country,name,ppe_product_types')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        # The trailing space is important as we are testing a literally
+        # non-empty but logically empty value
+        item = FacilityListItem(
+            raw_data='1234 main st,de,Shirts!,| ',
+            source=source)
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual([], item.ppe_product_types)
+
 
 class UserTokenGenerationTest(TestCase):
     def setUp(self):
