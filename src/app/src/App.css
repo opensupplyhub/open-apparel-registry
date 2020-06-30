@@ -702,6 +702,21 @@ hr {
   .facility-detail_map {
     width: auto;
   }
+
+  #panel-container {
+    width: auto;
+    max-width: 100%;
+    min-width: auto;
+  }
+
+  .sharedFacilityTooltip {
+    z-index: 99999999 !important;
+  }
+
+  .sharedFacilityTooltip-inner {
+    max-height: 80vh;
+    overflow: auto;
+  }
 }
 
 @media (max-width: 410px) {

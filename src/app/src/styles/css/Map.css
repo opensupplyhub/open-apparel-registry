@@ -5,14 +5,12 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-width: 450px;
+  width: 450px;
+  flex: none;
 }
 
 @media (min-width: 775px) {
-  #panel-container {
-    min-width: 450px;
-    flex: none;
-  }
-
   .map-container {
     flex: 1 !important;
     max-width: initial !important;

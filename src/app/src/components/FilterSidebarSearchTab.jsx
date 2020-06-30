@@ -239,7 +239,17 @@ function FilterSidebarSearchTab({
                             }
                             label="Show only shared facilities"
                         />
-                        <Tooltip title={tooltipTitle} placement="right">
+                        <Tooltip
+                            title={tooltipTitle}
+                            placement="right"
+                            enterDelay={50}
+                            interactive
+                            disableTouchListener
+                            classes={{
+                                popper: 'sharedFacilityTooltip',
+                                tooltip: 'sharedFacilityTooltip-inner',
+                            }}
+                        >
                             <IconButton>
                                 <InfoIcon />
                             </IconButton>
