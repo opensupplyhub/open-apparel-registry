@@ -1475,11 +1475,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         'address': m.facility_list_item.address,
                         'country_code': m.facility_list_item.country_code,
                         'list_id':
-                        m.facility_list_item.source.facility_list.id,
+                        m.facility_list_item.source.facility_list.id
+                        if m.facility_list_item.source.facility_list else None,
                         'list_name':
-                        m.facility_list_item.source.facility_list.name,
+                        m.facility_list_item.source.facility_list.name
+                        if m.facility_list_item.source.facility_list else None,
                         'list_description':
-                        m.facility_list_item.source.facility_list.description,
+                        m.facility_list_item.source.facility_list.description
+                        if m.facility_list_item.source.facility_list else None,
                         'list_contributor_name':
                         m.facility_list_item.source.contributor.name
                         if m.facility_list_item.source.contributor else None,
@@ -1585,15 +1588,21 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             previous_created_from_id = facility.created_from.id
 
-            previous_list_id = facility.created_from.source.facility_list.id
-
-            reason = 'Promoted item {} in list {} over item {} in list {}' \
-                .format(
+            if match.facility_list_item.source.facility_list:
+                new_desc = 'item {} in list {}'.format(
                     match.facility_list_item.id,
-                    match.facility_list_item.source.facility_list.id,
+                    match.facility_list_item.source.facility_list.id)
+            else:
+                new_desc = 'item {}'.format(match.facility_list_item.id)
+
+            if facility.created_from.source.facility_list:
+                previous_desc = 'item {} in list {}'.format(
                     previous_created_from_id,
-                    previous_list_id,
-                )
+                    facility.created_from.source.facility_list.id)
+            else:
+                previous_desc = 'item {}'.format(previous_created_from_id)
+
+            reason = 'Promoted {} over {}'.format(new_desc, previous_desc)
 
             facility.name = match.facility_list_item.name
             facility.address = match.facility_list_item.address
@@ -1625,9 +1634,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     'name': m.facility_list_item.name,
                     'address': m.facility_list_item.address,
                     'country_code': m.facility_list_item.country_code,
-                    'list_id': m.facility_list_item.source.facility_list.id,
+                    'list_id': m.facility_list_item.source.facility_list.id
+                    if m.facility_list_item.source.facility_list else None,
                     'list_name':
-                    m.facility_list_item.source.facility_list.name,
+                    m.facility_list_item.source.facility_list.name
+                    if m.facility_list_item.source.facility_list else None,
                     'list_description':
                     m.facility_list_item.source.facility_list.description
                     if m.facility_list_item.source.facility_list else None,
