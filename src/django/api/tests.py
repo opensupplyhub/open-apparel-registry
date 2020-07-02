@@ -426,6 +426,39 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assert_failed_parse_results(
             item, 'Could not find a country code for "Unknownistan".')
 
+    def test_ppe_field_parsing(self):
+        facility_list = FacilityList.objects.create(
+            header=('address,country,name,ppe_product_types,ppe_contact_phone,'
+                    'ppe_contact_email,ppe_website'))
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        item = FacilityListItem(
+            raw_data=('1234 main st,de,Shirts!, Mask | Gloves ,123-456-7890,'
+                      'ppe@example.com,https://example.com/ppe'),
+            source=source)
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Mask', 'Gloves'], item.ppe_product_types)
+        self.assertEqual('123-456-7890', item.ppe_contact_phone)
+        self.assertEqual('ppe@example.com', item.ppe_contact_email)
+        self.assertEqual('https://example.com/ppe', item.ppe_website)
+
+    def test_ppe_product_type_empty_values(self):
+        facility_list = FacilityList.objects.create(
+            header='address,country,name,ppe_product_types')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        # The trailing space is important as we are testing a literally
+        # non-empty but logically empty value
+        item = FacilityListItem(
+            raw_data='1234 main st,de,Shirts!,| ',
+            source=source)
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual([], item.ppe_product_types)
+
 
 class UserTokenGenerationTest(TestCase):
     def setUp(self):
@@ -3178,6 +3211,11 @@ class FacilityMatchPromoteTest(APITestCase):
         self.location_one = Point(1, 1)
         self.location_two = Point(2, 2)
 
+        self.ppe_product_types_two = ['Masks', 'Gloves']
+        self.ppe_contact_phone_two = '123-456-7890'
+        self.ppe_contact_email_two = 'ppe@example.com'
+        self.ppe_website_two = 'https://example.com/ppe'
+
         self.list_item_one = FacilityListItem \
             .objects \
             .create(name=self.name_one,
@@ -3234,6 +3272,10 @@ class FacilityMatchPromoteTest(APITestCase):
                     country_code=self.country_code_two,
                     row_index=1,
                     geocoded_point=self.location_two,
+                    ppe_product_types=self.ppe_product_types_two,
+                    ppe_contact_phone=self.ppe_contact_phone_two,
+                    ppe_contact_email=self.ppe_contact_email_two,
+                    ppe_website=self.ppe_website_two,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source_two)
 
@@ -3352,6 +3394,61 @@ class FacilityMatchPromoteTest(APITestCase):
             Facility.history.first().history_change_reason,
             reason,
         )
+
+        self.assertEqual(
+            self.facility_one.ppe_product_types,
+            self.list_item_two.ppe_product_types,
+        )
+
+        self.assertEqual(
+            self.facility_one.ppe_contact_phone,
+            self.list_item_two.ppe_contact_phone,
+        )
+
+        self.assertEqual(
+            self.facility_one.ppe_contact_email,
+            self.list_item_two.ppe_contact_email,
+        )
+
+        self.assertEqual(
+            self.facility_one.ppe_website,
+            self.list_item_two.ppe_website,
+        )
+
+    def test_can_promote_single_item_over_list_item(self):
+        single_source = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor_two)
+
+        single_item = FacilityListItem \
+            .objects \
+            .create(name='single',
+                    address='single',
+                    country_code='US',
+                    row_index=0,
+                    geocoded_point=self.location_one,
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=single_source)
+
+        single_match = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility_one,
+                    facility_list_item=single_item,
+                    confidence=0.85,
+                    results='')
+
+        single_item.facility = self.facility_one
+        single_item.save()
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.promote_url,
+                                         {'match_id': single_match.id})
+        self.assertEqual(post_response.status_code, 200)
 
 
 class PermissionsTests(TestCase):

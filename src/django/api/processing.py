@@ -119,6 +119,24 @@ def parse_facility_list_item(item):
             lng = float(values[fields.index(CsvHeaderField.LNG)])
             item.geocoded_point = Point(lng, lat)
             is_geocoded = True
+
+        if CsvHeaderField.PPE_PRODUCT_TYPES in fields:
+            product_types = values[
+                fields.index(CsvHeaderField.PPE_PRODUCT_TYPES)]
+            # The nested list comprehension ensures that we filter out
+            # whitespace-only values
+            item.ppe_product_types = \
+                [s for s in [s.strip() for s in product_types.split('|')] if s]
+        if CsvHeaderField.PPE_CONTACT_PHONE in fields:
+            item.ppe_contact_phone = values[
+                fields.index(CsvHeaderField.PPE_CONTACT_PHONE)]
+        if CsvHeaderField.PPE_CONTACT_EMAIL in fields:
+            item.ppe_contact_email = values[
+                fields.index(CsvHeaderField.PPE_CONTACT_EMAIL)]
+        if CsvHeaderField.PPE_WEBSITE in fields:
+            item.ppe_website = values[
+                fields.index(CsvHeaderField.PPE_WEBSITE)]
+
         try:
             item.full_clean(exclude=('processing_started_at',
                                      'processing_completed_at',
@@ -366,7 +384,11 @@ def save_match_details(match_results):
                                     address=item.address,
                                     country_code=item.country_code,
                                     location=item.geocoded_point,
-                                    created_from=item)
+                                    created_from=item,
+                                    ppe_product_types=item.ppe_product_types,
+                                    ppe_contact_phone=item.ppe_contact_phone,
+                                    ppe_contact_email=item.ppe_contact_email,
+                                    ppe_website=item.ppe_website)
                 facility.save()
 
                 match = make_pending_match(item.id, facility.id, 1.0)
