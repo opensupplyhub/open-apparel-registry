@@ -47,6 +47,7 @@ from allauth.account.utils import complete_signup
 import coreapi
 from waffle import switch_is_active, flag_is_active
 from waffle.decorators import waffle_switch
+from waffle.models import Switch
 
 
 from oar import urls
@@ -2216,10 +2217,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 @permission_classes((AllowAny,))
 def api_feature_flags(request):
     response_data = {
-        'claim_a_facility': switch_is_active('claim_a_facility'),
-        'vector_tile': switch_is_active('vector_tile'),
+        s.name: switch_is_active(s.name) for s in Switch.objects.all()
     }
-
     return Response(response_data)
 
 

@@ -14,6 +14,7 @@ import {
     facilityMatchStatusChoicesEnum,
     CLAIM_A_FACILITY,
     VECTOR_TILE,
+    PPE,
     facilityClaimStatusChoicesEnum,
 } from './constants';
 
@@ -214,7 +215,7 @@ export const filtersPropType = shape({
 export const facilityListItemStatusPropType =
     oneOf(Object.values(facilityListItemStatusChoicesEnum).concat('Status'));
 
-export const featureFlagPropType = oneOf([CLAIM_A_FACILITY, VECTOR_TILE]);
+export const featureFlagPropType = oneOf([CLAIM_A_FACILITY, VECTOR_TILE, PPE]);
 
 export const facilityClaimsListPropType = arrayOf(shape({
     created_at: string.isRequired,
