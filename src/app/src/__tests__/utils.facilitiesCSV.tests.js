@@ -7,6 +7,8 @@ import {
     formatDataForCSV,
 } from '../util/util.facilitiesCSV';
 
+import { PPE_FIELD_NAMES } from '../util/constants';
+
 it('creates a new facility row array from a feature', () => {
     const feature = {
         properties: {
@@ -97,4 +99,111 @@ it('creates a 2-d array including headers for exporting as a CSV', () => {
         formatDataForCSV(facilities),
         expected2DArray,
     )).toBe(true);
+});
+
+it('creates a 2-d array including PPE headers', () => {
+    const facilities = [
+        {
+            properties: {
+                name: 'name',
+                address: 'address',
+                country_code: 'country_code',
+                country_name: 'country_name',
+                oar_id: 'oar_id',
+                contributors: [
+                    {
+                        id: 1,
+                        name: 'contributor_name',
+                        verified: false,
+                    },
+                ],
+            },
+            geometry: {
+                coordinates: [
+                    'lng',
+                    'lat',
+                ],
+            },
+        },
+    ];
+
+    const expectedHeader = csvHeaders.concat(PPE_FIELD_NAMES);
+    const expectedRow = [
+        'oar_id',
+        'name',
+        'address',
+        'country_code',
+        'country_name',
+        'lat',
+        'lng',
+        'contributor_name',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+    ];
+
+    const expected2DArray = [expectedHeader, expectedRow];
+
+    expect(
+        formatDataForCSV(facilities, { includePPEFields: true }),
+    ).toEqual(expected2DArray);
+});
+
+it('creates a 2-d array including PPE headers and values', () => {
+    const facilities = [
+        {
+            properties: {
+                name: 'name',
+                address: 'address',
+                country_code: 'country_code',
+                country_name: 'country_name',
+                oar_id: 'oar_id',
+                contributors: [
+                    {
+                        id: 1,
+                        name: 'contributor_name',
+                        verified: false,
+                    },
+                ],
+                ppe_product_types: ['ppe_product_type_1', 'ppe_product_type_2'],
+                ppe_contact_phone: 'ppe_contact_phone',
+                ppe_contact_email: 'ppe_contact_email',
+                ppe_website: 'ppe_website',
+            },
+            geometry: {
+                coordinates: [
+                    'lng',
+                    'lat',
+                ],
+            },
+        },
+    ];
+
+    const expected2DArray = [
+        csvHeaders.concat([
+            'ppe_product_types',
+            'ppe_contact_phone',
+            'ppe_contact_email',
+            'ppe_website',
+        ]),
+        [
+            'oar_id',
+            'name',
+            'address',
+            'country_code',
+            'country_name',
+            'lat',
+            'lng',
+            'contributor_name',
+            'ppe_product_type_1|ppe_product_type_2',
+            'ppe_contact_phone',
+            'ppe_contact_email',
+            'ppe_website',
+        ],
+    ];
+
+    expect(
+        formatDataForCSV(facilities, { includePPEFields: true }),
+    ).toEqual(expected2DArray);
 });
