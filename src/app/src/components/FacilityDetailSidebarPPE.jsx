@@ -18,7 +18,11 @@ const FacilityDetailSidebarPPE = ({ properties }) => {
                         <div style={{ marginBottom: '5px' }}>
                             Product Types
                             <ul>
-                                {ppeFields.ppe_product_types.map(t => <li>{t}</li>)}
+                                {
+                                    ppeFields.ppe_product_types.map(
+                                        t => <li key={t}>{t}</li>,
+                                    )
+                                }
                             </ul>
                         </div>
                     ) : null}

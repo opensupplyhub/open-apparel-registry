@@ -14,6 +14,7 @@ import ReactSelect from 'react-select';
 import get from 'lodash/get';
 
 import ShowOnly from './ShowOnly';
+import FeatureFlag from './FeatureFlag';
 
 import {
     updateFacilityFreeTextQueryFilter,
@@ -22,6 +23,7 @@ import {
     updateCountryFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
+    updatePPEFilter,
     resetAllFilters,
 } from '../actions/filters';
 
@@ -66,6 +68,7 @@ const FACILITIES = 'FACILITIES';
 const CONTRIBUTORS = 'CONTRIBUTORS';
 const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const COUNTRIES = 'COUNTRIES';
+const PPE = 'PPE';
 
 function FilterSidebarSearchTab({
     contributorOptions,
@@ -91,6 +94,8 @@ function FilterSidebarSearchTab({
     activateDrawFilter,
     clearDrawFilter,
     boundary,
+    ppe,
+    updatePPE,
 }) {
     if (fetchingOptions) {
         return (
@@ -192,7 +197,7 @@ function FilterSidebarSearchTab({
             style={filterSidebarStyles.controlPanelContentStyles}
         >
             <div>
-                <div className="form__field">
+                <div className="form__field" style={{ marginBottom: '10px' }}>
                     <InputLabel
                         htmlFor={FACILITIES}
                         className="form__label"
@@ -208,6 +213,22 @@ function FilterSidebarSearchTab({
                         onKeyPress={submitFormOnEnterKeyPress}
                     />
                 </div>
+                <FeatureFlag flag="ppe">
+                    <div className="form__field" style={{ marginBottom: '16px' }}>
+                        <InputLabel
+                            htmlFor={PPE}
+                            className="form__label"
+                        >
+                            Only include PPE facilities
+                        </InputLabel>
+                        <Checkbox
+                            checked={!!ppe}
+                            onChange={updatePPE}
+                            color="primary"
+                            value={ppe}
+                        />
+                    </div>
+                </FeatureFlag>
                 <div className="form__field">
                     <InputLabel
                         shrink={false}
@@ -357,12 +378,14 @@ FilterSidebarSearchTab.propTypes = {
     updateContributor: func.isRequired,
     updateContributorType: func.isRequired,
     updateCountry: func.isRequired,
+    updatePPE: func.isRequired,
     updateCombineContributors: func.isRequired,
     facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
     combineContributors: string.isRequired,
+    ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
     facilities: facilityCollectionPropType,
@@ -392,6 +415,7 @@ function mapStateToProps({
         countries,
         combineContributors,
         boundary,
+        ppe,
     },
     facilities: {
         facilities: {
@@ -416,6 +440,7 @@ function mapStateToProps({
         fetchingFacilities,
         facilities,
         boundary,
+        ppe,
         fetchingOptions: fetchingContributors
             || fetchingContributorTypes
             || fetchingCountries,
@@ -438,6 +463,9 @@ function mapDispatchToProps(dispatch, {
         },
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
+        updatePPE: e => dispatch(updatePPEFilter(
+            e.target.checked ? 'true' : '',
+        )),
         updateCombineContributors: e => dispatch(
             updateCombineContributorsFilterOption(e.target.checked ? 'AND' : ''),
         ),

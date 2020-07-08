@@ -23,6 +23,7 @@ import {
     updateContributorFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    updatePPEFilter,
     resetAllFilters,
     updateAllFilters,
 } from '../actions/filters';
@@ -155,6 +156,7 @@ export default createReducer({
     [updateContributorFilter]: clearFacilitiesDataOnFilterChange,
     [updateContributorTypeFilter]: clearFacilitiesDataOnFilterChange,
     [updateCountryFilter]: clearFacilitiesDataOnFilterChange,
+    [updatePPEFilter]: clearFacilitiesDataOnFilterChange,
     [resetAllFilters]: clearFacilitiesDataOnFilterChange,
     [updateAllFilters]: clearFacilitiesDataOnFilterChange,
     [completeSubmitLogOut]: clearFacilitiesDataOnFilterChange,

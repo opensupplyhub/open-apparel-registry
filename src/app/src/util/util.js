@@ -140,6 +140,7 @@ export const createQueryStringFromSearchFilters = ({
     countries = [],
     combineContributors = '',
     boundary = {},
+    ppe = '',
 }) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
@@ -148,6 +149,7 @@ export const createQueryStringFromSearchFilters = ({
         countries: createCompactSortedQuerystringInputObject(countries),
         combine_contributors: combineContributors,
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
+        ppe,
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
@@ -192,6 +194,7 @@ export const createFiltersFromQueryString = (qs) => {
         countries = [],
         combine_contributors: combineContributors = '',
         boundary = '',
+        ppe = '',
     } = querystring.parse(qsToParse);
 
     return Object.freeze({
@@ -201,6 +204,7 @@ export const createFiltersFromQueryString = (qs) => {
         countries: createSelectOptionsFromParams(countries),
         combineContributors,
         boundary: isEmpty(boundary) ? null : JSON.parse(boundary),
+        ppe,
     });
 };
 
