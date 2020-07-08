@@ -549,6 +549,17 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'Pass a GeoJSON geometry to filter by '
                         'facilities within the boundaries of that geometry.')
                 ),
+                coreapi.Field(
+                    name='ppe',
+                    location='query',
+                    type='boolean',
+                    required=False,
+                    description=(
+                        'If "true" only facilities with PPE '
+                        'production details or PPE-specific contact '
+                        'information will be returned. Any other value will '
+                        'return all facilities.'),
+                ),
             ]
 
         if view.action == 'create':

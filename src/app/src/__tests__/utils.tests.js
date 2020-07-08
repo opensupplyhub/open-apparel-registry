@@ -246,12 +246,12 @@ it('creates a set of filters from a querystring', () => {
         countries: [],
         combineContributors: '',
         boundary: null,
+        ppe: '',
     };
 
-    expect(isEqual(
+    expect(
         createFiltersFromQueryString(contributorsString),
-        expectedContributorsMatch,
-    )).toBe(true);
+    ).toEqual(expectedContributorsMatch);
 
     const combinedContributorsString = '?contributors=1&contributors=2&combine_contributors=AND';
     const expectedCombinedContributorsMatch = {
@@ -270,12 +270,12 @@ it('creates a set of filters from a querystring', () => {
         countries: [],
         combineContributors: 'AND',
         boundary: null,
+        ppe: '',
     };
 
-    expect(isEqual(
+    expect(
         createFiltersFromQueryString(combinedContributorsString),
-        expectedCombinedContributorsMatch,
-    )).toBe(true);
+    ).toEqual(expectedCombinedContributorsMatch);
 
 
     const typesString = '?contributor_types=Union&contributor_types=Service Provider';
@@ -295,12 +295,12 @@ it('creates a set of filters from a querystring', () => {
         countries: [],
         combineContributors: '',
         boundary: null,
+        ppe: '',
     };
 
-    expect(isEqual(
+    expect(
         createFiltersFromQueryString(typesString),
-        expectedTypesMatch,
-    )).toBe(true);
+    ).toEqual(expectedTypesMatch);
 
     const countriesString = '?countries=US&countries=CN';
     const expectedCountriesMatch = {
@@ -319,12 +319,12 @@ it('creates a set of filters from a querystring', () => {
         ],
         combineContributors: '',
         boundary: null,
+        ppe: '',
     };
 
-    expect(isEqual(
+    expect(
         createFiltersFromQueryString(countriesString),
-        expectedCountriesMatch,
-    )).toBe(true);
+    ).toEqual(expectedCountriesMatch);
 
     const stringWithCountriesMissing = '?contributor_types=Union&countries=';
     const expectedMissingCountriesMatch = {
@@ -339,12 +339,27 @@ it('creates a set of filters from a querystring', () => {
         countries: [],
         combineContributors: '',
         boundary: null,
+        ppe: '',
     };
 
-    expect(isEqual(
+    expect(
         createFiltersFromQueryString(stringWithCountriesMissing),
-        expectedMissingCountriesMatch,
-    )).toBe(true);
+    ).toEqual(expectedMissingCountriesMatch);
+
+    const ppeString = '?ppe=true';
+    const expectedPPEMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+        combineContributors: '',
+        boundary: null,
+        ppe: 'true',
+    };
+
+    expect(
+        createFiltersFromQueryString(ppeString),
+    ).toEqual(expectedPPEMatch);
 });
 
 it('creates a facility detail link', () => {

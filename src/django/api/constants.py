@@ -30,6 +30,7 @@ class FacilitiesQueryParams:
     COUNTRIES = 'countries'
     COMBINE_CONTRIBUTORS = 'combine_contributors'
     BOUNDARY = 'boundary'
+    PPE = 'ppe'
 
 
 class FacilityListQueryParams:
