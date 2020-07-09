@@ -202,7 +202,12 @@ function FilterSidebarSearchTab({
                         htmlFor={FACILITIES}
                         className="form__label"
                     >
-                        Search a Facility Name or OAR ID
+                        <FeatureFlag
+                            flag="ppe"
+                            alternative="Search a Facility Name or OAR ID"
+                        >
+                              Search a Facility Name, OAR ID, or PPE Product Type
+                        </FeatureFlag>
                     </InputLabel>
                     <TextField
                         id={FACILITIES}

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add PPE-related model fields and API support [#1037](https://github.com/open-apparel-registry/open-apparel-registry/pull/1037)
 - Show PPE fields on facility detail and include in CSV downloads [#1041](https://github.com/open-apparel-registry/open-apparel-registry/pull/1041)
 - Add PPE filter checkbox to the facility search page [#1044](https://github.com/open-apparel-registry/open-apparel-registry/pull/1044)
+- Include PPE product types in free text query [#1045](https://github.com/open-apparel-registry/open-apparel-registry/pull/1045)
 
 ### Changed
 
