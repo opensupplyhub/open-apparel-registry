@@ -20,6 +20,15 @@ from api.constants import Affiliations, Certifications, FacilitiesQueryParams
 from api.helpers import prefix_a_an
 
 
+class ArrayLength(models.Func):
+    """
+    A Func subclass that can be used in a QuerySet.annotate() call to invoke
+    the Postgres cardinality function on an array field, which returns the
+    length of the array.
+    """
+    function = 'CARDINALITY'
+
+
 class Version(models.Model):
     """
     A table storing feature version numbers.
@@ -1069,6 +1078,15 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.BOUNDARY, None
         )
 
+        # The `ppe` query argument is defined as an optional boolean at the
+        # swagger level which is the built in field type option that most
+        # closely matches our desired behavior. Our intended use of the
+        # argument is conditionally "switch on" a special section of filter
+        # logic. To support that behavior we consider a missing value or any
+        # value than the string "true" to be `False`.
+        ppe = (True if params.get(FacilitiesQueryParams.PPE, '') == 'true'
+               else False)
+
         facilities_qs = Facility.objects.all()
 
         if free_text_query is not None:
@@ -1155,6 +1173,28 @@ class FacilityManager(models.Manager):
                 location__within=GEOSGeometry(boundary)
             )
 
+        if ppe:
+            # Include a facility if any of the PPE fields have a non-empty
+            # value.
+            # TODO: #1038 Remove the isnull checks after the fields are made
+            # non-null
+            facilities_qs = facilities_qs.annotate(
+                ppe_product_types_len=ArrayLength('ppe_product_types')
+            ).filter(
+                (Q(ppe_product_types__isnull=False)
+                 & Q(ppe_product_types_len__gt=0))
+                |
+                (Q(ppe_contact_phone__isnull=False)
+                 & ~Q(ppe_contact_phone=''))
+                |
+                (Q(ppe_contact_email__isnull=False)
+                 & ~Q(ppe_contact_email=''))
+                |
+                (Q(ppe_website__isnull=False)
+                 & ~Q(ppe_website=''))
+            )
+
+        print(facilities_qs.query)
         return facilities_qs
 
 
