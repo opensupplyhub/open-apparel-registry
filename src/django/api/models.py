@@ -12,6 +12,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.utils.dateformat import format
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
+from waffle import switch_is_active
 
 from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
@@ -1090,9 +1091,15 @@ class FacilityManager(models.Manager):
         facilities_qs = Facility.objects.all()
 
         if free_text_query is not None:
-            facilities_qs = facilities_qs \
-                .filter(Q(name__icontains=free_text_query) |
-                        Q(id__icontains=free_text_query))
+            if switch_is_active('ppe'):
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id__icontains=free_text_query) |
+                            Q(ppe_product_types__icontains=free_text_query))
+            else:
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id__icontains=free_text_query))
 
         # `name` is deprecated in favor of `q`. We keep `name` available for
         # backward compatibility.
