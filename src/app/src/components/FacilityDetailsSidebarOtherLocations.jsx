@@ -23,7 +23,7 @@ export default function FacilityDetailsSidebarOtherLocations({ data }) {
 
     return (
         <div className="control-panel__group">
-            <h1 className="control-panel__heading">Other locations</h1>
+            <h1 className="control-panel__heading">Other locations:</h1>
             <div className="control-panel__body">
                 <ul>
                     {map(data, location => (

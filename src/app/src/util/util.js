@@ -68,8 +68,8 @@ export const downloadListItemCSV = (list, items) =>
         `${list.id}_${list.name}_${(new Date()).toLocaleDateString()}.csv`,
     );
 
-export const downloadFacilitiesCSV = facilities =>
-    DownloadCSV(createFacilitiesCSV(facilities), 'facilities.csv');
+export const downloadFacilitiesCSV = (facilities, options) =>
+    DownloadCSV(createFacilitiesCSV(facilities, options), 'facilities.csv');
 
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
