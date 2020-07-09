@@ -494,7 +494,7 @@ def log_download(request):
 class FacilitiesAPIFilterBackend(BaseFilterBackend):
     def get_schema_fields(self, view):
         if view.action == 'list':
-            return [
+            fields = [
                 coreapi.Field(
                     name='q',
                     location='query',
@@ -549,18 +549,24 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'Pass a GeoJSON geometry to filter by '
                         'facilities within the boundaries of that geometry.')
                 ),
-                coreapi.Field(
-                    name='ppe',
-                    location='query',
-                    type='boolean',
-                    required=False,
-                    description=(
-                        'If "true" only facilities with PPE '
-                        'production details or PPE-specific contact '
-                        'information will be returned. Any other value will '
-                        'return all facilities.'),
-                ),
             ]
+
+            if switch_is_active('ppe'):
+                fields.append(
+                    coreapi.Field(
+                        name='ppe',
+                        location='query',
+                        type='boolean',
+                        required=False,
+                        description=(
+                            'If "true" only facilities with PPE '
+                            'production details or PPE-specific contact '
+                            'information will be returned. Any other value '
+                            'will return all facilities.'),
+                    )
+                )
+
+            return fields
 
         if view.action == 'create':
             return [
