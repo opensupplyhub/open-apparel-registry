@@ -112,6 +112,26 @@ class SourceAdmin(admin.ModelAdmin):
     readonly_fields = ('source_type', 'facility_list', 'create')
 
 
+class RequestLogAdmin(admin.ModelAdmin):
+    readonly_fields = ('user', 'token', 'method', 'path', 'response_code',
+                       'created_at')
+    actions = None
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def changeform_view(self, request, object_id=None, form_url='',
+                        extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['show_save_and_continue'] = False
+        extra_context['show_save'] = False
+        return super(RequestLogAdmin, self).changeform_view(
+            request, object_id, extra_context=extra_context)
+
+
 admin_site.register(models.Version)
 admin_site.register(models.User, OarUserAdmin)
 admin_site.register(models.Contributor, ContributorAdmin)
@@ -128,3 +148,4 @@ admin_site.register(Flag, FlagAdmin)
 admin_site.register(Sample, SampleAdmin)
 admin_site.register(Switch, SwitchAdmin)
 admin_site.register(Group)
+admin_site.register(models.RequestLog, RequestLogAdmin)

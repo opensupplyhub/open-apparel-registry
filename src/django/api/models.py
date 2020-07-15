@@ -1543,6 +1543,15 @@ class RequestLog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return '{} - {} - {} {} {} ({})'.format(
+            self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            self.user.email,
+            self.method,
+            self.path,
+            self.response_code,
+            self.id)
+
 
 class ProductType(models.Model):
     value = models.CharField(
