@@ -224,7 +224,7 @@ function FilterSidebarSearchTab({
                             htmlFor={PPE}
                             className="form__label"
                         >
-                            Only include PPE facilities
+                            Only show PPE facilities
                         </InputLabel>
                         <Checkbox
                             checked={!!ppe}
