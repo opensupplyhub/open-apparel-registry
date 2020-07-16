@@ -1113,6 +1113,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': match_started,
                 'error': True,
                 'message': str(e),
+                'trace': traceback.format_exc(),
                 'finished_at': str(datetime.utcnow())
             })
             item.save()
