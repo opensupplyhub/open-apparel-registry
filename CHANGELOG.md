@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Update PPE filter checkbox label / allow viewing RequestLog in the Django admin / log matching traceback [#1049](https://github.com/open-apparel-registry/open-apparel-registry/pull/1049)
+
 ### Deprecated
 
 ### Removed
