@@ -1,11 +1,13 @@
 import React from 'react';
 import pick from 'lodash/pick';
+import pickBy from 'lodash/pickBy';
+import identity from 'lodash/identity';
 import isEmpty from 'lodash/isEmpty';
 
 import { PPE_FIELD_NAMES } from '../util/constants';
 
 const FacilityDetailSidebarPPE = ({ properties }) => {
-    const ppeFields = pick(properties, PPE_FIELD_NAMES);
+    const ppeFields = pickBy(pick(properties, PPE_FIELD_NAMES), identity);
 
     return !isEmpty(ppeFields)
         ? (
