@@ -2834,6 +2834,10 @@ class FacilityMergeTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    ppe_product_types=['two_a', 'two_b'],
+                    ppe_contact_phone='222-222-2222',
+                    ppe_contact_email='ppe_two@example.com',
+                    ppe_website='https://example.com/ppe_two',
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source_2)
@@ -2843,6 +2847,10 @@ class FacilityMergeTest(APITestCase):
             .create(name='Name',
                     address='Address',
                     country_code='US',
+                    ppe_product_types=self.list_item_2.ppe_product_types,
+                    ppe_contact_phone=self.list_item_2.ppe_contact_phone,
+                    ppe_contact_email=self.list_item_2.ppe_contact_email,
+                    ppe_website=self.list_item_2.ppe_website,
                     location=Point(0, 0),
                     created_from=self.list_item_2)
 
@@ -2916,6 +2924,16 @@ class FacilityMergeTest(APITestCase):
             self.assertIn(alias.oar_id,
                           (self.facility_2.id, self.existing_alias.oar_id))
             self.assertEqual(FacilityAlias.MERGE, alias.reason)
+
+        # The PPE fields should have been copied
+        self.assertEqual(self.list_item_2.ppe_product_types,
+                         self.facility_1.ppe_product_types)
+        self.assertEqual(self.list_item_2.ppe_contact_phone,
+                         self.facility_1.ppe_contact_phone)
+        self.assertEqual(self.list_item_2.ppe_contact_email,
+                         self.facility_1.ppe_contact_email)
+        self.assertEqual(self.list_item_2.ppe_website,
+                         self.facility_1.ppe_website)
 
     def test_required_params(self):
         self.client.login(email=self.superuser_email,
@@ -3010,6 +3028,10 @@ class FacilitySplitTest(APITestCase):
                     address='Address',
                     country_code='US',
                     location=Point(0, 0),
+                    ppe_product_types=['two_a', 'two_b'],
+                    ppe_contact_phone='222-222-2222',
+                    ppe_contact_email='ppe_two@example.com',
+                    ppe_website='https://example.com/ppe_two',
                     created_from=self.list_item_one)
 
         self.match_one = FacilityMatch \
@@ -3048,6 +3070,10 @@ class FacilitySplitTest(APITestCase):
                     country_code='US',
                     row_index=1,
                     geocoded_point=Point(0, 0),
+                    ppe_product_types=['two_a', 'two_b'],
+                    ppe_contact_phone='222-222-2222',
+                    ppe_contact_email='ppe_two@example.com',
+                    ppe_website='https://example.com/ppe_two',
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source_two)
 
@@ -3164,6 +3190,23 @@ class FacilitySplitTest(APITestCase):
             self.match_two.facility.id,
             data['new_oar_id'],
         )
+
+    def test_post_reverts_ppe_data(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url,
+                                         {'match_id': self.match_two.id})
+        self.assertEqual(post_response.status_code, 200)
+
+        self.facility_one.refresh_from_db()
+        self.assertEqual(self.facility_one.created_from.ppe_product_types,
+                         self.facility_one.ppe_product_types)
+        self.assertEqual(self.facility_one.created_from.ppe_contact_phone,
+                         self.facility_one.ppe_contact_phone)
+        self.assertEqual(self.facility_one.created_from.ppe_contact_email,
+                         self.facility_one.ppe_contact_email)
+        self.assertEqual(self.facility_one.created_from.ppe_website,
+                         self.facility_one.ppe_website)
 
 
 class FacilityMatchPromoteTest(APITestCase):
