@@ -1,6 +1,9 @@
 import json
+import numpy as np
 import os
 import xlrd
+
+from datetime import datetime
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -28,7 +31,8 @@ from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
-                            reduce_matches, is_string_match)
+                            reduce_matches, is_string_match,
+                            save_match_details)
 from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
@@ -5618,3 +5622,192 @@ class ContributorTypesTest(FacilityAPITestCaseBase):
         self.list_item.status = FacilityListItem.GEOCODED
         self.list_item.save()
         self.fetch_and_assert_all_counts_are_zero()
+
+
+class PPEFieldTest(TestCase):
+    def setUp(self):
+        self.email_one = 'one@example.com'
+        self.email_two = 'two@example.com'
+        self.user_one = User.objects.create(email=self.email_one)
+        self.user_two = User.objects.create(email=self.email_two)
+
+        self.contrib_one = Contributor \
+            .objects \
+            .create(admin=self.user_one,
+                    name='contributor one',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_two = Contributor \
+            .objects \
+            .create(admin=self.user_two,
+                    name='contributor two',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_one = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='list_one')
+
+        self.list_two = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='list_two')
+
+        self.source_one = Source \
+            .objects \
+            .create(facility_list=self.list_one,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_one)
+
+        self.source_two = Source \
+            .objects \
+            .create(facility_list=self.list_two,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    create=True,
+                    contributor=self.contrib_two)
+
+        self.list_item_one = FacilityListItem \
+            .objects \
+            .create(name='name',
+                    address='address',
+                    country_code='US',
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_one)
+
+        self.list_item_two = FacilityListItem \
+            .objects \
+            .create(name='name',
+                    address='address',
+                    country_code='US',
+                    ppe_product_types=['Masks_Two', 'Gloves_Two'],
+                    ppe_contact_phone='222-222-2222',
+                    ppe_contact_email='two@example.com',
+                    ppe_website='http://example.com/two',
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_two)
+
+        self.facility = Facility \
+            .objects \
+            .create(name='name',
+                    address='address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=self.list_item_one)
+
+        self.facility_match_one = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    results="",
+                    facility_list_item=self.list_item_one)
+
+    def make_match_results(self, list_item_id, facility_id, score):
+        return {
+            'processed_list_item_ids': [list_item_id],
+            'item_matches': {
+                list_item_id: [(facility_id, np.float32(score))]
+            },
+            'results': {
+                'gazetteer_threshold': 50,
+                'automatic_threshold': 80,
+                'recall_weight': 0.5,
+                'code_version': 'abcd1234',
+            },
+            'started': str(datetime.utcnow()),
+            'finished': str(datetime.utcnow()),
+        }
+
+    def test_match_populates_ppe(self):
+        results = self.make_match_results(self.list_item_two.id,
+                                          self.facility.id, 100)
+        save_match_details(results)
+        self.facility.refresh_from_db()
+
+        self.assertEqual(self.list_item_two.ppe_product_types,
+                         self.facility.ppe_product_types)
+        self.assertEqual(self.list_item_two.ppe_contact_phone,
+                         self.facility.ppe_contact_phone)
+        self.assertEqual(self.list_item_two.ppe_contact_email,
+                         self.facility.ppe_contact_email)
+        self.assertEqual(self.list_item_two.ppe_website,
+                         self.facility.ppe_website)
+
+    def test_match_does_not_overwrite_ppe_product_types(self):
+        self.facility.ppe_product_types = ['TEST']
+        self.facility.save()
+
+        results = self.make_match_results(self.list_item_two.id,
+                                          self.facility.id, 100)
+        save_match_details(results)
+        self.facility.refresh_from_db()
+
+        self.assertEqual(['TEST'],
+                         self.facility.ppe_product_types)
+        self.assertEqual(self.list_item_two.ppe_contact_phone,
+                         self.facility.ppe_contact_phone)
+        self.assertEqual(self.list_item_two.ppe_contact_email,
+                         self.facility.ppe_contact_email)
+        self.assertEqual(self.list_item_two.ppe_website,
+                         self.facility.ppe_website)
+
+    def test_match_does_not_overwrite_ppe_contact_phone(self):
+        self.facility.ppe_contact_phone = 'ttt-ttt-tttt'
+        self.facility.save()
+
+        results = self.make_match_results(self.list_item_two.id,
+                                          self.facility.id, 100)
+        save_match_details(results)
+        self.facility.refresh_from_db()
+
+        self.assertEqual(self.list_item_two.ppe_product_types,
+                         self.facility.ppe_product_types)
+        self.assertEqual('ttt-ttt-tttt',
+                         self.facility.ppe_contact_phone)
+        self.assertEqual(self.list_item_two.ppe_contact_email,
+                         self.facility.ppe_contact_email)
+        self.assertEqual(self.list_item_two.ppe_website,
+                         self.facility.ppe_website)
+
+    def test_match_does_not_overwrite_ppe_contact_email(self):
+        self.facility.ppe_contact_email = 'TTT@TT.COM'
+        self.facility.save()
+
+        results = self.make_match_results(self.list_item_two.id,
+                                          self.facility.id, 100)
+        save_match_details(results)
+        self.facility.refresh_from_db()
+
+        self.assertEqual(self.list_item_two.ppe_product_types,
+                         self.facility.ppe_product_types)
+        self.assertEqual(self.list_item_two.ppe_contact_phone,
+                         self.facility.ppe_contact_phone)
+        self.assertEqual('TTT@TT.COM',
+                         self.facility.ppe_contact_email)
+        self.assertEqual(self.list_item_two.ppe_website,
+                         self.facility.ppe_website)
+
+    def test_match_does_not_overwrite_ppe_website(self):
+        self.facility.ppe_website = 'HTTP://TEST.COM'
+        self.facility.save()
+
+        results = self.make_match_results(self.list_item_two.id,
+                                          self.facility.id, 100)
+        save_match_details(results)
+        self.facility.refresh_from_db()
+
+        self.assertEqual(self.list_item_two.ppe_product_types,
+                         self.facility.ppe_product_types)
+        self.assertEqual(self.list_item_two.ppe_contact_phone,
+                         self.facility.ppe_contact_phone)
+        self.assertEqual(self.list_item_two.ppe_contact_email,
+                         self.facility.ppe_contact_email)
+        self.assertEqual('HTTP://TEST.COM',
+                         self.facility.ppe_website)
