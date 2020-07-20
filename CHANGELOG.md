@@ -13,10 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Show PPE fields on facility detail and include in CSV downloads [#1041](https://github.com/open-apparel-registry/open-apparel-registry/pull/1041)
 - Add PPE filter checkbox to the facility search page [#1044](https://github.com/open-apparel-registry/open-apparel-registry/pull/1044)
 - Include PPE product types in free text query [#1045](https://github.com/open-apparel-registry/open-apparel-registry/pull/1045)
+- Update PPE filter checkbox label / allow viewing RequestLog in the Django admin / log matching traceback [#1049](https://github.com/open-apparel-registry/open-apparel-registry/pull/1049)
+- Update PPE fields when matching, splitting, and merging [#1055](https://github.com/open-apparel-registry/open-apparel-registry/pull/1055)
 
 ### Changed
-
-- Update PPE filter checkbox label / allow viewing RequestLog in the Django admin / log matching traceback [#1049](https://github.com/open-apparel-registry/open-apparel-registry/pull/1049)
 
 ### Deprecated
 

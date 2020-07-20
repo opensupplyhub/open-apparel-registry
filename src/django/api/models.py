@@ -405,6 +405,25 @@ class PPEMixin(models.Model):
         verbose_name='ppe website',
         help_text='The website for PPE information')
 
+    @property
+    def has_ppe_product_types(self):
+        return (self.ppe_product_types is not None
+                and self.ppe_product_types != [])
+
+    @property
+    def has_ppe_contact_phone(self):
+        return (self.ppe_contact_phone is not None
+                and self.ppe_contact_phone != '')
+
+    @property
+    def has_ppe_contact_email(self):
+        return (self.ppe_contact_email is not None
+                and self.ppe_contact_email != '')
+
+    @property
+    def has_ppe_website(self):
+        return (self.ppe_website is not None and self.ppe_website != '')
+
 
 class FacilityListItem(PPEMixin):
     """

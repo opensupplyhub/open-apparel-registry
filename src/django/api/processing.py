@@ -361,6 +361,38 @@ def save_match_details(match_results):
         if item.source.create:
             for m in matches:
                 m.save()
+                if m.status == FacilityMatch.AUTOMATIC:
+                    should_update_ppe_product_types = (
+                        item.has_ppe_product_types
+                        and not m.facility.has_ppe_product_types)
+                    if should_update_ppe_product_types:
+                        m.facility.ppe_product_types = item.ppe_product_types
+
+                    should_update_ppe_contact_phone = (
+                        item.has_ppe_contact_phone
+                        and not m.facility.has_ppe_contact_phone)
+                    if should_update_ppe_contact_phone:
+                        m.facility.ppe_contact_phone = item.ppe_contact_phone
+
+                    should_update_ppe_contact_email = (
+                        item.has_ppe_contact_email
+                        and not m.facility.has_ppe_contact_email)
+                    if should_update_ppe_contact_email:
+                        m.facility.ppe_contact_email = item.ppe_contact_email
+
+                    should_update_ppe_website = (
+                        item.has_ppe_website
+                        and not m.facility.has_ppe_website)
+                    if should_update_ppe_website:
+                        m.facility.ppe_website = item.ppe_website
+
+                    should_save_facility = (
+                        should_update_ppe_product_types
+                        or should_update_ppe_contact_phone
+                        or should_update_ppe_contact_email
+                        or should_update_ppe_website)
+                    if should_save_facility:
+                        m.facility.save()
 
         all_matches.extend(matches)
 

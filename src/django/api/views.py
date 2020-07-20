@@ -1464,6 +1464,34 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         target = Facility.objects.get(id=target_id)
         merge = Facility.objects.get(id=merge_id)
 
+        should_update_ppe_product_types = \
+            merge.has_ppe_product_types and not target.has_ppe_product_types
+        if (should_update_ppe_product_types):
+            target.ppe_product_types = merge.ppe_product_types
+
+        should_update_ppe_contact_phone = \
+            merge.has_ppe_contact_phone and not target.has_ppe_contact_phone
+        if (should_update_ppe_contact_phone):
+            target.ppe_contact_phone = merge.ppe_contact_phone
+
+        should_update_ppe_contact_email = \
+            merge.has_ppe_contact_email and not target.has_ppe_contact_email
+        if (should_update_ppe_contact_email):
+            target.ppe_contact_email = merge.ppe_contact_email
+
+        should_update_ppe_website = \
+            merge.has_ppe_website and not target.has_ppe_website
+        if (should_update_ppe_website):
+            target.ppe_website = merge.ppe_website
+
+        should_save_target = (
+            should_update_ppe_website
+            or should_update_ppe_contact_phone
+            or should_update_ppe_contact_email
+            or should_update_ppe_website)
+        if should_save_target:
+            target.save()
+
         now = str(datetime.utcnow())
         for merge_match in merge.facilitymatch_set.all():
             merge_match.facility = target
@@ -1560,17 +1588,22 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 .objects \
                 .get(pk=match_id)
 
-            old_facility_id = match_for_new_facility.facility.id
+            old_facility = match_for_new_facility.facility
 
             list_item_for_match = match_for_new_facility.facility_list_item
 
             new_facility = Facility \
                 .objects \
-                .create(name=list_item_for_match.name,
-                        address=list_item_for_match.address,
-                        country_code=list_item_for_match.country_code,
-                        location=list_item_for_match.geocoded_point,
-                        created_from=list_item_for_match)
+                .create(
+                    name=list_item_for_match.name,
+                    address=list_item_for_match.address,
+                    country_code=list_item_for_match.country_code,
+                    location=list_item_for_match.geocoded_point,
+                    ppe_product_types=list_item_for_match.ppe_product_types,
+                    ppe_contact_phone=list_item_for_match.ppe_contact_phone,
+                    ppe_contact_email=list_item_for_match.ppe_contact_email,
+                    ppe_website=list_item_for_match.ppe_website,
+                    created_from=list_item_for_match)
 
             match_for_new_facility.facility = new_facility
             match_for_new_facility.confidence = 1.0
@@ -1590,10 +1623,34 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
-                'previous_facility_oar_id': old_facility_id,
+                'previous_facility_oar_id': old_facility.id,
             })
 
             list_item_for_match.save()
+
+            # If the list item being split has PPE data, restore the PPE data
+            # on the Facility to the values copied from the original line item
+            # that created the facility.
+            if list_item_for_match.has_ppe_product_types:
+                old_facility.ppe_product_types = \
+                    old_facility.created_from.ppe_product_types
+            if list_item_for_match.has_ppe_contact_phone:
+                old_facility.ppe_contact_phone = \
+                    old_facility.created_from.ppe_contact_phone
+            if list_item_for_match.has_ppe_contact_email:
+                old_facility.ppe_contact_email = \
+                    old_facility.created_from.ppe_contact_email
+            if list_item_for_match.has_ppe_website:
+                old_facility.ppe_website = \
+                    old_facility.created_from.ppe_website
+
+            should_save_old_facility = (
+                list_item_for_match.has_ppe_product_types
+                or list_item_for_match.has_ppe_contact_phone
+                or list_item_for_match.has_ppe_contact_email
+                or list_item_for_match.has_ppe_website)
+            if should_save_old_facility:
+                old_facility.save()
 
             return Response({
                 'match_id': match_for_new_facility.id,
