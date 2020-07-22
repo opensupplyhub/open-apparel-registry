@@ -68,7 +68,6 @@ const FACILITIES = 'FACILITIES';
 const CONTRIBUTORS = 'CONTRIBUTORS';
 const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const COUNTRIES = 'COUNTRIES';
-const PPE = 'PPE';
 
 function FilterSidebarSearchTab({
     contributorOptions,
@@ -98,6 +97,8 @@ function FilterSidebarSearchTab({
     updatePPE,
 }) {
     const [contributorPopoverAnchorEl, setContributorPopoverAnchorEl] =
+          useState(null);
+    const [ppePopoverAnchorEl, setPpePopoverAnchorEl] =
           useState(null);
 
     if (fetchingOptions) {
@@ -174,6 +175,15 @@ function FilterSidebarSearchTab({
         </div>
     );
 
+    const ppeInfoPopoverContent = (
+        <div style={styles.popover}>
+            <p>
+                Personal protective equipment (PPE) includes masks, gloves,
+                gowns, visors and other equipment.
+            </p>
+        </div>
+    );
+
     const boundaryButton = boundary == null ? (
         <Button
             variant="outlined"
@@ -225,18 +235,42 @@ function FilterSidebarSearchTab({
                 </div>
                 <FeatureFlag flag="ppe">
                     <div className="form__field" style={{ marginBottom: '16px' }}>
-                        <InputLabel
-                            htmlFor={PPE}
-                            className="form__label"
-                        >
-                            Only show PPE facilities
-                        </InputLabel>
-                        <Checkbox
-                            checked={!!ppe}
-                            onChange={updatePPE}
-                            color="primary"
-                            value={ppe}
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={!!ppe}
+                                    onChange={updatePPE}
+                                    color="primary"
+                                    value={ppe}
+                                />
+                            }
+                            label="Show only PPE facilities"
                         />
+                        <IconButton onClick={
+                            // eslint-disable-next-line no-confusing-arrow
+                            e => ppePopoverAnchorEl
+                                ? null
+                                :
+                                setPpePopoverAnchorEl(e.currentTarget)}
+                        >
+                            <InfoIcon />
+                        </IconButton>
+                        <Popover
+                            id="ppe-info-popover"
+                            anchorOrigin={{
+                                vertical: 'center',
+                                horizontal: 'right',
+                            }}
+                            transformOrigin={{
+                                vertical: 'center',
+                                horizontal: 'left',
+                            }}
+                            open={!!ppePopoverAnchorEl}
+                            anchorEl={ppePopoverAnchorEl}
+                            onClick={() => setPpePopoverAnchorEl(null)}
+                        >
+                            {ppeInfoPopoverContent}
+                        </Popover>
                     </div>
                 </FeatureFlag>
                 <div className="form__field">
