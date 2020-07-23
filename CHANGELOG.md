@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Use popovers for help text and match PPE checkbox style to contributor overlap [#1059](https://github.com/open-apparel-registry/open-apparel-registry/pull/1059)
+
 ### Deprecated
 
 ### Removed
