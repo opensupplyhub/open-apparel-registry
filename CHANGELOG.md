@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.26.1] - 2020-07-28
+
+- Log stack trace of exception raised during single item matching [95e27f2](https://github.com/open-apparel-registry/open-apparel-registry/commit/95e27f201618ad8cb6c652325eeeae6169cd4974)
+
 ## [2.26.0] - 2020-06-25
 
 ### Added
@@ -411,7 +415,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.26.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.26.1...HEAD
+[2.26.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.1
 [2.26.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.0
 [2.25.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.25.0
 [2.24.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.24.0
