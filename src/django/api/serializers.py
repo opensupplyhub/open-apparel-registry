@@ -16,7 +16,8 @@ from rest_framework.serializers import (CharField,
                                         ModelSerializer,
                                         SerializerMethodField,
                                         ValidationError,
-                                        Serializer)
+                                        Serializer,
+                                        URLField)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_auth.serializers import (PasswordResetSerializer,
                                    PasswordResetConfirmSerializer)
@@ -389,6 +390,7 @@ class FacilityQueryParamsSerializer(Serializer):
     page = IntegerField(required=False)
     pageSize = IntegerField(required=False)
     boundary = CharField(required=False)
+    ppe = BooleanField(default=False, required=False)
 
 
 class FacilityListQueryParamsSerializer(Serializer):
@@ -421,7 +423,9 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
-                  'oar_id', 'country_name', 'contributors')
+                  'oar_id', 'country_name', 'contributors',
+                  'ppe_product_types', 'ppe_contact_phone',
+                  'ppe_contact_email', 'ppe_website')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -465,7 +469,9 @@ class FacilityDetailsSerializer(FacilitySerializer):
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
-                  'country_name', 'claim_info', 'other_locations')
+                  'country_name', 'claim_info', 'other_locations',
+                  'ppe_product_types', 'ppe_contact_phone',
+                  'ppe_contact_email', 'ppe_website')
         geo_field = 'location'
 
     def get_other_names(self, facility):
@@ -573,6 +579,11 @@ class FacilityCreateBodySerializer(Serializer):
     country = CharField(required=True)
     name = CharField(required=True, max_length=200)
     address = CharField(required=True, max_length=200)
+    ppe_product_types = ListField(
+        required=False, child=CharField(required=True, max_length=50))
+    ppe_contact_phone = CharField(required=False, max_length=20)
+    ppe_contact_email = CharField(required=False)
+    ppe_website = URLField(required=False)
 
     def validate_country(self, value):
         try:

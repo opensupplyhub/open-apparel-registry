@@ -24,6 +24,7 @@ function processfixtures() {
 function enableswitches() {
     ./scripts/manage waffle_switch vector_tile on
     ./scripts/manage waffle_switch claim_a_facility on
+    ./scripts/manage waffle_switch ppe on
 }
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then

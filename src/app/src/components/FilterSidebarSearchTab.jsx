@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -9,11 +9,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-import Tooltip from '@material-ui/core/Tooltip';
+import Popover from '@material-ui/core/Popover';
 import ReactSelect from 'react-select';
 import get from 'lodash/get';
 
 import ShowOnly from './ShowOnly';
+import FeatureFlag from './FeatureFlag';
 
 import {
     updateFacilityFreeTextQueryFilter,
@@ -22,6 +23,7 @@ import {
     updateCountryFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
+    updatePPEFilter,
     resetAllFilters,
 } from '../actions/filters';
 
@@ -91,7 +93,14 @@ function FilterSidebarSearchTab({
     activateDrawFilter,
     clearDrawFilter,
     boundary,
+    ppe,
+    updatePPE,
 }) {
+    const [contributorPopoverAnchorEl, setContributorPopoverAnchorEl] =
+          useState(null);
+    const [ppePopoverAnchorEl, setPpePopoverAnchorEl] =
+          useState(null);
+
     if (fetchingOptions) {
         return (
             <div className="control-panel__content">
@@ -123,28 +132,30 @@ function FilterSidebarSearchTab({
     })();
 
     const styles = {
-        tooltip: {
-            fontSize: '18px',
+        popover: {
+            fontSize: '15px',
             padding: '10px',
             lineHeight: '22px',
+            maxWidth: '320px',
+            margin: '0 14px',
         },
-        tooltipLineItem: {
+        popoverLineItem: {
             marginBottom: '6px',
         },
-        tooltipHeading: {
+        popoverHeading: {
             fontWeight: 'bold',
         },
     };
 
-    const tooltipTitle = (
-        <div style={styles.tooltip}>
-            <p style={styles.tooltipHeading}>
+    const contributorInfoPopoverContent = (
+        <div style={styles.popover}>
+            <p style={styles.popoverHeading}>
                 Do you want to see only facilities which these contributors
                 share? If so, tick this box.
             </p>
             <p>There are now two ways to filter a Contributor search on the OAR:</p>
             <ol>
-                <li style={styles.tooltipLineItem}>
+                <li style={styles.popoverLineItem}>
                     You can search for all the facilities of multiple
                     contributors. This means that the results would show all of
                     the facilities contributed to the OAR by, for example, BRAC
@@ -152,7 +163,7 @@ function FilterSidebarSearchTab({
                     contributed by BRAC University but not by Clarks, or
                     vice-versa.
                 </li>
-                <li style={styles.tooltipLineItem}>
+                <li style={styles.popoverLineItem}>
                     By checking the “Show only shared facilities” box, this
                     adjusts the search logic to “AND”. This means that your
                     results will show only facilities contributed by BOTH BRAC
@@ -161,6 +172,15 @@ function FilterSidebarSearchTab({
                     show the specific Contributor overlap you are interested in.
                 </li>
             </ol>
+        </div>
+    );
+
+    const ppeInfoPopoverContent = (
+        <div style={styles.popover}>
+            <p>
+                Personal protective equipment (PPE) includes masks, gloves,
+                gowns, visors and other equipment.
+            </p>
         </div>
     );
 
@@ -192,12 +212,17 @@ function FilterSidebarSearchTab({
             style={filterSidebarStyles.controlPanelContentStyles}
         >
             <div>
-                <div className="form__field">
+                <div className="form__field" style={{ marginBottom: '10px' }}>
                     <InputLabel
                         htmlFor={FACILITIES}
                         className="form__label"
                     >
-                        Search a Facility Name or OAR ID
+                        <FeatureFlag
+                            flag="ppe"
+                            alternative="Search a Facility Name or OAR ID"
+                        >
+                              Search a Facility Name, OAR ID, or PPE Product Type
+                        </FeatureFlag>
                     </InputLabel>
                     <TextField
                         id={FACILITIES}
@@ -208,6 +233,46 @@ function FilterSidebarSearchTab({
                         onKeyPress={submitFormOnEnterKeyPress}
                     />
                 </div>
+                <FeatureFlag flag="ppe">
+                    <div className="form__field" style={{ marginBottom: '16px' }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={!!ppe}
+                                    onChange={updatePPE}
+                                    color="primary"
+                                    value={ppe}
+                                />
+                            }
+                            label="Show only PPE facilities"
+                        />
+                        <IconButton onClick={
+                            // eslint-disable-next-line no-confusing-arrow
+                            e => ppePopoverAnchorEl
+                                ? null
+                                :
+                                setPpePopoverAnchorEl(e.currentTarget)}
+                        >
+                            <InfoIcon />
+                        </IconButton>
+                        <Popover
+                            id="ppe-info-popover"
+                            anchorOrigin={{
+                                vertical: 'center',
+                                horizontal: 'right',
+                            }}
+                            transformOrigin={{
+                                vertical: 'center',
+                                horizontal: 'left',
+                            }}
+                            open={!!ppePopoverAnchorEl}
+                            anchorEl={ppePopoverAnchorEl}
+                            onClick={() => setPpePopoverAnchorEl(null)}
+                        >
+                            {ppeInfoPopoverContent}
+                        </Popover>
+                    </div>
+                </FeatureFlag>
                 <div className="form__field">
                     <InputLabel
                         shrink={false}
@@ -239,11 +304,31 @@ function FilterSidebarSearchTab({
                             }
                             label="Show only shared facilities"
                         />
-                        <Tooltip title={tooltipTitle} placement="right">
-                            <IconButton>
-                                <InfoIcon />
-                            </IconButton>
-                        </Tooltip>
+                        <IconButton onClick={
+                            // eslint-disable-next-line no-confusing-arrow
+                            e => contributorPopoverAnchorEl
+                                ? null
+                                :
+                                setContributorPopoverAnchorEl(e.currentTarget)}
+                        >
+                            <InfoIcon />
+                        </IconButton>
+                        <Popover
+                            id="contributor-info-popover"
+                            anchorOrigin={{
+                                vertical: 'center',
+                                horizontal: 'right',
+                            }}
+                            transformOrigin={{
+                                vertical: 'center',
+                                horizontal: 'left',
+                            }}
+                            open={!!contributorPopoverAnchorEl}
+                            anchorEl={contributorPopoverAnchorEl}
+                            onClick={() => setContributorPopoverAnchorEl(null)}
+                        >
+                            {contributorInfoPopoverContent}
+                        </Popover>
                     </ShowOnly>
                 </div>
                 <div className="form__field">
@@ -357,12 +442,14 @@ FilterSidebarSearchTab.propTypes = {
     updateContributor: func.isRequired,
     updateContributorType: func.isRequired,
     updateCountry: func.isRequired,
+    updatePPE: func.isRequired,
     updateCombineContributors: func.isRequired,
     facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
     combineContributors: string.isRequired,
+    ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
     facilities: facilityCollectionPropType,
@@ -392,6 +479,7 @@ function mapStateToProps({
         countries,
         combineContributors,
         boundary,
+        ppe,
     },
     facilities: {
         facilities: {
@@ -416,6 +504,7 @@ function mapStateToProps({
         fetchingFacilities,
         facilities,
         boundary,
+        ppe,
         fetchingOptions: fetchingContributors
             || fetchingContributorTypes
             || fetchingCountries,
@@ -438,6 +527,9 @@ function mapDispatchToProps(dispatch, {
         },
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
+        updatePPE: e => dispatch(updatePPEFilter(
+            e.target.checked ? 'true' : '',
+        )),
         updateCombineContributors: e => dispatch(
             updateCombineContributorsFilterOption(e.target.checked ? 'AND' : ''),
         ),

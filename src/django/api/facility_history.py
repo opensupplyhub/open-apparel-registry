@@ -135,6 +135,13 @@ def create_geojson_diff_for_location_change(entry):
     }
 
 
+def describe_change_value(field_name, value):
+    if field_name == 'ppe_product_types' and value:
+        import json
+        return json.loads(value)
+    return value
+
+
 def get_change_diff_for_history_entry(entry):
     if entry.prev_record is None:
         return {}
@@ -145,8 +152,8 @@ def get_change_diff_for_history_entry(entry):
     for change in delta.changes:
         if change.field not in ['created_at', 'updated_at']:
             changes[change.field] = {
-                'old': change.old,
-                'new': change.new,
+                'old': describe_change_value(change.field, change.old),
+                'new': describe_change_value(change.field, change.new),
             }
 
     return changes

@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
-import flow from 'lodash/flow';
+import isArray from 'lodash/isArray';
 
 import { joinDataIntoCSVString } from './util';
+import { PPE_FIELD_NAMES } from './constants';
 
 export const csvHeaders = Object.freeze([
     'oar_id',
@@ -14,35 +15,62 @@ export const csvHeaders = Object.freeze([
     'contributors',
 ]);
 
-export const createFacilityRowFromFeature = ({
-    properties: {
+export const createFacilityRowFromFeature = (feature, options) => {
+    const {
+        properties: {
+            name,
+            address,
+            country_code,
+            country_name,
+            oar_id,
+            contributors,
+        },
+        geometry: {
+            coordinates: [
+                lng,
+                lat,
+            ],
+        },
+    } = feature;
+
+    const ppeFields = options && options.includePPEFields
+        ? PPE_FIELD_NAMES.map(
+            f => isArray(feature.properties[f]) /* eslint-disable-line no-confusing-arrow */
+
+                ? feature.properties[f].join('|')
+                : feature.properties[f],
+        )
+        : [];
+
+    return Object.freeze([
+        oar_id,
         name,
         address,
         country_code,
         country_name,
-        oar_id,
-        contributors,
-    },
-    geometry: {
-        coordinates: [
-            lng,
-            lat,
-        ],
-    },
-}) => Object.freeze([
-    oar_id,
-    name,
-    address,
-    country_code,
-    country_name,
-    lat,
-    lng,
-    contributors ? contributors.map(c => c.name).join('|') : '',
-]);
+        lat,
+        lng,
+        contributors ? contributors.map(c => c.name).join('|') : '',
+    ].concat(ppeFields));
+};
 
-export const facilityReducer = (acc, next) =>
-    acc.concat([createFacilityRowFromFeature(next)]);
+export const makeFacilityReducer = options => (acc, next) =>
+    acc.concat([createFacilityRowFromFeature(next, options)]);
 
-export const formatDataForCSV = facilities => facilities.reduce(facilityReducer, [csvHeaders]);
+export const makeHeaderRow = options =>
+    [
+        options && options.includePPEFields
+            ? csvHeaders.concat(PPE_FIELD_NAMES)
+            : csvHeaders,
+    ];
 
-export const createFacilitiesCSV = flow(formatDataForCSV, data => joinDataIntoCSVString(data));
+export const formatDataForCSV = (facilities, options = {}) =>
+    facilities.reduce(
+        makeFacilityReducer(options),
+        makeHeaderRow(options),
+    );
+
+export const createFacilitiesCSV = (facilities, options = {}) => {
+    const data = formatDataForCSV(facilities, options);
+    return joinDataIntoCSVString(data);
+};

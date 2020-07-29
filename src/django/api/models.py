@@ -12,12 +12,22 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.utils.dateformat import format
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
+from waffle import switch_is_active
 
 from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
 from api.constants import Affiliations, Certifications, FacilitiesQueryParams
 from api.helpers import prefix_a_an
+
+
+class ArrayLength(models.Func):
+    """
+    A Func subclass that can be used in a QuerySet.annotate() call to invoke
+    the Postgres cardinality function on an array field, which returns the
+    length of the array.
+    """
+    function = 'CARDINALITY'
 
 
 class Version(models.Model):
@@ -360,7 +370,62 @@ class FacilityList(models.Model):
             return '{0} [NO SOURCE] ({1})'.format(self.name, self.id)
 
 
-class FacilityListItem(models.Model):
+class PPEMixin(models.Model):
+    class Meta:
+        abstract = True
+
+    ppe_product_types = postgres.ArrayField(
+        models.CharField(
+            null=False,
+            blank=False,
+            max_length=50,
+            help_text=('A type of personal protective equipment produced at '
+                       'the facility'),
+            verbose_name='ppe product type',
+        ),
+        null=True,
+        blank=True,
+        help_text=('The types of personal protective equipment produced at '
+                   'the facility'),
+        verbose_name='ppe product types')
+    ppe_contact_email = models.EmailField(
+        null=True,
+        blank=True,
+        verbose_name='ppe contact email',
+        help_text='The contact email for PPE-related discussion')
+    ppe_contact_phone = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        verbose_name='ppe contact phone',
+        help_text='The contact phone number for PPE-related discussion')
+    ppe_website = models.URLField(
+        null=True,
+        blank=True,
+        verbose_name='ppe website',
+        help_text='The website for PPE information')
+
+    @property
+    def has_ppe_product_types(self):
+        return (self.ppe_product_types is not None
+                and self.ppe_product_types != [])
+
+    @property
+    def has_ppe_contact_phone(self):
+        return (self.ppe_contact_phone is not None
+                and self.ppe_contact_phone != '')
+
+    @property
+    def has_ppe_contact_email(self):
+        return (self.ppe_contact_email is not None
+                and self.ppe_contact_email != '')
+
+    @property
+    def has_ppe_website(self):
+        return (self.ppe_website is not None and self.ppe_website != '')
+
+
+class FacilityListItem(PPEMixin):
     """
     Data, metadata, and workflow status and results for a single line from a
     facility list file.
@@ -1033,12 +1098,27 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.BOUNDARY, None
         )
 
+        # The `ppe` query argument is defined as an optional boolean at the
+        # swagger level which is the built in field type option that most
+        # closely matches our desired behavior. Our intended use of the
+        # argument is conditionally "switch on" a special section of filter
+        # logic. To support that behavior we consider a missing value or any
+        # value than the string "true" to be `False`.
+        ppe = (True if params.get(FacilitiesQueryParams.PPE, '') == 'true'
+               else False)
+
         facilities_qs = Facility.objects.all()
 
         if free_text_query is not None:
-            facilities_qs = facilities_qs \
-                .filter(Q(name__icontains=free_text_query) |
-                        Q(id__icontains=free_text_query))
+            if switch_is_active('ppe'):
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id__icontains=free_text_query) |
+                            Q(ppe_product_types__icontains=free_text_query))
+            else:
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id__icontains=free_text_query))
 
         # `name` is deprecated in favor of `q`. We keep `name` available for
         # backward compatibility.
@@ -1119,10 +1199,32 @@ class FacilityManager(models.Manager):
                 location__within=GEOSGeometry(boundary)
             )
 
+        if ppe:
+            # Include a facility if any of the PPE fields have a non-empty
+            # value.
+            # TODO: #1038 Remove the isnull checks after the fields are made
+            # non-null
+            facilities_qs = facilities_qs.annotate(
+                ppe_product_types_len=ArrayLength('ppe_product_types')
+            ).filter(
+                (Q(ppe_product_types__isnull=False)
+                 & Q(ppe_product_types_len__gt=0))
+                |
+                (Q(ppe_contact_phone__isnull=False)
+                 & ~Q(ppe_contact_phone=''))
+                |
+                (Q(ppe_contact_email__isnull=False)
+                 & ~Q(ppe_contact_email=''))
+                |
+                (Q(ppe_website__isnull=False)
+                 & ~Q(ppe_website=''))
+            )
+
+        print(facilities_qs.query)
         return facilities_qs
 
 
-class Facility(models.Model):
+class Facility(PPEMixin):
     """
     An official OAR facility. Search results are returned from this table.
     """
@@ -1459,6 +1561,15 @@ class RequestLog(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{} - {} - {} {} {} ({})'.format(
+            self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            self.user.email,
+            self.method,
+            self.path,
+            self.response_code,
+            self.id)
 
 
 class ProductType(models.Model):

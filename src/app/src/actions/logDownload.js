@@ -37,6 +37,7 @@ export function logDownload() {
             } = getState();
 
             const vectorTileFlagIsActive = get(featureFlags, 'flags.vector_tile', false);
+            const ppeIsActive = get(featureFlags, 'flags.ppe', false);
 
             const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
@@ -45,7 +46,10 @@ export function logDownload() {
 
                 return apiRequest
                     .post(makeLogDownloadUrl(path, recordCount))
-                    .then(() => downloadFacilitiesCSV(facilities))
+                    .then(() => downloadFacilitiesCSV(
+                        facilities,
+                        { includePPEFields: ppeIsActive },
+                    ))
                     .then(() => dispatch(completeLogDownload()))
                     .catch(err => dispatch(logErrorAndDispatchFailure(
                         err,
@@ -57,7 +61,7 @@ export function logDownload() {
             await apiRequest.post(makeLogDownloadUrl(path, count));
 
             if (!nextPageURL) {
-                downloadFacilitiesCSV(facilities);
+                downloadFacilitiesCSV(facilities, { includePPEFields: ppeIsActive });
             } else {
                 let nextFacilitiesSetURL = nextPageURL;
 
@@ -99,7 +103,7 @@ export function logDownload() {
                     },
                 } = getState();
 
-                downloadFacilitiesCSV(features);
+                downloadFacilitiesCSV(features, { includePPEFields: ppeIsActive });
             }
 
             return dispatch(completeLogDownload());

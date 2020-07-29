@@ -1,6 +1,9 @@
 import React, { Fragment, memo } from 'react';
 import MaterialButton from '@material-ui/core/Button';
 
+import FeatureFlag from './FeatureFlag';
+import { PPE } from '../util/constants';
+
 const ContributeHeader = memo(() => (
     <Fragment>
         <div className="control-panel__group">
@@ -40,24 +43,48 @@ const ContributeHeader = memo(() => (
                         </strong>
                     </li>
                 </ul>
-                <MaterialButton
-                    disableRipple
-                    variant="outlined"
-                    color="primary"
-                    className="outlined-button outlined-button--inline"
-                    href="/contributor-templates/OAR_Contributor_Template.xlsx"
-                >
-                    Download Excel (XLSX) Template
-                </MaterialButton>
-                <MaterialButton
-                    disableRipple
-                    variant="outlined"
-                    color="primary"
-                    className="outlined-button"
-                    href="/contributor-templates/OAR_Contributor_Template.csv"
-                >
-                    Download CSV Template
-                </MaterialButton>
+                <div style={{ margin: '20px 0' }}>
+                    <MaterialButton
+                        disableRipple
+                        variant="outlined"
+                        color="primary"
+                        className="outlined-button outlined-button--inline"
+                        href="/contributor-templates/OAR_Contributor_Template.xlsx"
+                    >
+                        Download Excel (XLSX) Template
+                    </MaterialButton>
+                    <MaterialButton
+                        disableRipple
+                        variant="outlined"
+                        color="primary"
+                        className="outlined-button"
+                        href="/contributor-templates/OAR_Contributor_Template.csv"
+                    >
+                        Download CSV Template
+                    </MaterialButton>
+                </div>
+                <FeatureFlag flag={PPE}>
+                    <div style={{ margin: '20px 0' }}>
+                        <MaterialButton
+                            disableRipple
+                            variant="outlined"
+                            color="primary"
+                            className="outlined-button outlined-button--inline"
+                            href="/contributor-templates/OAR_Contributor_Template_With_PPE.xlsx"
+                        >
+                            Download Excel (XLSX) Template With PPE Columns
+                        </MaterialButton>
+                        <MaterialButton
+                            disableRipple
+                            variant="outlined"
+                            color="primary"
+                            className="outlined-button"
+                            href="/contributor-templates/OAR_Contributor_Template_With_PPE.csv"
+                        >
+                            Download CSV Template With PPE Columns
+                        </MaterialButton>
+                    </div>
+                </FeatureFlag>
             </div>
         </div>
     </Fragment>

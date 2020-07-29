@@ -422,6 +422,7 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
 
 export const CLAIM_A_FACILITY = 'claim_a_facility';
 export const VECTOR_TILE = 'vector_tile';
+export const PPE = 'ppe';
 
 export const COUNTRY_CODES = Object.freeze({
     default: 'IE',
@@ -494,4 +495,11 @@ export const GRID_COLOR_RAMP = Object.freeze([
     [10, '#0086D8'],
     [40, '#0256BE'],
     [160, '#0427A4'],
+]);
+
+export const PPE_FIELD_NAMES = Object.freeze([
+    'ppe_product_types',
+    'ppe_contact_phone',
+    'ppe_contact_email',
+    'ppe_website',
 ]);

@@ -47,6 +47,7 @@ from allauth.account.utils import complete_signup
 import coreapi
 from waffle import switch_is_active, flag_is_active
 from waffle.decorators import waffle_switch
+from waffle.models import Switch
 
 
 from oar import urls
@@ -493,7 +494,7 @@ def log_download(request):
 class FacilitiesAPIFilterBackend(BaseFilterBackend):
     def get_schema_fields(self, view):
         if view.action == 'list':
-            return [
+            fields = [
                 coreapi.Field(
                     name='q',
                     location='query',
@@ -549,6 +550,23 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'facilities within the boundaries of that geometry.')
                 ),
             ]
+
+            if switch_is_active('ppe'):
+                fields.append(
+                    coreapi.Field(
+                        name='ppe',
+                        location='query',
+                        type='boolean',
+                        required=False,
+                        description=(
+                            'If "true" only facilities with PPE '
+                            'production details or PPE-specific contact '
+                            'information will be returned. Any other value '
+                            'will return all facilities.'),
+                    )
+                )
+
+            return fields
 
         if view.action == 'create':
             return [
@@ -775,6 +793,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
             }
 
+        ## Sample Request Body With PPE Fields
+
+            {
+                "country": "China",
+                "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
+                "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
+                "ppe_product_types": ["Masks", "Gloves"],
+                "ppe_contact_phone": "123-456-7890",
+                "ppe_contact_email": "ppe@example.com",
+                "ppe_website": "https://example.com/ppe"
+            }
+
         ## Sample Responses
 
         ### Automatic Match
@@ -813,7 +843,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ],
                     "country_name": "China",
                     "claim_info": null,
-                    "other_locations": []
+                    "other_locations": [],
+                    "ppe_product_types": [
+                      "Masks",
+                      "Gloves"
+                    ],
+                    "ppe_contact_phone": "123-456-7890",
+                    "ppe_contact_email": "ppe@example.com",
+                    "ppe_website": "https://example.com/ppe"
                   },
                   "confidence": 0.8153
                 }
@@ -941,6 +978,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             body_serializer.validated_data.get('country'))
         name = body_serializer.validated_data.get('name')
         address = body_serializer.validated_data.get('address')
+        ppe_product_types = \
+            body_serializer.validated_data.get('ppe_product_types')
+        ppe_contact_phone = \
+            body_serializer.validated_data.get('ppe_contact_phone')
+        ppe_contact_email = \
+            body_serializer.validated_data.get('ppe_contact_email')
+        ppe_website = body_serializer.validated_data.get('ppe_website')
 
         item = FacilityListItem.objects.create(
             source=source,
@@ -950,6 +994,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             name=name,
             address=address,
             country_code=country_code,
+            ppe_product_types=ppe_product_types,
+            ppe_contact_phone=ppe_contact_phone,
+            ppe_contact_email=ppe_contact_email,
+            ppe_website=ppe_website,
             processing_results=[{
                 'action': ProcessingAction.PARSE,
                 'started_at': parse_started,
@@ -1152,7 +1200,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     address=best_item.address,
                     country_code=best_item.country_code,
                     location=best_item.geocoded_point,
-                    created_from=best_item)
+                    created_from=best_item,
+                    ppe_product_types=best_item.ppe_product_types,
+                    ppe_contact_phone=best_item.ppe_contact_phone,
+                    ppe_contact_email=best_item.ppe_contact_email,
+                    ppe_website=best_item.ppe_website)
+
                 FacilityAlias.objects.create(
                     oar_id=facility.id,
                     facility=promoted_facility,
@@ -1411,6 +1464,34 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         target = Facility.objects.get(id=target_id)
         merge = Facility.objects.get(id=merge_id)
 
+        should_update_ppe_product_types = \
+            merge.has_ppe_product_types and not target.has_ppe_product_types
+        if (should_update_ppe_product_types):
+            target.ppe_product_types = merge.ppe_product_types
+
+        should_update_ppe_contact_phone = \
+            merge.has_ppe_contact_phone and not target.has_ppe_contact_phone
+        if (should_update_ppe_contact_phone):
+            target.ppe_contact_phone = merge.ppe_contact_phone
+
+        should_update_ppe_contact_email = \
+            merge.has_ppe_contact_email and not target.has_ppe_contact_email
+        if (should_update_ppe_contact_email):
+            target.ppe_contact_email = merge.ppe_contact_email
+
+        should_update_ppe_website = \
+            merge.has_ppe_website and not target.has_ppe_website
+        if (should_update_ppe_website):
+            target.ppe_website = merge.ppe_website
+
+        should_save_target = (
+            should_update_ppe_website
+            or should_update_ppe_contact_phone
+            or should_update_ppe_contact_email
+            or should_update_ppe_website)
+        if should_save_target:
+            target.save()
+
         now = str(datetime.utcnow())
         for merge_match in merge.facilitymatch_set.all():
             merge_match.facility = target
@@ -1476,11 +1557,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         'address': m.facility_list_item.address,
                         'country_code': m.facility_list_item.country_code,
                         'list_id':
-                        m.facility_list_item.source.facility_list.id,
+                        m.facility_list_item.source.facility_list.id
+                        if m.facility_list_item.source.facility_list else None,
                         'list_name':
-                        m.facility_list_item.source.facility_list.name,
+                        m.facility_list_item.source.facility_list.name
+                        if m.facility_list_item.source.facility_list else None,
                         'list_description':
-                        m.facility_list_item.source.facility_list.description,
+                        m.facility_list_item.source.facility_list.description
+                        if m.facility_list_item.source.facility_list else None,
                         'list_contributor_name':
                         m.facility_list_item.source.contributor.name
                         if m.facility_list_item.source.contributor else None,
@@ -1504,17 +1588,22 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 .objects \
                 .get(pk=match_id)
 
-            old_facility_id = match_for_new_facility.facility.id
+            old_facility = match_for_new_facility.facility
 
             list_item_for_match = match_for_new_facility.facility_list_item
 
             new_facility = Facility \
                 .objects \
-                .create(name=list_item_for_match.name,
-                        address=list_item_for_match.address,
-                        country_code=list_item_for_match.country_code,
-                        location=list_item_for_match.geocoded_point,
-                        created_from=list_item_for_match)
+                .create(
+                    name=list_item_for_match.name,
+                    address=list_item_for_match.address,
+                    country_code=list_item_for_match.country_code,
+                    location=list_item_for_match.geocoded_point,
+                    ppe_product_types=list_item_for_match.ppe_product_types,
+                    ppe_contact_phone=list_item_for_match.ppe_contact_phone,
+                    ppe_contact_email=list_item_for_match.ppe_contact_email,
+                    ppe_website=list_item_for_match.ppe_website,
+                    created_from=list_item_for_match)
 
             match_for_new_facility.facility = new_facility
             match_for_new_facility.confidence = 1.0
@@ -1534,10 +1623,34 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
-                'previous_facility_oar_id': old_facility_id,
+                'previous_facility_oar_id': old_facility.id,
             })
 
             list_item_for_match.save()
+
+            # If the list item being split has PPE data, restore the PPE data
+            # on the Facility to the values copied from the original line item
+            # that created the facility.
+            if list_item_for_match.has_ppe_product_types:
+                old_facility.ppe_product_types = \
+                    old_facility.created_from.ppe_product_types
+            if list_item_for_match.has_ppe_contact_phone:
+                old_facility.ppe_contact_phone = \
+                    old_facility.created_from.ppe_contact_phone
+            if list_item_for_match.has_ppe_contact_email:
+                old_facility.ppe_contact_email = \
+                    old_facility.created_from.ppe_contact_email
+            if list_item_for_match.has_ppe_website:
+                old_facility.ppe_website = \
+                    old_facility.created_from.ppe_website
+
+            should_save_old_facility = (
+                list_item_for_match.has_ppe_product_types
+                or list_item_for_match.has_ppe_contact_phone
+                or list_item_for_match.has_ppe_contact_email
+                or list_item_for_match.has_ppe_website)
+            if should_save_old_facility:
+                old_facility.save()
 
             return Response({
                 'match_id': match_for_new_facility.id,
@@ -1586,21 +1699,34 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             previous_created_from_id = facility.created_from.id
 
-            previous_list_id = facility.created_from.source.facility_list.id
-
-            reason = 'Promoted item {} in list {} over item {} in list {}' \
-                .format(
+            if match.facility_list_item.source.facility_list:
+                new_desc = 'item {} in list {}'.format(
                     match.facility_list_item.id,
-                    match.facility_list_item.source.facility_list.id,
+                    match.facility_list_item.source.facility_list.id)
+            else:
+                new_desc = 'item {}'.format(match.facility_list_item.id)
+
+            if facility.created_from.source.facility_list:
+                previous_desc = 'item {} in list {}'.format(
                     previous_created_from_id,
-                    previous_list_id,
-                )
+                    facility.created_from.source.facility_list.id)
+            else:
+                previous_desc = 'item {}'.format(previous_created_from_id)
+
+            reason = 'Promoted {} over {}'.format(new_desc, previous_desc)
 
             facility.name = match.facility_list_item.name
             facility.address = match.facility_list_item.address
             facility.country_code = match.facility_list_item.country_code
             facility.location = match.facility_list_item.geocoded_point
             facility.created_from = match.facility_list_item
+            facility.ppe_product_types = \
+                match.facility_list_item.ppe_product_types
+            facility.ppe_contact_phone = \
+                match.facility_list_item.ppe_contact_phone
+            facility.ppe_contact_email = \
+                match.facility_list_item.ppe_contact_email
+            facility.ppe_website = match.facility_list_item.ppe_website
             facility.changeReason = reason
             facility.save()
 
@@ -1626,9 +1752,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     'name': m.facility_list_item.name,
                     'address': m.facility_list_item.address,
                     'country_code': m.facility_list_item.country_code,
-                    'list_id': m.facility_list_item.source.facility_list.id,
+                    'list_id': m.facility_list_item.source.facility_list.id
+                    if m.facility_list_item.source.facility_list else None,
                     'list_name':
-                    m.facility_list_item.source.facility_list.name,
+                    m.facility_list_item.source.facility_list.name
+                    if m.facility_list_item.source.facility_list else None,
                     'list_description':
                     m.facility_list_item.source.facility_list.description
                     if m.facility_list_item.source.facility_list else None,
@@ -2164,10 +2292,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 @permission_classes((AllowAny,))
 def api_feature_flags(request):
     response_data = {
-        'claim_a_facility': switch_is_active('claim_a_facility'),
-        'vector_tile': switch_is_active('vector_tile'),
+        s.name: switch_is_active(s.name) for s in Switch.objects.all()
     }
-
     return Response(response_data)
 
 

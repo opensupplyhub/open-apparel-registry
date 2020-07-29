@@ -15,6 +15,7 @@ import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
 import FacilityDetailsSidebarOtherLocations from './FacilityDetailsSidebarOtherLocations';
 import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
+import FacilityDetailSidebarPPE from './FacilityDetailSidebarPPE';
 import FeatureFlag from './FeatureFlag';
 import BadgeUnclaimed from './BadgeUnclaimed';
 import BadgeVerified from './BadgeVerified';
@@ -38,6 +39,7 @@ import {
 
 import {
     CLAIM_A_FACILITY,
+    PPE,
     facilitiesRoute,
 } from '../util/constants';
 
@@ -282,6 +284,9 @@ class FacilityDetailSidebar extends Component {
                             label="Contributors:"
                             isContributorsList
                         />
+                        <FeatureFlag flag={PPE}>
+                            <FacilityDetailSidebarPPE properties={data.properties} />
+                        </FeatureFlag>
                         <FeatureFlag flag={CLAIM_A_FACILITY}>
                             <ShowOnly when={!!data.properties.claim_info}>
                                 <FacilityDetailSidebarClaimedInfo
