@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.27.0] - 2020-07-29
+
+### Added
+
 - Add PPE-related model fields and API support [#1037](https://github.com/open-apparel-registry/open-apparel-registry/pull/1037)
 - Show PPE fields on facility detail and include in CSV downloads [#1041](https://github.com/open-apparel-registry/open-apparel-registry/pull/1041)
 - Add PPE filter checkbox to the facility search page [#1044](https://github.com/open-apparel-registry/open-apparel-registry/pull/1044)
@@ -19,14 +33,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Use popovers for help text and match PPE checkbox style to contributor overlap [#1059](https://github.com/open-apparel-registry/open-apparel-registry/pull/1059)
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [2.26.1] - 2020-07-28
 
@@ -424,7 +430,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.26.1...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.27.0...HEAD
+[2.27.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.27.0
 [2.26.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.1
 [2.26.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.0
 [2.25.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.25.0
