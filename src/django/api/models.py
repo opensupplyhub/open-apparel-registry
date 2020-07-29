@@ -311,6 +311,24 @@ class Source(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __init__(self, *args, **kwargs):
+        super(Source, self).__init__(*args, **kwargs)
+        self.__original_is_active = self.is_active
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        super(Source, self).save(force_insert, force_update, *args, **kwargs)
+        if self.__original_is_active and not self.is_active:
+            for item in self.facilitylistitem_set.annotate(
+                ppe_product_types_len=ArrayLength('ppe_product_types')
+            ).filter(PPEMixin.PPE_FILTER):
+                for match in (item.facilitymatch_set
+                              .filter(is_active=True)
+                              .exclude(status=FacilityMatch.REJECTED)
+                              .exclude(status=FacilityMatch.PENDING)):
+                    if match.facility.revert_ppe(item):
+                        match.facility.save()
+        self.__original_is_active = self.is_active
+
     @property
     def display_name(self):
         name = self.contributor.name \
@@ -373,6 +391,22 @@ class FacilityList(models.Model):
 class PPEMixin(models.Model):
     class Meta:
         abstract = True
+
+    # TODO: #1038 Remove the isnull checks after the fields are made
+    # non-null
+    PPE_FILTER = (
+        (Q(ppe_product_types__isnull=False)
+         & Q(ppe_product_types_len__gt=0))
+        |
+        (Q(ppe_contact_phone__isnull=False)
+         & ~Q(ppe_contact_phone=''))
+        |
+        (Q(ppe_contact_email__isnull=False)
+         & ~Q(ppe_contact_email=''))
+        |
+        (Q(ppe_website__isnull=False)
+         & ~Q(ppe_website=''))
+    )
 
     ppe_product_types = postgres.ArrayField(
         models.CharField(
@@ -1202,23 +1236,9 @@ class FacilityManager(models.Manager):
         if ppe:
             # Include a facility if any of the PPE fields have a non-empty
             # value.
-            # TODO: #1038 Remove the isnull checks after the fields are made
-            # non-null
             facilities_qs = facilities_qs.annotate(
                 ppe_product_types_len=ArrayLength('ppe_product_types')
-            ).filter(
-                (Q(ppe_product_types__isnull=False)
-                 & Q(ppe_product_types_len__gt=0))
-                |
-                (Q(ppe_contact_phone__isnull=False)
-                 & ~Q(ppe_contact_phone=''))
-                |
-                (Q(ppe_contact_email__isnull=False)
-                 & ~Q(ppe_contact_email=''))
-                |
-                (Q(ppe_website__isnull=False)
-                 & ~Q(ppe_website=''))
-            )
+            ).filter(PPEMixin.PPE_FILTER)
 
         print(facilities_qs.query)
         return facilities_qs
@@ -1388,6 +1408,27 @@ class Facility(PPEMixin):
         return self.facilityclaim_set.filter(
             status=FacilityClaim.APPROVED).count() > 0
 
+    def revert_ppe(self, item):
+        """
+        If the specified item has PPE data, restore the PPE data
+        on the Facility to the values copied from the original line item
+        that created the facility. Return True if any update to the model was
+        made.
+        """
+        if item.has_ppe_product_types:
+            self.ppe_product_types = self.created_from.ppe_product_types
+        if item.has_ppe_contact_phone:
+            self.ppe_contact_phone = self.created_from.ppe_contact_phone
+        if item.has_ppe_contact_email:
+            self.ppe_contact_email = self.created_from.ppe_contact_email
+        if item.has_ppe_website:
+            self.ppe_website = self.created_from.ppe_website
+
+        return (item.has_ppe_website
+                or item.has_ppe_contact_phone
+                or item.has_ppe_contact_email
+                or item.has_ppe_website)
+
     def current_tile_cache_key():
         timestamp = format(
             Facility.objects.latest('updated_at').updated_at,
@@ -1470,6 +1511,20 @@ class FacilityMatch(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     history = HistoricalRecords()
+
+    def __init__(self, *args, **kwargs):
+        super(FacilityMatch, self).__init__(*args, **kwargs)
+        self.__original_is_active = self.is_active
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        super(FacilityMatch, self).save(
+            force_insert, force_update, *args, **kwargs)
+
+        if self.__original_is_active and not self.is_active:
+            if self.facility.revert_ppe(self.facility_list_item):
+                self.facility.save()
+
+        self.__original_is_active = self.is_active
 
     @property
     def source(self):

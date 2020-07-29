@@ -1628,28 +1628,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             list_item_for_match.save()
 
-            # If the list item being split has PPE data, restore the PPE data
-            # on the Facility to the values copied from the original line item
-            # that created the facility.
-            if list_item_for_match.has_ppe_product_types:
-                old_facility.ppe_product_types = \
-                    old_facility.created_from.ppe_product_types
-            if list_item_for_match.has_ppe_contact_phone:
-                old_facility.ppe_contact_phone = \
-                    old_facility.created_from.ppe_contact_phone
-            if list_item_for_match.has_ppe_contact_email:
-                old_facility.ppe_contact_email = \
-                    old_facility.created_from.ppe_contact_email
-            if list_item_for_match.has_ppe_website:
-                old_facility.ppe_website = \
-                    old_facility.created_from.ppe_website
-
-            should_save_old_facility = (
-                list_item_for_match.has_ppe_product_types
-                or list_item_for_match.has_ppe_contact_phone
-                or list_item_for_match.has_ppe_contact_email
-                or list_item_for_match.has_ppe_website)
-            if should_save_old_facility:
+            if old_facility.revert_ppe(list_item_for_match):
                 old_facility.save()
 
             return Response({
@@ -2042,7 +2021,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if replaces is not None:
             replaces_source_qs = Source.objects.filter(facility_list=replaces)
             if replaces_source_qs.exists():
-                replaces_source_qs.update(is_active=False)
+                for replaced_source in replaces_source_qs:
+                    # Use `save` on the instances rather than calling `update`
+                    # on the queryset to ensure that the custom save logic is
+                    # triggered
+                    replaced_source.is_active = False
+                    replaced_source.save()
 
         items = [FacilityListItem(row_index=idx,
                                   raw_data=row,
