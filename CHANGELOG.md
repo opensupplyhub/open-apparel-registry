@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Prevent crashing the parse job if ppe_product_types value too long [#1062](https://github.com/open-apparel-registry/open-apparel-registry/pull/1062)
+
 ### Security
 
 - Bump lodash from 4.17.13 to 4.17.19 in /src/app [#1051](https://github.com/open-apparel-registry/open-apparel-registry/pull/1051)

@@ -160,6 +160,16 @@ def parse_facility_list_item(item):
                     'There is a problem with the {0}: {1}'.format(name,
                                                                   error_str)
                 )
+
+            # If there is a validation error on the `ppe_product_types` array
+            # field, `full_clean` appears to set it to an empty string which
+            # then causes `save` to raise an exception.
+            ppe_product_types_is_valid = (
+                item.ppe_product_types is None
+                or isinstance(item.ppe_product_types, list))
+            if not ppe_product_types_is_valid:
+                item.ppe_product_types = []
+
             item.status = FacilityListItem.ERROR_PARSING
             item.processing_results.append({
                 'action': ProcessingAction.PARSE,
