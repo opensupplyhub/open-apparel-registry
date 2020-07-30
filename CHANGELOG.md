@@ -19,6 +19,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.28.0] - 2020-07-30
+
+### Changed
+
+- Added tooltips if table cells exceed certain lengths [#1054](https://github.com/open-apparel-registry/open-apparel-registry/pull/1054)
+- Add alternate country names [#1064](https://github.com/open-apparel-registry/open-apparel-registry/pull/1064)
+- Expand ppe_product_types and ppe_contact_phone [#1067](https://github.com/open-apparel-registry/open-apparel-registry/pull/1067)
+
+### Fixed
+
+- Prevent crashing the parse job if ppe_product_types value too long [#1062](https://github.com/open-apparel-registry/open-apparel-registry/pull/1062)
+
+### Security
+
+- Bump lodash from 4.17.13 to 4.17.19 in /src/app [#1051](https://github.com/open-apparel-registry/open-apparel-registry/pull/1051)
+- Bump elliptic from 6.4.1 to 6.5.3 in /src/app [#1066](https://github.com/open-apparel-registry/open-apparel-registry/pull/1066)
+
 ## [2.27.0] - 2020-07-29
 
 ### Added
@@ -430,7 +447,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.27.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.28.0...HEAD
+[2.28.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.28.0
 [2.27.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.27.0
 [2.26.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.1
 [2.26.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.0

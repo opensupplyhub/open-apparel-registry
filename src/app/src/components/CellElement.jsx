@@ -6,6 +6,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Tooltip from '@material-ui/core/Tooltip';
 import isObject from 'lodash/isObject';
 
 import { facilityMatchStatusChoicesEnum } from '../util/constants';
@@ -73,6 +74,25 @@ export default class CellElement extends Component {
         } = this.props;
 
         if (!hasActions) {
+            const OverflowTooltip = ({ children }) => {
+                if (item.length > 50) {
+                    return (
+                        <Tooltip
+                            title={item}
+                            placement="top-start"
+                            classes={{ tooltip: 'cell-tooltip' }}
+                            enterDelay={100}
+                        >
+                            <span style={confirmRejectMatchRowStyles.cellOverflowStyles}>
+                                {children}
+                            </span>
+                        </Tooltip>
+                    );
+                }
+
+                return children;
+            };
+
             const insetComponent = (() => {
                 if (stringIsHidden) {
                     return ' ';
@@ -83,6 +103,7 @@ export default class CellElement extends Component {
                         <Link
                             to={linkURL}
                             href={linkURL}
+                            style={confirmRejectMatchRowStyles.cellOverflowStyles}
                         >
                             {item}
                         </Link>
@@ -101,7 +122,9 @@ export default class CellElement extends Component {
                             : confirmRejectMatchRowStyles.cellRowStyles
                     }
                 >
-                    {insetComponent}
+                    <OverflowTooltip>
+                        {insetComponent}
+                    </OverflowTooltip>
                 </div>
             );
         }

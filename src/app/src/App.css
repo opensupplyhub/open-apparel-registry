@@ -715,3 +715,8 @@ hr {
 .mobile-navigation-drawer .navButton {
   padding: 15px;
 }
+
+.cell-tooltip {
+  font-size: 12px !important;
+  margin: 0 !important;
+}
