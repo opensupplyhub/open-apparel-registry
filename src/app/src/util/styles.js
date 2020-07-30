@@ -47,12 +47,18 @@ export const confirmRejectMatchRowStyles = Object.freeze({
         display: 'flex',
         flexDirection: 'column',
     }),
+    cellOverflowStyles: Object.freeze({
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+    }),
     cellRowStyles: Object.freeze({
-        height: '55px',
         minHeight: '55px',
         display: 'flex',
         alignItems: 'top',
         maxWidth: '400px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'hidden',
     }),
     cellSubtitleStyles: Object.freeze({
         display: 'flex',
@@ -65,6 +71,9 @@ export const confirmRejectMatchRowStyles = Object.freeze({
         display: 'flex',
         alignItems: 'top',
         maxWidth: '400px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'hidden',
     }),
     errorCellRowStyles: Object.freeze({
         height: '75px',
