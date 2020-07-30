@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Added tooltips if table cells exceed certain lengths [#1054](https://github.com/open-apparel-registry/open-apparel-registry/pull/1054)
+- Add alternate country names [#1064](https://github.com/open-apparel-registry/open-apparel-registry/pull/1064)
 
 ### Deprecated
 
