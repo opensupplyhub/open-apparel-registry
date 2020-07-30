@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 - Bump lodash from 4.17.13 to 4.17.19 in /src/app [#1051](https://github.com/open-apparel-registry/open-apparel-registry/pull/1051)
-
+- Bump elliptic from 6.4.1 to 6.5.3 in /src/app [#1066](https://github.com/open-apparel-registry/open-apparel-registry/pull/1066)
 
 ## [2.27.0] - 2020-07-29
 
