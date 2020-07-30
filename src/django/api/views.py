@@ -1464,32 +1464,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         target = Facility.objects.get(id=target_id)
         merge = Facility.objects.get(id=merge_id)
 
-        should_update_ppe_product_types = \
-            merge.has_ppe_product_types and not target.has_ppe_product_types
-        if (should_update_ppe_product_types):
-            target.ppe_product_types = merge.ppe_product_types
-
-        should_update_ppe_contact_phone = \
-            merge.has_ppe_contact_phone and not target.has_ppe_contact_phone
-        if (should_update_ppe_contact_phone):
-            target.ppe_contact_phone = merge.ppe_contact_phone
-
-        should_update_ppe_contact_email = \
-            merge.has_ppe_contact_email and not target.has_ppe_contact_email
-        if (should_update_ppe_contact_email):
-            target.ppe_contact_email = merge.ppe_contact_email
-
-        should_update_ppe_website = \
-            merge.has_ppe_website and not target.has_ppe_website
-        if (should_update_ppe_website):
-            target.ppe_website = merge.ppe_website
-
-        should_save_target = (
-            should_update_ppe_website
-            or should_update_ppe_contact_phone
-            or should_update_ppe_contact_email
-            or should_update_ppe_website)
-        if should_save_target:
+        if target.conditionally_set_ppe(merge):
             target.save()
 
         now = str(datetime.utcnow())
@@ -2791,6 +2766,9 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
 
         facility_match.save()
 
+        if facility_match.facility.conditionally_set_ppe(facility_list_item):
+            facility_match.facility.save()
+
         matches_to_reject = FacilityMatch \
             .objects \
             .filter(facility_list_item=facility_list_item) \
@@ -2928,11 +2906,16 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
             else:
                 new_facility = Facility \
                     .objects \
-                    .create(name=facility_list_item.name,
-                            address=facility_list_item.address,
-                            country_code=facility_list_item.country_code,
-                            location=facility_list_item.geocoded_point,
-                            created_from=facility_list_item)
+                    .create(
+                        name=facility_list_item.name,
+                        address=facility_list_item.address,
+                        country_code=facility_list_item.country_code,
+                        location=facility_list_item.geocoded_point,
+                        ppe_product_types=facility_list_item.ppe_product_types,
+                        ppe_contact_phone=facility_list_item.ppe_contact_phone,
+                        ppe_contact_email=facility_list_item.ppe_contact_email,
+                        ppe_website=facility_list_item.ppe_website,
+                        created_from=facility_list_item)
 
                 # also create a new facility match
                 match_results = {

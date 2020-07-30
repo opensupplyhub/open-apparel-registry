@@ -1408,6 +1408,39 @@ class Facility(PPEMixin):
         return self.facilityclaim_set.filter(
             status=FacilityClaim.APPROVED).count() > 0
 
+    def conditionally_set_ppe(self, item):
+        """
+        Copy PPE fields from the specified item if they are empty. `item` can
+        be either a `Facility` or a `FacilityListItem` because they both
+        inherit from `PPEMixin`. Returns True if any update to the model was
+        made.
+        """
+        should_update_ppe_product_types = \
+            item.has_ppe_product_types and not self.has_ppe_product_types
+        if (should_update_ppe_product_types):
+            self.ppe_product_types = item.ppe_product_types
+
+        should_update_ppe_contact_phone = \
+            item.has_ppe_contact_phone and not self.has_ppe_contact_phone
+        if (should_update_ppe_contact_phone):
+            self.ppe_contact_phone = item.ppe_contact_phone
+
+        should_update_ppe_contact_email = \
+            item.has_ppe_contact_email and not self.has_ppe_contact_email
+        if (should_update_ppe_contact_email):
+            self.ppe_contact_email = item.ppe_contact_email
+
+        should_update_ppe_website = \
+            item.has_ppe_website and not self.has_ppe_website
+        if (should_update_ppe_website):
+            self.ppe_website = item.ppe_website
+
+        return (
+            should_update_ppe_website
+            or should_update_ppe_contact_phone
+            or should_update_ppe_contact_email
+            or should_update_ppe_website)
+
     def revert_ppe(self, item):
         """
         If the specified item has PPE data, restore the PPE data
