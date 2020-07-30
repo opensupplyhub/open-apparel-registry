@@ -378,7 +378,7 @@ class PPEMixin(models.Model):
         models.CharField(
             null=False,
             blank=False,
-            max_length=50,
+            max_length=100,
             help_text=('A type of personal protective equipment produced at '
                        'the facility'),
             verbose_name='ppe product type',
@@ -394,7 +394,7 @@ class PPEMixin(models.Model):
         verbose_name='ppe contact email',
         help_text='The contact email for PPE-related discussion')
     ppe_contact_phone = models.CharField(
-        max_length=20,
+        max_length=100,
         null=True,
         blank=True,
         verbose_name='ppe contact phone',
