@@ -1443,19 +1443,26 @@ class Facility(PPEMixin):
 
     def revert_ppe(self, item):
         """
-        If the specified item has PPE data, restore the PPE data
-        on the Facility to the values copied from the original line item
-        that created the facility. Return True if any update to the model was
-        made.
+        If the specified item has PPE data either:
+        - Restore the PPE data on the Facility to the values copied from the
+          original line item that created the facility.
+        - If the facility created the item, clear the PPE fields.
+        Return True if any update to the model was made.
         """
-        if item.has_ppe_product_types:
-            self.ppe_product_types = self.created_from.ppe_product_types
-        if item.has_ppe_contact_phone:
-            self.ppe_contact_phone = self.created_from.ppe_contact_phone
-        if item.has_ppe_contact_email:
-            self.ppe_contact_email = self.created_from.ppe_contact_email
-        if item.has_ppe_website:
-            self.ppe_website = self.created_from.ppe_website
+        if item == self.created_from:
+            self.ppe_product_types = []
+            self.ppe_contact_phone = ''
+            self.ppe_contact_email = ''
+            self.ppe_website = ''
+        else:
+            if item.has_ppe_product_types:
+                self.ppe_product_types = self.created_from.ppe_product_types
+            if item.has_ppe_contact_phone:
+                self.ppe_contact_phone = self.created_from.ppe_contact_phone
+            if item.has_ppe_contact_email:
+                self.ppe_contact_email = self.created_from.ppe_contact_email
+            if item.has_ppe_website:
+                self.ppe_website = self.created_from.ppe_website
 
         return (item.has_ppe_website
                 or item.has_ppe_contact_phone

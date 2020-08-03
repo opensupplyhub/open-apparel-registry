@@ -5891,7 +5891,12 @@ class PPEFieldTest(TestCase):
         self.assertEqual(self.list_item_two.ppe_website,
                          self.facility.ppe_website)
 
-    def test_reject_match_creates_facility_with_ppe(self):
+    def reject_match_and_assert(self):
+        """
+        This helper creates a potential match for line_item_two, submits a
+        request to reject it, and asserts that a new facility is created from
+        line_item_two. The newly created `Facility` object is returned.
+        """
         results = self.make_match_results(self.list_item_two.id,
                                           self.facility.id, 70)
         save_match_details(results)
@@ -5919,3 +5924,33 @@ class PPEFieldTest(TestCase):
                          facility.ppe_contact_email)
         self.assertEqual(self.list_item_two.ppe_website,
                          facility.ppe_website)
+
+        return facility
+
+    def test_reject_match_creates_facility_with_ppe(self):
+        self.reject_match_and_assert()
+
+    def test_deactivating_created_from_source_clears_ppe(self):
+        facility = self.reject_match_and_assert()
+
+        facility.created_from.source.is_active = False
+        facility.created_from.source.save()
+        facility.refresh_from_db()
+
+        self.assertEqual([], facility.ppe_product_types)
+        self.assertEqual('', facility.ppe_contact_phone)
+        self.assertEqual('', facility.ppe_contact_email)
+        self.assertEqual('', facility.ppe_website)
+
+    def test_deactivating_created_from_match_clears_ppe(self):
+        facility = self.reject_match_and_assert()
+
+        for match in facility.created_from.facilitymatch_set.all():
+            match.is_active = False
+            match.save()
+        facility.refresh_from_db()
+
+        self.assertEqual([], facility.ppe_product_types)
+        self.assertEqual('', facility.ppe_contact_phone)
+        self.assertEqual('', facility.ppe_contact_email)
+        self.assertEqual('', facility.ppe_website)
