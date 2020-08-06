@@ -8,8 +8,9 @@ import { PPE_FIELD_NAMES } from '../util/constants';
 
 const FacilityDetailSidebarPPE = ({ properties }) => {
     const ppeFields = pickBy(pick(properties, PPE_FIELD_NAMES), identity);
+    const hasPPEValues = !Object.values(ppeFields).every(isEmpty);
 
-    return !isEmpty(ppeFields)
+    return hasPPEValues
         ? (
             <div className="control-panel__group">
                 <h1 className="control-panel__heading">

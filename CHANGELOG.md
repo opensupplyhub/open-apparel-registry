@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Update PPE fields when deactivating sources and matches or confirming/rejecting matches [#1069](https://github.com/open-apparel-registry/open-apparel-registry/pull/1069)
+
 ### Deprecated
 
 ### Removed

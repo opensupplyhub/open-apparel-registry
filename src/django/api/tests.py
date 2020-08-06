@@ -5673,6 +5673,8 @@ class PPEFieldTest(TestCase):
         self.email_two = 'two@example.com'
         self.user_one = User.objects.create(email=self.email_one)
         self.user_two = User.objects.create(email=self.email_two)
+        self.user_two.set_password('password')
+        self.user_two.save()
 
         self.contrib_one = Contributor \
             .objects \
@@ -5735,7 +5737,8 @@ class PPEFieldTest(TestCase):
                     ppe_website='http://example.com/two',
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
-                    source=self.source_two)
+                    source=self.source_two,
+                    geocoded_point=Point(0, 0))
 
         self.facility = Facility \
             .objects \
@@ -5854,3 +5857,100 @@ class PPEFieldTest(TestCase):
                          self.facility.ppe_contact_email)
         self.assertEqual('HTTP://TEST.COM',
                          self.facility.ppe_website)
+
+    def match_url(self, match, action='detail'):
+        return reverse('facility-match-{}'.format(action),
+                       kwargs={'pk': match.pk})
+
+    def test_confirm_match_populates_ppe(self):
+        results = self.make_match_results(self.list_item_two.id,
+                                          self.facility.id, 70)
+        save_match_details(results)
+
+        pending_qs = self.facility.facilitymatch_set.filter(
+            status=FacilityMatch.PENDING)
+        self.assertEqual(1, pending_qs.count())
+        match = pending_qs[0]
+        self.assertEqual(FacilityMatch.PENDING, match.status)
+
+        self.client.login(email=self.email_two,
+                          password='password')
+        response = self.client.post(
+            self.match_url(match, action='confirm')
+        )
+        self.assertEqual(200, response.status_code)
+
+        self.facility.refresh_from_db()
+
+        self.assertEqual(self.list_item_two.ppe_product_types,
+                         self.facility.ppe_product_types)
+        self.assertEqual(self.list_item_two.ppe_contact_phone,
+                         self.facility.ppe_contact_phone)
+        self.assertEqual(self.list_item_two.ppe_contact_email,
+                         self.facility.ppe_contact_email)
+        self.assertEqual(self.list_item_two.ppe_website,
+                         self.facility.ppe_website)
+
+    def reject_match_and_assert(self):
+        """
+        This helper creates a potential match for line_item_two, submits a
+        request to reject it, and asserts that a new facility is created from
+        line_item_two. The newly created `Facility` object is returned.
+        """
+        results = self.make_match_results(self.list_item_two.id,
+                                          self.facility.id, 70)
+        save_match_details(results)
+
+        pending_qs = self.facility.facilitymatch_set.filter(
+            status=FacilityMatch.PENDING)
+        self.assertEqual(1, pending_qs.count())
+        match = pending_qs[0]
+        self.assertEqual(FacilityMatch.PENDING, match.status)
+
+        self.client.login(email=self.email_two,
+                          password='password')
+        response = self.client.post(
+            self.match_url(match, action='reject')
+        )
+        self.assertEqual(200, response.status_code)
+
+        facility = Facility.objects.get(created_from=self.list_item_two)
+
+        self.assertEqual(self.list_item_two.ppe_product_types,
+                         facility.ppe_product_types)
+        self.assertEqual(self.list_item_two.ppe_contact_phone,
+                         facility.ppe_contact_phone)
+        self.assertEqual(self.list_item_two.ppe_contact_email,
+                         facility.ppe_contact_email)
+        self.assertEqual(self.list_item_two.ppe_website,
+                         facility.ppe_website)
+
+        return facility
+
+    def test_reject_match_creates_facility_with_ppe(self):
+        self.reject_match_and_assert()
+
+    def test_deactivating_created_from_source_clears_ppe(self):
+        facility = self.reject_match_and_assert()
+
+        facility.created_from.source.is_active = False
+        facility.created_from.source.save()
+        facility.refresh_from_db()
+
+        self.assertEqual([], facility.ppe_product_types)
+        self.assertEqual('', facility.ppe_contact_phone)
+        self.assertEqual('', facility.ppe_contact_email)
+        self.assertEqual('', facility.ppe_website)
+
+    def test_deactivating_created_from_match_clears_ppe(self):
+        facility = self.reject_match_and_assert()
+
+        for match in facility.created_from.facilitymatch_set.all():
+            match.is_active = False
+            match.save()
+        facility.refresh_from_db()
+
+        self.assertEqual([], facility.ppe_product_types)
+        self.assertEqual('', facility.ppe_contact_phone)
+        self.assertEqual('', facility.ppe_contact_email)
+        self.assertEqual('', facility.ppe_website)
