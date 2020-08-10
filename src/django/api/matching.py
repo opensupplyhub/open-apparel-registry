@@ -17,7 +17,8 @@ from api.models import (Facility,
                         FacilityList,
                         FacilityListItem,
                         FacilityMatch,
-                        HistoricalFacility)
+                        HistoricalFacility,
+                        HistoricalFacilityMatch)
 
 logger = logging.getLogger(__name__)
 
@@ -55,15 +56,20 @@ def clean(column):
     return column
 
 
+def match_detail_to_extended_facility_id(facility_id, match_id):
+    return '{}_MATCH-{}'.format(facility_id, match_id)
+
+
 def match_to_extended_facility_id(match):
-        """
-        We want manually confirmed matches to influence the matching process.
-        We were not successful when adding them as training data so we add them
-        to our list of canonical items with a synthetic ID. When post
-        processing the matches we will drop the extension using the
-        `normalize_extended_facility_id` function.
-        """
-        return '{}_MATCH-{}'.format(str(match.facility.id), str(match.id))
+    """
+    We want manually confirmed matches to influence the matching process.
+    We were not successful when adding them as training data so we add them
+    to our list of canonical items with a synthetic ID. When post
+    processing the matches we will drop the extension using the
+    `normalize_extended_facility_id` function.
+    """
+    return match_detail_to_extended_facility_id(
+        str(match.facility.id), str(match.id))
 
 
 def normalize_extended_facility_id(facility_id):
@@ -423,12 +429,15 @@ class GazetteerCache:
     _lock = threading.Lock()
     _gazetter = None
     _facility_version = None
+    _match_version = None
 
     @classmethod
     def _rebuild_gazetteer(cls):
         logger.info('Rebuilding gazetteer')
         with transaction.atomic():
             db_facility_version = HistoricalFacility.objects.aggregate(
+                max_id=Max('history_id')).get('max_id')
+            db_match_version = HistoricalFacilityMatch.objects.aggregate(
                 max_id=Max('history_id')).get('max_id')
             # We expect `get_canonical_items` to return a list rather than a
             # QuerySet so that we can close the transaction as quickly as
@@ -443,6 +452,7 @@ class GazetteerCache:
 
         cls._gazetter = train_gazetteer(messy, canonical, should_index=True)
         cls._facility_version = db_facility_version
+        cls._match_version = db_match_version
         return cls._gazetter
 
     @classmethod
@@ -489,6 +499,68 @@ class GazetteerCache:
         return facility_changes, latest_facility_dedupe_records
 
     @classmethod
+    @transaction.atomic
+    def _get_new_match_history(cls):
+        match_changes = []
+        latest_match_records = {}
+        latest_matched_facility_dedupe_records = {}
+
+        db_match_version = HistoricalFacility.objects.aggregate(
+            max_id=Max('history_id')).get('max_id')
+
+        if db_match_version != cls._match_version:
+            if cls._match_version is None:
+                last_match_version_id = 0
+            else:
+                last_match_version_id = cls._match_version
+
+            # We call `list` so that we can get all the data and exit
+            # the transaction as soon as possible
+            match_changes = list(
+                HistoricalFacilityMatch
+                .objects
+                .filter(history_id__gt=last_match_version_id)
+                .order_by('history_id')
+                .values('id', 'facility', 'history_type', 'history_id'))
+
+            # We use an dictionary comprehension so that we can load
+            # all the data and exit the transaction as soon as possible
+            latest_match_records = {
+                m['id']: {
+                    'facility': m['facility'],
+                    'status': m['status'],
+                    'is_active': m['is_active'],
+                } for m in
+                FacilityMatch
+                .objects
+                .filter(id__in=(
+                    HistoricalFacilityMatch
+                    .objects
+                    .filter(history_id__gt=last_match_version_id)
+                    .values_list('id', flat=True)
+                ))
+                .values('id', 'facility', 'status', 'is_active')}
+
+            # We use an dictionary comprehension so that we can load
+            # all the data and exit the transaction as soon as possible
+            latest_matched_facility_dedupe_records = {
+                f['id']: facility_values_to_dedupe_record(f) for f in
+                Facility
+                .objects
+                .filter(id__in=(
+                    HistoricalFacilityMatch
+                    .objects
+                    .filter(history_id__gt=last_match_version_id)
+                    .values_list('facility', flat=True)
+                ))
+                .extra(select={'country': 'country_code'})
+                .values('id', 'country', 'name', 'address')
+            }
+
+        return (match_changes, latest_match_records,
+                latest_matched_facility_dedupe_records)
+
+    @classmethod
     def get_latest(cls):
         lock_aquired = cls._lock.acquire(timeout=10)
         if not lock_aquired:
@@ -503,19 +575,85 @@ class GazetteerCache:
 
             for item in facility_changes:
                 if item['history_type'] == '-':
-                    cls._gazetter.unindex(
-                        facility_values_to_dedupe_record(item))
+                    record = facility_values_to_dedupe_record(item)
+                    logger.debug(
+                        'Unindexing facility {}'.format(str(record)))
+                    cls._gazetter.unindex(record)
                 else:
                     # The history record has old field values, so we use the
                     # updated version that we fetched. If we don't have a
                     # record for the ID, it means that the facility has been
                     # deleted. We don't need to index a deleted facility.
                     if item['id'] in latest_facility_dedupe_records:
-                        cls._gazetter.index(
-                            latest_facility_dedupe_records[item['id']])
+                        record = latest_facility_dedupe_records[item['id']]
+                        logger.debug(
+                            'Indexing facility {}'.format(str(record)))
+                        cls._gazetter.index(record)
                 cls._facility_version = item['history_id']
+
+            (match_changes, latest_match_records,
+             latest_matched_facility_dedupe_records) = \
+                cls._get_new_match_history()
+
+            def dedupe_record_for_match_item(item):
+                facility_id = item['facility']
+                key = match_detail_to_extended_facility_id(
+                    facility_id, item['id'])
+                """
+                The latest_matched_facility_dedupe_records dictionary looks
+                like this:
+
+                {
+                    facility_id: {
+                        facility_id: {
+                            field1: value1,
+                            field2, value2
+                        }
+                    }
+                }
+
+                We want to get the inner object and change the key from a real
+                facility ID to a "synthetic" facility ID which we use to index
+                confirmed matches.
+                """
+                value = (
+                    latest_matched_facility_dedupe_records
+                    [facility_id][facility_id]
+                )
+                return {key: value}
+
+            for item in match_changes:
+                match = (latest_match_records[item['id']]
+                         if item['id'] in latest_match_records
+                         else None)
+                has_facility = (
+                    item['facility'] in latest_matched_facility_dedupe_records)
+                is_confirmed_match_with_facility = (
+                    match
+                    and match['status'] == FacilityMatch.CONFIRMED
+                    and has_facility)
+                if is_confirmed_match_with_facility:
+                    if item['history_type'] == '-':
+                        record = dedupe_record_for_match_item(item)
+                        logger.debug('Unindexing match {}'.format(str(record)))
+                        cls._gazetter.unindex(record)
+                    else:
+                        # The history record has old field values, so we us the
+                        # updated version that we fetched. If we don't have a
+                        # record for the ID, it means that the facility has
+                        # been deleted. We don't need to index a deleted
+                        # facility.
+                        if match and match['is_active']:
+                            record = dedupe_record_for_match_item(item)
+                            logger.debug(
+                                'Indexing match {}'.format(str(record)))
+                            cls._gazetter.index(record)
+                    cls._match_version = item['history_id']
+
         except Exception:
-            extra_info = {'last_successful_version': cls._facility_version}
+            extra_info = {
+                'last_successful_facility_version': cls._facility_version,
+                'last_successful_match_version': cls._match_version}
             _try_reporting_error_to_rollbar(extra_info)
 
             # If there is an exception raised while attempting to incrementally
