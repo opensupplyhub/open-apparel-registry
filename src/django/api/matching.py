@@ -422,13 +422,13 @@ class GazetteerCache:
     """
     _lock = threading.Lock()
     _gazetter = None
-    _version = None
+    _facility_version = None
 
     @classmethod
     def _rebuild_gazetteer(cls):
         logger.info('Rebuilding gazetteer')
         with transaction.atomic():
-            db_version = HistoricalFacility.objects.aggregate(
+            db_facility_version = HistoricalFacility.objects.aggregate(
                 max_id=Max('history_id')).get('max_id')
             # We expect `get_canonical_items` to return a list rather than a
             # QuerySet so that we can close the transaction as quickly as
@@ -442,8 +442,51 @@ class GazetteerCache:
             messy = get_messy_items_for_training()
 
         cls._gazetter = train_gazetteer(messy, canonical, should_index=True)
-        cls._version = db_version
+        cls._facility_version = db_facility_version
         return cls._gazetter
+
+    @classmethod
+    @transaction.atomic
+    def _get_new_facility_history(cls):
+        facility_changes = []
+        latest_facility_dedupe_records = {}
+
+        db_facility_version = HistoricalFacility.objects.aggregate(
+            max_id=Max('history_id')).get('max_id')
+
+        if db_facility_version != cls._facility_version:
+            if cls._facility_version is None:
+                last_facility_version_id = 0
+            else:
+                last_facility_version_id = cls._facility_version
+            # We call `list` so that we can get all the data and exit
+            # the transaction as soon as possible
+            facility_changes = list(
+                HistoricalFacility
+                .objects
+                .filter(history_id__gt=last_facility_version_id)
+                .order_by('history_id')
+                .extra(select={'country': 'country_code'})
+                .values('id', 'country', 'name', 'address',
+                        'history_type', 'history_id'))
+
+            changed_facility_ids_qs = HistoricalFacility \
+                .objects \
+                .filter(history_id__gt=last_facility_version_id) \
+                .values_list('id', flat=True)
+
+            # We use an dictionary comprehension so that we can load
+            # all the data and exit the transaction as soon as possible
+            latest_facility_dedupe_records = {
+                f['id']: facility_values_to_dedupe_record(f) for f in
+                Facility
+                .objects
+                .filter(id__in=changed_facility_ids_qs)
+                .extra(select={'country': 'country_code'})
+                .values('id', 'country', 'name', 'address')
+            }
+
+        return facility_changes, latest_facility_dedupe_records
 
     @classmethod
     def get_latest(cls):
@@ -455,61 +498,24 @@ class GazetteerCache:
             if cls._gazetter is None:
                 return cls._rebuild_gazetteer()
 
-            changes = []
-            latest_facility_dedupe_records = {}
-            with transaction.atomic():
-                db_version = HistoricalFacility.objects.aggregate(
-                    max_id=Max('history_id')).get('max_id')
-                if db_version != cls._version:
-                    if cls._version is None:
-                        last_version_id = 0
-                    else:
-                        last_version_id = cls._version
-                    # We call `list` so that we can get all the data and exit
-                    # the transaction as soon as possible
-                    changes = list(
-                        HistoricalFacility
-                        .objects
-                        .filter(history_id__gt=last_version_id)
-                        .order_by('history_id')
-                        .extra(select={'country': 'country_code'})
-                        .values('id', 'country', 'name', 'address',
-                                'history_type', 'history_id'))
+            facility_changes, latest_facility_dedupe_records = \
+                cls._get_new_facility_history()
 
-                    changed_facility_ids_qs = HistoricalFacility \
-                        .objects \
-                        .filter(history_id__gt=last_version_id) \
-                        .values_list('id', flat=True)
-
-                    # We use an dictionary comprehension so that we can load
-                    # all the data and exit the transaction as soon as possible
-                    latest_facility_dedupe_records = {
-                        f['id']: facility_values_to_dedupe_record(f) for f in
-                        Facility
-                        .objects
-                        .filter(id__in=changed_facility_ids_qs)
-                        .extra(select={'country': 'country_code'})
-                        .values('id', 'country', 'name', 'address')
-                    }
-
-            # From this point the database transaction is closed and there can
-            # be no more queries
-            for item in changes:
+            for item in facility_changes:
                 if item['history_type'] == '-':
                     cls._gazetter.unindex(
                         facility_values_to_dedupe_record(item))
                 else:
-                    # The history record has old field values, so we
-                    # use the version that we fetched. If we don't have a
+                    # The history record has old field values, so we use the
+                    # updated version that we fetched. If we don't have a
                     # record for the ID, it means that the facility has been
                     # deleted. We don't need to index a deleted facility.
                     if item['id'] in latest_facility_dedupe_records:
                         cls._gazetter.index(
                             latest_facility_dedupe_records[item['id']])
-                cls._version = item['history_id']
-
+                cls._facility_version = item['history_id']
         except Exception:
-            extra_info = {'last_successful_version': cls._version}
+            extra_info = {'last_successful_version': cls._facility_version}
             _try_reporting_error_to_rollbar(extra_info)
 
             # If there is an exception raised while attempting to incrementally
