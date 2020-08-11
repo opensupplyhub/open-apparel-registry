@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-Rework GazetteerCache [#1076](https://github.com/open-apparel-registry/open-apparel-registry/pull/1076)
-
 ### Security
+
+## [2.30.0] - 2020-08-11
+
+### Fixed
+
+Rework GazetteerCache [#1076](https://github.com/open-apparel-registry/open-apparel-registry/pull/1076)
 
 ## [2.29.0] - 2020-08-06
 
@@ -455,7 +459,9 @@ Rework GazetteerCache [#1076](https://github.com/open-apparel-registry/open-appa
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.28.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.30.0...HEAD
+[2.30.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.30.0
+[2.29.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.29.0
 [2.28.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.28.0
 [2.27.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.27.0
 [2.26.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.26.1
