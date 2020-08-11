@@ -81,7 +81,8 @@ from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
                             get_country_code,
-                            save_match_details)
+                            save_match_details,
+                            reduce_matches)
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
@@ -1074,7 +1075,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for item_id, matches in item_matches.items():
                 result['item_id'] = item_id
                 result['status'] = item.status
-                for (facility_id, score), match in zip(matches, match_objects):
+                for (facility_id, score), match in zip(reduce_matches(matches),
+                                                       match_objects):
                     facility = Facility.objects.get(id=facility_id)
                     context = {'request': request}
                     facility_dict = FacilityDetailsSerializer(
