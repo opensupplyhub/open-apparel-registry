@@ -2,8 +2,18 @@
   {
     "name": "django",
     "image": "${image}",
-    "cpu": ${cpu},
-    "memory": ${memory},
+    "cpu": 0,
+    "command": [
+      "-b :8080",
+      "--workers=${gunicorn_workers}",
+      "--timeout=60",
+      "--access-logfile=-",
+      "--access-logformat=%({X-Forwarded-For}i)s %(h)s %(l)s %(u)s %(t)s \"%(r)s\" %(s)s %(b)s \"%(f)s\" \"%(a)s\"",
+      "--error-logfile=-",
+      "--log-level=info",
+      "--capture-output",
+      "oar.wsgi"
+    ],
     "environment": [
         { "name": "AWS_DEFAULT_REGION", "value": "${aws_region}" },
         { "name": "POSTGRES_HOST", "value": "${postgres_host}" },
