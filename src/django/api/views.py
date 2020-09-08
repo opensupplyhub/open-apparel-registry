@@ -63,7 +63,9 @@ from api.constants import (CsvHeaderField,
                            UpdateLocationParams,
                            FeatureGroups)
 from api.geocoding import geocode_address
-from api.matching import match_item, GazetteerCacheTimeoutError
+from api.matching import (match_item,
+                          text_match_item,
+                          GazetteerCacheTimeoutError)
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -590,6 +592,17 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'created, the contributor will not be publicly '
                         'associated with the facility'),
                 ),
+                coreapi.Field(
+                    name='textonlyfallback',
+                    location='query',
+                    type='boolean',
+                    required=False,
+                    description=(
+                        'If true and no confident matches were made then '
+                        'attempt to make a text-only match of the facility '
+                        'name. If more than 5 text matches are made only the '
+                        '5 highest confidence results are returned'),
+                ),
             ]
 
         return []
@@ -917,6 +930,55 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             }
 
 
+        ### Potential Text Only Match
+
+            {
+              "matches": [
+                {
+                  "id": "CN2019303BQ3FZP",
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                      120.596047,
+                      32.172013
+                    ]
+                  },
+                  "properties": {
+                    "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
+                    "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
+                    "country_code": "CN",
+                    "oar_id": "CN2019303BQ3FZP",
+                    "other_names": [],
+                    "other_addresses": [],
+                    "contributors": [
+                      {
+                        "id": 4,
+                        "name": "Researcher A (Summer 2019 Affiliate List)",
+                        "is_verified": false
+                      }
+                    ],
+                    "country_name": "China",
+                    "claim_info": null,
+                    "other_locations": []
+                  },
+                  "confidence": 0,
+                  "text_only_match": true
+                }
+              ],
+              "item_id": 959,
+              "geocoded_geometry": {
+                "type": "Point",
+                "coordinates": [
+                  120.596047,
+                  32.172013
+                ]
+              },
+              "geocoded_address": "Guoyuanzhen, Rugao, Nantong, Jiangsu, China",
+              "status": "POTENTIAL_MATCH"
+            }
+
+
         ### New Facility
 
             {
@@ -965,6 +1027,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             request._request, FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY)
         if not public_submission and not private_allowed:
             raise PermissionDenied('Cannot submit a private facility')
+        text_only_fallback = params_serializer.validated_data[
+            FacilityCreateQueryParams.TEXT_ONLY_FALLBACK]
 
         parse_started = str(datetime.utcnow())
 
@@ -1066,12 +1130,27 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         match_started = str(datetime.utcnow())
         try:
             match_results = match_item(country_code, name, address, item.id)
-            match_objects = save_match_details(match_results)
+            item_matches = match_results['item_matches']
+
+            gazetteer_match_count = len(item_matches.keys())
+
+            if gazetteer_match_count == 0 and text_only_fallback:
+                # When testing with more realistic data the text matching
+                # was returning dozens of results. Limiting to the first 5 is
+                # reasonable because the results are sorted with the highest
+                # confidence first.
+                text_only_matches = {
+                    item.id:
+                    list(text_match_item(item.country_code, item.name)[:5])}
+            else:
+                text_only_matches = {}
+
+            match_objects = save_match_details(
+                match_results, text_only_matches=text_only_matches)
 
             automatic_threshold = \
                 match_results['results']['automatic_threshold']
 
-            item_matches = match_results['item_matches']
             for item_id, matches in item_matches.items():
                 result['item_id'] = item_id
                 result['status'] = item.status
@@ -1092,6 +1171,27 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                                 'facility-match-reject',
                                 kwargs={'pk': match.pk})
                     result['matches'].append(facility_dict)
+
+            # Append the text only match results to the response if there were
+            # no gazetteer matches
+            if gazetteer_match_count == 0:
+                for match in match_objects:
+                    if match.results and match.results['text_only_match']:
+                        item.status = FacilityListItem.POTENTIAL_MATCH
+                        context = {'request': request}
+                        facility_dict = FacilityDetailsSerializer(
+                            match.facility, context=context).data
+                        facility_dict['confidence'] = match.confidence
+                        facility_dict['text_only_match'] = True
+                        if should_create:
+                            facility_dict['confirm_match_url'] = reverse(
+                                'facility-match-confirm',
+                                kwargs={'pk': match.pk})
+                            facility_dict['reject_match_url'] = reverse(
+                                'facility-match-reject',
+                                kwargs={'pk': match.pk})
+                        result['matches'].append(facility_dict)
+
         except GazetteerCacheTimeoutError as te:
             item.status = FacilityListItem.ERROR_MATCHING
             item.processing_results.append({

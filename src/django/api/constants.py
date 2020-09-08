@@ -50,6 +50,7 @@ class FacilityMergeQueryParams:
 class FacilityCreateQueryParams:
     CREATE = 'create'
     PUBLIC = 'public'
+    TEXT_ONLY_FALLBACK = 'textonlyfallback'
 
 
 class FeatureGroups:
