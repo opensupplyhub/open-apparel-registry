@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+- Bump http-proxy from 1.17.0 to 1.18.1 in /src/app [#1098](https://github.com/open-apparel-registry/open-apparel-registry/pull/1098)
+
 ## [2.30.0] - 2020-08-11
 
 ### Fixed
