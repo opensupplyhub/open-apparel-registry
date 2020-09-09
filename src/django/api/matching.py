@@ -9,6 +9,7 @@ import traceback
 from collections import defaultdict
 from datetime import datetime
 from django.conf import settings
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction
 from django.db.models import Q, Max
 from unidecode import unidecode
@@ -389,6 +390,28 @@ def match_item(country,
         automatic_threshold=automatic_threshold,
         gazetteer_threshold=gazetteer_threshold,
         recall_weight=recall_weight)
+
+
+def text_match_item(country_code, name, threshold=0.5):
+    """
+    Use simple fuzzy text matching rather than a dedupe model to find potential
+    matches.
+
+    Arguments:
+    country -- A valid 2-character ISO code.
+    name -- The name of the facility.
+    threshold -- Value between 0.0 and 1.0. The minimum acceptable similarity
+                 score. Defaults to 0.5.
+
+    Returns:
+    A Facility QuerySet that containing items with a matching country code and
+    a name similar to the name argument.
+    """
+    return Facility.objects \
+                   .annotate(similarity=TrigramSimilarity('name', name)) \
+                   .filter(similarity__gte=threshold,
+                           country_code=country_code) \
+                   .order_by('-similarity')
 
 
 def facility_values_to_dedupe_record(facility_dict):
