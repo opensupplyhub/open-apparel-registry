@@ -2,9 +2,7 @@
   {
     "name": "django",
     "image": "${image}",
-    "cpu": ${cpu},
-    "memory": ${memory},
-    "essential": true,
+    "cpu": 0,
     "entryPoint": ["./manage.py"],
     "environment": [
         { "name": "PYTHONUNBUFFERED", "value": "1" },

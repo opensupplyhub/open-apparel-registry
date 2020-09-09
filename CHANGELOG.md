@@ -19,11 +19,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.31.0] - 2020-09-09
+
+### Added
+
+- Add trigram match on facility name fallback when matching via API [#1099](https://github.com/open-apparel-registry/open-apparel-registry/pull/1099)
+
+### Security
+
+- Bump http-proxy from 1.17.0 to 1.18.1 in /src/app [#1098](https://github.com/open-apparel-registry/open-apparel-registry/pull/1098)
+
 ## [2.30.0] - 2020-08-11
 
 ### Fixed
 
-Rework GazetteerCache [#1076](https://github.com/open-apparel-registry/open-apparel-registry/pull/1076)
+- Rework GazetteerCache [#1076](https://github.com/open-apparel-registry/open-apparel-registry/pull/1076)
 
 ## [2.29.0] - 2020-08-06
 
@@ -459,7 +469,8 @@ Rework GazetteerCache [#1076](https://github.com/open-apparel-registry/open-appa
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.30.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.31.0...HEAD
+[2.31.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.31.0
 [2.30.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.30.0
 [2.29.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.29.0
 [2.28.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.28.0

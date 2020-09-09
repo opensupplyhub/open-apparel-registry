@@ -595,6 +595,7 @@ class FacilityCreateBodySerializer(Serializer):
 class FacilityCreateQueryParamsSerializer(Serializer):
     create = BooleanField(default=True, required=False)
     public = BooleanField(default=True, required=False)
+    textonlyfallback = BooleanField(default=False, required=False)
 
 
 class FacilityClaimSerializer(ModelSerializer):

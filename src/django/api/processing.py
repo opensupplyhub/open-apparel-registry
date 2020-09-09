@@ -1,3 +1,4 @@
+import copy
 import csv
 import traceback
 import sys
@@ -291,7 +292,7 @@ def is_string_match(item, facility):
             and clean(item.address) == clean(facility.address))
 
 
-def save_match_details(match_results):
+def save_match_details(match_results, text_only_matches=None):
     """
     Save the results of a call to match_facility_list_items by creating
     Facility and FacilityMatch instances and updating the state of the affected
@@ -303,10 +304,16 @@ def save_match_details(match_results):
     Arguments:
     match_results -- The dict return value from a call to
                      match_facility_list_items.
+    text_only_matches -- An optional object where keys are FacilityListItem
+                         IDs and values are a list of facilities that were
+                         matched to the item without dedupe which should be
+                         saved as pending matches.
 
     Returns:
     The list of `FacilityMatch` objects created
     """
+    if text_only_matches is None:
+        text_only_matches = {}
     processed_list_item_ids = match_results['processed_list_item_ids']
     item_matches = match_results['item_matches']
     results = match_results['results']
@@ -410,7 +417,34 @@ def save_match_details(match_results):
                  .filter(id__in=processed_list_item_ids)
                  .exclude(id__in=item_matches.keys()))
     for item in unmatched:
-        if item.status == FacilityListItem.GEOCODED_NO_RESULTS:
+        has_text_only_matches = (
+            item.id in text_only_matches
+            and len(text_only_matches[item.id]) > 0)
+        if has_text_only_matches:
+            text_only_results = copy.deepcopy(results)
+            text_only_results['text_only_match'] = True
+            text_only_match_objects = [
+                FacilityMatch(
+                    facility_list_item_id=item.id,
+                    facility_id=facility.id,
+                    confidence=0,
+                    status=FacilityMatch.PENDING,
+                    results=text_only_results)
+                for facility in text_only_matches[item.id]]
+            if item.source.create:
+                for m in text_only_match_objects:
+                    m.save()
+            all_matches.extend(text_only_match_objects)
+
+            item.status = FacilityListItem.POTENTIAL_MATCH
+            item.processing_results.append({
+                'action': ProcessingAction.MATCH,
+                'started_at': started,
+                'error': False,
+                'text_only_match': True,
+                'finished_at': finished
+            })
+        elif item.status == FacilityListItem.GEOCODED_NO_RESULTS:
             item.status = FacilityListItem.ERROR_MATCHING
             item.processing_results.append({
                 'action': ProcessingAction.MATCH,
