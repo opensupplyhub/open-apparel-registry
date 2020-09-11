@@ -1,0 +1,75 @@
+#!/bin/sh
+#
+# Generate queries to anonymize the PostgresSQL database.
+#
+# Run query against local PostgreSQL DB.
+# 1st Argument: DB Name
+# 2nd Argument: Query
+run_query() {
+    psql -h localhost -p 5433 -U openapparelregistry -t -A \
+        "$1" -c "$2"
+}
+
+# Establishes named piped connected to interactive Python shell, so that we
+# don't need to reimport the Faker packages for every function call.
+establish_fake_context() {
+    mkfifo /tmp/faker_in
+    python -i </tmp/faker_in >>/tmp/faker_out &
+    exec 3>/tmp/faker_in
+    echo "import string; from faker import Faker; fake = Faker();" >&3
+}
+
+close_fake_context() {
+    exec 3>&-
+    rm -f /tmp/faker*
+}
+
+# Wait for the Python shell to finish.
+wait_for_it() {
+    while ! [ -s /tmp/faker_out ]; do
+        :
+    done
+}
+
+# Generate fake data.
+# 1st Argument: Anything that `$ faker profile` returns.
+fake() {
+    cp /dev/null /tmp/faker_out
+    echo "print(fake.profile()['$1']);" >&3
+    wait_for_it
+    echo $(tail -n 1 /tmp/faker_out)
+}
+
+# Generate a fake SHA.
+fake_sha() {
+    cp /dev/null /tmp/faker_out
+    echo "print(fake.sha1(raw_output=False));" >&3
+    wait_for_it
+    echo $(tail -n 1 /tmp/faker_out)
+}
+
+#Generate a fake UUID.
+fake_uuid4() {
+    cp /dev/null /tmp/faker_out
+    echo "print(fake.uuid4());" >&3
+    wait_for_it
+    echo $(tail -n 1 /tmp/faker_out)
+}
+
+establish_fake_context
+
+for user_id in $(run_query openapparelregistry 'select id from "api_user"'); do
+    fake_email="${RANDOM}$(fake mail)"
+    echo "\
+UPDATE \"api_user\" \
+SET \
+email = '$fake_email' \
+WHERE id = '$user_id';"
+    echo "\
+UPDATE \"account_emailaddress\" \
+SET \
+email = '$fake_email' \
+WHERE user_id = '$user_id';"
+done
+
+close_fake_context

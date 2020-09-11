@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  k6:
+    image: loadimpact/k6
+    environment:
+      - K6_CLOUD_TOKEN
+    volumes:
+      - ./:/scripts/
+    command: run /scripts/zoom_rio_de_janerio_with_contributor_filter.js
