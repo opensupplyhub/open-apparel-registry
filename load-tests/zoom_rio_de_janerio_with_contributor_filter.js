@@ -14,13 +14,13 @@ har.log.entries.forEach(entry => {
   const startedDateTime = new Date(entry.startedDateTime);
   startedDateTime.setMilliseconds(0);
 
-  // Ensure we're always busting the cache
+  // // Ensure we're always busting the cache
   // const randomCacheKey = Math.random().toString(32).substring(5);
-  // const url = entry.request.url.replace(pattern, `${randomCacheKey}/$2/$3/$4`)
+  // const url = entry.request.url.replace(pattern, `${randomCacheKey}/$2/$3/$4.pbf?$5`);
 
   // Cache key is a hash of the query string / filters
   const cacheKey = crypto.sha1(entry.request.url.match(pattern)[5], "hex").slice(0, 8);
-  const url = entry.request.url.replace(pattern, `${cacheKey}/$2/$3/$4.pbf?$5`)
+  const url = entry.request.url.replace(pattern, `${cacheKey}/$2/$3/$4.pbf?$5`);
 
   const referer = entry.request.headers.find(header => header.name === "Referer").value;
 
