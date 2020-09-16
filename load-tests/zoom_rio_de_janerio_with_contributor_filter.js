@@ -26,7 +26,7 @@ har.log.entries.forEach((entry) => {
         .slice(0, 8);
     const url = entry.request.url.replace(
         pattern,
-        `${cacheKey}/$2/$3/$4.pbf?$5`
+        `${cacheKey}${__ENV.CACHE_KEY_SUFFIX}/$2/$3/$4.pbf?$5`
     );
 
     const referer = entry.request.headers.find(
