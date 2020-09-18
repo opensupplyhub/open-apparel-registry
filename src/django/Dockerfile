@@ -1,5 +1,7 @@
 FROM quay.io/azavea/django:2.2-python3.7-slim
 
+ENV PYTHONUNBUFFERED 1
+
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src
 
