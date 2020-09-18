@@ -16,7 +16,8 @@ def _initialize_gazetteer_cache():
 def run():
     # When `SERVER_SOFTWARE` is in the environment, we know that the app has
     # been loaded from gunicorn, not a management command.
-    if os.environ.get('SERVER_SOFTWARE') is not None:
+    if os.environ.get('SERVER_SOFTWARE') is not None \
+        and os.environ.get('DISABLE_GAZETTEER_CACHE') is None:
         # This run function is called the first time a request is made to the
         # app. In our deployments this will be the `/heath-check/` endpoint. We
         # do our model training in a thread so that the request does not
