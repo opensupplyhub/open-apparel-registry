@@ -1,3 +1,19 @@
+#
+# Security group resources
+#
+resource "aws_security_group" "batch" {
+  vpc_id = "${module.vpc.id}"
+
+  tags {
+    Name        = "sgBatchContainerInstance"
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
+  }
+}
+
+#
+# Batch resources
+#
 resource "aws_batch_compute_environment" "default" {
   depends_on = ["aws_iam_role_policy_attachment.batch_policy"]
 

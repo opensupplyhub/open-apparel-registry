@@ -180,6 +180,26 @@ variable "app_fargate_memory" {
   default = "512"
 }
 
+variable "tile_ecs_desired_count" {
+  default = "1"
+}
+
+variable "tile_ecs_deployment_min_percent" {
+  default = "100"
+}
+
+variable "tile_ecs_deployment_max_percent" {
+  default = "200"
+}
+
+variable "tile_fargate_cpu" {
+  default = "256"
+}
+
+variable "tile_fargate_memory" {
+  default = "512"
+}
+
 variable "cli_fargate_cpu" {
   default = "256"
 }
