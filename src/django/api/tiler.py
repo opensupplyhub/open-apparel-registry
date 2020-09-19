@@ -13,11 +13,11 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
 
     hex_width = abs(xy_bounds.right - xy_bounds.left) / (2 ** GRID_ZOOM_FACTOR)
     hex_grid_query = """
-        CREATE TEMP TABLE hex_grid (geom, mvt_geom) AS (
+        CREATE TEMP TABLE hex_grid (geom, mvt_geom, wgs84_geom) AS (
           SELECT geom, ST_AsMVTGeom(
             ST_Centroid(geom), ST_MakeEnvelope(
                 {xmin}, {ymin}, {xmax}, {ymax}
-            ))
+        )), ST_Transform (geom, 4326)
           FROM generate_hexgrid({width}, {xmin}, {ymin}, {xmax}, {ymax})
         )
     """
@@ -27,7 +27,7 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         ymax=xy_bounds.top)
 
     hex_grid_idx_query = \
-        'CREATE INDEX hex_grid_idx ON hex_grid USING gist (geom)'
+        'CREATE INDEX hex_grid_idx ON hex_grid USING gist (wgs84_geom)'
 
     location_query, location_params = Facility \
         .objects \
@@ -39,8 +39,8 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
     # Exclude geoms on the edges that wrap around the world
     wrap_filter = (
         'abs('
-        '   ST_XMax(ST_Envelope(ST_Transform(hex_grid.geom, 4326)))'
-        ' - ST_XMin(ST_Envelope(ST_Transform(hex_grid.geom, 4326)))'
+        '   ST_XMax(ST_Envelope(hex_grid.wgs84_geom))'
+        ' - ST_XMin(ST_Envelope(hex_grid.wgs84_geom))'
         ') < 180')
 
     if location_query.find('WHERE') >= 0:
@@ -53,12 +53,12 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
         'SELECT '
         '  hex_grid.mvt_geom, '
         '  count(location), '
-        '  ST_XMin(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as xmin, '
-        '  ST_YMin(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as ymin, '
-        '  ST_XMax(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as xmax, '
-        '  ST_YMax(ST_Envelope(ST_Transform(hex_grid.geom, 4326))) as ymax '
+        '  ST_XMin(ST_Envelope(hex_grid.wgs84_geom)) as xmin, '
+        '  ST_YMin(ST_Envelope(hex_grid.wgs84_geom)) as ymin, '
+        '  ST_XMax(ST_Envelope(hex_grid.wgs84_geom)) as xmax, '
+        '  ST_YMax(ST_Envelope(hex_grid.wgs84_geom)) as ymax '
         'FROM hex_grid JOIN api_facility '
-        '  ON ST_Contains(ST_Transform(hex_grid.geom, 4326), location) '
+        '  ON ST_Contains(hex_grid.wgs84_geom, location) '
         ' {where_clause} '
         'GROUP BY hex_grid.mvt_geom, '
         '  xmin, ymin, xmax, ymax')
