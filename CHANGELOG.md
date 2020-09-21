@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+- Apply `ST_Transform()` when `hex_grid` table is created [#1109](https://github.com/open-apparel-registry/open-apparel-registry/pull/1109)
 
 ### Security
 
