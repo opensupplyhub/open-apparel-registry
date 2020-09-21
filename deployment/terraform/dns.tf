@@ -20,7 +20,7 @@ resource "aws_route53_record" "database" {
   name    = "database.service.${var.r53_private_hosted_zone}"
   type    = "CNAME"
   ttl     = "10"
-  records = ["openapparelregistry-prd-clone.ctdp4povekhv.eu-west-1.rds.amazonaws.com"]
+  records = ["${module.database_enc.hostname}"]
 }
 
 #
