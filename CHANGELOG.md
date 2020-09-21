@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Simulate tile server throughput with k6 load test [#1103](https://github.com/open-apparel-registry/open-apparel-registry/pull/1103)
+
 ### Changed
 
 ### Deprecated
