@@ -7,6 +7,7 @@ components necessary to execute a load test are encapsulated in this directory.
 ## Variables
 
 - `K6_CLOUD_TOKEN`: An Auth Token for interacting with the k6 Cloud (optional)
+- `CACHE_KEY_SUFFIX`: A suffix to append in the path to ensure tile requests miss the cache (optional)
 
 ## Running
 
