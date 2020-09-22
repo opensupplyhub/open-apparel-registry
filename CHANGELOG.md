@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Simulate tile server throughput with k6 load test [#1103](https://github.com/open-apparel-registry/open-apparel-registry/pull/1103)
-
 ### Changed
 
 ### Deprecated
@@ -18,9 +16,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
-- Apply `ST_Transform()` when `hex_grid` table is created [#1109](https://github.com/open-apparel-registry/open-apparel-registry/pull/1109)
 
 ### Security
+
+## [2.31.1] - 2020-09-09
+
+### Added
+
+- Simulate tile server throughput with k6 load test [#1103](https://github.com/open-apparel-registry/open-apparel-registry/pull/1103)
+
+### Fixed
+
+- Apply `ST_Transform()` when `hex_grid` table is created [#1109](https://github.com/open-apparel-registry/open-apparel-registry/pull/1109)
 
 ## [2.31.0] - 2020-09-09
 
