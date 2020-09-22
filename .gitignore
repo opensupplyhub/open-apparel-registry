@@ -52,3 +52,12 @@ deployment/terraform/lambda-functions/**/*.zip
 deployment/terraform/lambda-functions/**/*.out
 deployment/terraform/lambda-functions/**/src/*
 !deployment/terraform/lambda-functions/alert_batch_failures/src/alert_batch_failures.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
