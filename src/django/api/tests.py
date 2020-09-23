@@ -1298,6 +1298,7 @@ class ContributorsListAPIEndpointTests(TestCase):
         self.email_four = 'four@example.com'
         self.email_five = 'five@example.com'
         self.email_six = 'six@example.com'
+        self.email_seven = 'seven@example.com'
 
         self.contrib_one_name = 'contributor that should be included'
         self.contrib_two_name = 'contributor with no lists'
@@ -1305,6 +1306,7 @@ class ContributorsListAPIEndpointTests(TestCase):
         self.contrib_four_name = 'contributor with a non public list'
         self.contrib_five_name = 'contributor with only error items'
         self.contrib_six_name = 'contributor with one good and one error item'
+        self.contrib_seven_name = 'contributor with create=False API source'
 
         self.country_code = 'US'
         self.list_one_name = 'one'
@@ -1313,6 +1315,7 @@ class ContributorsListAPIEndpointTests(TestCase):
         self.list_four_name = 'four'
         self.list_five_name = 'five'
         self.list_six_name = 'six'
+        self.list_seven_name = 'seven'
 
         self.user_one = User.objects.create(email=self.email_one)
         self.user_two = User.objects.create(email=self.email_two)
@@ -1320,6 +1323,7 @@ class ContributorsListAPIEndpointTests(TestCase):
         self.user_four = User.objects.create(email=self.email_four)
         self.user_five = User.objects.create(email=self.email_five)
         self.user_six = User.objects.create(email=self.email_six)
+        self.user_seven = User.objects.create(email=self.email_seven)
 
         self.contrib_one = Contributor \
             .objects \
@@ -1355,6 +1359,12 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(admin=self.user_six,
                     name=self.contrib_six_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_seven = Contributor \
+            .objects \
+            .create(admin=self.user_seven,
+                    name=self.contrib_seven_name,
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.list_one = FacilityList \
@@ -1463,6 +1473,20 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(row_index=1,
                     source=self.source_six,
+                    status=FacilityListItem.MATCHED)
+
+        # Test to ensure contributors don't appear in the list if all of their
+        # sources have create=False
+        self.source_seven = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    create=False,
+                    contributor=self.contrib_seven)
+
+        self.list_item_seven = FacilityListItem \
+            .objects \
+            .create(row_index=0,
+                    source=self.source_seven,
                     status=FacilityListItem.MATCHED)
 
     def test_contributors_list_has_only_contributors_with_active_lists(self):
