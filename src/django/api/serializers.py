@@ -451,11 +451,15 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         request = self.context.get('request') \
             if self.context is not None else None
         user = request.user if request is not None else None
-        return [
-            format_source(source)
-            for source
-            in facility.sources(user=user)
-        ]
+        distinct_names = []
+        distinct_sources = []
+        formatted_sources = [
+            format_source(source) for source in facility.sources(user=user)]
+        for formatted_source in formatted_sources:
+            if formatted_source['name'] not in distinct_names:
+                distinct_names.append(formatted_source['name'])
+                distinct_sources.append(formatted_source)
+        return distinct_sources
 
 
 class FacilityDetailsSerializer(FacilitySerializer):
