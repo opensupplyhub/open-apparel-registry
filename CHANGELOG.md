@@ -19,7 +19,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
-## [2.31.1] - 2020-09-09
+## [2.32.0] - 2020-09-24
+
+### Fixed
+
+- Return distinct source names from the facility API [#1113](https://github.com/open-apparel-registry/open-apparel-registry/pull/1113)
+- Exclude contributors if all sources are create=False [#1114](https://github.com/open-apparel-registry/open-apparel-registry/pull/1114)
+
+## [2.31.1] - 2020-09-21
 
 ### Added
 
@@ -479,7 +486,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.31.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.32.0...HEAD
+[2.32.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.32.0
+[2.31.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.31.1
 [2.31.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.31.0
 [2.30.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.30.0
 [2.29.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.29.0
