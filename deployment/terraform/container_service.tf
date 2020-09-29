@@ -91,7 +91,6 @@ resource "aws_lb_listener" "app" {
 #
 # ECS Resources
 #
-
 resource "aws_ecs_cluster" "app" {
   name = "ecs${var.environment}Cluster"
 }
@@ -100,7 +99,7 @@ data "template_file" "app" {
   template = "${file("task-definitions/app.json")}"
 
   vars = {
-    image  = "${local.app_image}"
+    image = "${local.app_image}"
 
     postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database_enc.port}"
@@ -108,8 +107,7 @@ data "template_file" "app" {
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
 
-    # See: https://docs.gunicorn.org/en/stable/design.html#how-many-workers
-    gunicorn_workers = "${ceil((2 * (__builtin_StringToFloat(var.app_fargate_cpu) / 1024)) + 1)}"
+    gunicorn_workers = 1
 
     google_server_side_api_key = "${var.google_server_side_api_key}"
     google_client_side_api_key = "${var.google_client_side_api_key}"
@@ -150,7 +148,7 @@ data "template_file" "app_cli" {
   template = "${file("task-definitions/app_cli.json")}"
 
   vars = {
-    image  = "${local.app_image}"
+    image = "${local.app_image}"
 
     postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database_enc.port}"
