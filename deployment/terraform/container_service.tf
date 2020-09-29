@@ -201,6 +201,7 @@ resource "aws_ecs_service" "app" {
   desired_count                      = "${var.app_ecs_desired_count}"
   deployment_minimum_healthy_percent = "${var.app_ecs_deployment_min_percent}"
   deployment_maximum_percent         = "${var.app_ecs_deployment_max_percent}"
+  health_check_grace_period_seconds  = "${var.app_ecs_grace_period_seconds}"
 
   launch_type = "FARGATE"
 

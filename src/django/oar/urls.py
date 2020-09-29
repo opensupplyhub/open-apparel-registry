@@ -25,9 +25,7 @@ from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
 from oar import settings
-from oar import startup
 
-startup.run()
 
 router = routers.DefaultRouter()
 router.register('facility-lists', views.FacilityListViewSet, 'facility-list')

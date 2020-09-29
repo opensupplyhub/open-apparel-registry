@@ -3,7 +3,6 @@ import logging
 import os
 import re
 import sys
-import threading
 import traceback
 
 from collections import defaultdict
@@ -449,7 +448,6 @@ class GazetteerCache:
     Note that the first time `get_latest` is called it will be slow, as it
     needs to train a model and index it with all the `Facility` items.
     """
-    _lock = threading.Lock()
     _gazetter = None
     _facility_version = None
     _match_version = None
@@ -585,10 +583,6 @@ class GazetteerCache:
 
     @classmethod
     def get_latest(cls):
-        lock_aquired = cls._lock.acquire(timeout=10)
-        if not lock_aquired:
-            raise GazetteerCacheTimeoutError
-
         try:
             if cls._gazetter is None:
                 return cls._rebuild_gazetteer()
@@ -678,19 +672,6 @@ class GazetteerCache:
                 'last_successful_facility_version': cls._facility_version,
                 'last_successful_match_version': cls._match_version}
             _try_reporting_error_to_rollbar(extra_info)
-
-            # If there is an exception raised while attempting to incrementally
-            # update the model from `HistoricalFacility` records then attempt
-            # to rebuild the model from scratch.
-            if cls._gazetter is not None:
-                logger.warn('Rebuilding gazetteer after update exception {} {}'
-                            .format(extra_info, traceback.format_exc()))
-                cls._rebuild_gazetteer()
-            else:
-                # If `cls._gazetter` is None then there was an exception while
-                # training from scratch, so we won't try again.
-                raise
-        finally:
-            cls._lock.release()
+            raise
 
         return cls._gazetter
