@@ -2785,6 +2785,12 @@ class FacilityMergeTest(APITestCase):
             email=self.superuser_email,
             password=self.superuser_password)
 
+        self.api_user_email = 'api@example.com'
+        self.api_user_password = 'example123'
+        self.api_user = User.objects.create(email=self.api_user_email)
+        self.api_user.set_password(self.api_user_password)
+        self.api_user.save()
+
         self.contributor_1 = Contributor \
             .objects \
             .create(admin=self.user,
@@ -2888,6 +2894,30 @@ class FacilityMergeTest(APITestCase):
 
         self.list_item_2.facility = self.facility_2
         self.list_item_2.save()
+
+        self.contributor_3 = Contributor \
+            .objects \
+            .create(admin=self.api_user,
+                    name='test contributor 3',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.source_3 = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    create=False,
+                    contributor=self.contributor_3)
+
+        self.list_item_3 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    facility=self.facility_2,
+                    source=self.source_3)
 
         self.existing_alias = FacilityAlias.objects.create(
             facility=self.facility_2,
