@@ -36,6 +36,18 @@ def _try_reporting_error_to_rollbar(extra_data=dict):
             str(extra_data), traceback.format_exc()))
 
 
+def _try_reporting_warning_to_rollbar(message, extra_data=dict):
+    try:
+        ROLLBAR = getattr(settings, 'ROLLBAR', {})
+        if ROLLBAR:
+            import rollbar
+            rollbar.report_message(
+                message, level='warning', extra_data=extra_data)
+    except Exception:
+        logger.error('Failed to post warning to Rollbar: {} {} {}'.format(
+            message, str(extra_data), traceback.format_exc()))
+
+
 def clean(column):
     """
     Remove punctuation and excess whitespace from a value before using it to
@@ -294,7 +306,16 @@ def match_items(messy,
     item_matches = defaultdict(list)
     for matches in results:
         for (messy_id, canon_id), score in matches:
-            item_matches[messy_id].append((canon_id, score))
+            # The gazetteer matcher obtained from the GazetteerCache may have
+            # encountered an exception raised by Dedupe while unindexing
+            # records and could therefore return matches for facility IDs that
+            # no longer exist due to merging or deleting.
+            facility_exists = Facility \
+                .objects \
+                .filter(pk=normalize_extended_facility_id(canon_id)) \
+                .exists()
+            if facility_exists:
+                item_matches[messy_id].append((canon_id, score))
 
     return {
         'processed_list_item_ids': list(messy.keys()),
@@ -595,7 +616,13 @@ class GazetteerCache:
                     record = facility_values_to_dedupe_record(item)
                     logger.debug(
                         'Unindexing facility {}'.format(str(record)))
-                    cls._gazetter.unindex(record)
+                    try:
+                        cls._gazetter.unindex(record)
+                    except (KeyError, AttributeError) as e:
+                        _try_reporting_warning_to_rollbar(
+                            'Exception while calling unindex: {}'.format(
+                                str(e)),
+                            extra_data={'traceback': traceback.format_exc()})
                 else:
                     # The history record has old field values, so we use the
                     # updated version that we fetched. If we don't have a
@@ -653,7 +680,14 @@ class GazetteerCache:
                     if item['history_type'] == '-':
                         record = dedupe_record_for_match_item(item)
                         logger.debug('Unindexing match {}'.format(str(record)))
-                        cls._gazetter.unindex(record)
+                        try:
+                            cls._gazetter.unindex(record)
+                        except (KeyError, AttributeError) as e:
+                            _try_reporting_warning_to_rollbar(
+                                'Exception while calling unindex: {}'.format(
+                                    str(e)),
+                                extra_data={'traceback':
+                                            traceback.format_exc()})
                     else:
                         # The history record has old field values, so we us the
                         # updated version that we fetched. If we don't have a
