@@ -36,18 +36,6 @@ def _try_reporting_error_to_rollbar(extra_data=dict):
             str(extra_data), traceback.format_exc()))
 
 
-def _try_reporting_warning_to_rollbar(message, extra_data=dict):
-    try:
-        ROLLBAR = getattr(settings, 'ROLLBAR', {})
-        if ROLLBAR:
-            import rollbar
-            rollbar.report_message(
-                message, level='warning', extra_data=extra_data)
-    except Exception:
-        logger.error('Failed to post warning to Rollbar: {} {} {}'.format(
-            message, str(extra_data), traceback.format_exc()))
-
-
 def clean(column):
     """
     Remove punctuation and excess whitespace from a value before using it to
@@ -612,18 +600,12 @@ class GazetteerCache:
                 cls._get_new_facility_history()
 
             for item in facility_changes:
-                if item['history_type'] == '-':
-                    record = facility_values_to_dedupe_record(item)
-                    logger.debug(
-                        'Unindexing facility {}'.format(str(record)))
-                    try:
-                        cls._gazetter.unindex(record)
-                    except (KeyError, AttributeError) as e:
-                        _try_reporting_warning_to_rollbar(
-                            'Exception while calling unindex: {}'.format(
-                                str(e)),
-                            extra_data={'traceback': traceback.format_exc()})
-                else:
+                # We were previously calling `cls._gazetter.unindex` to
+                # remove records with a `history_type` of `-` but it was
+                # raising exceptions for which we could not determine the
+                # root cause. We have opted to ignore them and filter out
+                # no longer existing records from the match results.
+                if item['history_type'] != '-':
                     # The history record has old field values, so we use the
                     # updated version that we fetched. If we don't have a
                     # record for the ID, it means that the facility has been
@@ -677,18 +659,12 @@ class GazetteerCache:
                     and match['status'] == FacilityMatch.CONFIRMED
                     and has_facility)
                 if is_confirmed_match_with_facility:
-                    if item['history_type'] == '-':
-                        record = dedupe_record_for_match_item(item)
-                        logger.debug('Unindexing match {}'.format(str(record)))
-                        try:
-                            cls._gazetter.unindex(record)
-                        except (KeyError, AttributeError) as e:
-                            _try_reporting_warning_to_rollbar(
-                                'Exception while calling unindex: {}'.format(
-                                    str(e)),
-                                extra_data={'traceback':
-                                            traceback.format_exc()})
-                    else:
+                    # We were previously calling `cls._gazetter.unindex` to
+                    # remove records with a `history_type` of `-` but it was
+                    # raising exceptions for which we could not determine the
+                    # root cause. We have opted to ignore them and filter out
+                    # no longer existing records from the match results.
+                    if item['history_type'] != '-':
                         # The history record has old field values, so we us the
                         # updated version that we fetched. If we don't have a
                         # record for the ID, it means that the facility has
