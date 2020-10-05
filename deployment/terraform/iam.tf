@@ -69,6 +69,33 @@ resource "aws_iam_role_policy" "batch_describe_and_submit" {
 }
 
 #
+# ALB IAM resources
+#
+data "aws_elb_service_account" "main" {}
+
+data "aws_iam_policy_document" "alb_access_logging" {
+  statement {
+    effect = "Allow"
+
+    actions = ["s3:PutObject"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["${data.aws_elb_service_account.main.arn}"]
+    }
+
+    resources = [
+      "${aws_s3_bucket.logs.arn}/ALB/*",
+    ]
+  }
+}
+
+resource "aws_s3_bucket_policy" "alb_access_logging" {
+  bucket = "${aws_s3_bucket.logs.id}"
+  policy = "${data.aws_iam_policy_document.alb_access_logging.json}"
+}
+
+#
 # EC2 IAM resources
 #
 data "aws_iam_policy_document" "container_instance_ec2_assume_role" {
