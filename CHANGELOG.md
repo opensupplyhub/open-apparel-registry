@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+Directly connect health check to GazetteerCache and remove the use of threading in model training [#1117](https://github.com/open-apparel-registry/open-apparel-registry/pull/1117)
+
 ### Deprecated
 
 ### Removed

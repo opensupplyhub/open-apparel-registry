@@ -94,3 +94,10 @@ The [Django](https://www.djangoproject.com) app runs inside a [Gunicorn](https:/
 | `setup`                                                | Provision Vagrant VM and run `update`                                                                                                                                                        |
 | `test`                                                 | Run tests                                                                                                                                                                                    |
 | `update`                                               | Build container images and execute database migrations                                                                                                                                       |
+
+## Tools ⚒️
+
+| Name                                                   | Description                                                                                                                                                                                  |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `postfacilitiescsv.py`                                 | POST the rows of a CSV containing facility information to the facilities API                                                                                                                 |
+| `devhealthcheck.sh`                                    | Simulate application load balancer health checks in development                                                                                                                              |
