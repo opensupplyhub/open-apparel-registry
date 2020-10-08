@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+- Make it possible to modify the RDS DB parameter group [#1125](https://github.com/open-apparel-registry/open-apparel-registry/pull/1125)
 
 ### Changed
 
