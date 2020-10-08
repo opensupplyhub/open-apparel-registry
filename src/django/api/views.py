@@ -1588,6 +1588,21 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             })
             merge_item.save()
 
+        # Submitting facilities through the API with create=false will create a
+        # FacilityListItem record but not a FacilityMatch. This loop handles
+        # updating any items that still reference the merge facility.
+        unmatched_items = FacilityListItem.objects.filter(facility=merge)
+        for unmatched_item in unmatched_items:
+            unmatched_item.facility = target
+            unmatched_item.processing_results.append({
+                'action': ProcessingAction.MERGE_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'merged_oar_id': merge.id,
+            })
+            unmatched_item.save()
+
         for alias in FacilityAlias.objects.filter(facility=merge):
             oar_id = alias.oar_id
             alias.changeReason = 'Merging {} into {}'.format(

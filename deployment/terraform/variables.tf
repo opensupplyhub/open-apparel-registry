@@ -172,6 +172,10 @@ variable "app_ecs_deployment_max_percent" {
   default = "200"
 }
 
+variable "app_ecs_grace_period_seconds" {
+  default = "180"
+}
+
 variable "app_fargate_cpu" {
   default = "256"
 }

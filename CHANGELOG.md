@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.33.0] - 2020-10-07
+
+### Changed
+
+Directly connect health check to GazetteerCache and remove the use of threading in model training [#1117](https://github.com/open-apparel-registry/open-apparel-registry/pull/1117) [#1123](https://github.com/open-apparel-registry/open-apparel-registry/pull/1123)
+
 ## [2.32.0] - 2020-09-24
 
 ### Fixed
@@ -486,7 +492,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.32.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.33.0...HEAD
+[2.33.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.33.0
 [2.32.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.32.0
 [2.31.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.31.1
 [2.31.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.31.0

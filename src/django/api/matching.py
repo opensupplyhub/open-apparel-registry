@@ -3,7 +3,6 @@ import logging
 import os
 import re
 import sys
-import threading
 import traceback
 
 from collections import defaultdict
@@ -295,7 +294,16 @@ def match_items(messy,
     item_matches = defaultdict(list)
     for matches in results:
         for (messy_id, canon_id), score in matches:
-            item_matches[messy_id].append((canon_id, score))
+            # The gazetteer matcher obtained from the GazetteerCache may have
+            # encountered an exception raised by Dedupe while unindexing
+            # records and could therefore return matches for facility IDs that
+            # no longer exist due to merging or deleting.
+            facility_exists = Facility \
+                .objects \
+                .filter(pk=normalize_extended_facility_id(canon_id)) \
+                .exists()
+            if facility_exists:
+                item_matches[messy_id].append((canon_id, score))
 
     return {
         'processed_list_item_ids': list(messy.keys()),
@@ -449,7 +457,6 @@ class GazetteerCache:
     Note that the first time `get_latest` is called it will be slow, as it
     needs to train a model and index it with all the `Facility` items.
     """
-    _lock = threading.Lock()
     _gazetter = None
     _facility_version = None
     _match_version = None
@@ -585,10 +592,6 @@ class GazetteerCache:
 
     @classmethod
     def get_latest(cls):
-        lock_aquired = cls._lock.acquire(timeout=10)
-        if not lock_aquired:
-            raise GazetteerCacheTimeoutError
-
         try:
             if cls._gazetter is None:
                 return cls._rebuild_gazetteer()
@@ -597,12 +600,12 @@ class GazetteerCache:
                 cls._get_new_facility_history()
 
             for item in facility_changes:
-                if item['history_type'] == '-':
-                    record = facility_values_to_dedupe_record(item)
-                    logger.debug(
-                        'Unindexing facility {}'.format(str(record)))
-                    cls._gazetter.unindex(record)
-                else:
+                # We were previously calling `cls._gazetter.unindex` to
+                # remove records with a `history_type` of `-` but it was
+                # raising exceptions for which we could not determine the
+                # root cause. We have opted to ignore them and filter out
+                # no longer existing records from the match results.
+                if item['history_type'] != '-':
                     # The history record has old field values, so we use the
                     # updated version that we fetched. If we don't have a
                     # record for the ID, it means that the facility has been
@@ -656,11 +659,12 @@ class GazetteerCache:
                     and match['status'] == FacilityMatch.CONFIRMED
                     and has_facility)
                 if is_confirmed_match_with_facility:
-                    if item['history_type'] == '-':
-                        record = dedupe_record_for_match_item(item)
-                        logger.debug('Unindexing match {}'.format(str(record)))
-                        cls._gazetter.unindex(record)
-                    else:
+                    # We were previously calling `cls._gazetter.unindex` to
+                    # remove records with a `history_type` of `-` but it was
+                    # raising exceptions for which we could not determine the
+                    # root cause. We have opted to ignore them and filter out
+                    # no longer existing records from the match results.
+                    if item['history_type'] != '-':
                         # The history record has old field values, so we us the
                         # updated version that we fetched. If we don't have a
                         # record for the ID, it means that the facility has
@@ -678,19 +682,6 @@ class GazetteerCache:
                 'last_successful_facility_version': cls._facility_version,
                 'last_successful_match_version': cls._match_version}
             _try_reporting_error_to_rollbar(extra_info)
-
-            # If there is an exception raised while attempting to incrementally
-            # update the model from `HistoricalFacility` records then attempt
-            # to rebuild the model from scratch.
-            if cls._gazetter is not None:
-                logger.warn('Rebuilding gazetteer after update exception {} {}'
-                            .format(extra_info, traceback.format_exc()))
-                cls._rebuild_gazetteer()
-            else:
-                # If `cls._gazetter` is None then there was an exception while
-                # training from scratch, so we won't try again.
-                raise
-        finally:
-            cls._lock.release()
+            raise
 
         return cls._gazetter

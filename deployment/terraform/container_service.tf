@@ -43,11 +43,24 @@ resource "aws_lb" "app" {
   security_groups = ["${aws_security_group.alb.id}"]
   subnets         = ["${module.vpc.public_subnet_ids}"]
 
+  access_logs {
+    bucket  = "${aws_s3_bucket.logs.id}"
+    prefix  = "ALB"
+    enabled = true
+  }
+
   tags {
     Name        = "alb${var.environment}App"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
+
+  # In order to enable access logging, the ELB service account needs S3 access.
+  # This is a "hidden" dependency that Terraform cannot automatically infer, so
+  # it must be declared explicitly.
+  depends_on = [
+    "aws_s3_bucket_policy.alb_access_logging"
+  ]
 }
 
 resource "aws_lb_target_group" "app" {
@@ -91,7 +104,6 @@ resource "aws_lb_listener" "app" {
 #
 # ECS Resources
 #
-
 resource "aws_ecs_cluster" "app" {
   name = "ecs${var.environment}Cluster"
 }
@@ -100,7 +112,7 @@ data "template_file" "app" {
   template = "${file("task-definitions/app.json")}"
 
   vars = {
-    image  = "${local.app_image}"
+    image = "${local.app_image}"
 
     postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database_enc.port}"
@@ -108,8 +120,7 @@ data "template_file" "app" {
     postgres_password = "${var.rds_database_password}"
     postgres_db       = "${var.rds_database_name}"
 
-    # See: https://docs.gunicorn.org/en/stable/design.html#how-many-workers
-    gunicorn_workers = "${ceil((2 * (__builtin_StringToFloat(var.app_fargate_cpu) / 1024)) + 1)}"
+    gunicorn_workers = 1
 
     google_server_side_api_key = "${var.google_server_side_api_key}"
     google_client_side_api_key = "${var.google_client_side_api_key}"
@@ -150,7 +161,7 @@ data "template_file" "app_cli" {
   template = "${file("task-definitions/app_cli.json")}"
 
   vars = {
-    image  = "${local.app_image}"
+    image = "${local.app_image}"
 
     postgres_host     = "${aws_route53_record.database.name}"
     postgres_port     = "${module.database_enc.port}"
@@ -201,6 +212,7 @@ resource "aws_ecs_service" "app" {
   desired_count                      = "${var.app_ecs_desired_count}"
   deployment_minimum_healthy_percent = "${var.app_ecs_deployment_min_percent}"
   deployment_maximum_percent         = "${var.app_ecs_deployment_max_percent}"
+  health_check_grace_period_seconds  = "${var.app_ecs_grace_period_seconds}"
 
   launch_type = "FARGATE"
 
