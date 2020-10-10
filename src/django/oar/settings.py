@@ -301,8 +301,10 @@ WATCHMAN_CHECKS = (
 ECSMANAGE_ENVIRONMENTS = {
     'default': {
         'TASK_DEFINITION_NAME': 'StagingAppCLI',
+        'CONTAINER_NAME': 'django',
         'CLUSTER_NAME': 'ecsStagingCluster',
         'LAUNCH_TYPE': 'FARGATE',
+        'PLATFORM_VERSION': '1.4.0',
         'SECURITY_GROUP_TAGS': {
             'Name': 'sgAppEcsService',
             'Environment': 'Staging',
@@ -317,8 +319,10 @@ ECSMANAGE_ENVIRONMENTS = {
     },
     'production': {
         'TASK_DEFINITION_NAME': 'ProductionAppCLI',
+        'CONTAINER_NAME': 'django',
         'CLUSTER_NAME': 'ecsProductionCluster',
         'LAUNCH_TYPE': 'FARGATE',
+        'PLATFORM_VERSION': '1.4.0',
         'SECURITY_GROUP_TAGS': {
             'Name': 'sgAppEcsService',
             'Environment': 'Production',
