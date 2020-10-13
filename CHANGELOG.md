@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-- Make it possible to modify the RDS DB parameter group [#1125](https://github.com/open-apparel-registry/open-apparel-registry/pull/1125)
 
 ### Changed
 
@@ -22,9 +21,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.34.0] - 2020-10-13
 
+### Added
+
+- Make it possible to modify the RDS DB parameter group [#1125](https://github.com/open-apparel-registry/open-apparel-registry/pull/1125)
+
 ### Fixed
 
-Always return accept/reject links with potential matches [#1131](https://github.com/open-apparel-registry/open-apparel-registry/pull/1131)
+- Always return accept/reject links with potential matches [#1131](https://github.com/open-apparel-registry/open-apparel-registry/pull/1131)
 
 ## [2.33.0] - 2020-10-07
 
