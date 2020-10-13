@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
+- Update `django-ecsmanage` to version 2.0.0 [1129](https://github.com/open-apparel-registry/open-apparel-registry/pull/1129)
 
 ### Deprecated
 
