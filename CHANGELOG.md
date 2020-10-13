@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+- Make it possible to modify the RDS DB parameter group [#1125](https://github.com/open-apparel-registry/open-apparel-registry/pull/1125)
 
 ### Changed
 
@@ -18,6 +19,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [2.34.0] - 2020-10-13
+
+### Fixed
+
+Always return accept/reject links with potential matches [#1131](https://github.com/open-apparel-registry/open-apparel-registry/pull/1131)
 
 ## [2.33.0] - 2020-10-07
 
@@ -492,7 +499,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.33.0...HEAD
+[Unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.34.0...HEAD
+[2.34.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.34.0
 [2.33.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.33.0
 [2.32.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.32.0
 [2.31.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.31.1

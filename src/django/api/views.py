@@ -1162,7 +1162,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         facility, context=context).data
                     # calling `round` alone was not trimming digits
                     facility_dict['confidence'] = float(str(round(score, 4)))
-                    if score < automatic_threshold:
+                    # If there is a single match for an item, it only needs to
+                    # be confirmed if it has a low score.
+                    if score < automatic_threshold or len(match_objects) > 1:
                         if should_create:
                             facility_dict['confirm_match_url'] = reverse(
                                 'facility-match-confirm',
