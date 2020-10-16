@@ -13,6 +13,7 @@ WHERE c.id IN (
   FROM api_source
   WHERE is_active = true
   AND is_public = true
+  AND "create" = true
   AND id IN (
     SELECT source_id
     FROM api_facilitylistitem
