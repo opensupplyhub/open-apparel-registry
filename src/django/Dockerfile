@@ -8,7 +8,10 @@ RUN set -ex \
     && buildDeps=" \
     build-essential \
     " \
-    && apt-get update && apt-get install -y $buildDeps --no-install-recommends \
+    && deps=" \
+    postgresql-client-12 \
+    " \
+    && apt-get update && apt-get install -y $buildDeps $deps --no-install-recommends \
     && pip install --no-cache-dir -r requirements.txt \
     && apt-get purge -y --auto-remove $buildDeps
 
