@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Update the development environment to use PostgreSQL 12.4 [1146](https://github.com/open-apparel-registry/open-apparel-registry/pull/1146)
+
 ### Deprecated
 
 ### Removed
