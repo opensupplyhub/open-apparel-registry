@@ -132,6 +132,12 @@ class RequestLogAdmin(admin.ModelAdmin):
             request, object_id, extra_context=extra_context)
 
 
+class ApiLimitAdmin(admin.ModelAdmin):
+    history_list_display = ('contributor', 'monthly_limit', 'created_at',
+                            'updated_at')
+    readonly_fields = ('contributor',)
+
+
 admin_site.register(models.Version)
 admin_site.register(models.User, OarUserAdmin)
 admin_site.register(models.Contributor, ContributorAdmin)
@@ -149,3 +155,4 @@ admin_site.register(Sample, SampleAdmin)
 admin_site.register(Switch, SwitchAdmin)
 admin_site.register(Group)
 admin_site.register(models.RequestLog, RequestLogAdmin)
+admin_site.register(models.ApiLimit, ApiLimitAdmin)
