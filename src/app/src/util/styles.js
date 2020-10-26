@@ -8,35 +8,30 @@ export const formValidationErrorMessageStyle = Object.freeze({
 
 export const listTableCellStyles = Object.freeze({
     rowIndexStyles: Object.freeze({
-        flex: '1',
         fontSize: '16px',
-        paddingTop: '10px',
-        paddingBottom: '10px',
+        padding: '10px 24px',
     }),
     countryNameStyles: Object.freeze({
-        flex: '1',
         fontSize: '16px',
-        paddingTop: '10px',
-        paddingBottom: '10px',
+        padding: '10px 24px',
     }),
     nameCellStyles: Object.freeze({
-        flex: '2',
         fontSize: '16px',
-        paddingTop: '10px',
-        paddingBottom: '10px',
+        padding: '10px 24px',
     }),
     addressCellStyles: Object.freeze({
-        flex: '2',
         fontSize: '16px',
-        paddingTop: '10px',
-        paddingBottom: '10px',
+        padding: '10px 24px',
     }),
     statusCellStyles: Object.freeze({
-        flex: '2',
         fontSize: '16px',
-        paddingRight: '30px',
-        paddingTop: '10px',
-        paddingBottom: '10px',
+        padding: '10px 24px',
+        width: '300px',
+    }),
+    compareCellStyles: Object.freeze({
+        fontSize: '16px',
+        padding: '10px 24px',
+        borderColor: '#f3f3f3',
     }),
 });
 
@@ -65,22 +60,9 @@ export const confirmRejectMatchRowStyles = Object.freeze({
         alignItems: 'center',
         maxWidth: '400px',
     }),
-    cellTitleStyles: Object.freeze({
-        height: '75px',
-        minHeight: '75px',
-        display: 'flex',
-        alignItems: 'top',
-        maxWidth: '400px',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'hidden',
-    }),
     errorCellRowStyles: Object.freeze({
-        height: '75px',
-        minHeight: '75px',
         display: 'flex',
         alignItems: 'center',
-        maxWidth: '400px',
         color: 'red',
     }),
     cellHiddenHRStyles: Object.freeze({

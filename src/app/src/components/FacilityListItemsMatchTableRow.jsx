@@ -1,14 +1,11 @@
 import React from 'react';
 import { bool, func, number, oneOfType, shape, string } from 'prop-types';
+import { Link } from 'react-router-dom';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-
 import FacilityListItemsDetailedTableRowCell from './FacilityListItemsDetailedTableRowCell';
-
 import { listTableCellStyles } from '../util/styles';
-
 import { makeFacilityDetailLink } from '../util/util';
-
 import { facilityListItemStatusPropType } from '../util/propTypes';
 
 const makeTableRowStyle = (isRemoved) => {
@@ -17,12 +14,15 @@ const makeTableRowStyle = (isRemoved) => {
             opacity: '0.6',
             verticalAlign: 'top',
             cursor: 'pointer',
+            textDecoration: 'line-through',
         });
     }
 
     return Object.freeze({
         verticalAlign: 'top',
         cursor: 'pointer',
+        background: '#f3f3f3',
+        borderColor: '#f3f3f3',
     });
 };
 
@@ -39,84 +39,129 @@ const FacilityListItemsMatchTableRow = ({
     handleRemoveItem,
     removeButtonDisabled,
     removeButtonID,
+    className,
 }) => (
-    <TableRow
-        hover={hover}
-        onClick={handleSelectRow}
-        style={makeTableRowStyle(isRemoved)}
-    >
-        <TableCell
-            align="center"
-            padding="default"
-            style={listTableCellStyles.rowIndexStyles}
+    <>
+        <TableRow
+            hover={hover}
+            onClick={handleSelectRow}
+            style={makeTableRowStyle(isRemoved)}
+            className={className}
         >
-            <FacilityListItemsDetailedTableRowCell
-                title={rowIndex}
-                subtitle=" "
-                hrIsHidden
-                stringIsHidden
-                data={[matchedFacility.oar_id]}
-                hasActions={false}
-            />
-        </TableCell>
-        <TableCell
-            align="center"
-            padding="default"
-            style={listTableCellStyles.countryNameStyles}
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.rowIndexStyles}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={rowIndex}
+                    stringIsHidden
+                    data={[matchedFacility.oar_id]}
+                    hasActions={false}
+                />
+            </TableCell>
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.countryNameStyles}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={countryName || ' '}
+                    stringIsHidden
+                    data={[matchedFacility.oar_id]}
+                    hasActions={false}
+                />
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.nameCellStyles}
+                colSpan={2}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={name || ' '}
+                    stringIsHidden
+                    data={[matchedFacility.name]}
+                    hasActions={false}
+                />
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.addressCellStyles}
+                colSpan={2}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={address || ' '}
+                    stringIsHidden
+                    data={[matchedFacility.address]}
+                    hasActions={false}
+                />
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.statusCellStyles}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={status}
+                    stringIsHidden
+                    data={[matchedFacility.oar_id]}
+                    hasActions={false}
+                    isRemoved={isRemoved}
+                    handleRemoveItem={handleRemoveItem}
+                    removeButtonDisabled={removeButtonDisabled}
+                    removeButtonID={removeButtonID}
+                />
+            </TableCell>
+        </TableRow>
+        <TableRow
+            onClick={handleSelectRow}
+            style={makeTableRowStyle(isRemoved)}
+            className={`${className} STATUS_MATCHED_EXPANDED--SUB-ROW`}
         >
-            <FacilityListItemsDetailedTableRowCell
-                title={countryName || ' '}
-                subtitle=" "
-                hrIsHidden
-                stringIsHidden
-                data={[matchedFacility.oar_id]}
-                hasActions={false}
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.rowIndexStyles}
             />
-        </TableCell>
-        <TableCell
-            padding="default"
-            style={listTableCellStyles.nameCellStyles}
-        >
-            <FacilityListItemsDetailedTableRowCell
-                title={name || ' '}
-                subtitle="Facility Match Name"
-                hrIsHidden={false}
-                stringisHidden={false}
-                data={[matchedFacility.name]}
-                linkURLs={[makeFacilityDetailLink(matchedFacility.oar_id)]}
-                hasActions={false}
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.countryNameStyles}
             />
-        </TableCell>
-        <TableCell
-            padding="default"
-            style={listTableCellStyles.addressCellStyles}
-        >
-            <FacilityListItemsDetailedTableRowCell
-                title={address || ' '}
-                subtitle="Facility Match Address"
-                hrIsHidden={false}
-                stringIsHidden={false}
-                data={[matchedFacility.address]}
-                hasActions={false}
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.nameCellStyles}
+                colSpan={2}
+            >
+                {matchedFacility ? (
+                    <>
+                        <b>Facility Match Name</b><br />
+                        <Link
+                            to={makeFacilityDetailLink(matchedFacility.oar_id)}
+                            href={makeFacilityDetailLink(matchedFacility.oar_id)}
+                        >
+                            {matchedFacility.name}
+                        </Link>
+                    </>
+                ) : ''}
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.addressCellStyles}
+                colSpan={2}
+            >
+                {matchedFacility ? (
+                    <>
+                        <b>Facility Match Address</b><br />
+                        {matchedFacility.address}
+                    </>
+                ) : ''}
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.statusCellStyles}
             />
-        </TableCell>
-        <TableCell
-            padding="default"
-            style={listTableCellStyles.statusCellStyles}
-        >
-            <FacilityListItemsDetailedTableRowCell
-                title={status}
-                hrIsHidden
-                stringIsHidden
-                data={[matchedFacility.oar_id]}
-                hasActions={false}
-                isRemoved={isRemoved}
-                handleRemoveItem={handleRemoveItem}
-                removeButtonDisabled={removeButtonDisabled}
-                removeButtonID={removeButtonID}
-            />
-        </TableCell>
-    </TableRow>
+        </TableRow>
+    </>
 );
 
 FacilityListItemsMatchTableRow.defaultProps = {

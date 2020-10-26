@@ -720,3 +720,31 @@ hr {
   font-size: 12px !important;
   margin: 0 !important;
 }
+
+.facility-list-row__expanded td {
+  border: none;
+}
+
+.facility-list-row__expanded + .facility-list-row__expanded td {
+  border-bottom: 1px solid #e0e0e0
+}
+
+.STATUS_MATCHED_COLLAPSED {
+  background: rgb(243, 243, 243);
+}
+
+.STATUS_MATCHED_COLLAPSED.STATUS_ERROR:hover {
+  background: #ffc7c7 !important;
+}
+
+.STATUS_ERROR {
+  background: #ffe2e2;
+}
+
+.STATUS_ERROR td {
+  border-color: #ffe2e2;
+}
+
+.STATUS_PARSED:not(:hover) {
+  background: #fff !important;
+}
