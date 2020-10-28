@@ -634,7 +634,7 @@ class FacilitiesAutoSchema(AutoSchema):
         return True
 
     def get_serializer_fields(self, path, method):
-        if method == 'POST':
+        if method == 'POST' and 'dissociate' not in path:
             return [
                 coreapi.Field(
                     name='data',
@@ -1957,6 +1957,100 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         )
 
         return Response(facility_history)
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,),
+            url_path='dissociate')
+    @transaction.atomic
+    def dissociate(self, request, pk=None):
+        """
+        Deactivate any matches to the facility submitted by the authenticated
+        contributor
+
+        Returns the facility details with an updated contributor list.
+
+        ### Sample response
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "OAR_ID_1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [1, 1]
+                        },
+                        "properties": {
+                            "name": "facility_name_1",
+                            "address" "facility address_1",
+                            "country_code": "US",
+                            "country_name": "United States",
+                            "oar_id": "OAR_ID_1",
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "OAR_ID_2",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [2, 2]
+                        },
+                        "properties": {
+                            "name": "facility_name_2",
+                            "address" "facility address_2",
+                            "country_code": "US",
+                            "country_name": "United States",
+                            "oar_id": "OAR_ID_2"
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                },
+                                {
+                                    "id": 2,
+                                    "name": "An MSI",
+                                    "is_verified": false
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+
+        """
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            raise NotFound('Facility with OAR ID {} not found'.format(pk))
+        contributor = request.user.contributor
+        matches = FacilityMatch.objects.filter(
+            facility=facility,
+            facility_list_item__source__contributor=contributor)
+
+        # Call `save` in a loop rather than use `update` to make sure that
+        # django-simple-history can log the changes
+        if matches.count() > 0:
+            for match in matches:
+                if match.is_active:
+                    match.is_active = False
+                    match.changeReason = create_dissociate_match_change_reason(
+                        match.facility_list_item,
+                        facility,
+                    )
+                    match.save()
+
+        context = {'request': request}
+        facility_data = FacilityDetailsSerializer(
+            facility, context=context).data
+        return Response(facility_data)
 
 
 class FacilityListViewSetSchema(AutoSchema):
