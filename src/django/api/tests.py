@@ -808,7 +808,7 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.assertEqual(len(other_addresses), 0)
 
 
-class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
+class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
     def setUp(self):
         self.country_code = 'US'
 
@@ -1160,6 +1160,30 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
         )
 
         self.assertEqual(remove_response.status_code, 404)
+
+    def test_dissociate_sets_matches_to_inactive(self):
+        confirm_response = self.client.post(
+            self.match_url(self.potential_facility_match_one, action='confirm')
+        )
+
+        confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(confirmed_match.is_active, True)
+
+        dissociate_url = reverse('facility-dissociate',
+                                 kwargs={'pk': confirmed_match.facility.pk})
+        dissociate_response = self.client.post(dissociate_url)
+
+        self.assertEqual(dissociate_response.status_code, 200)
+
+        updated_confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        self.assertEqual(updated_confirmed_match.is_active, False)
 
 
 def junk_chars(string):
@@ -4815,6 +4839,52 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         data = json.loads(removed_match_response.content)
 
+        self.assertEqual(
+            data[0]['action'],
+            'DISSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Dissociate facility {} from {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
+            ),
+        )
+
+    @override_flag('can_get_facility_history', active=True)
+    def test_includes_dissociation_record_when_dissociate_api_is_called(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-matches/{}/confirm/'.format(
+            self.match_for_confirm_or_remove.id,
+        )
+
+        confirm_response = self.client.post(confirm_url)
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        dissociate_url = reverse('facility-dissociate',
+                                 kwargs={'pk': self.facility_two.pk})
+        dissociate_response = self.client.post(dissociate_url)
+        self.assertEqual(
+            dissociate_response.status_code,
+            200,
+        )
+
+        history_url = reverse('facility-get-facility-history',
+                              kwargs={'pk': self.facility_two.pk})
+        history_response = self.client.get(history_url)
+        self.assertEqual(
+            history_response.status_code,
+            200,
+        )
+        data = json.loads(history_response.content)
         self.assertEqual(
             data[0]['action'],
             'DISSOCIATE',
