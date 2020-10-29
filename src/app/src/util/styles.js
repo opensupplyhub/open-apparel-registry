@@ -22,7 +22,7 @@ export const listTableCellStyles = Object.freeze({
     addressCellStyles: Object.freeze({
         fontSize: '16px',
         padding: '10px 24px',
-
+        wordBreak: 'break-word',
     }),
     statusCellStyles: Object.freeze({
         fontSize: '16px',
