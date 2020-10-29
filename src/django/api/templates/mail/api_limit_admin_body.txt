@@ -1,0 +1,15 @@
+{% block content %}
+Hi,
+
+{% if grace_limit %}
+You're receiving this email because {{ contributor_name }} has exceeded
+their limit of {{ grace_limit }} OAR API requests for this month.
+{% else %}
+You're receiving this email because {{ contributor_name }} has exceeded
+their limit of {{ limit }} OAR API requests for this month.
+{% endif %}
+
+Best wishes,
+
+{% include "mail/signature_block.txt" %}
+{% endblock content %}
