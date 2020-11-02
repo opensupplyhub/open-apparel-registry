@@ -1764,8 +1764,9 @@ class ApiLimit(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return ('ApiLimit {id} - Contributor {contributor_id} '
-                'limit {monthly_limit}').format(**self.__dict__)
+        return 'ApiLimit {} - {} ({}) - limit {}'.format(
+            self.id, self.contributor.name, self.contributor.id,
+            self.monthly_limit)
 
 
 class ApiBlock(models.Model):
