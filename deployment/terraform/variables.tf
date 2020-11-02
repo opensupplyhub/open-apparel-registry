@@ -45,11 +45,11 @@ variable "rds_allocated_storage" {
 }
 
 variable "rds_engine_version" {
-  default = "10.6"
+  default = "12.4"
 }
 
 variable "rds_parameter_group_family" {
-  default = "postgres10"
+  default = "postgres12"
 }
 
 variable "rds_instance_type" {
