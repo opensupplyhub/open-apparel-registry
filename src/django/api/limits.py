@@ -61,6 +61,7 @@ def check_contributor_api_limit(at_datetime, c):
             grace_limit = apiBlock.grace_limit
             if request_count > grace_limit:
                 with transaction.atomic():
+                    apiBlock.actual = request_count
                     apiBlock.active = True
                     apiBlock.save()
                 send_api_notice(contributor, limit, grace_limit)

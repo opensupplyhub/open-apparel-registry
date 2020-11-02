@@ -78,7 +78,8 @@ from api.models import (FacilityList,
                         DownloadLog,
                         Version,
                         FacilityLocation,
-                        Source)
+                        Source,
+                        ApiBlock)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -102,7 +103,8 @@ from api.serializers import (FacilityListSerializer,
                              ApprovedFacilityClaimSerializer,
                              FacilityMergeQueryParamsSerializer,
                              LogDownloadQueryParamsSerializer,
-                             FacilityUpdateLocationParamsSerializer)
+                             FacilityUpdateLocationParamsSerializer,
+                             ApiBlockSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
@@ -3193,3 +3195,40 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
         return Response(tile.tobytes())
     except core_exceptions.EmptyResultSet:
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+
+class ApiBlockAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+@schema(ApiBlockAutoSchema())
+class ApiBlockViewSet(mixins.ListModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+    """
+    Get ApiBlocks.
+    """
+    queryset = ApiBlock.objects.all()
+    serializer_class = ApiBlockSerializer
+
+    def validate_request(self, request):
+        if request.user.is_anonymous:
+            raise NotAuthenticated()
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+        return
+
+    def list(self, request):
+        self.validate_request(request)
+        response_data = ApiBlockSerializer(self.queryset, many=True).data
+        return Response(response_data)
+
+    def retrieve(self, request, pk=None):
+        self.validate_request(request)
+        return super(ApiBlockViewSet, self).retrieve(request, pk=pk)
+
+    def update(self, request, pk=None):
+        self.validate_request(request)
+        return super(ApiBlockViewSet, self).update(request, pk=pk)
