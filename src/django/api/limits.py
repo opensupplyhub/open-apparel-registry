@@ -17,6 +17,11 @@ def get_end_of_month(at_datetime):
             + relativedelta(months=1) - relativedelta(seconds=1))
 
 
+def get_api_block(contributor):
+    return ApiBlock.objects.filter(
+                contributor=contributor).order_by('-until').first()
+
+
 @transaction.atomic
 def check_contributor_api_limit(at_datetime, c):
     contributor = Contributor.objects.get(id=c.get('contributor'))
@@ -40,8 +45,7 @@ def check_contributor_api_limit(at_datetime, c):
             notification.api_limit_warning_sent_on = at_datetime
             notification.save()
     if request_count > limit:
-        apiBlock = ApiBlock.objects.filter(
-                    contributor=contributor).order_by('-until').first()
+        apiBlock = get_api_block(contributor)
         if apiBlock is None or apiBlock.until < at_datetime:
             until = get_end_of_month(at_datetime)
             ApiBlock.objects.create(contributor=contributor,

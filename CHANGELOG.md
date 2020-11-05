@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Add a dissociate API [#1156](https://github.com/open-apparel-registry/open-apparel-registry/pull/1156)
 -   Add an admin-only ApiBlock API [#1161](https://github.com/open-apparel-registry/open-apparel-registry/pull/1161)
+-   Add RequestMeter middleware [#1166](https://github.com/open-apparel-registry/open-apparel-registry/pull/1166)
 
 ### Changed
 
