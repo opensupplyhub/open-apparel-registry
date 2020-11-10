@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.36.0] - 2020-11-09
+
+### Added
+
 -   Add a dissociate API [#1156](https://github.com/open-apparel-registry/open-apparel-registry/pull/1156)
 -   Add an admin-only ApiBlock API [#1161](https://github.com/open-apparel-registry/open-apparel-registry/pull/1161)
 -   Add RequestMeter middleware [#1166](https://github.com/open-apparel-registry/open-apparel-registry/pull/1166)
@@ -18,14 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Update the development environment to use PostgreSQL 12.4 [1146](https://github.com/open-apparel-registry/open-apparel-registry/pull/1146)
 -   Allow setting the contributor on a new ApiLimit [1159](https://github.com/open-apparel-registry/open-apparel-registry/pull/1159)
 -   Reenable survey popup [#1159](https://github.com/open-apparel-registry/open-apparel-registry/pull/1167)
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
+-   Update contribute page text [#1171](https://github.com/open-apparel-registry/open-apparel-registry/pull/1171)
 
 ## [2.35.0] - 2020-10-21
 
