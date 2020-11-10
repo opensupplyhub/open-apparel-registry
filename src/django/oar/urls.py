@@ -34,6 +34,7 @@ router.register('facility-claims', views.FacilityClaimViewSet,
                 'facility-claim')
 router.register('facility-matches', views.FacilityMatchViewSet,
                 'facility-match')
+router.register('api-blocks', views.ApiBlockViewSet, 'api-block')
 
 public_apis = [
     url(r'^api/', include(router.urls)),
@@ -72,6 +73,7 @@ internal_apis = [
     path(r'tile/<layer>/<cachekey>/<int:z>/<int:x>/<int:y>.<ext>',
          views.get_tile, name='tile'),
     url(r'^api/current_tile_cache_key', views.current_tile_cache_key),
+    url(r'api-blocks', views.ApiBlockViewSet, 'api-block')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns = public_apis + internal_apis

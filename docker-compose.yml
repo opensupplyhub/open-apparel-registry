@@ -1,7 +1,7 @@
-version: '2.4'
+version: "2.4"
 services:
   database:
-    image: quay.io/azavea/postgis:2.4-postgres10.9-slim
+    image: quay.io/azavea/postgis:3-postgres12.4-slim
     environment:
       - POSTGRES_USER=openapparelregistry
       - POSTGRES_PASSWORD=openapparelregistry
@@ -16,36 +16,37 @@ services:
     image: openapparelregistry
     env_file: .env
     environment:
-        - POSTGRES_HOST=database
-        - POSTGRES_PORT=5432
-        - POSTGRES_USER=openapparelregistry
-        - POSTGRES_PASSWORD=openapparelregistry
-        - POSTGRES_DB=openapparelregistry
-        - DJANGO_ENV=Development
-        - DJANGO_SECRET_KEY=secret
-        - DJANGO_LOG_LEVEL=INFO
-        - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
-        - OAR_CLIENT_KEY=
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=openapparelregistry
+      - POSTGRES_PASSWORD=openapparelregistry
+      - POSTGRES_DB=openapparelregistry
+      - DJANGO_ENV=Development
+      - DJANGO_SECRET_KEY=secret
+      - DJANGO_LOG_LEVEL=INFO
+      - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
+      - OAR_CLIENT_KEY=
+      - NOTIFICATION_EMAIL_TO=notification@example.com
     build:
       context: ./src/django
       dockerfile: Dockerfile
     volumes:
-        - ./src/django:/usr/local/src
-        - $HOME/.aws:/root/.aws:ro
+      - ./src/django:/usr/local/src
+      - $HOME/.aws:/root/.aws:ro
     working_dir: /usr/local/src
     depends_on:
       database:
         condition: service_healthy
     command:
-        - '-b :8081'
-        - '--reload'
-        - '--timeout=90'
-        - '--access-logfile=-'
-        - '--error-logfile=-'
-        - '--log-level=debug'
-        - 'oar.wsgi'
+      - "-b :8081"
+      - "--reload"
+      - "--timeout=90"
+      - "--access-logfile=-"
+      - "--error-logfile=-"
+      - "--log-level=debug"
+      - "oar.wsgi"
     ports:
-        - '8081:8081'
+      - "8081:8081"
     cpus: 2
 
   app:

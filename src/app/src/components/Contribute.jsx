@@ -58,8 +58,12 @@ function ContributeList({
                     <Grid item xs={12}>
                         <p>
                             Read about how your facility lists are processed and
-                            matched in this&nbsp;
-                            <Link to={aboutProcessingRoute} href={aboutProcessingRoute}>guide</Link>
+                            matched in{' '}
+                            <Link
+                                to={aboutProcessingRoute}
+                                href={aboutProcessingRoute}
+                            >this guide
+                            </Link>
                         </p>
 
                         <p>

@@ -13,6 +13,7 @@ from django.contrib import auth
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.gis.geos import Point
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -26,7 +27,8 @@ from api.constants import (ProcessingAction,
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
-                        RequestLog, DownloadLog, FacilityLocation, Source)
+                        RequestLog, DownloadLog, FacilityLocation, Source,
+                        ApiLimit, ApiBlock, ContributorNotifications)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -41,6 +43,7 @@ from api.permissions import referring_host_is_allowed, referring_host
 from api.serializers import (ApprovedFacilityClaimSerializer,
                              FacilityCreateBodySerializer,
                              FacilityListSerializer)
+from api.limits import check_api_limits, get_end_of_month
 
 
 class FacilityListCreateTest(APITestCase):
@@ -808,7 +811,7 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.assertEqual(len(other_addresses), 0)
 
 
-class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
+class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
     def setUp(self):
         self.country_code = 'US'
 
@@ -1160,6 +1163,30 @@ class ConfirmRejectAndRemoveFacilityMatchTest(TestCase):
         )
 
         self.assertEqual(remove_response.status_code, 404)
+
+    def test_dissociate_sets_matches_to_inactive(self):
+        confirm_response = self.client.post(
+            self.match_url(self.potential_facility_match_one, action='confirm')
+        )
+
+        confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(confirmed_match.is_active, True)
+
+        dissociate_url = reverse('facility-dissociate',
+                                 kwargs={'pk': confirmed_match.facility.pk})
+        dissociate_response = self.client.post(dissociate_url)
+
+        self.assertEqual(dissociate_response.status_code, 200)
+
+        updated_confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        self.assertEqual(updated_confirmed_match.is_active, False)
 
 
 def junk_chars(string):
@@ -4830,6 +4857,52 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         )
 
     @override_flag('can_get_facility_history', active=True)
+    def test_includes_dissociation_record_when_dissociate_api_is_called(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        confirm_url = '/api/facility-matches/{}/confirm/'.format(
+            self.match_for_confirm_or_remove.id,
+        )
+
+        confirm_response = self.client.post(confirm_url)
+        self.assertEqual(
+            confirm_response.status_code,
+            200,
+        )
+
+        dissociate_url = reverse('facility-dissociate',
+                                 kwargs={'pk': self.facility_two.pk})
+        dissociate_response = self.client.post(dissociate_url)
+        self.assertEqual(
+            dissociate_response.status_code,
+            200,
+        )
+
+        history_url = reverse('facility-get-facility-history',
+                              kwargs={'pk': self.facility_two.pk})
+        history_response = self.client.get(history_url)
+        self.assertEqual(
+            history_response.status_code,
+            200,
+        )
+        data = json.loads(history_response.content)
+        self.assertEqual(
+            data[0]['action'],
+            'DISSOCIATE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Dissociate facility {} from {} via list {}'.format(
+                self.facility_two.id,
+                self.contributor.name,
+                self.list_for_confirm_or_remove.name,
+            ),
+        )
+
+    @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_approval(self):
         self.client.logout()
@@ -6059,3 +6132,88 @@ class PPEFieldTest(TestCase):
         self.assertEqual('', facility.ppe_contact_phone)
         self.assertEqual('', facility.ppe_contact_email)
         self.assertEqual('', facility.ppe_website)
+
+
+class ApiLimitTest(TestCase):
+    def setUp(self):
+        self.email_one = 'one@example.com'
+        self.email_two = 'two@example.com'
+        self.user_one = User.objects.create(email=self.email_one)
+        self.user_two = User.objects.create(email=self.email_two)
+
+        self.contrib_one = Contributor \
+            .objects \
+            .create(admin=self.user_one,
+                    name='contributor one',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_two = Contributor \
+            .objects \
+            .create(admin=self.user_two,
+                    name='contributor two',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.limit_one = ApiLimit.objects.create(contributor=self.contrib_one,
+                                                 monthly_limit=10)
+
+        self.limit_two = ApiLimit.objects.create(contributor=self.contrib_two,
+                                                 monthly_limit=10)
+
+        self.notification_time = timezone.now()
+        self.notification = ContributorNotifications \
+            .objects \
+            .create(contributor=self.contrib_two,
+                    api_limit_warning_sent_on=self.notification_time,
+                    api_limit_exceeded_sent_on=self.notification_time,
+                    api_grace_limit_exceeded_sent_on=self.notification_time)
+
+    def test_under_limit_does_nothing(self):
+        check_api_limits(timezone.now())
+        self.assertEqual(ApiBlock.objects.filter(
+                         contributor=self.contrib_one).count(), 0)
+
+    def test_limit_warning_sent_once(self):
+        for x in range(10):
+            RequestLog.objects.create(user=self.user_one, response_code=200)
+            RequestLog.objects.create(user=self.user_two, response_code=200)
+        else:
+            check_api_limits(timezone.now())
+
+        self.assertEqual(ApiBlock.objects.filter(
+                         contributor=self.contrib_one).count(), 0)
+        self.assertEqual(ApiBlock.objects.filter(
+                         contributor=self.contrib_two).count(), 0)
+
+        warning = ContributorNotifications.objects.get(
+                  contributor=self.contrib_one)
+        self.assertIsNotNone(warning.api_limit_warning_sent_on)
+
+        warning_two = ContributorNotifications.objects.get(
+                      contributor=self.contrib_two)
+        self.assertEqual(warning_two.api_limit_warning_sent_on,
+                         self.notification_time)
+
+    def test_over_limit_block_set_once(self):
+        ApiBlock.objects.create(contributor=self.contrib_two,
+                                until=get_end_of_month(self.notification_time),
+                                active=False, limit=10, actual=11)
+
+        for x in range(11):
+            RequestLog.objects.create(user=self.user_one, response_code=200)
+            RequestLog.objects.create(user=self.user_two, response_code=200)
+        else:
+            check_api_limits(timezone.now())
+
+        self.assertEqual(ApiBlock.objects.filter(
+                         contributor=self.contrib_one).count(), 1)
+        self.assertEqual(ApiBlock.objects.filter(
+                         contributor=self.contrib_two).count(), 1)
+
+        notice = ContributorNotifications.objects.get(
+                 contributor=self.contrib_one)
+        self.assertIsNotNone(notice.api_limit_exceeded_sent_on)
+
+        notice_two = ContributorNotifications.objects.get(
+                     contributor=self.contrib_two)
+        self.assertEqual(notice_two.api_limit_exceeded_sent_on,
+                         self.notification_time)

@@ -135,7 +135,12 @@ class RequestLogAdmin(admin.ModelAdmin):
 class ApiLimitAdmin(admin.ModelAdmin):
     history_list_display = ('contributor', 'monthly_limit', 'created_at',
                             'updated_at')
-    readonly_fields = ('contributor',)
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ["contributor", ]
+        else:
+            return []
 
 
 admin_site.register(models.Version)

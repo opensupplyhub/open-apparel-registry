@@ -219,3 +219,91 @@ def send_claim_update_notice_to_list_contributors(request, facility_claim):
         send_claim_update_note_to_one_contributor(request,
                                                   facility_claim,
                                                   contributor)
+
+
+def send_api_notice(contributor, limit, grace_limit=None):
+    subj_template = get_template(
+        'mail/api_limit_subject.txt')
+    text_template = get_template(
+        'mail/api_limit_body.txt')
+    html_template = get_template(
+        'mail/api_limit_body.html')
+
+    notice_dictionary = {
+        'limit': limit,
+        'grace_limit': grace_limit
+    }
+
+    send_mail(
+        subj_template.render().rstrip(),
+        text_template.render(notice_dictionary),
+        settings.DEFAULT_FROM_EMAIL,
+        [contributor.admin.email],
+        html_message=html_template.render(notice_dictionary)
+    )
+
+
+def send_admin_api_notice(contributor_name, limit, grace_limit=None):
+    subj_template = get_template(
+        'mail/api_limit_admin_subject.txt')
+    text_template = get_template(
+        'mail/api_limit_admin_body.txt')
+    html_template = get_template(
+        'mail/api_limit_admin_body.html')
+
+    notice_dictionary = {
+        'contributor_name': contributor_name,
+        'limit': limit,
+        'grace_limit': grace_limit
+    }
+
+    send_mail(
+        subj_template.render().rstrip(),
+        text_template.render(notice_dictionary),
+        settings.DEFAULT_FROM_EMAIL,
+        [settings.NOTIFICATION_EMAIL_TO],
+        html_message=html_template.render(notice_dictionary)
+    )
+
+
+def send_api_warning(contributor, limit):
+    subj_template = get_template(
+        'mail/api_limit_warning_subject.txt')
+    text_template = get_template(
+        'mail/api_limit_warning_body.txt')
+    html_template = get_template(
+        'mail/api_limit_warning_body.html')
+
+    notice_dictionary = {
+        'limit': limit
+    }
+
+    send_mail(
+        subj_template.render().rstrip(),
+        text_template.render(notice_dictionary),
+        settings.DEFAULT_FROM_EMAIL,
+        [contributor.admin.email],
+        html_message=html_template.render(notice_dictionary)
+    )
+
+
+def send_admin_api_warning(contributor_name, limit):
+    subj_template = get_template(
+        'mail/api_limit_warning_admin_subject.txt')
+    text_template = get_template(
+        'mail/api_limit_warning_admin_body.txt')
+    html_template = get_template(
+        'mail/api_limit_warning_admin_body.html')
+
+    notice_dictionary = {
+        'contributor_name': contributor_name,
+        'limit': limit
+    }
+
+    send_mail(
+        subj_template.render().rstrip(),
+        text_template.render(notice_dictionary),
+        settings.DEFAULT_FROM_EMAIL,
+        [settings.NOTIFICATION_EMAIL_TO],
+        html_message=html_template.render(notice_dictionary)
+    )

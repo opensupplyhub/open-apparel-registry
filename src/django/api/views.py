@@ -78,7 +78,8 @@ from api.models import (FacilityList,
                         DownloadLog,
                         Version,
                         FacilityLocation,
-                        Source)
+                        Source,
+                        ApiBlock)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -102,7 +103,8 @@ from api.serializers import (FacilityListSerializer,
                              ApprovedFacilityClaimSerializer,
                              FacilityMergeQueryParamsSerializer,
                              LogDownloadQueryParamsSerializer,
-                             FacilityUpdateLocationParamsSerializer)
+                             FacilityUpdateLocationParamsSerializer,
+                             ApiBlockSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
@@ -634,7 +636,7 @@ class FacilitiesAutoSchema(AutoSchema):
         return True
 
     def get_serializer_fields(self, path, method):
-        if method == 'POST':
+        if method == 'POST' and 'dissociate' not in path:
             return [
                 coreapi.Field(
                     name='data',
@@ -1958,6 +1960,100 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         return Response(facility_history)
 
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,),
+            url_path='dissociate')
+    @transaction.atomic
+    def dissociate(self, request, pk=None):
+        """
+        Deactivate any matches to the facility submitted by the authenticated
+        contributor
+
+        Returns the facility details with an updated contributor list.
+
+        ### Sample response
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "OAR_ID_1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [1, 1]
+                        },
+                        "properties": {
+                            "name": "facility_name_1",
+                            "address" "facility address_1",
+                            "country_code": "US",
+                            "country_name": "United States",
+                            "oar_id": "OAR_ID_1",
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "OAR_ID_2",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [2, 2]
+                        },
+                        "properties": {
+                            "name": "facility_name_2",
+                            "address" "facility address_2",
+                            "country_code": "US",
+                            "country_name": "United States",
+                            "oar_id": "OAR_ID_2"
+                            "contributors": [
+                                {
+                                    "id": 1,
+                                    "name": "Brand A (2019 Q1 List)",
+                                    "is_verified": false
+                                },
+                                {
+                                    "id": 2,
+                                    "name": "An MSI",
+                                    "is_verified": false
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+
+        """
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            raise NotFound('Facility with OAR ID {} not found'.format(pk))
+        contributor = request.user.contributor
+        matches = FacilityMatch.objects.filter(
+            facility=facility,
+            facility_list_item__source__contributor=contributor)
+
+        # Call `save` in a loop rather than use `update` to make sure that
+        # django-simple-history can log the changes
+        if matches.count() > 0:
+            for match in matches:
+                if match.is_active:
+                    match.is_active = False
+                    match.changeReason = create_dissociate_match_change_reason(
+                        match.facility_list_item,
+                        facility,
+                    )
+                    match.save()
+
+        context = {'request': request}
+        facility_data = FacilityDetailsSerializer(
+            facility, context=context).data
+        return Response(facility_data)
+
 
 class FacilityListViewSetSchema(AutoSchema):
     def get_serializer_fields(self, path, method):
@@ -3099,3 +3195,40 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
         return Response(tile.tobytes())
     except core_exceptions.EmptyResultSet:
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+
+class ApiBlockAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+@schema(ApiBlockAutoSchema())
+class ApiBlockViewSet(mixins.ListModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+    """
+    Get ApiBlocks.
+    """
+    queryset = ApiBlock.objects.all()
+    serializer_class = ApiBlockSerializer
+
+    def validate_request(self, request):
+        if request.user.is_anonymous:
+            raise NotAuthenticated()
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+        return
+
+    def list(self, request):
+        self.validate_request(request)
+        response_data = ApiBlockSerializer(self.queryset, many=True).data
+        return Response(response_data)
+
+    def retrieve(self, request, pk=None):
+        self.validate_request(request)
+        return super(ApiBlockViewSet, self).retrieve(request, pk=pk)
+
+    def update(self, request, pk=None):
+        self.validate_request(request)
+        return super(ApiBlockViewSet, self).update(request, pk=pk)
