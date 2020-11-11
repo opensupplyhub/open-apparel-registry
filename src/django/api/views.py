@@ -3222,7 +3222,8 @@ class ApiBlockViewSet(mixins.ListModelMixin,
 
     def list(self, request):
         self.validate_request(request)
-        response_data = ApiBlockSerializer(self.queryset, many=True).data
+        response_data = ApiBlockSerializer(
+            ApiBlock.objects.all(), many=True).data
         return Response(response_data)
 
     def retrieve(self, request, pk=None):

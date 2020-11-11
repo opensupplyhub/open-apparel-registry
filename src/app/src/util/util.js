@@ -82,6 +82,9 @@ export const makeSingleFacilityListItemsURL = id => `/api/facility-lists/${id}/i
 
 export const makeDashboardFacilityListsURL = contributorID => `/api/facility-lists/?contributor=${contributorID}`;
 
+export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
+export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
+
 export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeGetContributorsURL = () => '/api/contributors/';
@@ -437,6 +440,8 @@ export const getBBoxForArrayOfGeoJSONPoints = flow(
     featureCollection,
     bbox,
 );
+
+export const makeApiBlockDetailLink = id => `/dashboard/apiblocks/${id}`;
 
 export const makeFacilityListItemsDetailLink = id => `/lists/${id}`;
 export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (

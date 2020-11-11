@@ -289,3 +289,14 @@ export const approvedFacilityClaimPropType = shape({
     product_type_choices: arrayOf(arrayOf(string)).isRequired,
     production_type_choices: arrayOf(arrayOf(string)).isRequired,
 });
+
+export const apiBlockPropType = shape({
+    limit: number.isRequired,
+    actual: number.isRequired,
+    contributor: string.isRequired,
+    active: bool.isRequired,
+    grace_limit: number,
+    grace_reason: string,
+    until: string.isRequired,
+    created_at: string.isReqired,
+});

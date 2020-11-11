@@ -11,6 +11,8 @@ import DashboardDeleteFacility from './DashboardDeleteFacility';
 import DashboardMergeFacilities from './DashboardMergeFacilities';
 import DashboardAdjustFacilityMatches from './DashboardAdjustFacilityMatches';
 import DashboardUpdateFacilityLocation from './DashboardUpdateFacilityLocation';
+import DashboardApiBlocks from './DashboardApiBlocks';
+import DashboardApiBlock from './DashboardApiBlock';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
 
@@ -26,6 +28,8 @@ import {
     dashboardMergeFacilitiesRoute,
     dashboardAdjustFacilityMatchesRoute,
     dashboardUpdateFacilityLocationRoute,
+    dashboardApiBlocksRoute,
+    dashboardApiBlockRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -81,6 +85,7 @@ function Dashboard({
             <Link to={dashboardUpdateFacilityLocationRoute}>
                 Update facility location
             </Link>
+            <Link to={dashboardApiBlocksRoute}>View API Blocks</Link>
         </div>
     );
 
@@ -155,6 +160,16 @@ function Dashboard({
                             />
                             <Route
                                 exact
+                                path={dashboardApiBlockRoute}
+                                render={makeClickableDashboardLinkFn('API Block')}
+                            />
+                            <Route
+                                exact
+                                path={dashboardApiBlocksRoute}
+                                render={makeClickableDashboardLinkFn('API Blocks')}
+                            />
+                            <Route
+                                exact
                                 path={dashboardRoute}
                                 render={() => 'Dashboard'}
                             />
@@ -218,6 +233,16 @@ function Dashboard({
                     />
                     <Route
                         exact
+                        path={dashboardApiBlockRoute}
+                        component={DashboardApiBlock}
+                    />
+                    <Route
+                        exact
+                        path={dashboardApiBlocksRoute}
+                        component={DashboardApiBlocks}
+                    />
+                    <Route
+                        exact
                         path={dashboardRoute}
                         render={() => linkSection}
                     />
@@ -227,12 +252,10 @@ function Dashboard({
         </AppOverflow>
     );
 }
-
 Dashboard.propTypes = {
     userWithAccessHasSignedIn: bool.isRequired,
     fetchingSessionSignIn: bool.isRequired,
 };
-
 function mapStateToProps({
     auth: {
         user: {
@@ -248,5 +271,4 @@ function mapStateToProps({
         fetchingSessionSignIn: fetching,
     };
 }
-
 export default connect(mapStateToProps)(Dashboard);
