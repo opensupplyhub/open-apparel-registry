@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Tooltip from '@material-ui/core/Tooltip';
 import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 
@@ -34,20 +33,6 @@ export default function FacilityListItemsDetailedTableRowCell({
         }
 
         if (!isFunction(handleRemoveItem)) {
-            if (title.length > 50) {
-                return (
-                    <Tooltip
-                        title={title}
-                        placement="top-start"
-                        classes={{ tooltip: 'cell-tooltip' }}
-                        enterDelay={200}
-                    >
-                        <span style={confirmRejectMatchRowStyles.cellOverflowStyles}>
-                            {title}
-                        </span>
-                    </Tooltip>
-                );
-            }
             return title;
         }
 
@@ -57,7 +42,6 @@ export default function FacilityListItemsDetailedTableRowCell({
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    width: '100%',
                 }}
             >
                 <span style={{ marginRight: '5px' }}>
@@ -77,10 +61,8 @@ export default function FacilityListItemsDetailedTableRowCell({
     })();
 
     return (
-        <div style={confirmRejectMatchRowStyles.cellStyles}>
-            <div style={confirmRejectMatchRowStyles.cellTitleStyles}>
-                {statusSection}
-            </div>
+        <>
+            {statusSection}
             <ShowOnly when={!readOnly}>
                 <div style={confirmRejectMatchRowStyles.cellSubtitleStyles}>
                     <Typography variant="body2">
@@ -101,7 +83,7 @@ export default function FacilityListItemsDetailedTableRowCell({
                         </Fragment>))
                 }
             </ShowOnly>
-        </div>
+        </>
     );
 }
 

@@ -23,77 +23,117 @@ const FacilityListItemsErrorTableRow = memo(({
     hover,
     errors,
     handleSelectRow,
+    className,
 }) => (
-    <TableRow
-        hover={hover}
-        onClick={handleSelectRow}
-        style={{ verticalAlign: 'top' }}
-    >
-        <TableCell
-            align="center"
-            padding="default"
-            style={listTableCellStyles.rowIndexStyles}
+    <>
+        <TableRow
+            hover={hover}
+            onClick={handleSelectRow}
+            style={{ verticalAlign: 'top' }}
+            className={className}
         >
-            <FacilityListItemsDetailedTableRowCell
-                title={rowIndex}
-                hrIsHidden
-                stringIsHidden
-                data={errors}
-                hasActions={false}
-            />
-        </TableCell>
-        <TableCell
-            align="center"
-            padding="default"
-            style={listTableCellStyles.countryNameStyles}
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.rowIndexStyles}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={rowIndex}
+                    stringIsHidden
+                    data={errors}
+                    hasActions={false}
+                />
+            </TableCell>
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.countryNameStyles}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={countryName}
+                    stringIsHidden
+                    data={errors}
+                    hasActions={false}
+                />
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.nameCellStyles}
+                colSpan={2}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={name}
+                    stringIsHidden
+                    data={errors}
+                    hasActions={false}
+                    errorState
+                />
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.addressCellStyles}
+                colSpan={2}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={address}
+                    stringIsHidden
+                    data={errors}
+                    hasActions={false}
+                />
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.statusCellStyles}
+            >
+                <FacilityListItemsDetailedTableRowCell
+                    title={status}
+                    stringIsHidden
+                    data={errors}
+                    hasActions={false}
+                />
+            </TableCell>
+        </TableRow>
+        <TableRow
+            hover={hover}
+            onClick={handleSelectRow}
+            style={{ verticalAlign: 'top' }}
+            className={`${className} STATUS_ERROR_EXPANDED--SUB-ROW`}
         >
-            <FacilityListItemsDetailedTableRowCell
-                title={countryName}
-                hrIsHidden
-                stringIsHidden
-                data={errors}
-                hasActions={false}
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.rowIndexStyles}
             />
-        </TableCell>
-        <TableCell
-            padding="default"
-            style={listTableCellStyles.nameCellStyles}
-        >
-            <FacilityListItemsDetailedTableRowCell
-                title={name}
-                subtitle="Errors"
-                hrIsHidden={false}
-                stringIsHidden={false}
-                data={errors}
-                hasActions={false}
-                errorState
+            <TableCell
+                align="center"
+                padding="default"
+                style={listTableCellStyles.countryNameStyles}
             />
-        </TableCell>
-        <TableCell
-            padding="default"
-            style={listTableCellStyles.addressCellStyles}
-        >
-            <FacilityListItemsDetailedTableRowCell
-                title={address}
-                hrIsHidden
-                stringIsHidden
-                data={errors}
-                hasActions={false}
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.nameCellStyles}
+                colSpan={2}
+            >
+                {errors ? (
+                    <>
+                        <b>Errors</b><br />
+                        <div style={{ color: 'red' }}>
+                            {errors}
+                        </div>
+                    </>
+                ) : ''}
+            </TableCell>
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.addressCellStyles}
+                colSpan={2}
             />
-        </TableCell>
-        <TableCell
-            padding="default"
-            style={listTableCellStyles.statusCellStyles}
-        >
-            <FacilityListItemsDetailedTableRowCell
-                title={status}
-                hrIsHidden
-                stringIsHidden
-                data={errors}
-                hasActions={false}
+            <TableCell
+                padding="default"
+                style={listTableCellStyles.statusCellStyles}
             />
-        </TableCell>
-    </TableRow>
+        </TableRow>
+    </>
 ), propsAreEqual);
 
 FacilityListItemsErrorTableRow.defaultProps = {

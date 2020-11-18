@@ -15,6 +15,7 @@ import { makeFacilityDetailLink } from '../util/util';
 const makeTableRowStyles = ({ handleSelectRow, isRemoved }) => ({
     cursor: isFunction(handleSelectRow) ? 'pointer' : 'auto',
     opacity: isRemoved ? '0.6' : '1.0',
+    textDecoration: isRemoved ? 'line-through' : 'initial',
 });
 
 const FacilityListItemsTableRow = ({
@@ -31,11 +32,13 @@ const FacilityListItemsTableRow = ({
     handleRemoveItem,
     removeButtonDisabled,
     removeButtonID,
+    className,
 }) => (
     <TableRow
         hover={hover}
         onClick={handleSelectRow}
         style={makeTableRowStyles({ handleSelectRow, isRemoved })}
+        className={className}
     >
         <TableCell
             align="center"
@@ -54,6 +57,7 @@ const FacilityListItemsTableRow = ({
         <TableCell
             padding="default"
             style={listTableCellStyles.nameCellStyles}
+            colSpan={2}
         >
             {
                 (newFacility && oarID)
@@ -70,6 +74,7 @@ const FacilityListItemsTableRow = ({
         <TableCell
             padding="default"
             style={listTableCellStyles.addressCellStyles}
+            colSpan={2}
         >
             {address}
         </TableCell>
