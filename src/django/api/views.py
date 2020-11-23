@@ -916,7 +916,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     "claim_info": null,
                     "other_locations": []
                   },
-                  "confidence": 0.7686
+                  "confidence": 0.7686,
+                  "confirm_match_url": "/api/facility-matches/135005/confirm/",
+                  "reject_match_url": "/api/facility-matches/135005/reject/"
                 }
               ],
               "item_id": 959,
@@ -965,6 +967,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     "other_locations": []
                   },
                   "confidence": 0,
+                  "confirm_match_url": "/api/facility-matches/135005/confirm/",
+                  "reject_match_url": "/api/facility-matches/135005/reject/"
                   "text_only_match": true
                 }
               ],
