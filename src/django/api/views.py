@@ -1611,6 +1611,32 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             })
             unmatched_item.save()
 
+        target_has_approved_claim = FacilityClaim.objects.filter(
+            facility=target, status=FacilityClaim.APPROVED).exists()
+        merge_claims = FacilityClaim.objects.filter(facility=merge)
+        for claim in merge_claims:
+            claim.facility = target
+            should_change_status = (
+                claim.status in (FacilityClaim.APPROVED, FacilityClaim.PENDING)
+                and target_has_approved_claim)
+            if should_change_status:
+                claim.status = (
+                    FacilityClaim.REVOKED
+                    if claim.status == FacilityClaim.APPROVED
+                    else FacilityClaim.DENIED)
+                claim.status_change_by = request.user
+                claim.status_change_date = datetime.utcnow()
+                change_reason_template = \
+                    'Merging {} into {} which already has an approved claim'
+                claim.status_change_reason = \
+                    change_reason_template.format(merge.id, target.id)
+                claim.changeReason = \
+                    change_reason_template.format(merge.id, target.id)
+            else:
+                claim.changeReason = \
+                    'Merging {} into {}'.format(merge.id, target.id)
+            claim.save()
+
         for alias in FacilityAlias.objects.filter(facility=merge):
             oar_id = alias.oar_id
             alias.changeReason = 'Merging {} into {}'.format(

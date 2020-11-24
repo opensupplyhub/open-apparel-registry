@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+-    Update facility claims when merging [#1181](https://github.com/open-apparel-registry/open-apparel-registry/pull/1181)
+
 ### Security
 
 ## [2.36.0] - 2020-11-09
