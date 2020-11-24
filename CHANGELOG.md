@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
--   Add ApiBlock Dashboard [#1170](https://github.com/open-apparel-registry/open-apparel-registry/pull/1170)
-
 ### Changed
-
--   Include confirm and reject urls in API response examples [#1180](https://github.com/open-apparel-registry/open-apparel-registry/pull/1180)
 
 ### Deprecated
 
@@ -21,9 +17,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
--    Update facility claims when merging [#1181](https://github.com/open-apparel-registry/open-apparel-registry/pull/1181)
-
 ### Security
+
+## [2.37.0] - 2020-11-24
+
+### Added
+
+-   Add ApiBlock Dashboard [#1170](https://github.com/open-apparel-registry/open-apparel-registry/pull/1170)
+
+### Changed
+
+-   Include confirm and reject urls in API response examples [#1180](https://github.com/open-apparel-registry/open-apparel-registry/pull/1180)
+
+### Fixed
+
+-    Update facility claims when merging [#1181](https://github.com/open-apparel-registry/open-apparel-registry/pull/1181)
 
 ## [2.36.0] - 2020-11-09
 
@@ -627,7 +635,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.36.0...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.37.0...HEAD
+[2.37.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.37.0
 [2.36.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.36.0
 [2.35.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.35.0
 [2.34.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.34.0
