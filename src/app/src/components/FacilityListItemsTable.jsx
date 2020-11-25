@@ -345,6 +345,7 @@ class FacilityListItemsTable extends Component {
                 direction="row"
                 justify="space-between"
                 alignItems="center"
+                className="TABLE_PAGINATION"
             >
                 <Grid
                     item
@@ -389,6 +390,7 @@ class FacilityListItemsTable extends Component {
                             handleRemoveItem={() => this.handleRemoveButtonClick(item)}
                             removeButtonDisabled={isRemovingItem}
                             removeButtonID={REMOVE_BUTTON_ID}
+                            className="STATUS_POTENTIAL_MATCH facility-list-row__expanded"
                         />
                     );
                 }
@@ -412,6 +414,7 @@ class FacilityListItemsTable extends Component {
                             handleRemoveItem={() => this.handleRemoveButtonClick(item)}
                             removeButtonDisabled={isRemovingItem}
                             removeButtonID={REMOVE_BUTTON_ID}
+                            className="STATUS_NEW_FACILITY"
                         />
                     );
                 }
@@ -431,21 +434,7 @@ class FacilityListItemsTable extends Component {
                             handleRemoveItem={() => this.handleRemoveButtonClick(item)}
                             removeButtonDisabled={isRemovingItem}
                             removeButtonID={REMOVE_BUTTON_ID}
-                        />
-                    );
-                }
-
-                if (facilityListItemErrorStatuses.includes(item.status)) {
-                    return (
-                        <FacilityListItemsErrorTableRow
-                            key={item.row_index}
-                            rowIndex={item.row_index}
-                            countryName={item.country_name}
-                            name={item.name}
-                            address={item.address}
-                            status={item.status}
-                            errors={item.processing_errors}
-                            handleSelectRow={handleSelectRow}
+                            className={`STATUS_MATCHED_COLLAPSED ${(facilityListItemErrorStatuses.includes(item.status) ? 'STATUS_ERROR' : '')} STATUS_${item.status.toString()}`}
                         />
                     );
                 }
@@ -466,6 +455,23 @@ class FacilityListItemsTable extends Component {
                             handleRemoveItem={() => this.handleRemoveButtonClick(item)}
                             removeButtonDisabled={isRemovingItem}
                             removeButtonID={REMOVE_BUTTON_ID}
+                            className="STATUS_MATCHED_EXPANDED facility-list-row__expanded"
+                        />
+                    );
+                }
+
+                if (facilityListItemErrorStatuses.includes(item.status)) {
+                    return (
+                        <FacilityListItemsErrorTableRow
+                            key={item.row_index}
+                            rowIndex={item.row_index}
+                            countryName={item.country_name}
+                            name={item.name}
+                            address={item.address}
+                            status={item.status}
+                            errors={item.processing_errors}
+                            handleSelectRow={handleSelectRow}
+                            className="STATUS_ERROR"
                         />
                     );
                 }
@@ -481,6 +487,7 @@ class FacilityListItemsTable extends Component {
                         handleSelectRow={handleSelectRow}
                         hover
                         isRemoved={anyListItemMatchesAreInactive(item)}
+                        className={`STATUS_${item.status}`}
                     />
                 );
             });
@@ -529,11 +536,11 @@ class FacilityListItemsTable extends Component {
                     </ShowOnly>
                 </div>
                 {paginationControlsRow}
-                <div style={facilityListItemsTableStyles.tableWrapperStyles}>
-                    <Table>
+                <div className="TABLE_WRAPPER" style={facilityListItemsTableStyles.tableWrapperStyles}>
+                    <Table style={{ tableLayout: 'fixed', minWidth: '1200px' }}>
                         <TableHead>
                             <FacilityListItemsTableRow
-                                rowIndex="CSV Row Index"
+                                rowIndex="Row Index"
                                 countryName="Country Name"
                                 name="Name"
                                 address="Address"

@@ -996,7 +996,7 @@ class ApiBlockSerializer(ModelSerializer):
         model = ApiBlock
         fields = ('contributor', 'until', 'active', 'limit', 'actual',
                   'grace_limit', 'grace_created_by', 'grace_reason',
-                  'created_at', 'updated_at')
+                  'created_at', 'updated_at', 'id')
 
     def get_contributor(self, instance):
         return instance.contributor.name

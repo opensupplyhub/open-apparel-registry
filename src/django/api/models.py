@@ -487,6 +487,7 @@ class FacilityListItem(PPEMixin):
     REMOVED = 'REMOVED'
 
     # These status choices must be kept in sync with the client's
+    # If a new status is added, add supporting styles src/app/src/App.css
     # `facilityListItemStatusChoicesEnum`.
     STATUS_CHOICES = (
         (UPLOADED, UPLOADED),

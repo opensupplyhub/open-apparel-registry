@@ -2917,6 +2917,20 @@ class FacilityMergeTest(APITestCase):
         self.list_item_1.facility = self.facility_1
         self.list_item_1.save()
 
+        self.facility_1_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=self.contributor_1,
+                facility=self.facility_1,
+                contact_person='test 1',
+                job_title='test 1',
+                email='test1@test.com',
+                phone_number='1234567890',
+                company_name='test 1',
+                facility_description='test 1',
+                preferred_contact_method=FacilityClaim.EMAIL,
+                status=FacilityClaim.APPROVED)
+
         self.contributor_2 = Contributor \
             .objects \
             .create(admin=self.superuser,
@@ -2972,6 +2986,19 @@ class FacilityMergeTest(APITestCase):
 
         self.list_item_2.facility = self.facility_2
         self.list_item_2.save()
+
+        self.facility_2_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=self.contributor_2,
+                facility=self.facility_2,
+                contact_person='test 2',
+                job_title='test 2',
+                email='test2@test.com',
+                phone_number='1234567890',
+                company_name='test 2',
+                facility_description='test 2',
+                preferred_contact_method=FacilityClaim.EMAIL)
 
         self.contributor_3 = Contributor \
             .objects \
@@ -3066,6 +3093,37 @@ class FacilityMergeTest(APITestCase):
                          self.facility_1.ppe_contact_email)
         self.assertEqual(self.list_item_2.ppe_website,
                          self.facility_1.ppe_website)
+
+        self.facility_2_claim.refresh_from_db()
+        # The pending claim on the merge facility should have been updated
+        self.assertEqual(self.facility_1, self.facility_2_claim.facility)
+        self.assertEqual(FacilityClaim.DENIED, self.facility_2_claim.status)
+
+    def test_merge_with_two_approved_claims(self):
+        self.facility_1_claim.status = FacilityClaim.APPROVED
+        self.facility_1_claim.save()
+        self.facility_2_claim.status = FacilityClaim.APPROVED
+        self.facility_2_claim.save()
+
+        just_before_change = datetime.utcnow()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(200, response.status_code)
+
+        self.facility_1_claim.refresh_from_db()
+        self.facility_2_claim.refresh_from_db()
+
+        self.assertEqual(self.facility_1, self.facility_2_claim.facility)
+        self.assertEqual(FacilityClaim.APPROVED, self.facility_1_claim.status)
+        self.assertEqual(FacilityClaim.REVOKED, self.facility_2_claim.status)
+        self.assertEqual(self.superuser,
+                         self.facility_2_claim.status_change_by)
+        # Modifying tzinfo avoids
+        # TypeError: can't compare offset-naive and offset-aware datetimes
+        self.assertGreater(
+            self.facility_2_claim.status_change_date.replace(tzinfo=None),
+            just_before_change.replace(tzinfo=None))
 
     def test_required_params(self):
         self.client.login(email=self.superuser_email,

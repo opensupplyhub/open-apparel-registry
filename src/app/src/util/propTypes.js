@@ -84,7 +84,6 @@ export const facilityListItemPropType = shape({
     country_name: string.isRequired,
     geocoded_point: string,
     geocoded_address: string,
-    facility_list: number.isRequired,
     processing_errors: arrayOf(string.isRequired),
     matched_facility: shape({
         oar_id: string.isRequired,
@@ -288,4 +287,15 @@ export const approvedFacilityClaimPropType = shape({
     certification_choices: arrayOf(arrayOf(string)).isRequired,
     product_type_choices: arrayOf(arrayOf(string)).isRequired,
     production_type_choices: arrayOf(arrayOf(string)).isRequired,
+});
+
+export const apiBlockPropType = shape({
+    limit: number.isRequired,
+    actual: number.isRequired,
+    contributor: string.isRequired,
+    active: bool.isRequired,
+    grace_limit: number,
+    grace_reason: string,
+    until: string.isRequired,
+    created_at: string.isReqired,
 });

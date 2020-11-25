@@ -1,6 +1,7 @@
 import React from 'react';
 import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
@@ -23,6 +24,7 @@ function FacilityListItemsConfirmationTableRow({
     makeRejectMatchFunction,
     fetching,
     readOnly,
+    className,
 }) {
     const [
         matchIDs,
@@ -64,73 +66,139 @@ function FacilityListItemsConfirmationTableRow({
     );
 
     return (
-        <TableRow hover={false} style={{ background: '#e0e0e0', verticalAlign: 'top' }}>
-            <TableCell
-                align="center"
-                padding="default"
-                style={listTableCellStyles.rowIndexStyles}
+        <>
+            <TableRow
+                hover={false}
+                style={{ background: '#dcfbff', verticalAlign: 'top' }}
+                className={className}
             >
-                <FacilityListItemsDetailedTableRowCell
-                    title={item.row_index}
-                    subtitle=" "
-                    stringIsHidden
-                    data={matchIDs}
-                    hasActions={false}
-                />
-            </TableCell>
-            <TableCell
-                align="center"
-                padding="default"
-                style={listTableCellStyles.countryNameStyles}
+                <TableCell
+                    align="center"
+                    padding="default"
+                    style={listTableCellStyles.rowIndexStyles}
+                >
+                    <FacilityListItemsDetailedTableRowCell
+                        title={item.row_index}
+                        stringIsHidden
+                        data={matchIDs}
+                        hasActions={false}
+                    />
+                </TableCell>
+                <TableCell
+                    align="center"
+                    padding="default"
+                    style={listTableCellStyles.countryNameStyles}
+                >
+                    <FacilityListItemsDetailedTableRowCell
+                        title={item.country_name || ' '}
+                        stringIsHidden
+                        data={matchIDs}
+                        hasActions={false}
+                    />
+                </TableCell>
+                <TableCell
+                    padding="default"
+                    style={listTableCellStyles.nameCellStyles}
+                    colSpan={2}
+                >
+                    <FacilityListItemsDetailedTableRowCell
+                        title={item.name || ' '}
+                        stringIsHidden
+                        data={matchNames}
+                        hasActions={false}
+                    />
+                </TableCell>
+                <TableCell
+                    padding="default"
+                    style={listTableCellStyles.addressCellStyles}
+                    colSpan={2}
+                >
+                    <FacilityListItemsDetailedTableRowCell
+                        title={item.address || ' '}
+                        stringIsHidden
+                        data={matchAddresses}
+                        hasActions={false}
+                    />
+                </TableCell>
+                <TableCell
+                    padding="default"
+                    style={listTableCellStyles.statusCellStyles}
+                >
+                    <FacilityListItemsDetailedTableRowCell
+                        title={item.status}
+                        stringIsHidden
+                        data={matchConfirmOrRejectFunctions}
+                        hasActions={false}
+                        fetching={fetching}
+                        readOnly={readOnly}
+                    />
+                </TableCell>
+            </TableRow>
+            <TableRow
+                hover={false}
+                style={{ background: '#dcfbff', verticalAlign: 'top' }}
+                className={`${className} STATUS_POTENTIAL_MATCH--SUB-ROW`}
             >
-                <FacilityListItemsDetailedTableRowCell
-                    title={item.country_name || ' '}
-                    subtitle=" "
-                    stringIsHidden
-                    data={matchIDs}
-                    hasActions={false}
+                <TableCell
+                    align="center"
+                    padding="default"
+                    style={listTableCellStyles.rowIndexStyles}
                 />
-            </TableCell>
-            <TableCell
-                padding="default"
-                style={listTableCellStyles.nameCellStyles}
-            >
-                <FacilityListItemsDetailedTableRowCell
-                    title={item.name || ' '}
-                    subtitle="Matched Name"
-                    stringisHidden={false}
-                    data={matchNames}
-                    hasActions={false}
-                    linkURLs={matchOARIDs.map(makeFacilityDetailLink)}
+                <TableCell
+                    align="center"
+                    padding="default"
+                    style={listTableCellStyles.countryNameStyles}
                 />
-            </TableCell>
-            <TableCell
-                padding="default"
-                style={listTableCellStyles.addressCellStyles}
-            >
-                <FacilityListItemsDetailedTableRowCell
-                    title={item.address || ' '}
-                    subtitle="Matched Address"
-                    stringIsHidden={false}
-                    data={matchAddresses}
-                    hasActions={false}
-                />
-            </TableCell>
-            <TableCell
-                padding="default"
-                style={listTableCellStyles.statusCellStyles}
-            >
-                <FacilityListItemsDetailedTableRowCell
-                    title={item.status}
-                    subtitle="Actions"
-                    stringIsHidden={false}
-                    data={matchConfirmOrRejectFunctions}
-                    hasActions
-                    fetching={fetching}
-                    readOnly={readOnly}
-                />
-            </TableCell>
-        </TableRow>
+                <TableCell
+                    padding="default"
+                    style={listTableCellStyles.nameCellStyles}
+                    colSpan={2}
+                >
+                    {matchOARIDs ? (
+                        <>
+                            <b>Facility Match Name</b>
+                            <br />
+                            <Link
+                                to={makeFacilityDetailLink(matchOARIDs)}
+                                href={makeFacilityDetailLink(matchOARIDs)}
+                            >
+                                {matchNames}
+                            </Link>
+                        </>
+                    ) : (
+                        ' '
+                    )}
+                </TableCell>
+                <TableCell
+                    padding="default"
+                    style={listTableCellStyles.addressCellStyles}
+                    colSpan={2}
+                >
+                    {matchAddresses ? (
+                        <>
+                            <b>Facility Match Address</b>
+                            <br />
+                            {matchAddresses}
+                        </>
+                    ) : (
+                        ' '
+                    )}
+                </TableCell>
+                <TableCell
+                    padding="default"
+                    style={listTableCellStyles.statusCellStyles}
+                >
+                    <FacilityListItemsDetailedTableRowCell
+                        title
+                        stringIsHidden
+                        data={matchConfirmOrRejectFunctions}
+                        hasActions
+                        fetching={fetching}
+                        readOnly={readOnly}
+                    />
+                </TableCell>
+            </TableRow>
+        </>
     );
 }
 
