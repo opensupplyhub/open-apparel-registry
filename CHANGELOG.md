@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+-   Remove leading and trailing whitespace from country when parsing [#1184](https://github.com/open-apparel-registry/open-apparel-registry/pull/1184)
+
 ### Security
 
 ## [2.37.0] - 2020-11-24
