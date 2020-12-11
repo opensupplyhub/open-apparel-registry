@@ -1,7 +1,6 @@
 import React from 'react';
 import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
@@ -154,42 +153,35 @@ function FacilityListItemsConfirmationTableRow({
                     style={listTableCellStyles.nameCellStyles}
                     colSpan={2}
                 >
-                    {matchOARIDs ? (
-                        <>
-                            <b>Facility Match Name</b>
-                            <br />
-                            <Link
-                                to={makeFacilityDetailLink(matchOARIDs)}
-                                href={makeFacilityDetailLink(matchOARIDs)}
-                            >
-                                {matchNames}
-                            </Link>
-                        </>
-                    ) : (
-                        ' '
-                    )}
+                    <b>Facility Match Name</b>
+                    <FacilityListItemsDetailedTableRowCell
+                        title=" "
+                        stringisHidden={false}
+                        data={matchNames}
+                        hasActions={false}
+                        linkURLs={matchOARIDs.map(makeFacilityDetailLink)}
+                    />
                 </TableCell>
                 <TableCell
                     padding="default"
                     style={listTableCellStyles.addressCellStyles}
                     colSpan={2}
                 >
-                    {matchAddresses ? (
-                        <>
-                            <b>Facility Match Address</b>
-                            <br />
-                            {matchAddresses}
-                        </>
-                    ) : (
-                        ' '
-                    )}
+                    <b>Facility Match Address</b>
+                    <FacilityListItemsDetailedTableRowCell
+                        title=" "
+                        stringIsHidden={false}
+                        data={matchAddresses}
+                        hasActions={false}
+                    />
                 </TableCell>
                 <TableCell
                     padding="default"
                     style={listTableCellStyles.statusCellStyles}
                 >
+                    <b>Actions</b>
                     <FacilityListItemsDetailedTableRowCell
-                        title
+                        title=" "
                         stringIsHidden
                         data={matchConfirmOrRejectFunctions}
                         hasActions
