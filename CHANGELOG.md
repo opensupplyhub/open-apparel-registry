@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+
 - Scheduled check_api_limits invocation with Step Functions [#1193](https://github.com/open-apparel-registry/open-apparel-registry/pull/1193)
 
 ### Changed
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+- Bump ini from 1.3.5 to 1.3.7 in /src/app [#1188](https://github.com/open-apparel-registry/open-apparel-registry/pull/1188)
 
 ## [2.37.1] - 2020-12-14
 
