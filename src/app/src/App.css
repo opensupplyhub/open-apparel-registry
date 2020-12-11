@@ -693,7 +693,7 @@ hr {
   .form__action {
     margin-bottom: 5px;
   }
-  
+
   .filter-sidebar-tabgroup {
     position: sticky !important;
     top: -11px;
@@ -755,8 +755,4 @@ hr {
 
 .STATUS_PARSED:not(:hover) {
   background: #fff !important;
-}
-
-.STATUS_POTENTIAL_MATCH--ACTIONS + .STATUS_POTENTIAL_MATCH--ACTIONS {
-  display: none !important;
 }

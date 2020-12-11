@@ -71,7 +71,7 @@ export default function FacilityListItemsDetailedTableRowCell({
                 </div>
                 {
                     data.map((item, index) => (
-                        <Fragment key={hasActions ? item.id : item}>
+                        <Fragment key={item.id ? item.id : item}>
                             <CellElement
                                 item={item}
                                 fetching={fetching}
