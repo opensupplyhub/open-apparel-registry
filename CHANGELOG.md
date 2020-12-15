@@ -17,10 +17,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+### Security
+
+## [2.37.1] - 2020-12-14
+
+### Fixed
+
 -   Remove leading and trailing whitespace from country when parsing [#1184](https://github.com/open-apparel-registry/open-apparel-registry/pull/1184)
 -   Fix pending matches bug [#1189](https://github.com/open-apparel-registry/open-apparel-registry/pull/1189)
-
-### Security
 
 ## [2.37.0] - 2020-11-24
 
@@ -638,7 +642,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.37.0...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.37.1...HEAD
+[2.37.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.37.1
 [2.37.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.37.0
 [2.36.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.36.0
 [2.35.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.35.0
