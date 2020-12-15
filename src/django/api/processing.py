@@ -87,7 +87,7 @@ def parse_csv_line(line):
 
 def get_country_code(country):
     # TODO: Handle minor spelling errors in country names
-    country = str(country)
+    country = str(country).strip()
     if country.upper() in COUNTRY_NAMES:
         return country.upper()
     elif country.lower() in COUNTRY_CODES:

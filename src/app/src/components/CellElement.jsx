@@ -247,7 +247,6 @@ export default class CellElement extends Component {
             <div
                 key={item.id}
                 style={confirmRejectMatchRowStyles.cellRowStyles}
-                className="STATUS_POTENTIAL_MATCH--ACTIONS"
             >
                 <div style={confirmRejectMatchRowStyles.cellActionStyles}>
                     <Button
