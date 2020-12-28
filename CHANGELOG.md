@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+- Scheduled check_api_limits invocation with Step Functions [#1193](https://github.com/open-apparel-registry/open-apparel-registry/pull/1193)
 
 ### Changed
 

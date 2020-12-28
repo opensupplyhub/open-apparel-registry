@@ -1,0 +1,45 @@
+{
+    "StartAt": "Run scheduled task synchronously",
+    "States": {
+        "Run scheduled task synchronously": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::ecs:runTask.sync",
+            "Parameters": {
+                "Cluster": "${ecs_cluster_arn}",
+                "LaunchType": "FARGATE",
+                "NetworkConfiguration": {
+                    "AwsvpcConfiguration": {
+                        "SecurityGroups": [
+                            "${security_group_id}"
+                        ],
+                        "Subnets": ${subnet_ids}
+                    }
+                },
+                "TaskDefinition": "${ecs_task_definition_arn}",
+                "Overrides": {
+                    "ContainerOverrides": [
+                        {
+                            "Name": "${ecs_container_name}",
+                            "Command.$": "$.commands"
+                        }
+                    ]
+                }
+            },
+            "TimeoutSeconds": ${timeout_seconds},
+            "Catch": [
+                {
+                    "ErrorEquals": [
+                        "States.ALL"
+                    ],
+                    "Next": "Notify scheduled task failure"
+                }
+            ],
+            "End": true
+        },
+        "Notify scheduled task failure": {
+            "Type": "Task",
+            "Resource": "${lambda_function_arn}",
+            "End": true
+        }
+    }
+}
