@@ -223,7 +223,7 @@ data "aws_iam_policy_document" "step_functions_assume_role" {
 
     principals {
       type        = "Service"
-      identifiers = ["states.${var.aws_region}.amazonaws.com"]
+      identifiers = ["states.amazonaws.com"]
     }
 
     actions = [
