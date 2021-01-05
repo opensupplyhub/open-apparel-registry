@@ -43,7 +43,7 @@ from api.permissions import referring_host_is_allowed, referring_host
 from api.serializers import (ApprovedFacilityClaimSerializer,
                              FacilityCreateBodySerializer,
                              FacilityListSerializer)
-from api.limits import check_api_limits, get_end_of_month
+from api.limits import check_api_limits, get_end_of_year
 
 
 class FacilityListCreateTest(APITestCase):
@@ -6212,10 +6212,10 @@ class ApiLimitTest(TestCase):
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.limit_one = ApiLimit.objects.create(contributor=self.contrib_one,
-                                                 monthly_limit=10)
+                                                 yearly_limit=10)
 
         self.limit_two = ApiLimit.objects.create(contributor=self.contrib_two,
-                                                 monthly_limit=10)
+                                                 yearly_limit=10)
 
         self.notification_time = timezone.now()
         self.notification = ContributorNotifications \
@@ -6253,7 +6253,7 @@ class ApiLimitTest(TestCase):
 
     def test_over_limit_block_set_once(self):
         ApiBlock.objects.create(contributor=self.contrib_two,
-                                until=get_end_of_month(self.notification_time),
+                                until=get_end_of_year(self.notification_time),
                                 active=False, limit=10, actual=11)
 
         for x in range(11):
