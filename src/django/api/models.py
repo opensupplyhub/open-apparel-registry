@@ -1758,6 +1758,12 @@ class ApiLimit(models.Model):
         null=False,
         blank=False,
         help_text='The number of requests a contributor can make monthly.')
+    # TODO: After deploying this database change, remove monthly_limit and make
+    # yearly_limit non-null
+    yearly_limit = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text='The number of requests a contributor can make per year.')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
