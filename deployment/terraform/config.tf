@@ -1,6 +1,6 @@
 provider "aws" {
   region  = "${var.aws_region}"
-  version = "~> 1.56.0"
+  version = "~> 2.70.0"
 }
 
 /**
@@ -15,7 +15,7 @@ provider "aws" {
 provider "aws" {
   alias   = "certificates"
   region  = "us-east-1"
-  version = "~> 1.56.0"
+  version = "~> 2.70.0"
 }
 
 provider "template" {

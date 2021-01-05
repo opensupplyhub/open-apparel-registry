@@ -245,6 +245,14 @@ variable "batch_default_ce_instance_types" {
   ]
 }
 
+variable "app_cli_state_machine_timeout_seconds" {
+  default = "600"
+}
+
+variable "check_api_limits_schedule_expression" {
+  default = "rate(1 hour)"
+}
+
 variable "ec2_service_role_policy_arn" {
   default = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
@@ -262,3 +270,4 @@ variable "aws_lambda_service_role_policy_arn" {
 }
 
 variable "oar_client_key" {}
+

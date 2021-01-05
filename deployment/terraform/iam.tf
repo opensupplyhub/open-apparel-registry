@@ -179,9 +179,9 @@ resource "aws_iam_role_policy_attachment" "spot_fleet_policy" {
 }
 
 #
-# Lambda resources
+# Lambda IAM resources
 #
-data "aws_iam_policy_document" "alert_batch_failures_assume_role" {
+data "aws_iam_policy_document" "lambda_assume_role" {
   statement {
     effect = "Allow"
 
@@ -196,10 +196,157 @@ data "aws_iam_policy_document" "alert_batch_failures_assume_role" {
 
 resource "aws_iam_role" "alert_batch_failures" {
   name               = "lambda${var.environment}AlertBatchFailures"
-  assume_role_policy = "${data.aws_iam_policy_document.alert_batch_failures_assume_role.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.lambda_assume_role.json}"
 }
 
 resource "aws_iam_role_policy_attachment" "alert_batch_failures_lambda_policy" {
   role       = "${aws_iam_role.alert_batch_failures.name}"
   policy_arn = "${var.aws_lambda_service_role_policy_arn}"
+}
+
+resource "aws_iam_role" "alert_sfn_failures" {
+  name               = "lambda${var.environment}AlertStepFunctionsFailures"
+  assume_role_policy = "${data.aws_iam_policy_document.lambda_assume_role.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "alert_sfn_failures_lambda_policy" {
+  role       = "${aws_iam_role.alert_sfn_failures.name}"
+  policy_arn = "${var.aws_lambda_service_role_policy_arn}"
+}
+
+#
+# Step Functions IAM resources
+#
+data "aws_iam_policy_document" "step_functions_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["states.amazonaws.com"]
+    }
+
+    actions = [
+      "sts:AssumeRole",
+    ]
+  }
+}
+
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "step_functions_service_role_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = ["iam:PassRole"]
+
+    # Allow Step Functions to assume the ECS task and execution roles.
+    resources = [
+      "${aws_iam_role.app_task_role.arn}",
+      "${aws_iam_role.ecs_task_execution_role.arn}",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = ["ecs:RunTask"]
+
+    # Allow ecs:RunTask for all current and future versions of the task
+    # definition.
+    resources = ["${replace(aws_ecs_task_definition.app_cli.arn, "/:\\d+$/", ":*")}"]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "ecs:cluster"
+
+      values = ["${aws_ecs_cluster.app.arn}"]
+    }
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecs:StopTask",
+      "ecs:DescribeTasks",
+    ]
+
+    # Despite the "*" wildcard, only allow these actions for ECS tasks that were
+    # started by Step Functions.
+    # See: https://github.com/awsdocs/aws-step-functions-developer-guide/blob/master/doc_source/ecs-iam.md#-synchronous-
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "events:PutTargets",
+      "events:PutRule",
+      "events:DescribeRule",
+    ]
+
+    resources = [
+      "arn:aws:events:${var.aws_region}:${data.aws_caller_identity.current.account_id}:rule/StepFunctionsGetEventsForECSTaskRule",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = ["lambda:InvokeFunction"]
+
+    resources = ["${aws_lambda_function.alert_sfn_failures.arn}"]
+  }
+}
+
+resource "aws_iam_role" "step_functions_service_role" {
+  name               = "stepFunctions${var.environment}ServiceRole"
+  assume_role_policy = "${data.aws_iam_policy_document.step_functions_assume_role.json}"
+}
+
+resource "aws_iam_role_policy" "step_functions_service_role_policy" {
+  name   = "stepFunctions${var.environment}ServiceRolePolicy"
+  role   = "${aws_iam_role.step_functions_service_role.name}"
+  policy = "${data.aws_iam_policy_document.step_functions_service_role_policy.json}"
+}
+
+#
+# CloudWatch Events IAM resources
+#
+data "aws_iam_policy_document" "cloudwatch_events_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+
+    actions = [
+      "sts:AssumeRole",
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "cloudwatch_events_service_role_policy" {
+  statement {
+    effect = "Allow"
+
+    resources = ["${aws_sfn_state_machine.app_cli.id}"]
+
+    actions = ["states:StartExecution"]
+  }
+}
+
+resource "aws_iam_role" "cloudwatch_events_service_role" {
+  name               = "cloudWatchEvents${var.environment}ServiceRole"
+  assume_role_policy = "${data.aws_iam_policy_document.cloudwatch_events_assume_role.json}"
+}
+
+resource "aws_iam_role_policy" "cloudwatch_events_service_role_policy" {
+  name   = "cloudWatchEvents${var.environment}ServiceRolePolicy"
+  role   = "${aws_iam_role.cloudwatch_events_service_role.name}"
+  policy = "${data.aws_iam_policy_document.cloudwatch_events_service_role_policy.json}"
 }

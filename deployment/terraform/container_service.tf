@@ -59,7 +59,7 @@ resource "aws_lb" "app" {
   # This is a "hidden" dependency that Terraform cannot automatically infer, so
   # it must be declared explicitly.
   depends_on = [
-    "aws_s3_bucket_policy.alb_access_logging"
+    "aws_s3_bucket_policy.alb_access_logging",
   ]
 }
 
