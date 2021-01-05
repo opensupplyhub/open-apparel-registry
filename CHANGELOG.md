@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 - Bump ini from 1.3.5 to 1.3.7 in /src/app [#1188](https://github.com/open-apparel-registry/open-apparel-registry/pull/1188)
+- Bump axios from 0.19.0 to 0.21.1 in /src/app [#1194](https://github.com/open-apparel-registry/open-apparel-registry/pull/1194)
 
 ## [2.37.1] - 2020-12-14
 
