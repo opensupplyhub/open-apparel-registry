@@ -9,17 +9,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Scheduled check_api_limits invocation with Step Functions [#1193](https://github.com/open-apparel-registry/open-apparel-registry/pull/1193)
-
 ### Changed
-
-- Add ApiBlock.yearly_limit to prepare for replacing monthly_limit [#1197](https://github.com/open-apparel-registry/open-apparel-registry/pull/1197)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+### Security
+
+## [2.38.0] - 2021-01-06
+
+### Added
+
+- Scheduled check_api_limits invocation with Step Functions [#1193](https://github.com/open-apparel-registry/open-apparel-registry/pull/1193)
+
+### Changed
+
+- Add ApiBlock.yearly_limit to prepare for replacing monthly_limit [#1197](https://github.com/open-apparel-registry/open-apparel-registry/pull/1197)
 
 ### Security
 
