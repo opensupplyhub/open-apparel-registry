@@ -1,4 +1,4 @@
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, time
 
 from django.db.models import Count, F
 from django.db import transaction
@@ -11,10 +11,8 @@ from api.mail import (send_api_notice, send_admin_api_notice, send_api_warning,
                       send_admin_api_warning)
 
 
-def get_end_of_month(at_datetime):
-    return (at_datetime.replace(
-            day=1, hour=0, minute=0, second=0, microsecond=0)
-            + relativedelta(months=1) - relativedelta(seconds=1))
+def get_end_of_year(at_datetime):
+    return datetime.combine(at_datetime.replace(month=12, day=31), time.max)
 
 
 def get_api_block(contributor):
@@ -30,7 +28,7 @@ def check_contributor_api_limit(at_datetime, c):
         .get_or_create(contributor=contributor)
     try:
         apiLimit = ApiLimit.objects.get(contributor=contributor)
-        limit = apiLimit.monthly_limit
+        limit = apiLimit.yearly_limit
     except ObjectDoesNotExist:
         limit = settings.API_FREE_REQUEST_LIMIT
     if limit == 0:
@@ -47,7 +45,7 @@ def check_contributor_api_limit(at_datetime, c):
     if request_count > limit:
         apiBlock = get_api_block(contributor)
         if apiBlock is None or apiBlock.until < at_datetime:
-            until = get_end_of_month(at_datetime)
+            until = get_end_of_year(at_datetime)
             ApiBlock.objects.create(contributor=contributor,
                                     until=until, active=True,
                                     limit=limit, actual=request_count)

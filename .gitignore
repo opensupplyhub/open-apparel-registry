@@ -48,10 +48,13 @@ research/dedupe/gazetteer/gazetteer_messy_pass_2.csv
 research/dedupe/gazetteer/gazetteer_output.csv
 research/dedupe/gazetteer/gazetteer_pass_2_output.csv
 research/dedupe/gazetteer/gazetteer_training.json
+
+# Lambda
 deployment/terraform/lambda-functions/**/*.zip
 deployment/terraform/lambda-functions/**/*.out
 deployment/terraform/lambda-functions/**/src/*
 !deployment/terraform/lambda-functions/alert_batch_failures/src/alert_batch_failures.py
+!deployment/terraform/lambda-functions/alert_sfn_failures/src/alert_sfn_failures.py
 
 # Environments
 .env

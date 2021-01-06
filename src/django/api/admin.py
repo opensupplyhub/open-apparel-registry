@@ -133,7 +133,7 @@ class RequestLogAdmin(admin.ModelAdmin):
 
 
 class ApiLimitAdmin(admin.ModelAdmin):
-    history_list_display = ('contributor', 'monthly_limit', 'created_at',
+    history_list_display = ('contributor', 'yearly_limit', 'created_at',
                             'updated_at')
 
     def get_readonly_fields(self, request, obj=None):

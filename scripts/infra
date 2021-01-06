@@ -41,6 +41,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
                 # Build Lambda function archives
                 make -sC lambda-functions/alert_batch_failures
+                make -sC lambda-functions/alert_sfn_failures
 
                 # Clear stale modules & remote state, then re-initialize
                 rm -rf .terraform terraform.tfstate* 
