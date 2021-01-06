@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Add ApiBlock.yearly_limit to prepare for replacing monthly_limit [#1197](https://github.com/open-apparel-registry/open-apparel-registry/pull/1197)
+
 ### Deprecated
 
 ### Removed
