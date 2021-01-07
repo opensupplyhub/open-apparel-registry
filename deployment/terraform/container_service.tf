@@ -134,6 +134,7 @@ data "template_file" "app" {
     oar_client_key = "${var.oar_client_key}"
 
     default_from_email = "${var.default_from_email}"
+    notification_email_to = "${var.notification_email_to}"
 
     app_port = "${var.app_port}"
 
@@ -181,6 +182,7 @@ data "template_file" "app_cli" {
     oar_client_key = "${var.oar_client_key}"
 
     default_from_email = "${var.default_from_email}"
+    notification_email_to = "${var.notification_email_to}"
 
     app_port = "${var.app_port}"
 
