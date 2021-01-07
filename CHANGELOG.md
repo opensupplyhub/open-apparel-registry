@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Remove ApiLimit monthly_limit and make yearly_limit non-null [#1198](https://github.com/open-apparel-registry/open-apparel-registry/pull/1198)
+
 ### Deprecated
 
 ### Removed
