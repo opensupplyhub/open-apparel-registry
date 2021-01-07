@@ -1754,17 +1754,9 @@ class ApiLimit(models.Model):
         on_delete=models.CASCADE,
         help_text='The contributor to whom the limit applies.'
     )
-    # TODO: Remove after deploying changes that remove all
-    # refrences to monthly_limit
-    monthly_limit = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text='The number of requests a contributor can make monthly.')
-    # TODO: Make yearly_limit non-null after deploying changes that remove all
-    # refrences to monthly_limit
     yearly_limit = models.PositiveIntegerField(
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         help_text='The number of requests a contributor can make per year.')
 
     created_at = models.DateTimeField(auto_now_add=True)
