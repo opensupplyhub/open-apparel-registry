@@ -50,6 +50,8 @@ class OarUserAdmin(UserAdmin):
                            'has_agreed_to_terms_of_service',
                            'groups')}),
     )
+    search_fields = ('email',)
+    list_display = ('email', 'is_active')
 
 
 class FacilityHistoryAdmin(SimpleHistoryAdmin):
