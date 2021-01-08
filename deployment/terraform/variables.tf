@@ -214,6 +214,8 @@ variable "django_secret_key" {}
 
 variable "default_from_email" {}
 
+variable "notification_email_to" {}
+
 variable "batch_default_ce_spot_fleet_bid_percentage" {
   default = "40"
 }
