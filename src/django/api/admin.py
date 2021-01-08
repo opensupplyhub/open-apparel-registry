@@ -110,6 +110,7 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
 
 class SourceAdmin(admin.ModelAdmin):
     readonly_fields = ('source_type', 'facility_list', 'create')
+    list_filter = ('source_type', 'contributor')
 
 
 class RequestLogAdmin(admin.ModelAdmin):
