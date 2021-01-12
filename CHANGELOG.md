@@ -11,18 +11,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Allow setting NOTIFICATION_EMAIL_TO from a deployment var [#1203](https://github.com/open-apparel-registry/open-apparel-registry/pull/1203)
-- Admin updates to allow filtering the source admin list by type and contributor and search users [#1207](https://github.com/open-apparel-registry/open-apparel-registry/pull/1207)
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- Fix S3 permissions to allow CloudFront logging [#1208](https://github.com/open-apparel-registry/open-apparel-registry/pull/1208)
-
 ### Security
+
+## [2.38.2] - 2021-01-12
+
+### Changed
+
+- Allow setting NOTIFICATION_EMAIL_TO from a deployment var [#1203](https://github.com/open-apparel-registry/open-apparel-registry/pull/1203)
+- Admin updates to allow filtering the source admin list by type and contributor and search users [#1207](https://github.com/open-apparel-registry/open-apparel-registry/pull/1207)
+
+### Fixed
+
+- Fix S3 permissions to allow CloudFront logging [#1208](https://github.com/open-apparel-registry/open-apparel-registry/pull/1208)
 
 ## [2.38.1] - 2021-01-06
 
@@ -668,7 +674,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.38.1...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.38.2...HEAD
+[2.38.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.2
 [2.38.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.1
 [2.38.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.0
 [2.37.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.37.1
