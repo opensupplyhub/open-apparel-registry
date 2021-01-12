@@ -273,3 +273,6 @@ variable "aws_lambda_service_role_policy_arn" {
 
 variable "oar_client_key" {}
 
+variable "aws_cloudfront_canonical_user_id" {
+  default = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
+}
