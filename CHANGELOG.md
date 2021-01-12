@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix S3 permissions to allow CloudFront logging [#1208](https://github.com/open-apparel-registry/open-apparel-registry/pull/1208)
+
 ### Security
 
 ## [2.38.1] - 2021-01-06
