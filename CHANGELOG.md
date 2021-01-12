@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-Allow setting NOTIFICATION_EMAIL_TO from a deployment var [#1203](https://github.com/open-apparel-registry/open-apparel-registry/pull/1203)
+- Allow setting NOTIFICATION_EMAIL_TO from a deployment var [#1203](https://github.com/open-apparel-registry/open-apparel-registry/pull/1203)
+- Admin updates to allow filtering the source admin list by type and contributor and search users [#1207](https://github.com/open-apparel-registry/open-apparel-registry/pull/1207)
 
 ### Deprecated
 
