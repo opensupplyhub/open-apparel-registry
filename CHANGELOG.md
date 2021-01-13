@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Change monthly to yearly in API notification emails [#1211](https://github.com/open-apparel-registry/open-apparel-registry/pull/1211)
-
 ### Security
+
+## [2.38.3] - 2021-01-13
+
+### Fixed
+
+- Change monthly to yearly in API notification emails [#1211](https://github.com/open-apparel-registry/open-apparel-registry/pull/1211)
 
 ## [2.38.2] - 2021-01-12
 
@@ -676,7 +680,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.38.2...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.38.3...HEAD
+[2.38.3]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.3
 [2.38.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.2
 [2.38.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.1
 [2.38.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.0
