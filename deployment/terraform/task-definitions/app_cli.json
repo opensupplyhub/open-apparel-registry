@@ -15,6 +15,7 @@
         { "name": "DJANGO_ENV", "value": "${environment}" },
         { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
         { "name": "DEFAULT_FROM_EMAIL", "value": "${default_from_email}" },
+        { "name": "NOTIFICATION_EMAIL_TO", "value": "${notification_email_to}" },
         { "name": "GOOGLE_SERVER_SIDE_API_KEY", "value": "${google_server_side_api_key}" },
         { "name": "REACT_APP_GOOGLE_CLIENT_SIDE_API_KEY", "value": "${google_client_side_api_key}" },
         { "name": "REACT_APP_GOOGLE_ANALYTICS_KEY", "value": "${google_analytics_key}" },

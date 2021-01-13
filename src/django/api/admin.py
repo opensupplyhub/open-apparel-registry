@@ -50,6 +50,8 @@ class OarUserAdmin(UserAdmin):
                            'has_agreed_to_terms_of_service',
                            'groups')}),
     )
+    search_fields = ('email',)
+    list_display = ('email', 'is_active')
 
 
 class FacilityHistoryAdmin(SimpleHistoryAdmin):
@@ -110,6 +112,7 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
 
 class SourceAdmin(admin.ModelAdmin):
     readonly_fields = ('source_type', 'facility_list', 'create')
+    list_filter = ('source_type', 'contributor')
 
 
 class RequestLogAdmin(admin.ModelAdmin):
