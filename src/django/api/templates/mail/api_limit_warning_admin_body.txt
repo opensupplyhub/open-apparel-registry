@@ -2,7 +2,7 @@
 Hi,
 
 You're receiving this email because {{ contributor_name }} has used 90% of
-their limit of {{ limit }} OAR API requests for this month.
+their limit of {{ limit }} OAR API requests for this year.
 
 Best wishes,
 

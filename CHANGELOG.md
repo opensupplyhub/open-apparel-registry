@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Change monthly to yearly in API notification emails [#1211](https://github.com/open-apparel-registry/open-apparel-registry/pull/1211)
+
 ### Security
 
 ## [2.38.2] - 2021-01-12
