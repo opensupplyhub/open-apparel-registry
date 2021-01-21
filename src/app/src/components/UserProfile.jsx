@@ -11,6 +11,7 @@ import Button from './Button';
 import FacilityListSummary from './FacilityListSummary';
 import UserProfileField from './UserProfileField';
 import UserAPITokens from './UserAPITokens';
+import UserCookiePreferences from './UserCookiePreferences';
 import BadgeVerified from './BadgeVerified';
 import ShowOnly from './ShowOnly';
 import RouteNotFound from './RouteNotFound';
@@ -243,6 +244,7 @@ class UserProfile extends Component {
                         {facilityLists}
                         {errorMessages}
                         {submitButton}
+                        <UserCookiePreferences />
                         {apiTokensSection}
                     </Grid>
                 </AppGrid>
