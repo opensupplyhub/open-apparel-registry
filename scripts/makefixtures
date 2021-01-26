@@ -17,6 +17,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
-        docker-compose exec django /bin/bash -c "pip install -q -r requirements.dev.txt && ./manage.py makefixtures"
+        docker-compose exec django /bin/bash -c "pip install -q -r requirements.dev.txt && ./manage.py makefixtures $*"
     fi
 fi
