@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.39.0] - 2021-01-28
+
+### Added
+
 - Add page to manage cookie preferences [#1213](https://github.com/open-apparel-registry/open-apparel-registry/pull/1213)
 
 ### Changed
