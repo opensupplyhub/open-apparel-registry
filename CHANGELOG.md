@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Only show cookie preferences for the logged in user [#1229](https://github.com/open-apparel-registry/open-apparel-registry/pull/1229)
+
 ### Security
 
 ## [2.39.0] - 2021-01-28
