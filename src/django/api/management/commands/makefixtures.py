@@ -409,31 +409,67 @@ class Command(BaseCommand):
         parser.add_argument('-m', '--match', action='store_true',
                             help='Create facilities and matches')
 
+        parser.add_argument(
+            '-u',
+            '--usercount',
+            type=int,
+            help='The number of user records to create',
+            default=100,
+        )
+
+        parser.add_argument(
+            '-c',
+            '--maxcontribid',
+            type=int,
+            help='The maximum contributor id. Range starts at 2',
+            default=99,
+        )
+
+        parser.add_argument(
+            '-l',
+            '--maxlistid',
+            type=int,
+            help='The maximum facility list id. Range starts at 2',
+            default=15,
+        )
+
+        parser.add_argument(
+            '-s',
+            '--maxsourceid',
+            type=int,
+            help='The maximum source id. Range starts at 2',
+            default=15,
+        )
+
     def handle(self, *args, **options):
         match = options['match']
+        user_count = options['usercount']
+        max_contributor_id = options['maxcontribid']
+        max_list_id = options['maxlistid']
+        max_source_id = options['maxsourceid']
 
         try:
-            list_items = make_facility_list_items()
+            list_items = make_facility_list_items(max_list_pk=max_list_id)
             if match:
                 facilities, matches = make_facilities_and_matches(list_items)
             else:
                 self.stderr.write("Skipped making facilities and matches")
 
             with open('/usr/local/src/api/fixtures/users.json', 'w') as f:
-                json.dump(make_users(), f, separators=(',', ': '),
-                          indent=4)
+                json.dump(make_users(count=user_count), f,
+                          separators=(',', ': '), indent=4)
             with open('/usr/local/src/api/fixtures/contributors.json',
                       'w') as f:
-                json.dump(make_contributors(), f, separators=(',', ': '),
-                          indent=4)
+                json.dump(make_contributors(max_id=max_contributor_id), f,
+                          separators=(',', ': '), indent=4)
             with open('/usr/local/src/api/fixtures/facility_lists.json',
                       'w') as f:
-                json.dump(make_facility_lists(), f, separators=(',', ': '),
-                          indent=4)
+                json.dump(make_facility_lists(max_id=max_list_id), f,
+                          separators=(',', ': '), indent=4)
             with open('/usr/local/src/api/fixtures/sources.json',
                       'w') as f:
-                json.dump(make_sources(), f, separators=(',', ': '),
-                          indent=4)
+                json.dump(make_sources(max_id=max_source_id), f,
+                          separators=(',', ': '), indent=4)
             with open('/usr/local/src/api/fixtures/facility_list_items.json',
                       'w') as f:
                 json.dump(list_items, f, separators=(',', ': '), indent=4)
