@@ -35,7 +35,8 @@ from api.models import (FacilityList,
                         ProductType,
                         ProductionType,
                         Source,
-                        ApiBlock)
+                        ApiBlock,
+                        FacilityActivityReport)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code
 from waffle import switch_is_active
@@ -476,7 +477,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
                   'country_name', 'claim_info', 'other_locations',
                   'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website')
+                  'ppe_contact_email', 'ppe_website',  'is_closed')
         geo_field = 'location'
 
     def get_other_names(self, facility):
@@ -1027,3 +1028,13 @@ class ApiBlockSerializer(ModelSerializer):
         instance.save()
 
         return instance
+
+
+class FacilityActivityReportSerializer(ModelSerializer):
+    class Meta:
+        model = FacilityActivityReport
+        fields = ('facility', 'reported_by_user', 'reported_by_contributor',
+                  'closure_state', 'approved_at', 'status_change_reason',
+                  'status', 'status_change_reason', 'status_change_by',
+                  'status_change_date', 'created_at', 'updated_at', 'id',
+                  'reason_for_report')

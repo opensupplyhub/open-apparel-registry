@@ -73,6 +73,7 @@ from api.models import (FacilityList,
                         Facility,
                         FacilityMatch,
                         FacilityAlias,
+                        FacilityActivityReport,
                         Contributor,
                         User,
                         DownloadLog,
@@ -104,7 +105,8 @@ from api.serializers import (FacilityListSerializer,
                              FacilityMergeQueryParamsSerializer,
                              LogDownloadQueryParamsSerializer,
                              FacilityUpdateLocationParamsSerializer,
-                             ApiBlockSerializer)
+                             ApiBlockSerializer,
+                             FacilityActivityReportSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
@@ -636,6 +638,18 @@ class FacilitiesAutoSchema(AutoSchema):
         return True
 
     def get_serializer_fields(self, path, method):
+        if method == 'POST' and 'report' in path:
+            return [
+                coreapi.Field(
+                    name='data',
+                    location='body',
+                    description=(
+                        'The closure state of the facility. Must be OPEN or '
+                        'CLOSED. See the sample request body above.'),
+                    required=True,
+                )
+            ]
+
         if method == 'POST' and 'dissociate' not in path:
             return [
                 coreapi.Field(
@@ -2084,6 +2098,44 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             facility, context=context).data
         return Response(facility_data)
 
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,),
+            url_path='report')
+    @transaction.atomic
+    def report(self, request, pk=None):
+        """
+        Report that a facility has been closed or opened.
+
+        ## Sample Request Body
+
+            {
+                "closure_state": "CLOSED",
+                "reason_for_report": "This facility was closed."
+            }
+        """
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            raise NotFound('Facility with OAR ID {} not found'.format(pk))
+
+        contributor = request.user.contributor
+        facility_activity_report = FacilityActivityReport.objects.create(
+            facility=facility,
+            reported_by_user=request.user,
+            reported_by_contributor=contributor,
+            closure_state=request.data.get('closure_state'),
+            reason_for_report=request.data.get('reason_for_report'))
+
+        try:
+            facility_activity_report.full_clean()
+        except core_exceptions.ValidationError:
+            raise BadRequestException('Closure state must be CLOSED or OPEN.')
+
+        facility_activity_report.save()
+
+        serializer = FacilityActivityReportSerializer(facility_activity_report)
+        return Response(serializer.data)
+
 
 class FacilityListViewSetSchema(AutoSchema):
     def get_serializer_fields(self, path, method):
@@ -3263,3 +3315,108 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     def update(self, request, pk=None):
         self.validate_request(request)
         return super(ApiBlockViewSet, self).update(request, pk=pk)
+
+
+class FacilityActivityReportAutoSchema(AutoSchema):
+    def get_serializer_fields(self, path, method):
+        return [
+            coreapi.Field(
+                name='data',
+                location='body',
+                description=('The reason for the report status change.'),
+                required=True,
+            )
+        ]
+
+
+def update_facility_activity_report_status(facility_activity_report,
+                                           request, status):
+    status_change_reason = request.data.get('status_change_reason')
+    now = str(datetime.utcnow())
+
+    facility_activity_report.status_change_reason = status_change_reason
+    facility_activity_report.status_change_by = request.user
+    facility_activity_report.status_change_date = now
+    facility_activity_report.status = status
+    if status == 'CONFIRMED':
+        facility_activity_report.approved_at = now
+    facility_activity_report.save()
+
+    return facility_activity_report
+
+
+@schema(FacilityActivityReportAutoSchema())
+class FacilityActivityReportViewSet(viewsets.GenericViewSet):
+    """
+    Approve or reject FacilityActivityReports.
+
+    ## Sample Request Body
+
+        {
+            "status_change_reason": "CLOSED"
+        }
+    """
+    queryset = FacilityActivityReport.objects.all()
+    serializer_class = FacilityActivityReportSerializer
+    permission_classes = (IsAdminUser,)
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsAdminUser,),
+            url_path='approve')
+    def approve(self, request, pk=None):
+        """
+        Approve a facility report.
+
+        ## Sample Request Body
+
+            {
+                "status_change_reason": "The facility report was confirmed."
+            }
+        """
+        try:
+            facility_activity_report = self.queryset.get(id=pk)
+        except FacilityActivityReport.DoesNotExist:
+            raise NotFound()
+
+        facility_activity_report = update_facility_activity_report_status(
+                                    facility_activity_report, request,
+                                    'CONFIRMED')
+
+        facility = facility_activity_report.facility
+        if facility_activity_report.closure_state == 'CLOSED':
+            facility.is_closed = True
+        else:
+            facility.is_closed = False
+        facility.save()
+
+        response_data = FacilityActivityReportSerializer(
+                        facility_activity_report).data
+
+        return Response(response_data)
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsAdminUser,),
+            url_path='reject')
+    def reject(self, request, pk=None):
+        """
+        Reject a facility report.
+
+        ## Sample Request Body
+
+            {
+                "status_change_reason": "The facility report is incorrect."
+            }
+        """
+        try:
+            facility_activity_report = self.queryset.get(id=pk)
+        except FacilityActivityReport.DoesNotExist:
+            raise NotFound()
+
+        facility_activity_report = update_facility_activity_report_status(
+                                    facility_activity_report, request,
+                                    'REJECTED')
+
+        response_data = FacilityActivityReportSerializer(
+                        facility_activity_report).data
+
+        return Response(response_data)
