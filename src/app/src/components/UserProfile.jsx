@@ -233,6 +233,10 @@ class UserProfile extends Component {
             ? <UserAPITokens />
             : null;
 
+        const cookiePreferences = isEditableProfile
+            ? <UserCookiePreferences />
+            : null;
+
         return (
             <AppOverflow>
                 <AppGrid
@@ -244,7 +248,7 @@ class UserProfile extends Component {
                         {facilityLists}
                         {errorMessages}
                         {submitButton}
-                        <UserCookiePreferences />
+                        {cookiePreferences}
                         {apiTokensSection}
                     </Grid>
                 </AppGrid>
