@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Add a management command to make CSVs from a CSV download [#1214](https://github.com/open-apparel-registry/open-apparel-registry/pull/1214)
-
 ### Changed
 
 ### Deprecated
@@ -19,25 +17,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Only show cookie preferences for the logged in user [#1229](https://github.com/open-apparel-registry/open-apparel-registry/pull/1229)
-
 ### Security
+
+## [2.39.1] - 2021-02-02
+
+### Added
+
+- Add a management command to make CSVs from a CSV download [#1214](https://github.com/open-apparel-registry/open-apparel-registry/pull/1214)
+
+### Fixed
+
+- Only show cookie preferences for the logged in user [#1229](https://github.com/open-apparel-registry/open-apparel-registry/pull/1229)
 
 ## [2.39.0] - 2021-01-28
 
 ### Added
 
 - Add page to manage cookie preferences [#1213](https://github.com/open-apparel-registry/open-apparel-registry/pull/1213)
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [2.38.3] - 2021-01-13
 
@@ -700,7 +696,9 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.38.3...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.39.0...HEAD
+[2.39.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.1
+[2.39.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.0
 [2.38.3]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.3
 [2.38.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.2
 [2.38.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.1
