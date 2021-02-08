@@ -3319,14 +3319,17 @@ class ApiBlockViewSet(mixins.ListModelMixin,
 
 class FacilityActivityReportAutoSchema(AutoSchema):
     def get_serializer_fields(self, path, method):
-        return [
-            coreapi.Field(
-                name='data',
-                location='body',
-                description=('The reason for the report status change.'),
-                required=True,
-            )
-        ]
+        if method == 'POST':
+            return [
+                coreapi.Field(
+                    name='data',
+                    location='body',
+                    description=('The reason for the report status change.'),
+                    required=True,
+                )
+            ]
+        return super(FacilityActivityReportAutoSchema,
+                     self).get_serializer_fields(path, method)
 
 
 def update_facility_activity_report_status(facility_activity_report,
@@ -3345,20 +3348,24 @@ def update_facility_activity_report_status(facility_activity_report,
     return facility_activity_report
 
 
+class IsListAndAdminOrNotList(IsAdminUser):
+    """
+    Custom permission to only allow access to lists for admins
+    """
+    def has_permission(self, request, view):
+        is_admin = super(IsListAndAdminOrNotList, self) \
+                    .has_permission(request, view)
+        return view.action != 'list' or is_admin
+
+
 @schema(FacilityActivityReportAutoSchema())
 class FacilityActivityReportViewSet(viewsets.GenericViewSet):
     """
-    Approve or reject FacilityActivityReports.
-
-    ## Sample Request Body
-
-        {
-            "status_change_reason": "CLOSED"
-        }
+    Manage FacilityActivityReports.
     """
     queryset = FacilityActivityReport.objects.all()
     serializer_class = FacilityActivityReportSerializer
-    permission_classes = (IsAdminUser,)
+    permission_classes = (IsListAndAdminOrNotList,)
 
     @action(detail=True, methods=['POST'],
             permission_classes=(IsAdminUser,),
@@ -3418,5 +3425,11 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
 
         response_data = FacilityActivityReportSerializer(
                         facility_activity_report).data
+
+        return Response(response_data)
+
+    def list(self, request):
+        response_data = FacilityActivityReportSerializer(
+            FacilityActivityReport.objects.all(), many=True).data
 
         return Response(response_data)
