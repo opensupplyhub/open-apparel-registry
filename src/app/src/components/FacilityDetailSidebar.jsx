@@ -20,6 +20,7 @@ import FeatureFlag from './FeatureFlag';
 import BadgeUnclaimed from './BadgeUnclaimed';
 import BadgeVerified from './BadgeVerified';
 import ShowOnly from './ShowOnly';
+import ReportFacilityStatus from './ReportFacilityStatus';
 
 import {
     fetchSingleFacility,
@@ -361,6 +362,7 @@ class FacilityDetailSidebar extends Component {
                                         </Link>
                                     </FeatureFlag>
                                 </ShowOnly>
+                                <ReportFacilityStatus data={data} />
                             </div>
                         </div>
                     </div>
