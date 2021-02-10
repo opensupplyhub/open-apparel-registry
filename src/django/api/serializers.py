@@ -427,7 +427,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'country_name', 'contributors',
                   'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website')
+                  'ppe_contact_email', 'ppe_website', 'is_closed')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map

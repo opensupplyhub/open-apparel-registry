@@ -51,6 +51,8 @@ const facilitiesTabStyles = Object.freeze({
     }),
     listItemStyles: Object.freeze({
         wordWrap: 'anywhere',
+        flexDirection: 'column',
+        alignItems: 'start',
     }),
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
@@ -85,6 +87,16 @@ const facilitiesTabStyles = Object.freeze({
     }),
     downloadLabelStyles: Object.freeze({
         margin: '5px 0',
+    }),
+    closureRibbon: Object.freeze({
+        background: 'rgb(255, 218, 162)',
+        borderRadius: '4px',
+        border: '1px solid rgb(134, 65, 15)',
+        color: 'rgb(85, 43, 12)',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        padding: '0 5px',
+        marginTop: '5px',
     }),
 });
 
@@ -277,6 +289,7 @@ function FilterSidebarFacilitiesTab({
                                         name,
                                         country_name: countryName,
                                         oar_id: oarID,
+                                        is_closed: isClosed,
                                     },
                                 }) => (
                                     <Fragment key={oarID}>
@@ -300,6 +313,11 @@ function FilterSidebarFacilitiesTab({
                                                     secondary={address}
                                                 />
                                             </Link>
+                                            {isClosed && (
+                                                <div style={facilitiesTabStyles.closureRibbon}>
+                                                    Closed facility
+                                                </div>
+                                            )}
                                         </ListItem>
                                     </Fragment>))
                         }
