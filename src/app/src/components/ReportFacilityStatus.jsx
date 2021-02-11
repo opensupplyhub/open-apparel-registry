@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -10,8 +11,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+
 import DashboardActivityReportToast from './DashboardActivityReportToast';
-import ShowOnly from './ShowOnly';
 
 import {
     createDashboardActivityReport,
@@ -19,6 +20,7 @@ import {
 } from '../actions/dashboardActivityReports';
 
 import { facilityDetailsPropType } from '../util/propTypes';
+import { authLoginFormRoute } from '../util/constants';
 
 const styles = Object.freeze({
     linkStyle: Object.freeze({
@@ -75,6 +77,18 @@ function ReportFacilityStatus({
         closeDialog();
     };
 
+    const loginButton = (
+        <Button
+            variant="contained"
+            color="primary"
+            onClick={closeDialog}
+            component={Link}
+            to={authLoginFormRoute}
+        >
+            Log In
+        </Button>
+    );
+
     const dialog = (
         <Dialog
             open={showDialog}
@@ -92,52 +106,71 @@ function ReportFacilityStatus({
                 </Typography>
                 <Divider />
             </DialogTitle>
-            <DialogContent>
-                <DialogContentText
-                    id="status-dialog-description"
-                    style={styles.description}
+            {!user ? (
+                <DialogContent>
+                    <DialogContentText
+                        id="status-dialog-description"
+                        style={styles.description}
+                    >
+                        {`You must be logged in to report this facility as ${
+                            data.properties.is_closed ? 'reopened' : 'closed'
+                        }`}
+                    </DialogContentText>
+                </DialogContent>
+            ) : (
+                <DialogContent>
+                    <DialogContentText
+                        id="status-dialog-description"
+                        style={styles.description}
+                    >
+                        Please provide information the OAR team can use to
+                        verify this status change.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="report-reason"
+                        variant="outlined"
+                        multiline
+                        rows={4}
+                        value={reasonForReport}
+                        style={styles.dialogTextFieldStyles}
+                        onChange={e => setReportReason(e.target.value)}
+                    />
+                </DialogContent>
+            )}
+            {!user ? (
+                <DialogActions
+                    style={styles.dialogActionsStyles}
                 >
-                    Please provide information the OAR team can use to
-                    verify this status change.
-                </DialogContentText>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="report-reason"
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                    value={reasonForReport}
-                    style={styles.dialogTextFieldStyles}
-                    onChange={e => setReportReason(e.target.value)}
-                />
-            </DialogContent>
-            <DialogActions
-                style={styles.dialogActionsStyles}
-            >
-                <Button onClick={closeDialog}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit} color="primary" variant="contained">
-                  Report
-                </Button>
-            </DialogActions>
+                    {loginButton}
+                </DialogActions>
+            ) : (
+                <DialogActions
+                    style={styles.dialogActionsStyles}
+                >
+                    <Button onClick={closeDialog}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary" variant="contained">
+                      Report
+                    </Button>
+                </DialogActions>
+            )}
         </Dialog>
     );
 
     return (
         <div>
-            <ShowOnly when={!!user}>
-                <button
-                    className="link-underline small"
-                    style={styles.linkStyle}
-                    to="#"
-                    onClick={() => setShowDialog(true)}
-                    type="button"
-                >
-                    Report facility as {data.properties.is_closed ? 'reopened' : 'closed'}
-                </button>
-            </ShowOnly>
+            <button
+                className="link-underline small"
+                style={styles.linkStyle}
+                to="#"
+                onClick={() => setShowDialog(true)}
+                type="button"
+            >
+                Report facility as {data.properties.is_closed ? 'reopened' : 'closed'}
+            </button>
             {dialog}
             <DashboardActivityReportToast
                 {...activityReports}

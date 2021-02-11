@@ -14,7 +14,8 @@ const styles = {
         bottom: '75px',
     },
     messageGradient: {
-        width: '368px',
+        minWidth: '368px',
+        width: '100%',
         background: gradient,
         borderRadius: '0px 0px 2px 2px',
         padding: '0 0 6px 0',
