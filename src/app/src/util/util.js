@@ -85,6 +85,10 @@ export const makeDashboardFacilityListsURL = contributorID => `/api/facility-lis
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
 export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
 
+export const makeDashboardActivityReportsURL = () => '/api/facility-activity-reports/';
+export const makeRejectDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/reject/`;
+export const makeConfirmDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/approve/`;
+
 export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeGetContributorsURL = () => '/api/contributors/';

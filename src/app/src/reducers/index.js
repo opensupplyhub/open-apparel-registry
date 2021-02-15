@@ -24,6 +24,7 @@ import ClaimedFacilityDetailsReducer from './ClaimedFacilityDetailsReducer';
 import ClaimedFacilitesReducer from './ClaimedFacilitesReducer';
 import DashboardListsReducer from './DashboardListsReducer';
 import DashboardApiBlocksReducer from './DashboardApiBlocksReducer';
+import DashboardActivityReportsReducer from './DashboardActivityReportsReducer';
 import DeleteFacilityReducer from './DeleteFacilityReducer';
 import MergeFacilitiesReducer from './MergeFacilitiesReducer';
 import AdjustFacilityMatchesReducer from './AdjustFacilityMatchesReducer';
@@ -50,6 +51,7 @@ export default combineReducers({
     claimedFacilities: ClaimedFacilitesReducer,
     dashboardLists: DashboardListsReducer,
     dashboardApiBlocks: DashboardApiBlocksReducer,
+    dashboardActivityReports: DashboardActivityReportsReducer,
     deleteFacility: DeleteFacilityReducer,
     mergeFacilities: MergeFacilitiesReducer,
     adjustFacilityMatches: AdjustFacilityMatchesReducer,

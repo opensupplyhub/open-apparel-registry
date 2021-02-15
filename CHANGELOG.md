@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add a management command to make CSVs from a CSV download [#1214](https://github.com/open-apparel-registry/open-apparel-registry/pull/1214)
 - Add API for reporting a facility as closed or reopened [#1231](https://github.com/open-apparel-registry/open-apparel-registry/pull/1231)
+- Confirm or reject status reports [#1235](https://github.com/open-apparel-registry/open-apparel-registry/pull/1235)
 
 ### Changed
 
