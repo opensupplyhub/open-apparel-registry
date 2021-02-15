@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Rename Taiwan [#1234](https://github.com/open-apparel-registry/open-apparel-registry/pull/1234)
+- Rename Taiwan
+  [#1234](https://github.com/open-apparel-registry/open-apparel-registry/pull/1234) [#1238](https://github.com/open-apparel-registry/open-apparel-registry/pull/1238)
 
 ### Deprecated
 
