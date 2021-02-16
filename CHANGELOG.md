@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add API for reporting a facility as closed or reopened [#1231](https://github.com/open-apparel-registry/open-apparel-registry/pull/1231)
 - Confirm or reject status reports [#1235](https://github.com/open-apparel-registry/open-apparel-registry/pull/1235)
 - Report Facility Status from Facility Details [#1239](https://github.com/open-apparel-registry/open-apparel-registry/pull/1239)
+- Add Report Waffle Switch [#1246](https://github.com/open-apparel-registry/open-apparel-registry/pull/1246)
 
 ### Changed
 

@@ -18,6 +18,8 @@ import get from 'lodash/get';
 import { toast } from 'react-toastify';
 import InfiniteAnyHeight from 'react-infinite-any-height';
 
+import FeatureFlag from './FeatureFlag';
+
 import {
     makeSidebarSearchTabActive,
 } from '../actions/ui';
@@ -29,6 +31,7 @@ import { logDownload } from '../actions/logDownload';
 import { facilityCollectionPropType } from '../util/propTypes';
 
 import {
+    REPORT_A_FACILITY,
     authLoginFormRoute,
     authRegisterFormRoute,
 } from '../util/constants';
@@ -313,11 +316,13 @@ function FilterSidebarFacilitiesTab({
                                                     secondary={address}
                                                 />
                                             </Link>
-                                            {isClosed && (
-                                                <div style={facilitiesTabStyles.closureRibbon}>
-                                                    Closed facility
-                                                </div>
-                                            )}
+                                            <FeatureFlag flag={REPORT_A_FACILITY}>
+                                                {isClosed && (
+                                                    <div style={facilitiesTabStyles.closureRibbon}>
+                                                        Closed facility
+                                                    </div>
+                                                )}
+                                            </FeatureFlag>
                                         </ListItem>
                                     </Fragment>))
                         }
