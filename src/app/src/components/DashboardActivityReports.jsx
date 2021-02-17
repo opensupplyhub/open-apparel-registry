@@ -266,7 +266,7 @@ function DashboardActivityReports({
                   Cancel
                 </Button>
                 <Button onClick={updateReport} color="primary" variant="contained">
-                  Confirm
+                    {mode === REJECT ? 'Reject' : 'Confirm'}
                 </Button>
             </DialogActions>
           </>
