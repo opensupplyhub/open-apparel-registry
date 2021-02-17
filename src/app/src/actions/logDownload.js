@@ -38,6 +38,7 @@ export function logDownload() {
 
             const vectorTileFlagIsActive = get(featureFlags, 'flags.vector_tile', false);
             const ppeIsActive = get(featureFlags, 'flags.ppe', false);
+            const reportsAreActive = get(featureFlags, 'flags.report_a_facility', false);
 
             const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
@@ -48,7 +49,10 @@ export function logDownload() {
                     .post(makeLogDownloadUrl(path, recordCount))
                     .then(() => downloadFacilitiesCSV(
                         facilities,
-                        { includePPEFields: ppeIsActive },
+                        {
+                            includePPEFields: ppeIsActive,
+                            includeClosureFields: reportsAreActive,
+                        },
                     ))
                     .then(() => dispatch(completeLogDownload()))
                     .catch(err => dispatch(logErrorAndDispatchFailure(
@@ -61,7 +65,10 @@ export function logDownload() {
             await apiRequest.post(makeLogDownloadUrl(path, count));
 
             if (!nextPageURL) {
-                downloadFacilitiesCSV(facilities, { includePPEFields: ppeIsActive });
+                downloadFacilitiesCSV(facilities, {
+                    includePPEFields: ppeIsActive,
+                    includeClosureFields: reportsAreActive,
+                });
             } else {
                 let nextFacilitiesSetURL = nextPageURL;
 
@@ -103,7 +110,10 @@ export function logDownload() {
                     },
                 } = getState();
 
-                downloadFacilitiesCSV(features, { includePPEFields: ppeIsActive });
+                downloadFacilitiesCSV(features, {
+                    includePPEFields: ppeIsActive,
+                    includeClosureFields: reportsAreActive,
+                });
             }
 
             return dispatch(completeLogDownload());
