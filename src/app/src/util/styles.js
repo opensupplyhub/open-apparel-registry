@@ -34,6 +34,11 @@ export const listTableCellStyles = Object.freeze({
         padding: '10px 24px',
         borderColor: '#f3f3f3',
     }),
+    headerCellStyles: Object.freeze({
+        fontSize: '16px',
+        padding: '10px 24px',
+        color: 'black',
+    }),
 });
 
 export const confirmRejectMatchRowStyles = Object.freeze({
