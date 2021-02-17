@@ -16,10 +16,12 @@ import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
 import FacilityDetailsSidebarOtherLocations from './FacilityDetailsSidebarOtherLocations';
 import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
 import FacilityDetailSidebarPPE from './FacilityDetailSidebarPPE';
+import FacilityDetailStatusList from './FacilityDetailStatusList';
 import FeatureFlag from './FeatureFlag';
 import BadgeUnclaimed from './BadgeUnclaimed';
 import BadgeVerified from './BadgeVerified';
 import ShowOnly from './ShowOnly';
+import ReportFacilityStatus from './ReportFacilityStatus';
 
 import {
     fetchSingleFacility,
@@ -65,6 +67,27 @@ const detailsSidebarStyles = Object.freeze({
     linkStyle: Object.freeze({
         display: 'inline-block',
         fontSize: '16px',
+    }),
+    closureRibbon: Object.freeze({
+        background: 'rgb(255, 218, 162)',
+        borderRadius: '4px',
+        border: '1px solid rgb(134, 65, 15)',
+        color: 'rgb(85, 43, 12)',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        padding: '5px',
+        margin: '10px 5px 0 5px',
+        textAlign: 'center',
+    }),
+    pendingRibbon: Object.freeze({
+        borderRadius: '4px',
+        border: '1px solid rgb(134, 65, 15)',
+        color: 'rgb(85, 43, 12)',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        padding: '5px',
+        margin: '10px 5px 0 5px',
+        textAlign: 'center',
     }),
 });
 
@@ -192,6 +215,26 @@ class FacilityDetailSidebar extends Component {
 
         const facilityClaimID = get(data, 'properties.claim_info.id', null);
 
+        const report = get(data, 'properties.activity_reports[0]');
+        const renderStatusRibbon = () => {
+            if (!report) return null;
+            if (report.status === 'PENDING') {
+                return (
+                    <div style={detailsSidebarStyles.pendingRibbon}>
+                        Reported as {report.closure_state.toLowerCase()} (status pending).
+                    </div>
+                );
+            }
+            if (data.properties.is_closed) {
+                return (
+                    <div style={detailsSidebarStyles.closureRibbon}>
+                        This facility is closed.
+                    </div>
+                );
+            }
+            return null;
+        };
+
         return (
             <div className="control-panel facility-detail">
                 <div className="panel-header display-flex">
@@ -255,6 +298,7 @@ class FacilityDetailSidebar extends Component {
                     </FeatureFlag>
                 </div>
                 <div className="facility-detail_data">
+                    {renderStatusRibbon()}
                     <FacilityDetailsStaticMap data={data} />
                     <div className="control-panel__content">
                         <div className="control-panel__group">
@@ -294,6 +338,9 @@ class FacilityDetailSidebar extends Component {
                                 />
                             </ShowOnly>
                         </FeatureFlag>
+                        <FacilityDetailStatusList
+                            activityReports={data.properties.activity_reports}
+                        />
                         <div className="control-panel__group">
                             <div style={detailsSidebarStyles.linkSectionStyle}>
                                 <ShowOnly when={!facilityIsClaimedByCurrentUser}>
@@ -361,6 +408,7 @@ class FacilityDetailSidebar extends Component {
                                         </Link>
                                     </FeatureFlag>
                                 </ShowOnly>
+                                <ReportFacilityStatus data={data} />
                             </div>
                         </div>
                     </div>

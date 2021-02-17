@@ -427,7 +427,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'country_name', 'contributors',
                   'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website')
+                  'ppe_contact_email', 'ppe_website', 'is_closed')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -470,6 +470,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
     other_locations = SerializerMethodField()
     country_name = SerializerMethodField()
     claim_info = SerializerMethodField()
+    activity_reports = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -477,7 +478,8 @@ class FacilityDetailsSerializer(FacilitySerializer):
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
                   'country_name', 'claim_info', 'other_locations',
                   'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website',  'is_closed')
+                  'ppe_contact_email', 'ppe_website',  'is_closed',
+                  'activity_reports')
         geo_field = 'location'
 
     def get_other_names(self, facility):
@@ -579,6 +581,10 @@ class FacilityDetailsSerializer(FacilitySerializer):
             }
         except FacilityClaim.DoesNotExist:
             return None
+
+    def get_activity_reports(self, facility):
+        return FacilityActivityReportSerializer(
+            facility.activity_reports(), many=True).data
 
 
 class FacilityCreateBodySerializer(Serializer):
@@ -1034,6 +1040,7 @@ class FacilityActivityReportSerializer(ModelSerializer):
     reported_by_user = SerializerMethodField()
     reported_by_contributor = SerializerMethodField()
     facility_name = SerializerMethodField()
+    status_change_by = SerializerMethodField()
 
     class Meta:
         model = FacilityActivityReport
@@ -1051,3 +1058,9 @@ class FacilityActivityReportSerializer(ModelSerializer):
 
     def get_facility_name(self, instance):
         return instance.facility.name
+
+    def get_status_change_by(self, instance):
+        if instance.status_change_by is not None:
+            return instance.status_change_by.email
+        else:
+            return None

@@ -28,6 +28,10 @@ import {
     updateAllFilters,
 } from '../actions/filters';
 
+import {
+    completeCreateDashboardActivityReport,
+} from '../actions/dashboardActivityReports';
+
 import { makeFeatureCollectionFromSingleFeature } from '../util/util';
 
 import { completeSubmitLogOut } from '../actions/auth';
@@ -160,4 +164,13 @@ export default createReducer({
     [resetAllFilters]: clearFacilitiesDataOnFilterChange,
     [updateAllFilters]: clearFacilitiesDataOnFilterChange,
     [completeSubmitLogOut]: clearFacilitiesDataOnFilterChange,
+    [completeCreateDashboardActivityReport]: (state, payload) => update(state, {
+        singleFacility: {
+            data: {
+                properties: {
+                    activity_reports: { $unshift: [payload.data] },
+                },
+            },
+        },
+    }),
 }, initialState);

@@ -2118,7 +2118,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound('Facility with OAR ID {} not found'.format(pk))
 
-        contributor = request.user.contributor
+        try:
+            contributor = request.user.contributor
+        except Contributor.DoesNotExist:
+            raise ValidationError('Contributor not found for requesting user.')
+
         facility_activity_report = FacilityActivityReport.objects.create(
             facility=facility,
             reported_by_user=request.user,

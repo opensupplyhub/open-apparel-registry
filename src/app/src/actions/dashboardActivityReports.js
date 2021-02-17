@@ -7,6 +7,7 @@ import {
     makeDashboardActivityReportsURL,
     makeRejectDashboardActivityReportURL,
     makeConfirmDashboardActivityReportURL,
+    makeCreateDashboardActivityReportURL,
 } from '../util/util';
 
 export const startFetchDashboardActivityReports = createAction('START_FETCH_DASHBOARD_ACTIVITY_REPORTS');
@@ -74,3 +75,32 @@ export function confirmDashboardActivityReport({ id, statusChangeReason }) {
                 ));
     };
 }
+
+export const startCreateDashboardActivityReport = createAction('START_CREATE_DASHBOARD_ACTIVITY_REPORT');
+export const failCreateDashboardActivityReport = createAction('FAIL_CREATE_DASHBOARD_ACTIVITY_REPORT');
+export const completeCreateDashboardActivityReport = createAction('COMPLETE_CREATE_DASHBOARD_ACTIVITY_REPORT');
+
+export function createDashboardActivityReport({ id, reasonForReport, closureState }) {
+    return (dispatch) => {
+        dispatch(startCreateDashboardActivityReport());
+
+        return apiRequest
+            .post(makeCreateDashboardActivityReportURL(id), {
+                reason_for_report: reasonForReport,
+                closure_state: closureState,
+            })
+            .then(({ data }) => dispatch(completeCreateDashboardActivityReport({
+                data, message: `Successfully reported facility as ${data.closure_state.toLowerCase()}.`,
+            })))
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented creating a facility activity report',
+                        failCreateDashboardActivityReport,
+                    ),
+                ));
+    };
+}
+
+export const resetDashbooardActivityReports = createAction('RESET_DASHBOARD_ACTIVITY_REPORTS');

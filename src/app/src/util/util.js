@@ -88,6 +88,7 @@ export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
 export const makeDashboardActivityReportsURL = () => '/api/facility-activity-reports/';
 export const makeRejectDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/reject/`;
 export const makeConfirmDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/approve/`;
+export const makeCreateDashboardActivityReportURL = oarId => `/api/facilities/${oarId}/report/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 

@@ -1490,6 +1490,13 @@ class Facility(PPEMixin):
 
         return '{}-{}'.format(timestamp, tile_version)
 
+    def activity_reports(self):
+        return FacilityActivityReport.objects \
+                    .filter(facility=self.id,
+                            status__in=[FacilityActivityReport.PENDING,
+                                        FacilityActivityReport.CONFIRMED]) \
+                    .order_by('-created_at')
+
 
 class FacilityMatch(models.Model):
     """
