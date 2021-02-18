@@ -312,7 +312,7 @@ export const activityReportPropType = shape({
     reported_by_contributor: string.isRequired,
     reported_by_user: string.isRequired,
     status: string.isRequired,
-    status_change_by: number,
+    status_change_by: string,
     status_change_date: string,
     status_change_reason: string,
     updated_at: string.isRequired,
