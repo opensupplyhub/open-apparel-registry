@@ -42,6 +42,7 @@ import {
 import {
     CLAIM_A_FACILITY,
     PPE,
+    REPORT_A_FACILITY,
     facilitiesRoute,
 } from '../util/constants';
 
@@ -298,7 +299,9 @@ class FacilityDetailSidebar extends Component {
                     </FeatureFlag>
                 </div>
                 <div className="facility-detail_data">
-                    {renderStatusRibbon()}
+                    <FeatureFlag flag={REPORT_A_FACILITY}>
+                        {renderStatusRibbon()}
+                    </FeatureFlag>
                     <FacilityDetailsStaticMap data={data} />
                     <div className="control-panel__content">
                         <div className="control-panel__group">
@@ -338,9 +341,11 @@ class FacilityDetailSidebar extends Component {
                                 />
                             </ShowOnly>
                         </FeatureFlag>
-                        <FacilityDetailStatusList
-                            activityReports={data.properties.activity_reports}
-                        />
+                        <FeatureFlag flag={REPORT_A_FACILITY}>
+                            <FacilityDetailStatusList
+                                activityReports={data.properties.activity_reports}
+                            />
+                        </FeatureFlag>
                         <div className="control-panel__group">
                             <div style={detailsSidebarStyles.linkSectionStyle}>
                                 <ShowOnly when={!facilityIsClaimedByCurrentUser}>
@@ -408,7 +413,9 @@ class FacilityDetailSidebar extends Component {
                                         </Link>
                                     </FeatureFlag>
                                 </ShowOnly>
-                                <ReportFacilityStatus data={data} />
+                                <FeatureFlag flag={REPORT_A_FACILITY}>
+                                    <ReportFacilityStatus data={data} />
+                                </FeatureFlag>
                             </div>
                         </div>
                     </div>
