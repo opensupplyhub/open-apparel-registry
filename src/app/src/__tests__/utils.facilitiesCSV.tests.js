@@ -207,3 +207,86 @@ it('creates a 2-d array including PPE headers and values', () => {
         formatDataForCSV(facilities, { includePPEFields: true }),
     ).toEqual(expected2DArray);
 });
+
+it('creates a 2-d array including closure headers and values', () => {
+    const facilities = [
+        {
+            properties: {
+                name: 'name',
+                address: 'address',
+                country_code: 'country_code',
+                country_name: 'country_name',
+                oar_id: 'oar_id',
+                contributors: [
+                    {
+                        id: 1,
+                        name: 'contributor_name',
+                        verified: false,
+                    },
+                ],
+                is_closed: true,
+            },
+            geometry: {
+                coordinates: [
+                    'lng',
+                    'lat',
+                ],
+            },
+        },
+        {
+            properties: {
+                name: 'name',
+                address: 'address',
+                country_code: 'country_code',
+                country_name: 'country_name',
+                oar_id: 'oar_id',
+                contributors: [
+                    {
+                        id: 1,
+                        name: 'contributor_name',
+                        verified: false,
+                    },
+                ],
+                is_closed: false,
+            },
+            geometry: {
+                coordinates: [
+                    'lng',
+                    'lat',
+                ],
+            },
+        },
+    ];
+
+    const expected2DArray = [
+        csvHeaders.concat([
+            'is_closed',
+        ]),
+        [
+            'oar_id',
+            'name',
+            'address',
+            'country_code',
+            'country_name',
+            'lat',
+            'lng',
+            'contributor_name',
+            'CLOSED',
+        ],
+        [
+            'oar_id',
+            'name',
+            'address',
+            'country_code',
+            'country_name',
+            'lat',
+            'lng',
+            'contributor_name',
+            null,
+        ],
+    ];
+
+    expect(
+        formatDataForCSV(facilities, { includeClosureFields: true }),
+    ).toEqual(expected2DArray);
+});
