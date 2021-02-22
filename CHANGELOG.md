@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Embedded map settings changes [#1353](https://github.com/open-apparel-registry/open-apparel-registry/pull/1353)
 - Disable PPE search in embed mode [#1364](https://github.com/open-apparel-registry/open-apparel-registry/pull/1364)
 - Enable the default embed map custom fields by default [#1365](https://github.com/open-apparel-registry/open-apparel-registry/pull/1365)
+- Allow IFrames [#1367](https://github.com/open-apparel-registry/open-apparel-registry/pull/1367)
 
 ### Changed
 
