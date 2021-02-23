@@ -19,9 +19,13 @@ const apiDocumentationURL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:8081/api/docs/'
     : '/api/docs/';
 
-export default function Navbar() {
+export default function Navbar({ embed }) {
     const [drawerHandler, setDrawerHandler] = useState(false);
     const mobileMenuToggleRef = useRef();
+
+    if (embed) {
+        return <div id="google_translate_element" />;
+    }
 
     const aboutLinks = [
         {

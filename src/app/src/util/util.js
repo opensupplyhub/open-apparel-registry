@@ -687,3 +687,6 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData => uniq
         return false;
     },
 );
+
+export const getLocationWithoutEmbedParam = () =>
+    window.location.href.replace('&embed=1', '').replace('embed=1', '');
