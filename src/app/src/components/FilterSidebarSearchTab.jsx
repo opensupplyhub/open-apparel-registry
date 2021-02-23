@@ -95,6 +95,7 @@ function FilterSidebarSearchTab({
     boundary,
     ppe,
     updatePPE,
+    embed,
 }) {
     const [contributorPopoverAnchorEl, setContributorPopoverAnchorEl] =
           useState(null);
@@ -392,7 +393,7 @@ function FilterSidebarSearchTab({
                         <Button
                             size="small"
                             variant="outlined"
-                            onClick={resetFilters}
+                            onClick={() => resetFilters(embed)}
                             disableRipple
                             color="primary"
                             className="outlined-button"
@@ -488,6 +489,9 @@ function mapStateToProps({
         },
     },
     featureFlags,
+    embeddedMap: {
+        embed,
+    },
 }) {
     const vectorTileFlagIsActive = get(featureFlags, 'flags.vector_tile', false);
 
@@ -508,6 +512,7 @@ function mapStateToProps({
         fetchingOptions: fetchingContributors
             || fetchingContributorTypes
             || fetchingCountries,
+        embed,
     };
 }
 
@@ -533,9 +538,9 @@ function mapDispatchToProps(dispatch, {
         updateCombineContributors: e => dispatch(
             updateCombineContributorsFilterOption(e.target.checked ? 'AND' : ''),
         ),
-        resetFilters: () => {
+        resetFilters: (embedded) => {
             dispatch(recordSearchTabResetButtonClick());
-            return dispatch(resetAllFilters());
+            return dispatch(resetAllFilters(embedded));
         },
         searchForFacilities: vectorTilesAreActive => dispatch(fetchFacilities({
             pageSize: vectorTilesAreActive ? FACILITIES_REQUEST_PAGE_SIZE : 50,
