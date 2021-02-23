@@ -223,16 +223,20 @@ class FacilityDetailSidebar extends Component {
             if (!report) return null;
             if (report.status === 'PENDING') {
                 return (
-                    <div style={detailsSidebarStyles.pendingRibbon}>
-                        Reported as {report.closure_state.toLowerCase()} (status pending).
-                    </div>
+                    <FeatureFlag flag={REPORT_A_FACILITY}>
+                        <div style={detailsSidebarStyles.pendingRibbon}>
+                            Reported as {report.closure_state.toLowerCase()} (status pending).
+                        </div>
+                    </FeatureFlag>
                 );
             }
             if (data.properties.is_closed) {
                 return (
-                    <div style={detailsSidebarStyles.closureRibbon}>
-                        This facility is closed.
-                    </div>
+                    <FeatureFlag flag={REPORT_A_FACILITY}>
+                        <div style={detailsSidebarStyles.closureRibbon}>
+                            This facility is closed.
+                        </div>
+                    </FeatureFlag>
                 );
             }
             return null;
@@ -357,9 +361,7 @@ class FacilityDetailSidebar extends Component {
                     </FeatureFlag>
                 </div>
                 <div className="facility-detail_data">
-                    <FeatureFlag flag={REPORT_A_FACILITY}>
-                        {renderStatusRibbon()}
-                    </FeatureFlag>
+                    {renderStatusRibbon()}
                     <FacilityDetailsStaticMap data={data} />
                     <div className="control-panel__content">
                         <div className="control-panel__group">

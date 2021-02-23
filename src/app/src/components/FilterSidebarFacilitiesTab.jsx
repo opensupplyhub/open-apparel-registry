@@ -316,13 +316,13 @@ function FilterSidebarFacilitiesTab({
                                                     secondary={address}
                                                 />
                                             </Link>
-                                            <FeatureFlag flag={REPORT_A_FACILITY}>
-                                                {isClosed && (
+                                            {isClosed ? (
+                                                <FeatureFlag flag={REPORT_A_FACILITY}>
                                                     <div style={facilitiesTabStyles.closureRibbon}>
                                                         Closed facility
                                                     </div>
-                                                )}
-                                            </FeatureFlag>
+                                                </FeatureFlag>
+                                            ) : null}
                                         </ListItem>
                                     </Fragment>))
                         }
