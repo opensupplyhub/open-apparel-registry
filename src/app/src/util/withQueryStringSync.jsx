@@ -31,6 +31,9 @@ export default function withQueryStringSync(WrappedComponent) {
                 filters,
                 hydrateFiltersFromQueryString,
                 vectorTileFeatureIsActive,
+                embeddedMap: {
+                    embed,
+                },
             } = this.props;
 
             // This check returns null when the component mounts on the facility details route
@@ -49,7 +52,7 @@ export default function withQueryStringSync(WrappedComponent) {
 
             return search
                 ? hydrateFiltersFromQueryString(search, fetchFacilitiesOnMount)
-                : replace(`?${createQueryStringFromSearchFilters(filters)}`);
+                : replace(`?${createQueryStringFromSearchFilters(filters, embed)}`);
         }
 
         componentDidUpdate({ resetButtonClickCount: prevResetButtonClickCount }) {
@@ -64,9 +67,12 @@ export default function withQueryStringSync(WrappedComponent) {
                 resetButtonClickCount,
                 hydrateFiltersFromQueryString,
                 vectorTileFeatureIsActive,
+                embeddedMap: {
+                    embed,
+                },
             } = this.props;
 
-            const newQueryString = `?${createQueryStringFromSearchFilters(filters)}`;
+            const newQueryString = `?${createQueryStringFromSearchFilters(filters, embed)}`;
 
             if (resetButtonClickCount !== prevResetButtonClickCount && vectorTileFeatureIsActive) {
                 replace(newQueryString);
@@ -120,12 +126,14 @@ export default function withQueryStringSync(WrappedComponent) {
             flags,
             fetching: fetchingFeatureFlags,
         },
+        embeddedMap,
     }) {
         return {
             filters,
             resetButtonClickCount,
             vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
             fetchingFeatureFlags,
+            embeddedMap,
         };
     }
 

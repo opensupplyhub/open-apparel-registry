@@ -5,6 +5,7 @@ import {
     createFiltersFromQueryString,
     updateListWithLabels,
 } from '../util/util';
+import { setEmbeddedMapStatusFromQueryString } from '../actions/embeddedMap';
 
 export const updateFacilityFreeTextQueryFilter =
     createAction('UPDATE_FACILITY_FREE_TEXT_QUERY_FILTER');
@@ -22,6 +23,8 @@ export function setFiltersFromQueryString(qs = '') {
         if (!qs) {
             return null;
         }
+
+        dispatch(setEmbeddedMapStatusFromQueryString(qs));
 
         // If contributor data already exists in the state, use it to match
         // filters from the query string with labels. Otherwise, use the

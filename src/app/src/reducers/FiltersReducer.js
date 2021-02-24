@@ -71,7 +71,12 @@ export default createReducer({
     [updatePPEFilter]: (state, payload) => update(state, {
         ppe: { $set: payload },
     }),
-    [resetAllFilters]: () => initialState,
+    [resetAllFilters]: (state, payload) => update(initialState, {
+        contributors: {
+            $set: payload ? state.contributors
+                : initialState.contributors,
+        },
+    }),
     [updateAllFilters]: (_state, payload) => payload,
     [completeFetchContributorOptions]: maybeSetFromQueryString('contributors'),
     [completeFetchContributorTypeOptions]: maybeSetFromQueryString('contributorTypes'),

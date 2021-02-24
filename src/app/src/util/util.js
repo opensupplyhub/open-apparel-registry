@@ -149,7 +149,7 @@ export const createQueryStringFromSearchFilters = ({
     combineContributors = '',
     boundary = {},
     ppe = '',
-}) => {
+}, withEmbed) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
         contributors: createCompactSortedQuerystringInputObject(contributors),
@@ -158,6 +158,7 @@ export const createQueryStringFromSearchFilters = ({
         combine_contributors: combineContributors,
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
         ppe,
+        embed: !withEmbed ? '' : '1',
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
