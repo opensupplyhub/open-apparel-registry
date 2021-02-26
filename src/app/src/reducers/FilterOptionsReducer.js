@@ -5,6 +5,9 @@ import {
     startFetchContributorOptions,
     failFetchContributorOptions,
     completeFetchContributorOptions,
+    startFetchListOptions,
+    failFetchListOptions,
+    completeFetchListOptions,
     startFetchContributorTypeOptions,
     failFetchContributorTypeOptions,
     completeFetchContributorTypeOptions,
@@ -16,6 +19,11 @@ import {
 
 const initialState = Object.freeze({
     contributors: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    lists: Object.freeze({
         data: Object.freeze([]),
         fetching: false,
         error: null,
@@ -47,6 +55,25 @@ export default createReducer({
     }),
     [completeFetchContributorOptions]: (state, payload) => update(state, {
         contributors: {
+            fetching: { $set: false },
+            error: { $set: null },
+            data: { $set: payload },
+        },
+    }),
+    [startFetchListOptions]: state => update(state, {
+        lists: {
+            fetching: { $set: true },
+            error: { $set: null },
+        },
+    }),
+    [failFetchListOptions]: (state, payload) => update(state, {
+        lists: {
+            fetching: { $set: false },
+            error: { $set: payload },
+        },
+    }),
+    [completeFetchListOptions]: (state, payload) => update(state, {
+        lists: {
             fetching: { $set: false },
             error: { $set: null },
             data: { $set: payload },

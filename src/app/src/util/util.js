@@ -93,6 +93,7 @@ export const makeCreateDashboardActivityReportURL = oarId => `/api/facilities/${
 export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeGetContributorsURL = () => '/api/contributors/';
+export const makeGetListsURL = () => '/api/contributor-lists/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
 

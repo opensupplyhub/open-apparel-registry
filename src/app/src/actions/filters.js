@@ -11,6 +11,7 @@ export const updateFacilityFreeTextQueryFilter =
     createAction('UPDATE_FACILITY_FREE_TEXT_QUERY_FILTER');
 export const updateContributorFilter = createAction('UPDATE_CONTRIBUTOR_FILTER');
 export const updateContributorTypeFilter = createAction('UPDATE_CONTRIBUTOR_TYPE_FILTER');
+export const updateListFilter = createAction('UPDATE_LIST_FILTER');
 export const updateCountryFilter = createAction('UPDATE_COUNTRY_FILTER');
 export const updateCombineContributorsFilterOption = createAction('UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION');
 export const updateBoundaryFilter = createAction('UPDATE_BOUNDARY_FILTER');

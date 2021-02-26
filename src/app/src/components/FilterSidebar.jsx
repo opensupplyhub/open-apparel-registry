@@ -29,6 +29,7 @@ import {
 
 import {
     fetchContributorOptions,
+    fetchListOptions,
     fetchContributorTypeOptions,
     fetchCountryOptions,
     fetchAllFilterOptions,
@@ -57,8 +58,10 @@ class FilterSidebar extends Component {
             countriesData,
             fetchFilterOptions,
             fetchContributors,
+            fetchLists,
             fetchContributorTypes,
             fetchCountries,
+            contributors,
         } = this.props;
 
         if (allListsAreEmpty(contributorsData, contributorTypesData, countriesData)) {
@@ -77,7 +80,17 @@ class FilterSidebar extends Component {
             fetchCountries();
         }
 
+        if (contributors && contributors.length) {
+            fetchLists();
+        }
+
         return null;
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.contributors !== prevProps.contributors) {
+            this.props.fetchLists();
+        }
     }
 
     render() {
@@ -224,6 +237,9 @@ function mapStateToProps({
         contributors: {
             data: contributorsData,
         },
+        lists: {
+            data: listsData,
+        },
         contributorTypes: {
             data: contributorTypesData,
         },
@@ -238,15 +254,18 @@ function mapStateToProps({
     embeddedMap: {
         embed,
     },
+    filters: { contributors },
 }) {
     return {
         activeFilterSidebarTab,
         contributorsData,
         contributorTypesData,
         countriesData,
+        listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
         embed,
+        contributors,
     };
 }
 
@@ -257,6 +276,7 @@ function mapDispatchToProps(dispatch) {
         makeFacilitiesTabActive: () => dispatch(makeSidebarFacilitiesTabActive()),
         fetchFilterOptions: () => dispatch(fetchAllFilterOptions()),
         fetchContributors: () => dispatch(fetchContributorOptions()),
+        fetchLists: () => dispatch(fetchListOptions()),
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchCountries: () => dispatch(fetchCountryOptions()),
     };
