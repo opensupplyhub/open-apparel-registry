@@ -1064,3 +1064,10 @@ class FacilityActivityReportSerializer(ModelSerializer):
             return instance.status_change_by.email
         else:
             return None
+
+
+class ContributorListQueryParamsSerializer(Serializer):
+    contributors = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )
