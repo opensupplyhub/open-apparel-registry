@@ -526,6 +526,13 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                     description='Contributor ID',
                 ),
                 coreapi.Field(
+                    name='lists',
+                    location='query',
+                    type='integer',
+                    required=False,
+                    description='List ID',
+                ),
+                coreapi.Field(
                     name='contributor_types',
                     location='query',
                     type='string',

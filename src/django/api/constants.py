@@ -26,6 +26,7 @@ class FacilitiesQueryParams:
     Q = 'q'
     NAME = 'name'
     CONTRIBUTORS = 'contributors'
+    LISTS = 'lists'
     CONTRIBUTOR_TYPES = 'contributor_types'
     COUNTRIES = 'countries'
     COMBINE_CONTRIBUTORS = 'combine_contributors'

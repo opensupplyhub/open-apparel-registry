@@ -1121,6 +1121,8 @@ class FacilityManager(models.Manager):
 
         contributors = params.getlist(FacilitiesQueryParams.CONTRIBUTORS)
 
+        lists = params.getlist(FacilitiesQueryParams.LISTS)
+
         contributor_types = params \
             .getlist(FacilitiesQueryParams.CONTRIBUTOR_TYPES)
 
@@ -1228,6 +1230,12 @@ class FacilityManager(models.Manager):
                             FacilityMatch.CONFIRMED],
                         contributor__in=contributors).values_list(
                             'facilitylistitem__facility', flat=True)))
+
+        if len(lists):
+            facilities_qs = facilities_qs.filter(
+                id__in=(Source.objects.filter(
+                    facilitylistitem__source_id__in=lists).values_list(
+                        'facilitylistitem__facility', flat=True)))
 
         if boundary is not None:
             facilities_qs = facilities_qs.filter(

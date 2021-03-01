@@ -381,6 +381,10 @@ class FacilityQueryParamsSerializer(Serializer):
         child=IntegerField(required=False),
         required=False,
     )
+    lists = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )
     contributor_types = ListField(
         child=CharField(required=False),
         required=False,
