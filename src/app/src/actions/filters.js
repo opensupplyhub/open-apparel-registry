@@ -33,15 +33,28 @@ export function setFiltersFromQueryString(qs = '') {
         // contributor data is loaded.
 
         const filters = createFiltersFromQueryString(qs);
-        const { filterOptions: { contributors: { data } } } = getState();
+        const {
+            filterOptions: {
+                contributors: { data },
+                lists,
+            },
+        } = getState();
 
-        const payload = data.length
+        let payload = data.length
             ? update(filters, {
                 contributors: {
                     $set: updateListWithLabels(filters.contributors, data),
                 },
             })
             : filters;
+
+        payload = lists.data.length
+            ? update(payload, {
+                lists: {
+                    $set: updateListWithLabels(filters.lists, lists.data),
+                },
+            })
+            : payload;
 
         return dispatch(updateAllFilters(payload));
     };

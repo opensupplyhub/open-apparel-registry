@@ -10,7 +10,10 @@ import {
     makeGetContributorTypesURL,
     makeGetCountriesURL,
     mapDjangoChoiceTuplesToSelectOptions,
+    updateListWithLabels,
 } from '../util/util';
+
+import { updateListFilter } from './filters';
 
 export const startFetchContributorOptions = createAction('START_FETCH_CONTRIBUTOR_OPTIONS');
 export const failFetchContributorOptions = createAction('FAIL_FETCH_CONTRIBUTOR_OPTIONS');
@@ -53,19 +56,24 @@ export function fetchContributorOptions() {
 
 export function fetchListOptions() {
     return (dispatch, getState) => {
-        const { filters: { contributors } } = getState();
-
+        const { filters } = getState();
         dispatch(startFetchListOptions());
 
         const url = makeGetListsURL();
         const qs = `?${querystring.stringify({
-            contributors: contributors.map(c => c.value),
+            contributors: filters.contributors.map(c => c.value),
         })}`;
 
         return apiRequest
             .get(`${url}${qs}`)
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
-            .then(data => dispatch(completeFetchListOptions(data)))
+            .then((data) => {
+                dispatch(completeFetchListOptions(data));
+
+                const payload = updateListWithLabels(filters.lists, data);
+
+                return dispatch(updateListFilter(payload));
+            })
             .catch(err => dispatch(logErrorAndDispatchFailure(
                 err,
                 'An error prevented fetching list options',
@@ -111,5 +119,6 @@ export function fetchAllFilterOptions() {
         dispatch(fetchContributorOptions());
         dispatch(fetchContributorTypeOptions());
         dispatch(fetchCountryOptions());
+        dispatch(fetchListOptions());
     };
 }

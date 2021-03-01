@@ -147,6 +147,7 @@ export const createQueryStringFromSearchFilters = ({
     contributors = [],
     contributorTypes = [],
     countries = [],
+    lists = [],
     combineContributors = '',
     boundary = {},
     ppe = '',
@@ -154,6 +155,7 @@ export const createQueryStringFromSearchFilters = ({
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
         contributors: createCompactSortedQuerystringInputObject(contributors),
+        lists: createCompactSortedQuerystringInputObject(lists),
         contributor_types: createCompactSortedQuerystringInputObject(contributorTypes),
         countries: createCompactSortedQuerystringInputObject(countries),
         combine_contributors: combineContributors,
@@ -200,6 +202,7 @@ export const createFiltersFromQueryString = (qs) => {
     const {
         q: facilityFreeTextQuery = '',
         contributors = [],
+        lists = [],
         contributor_types: contributorTypes = [],
         countries = [],
         combine_contributors: combineContributors = '',
@@ -210,6 +213,7 @@ export const createFiltersFromQueryString = (qs) => {
     return Object.freeze({
         facilityFreeTextQuery,
         contributors: createSelectOptionsFromParams(contributors),
+        lists: createSelectOptionsFromParams(lists),
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),
         combineContributors,
