@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Report Waffle Switch [#1246](https://github.com/open-apparel-registry/open-apparel-registry/pull/1246)
 - Add Closure to CSV Download [#1249](https://github.com/open-apparel-registry/open-apparel-registry/pull/1249)
 - Manage Embed Parameter [#1257](https://github.com/open-apparel-registry/open-apparel-registry/pull/1257)
+- Send Notification of Facility Report Response [#1250](https://github.com/open-apparel-registry/open-apparel-registry/pull/1250)
 
 ### Changed
 
