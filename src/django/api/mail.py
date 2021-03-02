@@ -307,3 +307,35 @@ def send_admin_api_warning(contributor_name, limit):
         [settings.NOTIFICATION_EMAIL_TO],
         html_message=html_template.render(notice_dictionary)
     )
+
+
+def send_report_result(report):
+    subj_template = get_template(
+        'mail/report_result_subject.txt')
+    text_template = get_template(
+        'mail/report_result_body.txt')
+    html_template = get_template(
+        'mail/report_result_body.html')
+
+    if report.closure_state == 'OPEN':
+        closure_state = 're-opened'
+    else:
+        closure_state = 'closed'
+
+    report_dictionary = {
+        'facility_name': report.facility.name,
+        'is_closure': closure_state == 'closed',
+        'is_reopening': closure_state == 're-opened',
+        'is_confirmed': report.status == 'CONFIRMED',
+        'is_rejected': report.status == 'REJECTED',
+        'closure_state': closure_state,
+        'status_change_reason': report.status_change_reason,
+    }
+
+    send_mail(
+        subj_template.render().rstrip(),
+        text_template.render(report_dictionary),
+        settings.DEFAULT_FROM_EMAIL,
+        [settings.NOTIFICATION_EMAIL_TO],
+        html_message=html_template.render(report_dictionary)
+    )

@@ -116,7 +116,8 @@ from api.mail import (send_claim_facility_confirmation_email,
                       send_claim_facility_denial_email,
                       send_claim_facility_revocation_email,
                       send_approved_claim_notice_to_list_contributors,
-                      send_claim_update_notice_to_list_contributors)
+                      send_claim_update_notice_to_list_contributors,
+                      send_report_result)
 from api.exceptions import BadRequestException
 from api.tiler import (get_facilities_vector_tile,
                        get_facility_grid_vector_tile)
@@ -3348,6 +3349,8 @@ def update_facility_activity_report_status(facility_activity_report,
     if status == 'CONFIRMED':
         facility_activity_report.approved_at = now
     facility_activity_report.save()
+
+    send_report_result(facility_activity_report)
 
     return facility_activity_report
 
