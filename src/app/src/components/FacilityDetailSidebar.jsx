@@ -37,6 +37,7 @@ import {
     makeApprovedClaimDetailsLink,
     makeProfileRouteLink,
     removeDuplicatesFromOtherLocationsData,
+    getLocationWithoutEmbedParam,
 } from '../util/util';
 
 import {
@@ -126,6 +127,7 @@ class FacilityDetailSidebar extends Component {
             history: { push },
             facilityIsClaimedByCurrentUser,
             userHasPendingFacilityClaim,
+            embed,
         } = this.props;
 
         if (fetching) {
@@ -221,20 +223,80 @@ class FacilityDetailSidebar extends Component {
             if (!report) return null;
             if (report.status === 'PENDING') {
                 return (
-                    <div style={detailsSidebarStyles.pendingRibbon}>
-                        Reported as {report.closure_state.toLowerCase()} (status pending).
-                    </div>
+                    <FeatureFlag flag={REPORT_A_FACILITY}>
+                        <div style={detailsSidebarStyles.pendingRibbon}>
+                            Reported as {report.closure_state.toLowerCase()} (status pending).
+                        </div>
+                    </FeatureFlag>
                 );
             }
             if (data.properties.is_closed) {
                 return (
-                    <div style={detailsSidebarStyles.closureRibbon}>
-                        This facility is closed.
-                    </div>
+                    <FeatureFlag flag={REPORT_A_FACILITY}>
+                        <div style={detailsSidebarStyles.closureRibbon}>
+                            This facility is closed.
+                        </div>
+                    </FeatureFlag>
                 );
             }
             return null;
         };
+
+        const claimedFacilitySection = (
+            <ShowOnly when={!facilityIsClaimedByCurrentUser}>
+                <>
+                    <FeatureFlag flag={CLAIM_A_FACILITY}>
+                        {data.properties.claim_info ? (
+                            <a
+                                className="link-underline small"
+                                href={makeDisputeClaimEmailLink(
+                                    data.properties.oar_id,
+                                )}
+                                style={
+                                    detailsSidebarStyles.linkStyle
+                                }
+                            >
+                                Dispute claim
+                            </a>
+                        ) : (
+                            <>
+                                <ShowOnly when={!userHasPendingFacilityClaim}>
+                                    <Link
+                                        className="link-underline small"
+                                        to={makeClaimFacilityLink(
+                                            data.properties.oar_id,
+                                        )}
+                                        href={makeClaimFacilityLink(
+                                            data.properties.oar_id,
+                                        )}
+                                        style={
+                                            detailsSidebarStyles.linkStyle
+                                        }
+                                    >
+                                        Claim this facility
+                                    </Link>
+                                </ShowOnly>
+                                <ShowOnly when={userHasPendingFacilityClaim}>
+                                    <p>
+                                        You have a pending claim on this
+                                        facility
+                                    </p>
+                                </ShowOnly>
+                            </>
+                        )}
+                    </FeatureFlag>
+                    <a
+                        className="link-underline small"
+                        href={makeReportADataIssueEmailLink(
+                            data.properties.oar_id,
+                        )}
+                        style={detailsSidebarStyles.linkStyle}
+                    >
+                            Suggest a data edit
+                    </a>
+                </>
+            </ShowOnly>
+        );
 
         return (
             <div className="control-panel facility-detail">
@@ -299,9 +361,7 @@ class FacilityDetailSidebar extends Component {
                     </FeatureFlag>
                 </div>
                 <div className="facility-detail_data">
-                    <FeatureFlag flag={REPORT_A_FACILITY}>
-                        {renderStatusRibbon()}
-                    </FeatureFlag>
+                    {renderStatusRibbon()}
                     <FacilityDetailsStaticMap data={data} />
                     <div className="control-panel__content">
                         <div className="control-panel__group">
@@ -321,15 +381,18 @@ class FacilityDetailSidebar extends Component {
                         <FacilityDetailSidebarInfo
                             data={data.properties.other_names}
                             label="Also known as:"
+                            embed={embed}
                         />
                         <FacilityDetailSidebarInfo
                             data={data.properties.other_addresses}
                             label="Other addresses:"
+                            embed={embed}
                         />
                         <FacilityDetailSidebarInfo
                             data={data.properties.contributors}
                             label="Contributors:"
                             isContributorsList
+                            embed={embed}
                         />
                         <FeatureFlag flag={PPE}>
                             <FacilityDetailSidebarPPE properties={data.properties} />
@@ -348,74 +411,35 @@ class FacilityDetailSidebar extends Component {
                         </FeatureFlag>
                         <div className="control-panel__group">
                             <div style={detailsSidebarStyles.linkSectionStyle}>
-                                <ShowOnly when={!facilityIsClaimedByCurrentUser}>
-                                    <>
+                                <ShowOnly when={!embed}>
+                                    {claimedFacilitySection}
+                                    <ShowOnly when={facilityIsClaimedByCurrentUser}>
                                         <FeatureFlag flag={CLAIM_A_FACILITY}>
-                                            {data.properties.claim_info ? (
-                                                <a
-                                                    className="link-underline small"
-                                                    href={makeDisputeClaimEmailLink(
-                                                        data.properties.oar_id,
-                                                    )}
-                                                    style={
-                                                        detailsSidebarStyles.linkStyle
-                                                    }
-                                                >
-                                                    Dispute claim
-                                                </a>
-                                            ) : (
-                                                <>
-                                                    <ShowOnly when={!userHasPendingFacilityClaim}>
-                                                        <Link
-                                                            className="link-underline small"
-                                                            to={makeClaimFacilityLink(
-                                                                data.properties.oar_id,
-                                                            )}
-                                                            href={makeClaimFacilityLink(
-                                                                data.properties.oar_id,
-                                                            )}
-                                                            style={
-                                                                detailsSidebarStyles.linkStyle
-                                                            }
-                                                        >
-                                                            Claim this facility
-                                                        </Link>
-                                                    </ShowOnly>
-                                                    <ShowOnly when={userHasPendingFacilityClaim}>
-                                                        <p>
-                                                            You have a pending claim on this
-                                                            facility
-                                                        </p>
-                                                    </ShowOnly>
-                                                </>
-                                            )}
+                                            <Link
+                                                className="link-underline small"
+                                                to={makeApprovedClaimDetailsLink(facilityClaimID)}
+                                                href={makeApprovedClaimDetailsLink(facilityClaimID)}
+                                                style={detailsSidebarStyles.linkStyle}
+                                            >
+                                                Update facility details
+                                            </Link>
                                         </FeatureFlag>
-                                        <a
-                                            className="link-underline small"
-                                            href={makeReportADataIssueEmailLink(
-                                                data.properties.oar_id,
-                                            )}
-                                            style={detailsSidebarStyles.linkStyle}
-                                        >
-                                                Suggest a data edit
-                                        </a>
-                                    </>
-                                </ShowOnly>
-                                <ShowOnly when={facilityIsClaimedByCurrentUser}>
-                                    <FeatureFlag flag={CLAIM_A_FACILITY}>
-                                        <Link
-                                            className="link-underline small"
-                                            to={makeApprovedClaimDetailsLink(facilityClaimID)}
-                                            href={makeApprovedClaimDetailsLink(facilityClaimID)}
-                                            style={detailsSidebarStyles.linkStyle}
-                                        >
-                                            Update facility details
-                                        </Link>
+                                    </ShowOnly>
+                                    <FeatureFlag flag={REPORT_A_FACILITY}>
+                                        <ReportFacilityStatus data={data} />
                                     </FeatureFlag>
                                 </ShowOnly>
-                                <FeatureFlag flag={REPORT_A_FACILITY}>
-                                    <ReportFacilityStatus data={data} />
-                                </FeatureFlag>
+                                <ShowOnly when={embed}>
+                                    <a
+                                        className="link-underline small"
+                                        href={getLocationWithoutEmbedParam()}
+                                        style={detailsSidebarStyles.linkStyle}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                            View Facility on the Open Apparel Registry
+                                    </a>
+                                </ShowOnly>
                             </div>
                         </div>
                     </div>
@@ -456,6 +480,9 @@ function mapStateToProps({
     auth: {
         user,
     },
+    embeddedMap: {
+        embed,
+    },
 }, {
     match: {
         params: {
@@ -487,6 +514,7 @@ function mapStateToProps({
         facilityIsClaimedByCurrentUser,
         userHasPendingFacilityClaim,
         user,
+        embed: !!embed,
     };
 }
 

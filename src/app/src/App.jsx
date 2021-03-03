@@ -88,15 +88,17 @@ class App extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags } = this.props;
+        const { fetchingFeatureFlags, embed } = this.props;
 
+        const mainPanelStyle = embed ? { ...appStyles.mainPanelStyle, bottom: 0, top: 0 }
+            : appStyles.mainPanelStyle;
         return (
             <ErrorBoundary>
                 <Router history={history}>
                     <div className="App">
                         <Translate />
-                        <Navbar />
-                        <main style={appStyles.mainPanelStyle} className="mainPanel">
+                        <Navbar embed={embed} />
+                        <main style={mainPanelStyle} className="mainPanel">
                             <Switch>
                                 <Route
                                     exact
@@ -208,7 +210,7 @@ class App extends Component {
                                 <Route render={() => <RouteNotFound />} />
                             </Switch>
                         </main>
-                        <Footer />
+                        {embed ? null : <Footer />}
                         <ToastContainer
                             position="bottom-center"
                             transition={Slide}
@@ -231,9 +233,13 @@ function mapStateToProps({
     featureFlags: {
         fetching: fetchingFeatureFlags,
     },
+    embeddedMap: {
+        embed,
+    },
 }) {
     return {
         fetchingFeatureFlags,
+        embed: !!embed,
     };
 }
 

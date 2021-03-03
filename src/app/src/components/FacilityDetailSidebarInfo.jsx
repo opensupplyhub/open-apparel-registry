@@ -26,6 +26,7 @@ const FacilityDetailSidebarInfo = memo(({
     data,
     label,
     isContributorsList,
+    embed,
 }) => {
     const makeContributorListItem =
         ({ id, name, is_verified: isVerified }) => (
@@ -39,7 +40,7 @@ const FacilityDetailSidebarInfo = memo(({
                     </span>
                 </ShowOnly>
                 {
-                    id ? (
+                    id && !embed ? (
                         <Link
                             to={makeProfileRouteLink(id)}
                             href={makeProfileRouteLink(id)}

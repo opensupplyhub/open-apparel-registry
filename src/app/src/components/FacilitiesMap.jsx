@@ -41,7 +41,10 @@ import {
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
 
-import { makeFacilityDetailLink } from '../util/util';
+import {
+    makeFacilityDetailLink,
+    getLocationWithoutEmbedParam,
+} from '../util/util';
 
 const selectedMarkerURL = '/images/selectedmarker.png';
 const unselectedMarkerURL = '/images/marker.png';
@@ -261,7 +264,7 @@ function FacilitiesMap({
             />
             <Control position="topright">
                 <CopyToClipboard
-                    text={window.location.href}
+                    text={getLocationWithoutEmbedParam()}
                     onCopy={() => toast('Copied search to clipboard')}
                 >
                     <Button

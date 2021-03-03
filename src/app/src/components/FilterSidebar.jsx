@@ -88,13 +88,14 @@ class FilterSidebar extends Component {
             makeFacilitiesTabActive,
             vectorTileFeatureIsActive,
             fetchingFeatureFlags,
+            embed,
         } = this.props;
 
         if (fetchingFeatureFlags) {
             return <CircularProgress />;
         }
 
-        const header = (
+        const header = !embed ? (
             <div className="panel-header results-height-subtract">
                 <h3 className="panel-header__title">
                     Open Apparel Registry
@@ -102,11 +103,15 @@ class FilterSidebar extends Component {
                 <p className="panel-header__subheading">
                     The open map of global apparel facilities.
                 </p>
-            </div>);
+            </div>) : null;
 
-        const orderedTabsForSidebar = vectorTileFeatureIsActive
+        let orderedTabsForSidebar = vectorTileFeatureIsActive
             ? filterSidebarTabs.slice().reverse()
             : filterSidebarTabs;
+
+        if (embed) {
+            orderedTabsForSidebar = orderedTabsForSidebar.filter(({ tab }) => tab !== 'guide');
+        }
 
         const activeTabIndex = orderedTabsForSidebar
             .findIndex(({ tab }) => tab === activeFilterSidebarTab);
@@ -230,6 +235,9 @@ function mapStateToProps({
         flags,
         fetching: fetchingFeatureFlags,
     },
+    embeddedMap: {
+        embed,
+    },
 }) {
     return {
         activeFilterSidebarTab,
@@ -238,6 +246,7 @@ function mapStateToProps({
         countriesData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
+        embed,
     };
 }
 

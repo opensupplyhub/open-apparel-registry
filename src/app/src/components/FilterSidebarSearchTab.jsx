@@ -274,84 +274,86 @@ function FilterSidebarSearchTab({
                         </Popover>
                     </div>
                 </FeatureFlag>
-                <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={CONTRIBUTORS}
-                        style={filterSidebarSearchTabStyles.inputLabelStyle}
-                    >
-                        Filter by Contributor
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={CONTRIBUTORS}
-                        name={CONTRIBUTORS}
-                        className="basic-multi-select notranslate"
-                        classNamePrefix="select"
-                        options={contributorOptions}
-                        value={contributors}
-                        onChange={updateContributor}
-                        disabled={fetchingOptions || fetchingFacilities}
-                    />
-                    <ShowOnly when={contributors && contributors.length > 1}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={!!combineContributors}
-                                    onChange={updateCombineContributors}
-                                    color="primary"
-                                    value={combineContributors}
-                                />
-                            }
-                            label="Show only shared facilities"
+                <ShowOnly when={!embed}>
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={CONTRIBUTORS}
+                            style={filterSidebarSearchTabStyles.inputLabelStyle}
+                        >
+                            Filter by Contributor
+                        </InputLabel>
+                        <ReactSelect
+                            isMulti
+                            id={CONTRIBUTORS}
+                            name={CONTRIBUTORS}
+                            className="basic-multi-select notranslate"
+                            classNamePrefix="select"
+                            options={contributorOptions}
+                            value={contributors}
+                            onChange={updateContributor}
+                            disabled={fetchingOptions || fetchingFacilities}
                         />
-                        <IconButton onClick={
-                            // eslint-disable-next-line no-confusing-arrow
-                            e => contributorPopoverAnchorEl
-                                ? null
-                                :
-                                setContributorPopoverAnchorEl(e.currentTarget)}
+                        <ShowOnly when={contributors && contributors.length > 1}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={!!combineContributors}
+                                        onChange={updateCombineContributors}
+                                        color="primary"
+                                        value={combineContributors}
+                                    />
+                                }
+                                label="Show only shared facilities"
+                            />
+                            <IconButton onClick={
+                                // eslint-disable-next-line no-confusing-arrow
+                                e => contributorPopoverAnchorEl
+                                    ? null
+                                    :
+                                    setContributorPopoverAnchorEl(e.currentTarget)}
+                            >
+                                <InfoIcon />
+                            </IconButton>
+                            <Popover
+                                id="contributor-info-popover"
+                                anchorOrigin={{
+                                    vertical: 'center',
+                                    horizontal: 'right',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'center',
+                                    horizontal: 'left',
+                                }}
+                                open={!!contributorPopoverAnchorEl}
+                                anchorEl={contributorPopoverAnchorEl}
+                                onClick={() => setContributorPopoverAnchorEl(null)}
+                            >
+                                {contributorInfoPopoverContent}
+                            </Popover>
+                        </ShowOnly>
+                    </div>
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={CONTRIBUTOR_TYPES}
+                            style={filterSidebarSearchTabStyles.inputLabelStyle}
                         >
-                            <InfoIcon />
-                        </IconButton>
-                        <Popover
-                            id="contributor-info-popover"
-                            anchorOrigin={{
-                                vertical: 'center',
-                                horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                                vertical: 'center',
-                                horizontal: 'left',
-                            }}
-                            open={!!contributorPopoverAnchorEl}
-                            anchorEl={contributorPopoverAnchorEl}
-                            onClick={() => setContributorPopoverAnchorEl(null)}
-                        >
-                            {contributorInfoPopoverContent}
-                        </Popover>
-                    </ShowOnly>
-                </div>
-                <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={CONTRIBUTOR_TYPES}
-                        style={filterSidebarSearchTabStyles.inputLabelStyle}
-                    >
-                        Filter by Contributor Type
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={CONTRIBUTOR_TYPES}
-                        name="contributorTypes"
-                        className="basic-multi-select notranslate"
-                        classNamePrefix="select"
-                        options={contributorTypeOptions}
-                        value={contributorTypes}
-                        onChange={updateContributorType}
-                        disabled={fetchingOptions || fetchingFacilities}
-                    />
-                </div>
+                            Filter by Contributor Type
+                        </InputLabel>
+                        <ReactSelect
+                            isMulti
+                            id={CONTRIBUTOR_TYPES}
+                            name="contributorTypes"
+                            className="basic-multi-select notranslate"
+                            classNamePrefix="select"
+                            options={contributorTypeOptions}
+                            value={contributorTypes}
+                            onChange={updateContributorType}
+                            disabled={fetchingOptions || fetchingFacilities}
+                        />
+                    </div>
+                </ShowOnly>
                 <div className="form__field">
                     <InputLabel
                         shrink={false}
@@ -383,13 +385,15 @@ function FilterSidebarSearchTab({
                     {boundaryButton}
                 </div>
                 <div className="form__action">
-                    <a
-                        className="control-link"
-                        href="mailto:info@openapparel.org?subject=Reporting an issue"
-                    >
-                        Report an issue
-                    </a>
-                    <div className="offset offset-right">
+                    {!embed ? (
+                        <a
+                            className="control-link"
+                            href="mailto:info@openapparel.org?subject=Reporting an issue"
+                        >
+                            Report an issue
+                        </a>
+                    ) : null}
+                    <div className="offset offset-right" style={{ flex: 1 }}>
                         <Button
                             size="small"
                             variant="outlined"
