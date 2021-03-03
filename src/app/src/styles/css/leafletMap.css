@@ -6,7 +6,7 @@
     width: 53px;
     height: 53px;
     line-height: 53px;
-    background-image: url('/images/m1.png');
+    background-image: url('../images/m1.png');
     color: #fff;
     text-align: center;
     font-size: 18px;
@@ -16,7 +16,7 @@
     width: 55px;
     height: 55px;
     line-height: 55px;
-    background-image: url('/images/m2.png');
+    background-image: url('../images/m2.png');
     color: #fff;
     text-align: center;
     font-size: 18px;;
@@ -26,7 +26,7 @@
     width: 65px;
     height: 65px;
     line-height: 65px;
-    background-image: url('/images/m3.png');
+    background-image: url('../images/m3.png');
     color: #fff;
     text-align: center;
     font-size: 18px;;
@@ -36,7 +36,7 @@
     width: 78px;
     height: 78px;
     line-height: 78px;
-    background-image: url('/images/m4.png');
+    background-image: url('../images/m4.png');
     color: #fff;
     text-align: center;
     font-size: 18px;;
@@ -46,7 +46,7 @@
     width: 90px;
     height: 90px;
     line-height: 90px;
-    background-image: url('/images/m5.png');
+    background-image: url('../images/m5.png');
     color: #fff;
     text-align: center;
     font-size: 18px;;
