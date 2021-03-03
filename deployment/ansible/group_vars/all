@@ -1,6 +1,7 @@
 ---
 aws_cli_version: "1.16.*"
 aws_profile: "open-apparel-registry"
+pip_get_pip_version: "2.7"
 
 oar_settings_bucket: "openapparelregistry-development-config-eu-west-1"
 
