@@ -1,6 +1,5 @@
 // polyfills for IE11
 import 'core-js';
-import 'react-hot-loader';
 import React from 'react';
 import { render } from 'react-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
