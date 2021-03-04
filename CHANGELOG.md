@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Manage Embed Parameter [#1257](https://github.com/open-apparel-registry/open-apparel-registry/pull/1257)
 - Send Notification of Facility Report Response [#1250](https://github.com/open-apparel-registry/open-apparel-registry/pull/1250)
 - Render Appropriately in Embed Mode [#1260](https://github.com/open-apparel-registry/open-apparel-registry/pull/1260)
+- Filter Facilities by List [#1264](https://github.com/open-apparel-registry/open-apparel-registry/pull/1264)
 
 ### Changed
 
