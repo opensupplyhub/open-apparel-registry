@@ -39,7 +39,7 @@ function DashboardAdjustFacilityMatches({
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => resetAdjustState, []);
-    /* eslint-disable react-books/exhaustive-deps */
+    /* eslint-disable react-hooks/exhaustive-deps */
 
     return (
         <div style={{ width: '100%', display: 'flex' }}>

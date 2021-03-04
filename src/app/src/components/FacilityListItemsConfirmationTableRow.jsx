@@ -160,23 +160,21 @@ function FacilityListItemsConfirmationTableRow({
                         style={listTableCellStyles.headerCellStyles}
                     >
                         <ShowOnly when={!readOnly}>
-                            {
-                                <CellElement
-                                    item={{
-                                        confirmMatch: makeConfirmMatchFunction(id),
-                                        rejectMatch: makeRejectMatchFunction(id),
-                                        id,
-                                        status,
-                                        matchName: name,
-                                        matchAddress: address,
-                                        itemName: item.name,
-                                        itemAddress: item.address,
-                                    }}
-                                    fetching={fetching}
-                                    hasActions
-                                    stringIsHidden
-                                />
-                            }
+                            <CellElement
+                                item={{
+                                    confirmMatch: makeConfirmMatchFunction(id),
+                                    rejectMatch: makeRejectMatchFunction(id),
+                                    id,
+                                    status,
+                                    matchName: name,
+                                    matchAddress: address,
+                                    itemName: item.name,
+                                    itemAddress: item.address,
+                                }}
+                                fetching={fetching}
+                                hasActions
+                                stringIsHidden
+                            />
                         </ShowOnly>
                     </TableCell>
                 </TableRow>

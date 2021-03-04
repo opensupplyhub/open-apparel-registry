@@ -127,6 +127,11 @@ function DashboardActivityReportToast({ error, message, resetReports }) {
     );
 }
 
+DashboardActivityReportToast.defaultProps = {
+    error: [],
+    message: '',
+};
+
 DashboardActivityReportToast.propTypes = {
     error: arrayOf(string),
     message: string,

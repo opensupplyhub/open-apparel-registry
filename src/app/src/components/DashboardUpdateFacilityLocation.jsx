@@ -114,6 +114,7 @@ function DashboardUpdateFacilityLocation({
 DashboardUpdateFacilityLocation.defaultProps = {
     targetData: null,
     targetError: null,
+    contributor: null,
 };
 
 DashboardUpdateFacilityLocation.propTypes = {
