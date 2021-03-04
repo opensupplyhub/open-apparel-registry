@@ -25,10 +25,7 @@ import {
 
 import { userPropType } from '../util/propTypes';
 
-import {
-    authRegisterFormRoute,
-    facilitiesRoute,
-} from '../util/constants';
+import { authRegisterFormRoute, facilitiesRoute } from '../util/constants';
 
 import { formValidationErrorMessageStyle } from '../util/styles';
 
@@ -37,14 +34,9 @@ const LOGIN_PASSWORD = 'LOGIN_PASSWORD';
 
 class LoginForm extends Component {
     componentDidUpdate() {
-        const {
-            user,
-            history,
-        } = this.props;
+        const { user, history } = this.props;
 
-        return user
-            ? history.push(facilitiesRoute)
-            : null;
+        return user ? history.push(facilitiesRoute) : null;
     }
 
     componentWillUnmount() {
@@ -73,8 +65,8 @@ class LoginForm extends Component {
                 <AppGrid title="Log In">
                     <Grid item xs={12} sm={7}>
                         <p>
-                            You must be a registered user to contribute to the Open
-                            Apparel Registry.
+                            You must be a registered user to contribute to the
+                            Open Apparel Registry.
                             <br />
                             Don&apos;t have an account?{' '}
                             <Link
@@ -99,7 +91,9 @@ class LoginForm extends Component {
                                 type="email"
                                 value={email}
                                 onChange={updateEmail}
-                                submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
+                                submitFormOnEnterKeyPress={
+                                    submitFormOnEnterKeyPress
+                                }
                             />
                         </div>
                         <div className="form__field">
@@ -114,20 +108,17 @@ class LoginForm extends Component {
                                 type="password"
                                 value={password}
                                 onChange={updatePassword}
-                                submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
+                                submitFormOnEnterKeyPress={
+                                    submitFormOnEnterKeyPress
+                                }
                             />
                         </div>
                         <SendResetPasswordEmailForm />
                         <ShowOnly when={!!(error && error.length)}>
                             <ul style={formValidationErrorMessageStyle}>
-                                {
-                                    error && error.length
-                                        ? error.map(err => (
-                                            <li key={err}>
-                                                {err}
-                                            </li>))
-                                        : null
-                                }
+                                {error && error.length
+                                    ? error.map(err => <li key={err}>{err}</li>)
+                                    : null}
                             </ul>
                         </ShowOnly>
                         <Button
@@ -167,17 +158,10 @@ LoginForm.propTypes = {
 function mapStateToProps({
     auth: {
         login: {
-            form: {
-                email,
-                password,
-            },
+            form: { email, password },
         },
-        user: {
-            user,
-        },
-        session: {
-            fetching: sessionFetching,
-        },
+        user: { user },
+        session: { fetching: sessionFetching },
         fetching,
         error,
     },
@@ -194,12 +178,14 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateEmail: e => dispatch(updateLoginFormEmailAddress(getValueFromEvent(e))),
-        updatePassword: e => dispatch(updateLoginFormPassword(getValueFromEvent(e))),
+        updateEmail: e =>
+            dispatch(updateLoginFormEmailAddress(getValueFromEvent(e))),
+        updatePassword: e =>
+            dispatch(updateLoginFormPassword(getValueFromEvent(e))),
         submitForm: () => dispatch(submitLoginForm()),
         clearForm: () => dispatch(resetAuthFormState()),
-        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
-            () => dispatch(submitLoginForm()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(() =>
+            dispatch(submitLoginForm()),
         ),
     };
 }

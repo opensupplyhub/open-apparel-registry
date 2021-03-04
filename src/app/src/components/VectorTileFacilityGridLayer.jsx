@@ -103,7 +103,8 @@ const VectorTileFacilityGridLayer = ({
 
                     const fillColor = gridColorRamp.reduce(
                         // eslint-disable-next-line no-confusing-arrow
-                        (color, [val, c]) => count + factor > val ? c : color, gridColorRamp[0],
+                        (color, [val, c]) => (count + factor > val ? c : color),
+                        gridColorRamp[0],
                     );
 
                     return {
@@ -112,7 +113,7 @@ const VectorTileFacilityGridLayer = ({
                         fillOpacity: 0.8,
                         stroke: true,
                         weight: 0.25,
-                        radius: 14 - (3 / count),
+                        radius: 14 - 3 / count,
                         color: gridColorRamp[gridColorRamp.length - 1],
                     };
                 },
@@ -143,10 +144,7 @@ function mapStateToProps({
     ui: {
         facilitiesSidebarTabSearch: { resetButtonClickCount },
     },
-    vectorTileLayer: {
-        key,
-        gridColorRamp,
-    },
+    vectorTileLayer: { key, gridColorRamp },
 }) {
     const querystring = createQueryStringFromSearchFilters(filters);
     const tileCacheKey = createTileCacheKeyWithEncodedFilters(filters, key);
@@ -161,6 +159,4 @@ function mapStateToProps({
     };
 }
 
-export default connect(
-    mapStateToProps,
-)(VectorTileFacilityGridLayer);
+export default connect(mapStateToProps)(VectorTileFacilityGridLayer);

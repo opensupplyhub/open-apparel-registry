@@ -63,7 +63,10 @@ export default function FilterSidebarGuideTab({ vectorTile }) {
             <ol>
                 <li>
                     With a{' '}
-                    <Link to={authRegisterFormRoute} href={authRegisterFormRoute}>
+                    <Link
+                        to={authRegisterFormRoute}
+                        href={authRegisterFormRoute}
+                    >
                         Free Account
                     </Link>
                     , industry stakeholders can add a list of facilities, from
@@ -104,10 +107,7 @@ export default function FilterSidebarGuideTab({ vectorTile }) {
             <p className="control-panel__body">
                 Users can download the data for free by clicking the “Download”
                 button (free account required) or{' '}
-                <a href="/api/docs/">
-                    connecting via API
-                </a>
-                .
+                <a href="/api/docs/">connecting via API</a>.
             </p>
             <p className="control-panel__body">
                 By default, the map includes all facilities in the database and

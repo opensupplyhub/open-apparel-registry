@@ -49,10 +49,7 @@ const dashboardStyles = Object.freeze({
 
 const DASHBOARD_TITLE = 'Dashboard';
 
-function Dashboard({
-    userWithAccessHasSignedIn,
-    fetchingSessionSignIn,
-}) {
+function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
     if (fetchingSessionSignIn) {
         return (
             <AppGrid title="">
@@ -67,20 +64,12 @@ function Dashboard({
 
     const linkSection = (
         <div style={dashboardStyles.linkSectionStyles}>
-            <Link to={dashboardListsRoute}>
-                View Contributor Lists
-            </Link>
+            <Link to={dashboardListsRoute}>View Contributor Lists</Link>
             <FeatureFlag flag={CLAIM_A_FACILITY}>
-                <Link to={dashboardClaimsRoute}>
-                    View Facility Claims
-                </Link>
+                <Link to={dashboardClaimsRoute}>View Facility Claims</Link>
             </FeatureFlag>
-            <Link to={dashboardDeleteFacilityRoute}>
-                Delete a facility
-            </Link>
-            <Link to={dashboardMergeFacilitiesRoute}>
-                Merge two facilities
-            </Link>
+            <Link to={dashboardDeleteFacilityRoute}>Delete a facility</Link>
+            <Link to={dashboardMergeFacilitiesRoute}>Merge two facilities</Link>
             <Link to={dashboardAdjustFacilityMatchesRoute}>
                 Adjust facility matches
             </Link>
@@ -106,83 +95,93 @@ function Dashboard({
             <AppGrid
                 style={dashboardStyles.appGridStyles}
                 title={
-                    (
-                        <Switch>
-                            <Route
-                                exact
-                                path={dashboardListsRoute}
-                                render={makeClickableDashboardLinkFn('Contributor Lists')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardClaimsDetailsRoute}
-                                render={
-                                    () => (
-                                        <FeatureFlag
-                                            flag={CLAIM_A_FACILITY}
-                                            alternative={DASHBOARD_TITLE}
-                                        >
-                                            {makeClickableDashboardLinkFn('Facility Claim Details')()}
-                                        </FeatureFlag>
-                                    )
-                                }
-                            />
-                            <Route
-                                exact
-                                path={dashboardClaimsRoute}
-                                render={
-                                    () => (
-                                        <FeatureFlag
-                                            flag={CLAIM_A_FACILITY}
-                                            alternative={DASHBOARD_TITLE}
-                                        >
-                                            {makeClickableDashboardLinkFn('Facility Claims')()}
-                                        </FeatureFlag>
-                                    )
-                                }
-                            />
-                            <Route
-                                exact
-                                path={dashboardDeleteFacilityRoute}
-                                render={makeClickableDashboardLinkFn('Delete Facility')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardMergeFacilitiesRoute}
-                                render={makeClickableDashboardLinkFn('Merge Facilities')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardAdjustFacilityMatchesRoute}
-                                render={makeClickableDashboardLinkFn('Adjust Facility Matches')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardUpdateFacilityLocationRoute}
-                                render={makeClickableDashboardLinkFn('Update Facility Location')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardApiBlockRoute}
-                                render={makeClickableDashboardLinkFn('API Block')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardApiBlocksRoute}
-                                render={makeClickableDashboardLinkFn('API Blocks')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardActivityReportsRoute}
-                                render={makeClickableDashboardLinkFn('Status Reports')}
-                            />
-                            <Route
-                                exact
-                                path={dashboardRoute}
-                                render={() => 'Dashboard'}
-                            />
-                        </Switch>
-                    )
+                    <Switch>
+                        <Route
+                            exact
+                            path={dashboardListsRoute}
+                            render={makeClickableDashboardLinkFn(
+                                'Contributor Lists',
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardClaimsDetailsRoute}
+                            render={() => (
+                                <FeatureFlag
+                                    flag={CLAIM_A_FACILITY}
+                                    alternative={DASHBOARD_TITLE}
+                                >
+                                    {makeClickableDashboardLinkFn(
+                                        'Facility Claim Details',
+                                    )()}
+                                </FeatureFlag>
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardClaimsRoute}
+                            render={() => (
+                                <FeatureFlag
+                                    flag={CLAIM_A_FACILITY}
+                                    alternative={DASHBOARD_TITLE}
+                                >
+                                    {makeClickableDashboardLinkFn(
+                                        'Facility Claims',
+                                    )()}
+                                </FeatureFlag>
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardDeleteFacilityRoute}
+                            render={makeClickableDashboardLinkFn(
+                                'Delete Facility',
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardMergeFacilitiesRoute}
+                            render={makeClickableDashboardLinkFn(
+                                'Merge Facilities',
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardAdjustFacilityMatchesRoute}
+                            render={makeClickableDashboardLinkFn(
+                                'Adjust Facility Matches',
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardUpdateFacilityLocationRoute}
+                            render={makeClickableDashboardLinkFn(
+                                'Update Facility Location',
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardApiBlockRoute}
+                            render={makeClickableDashboardLinkFn('API Block')}
+                        />
+                        <Route
+                            exact
+                            path={dashboardApiBlocksRoute}
+                            render={makeClickableDashboardLinkFn('API Blocks')}
+                        />
+                        <Route
+                            exact
+                            path={dashboardActivityReportsRoute}
+                            render={makeClickableDashboardLinkFn(
+                                'Status Reports',
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={dashboardRoute}
+                            render={() => 'Dashboard'}
+                        />
+                    </Switch>
                 }
             >
                 <Switch>
@@ -214,30 +213,26 @@ function Dashboard({
                     <Route
                         exact
                         path={dashboardClaimsDetailsRoute}
-                        render={
-                            () => (
-                                <FeatureFlag
-                                    flag={CLAIM_A_FACILITY}
-                                    alternative={linkSection}
-                                >
-                                    <Route component={DashboardClaimsDetails} />
-                                </FeatureFlag>
-                            )
-                        }
+                        render={() => (
+                            <FeatureFlag
+                                flag={CLAIM_A_FACILITY}
+                                alternative={linkSection}
+                            >
+                                <Route component={DashboardClaimsDetails} />
+                            </FeatureFlag>
+                        )}
                     />
                     <Route
                         exact
                         path={dashboardClaimsRoute}
-                        render={
-                            () => (
-                                <FeatureFlag
-                                    flag={CLAIM_A_FACILITY}
-                                    alternative={linkSection}
-                                >
-                                    <Route component={DashboardClaims} />
-                                </FeatureFlag>
-                            )
-                        }
+                        render={() => (
+                            <FeatureFlag
+                                flag={CLAIM_A_FACILITY}
+                                alternative={linkSection}
+                            >
+                                <Route component={DashboardClaims} />
+                            </FeatureFlag>
+                        )}
                     />
                     <Route
                         exact
@@ -271,12 +266,8 @@ Dashboard.propTypes = {
 };
 function mapStateToProps({
     auth: {
-        user: {
-            user,
-        },
-        session: {
-            fetching,
-        },
+        user: { user },
+        session: { fetching },
     },
 }) {
     return {

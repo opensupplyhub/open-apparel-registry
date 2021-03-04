@@ -22,16 +22,10 @@ const zoomStyles = Object.freeze({
     }),
 });
 
-function ZoomToSearchControl({
-    zoomToSearch,
-    toggleZoom,
-}) {
+function ZoomToSearchControl({ zoomToSearch, toggleZoom }) {
     return (
         <div id="zoom-search" style={zoomStyles.zoomStyle}>
-            <label
-                htmlFor="zoom-checkbox"
-                style={zoomStyles.zoomLabelStyle}
-            >
+            <label htmlFor="zoom-checkbox" style={zoomStyles.zoomLabelStyle}>
                 <input
                     type="checkbox"
                     name="zoom-checkbox"
@@ -64,4 +58,7 @@ ZoomToSearchControl.propTypes = {
     zoomToSearch: PropTypes.bool,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ZoomToSearchControl);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(ZoomToSearchControl);

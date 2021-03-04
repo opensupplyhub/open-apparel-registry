@@ -11,8 +11,8 @@ import { facilityDetailsContributorPropType } from '../util/propTypes';
 import { makeProfileRouteLink } from '../util/util';
 
 const propsAreEqual = (prevProps, nextProps) =>
-    isEqual(prevProps.label, nextProps.label)
-    && isEqual(prevProps.data, nextProps.data);
+    isEqual(prevProps.label, nextProps.label) &&
+    isEqual(prevProps.data, nextProps.data);
 
 const styles = {
     badgeVerified: {
@@ -22,14 +22,13 @@ const styles = {
     },
 };
 
-const FacilityDetailSidebarInfo = memo(({
-    data,
-    label,
-    isContributorsList,
-    embed,
-}) => {
-    const makeContributorListItem =
-        ({ id, name, is_verified: isVerified }) => (
+const FacilityDetailSidebarInfo = memo(
+    ({ data, label, isContributorsList, embed }) => {
+        const makeContributorListItem = ({
+            id,
+            name,
+            is_verified: isVerified,
+        }) => (
             <li key={id} className="word-break">
                 <ShowOnly when={isVerified}>
                     <span title="Verified">
@@ -39,43 +38,42 @@ const FacilityDetailSidebarInfo = memo(({
                         />
                     </span>
                 </ShowOnly>
-                {
-                    id && !embed ? (
-                        <Link
-                            to={makeProfileRouteLink(id)}
-                            href={makeProfileRouteLink(id)}
-                        >
-                            {name}
-                        </Link>
-                    ) : name
-                }
+                {id && !embed ? (
+                    <Link
+                        to={makeProfileRouteLink(id)}
+                        href={makeProfileRouteLink(id)}
+                    >
+                        {name}
+                    </Link>
+                ) : (
+                    name
+                )}
             </li>
         );
 
-    const makeStringListItem = item => (
-        <li key={item} className="word-break">
-            {item}
-        </li>);
+        const makeStringListItem = item => (
+            <li key={item} className="word-break">
+                {item}
+            </li>
+        );
 
-    const createListItem = isContributorsList
-        ? makeContributorListItem
-        : makeStringListItem;
+        const createListItem = isContributorsList
+            ? makeContributorListItem
+            : makeStringListItem;
 
-    return (
-        <ShowOnly when={!!data.length}>
-            <div className="control-panel__group">
-                <h1 className="control-panel__heading">
-                    {label}
-                </h1>
-                <div className="control-panel__body">
-                    <ul>
-                        {data.map(createListItem)}
-                    </ul>
+        return (
+            <ShowOnly when={!!data.length}>
+                <div className="control-panel__group">
+                    <h1 className="control-panel__heading">{label}</h1>
+                    <div className="control-panel__body">
+                        <ul>{data.map(createListItem)}</ul>
+                    </div>
                 </div>
-            </div>
-        </ShowOnly>
-    );
-}, propsAreEqual);
+            </ShowOnly>
+        );
+    },
+    propsAreEqual,
+);
 
 FacilityDetailSidebarInfo.defaultProps = {
     isContributorsList: false,

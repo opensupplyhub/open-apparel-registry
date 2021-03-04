@@ -105,55 +105,41 @@ function DashboardClaimsDetails({
                 <InfoSection
                     label="Facility"
                     value={
-                        (
-                            <Link
-                                to={makeFacilityDetailLink(data.facility.id)}
-                                href={makeFacilityDetailLink(data.facility.id)}
-                            >
-                                {data.facility.properties.name}
-                            </Link>
-                        )
+                        <Link
+                            to={makeFacilityDetailLink(data.facility.id)}
+                            href={makeFacilityDetailLink(data.facility.id)}
+                        >
+                            {data.facility.properties.name}
+                        </Link>
                     }
                 />
                 <InfoSection
                     label="Claim Contributor"
                     value={
-                        (
-                            <Link
-                                to={makeProfileRouteLink(data.contributor.id)}
-                                href={makeProfileRouteLink(data.contributor.id)}
-                            >
-                                {data.contributor.name}
-                            </Link>
-                        )
+                        <Link
+                            to={makeProfileRouteLink(data.contributor.id)}
+                            href={makeProfileRouteLink(data.contributor.id)}
+                        >
+                            {data.contributor.name}
+                        </Link>
                     }
                 />
                 <InfoSection
                     label="Contact Person"
                     value={data.contact_person}
                 />
-                <InfoSection
-                    label="Job Title"
-                    value={data.job_title}
-                />
-                <InfoSection
-                    label="Email"
-                    value={data.email}
-                />
-                <InfoSection
-                    label="Phone Number"
-                    value={data.phone_number}
-                />
-                <InfoSection
-                    label="Company Name"
-                    value={data.company_name}
-                />
+                <InfoSection label="Job Title" value={data.job_title} />
+                <InfoSection label="Email" value={data.email} />
+                <InfoSection label="Phone Number" value={data.phone_number} />
+                <InfoSection label="Company Name" value={data.company_name} />
                 <InfoSection
                     label="Website"
                     value={
                         data.website && (
                             <a
-                                href={addProtocolToWebsiteURLIfMissing(data.website)}
+                                href={addProtocolToWebsiteURLIfMissing(
+                                    data.website,
+                                )}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -164,28 +150,27 @@ function DashboardClaimsDetails({
                 />
                 <InfoSection
                     label="Facility Parent Company / Supplier Group"
-                    value={
-                        (() => {
-                            const parentCompanyName = get(data, 'facility_parent_company.name', null);
+                    value={(() => {
+                        const parentCompanyName = get(
+                            data,
+                            'facility_parent_company.name',
+                            null,
+                        );
 
-                            if (!parentCompanyName) {
-                                return '';
-                            }
+                        if (!parentCompanyName) {
+                            return '';
+                        }
 
-                            const profileLink = makeProfileRouteLink(
-                                get(data, 'facility_parent_company.id', null),
-                            );
+                        const profileLink = makeProfileRouteLink(
+                            get(data, 'facility_parent_company.id', null),
+                        );
 
-                            return (
-                                <Link
-                                    to={profileLink}
-                                    href={profileLink}
-                                >
-                                    {parentCompanyName}
-                                </Link>
-                            );
-                        })()
-                    }
+                        return (
+                            <Link to={profileLink} href={profileLink}>
+                                {parentCompanyName}
+                            </Link>
+                        );
+                    })()}
                 />
                 <InfoSection
                     label="Preferred Contact Method"
@@ -196,7 +181,9 @@ function DashboardClaimsDetails({
                     value={
                         data.linkedin_profile && (
                             <a
-                                href={addProtocolToWebsiteURLIfMissing(data.linkedin_profile)}
+                                href={addProtocolToWebsiteURLIfMissing(
+                                    data.linkedin_profile,
+                                )}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -219,16 +206,9 @@ function DashboardClaimsDetails({
                     Facility Claim Review Notes
                 </Typography>
             </div>
-            {
-                data
-                    .notes
-                    .map(note => (
-                        <DashboardClaimsDetailsNote
-                            key={note.id}
-                            note={note}
-                        />
-                    ))
-            }
+            {data.notes.map(note => (
+                <DashboardClaimsDetailsNote key={note.id} note={note} />
+            ))}
             <Route component={DashboardClaimsDetailsAddNote} />
         </>
     );

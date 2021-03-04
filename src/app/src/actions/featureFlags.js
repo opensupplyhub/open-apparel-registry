@@ -9,20 +9,26 @@ import {
 
 export const startFetchFeatureFlags = createAction('START_FETCH_FEATURE_FLAGS');
 export const failFetchFeatureFlags = createAction('FAIL_FETCH_FEATURE_FLAGS');
-export const completeFetchFeatureFlags = createAction('COMPLETE_FETCH_FEATURE_FLAGS');
+export const completeFetchFeatureFlags = createAction(
+    'COMPLETE_FETCH_FEATURE_FLAGS',
+);
 export const clearFeatureFlags = createAction('CLEAR_FEATURE_FLAGS');
 
 export function fetchFeatureFlags() {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchFeatureFlags());
 
         return apiRequest
             .get(makeGetAPIFeatureFlagsURL())
             .then(({ data }) => dispatch(completeFetchFeatureFlags(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching feature flags',
-                failFetchFeatureFlags,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching feature flags',
+                        failFetchFeatureFlags,
+                    ),
+                ),
+            );
     };
 }

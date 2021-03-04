@@ -16,9 +16,7 @@ const FacilityListItemsEmpty = memo(() => (
         className="margin-top-16"
         style={facilityListItemsEmptyStyles.containerStyle}
     >
-        <p>
-            No items were found for this list.
-        </p>
+        <p>No items were found for this list.</p>
     </div>
 ));
 

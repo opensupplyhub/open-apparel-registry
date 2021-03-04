@@ -17,8 +17,8 @@ const isLocalhost = Boolean(
         window.location.hostname === '[::1]' ||
         // 127.0.0.1/8 is considered localhost for IPv4.
         window.location.hostname.match(
-            /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-        )
+            /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/,
+        ),
 );
 
 export default function register() {
@@ -44,7 +44,7 @@ export default function register() {
                 navigator.serviceWorker.ready.then(() => {
                     console.log(
                         'This web app is being served cache-first by a service ' +
-                            'worker. To learn more, visit https://goo.gl/SC7cgQ'
+                            'worker. To learn more, visit https://goo.gl/SC7cgQ',
                     );
                 });
             } else {
@@ -69,7 +69,7 @@ function registerValidSW(swUrl) {
                             // It's the perfect time to display a "New content is
                             // available; please refresh." message in your web app.
                             console.log(
-                                'New content is available; please refresh.'
+                                'New content is available; please refresh.',
                             );
                         } else {
                             // At this point, everything has been precached.
@@ -109,7 +109,7 @@ function checkValidServiceWorker(swUrl) {
         })
         .catch(() => {
             console.log(
-                'No internet connection found. App is running in offline mode.'
+                'No internet connection found. App is running in offline mode.',
             );
         });
 }

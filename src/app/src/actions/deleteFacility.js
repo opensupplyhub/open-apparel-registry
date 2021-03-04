@@ -8,19 +8,25 @@ import {
     makeGetFacilityByOARIdURL,
 } from '../util/util';
 
-export const startFetchFacilityToDelete = createAction('START_FETCH_FACILITY_TO_DELETE');
-export const failFetchFacilityToDelete = createAction('FAIL_FETCH_FACILITY_TO_DELETE');
-export const completeFetchFacilityToDelete = createAction('COMPLETE_FETCH_FACILITY_TO_DELETE');
+export const startFetchFacilityToDelete = createAction(
+    'START_FETCH_FACILITY_TO_DELETE',
+);
+export const failFetchFacilityToDelete = createAction(
+    'FAIL_FETCH_FACILITY_TO_DELETE',
+);
+export const completeFetchFacilityToDelete = createAction(
+    'COMPLETE_FETCH_FACILITY_TO_DELETE',
+);
 export const clearFacilityToDelete = createAction('CLEAR_FACILITY_TO_DELETE');
-export const updateFacilityToDeleteOARID = createAction('UPDATE_FACILITY_TO_DELETE_OAR_ID');
+export const updateFacilityToDeleteOARID = createAction(
+    'UPDATE_FACILITY_TO_DELETE_OAR_ID',
+);
 
 export function fetchFacilityToDelete() {
     return (dispatch, getState) => {
         const {
             deleteFacility: {
-                facility: {
-                    oarID,
-                },
+                facility: { oarID },
             },
         } = getState();
 
@@ -33,26 +39,30 @@ export function fetchFacilityToDelete() {
         return apiRequest
             .get(makeGetFacilityByOARIdURL(oarID))
             .then(({ data }) => dispatch(completeFetchFacilityToDelete(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching that facility',
-                failFetchFacilityToDelete,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching that facility',
+                        failFetchFacilityToDelete,
+                    ),
+                ),
+            );
     };
 }
 
 export const startDeleteFacility = createAction('START_DELETE_FACILITY');
 export const failDeleteFacility = createAction('FAIL_DELETE_FACILITY');
 export const completeDeleteFacility = createAction('COMPLETE_DELETE_FACILITY');
-export const resetDeleteFacilityState = createAction('RESET_DELETE_FACILITY_STATE');
+export const resetDeleteFacilityState = createAction(
+    'RESET_DELETE_FACILITY_STATE',
+);
 
 export function deleteFacility() {
     return (dispatch, getState) => {
         const {
             deleteFacility: {
-                facility: {
-                    data: facilityToDeleteData,
-                },
+                facility: { data: facilityToDeleteData },
             },
         } = getState();
 
@@ -61,20 +71,26 @@ export function deleteFacility() {
         const oarID = get(facilityToDeleteData, 'id', null);
 
         if (!oarID) {
-            return dispatch(logErrorAndDispatchFailure(
-                null,
-                'An error prevented deleting that facility',
-                failDeleteFacility,
-            ));
+            return dispatch(
+                logErrorAndDispatchFailure(
+                    null,
+                    'An error prevented deleting that facility',
+                    failDeleteFacility,
+                ),
+            );
         }
 
         return apiRequest
             .delete(makeGetFacilityByOARIdURL(oarID))
             .then(() => dispatch(completeDeleteFacility()))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented deleting that facility',
-                failDeleteFacility,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented deleting that facility',
+                        failDeleteFacility,
+                    ),
+                ),
+            );
     };
 }

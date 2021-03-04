@@ -41,7 +41,13 @@ class MapAndSidebar extends Component {
                     <Grid item sm={12} md={4} id="panel-container">
                         <Route component={SidebarWithErrorBoundary} />
                     </Grid>
-                    <Grid item sm={12} md={8} style={{ position: 'relative' }} className="map-container">
+                    <Grid
+                        item
+                        sm={12}
+                        md={8}
+                        style={{ position: 'relative' }}
+                        className="map-container"
+                    >
                         {!hasError && (
                             <Switch>
                                 <Route
@@ -50,9 +56,17 @@ class MapAndSidebar extends Component {
                                     render={() => (
                                         <FeatureFlag
                                             flag={VECTOR_TILE}
-                                            alternative={<Route component={FacilitiesMap} />}
+                                            alternative={
+                                                <Route
+                                                    component={FacilitiesMap}
+                                                />
+                                            }
                                         >
-                                            <Route component={VectorTileFacilitiesMap} />
+                                            <Route
+                                                component={
+                                                    VectorTileFacilitiesMap
+                                                }
+                                            />
                                         </FeatureFlag>
                                     )}
                                 />
@@ -62,9 +76,17 @@ class MapAndSidebar extends Component {
                                     render={() => (
                                         <FeatureFlag
                                             flag={VECTOR_TILE}
-                                            alternative={<Route component={FacilitiesMap} />}
+                                            alternative={
+                                                <Route
+                                                    component={FacilitiesMap}
+                                                />
+                                            }
                                         >
-                                            <Route component={VectorTileFacilitiesMap} />
+                                            <Route
+                                                component={
+                                                    VectorTileFacilitiesMap
+                                                }
+                                            />
                                         </FeatureFlag>
                                     )}
                                 />
@@ -74,9 +96,17 @@ class MapAndSidebar extends Component {
                                     render={() => (
                                         <FeatureFlag
                                             flag={VECTOR_TILE}
-                                            alternative={<Route component={FacilitiesMap} />}
+                                            alternative={
+                                                <Route
+                                                    component={FacilitiesMap}
+                                                />
+                                            }
                                         >
-                                            <Route component={VectorTileFacilitiesMap} />
+                                            <Route
+                                                component={
+                                                    VectorTileFacilitiesMap
+                                                }
+                                            />
                                         </FeatureFlag>
                                     )}
                                 />

@@ -74,10 +74,12 @@ const appStyles = Object.freeze({
 
 class App extends Component {
     componentDidMount() {
-        window.addEventListener('resize', () => this.props.handleWindowResize({
-            innerHeight: window.innerHeight,
-            innerWidth: window.innerWidth,
-        }));
+        window.addEventListener('resize', () =>
+            this.props.handleWindowResize({
+                innerHeight: window.innerHeight,
+                innerWidth: window.innerWidth,
+            }),
+        );
 
         window.setGridColorRamp = this.props.setRamp;
 
@@ -89,7 +91,8 @@ class App extends Component {
     render() {
         const { fetchingFeatureFlags, embed } = this.props;
 
-        const mainPanelStyle = embed ? { ...appStyles.mainPanelStyle, bottom: 0, top: 0 }
+        const mainPanelStyle = embed
+            ? { ...appStyles.mainPanelStyle, bottom: 0, top: 0 }
             : appStyles.mainPanelStyle;
         return (
             <ErrorBoundary>
@@ -105,7 +108,11 @@ class App extends Component {
                                     render={() => (
                                         <FeatureFlag
                                             flag={CLAIM_A_FACILITY}
-                                            alternative={<Route component={MapAndSidebar} />}
+                                            alternative={
+                                                <Route
+                                                    component={MapAndSidebar}
+                                                />
+                                            }
                                         >
                                             <Route component={ClaimFacility} />
                                         </FeatureFlag>
@@ -118,21 +125,23 @@ class App extends Component {
                                             flag={CLAIM_A_FACILITY}
                                             alternative={<RouteNotFound />}
                                         >
-                                            <Route component={ClaimedFacilities} />
+                                            <Route
+                                                component={ClaimedFacilities}
+                                            />
                                         </FeatureFlag>
                                     )}
                                 />
                                 <Route
                                     path={facilitiesRoute}
-                                    render={
-                                        () => {
-                                            if (fetchingFeatureFlags) {
-                                                return <CircularProgress />;
-                                            }
-
-                                            return <Route component={MapAndSidebar} />;
+                                    render={() => {
+                                        if (fetchingFeatureFlags) {
+                                            return <CircularProgress />;
                                         }
-                                    }
+
+                                        return (
+                                            <Route component={MapAndSidebar} />
+                                        );
+                                    }}
                                 />
                                 <Route
                                     exact
@@ -196,15 +205,15 @@ class App extends Component {
                                 <Route
                                     exact
                                     path={mainRoute}
-                                    render={
-                                        () => {
-                                            if (fetchingFeatureFlags) {
-                                                return <CircularProgress />;
-                                            }
-
-                                            return <Route component={MapAndSidebar} />;
+                                    render={() => {
+                                        if (fetchingFeatureFlags) {
+                                            return <CircularProgress />;
                                         }
-                                    }
+
+                                        return (
+                                            <Route component={MapAndSidebar} />
+                                        );
+                                    }}
                                 />
                                 <Route render={() => <RouteNotFound />} />
                             </Switch>
@@ -229,12 +238,8 @@ App.propTypes = {
 };
 
 function mapStateToProps({
-    featureFlags: {
-        fetching: fetchingFeatureFlags,
-    },
-    embeddedMap: {
-        embed,
-    },
+    featureFlags: { fetching: fetchingFeatureFlags },
+    embeddedMap: { embed },
 }) {
     return {
         fetchingFeatureFlags,
@@ -252,4 +257,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(appStyles)(App));
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(withStyles(appStyles)(App));

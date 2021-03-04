@@ -84,10 +84,7 @@ const dashboardClaimsControlsStyles = Object.freeze({
 });
 
 function DashboardClaimsDetailsControls({
-    data: {
-        id: claimID,
-        status,
-    },
+    data: { id: claimID, status },
     fetching,
     error,
     approveClaim,
@@ -97,16 +94,19 @@ function DashboardClaimsDetailsControls({
     const [statusChangeText, setStatusChangeText] = useState('');
     const [displayedDialogType, setDisplayedDialogType] = useState(null);
 
-    const openApproveDialog = () => setDisplayedDialogType(dialogTypesEnum.APPROVE);
+    const openApproveDialog = () =>
+        setDisplayedDialogType(dialogTypesEnum.APPROVE);
     const openDenyDialog = () => setDisplayedDialogType(dialogTypesEnum.DENY);
-    const openRevokeDialog = () => setDisplayedDialogType(dialogTypesEnum.REVOKE);
+    const openRevokeDialog = () =>
+        setDisplayedDialogType(dialogTypesEnum.REVOKE);
 
     const closeDialog = () => {
         setDisplayedDialogType(null);
         setStatusChangeText('');
     };
 
-    const handleUpdateStatusChangeText = e => setStatusChangeText(getValueFromEvent(e));
+    const handleUpdateStatusChangeText = e =>
+        setStatusChangeText(getValueFromEvent(e));
 
     const handleApproveClaim = () => {
         approveClaim(statusChangeText);
@@ -176,28 +176,35 @@ function DashboardClaimsDetailsControls({
         </Typography>
     );
 
-    const dialogContentData = get(Object.freeze({
-        [dialogTypesEnum.APPROVE]: Object.freeze({
-            title: 'Approve this facility claim?',
-            action: handleApproveClaim,
-            actionTerm: 'approve',
+    const dialogContentData = get(
+        Object.freeze({
+            [dialogTypesEnum.APPROVE]: Object.freeze({
+                title: 'Approve this facility claim?',
+                action: handleApproveClaim,
+                actionTerm: 'approve',
+            }),
+            [dialogTypesEnum.DENY]: Object.freeze({
+                title: 'Deny this facility claim?',
+                action: handleDenyClaim,
+                actionTerm: 'deny',
+            }),
+            [dialogTypesEnum.REVOKE]: Object.freeze({
+                title: 'Revoke this facility claim?',
+                action: handleRevokeClaim,
+                actionTerm: 'revoke',
+            }),
         }),
-        [dialogTypesEnum.DENY]: Object.freeze({
-            title: 'Deny this facility claim?',
-            action: handleDenyClaim,
-            actionTerm: 'deny',
-        }),
-        [dialogTypesEnum.REVOKE]: Object.freeze({
-            title: 'Revoke this facility claim?',
-            action: handleRevokeClaim,
-            actionTerm: 'revoke',
-        }),
-    }), displayedDialogType, null);
+        displayedDialogType,
+        null,
+    );
 
-    const isPendingOrApproved = includes([
-        facilityClaimStatusChoicesEnum.PENDING,
-        facilityClaimStatusChoicesEnum.APPROVED,
-    ], status);
+    const isPendingOrApproved = includes(
+        [
+            facilityClaimStatusChoicesEnum.PENDING,
+            facilityClaimStatusChoicesEnum.APPROVED,
+        ],
+        status,
+    );
 
     return (
         <div style={dashboardClaimsControlsStyles.containerStyles}>
@@ -212,75 +219,81 @@ function DashboardClaimsDetailsControls({
                     {status}
                 </Typography>
             </div>
-            {
-                isPendingOrApproved && (
-                    <div style={dashboardClaimsControlsStyles.statusChangeSectionStyles}>
-                        <Typography
-                            variant="title"
-                            style={dashboardClaimsControlsStyles.titleStyles}
-                        >
-                            Update Status
-                        </Typography>
-                        {errorSection}
-                        <div style={dashboardClaimsControlsStyles.controlsContainerStyles}>
-                            {controlsSection}
-                        </div>
+            {isPendingOrApproved && (
+                <div
+                    style={
+                        dashboardClaimsControlsStyles.statusChangeSectionStyles
+                    }
+                >
+                    <Typography
+                        variant="title"
+                        style={dashboardClaimsControlsStyles.titleStyles}
+                    >
+                        Update Status
+                    </Typography>
+                    {errorSection}
+                    <div
+                        style={
+                            dashboardClaimsControlsStyles.controlsContainerStyles
+                        }
+                    >
+                        {controlsSection}
                     </div>
-                )
-            }
+                </div>
+            )}
             <Dialog
                 open={displayedDialogType || false}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 style={dashboardClaimsControlsStyles.dialogContainerStyles}
             >
-                {
-                    dialogContentData
-                        ? (
-                            <>
-                                <DialogTitle>
-                                    {dialogContentData.title}
-                                </DialogTitle>
-                                <DialogContent>
-                                    <InputLabel htmlFor="dialog-text-field">
-                                        <Typography variant="body2">
-                                            Enter a reason. (This will be emailed to
-                                            the person who submitted the facility claim.)
-                                        </Typography>
-                                    </InputLabel>
-                                    <TextField
-                                        id="dialog-text-field"
-                                        variant="outlined"
-                                        value={statusChangeText}
-                                        onChange={handleUpdateStatusChangeText}
-                                        autoFocus
-                                        multiline
-                                        rows={4}
-                                        style={dashboardClaimsControlsStyles.dialogTextFieldStyles}
-                                    />
-                                </DialogContent>
-                                <DialogActions
-                                    style={dashboardClaimsControlsStyles.dialogActionsStyles}
-                                >
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-                                        onClick={closeDialog}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        onClick={dialogContentData.action}
-                                    >
-                                        {dialogContentData.actionTerm}
-                                    </Button>
-                                </DialogActions>
-                            </>
-                        )
-                        : <div style={{ display: 'none' }} />
-                }
+                {dialogContentData ? (
+                    <>
+                        <DialogTitle>{dialogContentData.title}</DialogTitle>
+                        <DialogContent>
+                            <InputLabel htmlFor="dialog-text-field">
+                                <Typography variant="body2">
+                                    Enter a reason. (This will be emailed to the
+                                    person who submitted the facility claim.)
+                                </Typography>
+                            </InputLabel>
+                            <TextField
+                                id="dialog-text-field"
+                                variant="outlined"
+                                value={statusChangeText}
+                                onChange={handleUpdateStatusChangeText}
+                                autoFocus
+                                multiline
+                                rows={4}
+                                style={
+                                    dashboardClaimsControlsStyles.dialogTextFieldStyles
+                                }
+                            />
+                        </DialogContent>
+                        <DialogActions
+                            style={
+                                dashboardClaimsControlsStyles.dialogActionsStyles
+                            }
+                        >
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={closeDialog}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={dialogContentData.action}
+                            >
+                                {dialogContentData.actionTerm}
+                            </Button>
+                        </DialogActions>
+                    </>
+                ) : (
+                    <div style={{ display: 'none' }} />
+                )}
             </Dialog>
         </div>
     );
@@ -301,10 +314,7 @@ DashboardClaimsDetailsControls.propTypes = {
 
 function mapStateToProps({
     claimFacilityDashboard: {
-        statusControls: {
-            fetching,
-            error,
-        },
+        statusControls: { fetching, error },
     },
 }) {
     return {
@@ -313,11 +323,7 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    data: {
-        id,
-    },
-}) {
+function mapDispatchToProps(dispatch, { data: { id } }) {
     return {
         approveClaim: reason => dispatch(approveFacilityClaim(id, reason)),
         denyClaim: reason => dispatch(denyFacilityClaim(id, reason)),
@@ -325,4 +331,7 @@ function mapDispatchToProps(dispatch, {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardClaimsDetailsControls);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(DashboardClaimsDetailsControls);

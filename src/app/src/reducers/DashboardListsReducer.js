@@ -28,48 +28,58 @@ const initialState = Object.freeze({
     }),
 });
 
-export default createReducer({
-    [startFetchDashboardListContributors]: state => update(state, {
-        contributors: {
-            fetching: { $set: true },
-            error: { $set: null },
-        },
-    }),
-    [failFetchDashboardListContributors]: (state, payload) => update(state, {
-        contributors: {
-            fetching: { $set: false },
-            error: { $set: payload },
-        },
-    }),
-    [completeFetchDashboardListContributors]: (state, payload) => update(state, {
-        contributors: {
-            fetching: { $set: false },
-            error: { $set: null },
-            data: { $set: payload },
-        },
-    }),
-    [setDashboardListContributor]: (state, payload) => update(state, {
-        contributor: { $set: payload },
-    }),
-    [startFetchDashboardFacilityLists]: state => update(state, {
-        facilityLists: {
-            fetching: { $set: true },
-            error: { $set: null },
-        },
-    }),
-    [failFetchDashboardFacilityLists]: (state, payload) => update(state, {
-        facilityLists: {
-            fetching: { $set: false },
-            error: { $set: payload },
-        },
-    }),
-    [completeFetchDashboardFacilityLists]: (state, payload) => update(state, {
-        facilityLists: {
-            fetching: { $set: false },
-            error: { $set: null },
-            data: { $set: payload },
-        },
-    }),
-    [resetDashboardFacilityLists]: () => initialState,
-    [completeSubmitLogOut]: () => initialState,
-}, initialState);
+export default createReducer(
+    {
+        [startFetchDashboardListContributors]: state =>
+            update(state, {
+                contributors: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchDashboardListContributors]: (state, payload) =>
+            update(state, {
+                contributors: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchDashboardListContributors]: (state, payload) =>
+            update(state, {
+                contributors: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [setDashboardListContributor]: (state, payload) =>
+            update(state, {
+                contributor: { $set: payload },
+            }),
+        [startFetchDashboardFacilityLists]: state =>
+            update(state, {
+                facilityLists: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchDashboardFacilityLists]: (state, payload) =>
+            update(state, {
+                facilityLists: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchDashboardFacilityLists]: (state, payload) =>
+            update(state, {
+                facilityLists: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [resetDashboardFacilityLists]: () => initialState,
+        [completeSubmitLogOut]: () => initialState,
+    },
+    initialState,
+);

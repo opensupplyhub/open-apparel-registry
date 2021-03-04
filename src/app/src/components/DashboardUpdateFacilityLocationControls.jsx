@@ -58,7 +58,13 @@ export default function DashboardUpdateFacilityLocationControls({
                 toast('Facility location was updated');
             }
         }
-    }, [updating, updatingFacility, error, setDialogIsOpen, setUpdatingFacility]);
+    }, [
+        updating,
+        updatingFacility,
+        error,
+        setDialogIsOpen,
+        setUpdatingFacility,
+    ]);
 
     return (
         <div style={styles.containerStyles}>
@@ -73,84 +79,86 @@ export default function DashboardUpdateFacilityLocationControls({
             </Button>
             {updating && <CircularProgress />}
 
-            {
-                error &&
-                    <span style={styles.errorStyles}>
-                        An error prevented updating the facility location
-                    </span>
-            }
+            {error && (
+                <span style={styles.errorStyles}>
+                    An error prevented updating the facility location
+                </span>
+            )}
 
-            {error && error.length &&
-                (
-                    <ul style={styles.errorStyles}>
-                        {error.map(err => (
-                            <li key={err}>
-                                <span style={styles.errorStyles}>
-                                    {err}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                )
-            }
+            {error && error.length && (
+                <ul style={styles.errorStyles}>
+                    {error.map(err => (
+                        <li key={err}>
+                            <span style={styles.errorStyles}>{err}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
 
             <Dialog open={dialogIsOpen}>
-                {
-                    dialogIsOpen
-                        ? (
-                            <>
-                                <DialogTitle>
-                                    Update {get(facility, 'properties.name', '')}?
-                                </DialogTitle>
-                                <DialogContent>
+                {dialogIsOpen ? (
+                    <>
+                        <DialogTitle>
+                            Update {get(facility, 'properties.name', '')}?
+                        </DialogTitle>
+                        <DialogContent>
+                            <Typography style={styles.labelStyles}>
+                                Do you really want to update the facility
+                                location?
+                            </Typography>
+                            <ul>
+                                <li>
                                     <Typography style={styles.labelStyles}>
-                                      Do you really want to update the facility location?
+                                        Name:{' '}
+                                        {get(facility, 'properties.name', '')}
                                     </Typography>
-                                    <ul>
-                                        <li>
-                                            <Typography style={styles.labelStyles}>
-                                                Name: {get(facility, 'properties.name', '')}
-                                            </Typography>
-                                        </li>
-                                        <li>
-                                            <Typography style={styles.labelStyles}>
-                                                OAR ID: {get(facility, 'id', '')}
-                                            </Typography>
-                                        </li>
-                                        <li>
-                                            <Typography style={styles.labelStyles}>
-                                                Old Location: {get(facility, 'geometry.coordinates', []).join(', ')}
-                                            </Typography>
-                                        </li>
-                                        <li>
-                                            <Typography style={styles.labelStyles}>
-                                                New Location: {
-                                                    [get(newLocation, 'lng', ''), get(newLocation, 'lat', '')].join(', ')
-                                                }
-                                            </Typography>
-                                        </li>
-                                    </ul>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-                                        onClick={() => setDialogIsOpen(false)}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        color="secondary"
-                                        onClick={updateFacility}
-                                    >
-                                        Update location
-                                    </Button>
-                                </DialogActions>
-                            </>
-                        )
-                        : <div style={{ display: 'none' }} />
-                }
+                                </li>
+                                <li>
+                                    <Typography style={styles.labelStyles}>
+                                        OAR ID: {get(facility, 'id', '')}
+                                    </Typography>
+                                </li>
+                                <li>
+                                    <Typography style={styles.labelStyles}>
+                                        Old Location:{' '}
+                                        {get(
+                                            facility,
+                                            'geometry.coordinates',
+                                            [],
+                                        ).join(', ')}
+                                    </Typography>
+                                </li>
+                                <li>
+                                    <Typography style={styles.labelStyles}>
+                                        New Location:{' '}
+                                        {[
+                                            get(newLocation, 'lng', ''),
+                                            get(newLocation, 'lat', ''),
+                                        ].join(', ')}
+                                    </Typography>
+                                </li>
+                            </ul>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => setDialogIsOpen(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                onClick={updateFacility}
+                            >
+                                Update location
+                            </Button>
+                        </DialogActions>
+                    </>
+                ) : (
+                    <div style={{ display: 'none' }} />
+                )}
             </Dialog>
         </div>
     );

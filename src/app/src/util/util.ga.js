@@ -12,7 +12,9 @@ const getCurrentTimestamp = () => moment().toISOString();
 
 const storedConsentIsStillValid = () => {
     try {
-        const storedTimestamp = window.localStorage.getItem(GA_TRACKING_DECISION_DATE);
+        const storedTimestamp = window.localStorage.getItem(
+            GA_TRACKING_DECISION_DATE,
+        );
         if (!storedTimestamp) {
             throw new Error('no stored timestamp');
         }
@@ -65,7 +67,10 @@ export const userHasAcceptedGATracking = () => {
             throw new Error('Consent timestamp is no longer valid');
         }
 
-        return window.localStorage.getItem(GA_TRACKING) === HAS_ACCEPTED_GA_TRACKING;
+        return (
+            window.localStorage.getItem(GA_TRACKING) ===
+            HAS_ACCEPTED_GA_TRACKING
+        );
     } catch (e) {
         window.console.warn(e);
 
@@ -75,7 +80,10 @@ export const userHasAcceptedGATracking = () => {
 
 export const userHasRejectedGATracking = () => {
     try {
-        return window.localStorage.getItem(GA_TRACKING) === HAS_REJECTED_GA_TRACKING;
+        return (
+            window.localStorage.getItem(GA_TRACKING) ===
+            HAS_REJECTED_GA_TRACKING
+        );
     } catch (e) {
         window.console.warn(e);
 
@@ -86,7 +94,10 @@ export const userHasRejectedGATracking = () => {
 export const rejectGATracking = () => {
     try {
         window.localStorage.setItem(GA_TRACKING, HAS_REJECTED_GA_TRACKING);
-        window.localStorage.setItem(GA_TRACKING_DECISION_DATE, getCurrentTimestamp());
+        window.localStorage.setItem(
+            GA_TRACKING_DECISION_DATE,
+            getCurrentTimestamp(),
+        );
     } catch (e) {
         window.console.warn(e);
     }
@@ -97,7 +108,10 @@ export const createGADisableKey = key => `ga-disable-${key}`;
 
 export const startGATrackingIfUserHasAcceptedNotification = () => {
     try {
-        if (window.localStorage.getItem(GA_TRACKING) !== HAS_ACCEPTED_GA_TRACKING) {
+        if (
+            window.localStorage.getItem(GA_TRACKING) !==
+            HAS_ACCEPTED_GA_TRACKING
+        ) {
             return null;
         }
 
@@ -117,20 +131,41 @@ export const startGATrackingIfUserHasAcceptedNotification = () => {
 
         /* eslint-disable */
         // This is the standard Google Analytics analytics.js code snippet
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            (i[r] =
+                i[r] ||
+                function () {
+                    (i[r].q = i[r].q || []).push(arguments);
+                }),
+                (i[r].l = 1 * new Date());
+            (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m);
+        })(
+            window,
+            document,
+            'script',
+            'https://www.google-analytics.com/analytics.js',
+            'ga',
+        );
         /* eslint-enable */
 
-        window.ga('create', window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY, 'auto');
+        window.ga(
+            'create',
+            window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY,
+            'auto',
+        );
         window.ga('set', 'anonymizeIp', true);
 
         window.ga('send', 'event', {
             hitType: 'event',
             eventAction: 'TRACKING_CONSENT',
             eventCategory: 'TRACKING_CONSENT',
-            eventLabel: `User consented to GA tracking on ${window.localStorage.getItem(GA_TRACKING_DECISION_DATE)}`, // eslint-disable-line
+            eventLabel: `User consented to GA tracking on ${window.localStorage.getItem(
+                GA_TRACKING_DECISION_DATE,
+            )}`, // eslint-disable-line
             nonInteraction: true,
             anonymizeIp: true,
         });
@@ -152,7 +187,10 @@ export const acceptGATrackingAndStartTracking = () => {
         // If user has already rejected GA tracking, this is a noop
         if (!userHasRejectedGATracking()) {
             window.localStorage.setItem(GA_TRACKING, HAS_ACCEPTED_GA_TRACKING);
-            window.localStorage.setItem(GA_TRACKING_DECISION_DATE, getCurrentTimestamp());
+            window.localStorage.setItem(
+                GA_TRACKING_DECISION_DATE,
+                getCurrentTimestamp(),
+            );
             startGATrackingIfUserHasAcceptedNotification();
         }
     } catch (e) {

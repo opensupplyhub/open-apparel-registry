@@ -22,11 +22,7 @@ function FeatureFlag({
         return alternative;
     }
 
-    return (
-        <React.Fragment>
-            {children}
-        </React.Fragment>
-    );
+    return <React.Fragment>{children}</React.Fragment>;
 }
 
 FeatureFlag.defaultProps = {
@@ -41,12 +37,7 @@ FeatureFlag.propTypes = {
     fetching: bool.isRequired,
 };
 
-function mapStateToProps({
-    featureFlags: {
-        fetching,
-        flags,
-    },
-}) {
+function mapStateToProps({ featureFlags: { fetching, flags } }) {
     return {
         activeFeatureFlags: convertFeatureFlagsObjectToListOfActiveFlags(flags),
         fetching,

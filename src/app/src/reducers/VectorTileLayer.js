@@ -18,21 +18,28 @@ const initialState = Object.freeze({
     gridColorRamp: GRID_COLOR_RAMP,
 });
 
-export default createReducer({
-    [startFetchCurrentTileCacheKey]: state => update(state, {
-        fetching: { $set: true },
-        error: { $set: false },
-    }),
-    [failFetchCurrentTileCacheKey]: (state, error) => update(state, {
-        fetching: { $set: false },
-        error: { $set: error },
-    }),
-    [completeFetchCurrentTileCacheKey]: (state, key) => update(state, {
-        key: { $set: key },
-        fetching: { $set: false },
-        error: { $set: null },
-    }),
-    [setFacilityGridRamp]: (state, payload) => update(state, {
-        gridColorRamp: { $set: payload },
-    }),
-}, initialState);
+export default createReducer(
+    {
+        [startFetchCurrentTileCacheKey]: state =>
+            update(state, {
+                fetching: { $set: true },
+                error: { $set: false },
+            }),
+        [failFetchCurrentTileCacheKey]: (state, error) =>
+            update(state, {
+                fetching: { $set: false },
+                error: { $set: error },
+            }),
+        [completeFetchCurrentTileCacheKey]: (state, key) =>
+            update(state, {
+                key: { $set: key },
+                fetching: { $set: false },
+                error: { $set: null },
+            }),
+        [setFacilityGridRamp]: (state, payload) =>
+            update(state, {
+                gridColorRamp: { $set: payload },
+            }),
+    },
+    initialState,
+);

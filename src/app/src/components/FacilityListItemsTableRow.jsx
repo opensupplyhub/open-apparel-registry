@@ -59,17 +59,16 @@ const FacilityListItemsTableRow = ({
             style={listTableCellStyles.nameCellStyles}
             colSpan={2}
         >
-            {
-                (newFacility && oarID)
-                    ? (
-                        <Link
-                            to={makeFacilityDetailLink(oarID)}
-                            href={makeFacilityDetailLink(oarID)}
-                        >
-                            {name}
-                        </Link>)
-                    : name
-            }
+            {newFacility && oarID ? (
+                <Link
+                    to={makeFacilityDetailLink(oarID)}
+                    href={makeFacilityDetailLink(oarID)}
+                >
+                    {name}
+                </Link>
+            ) : (
+                name
+            )}
         </TableCell>
         <TableCell
             padding="default"
@@ -82,34 +81,38 @@ const FacilityListItemsTableRow = ({
             padding="default"
             style={listTableCellStyles.statusCellStyles}
         >
-            {
-                (() => {
-                    if (isRemoved) {
-                        return 'REMOVED';
-                    }
+            {(() => {
+                if (isRemoved) {
+                    return 'REMOVED';
+                }
 
-                    if (!isFunction(handleRemoveItem)) {
-                        return newFacility ? 'NEW_FACILITY' : status;
-                    }
+                if (!isFunction(handleRemoveItem)) {
+                    return newFacility ? 'NEW_FACILITY' : status;
+                }
 
-                    return (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <span style={{ marginRight: '5px' }}>
-                                {newFacility ? 'NEW_FACILITY' : status}
-                            </span>
-                            <Button
-                                color="primary"
-                                onClick={handleRemoveItem}
-                                style={{ marginLeft: '5px', marginRight: '5px' }}
-                                disabled={removeButtonDisabled}
-                                id={removeButtonID}
-                            >
-                                Remove
-                            </Button>
-                        </div>
-                    );
-                })()
-            }
+                return (
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <span style={{ marginRight: '5px' }}>
+                            {newFacility ? 'NEW_FACILITY' : status}
+                        </span>
+                        <Button
+                            color="primary"
+                            onClick={handleRemoveItem}
+                            style={{ marginLeft: '5px', marginRight: '5px' }}
+                            disabled={removeButtonDisabled}
+                            id={removeButtonID}
+                        >
+                            Remove
+                        </Button>
+                    </div>
+                );
+            })()}
         </TableCell>
     </TableRow>
 );

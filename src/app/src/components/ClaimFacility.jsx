@@ -43,9 +43,7 @@ function ClaimFacility({
     clearClaimData,
     userHasSignedIn,
     match: {
-        params: {
-            oarID,
-        },
+        params: { oarID },
     },
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
@@ -65,10 +63,7 @@ function ClaimFacility({
             <AppGrid title="Claim this facility">
                 <Grid container className="margin-bottom-64">
                     <Grid item xs={12}>
-                        <Link
-                            to={authLoginFormRoute}
-                            href={authLoginFormRoute}
-                        >
+                        <Link to={authLoginFormRoute} href={authLoginFormRoute}>
                             Log in to claim a facility on Open Apparel Registry
                         </Link>
                     </Grid>
@@ -92,15 +87,13 @@ function ClaimFacility({
             <AppGrid
                 title="Claim this facility"
                 backButtonComponent={
-                    (
-                        <Link
-                            to={makeFacilityDetailLink(oarID)}
-                            href={makeFacilityDetailLink(oarID)}
-                            style={{ color: 'black' }}
-                        >
-                            <ArrowBackIcon fill="black" />
-                        </Link>
-                    )
+                    <Link
+                        to={makeFacilityDetailLink(oarID)}
+                        href={makeFacilityDetailLink(oarID)}
+                        style={{ color: 'black' }}
+                    >
+                        <ArrowBackIcon fill="black" />
+                    </Link>
                 }
             >
                 <div style={claimFacilityContainerStyles.containerStyles}>
@@ -131,9 +124,7 @@ ClaimFacility.propTypes = {
 function mapStateToProps({
     claimFacility: {
         facilityData: { data, fetching, error },
-        parentCompanyOptions: {
-            fetching: fetchingParentCompanyOptions,
-        },
+        parentCompanyOptions: { fetching: fetchingParentCompanyOptions },
     },
     auth: {
         user: { user },
@@ -165,7 +156,4 @@ function mapDispatchToProps(
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(ClaimFacility);
+export default connect(mapStateToProps, mapDispatchToProps)(ClaimFacility);

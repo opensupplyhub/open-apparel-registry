@@ -199,7 +199,8 @@ function FacilitiesMap({
                 // individual person it is likely a precision error, not a
                 // distinct geocoded point.
                 // https://en.wikipedia.org/wiki/Decimal_degrees#Precision
-                const pointsIntersect = distance(nextFeature, coordinates) < 0.000001;
+                const pointsIntersect =
+                    distance(nextFeature, coordinates) < 0.000001;
                 return pointsIntersect ? acc.concat(nextFeature) : acc;
             }, []),
         );
@@ -249,7 +250,10 @@ function FacilitiesMap({
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
             zoomControl={false}
-            maxBounds={[[-90, -180], [90, 180]]}
+            maxBounds={[
+                [-90, -180],
+                [90, 180],
+            ]}
             worldCopyJump
         >
             <ReactLeafletGoogleLayer
@@ -279,7 +283,7 @@ function FacilitiesMap({
                 showCoverageOnHover={false}
                 removeOutsideVisibleBounds
                 spiderfyOnMaxZoom={false}
-                iconCreateFunction={(cluster) => {
+                iconCreateFunction={cluster => {
                     const clusterCount = cluster.getChildCount();
                     const [iconClassName, iconSize] = (() => {
                         if (clusterCount < 10) {
@@ -407,7 +411,4 @@ function mapDispatchToProps(_, { history: { push } }) {
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(FacilitiesMap);
+export default connect(mapStateToProps, mapDispatchToProps)(FacilitiesMap);

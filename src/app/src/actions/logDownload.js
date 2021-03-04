@@ -11,12 +11,9 @@ import {
     downloadFacilitiesCSV,
 } from '../util/util';
 
-export const startLogDownload =
-    createAction('START_LOG_DOWNLOAD');
-export const failLogDownload =
-    createAction('FAIL_LOG_DOWNLOAD');
-export const completeLogDownload =
-    createAction('COMPLETE_LOG_DOWNLOAD');
+export const startLogDownload = createAction('START_LOG_DOWNLOAD');
+export const failLogDownload = createAction('FAIL_LOG_DOWNLOAD');
+export const completeLogDownload = createAction('COMPLETE_LOG_DOWNLOAD');
 
 export function logDownload() {
     return async (dispatch, getState) => {
@@ -26,19 +23,24 @@ export function logDownload() {
             const {
                 facilities: {
                     facilities: {
-                        data: {
-                            features: facilities,
-                            count,
-                        },
+                        data: { features: facilities, count },
                         nextPageURL,
                     },
                 },
                 featureFlags,
             } = getState();
 
-            const vectorTileFlagIsActive = get(featureFlags, 'flags.vector_tile', false);
+            const vectorTileFlagIsActive = get(
+                featureFlags,
+                'flags.vector_tile',
+                false,
+            );
             const ppeIsActive = get(featureFlags, 'flags.ppe', false);
-            const reportsAreActive = get(featureFlags, 'flags.report_a_facility', false);
+            const reportsAreActive = get(
+                featureFlags,
+                'flags.report_a_facility',
+                false,
+            );
 
             const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
@@ -47,19 +49,22 @@ export function logDownload() {
 
                 return apiRequest
                     .post(makeLogDownloadUrl(path, recordCount))
-                    .then(() => downloadFacilitiesCSV(
-                        facilities,
-                        {
+                    .then(() =>
+                        downloadFacilitiesCSV(facilities, {
                             includePPEFields: ppeIsActive,
                             includeClosureFields: reportsAreActive,
-                        },
-                    ))
+                        }),
+                    )
                     .then(() => dispatch(completeLogDownload()))
-                    .catch(err => dispatch(logErrorAndDispatchFailure(
-                        err,
-                        'An error prevented the download',
-                        failLogDownload,
-                    )));
+                    .catch(err =>
+                        dispatch(
+                            logErrorAndDispatchFailure(
+                                err,
+                                'An error prevented the download',
+                                failLogDownload,
+                            ),
+                        ),
+                    );
             }
 
             await apiRequest.post(makeLogDownloadUrl(path, count));
@@ -91,9 +96,7 @@ export function logDownload() {
 
                     const {
                         facilities: {
-                            facilities: {
-                                nextPageURL: newNextPageURL,
-                            },
+                            facilities: { nextPageURL: newNextPageURL },
                         },
                     } = getState();
 
@@ -103,9 +106,7 @@ export function logDownload() {
                 const {
                     facilities: {
                         facilities: {
-                            data: {
-                                features,
-                            },
+                            data: { features },
                         },
                     },
                 } = getState();
@@ -118,11 +119,13 @@ export function logDownload() {
 
             return dispatch(completeLogDownload());
         } catch (err) {
-            return dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented the download',
-                failLogDownload,
-            ));
+            return dispatch(
+                logErrorAndDispatchFailure(
+                    err,
+                    'An error prevented the download',
+                    failLogDownload,
+                ),
+            );
         }
     };
 }

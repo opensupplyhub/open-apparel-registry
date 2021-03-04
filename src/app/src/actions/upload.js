@@ -2,18 +2,20 @@ import { createAction } from 'redux-act';
 
 import apiRequest from '../util/apiRequest';
 
-import {
-    logErrorAndDispatchFailure,
-    makeFacilityListsURL,
-} from '../util/util';
+import { logErrorAndDispatchFailure, makeFacilityListsURL } from '../util/util';
 
 import { contributeReplacesNoneSelectionID } from '../util/constants';
 
 export const updateFileUploadName = createAction('UPDATE_FILE_UPLOAD_NAME');
-export const updateFileUploadDescription = createAction('UPDATE_FILE_UPLOAD_DESCRIPTION');
-export const updateFileUploadFileName = createAction('UPDATE_FILE_UPLOAD_FILE_NAME');
-export const updateFileUploadListToReplaceID =
-    createAction('UPDATE_FILE_UPLOAD_LIST_TO_REPLACE_ID');
+export const updateFileUploadDescription = createAction(
+    'UPDATE_FILE_UPLOAD_DESCRIPTION',
+);
+export const updateFileUploadFileName = createAction(
+    'UPDATE_FILE_UPLOAD_FILE_NAME',
+);
+export const updateFileUploadListToReplaceID = createAction(
+    'UPDATE_FILE_UPLOAD_LIST_TO_REPLACE_ID',
+);
 
 export const startUploadFile = createAction('START_UPLOAD_FILE');
 export const failUploadFile = createAction('FAIL_UPLOAD_FILE');
@@ -27,20 +29,18 @@ export function uploadFile(file = null, redirectToListDetail) {
 
         const {
             upload: {
-                form: {
-                    name,
-                    description,
-                    replaces,
-                },
+                form: { name, description, replaces },
             },
         } = getState();
 
         if (!file) {
-            return dispatch(logErrorAndDispatchFailure(
-                null,
-                'Missing required facility list file',
-                failUploadFile,
-            ));
+            return dispatch(
+                logErrorAndDispatchFailure(
+                    null,
+                    'Missing required facility list file',
+                    failUploadFile,
+                ),
+            );
         }
 
         const formData = new FormData();
@@ -64,10 +64,14 @@ export function uploadFile(file = null, redirectToListDetail) {
                 dispatch(completeUploadFile());
                 redirectToListDetail(id);
             })
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented uploading that file',
-                failUploadFile,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented uploading that file',
+                        failUploadFile,
+                    ),
+                ),
+            );
     };
 }

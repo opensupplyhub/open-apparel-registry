@@ -130,7 +130,12 @@ function ClaimFacilityStepper({
     useEffect(() => {
         if (fetching) {
             setSubmittingForm(true);
-        } else if (nextButtonAction === SUBMIT_FORM && !fetching && !error && submittingForm) {
+        } else if (
+            nextButtonAction === SUBMIT_FORM &&
+            !fetching &&
+            !error &&
+            submittingForm
+        ) {
             setSubmittingForm(false);
             setActiveStep(activeStep + 1);
         }
@@ -155,26 +160,24 @@ function ClaimFacilityStepper({
                             ? `Step ${activeStep + 2}: ${nextStepName}`
                             : nextStepName}
                     </Typography>
-                    {
-                        (error || !stepInputIsValid(formData))
-                            ? (
-                                <Typography
-                                    variant="body2"
-                                    style={
-                                        claimFacilityStepperStyles.validationMessageStyles
-                                    }
-                                    color="error"
-                                >
-                                    {
-                                        error
-                                            ? 'An error prevented submitting the form'
-                                            : 'Some required fields are missing or invalid.'
-                                    }
-                                </Typography>
-                            )
-                            : null
-                    }
-                    <div style={claimFacilityStepperStyles.buttonsContainerStyles}>
+                    {error || !stepInputIsValid(formData) ? (
+                        <Typography
+                            variant="body2"
+                            style={
+                                claimFacilityStepperStyles.validationMessageStyles
+                            }
+                            color="error"
+                        >
+                            {error
+                                ? 'An error prevented submitting the form'
+                                : 'Some required fields are missing or invalid.'}
+                        </Typography>
+                    ) : null}
+                    <div
+                        style={
+                            claimFacilityStepperStyles.buttonsContainerStyles
+                        }
+                    >
                         {hasBackButton && (
                             <Button
                                 color="default"
@@ -208,7 +211,11 @@ function ClaimFacilityStepper({
                                     !claimAFacilityFormIsValid(formData)
                                 }
                             >
-                                {fetching ? <CircularProgress size={5} /> : 'Submit'}
+                                {fetching ? (
+                                    <CircularProgress size={5} />
+                                ) : (
+                                    'Submit'
+                                )}
                             </Button>
                         )}
                     </div>

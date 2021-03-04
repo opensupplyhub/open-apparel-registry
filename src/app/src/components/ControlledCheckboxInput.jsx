@@ -19,20 +19,21 @@ export default function ControlledCheckboxInput({
     checked,
     id,
 }) {
-    const labelElement = link
-        ? (
-            <Fragment>
-                {link.prefixText}
-                <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-underline"
-                    href={link.url}
-                >
-                    {text}
-                </a>
-            </Fragment>)
-        : text;
+    const labelElement = link ? (
+        <Fragment>
+            {link.prefixText}
+            <a
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-underline"
+                href={link.url}
+            >
+                {text}
+            </a>
+        </Fragment>
+    ) : (
+        text
+    );
 
     return (
         <Fragment>
@@ -43,10 +44,7 @@ export default function ControlledCheckboxInput({
                 style={controlledCheckboxInputStyles.checkbox}
                 checked={checked}
             />
-            <label
-                htmlFor={id}
-                style={controlledCheckboxInputStyles.p}
-            >
+            <label htmlFor={id} style={controlledCheckboxInputStyles.p}>
                 {labelElement}
             </label>
         </Fragment>

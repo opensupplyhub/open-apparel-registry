@@ -27,32 +27,25 @@ const ClaimInfoSection = ({ label, value }) =>
         </div>
     );
 
-export default function FacilityDetailsSidebarClaimedInfo({
-    data,
-}) {
+export default function FacilityDetailsSidebarClaimedInfo({ data }) {
     if (!data) {
         return null;
     }
 
-    const {
-        facility,
-        contact,
-        office,
-    } = data;
+    const { facility, contact, office } = data;
 
     const facilitySection = (
         <>
-            <Typography variant="title">
-                Claimed Facility Info
-            </Typography>
+            <Typography variant="title">Claimed Facility Info</Typography>
             <div className="control-panel__group">
                 <p>
-                    Please note: The OAR team <strong>has only</strong> verified that the person
-                    claiming a facility profile is connected to that facility.
-                    The OAR team <strong>has not</strong> verified any additional details added
-                    to a facility profile, e.g. certifications, production
-                    capabilities etc. Users interested in those details will
-                    need to carry out their own due diligence checks.
+                    Please note: The OAR team <strong>has only</strong> verified
+                    that the person claiming a facility profile is connected to
+                    that facility. The OAR team <strong>has not</strong>{' '}
+                    verified any additional details added to a facility profile,
+                    e.g. certifications, production capabilities etc. Users
+                    interested in those details will need to carry out their own
+                    due diligence checks.
                 </p>
                 <Link
                     to={aboutClaimedFacilitiesRoute}
@@ -71,26 +64,22 @@ export default function FacilityDetailsSidebarClaimedInfo({
                 label="Name (native language)"
                 value={facility.name_native_language}
             />
-            <ClaimInfoSection
-                label="Address"
-                value={facility.address}
-            />
+            <ClaimInfoSection label="Address" value={facility.address} />
             <ClaimInfoSection
                 label="Parent Company / Supplier Group"
                 value={
-                    facility.parent_company
-                        ? (
-                            <Link
-                                to={
-                                    makeProfileRouteLink(get(facility, 'parent_company.id', null))
-                                }
-                                href={
-                                    makeProfileRouteLink(get(facility, 'parent_company.id', null))
-                                }
-                            >
-                                {get(facility, 'parent_company.name', null)}
-                            </Link>)
-                        : null
+                    facility.parent_company ? (
+                        <Link
+                            to={makeProfileRouteLink(
+                                get(facility, 'parent_company.id', null),
+                            )}
+                            href={makeProfileRouteLink(
+                                get(facility, 'parent_company.id', null),
+                            )}
+                        >
+                            {get(facility, 'parent_company.name', null)}
+                        </Link>
+                    ) : null
                 }
             />
             <ClaimInfoSection
@@ -108,36 +97,31 @@ export default function FacilityDetailsSidebarClaimedInfo({
             <ClaimInfoSection
                 label="Website"
                 value={
-                    facility.website
-                        ? (
-                            <a
-                                href={
-                                    addProtocolToWebsiteURLIfMissing(
-                                        facility.website,
-                                    )
-                                }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {facility.website}
-                            </a>)
-                        : null
+                    facility.website ? (
+                        <a
+                            href={addProtocolToWebsiteURLIfMissing(
+                                facility.website,
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {facility.website}
+                        </a>
+                    ) : null
                 }
             />
-            {
-                contact && (
-                    <>
-                        <ClaimInfoSection
-                            value={contact.name}
-                            label="Contact Person"
-                        />
-                        <ClaimInfoSection
-                            value={contact.email}
-                            label="Contact Email"
-                        />
-                    </>
-                )
-            }
+            {contact && (
+                <>
+                    <ClaimInfoSection
+                        value={contact.name}
+                        label="Contact Person"
+                    />
+                    <ClaimInfoSection
+                        value={contact.email}
+                        label="Contact Email"
+                    />
+                </>
+            )}
             <ClaimInfoSection
                 value={facility.phone_number}
                 label="Phone Number"
@@ -161,75 +145,63 @@ export default function FacilityDetailsSidebarClaimedInfo({
             <ClaimInfoSection
                 label="Affiliations"
                 value={
-                    facility.affiliations && facility.affiliations.length
-                        && (
-                            <ul>
-                                {
-                                    orderBy(facility.affiliations, identity)
-                                        .map(affiliation => (
-                                            <li key={affiliation}>
-                                                {affiliation}
-                                            </li>
-                                        ))
-                                }
-                            </ul>
-                        )
-
+                    facility.affiliations &&
+                    facility.affiliations.length && (
+                        <ul>
+                            {orderBy(facility.affiliations, identity).map(
+                                affiliation => (
+                                    <li key={affiliation}>{affiliation}</li>
+                                ),
+                            )}
+                        </ul>
+                    )
                 }
             />
             <ClaimInfoSection
                 label="Certifications/Standards/Regulations"
                 value={
-                    facility.certifications && facility.certifications.length
-                        && (
-                            <ul>
-                                {
-                                    orderBy(facility.certifications, identity)
-                                        .map(certification => (
-                                            <li key={certification}>
-                                                {certification}
-                                            </li>
-                                        ))
-                                }
-                            </ul>
-                        )
-
+                    facility.certifications &&
+                    facility.certifications.length && (
+                        <ul>
+                            {orderBy(facility.certifications, identity).map(
+                                certification => (
+                                    <li key={certification}>{certification}</li>
+                                ),
+                            )}
+                        </ul>
+                    )
                 }
             />
             <ClaimInfoSection
                 label="Product Types"
                 value={
-                    facility.product_types && facility.product_types.length
-                        && (
-                            <ul>
-                                {
-                                    orderBy(facility.product_types, identity)
-                                        .map(productType => (
-                                            <li key={productType}>
-                                                {productType}
-                                            </li>
-                                        ))
-                                }
-                            </ul>
-                        )
+                    facility.product_types &&
+                    facility.product_types.length && (
+                        <ul>
+                            {orderBy(facility.product_types, identity).map(
+                                productType => (
+                                    <li key={productType}>{productType}</li>
+                                ),
+                            )}
+                        </ul>
+                    )
                 }
             />
             <ClaimInfoSection
                 label="Production Types"
                 value={
-                    facility.production_types && facility.production_types.length
-                        && (
-                            <ul>
-                                {
-                                    orderBy(facility.production_types, identity)
-                                        .map(productionType => (
-                                            <li key={productionType}>
-                                                {productionType}
-                                            </li>
-                                        ))
-                                }
-                            </ul>
-                        )
+                    facility.production_types &&
+                    facility.production_types.length && (
+                        <ul>
+                            {orderBy(facility.production_types, identity).map(
+                                productionType => (
+                                    <li key={productionType}>
+                                        {productionType}
+                                    </li>
+                                ),
+                            )}
+                        </ul>
+                    )
                 }
             />
         </>
@@ -237,10 +209,7 @@ export default function FacilityDetailsSidebarClaimedInfo({
 
     const officeSection = office && (
         <>
-            <ClaimInfoSection
-                value={office.name}
-                label="Office Name"
-            />
+            <ClaimInfoSection value={office.name} label="Office Name" />
             <ClaimInfoSection
                 value={`${office.address || ' '} ${office.country || ' '}`}
                 label="Office Address"

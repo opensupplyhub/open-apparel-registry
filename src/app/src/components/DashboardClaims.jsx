@@ -6,17 +6,14 @@ import Typography from '@material-ui/core/Typography';
 
 import DashboardClaimsListTable from './DashboardClaimsListTable';
 
-import { fetchFacilityClaims, clearFacilityClaims } from '../actions/claimFacilityDashboard';
+import {
+    fetchFacilityClaims,
+    clearFacilityClaims,
+} from '../actions/claimFacilityDashboard';
 
 import { facilityClaimsListPropType } from '../util/propTypes';
 
-function DashboardClaims({
-    data,
-    fetching,
-    error,
-    getClaims,
-    clearClaims,
-}) {
+function DashboardClaims({ data, fetching, error, getClaims, clearClaims }) {
     useEffect(() => {
         getClaims();
 
@@ -28,11 +25,7 @@ function DashboardClaims({
     }
 
     if (error) {
-        return (
-            <Typography>
-                {error}
-            </Typography>
-        );
+        return <Typography>{error}</Typography>;
     }
 
     if (!data) {
@@ -57,11 +50,7 @@ DashboardClaims.propTypes = {
 
 function mapStateToProps({
     claimFacilityDashboard: {
-        list: {
-            data,
-            fetching,
-            error,
-        },
+        list: { data, fetching, error },
     },
 }) {
     return {

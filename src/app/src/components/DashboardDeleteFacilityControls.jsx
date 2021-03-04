@@ -54,7 +54,13 @@ export default function DashboardDeleteFacilityControls({
                 toast('Facility was deleted');
             }
         }
-    }, [deleting, deletingFacility, error, setDialogIsOpen, setDeletingFacility]);
+    }, [
+        deleting,
+        deletingFacility,
+        error,
+        setDialogIsOpen,
+        setDeletingFacility,
+    ]);
 
     return (
         <div style={deleteControlsStyles.containerStyles}>
@@ -68,65 +74,85 @@ export default function DashboardDeleteFacilityControls({
                 Delete facility
             </Button>
             {deleting && <CircularProgress />}
-            {error && <span style={{ color: 'red' }}>An error prevented deleting that facility</span>}
+            {error && (
+                <span style={{ color: 'red' }}>
+                    An error prevented deleting that facility
+                </span>
+            )}
             <Dialog open={dialogIsOpen}>
-                {
-                    dialogIsOpen
-                        ? (
-                            <>
-                                <DialogTitle>
-                                    Delete {get(data, 'properties.name', '')}?
-                                </DialogTitle>
-                                <DialogContent>
-                                    <Typography style={deleteControlsStyles.labelStyles}>
-                                        Do you really want to delete this facility?
-                                    </Typography>
-                                    <ul>
-                                        <li>
-                                            <Typography style={deleteControlsStyles.labelStyles}>
-                                                Name: {get(data, 'properties.name', '')}
-                                            </Typography>
-                                        </li>
-                                        <li>
-                                            <Typography style={deleteControlsStyles.labelStyles}>
-                                                OAR ID: {get(data, 'id', '')}
-                                            </Typography>
-                                        </li>
-                                        <li>
-                                            <Typography style={deleteControlsStyles.labelStyles}>
-                                                Address: {get(data, 'properties.address', '')}
-                                            </Typography>
-                                        </li>
-                                        <li>
-                                            <Typography style={deleteControlsStyles.labelStyles}>
-                                                Country: {get(data, 'properties.country_name', '')}
-                                            </Typography>
-                                        </li>
-                                    </ul>
-                                    <Typography style={deleteControlsStyles.labelStyles}>
-                                        This action is irrevocable.
-                                    </Typography>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-                                        onClick={() => setDialogIsOpen(false)}
+                {dialogIsOpen ? (
+                    <>
+                        <DialogTitle>
+                            Delete {get(data, 'properties.name', '')}?
+                        </DialogTitle>
+                        <DialogContent>
+                            <Typography
+                                style={deleteControlsStyles.labelStyles}
+                            >
+                                Do you really want to delete this facility?
+                            </Typography>
+                            <ul>
+                                <li>
+                                    <Typography
+                                        style={deleteControlsStyles.labelStyles}
                                     >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        color="secondary"
-                                        onClick={deleteFacility}
+                                        Name: {get(data, 'properties.name', '')}
+                                    </Typography>
+                                </li>
+                                <li>
+                                    <Typography
+                                        style={deleteControlsStyles.labelStyles}
                                     >
-                                        Delete facility
-                                    </Button>
-                                </DialogActions>
-                            </>
-                        )
-                        : <div style={{ display: 'none' }} />
-                }
+                                        OAR ID: {get(data, 'id', '')}
+                                    </Typography>
+                                </li>
+                                <li>
+                                    <Typography
+                                        style={deleteControlsStyles.labelStyles}
+                                    >
+                                        Address:{' '}
+                                        {get(data, 'properties.address', '')}
+                                    </Typography>
+                                </li>
+                                <li>
+                                    <Typography
+                                        style={deleteControlsStyles.labelStyles}
+                                    >
+                                        Country:{' '}
+                                        {get(
+                                            data,
+                                            'properties.country_name',
+                                            '',
+                                        )}
+                                    </Typography>
+                                </li>
+                            </ul>
+                            <Typography
+                                style={deleteControlsStyles.labelStyles}
+                            >
+                                This action is irrevocable.
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => setDialogIsOpen(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                onClick={deleteFacility}
+                            >
+                                Delete facility
+                            </Button>
+                        </DialogActions>
+                    </>
+                ) : (
+                    <div style={{ display: 'none' }} />
+                )}
             </Dialog>
         </div>
     );

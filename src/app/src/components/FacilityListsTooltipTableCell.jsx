@@ -27,10 +27,7 @@ export default function FacilityListsTooltipTableCell({
     );
 
     return (
-        <Tooltip
-            title={title}
-            open={tooltipIsOpen}
-        >
+        <Tooltip title={title} open={tooltipIsOpen}>
             <TableCell
                 padding="dense"
                 onMouseEnter={openTooltip}

@@ -79,10 +79,12 @@ DashboardAdjustFacilityMatches.propTypes = {
     data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
-    adjustData: arrayOf(shape({
-        match_id: number.isRequired,
-        new_oar_id: string.isRequired,
-    })).isRequired,
+    adjustData: arrayOf(
+        shape({
+            match_id: number.isRequired,
+            new_oar_id: string.isRequired,
+        }),
+    ).isRequired,
     adjusting: bool.isRequired,
     errorAdjusting: arrayOf(string),
     updateOARID: func.isRequired,

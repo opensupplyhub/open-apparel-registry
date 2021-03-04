@@ -77,9 +77,13 @@ function DashboardApiBlocksTable({
                             onClick={() => onClickRow(block)}
                             style={getRowStyle(block.active, isClickable)}
                         >
-                            <TableCell>{moment(block.created_at).format('L')}</TableCell>
+                            <TableCell>
+                                {moment(block.created_at).format('L')}
+                            </TableCell>
                             <TableCell>{block.contributor}</TableCell>
-                            <TableCell>{moment(block.until).format('L')}</TableCell>
+                            <TableCell>
+                                {moment(block.until).format('L')}
+                            </TableCell>
                             <TableCell>{block.limit}</TableCell>
                             <TableCell>{block.actual}</TableCell>
                             <TableCell>{block.grace_limit}</TableCell>

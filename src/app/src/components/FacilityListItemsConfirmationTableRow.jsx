@@ -42,36 +42,28 @@ function FacilityListItemsConfirmationTableRow({
                     padding="default"
                     style={listTableCellStyles.rowIndexStyles}
                 >
-                    <CellElement
-                        item={item.row_index}
-                    />
+                    <CellElement item={item.row_index} />
                 </TableCell>
                 <TableCell
                     align="center"
                     padding="default"
                     style={listTableCellStyles.countryNameStyles}
                 >
-                    <CellElement
-                        item={item.country_name || ' '}
-                    />
+                    <CellElement item={item.country_name || ' '} />
                 </TableCell>
                 <TableCell
                     padding="default"
                     style={listTableCellStyles.nameCellStyles}
                     colSpan={2}
                 >
-                    <CellElement
-                        item={item.name || ' '}
-                    />
+                    <CellElement item={item.name || ' '} />
                 </TableCell>
                 <TableCell
                     padding="default"
                     style={listTableCellStyles.addressCellStyles}
                     colSpan={2}
                 >
-                    <CellElement
-                        item={item.address || ' '}
-                    />
+                    <CellElement item={item.address || ' '} />
                 </TableCell>
                 <TableCell
                     padding="default"
@@ -89,14 +81,14 @@ function FacilityListItemsConfirmationTableRow({
             </TableRow>
             <TableRow
                 hover={false}
-                style={{ background: '#dcfbff', verticalAlign: 'top', border: 0 }}
+                style={{
+                    background: '#dcfbff',
+                    verticalAlign: 'top',
+                    border: 0,
+                }}
                 className={className}
             >
-                <TableCell
-                    padding="default"
-                    variant="head"
-                    colSpan={2}
-                />
+                <TableCell padding="default" variant="head" colSpan={2} />
                 <TableCell
                     padding="default"
                     variant="head"
@@ -121,20 +113,16 @@ function FacilityListItemsConfirmationTableRow({
                     <b>Actions</b>
                 </TableCell>
             </TableRow>
-            {item.matches.map(({
-                id, status, address, oar_id, name, // eslint-disable-line camelcase
-            }) => (
+            {item.matches.map((
+                { id, status, address, oar_id, name }, // eslint-disable-line camelcase
+            ) => (
                 <TableRow
                     hover={false}
                     style={{ background: '#dcfbff', verticalAlign: 'top' }}
                     className={className}
                     key={id}
                 >
-                    <TableCell
-                        padding="default"
-                        variant="head"
-                        colSpan={2}
-                    />
+                    <TableCell padding="default" variant="head" colSpan={2} />
                     <TableCell
                         padding="default"
                         colSpan={2}
@@ -150,9 +138,7 @@ function FacilityListItemsConfirmationTableRow({
                         style={listTableCellStyles.addressCellStyles}
                         colSpan={2}
                     >
-                        <CellElement
-                            item={address}
-                        />
+                        <CellElement item={address} />
                     </TableCell>
                     <TableCell
                         padding="default"
@@ -197,9 +183,7 @@ FacilityListItemsConfirmationTableRow.propTypes = {
 
 function mapStateToProps({
     facilityListDetails: {
-        confirmOrRejectMatchOrRemoveItem: {
-            fetching,
-        },
+        confirmOrRejectMatchOrRemoveItem: { fetching },
     },
 }) {
     return {
@@ -209,11 +193,14 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        makeConfirmMatchFunction: matchID =>
-            () => dispatch(confirmFacilityListItemMatch(matchID)),
-        makeRejectMatchFunction: matchID =>
-            () => dispatch(rejectFacilityListItemMatch(matchID)),
+        makeConfirmMatchFunction: matchID => () =>
+            dispatch(confirmFacilityListItemMatch(matchID)),
+        makeRejectMatchFunction: matchID => () =>
+            dispatch(rejectFacilityListItemMatch(matchID)),
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FacilityListItemsConfirmationTableRow);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(FacilityListItemsConfirmationTableRow);

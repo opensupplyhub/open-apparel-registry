@@ -15,17 +15,23 @@ export const completeFetchCurrentTileCacheKey = createAction(
 );
 
 export function fetchCurrentTileCacheKey() {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchCurrentTileCacheKey());
 
         return apiRequest
             .get('/api/current_tile_cache_key')
-            .then(({ data }) => dispatch(completeFetchCurrentTileCacheKey(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching the current tile cache key',
-                failFetchCurrentTileCacheKey,
-            )));
+            .then(({ data }) =>
+                dispatch(completeFetchCurrentTileCacheKey(data)),
+            )
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching the current tile cache key',
+                        failFetchCurrentTileCacheKey,
+                    ),
+                ),
+            );
     };
 }
 

@@ -85,7 +85,6 @@ const styles = Object.freeze({
     }),
 });
 
-
 export default function DashboardUpdateLocationCard({
     newLocation,
     notes,
@@ -110,11 +109,7 @@ export default function DashboardUpdateLocationCard({
                 <ul style={styles.errorStyles}>
                     {error.map(err => (
                         <li key={err}>
-                            <span
-                                style={styles.errorStyles}
-                            >
-                                {err}
-                            </span>
+                            <span style={styles.errorStyles}>{err}</span>
                         </li>
                     ))}
                 </ul>
@@ -122,45 +117,44 @@ export default function DashboardUpdateLocationCard({
         }
 
         const newFacility =
-              facility &&
-              newLocation &&
-              !Number.isNaN(parseFloat(newLocation.lat)) &&
-              !Number.isNaN(parseFloat(newLocation.lng)) &&
-              Object.assign({}, facility, {
-                  geometry: {
-                      type: 'Point',
-                      coordinates: [
-                          parseFloat(newLocation.lng),
-                          parseFloat(newLocation.lat),
-                      ],
-                  },
-              });
+            facility &&
+            newLocation &&
+            !Number.isNaN(parseFloat(newLocation.lat)) &&
+            !Number.isNaN(parseFloat(newLocation.lng)) &&
+            Object.assign({}, facility, {
+                geometry: {
+                    type: 'Point',
+                    coordinates: [
+                        parseFloat(newLocation.lng),
+                        parseFloat(newLocation.lat),
+                    ],
+                },
+            });
 
-        const distanceBetweenLocations = newFacility &&
-              distance(
-                  point(facility.geometry.coordinates),
-                  point(newFacility.geometry.coordinates),
-              );
+        const distanceBetweenLocations =
+            newFacility &&
+            distance(
+                point(facility.geometry.coordinates),
+                point(newFacility.geometry.coordinates),
+            );
 
         return (
             <>
-                {
-                    newFacility && (
-                        <>
-                            <div style={styles.mapStyles}>
-                                <FacilityDetailsStaticMap data={newFacility} />
-                            </div>
-                            <div style={styles.infoContainerStyles}>
-                                <Typography style={styles.labelStyles}>
-                                    Distance From Current Location
-                                </Typography>
-                                <Typography style={styles.fieldStyles}>
-                                    {`${round(distanceBetweenLocations, 2)} km`}
-                                </Typography>
-                            </div>
-                        </>
-                    )
-                }
+                {newFacility && (
+                    <>
+                        <div style={styles.mapStyles}>
+                            <FacilityDetailsStaticMap data={newFacility} />
+                        </div>
+                        <div style={styles.infoContainerStyles}>
+                            <Typography style={styles.labelStyles}>
+                                Distance From Current Location
+                            </Typography>
+                            <Typography style={styles.fieldStyles}>
+                                {`${round(distanceBetweenLocations, 2)} km`}
+                            </Typography>
+                        </div>
+                    </>
+                )}
             </>
         );
     })();
@@ -168,10 +162,7 @@ export default function DashboardUpdateLocationCard({
     return (
         <>
             <Card style={styles.cardStyles}>
-                <Typography
-                    variant="title"
-                    style={styles.textSectionStyles}
-                >
+                <Typography variant="title" style={styles.textSectionStyles}>
                     {title}
                 </Typography>
                 <CardActions>

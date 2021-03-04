@@ -11,10 +11,7 @@ import App from './App';
 
 const theme = createMuiTheme({
     typography: {
-        fontFamily: [
-            'ff-tisa-sans-web-pro',
-            'sans-serif',
-        ].join(','),
+        fontFamily: ['ff-tisa-sans-web-pro', 'sans-serif'].join(','),
     },
     palette: {
         primary: {

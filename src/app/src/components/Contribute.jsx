@@ -18,10 +18,7 @@ import {
     aboutProcessingRoute,
 } from '../util/constants';
 
-function ContributeList({
-    userHasSignedIn,
-    fetchingSessionSignIn,
-}) {
+function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
     if (fetchingSessionSignIn) {
         return (
             <AppGrid title="Contribute">
@@ -39,10 +36,7 @@ function ContributeList({
             <AppGrid title="Contribute">
                 <Grid container className="margin-bottom-64">
                     <Grid item xs={12}>
-                        <Link
-                            to={authLoginFormRoute}
-                            href={authLoginFormRoute}
-                        >
+                        <Link to={authLoginFormRoute} href={authLoginFormRoute}>
                             Log in to contribute to Open Apparel Registry
                         </Link>
                     </Grid>
@@ -62,37 +56,41 @@ function ContributeList({
                             <Link
                                 to={aboutProcessingRoute}
                                 href={aboutProcessingRoute}
-                            >this guide
+                            >
+                                this guide
                             </Link>
                         </p>
 
                         <p>
-                            To contribute your supplier list to the OAR,
-                            please complete the following steps:
+                            To contribute your supplier list to the OAR, please
+                            complete the following steps:
                         </p>
-                        <Paper style={{
-                            padding: '20px',
-                            marginBottom: '20px',
-                        }}
+                        <Paper
+                            style={{
+                                padding: '20px',
+                                marginBottom: '20px',
+                            }}
                         >
                             <ContributeHeader />
                         </Paper>
-                        <Paper style={{
-                            padding: '20px',
-                            marginBottom: '20px',
-                        }}
+                        <Paper
+                            style={{
+                                padding: '20px',
+                                marginBottom: '20px',
+                            }}
                         >
                             <Route component={ContributeForm} />
                         </Paper>
-                        <Paper style={{
-                            padding: '20px',
-                        }}
+                        <Paper
+                            style={{
+                                padding: '20px',
+                            }}
                         >
                             <div className="form__field">
                                 <p className="form__label">
                                     Once the list has been successfully
-                                    uploaded, view your list and confirm or reject
-                                    matches.
+                                    uploaded, view your list and confirm or
+                                    reject matches.
                                 </p>
                             </div>
                             <div className="form__field">
@@ -120,12 +118,8 @@ ContributeList.propTypes = {
 
 function mapStateToProps({
     auth: {
-        user: {
-            user,
-        },
-        session: {
-            fetching,
-        },
+        user: { user },
+        session: { fetching },
     },
 }) {
     return {

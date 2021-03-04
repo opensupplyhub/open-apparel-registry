@@ -55,9 +55,7 @@ function VectorTileFacilitiesMap({
     match: {
         params: { oarID },
     },
-    history: {
-        push,
-    },
+    history: { push },
     location,
     facilityDetailsData,
     gridColorRamp,
@@ -84,7 +82,7 @@ function VectorTileFacilitiesMap({
         oarID ? detailsZoomLevel : initialZoom,
     );
 
-    const handleZoomEnd = (e) => {
+    const handleZoomEnd = e => {
         const newMapZoomLevel = get(e, 'target._zoom', null);
 
         return newMapZoomLevel
@@ -96,11 +94,18 @@ function VectorTileFacilitiesMap({
         return null;
     }
 
-    const handleCellClick = (event) => {
-        const { xmin, ymin, xmax, ymax, count } = get(event, 'layer.properties', {});
+    const handleCellClick = event => {
+        const { xmin, ymin, xmax, ymax, count } = get(
+            event,
+            'layer.properties',
+            {},
+        );
         const leafletMap = get(mapRef, 'current.leafletElement', null);
         if (count && leafletMap) {
-            leafletMap.fitBounds([[ymin, xmin], [ymax, xmax]]);
+            leafletMap.fitBounds([
+                [ymin, xmin],
+                [ymax, xmax],
+            ]);
         }
     };
 
@@ -114,7 +119,10 @@ function VectorTileFacilitiesMap({
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
             zoomControl={false}
-            maxBounds={[[-90, -180], [90, 180]]}
+            maxBounds={[
+                [-90, -180],
+                [90, 180],
+            ]}
             worldCopyJump
             onZoomEnd={handleZoomEnd}
         >
@@ -215,12 +223,8 @@ function mapStateToProps({
         singleFacility: { data },
         facilities: { data: facilitiesData },
     },
-    vectorTileLayer: {
-        gridColorRamp,
-    },
-    filters: {
-        boundary,
-    },
+    vectorTileLayer: { gridColorRamp },
+    filters: { boundary },
 }) {
     return {
         resetButtonClickCount,
@@ -237,7 +241,7 @@ function mapStateToProps({
 
 function mapDispatchToProps(_, { history: { push } }) {
     return {
-        handleMarkerClick: (e) => {
+        handleMarkerClick: e => {
             const oarID = get(e, 'layer.properties.id', null);
 
             return oarID ? push(makeFacilityDetailLink(oarID)) : noop();

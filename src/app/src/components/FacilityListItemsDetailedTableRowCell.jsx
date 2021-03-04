@@ -1,5 +1,14 @@
 import React, { Fragment } from 'react';
-import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
+import {
+    arrayOf,
+    bool,
+    func,
+    number,
+    oneOf,
+    oneOfType,
+    shape,
+    string,
+} from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import get from 'lodash/get';
@@ -44,9 +53,7 @@ export default function FacilityListItemsDetailedTableRowCell({
                     alignItems: 'center',
                 }}
             >
-                <span style={{ marginRight: '5px' }}>
-                    {title}
-                </span>
+                <span style={{ marginRight: '5px' }}>{title}</span>
                 <Button
                     color="primary"
                     onClick={handleRemoveItem}
@@ -65,23 +72,20 @@ export default function FacilityListItemsDetailedTableRowCell({
             {statusSection}
             <ShowOnly when={!readOnly}>
                 <div style={confirmRejectMatchRowStyles.cellSubtitleStyles}>
-                    <Typography variant="body2">
-                        {subtitle}
-                    </Typography>
+                    <Typography variant="body2">{subtitle}</Typography>
                 </div>
-                {
-                    data.map((item, index) => (
-                        <Fragment key={item.id ? item.id : item}>
-                            <CellElement
-                                item={item}
-                                fetching={fetching}
-                                errorState={errorState}
-                                hasActions={hasActions}
-                                stringIsHidden={stringIsHidden}
-                                linkURL={get(linkURLs, [`${index}`], null)}
-                            />
-                        </Fragment>))
-                }
+                {data.map((item, index) => (
+                    <Fragment key={item.id ? item.id : item}>
+                        <CellElement
+                            item={item}
+                            fetching={fetching}
+                            errorState={errorState}
+                            hasActions={hasActions}
+                            stringIsHidden={stringIsHidden}
+                            linkURL={get(linkURLs, [`${index}`], null)}
+                        />
+                    </Fragment>
+                ))}
             </ShowOnly>
         </>
     );
@@ -108,16 +112,19 @@ FacilityListItemsDetailedTableRowCell.propTypes = {
     data: oneOfType([
         arrayOf(number.isRequired),
         arrayOf(string.isRequired),
-        arrayOf(shape({
-            id: number.isRequired,
-            confirmMatch: func.isRequired,
-            rejectMatch: func.isRequired,
-            status: oneOf(Object.values(facilityMatchStatusChoicesEnum)).isRequired,
-            matchName: string.isRequired,
-            matchAddress: string.isRequired,
-            itemName: string.isRequired,
-            itemAddress: string.isRequired,
-        })).isRequired,
+        arrayOf(
+            shape({
+                id: number.isRequired,
+                confirmMatch: func.isRequired,
+                rejectMatch: func.isRequired,
+                status: oneOf(Object.values(facilityMatchStatusChoicesEnum))
+                    .isRequired,
+                matchName: string.isRequired,
+                matchAddress: string.isRequired,
+                itemName: string.isRequired,
+                itemAddress: string.isRequired,
+            }),
+        ).isRequired,
     ]).isRequired,
     hasActions: bool,
     fetching: bool,

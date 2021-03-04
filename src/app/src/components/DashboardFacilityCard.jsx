@@ -132,22 +132,20 @@ export default function DashboardFacilityCard({
             return null;
         }
 
-        const contributorContent =
-            get(data, 'properties.contributors', []).length && (
-                <ul style={dashboardFacilityCardStyles.listStyles}>
-                    {data.properties.contributors.map(({ name }) => (
-                        <li key={name}>
-                            <Typography
-                                style={
-                                    dashboardFacilityCardStyles.fieldStyles
-                                }
-                            >
-                                {name}
-                            </Typography>
-                        </li>
-                    ))}
-                </ul>
-            );
+        const contributorContent = get(data, 'properties.contributors', [])
+            .length && (
+            <ul style={dashboardFacilityCardStyles.listStyles}>
+                {data.properties.contributors.map(({ name }) => (
+                    <li key={name}>
+                        <Typography
+                            style={dashboardFacilityCardStyles.fieldStyles}
+                        >
+                            {name}
+                        </Typography>
+                    </li>
+                ))}
+            </ul>
+        );
 
         return (
             <>

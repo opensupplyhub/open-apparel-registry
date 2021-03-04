@@ -16,7 +16,7 @@ import {
     CLAIM_A_FACILITY,
 } from '../util/constants';
 
-const itemMap = (item) => {
+const itemMap = item => {
     if (item.url === aboutClaimedFacilitiesRoute) {
         return (
             <FeatureFlag flag={CLAIM_A_FACILITY}>
@@ -34,7 +34,11 @@ const itemMap = (item) => {
     switch (item.type) {
         case 'link':
             return (
-                <Link to={item.url} href={item.url} className="link full-width-height">
+                <Link
+                    to={item.url}
+                    href={item.url}
+                    className="link full-width-height"
+                >
                     {item.text}
                 </Link>
             );
@@ -51,7 +55,11 @@ const itemMap = (item) => {
             );
         default:
             return (
-                <Button color="primary" onClick={item.action} style={{ border: 'none' }}>
+                <Button
+                    color="primary"
+                    onClick={item.action}
+                    style={{ border: 'none' }}
+                >
                     {item.text}
                 </Button>
             );
@@ -65,7 +73,7 @@ class NavbarDropdown extends Component {
 
     handleToggle = () => this.setState(state => ({ open: !state.open }));
 
-    handleClose = (event) => {
+    handleClose = event => {
         if (this.anchorEl.contains(event.target)) {
             return;
         }
@@ -79,7 +87,11 @@ class NavbarDropdown extends Component {
 
         const DropdownItems = ({ items, onClick }) =>
             items.map(item => (
-                <MenuItem className="dropdown-list-item" key={`li-${item.text}`} onClick={onClick}>
+                <MenuItem
+                    className="dropdown-list-item"
+                    key={`li-${item.text}`}
+                    onClick={onClick}
+                >
                     {itemMap(item)}
                 </MenuItem>
             ));
@@ -89,7 +101,7 @@ class NavbarDropdown extends Component {
                 <Button
                     className="btn-text navButton"
                     disableRipple
-                    buttonRef={(node) => {
+                    buttonRef={node => {
                         this.anchorEl = node;
                     }}
                     aria-owns={open ? 'menu-list-grow' : null}

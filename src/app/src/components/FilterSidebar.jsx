@@ -64,7 +64,13 @@ class FilterSidebar extends Component {
             contributors,
         } = this.props;
 
-        if (allListsAreEmpty(contributorsData, contributorTypesData, countriesData)) {
+        if (
+            allListsAreEmpty(
+                contributorsData,
+                contributorTypesData,
+                countriesData,
+            )
+        ) {
             return fetchFilterOptions();
         }
 
@@ -110,37 +116,39 @@ class FilterSidebar extends Component {
 
         const header = !embed ? (
             <div className="panel-header results-height-subtract">
-                <h3 className="panel-header__title">
-                    Open Apparel Registry
-                </h3>
+                <h3 className="panel-header__title">Open Apparel Registry</h3>
                 <p className="panel-header__subheading">
                     The open map of global apparel facilities.
                 </p>
-            </div>) : null;
+            </div>
+        ) : null;
 
         let orderedTabsForSidebar = vectorTileFeatureIsActive
             ? filterSidebarTabs.slice().reverse()
             : filterSidebarTabs;
 
         if (embed) {
-            orderedTabsForSidebar = orderedTabsForSidebar.filter(({ tab }) => tab !== 'guide');
+            orderedTabsForSidebar = orderedTabsForSidebar.filter(
+                ({ tab }) => tab !== 'guide',
+            );
         }
 
-        const activeTabIndex = orderedTabsForSidebar
-            .findIndex(({ tab }) => tab === activeFilterSidebarTab);
+        const activeTabIndex = orderedTabsForSidebar.findIndex(
+            ({ tab }) => tab === activeFilterSidebarTab,
+        );
 
         const handleTabChange = (_, value) => {
             const changeTabFunctionsList = vectorTileFeatureIsActive
                 ? [
-                    makeSearchTabActive,
-                    makeFacilitiesTabActive,
-                    makeGuideTabActive,
-                ]
+                      makeSearchTabActive,
+                      makeFacilitiesTabActive,
+                      makeGuideTabActive,
+                  ]
                 : [
-                    makeGuideTabActive,
-                    makeFacilitiesTabActive,
-                    makeSearchTabActive,
-                ];
+                      makeGuideTabActive,
+                      makeFacilitiesTabActive,
+                      makeSearchTabActive,
+                  ];
 
             const changeTab = changeTabFunctionsList[value];
 
@@ -148,7 +156,10 @@ class FilterSidebar extends Component {
         };
 
         const tabBar = (
-            <AppBar position="static" className="results-height-subtract filter-sidebar-tabgroup">
+            <AppBar
+                position="static"
+                className="results-height-subtract filter-sidebar-tabgroup"
+            >
                 <Tabs
                     value={activeTabIndex}
                     onChange={handleTabChange}
@@ -157,18 +168,17 @@ class FilterSidebar extends Component {
                         indicator: 'tabs-indicator-color',
                     }}
                 >
-                    {
-                        orderedTabsForSidebar
-                            .map(sidebarTab => (
-                                <Tab
-                                    key={sidebarTab.tab}
-                                    label={sidebarTab.tab}
-                                    className="tab-minwidth"
-                                />))
-                    }
+                    {orderedTabsForSidebar.map(sidebarTab => (
+                        <Tab
+                            key={sidebarTab.tab}
+                            label={sidebarTab.tab}
+                            className="tab-minwidth"
+                        />
+                    ))}
                     <FacilitySidebarSearchTabFacilitiesCount />
                 </Tabs>
-            </AppBar>);
+            </AppBar>
+        );
 
         const insetComponent = (() => {
             switch (activeFilterSidebarTab) {
@@ -189,13 +199,18 @@ class FilterSidebar extends Component {
                     return (
                         <FeatureFlag
                             flag={VECTOR_TILE}
-                            alternative={<NonVectorTileFilterSidebarFacilitiesTab />}
+                            alternative={
+                                <NonVectorTileFilterSidebarFacilitiesTab />
+                            }
                         >
                             <FilterSidebarFacilitiesTab />
                         </FeatureFlag>
                     );
                 default:
-                    window.console.warn('invalid tab selection', activeFilterSidebarTab);
+                    window.console.warn(
+                        'invalid tab selection',
+                        activeFilterSidebarTab,
+                    );
                     return null;
             }
         })();
@@ -214,7 +229,8 @@ class FilterSidebar extends Component {
 }
 
 FilterSidebar.propTypes = {
-    activeFilterSidebarTab: oneOf(Object.values(filterSidebarTabsEnum)).isRequired,
+    activeFilterSidebarTab: oneOf(Object.values(filterSidebarTabsEnum))
+        .isRequired,
     makeGuideTabActive: func.isRequired,
     makeSearchTabActive: func.isRequired,
     makeFacilitiesTabActive: func.isRequired,
@@ -230,30 +246,15 @@ FilterSidebar.propTypes = {
 };
 
 function mapStateToProps({
-    ui: {
-        activeFilterSidebarTab,
-    },
+    ui: { activeFilterSidebarTab },
     filterOptions: {
-        contributors: {
-            data: contributorsData,
-        },
-        lists: {
-            data: listsData,
-        },
-        contributorTypes: {
-            data: contributorTypesData,
-        },
-        countries: {
-            data: countriesData,
-        },
+        contributors: { data: contributorsData },
+        lists: { data: listsData },
+        contributorTypes: { data: contributorTypesData },
+        countries: { data: countriesData },
     },
-    featureFlags: {
-        flags,
-        fetching: fetchingFeatureFlags,
-    },
-    embeddedMap: {
-        embed,
-    },
+    featureFlags: { flags, fetching: fetchingFeatureFlags },
+    embeddedMap: { embed },
     filters: { contributors },
 }) {
     return {
@@ -273,7 +274,8 @@ function mapDispatchToProps(dispatch) {
     return {
         makeGuideTabActive: () => dispatch(makeSidebarGuideTabActive()),
         makeSearchTabActive: () => dispatch(makeSidebarSearchTabActive()),
-        makeFacilitiesTabActive: () => dispatch(makeSidebarFacilitiesTabActive()),
+        makeFacilitiesTabActive: () =>
+            dispatch(makeSidebarFacilitiesTabActive()),
         fetchFilterOptions: () => dispatch(fetchAllFilterOptions()),
         fetchContributors: () => dispatch(fetchContributorOptions()),
         fetchLists: () => dispatch(fetchListOptions()),

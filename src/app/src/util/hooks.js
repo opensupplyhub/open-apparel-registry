@@ -26,10 +26,7 @@ export default function useUpdateLeafletMapImperatively(
 ) {
     const mapRef = useRef(null);
 
-    const [
-        currentExtent,
-        setCurrentExtent,
-    ] = useState(extent);
+    const [currentExtent, setCurrentExtent] = useState(extent);
     useEffect(() => {
         if (zoomToSearch && extent != null && currentExtent !== extent) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
@@ -58,12 +55,7 @@ export default function useUpdateLeafletMapImperatively(
 
             setCurrentExtent(extent);
         }
-    }, [
-        extent,
-        currentExtent,
-        zoomToSearch,
-        boundary,
-    ]);
+    }, [extent, currentExtent, zoomToSearch, boundary]);
 
     // Reset the map state when the reset button is clicked
     // while zoom to search is disabled.
@@ -73,15 +65,14 @@ export default function useUpdateLeafletMapImperatively(
     ] = useState(resetButtonClickCount);
 
     useEffect(() => {
-        if (!zoomToSearch &&
-                resetButtonClickCount !== currentResetButtonClickCount) {
+        if (
+            !zoomToSearch &&
+            resetButtonClickCount !== currentResetButtonClickCount
+        ) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
 
             if (leafletMap) {
-                leafletMap.setView(
-                    initialCenter,
-                    initialZoom,
-                );
+                leafletMap.setView(initialCenter, initialZoom);
             }
 
             setCurrentResetButtonClickCount(resetButtonClickCount);
@@ -103,11 +94,7 @@ export default function useUpdateLeafletMapImperatively(
     useEffect(() => {
         if (data && shouldSetViewOnReceivingData) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
-            const facilityLocation = get(
-                data,
-                'geometry.coordinates',
-                null,
-            );
+            const facilityLocation = get(data, 'geometry.coordinates', null);
 
             delay(() => {
                 if (leafletMap && facilityLocation) {
@@ -116,20 +103,13 @@ export default function useUpdateLeafletMapImperatively(
                         lat: last(facilityLocation),
                     };
 
-                    leafletMap.setView(
-                        facilityLatLng,
-                        detailsZoomLevel,
-                    );
+                    leafletMap.setView(facilityLatLng, detailsZoomLevel);
                 }
             }, 0);
 
             setShouldSetViewOnReceivingData(false);
         }
-    }, [
-        data,
-        shouldSetViewOnReceivingData,
-        setShouldSetViewOnReceivingData,
-    ]);
+    }, [data, shouldSetViewOnReceivingData, setShouldSetViewOnReceivingData]);
 
     // Set the map view to center on the facility at zoom level 15 if
     // the user has clicked on a facility list item in the sidebar for a
@@ -146,11 +126,7 @@ export default function useUpdateLeafletMapImperatively(
         } else if (data && panMapOnGettingFacilityData) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
 
-            const facilityLocation = get(
-                data,
-                'geometry.coordinates',
-                null,
-            );
+            const facilityLocation = get(data, 'geometry.coordinates', null);
 
             if (leafletMap && facilityLocation) {
                 const facilityLatLng = {
@@ -164,15 +140,14 @@ export default function useUpdateLeafletMapImperatively(
 
                 const currentMapZoomLevel = leafletMap.getZoom();
 
-                const shouldSetMapView = (isVectorTileMap
-                    && (currentMapZoomLevel < maxVectorTileFacilitiesGridZoom + 1))
-                    || !mapBoundsContainsFacility;
+                const shouldSetMapView =
+                    (isVectorTileMap &&
+                        currentMapZoomLevel <
+                            maxVectorTileFacilitiesGridZoom + 1) ||
+                    !mapBoundsContainsFacility;
 
                 if (shouldSetMapView) {
-                    leafletMap.setView(
-                        facilityLatLng,
-                        detailsZoomLevel,
-                    );
+                    leafletMap.setView(facilityLatLng, detailsZoomLevel);
                 }
             }
 

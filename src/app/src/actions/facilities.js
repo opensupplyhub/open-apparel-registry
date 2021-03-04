@@ -20,12 +20,20 @@ import { makeSidebarFacilitiesTabActive } from './ui';
 
 export const startFetchFacilities = createAction('START_FETCH_FACILITIES');
 export const failFetchFacilities = createAction('FAIL_FETCH_FACILITIES');
-export const completeFetchFacilities = createAction('COMPLETE_FETCH_FACILITIES');
+export const completeFetchFacilities = createAction(
+    'COMPLETE_FETCH_FACILITIES',
+);
 export const resetFacilities = createAction('RESET_FACILITIES');
 
-export const startFetchSingleFacility = createAction('START_FETCH_SINGLE_FACILITY');
-export const failFetchSingleFacility = createAction('FAIL_FETCH_SINGLE_FACILITY');
-export const completeFetchSingleFacility = createAction('COMPLETE_FETCH_SINGLE_FACILITY');
+export const startFetchSingleFacility = createAction(
+    'START_FETCH_SINGLE_FACILITY',
+);
+export const failFetchSingleFacility = createAction(
+    'FAIL_FETCH_SINGLE_FACILITY',
+);
+export const completeFetchSingleFacility = createAction(
+    'COMPLETE_FETCH_SINGLE_FACILITY',
+);
 export const resetSingleFacility = createAction('RESET_SINGLE_FACILITY');
 
 export function fetchFacilities({
@@ -37,20 +45,15 @@ export function fetchFacilities({
         dispatch(fetchCurrentTileCacheKey());
         dispatch(startFetchFacilities());
 
-        const {
-            filters,
-        } = getState();
+        const { filters } = getState();
 
         const qs = createQueryStringFromSearchFilters(filters);
 
         return apiRequest
             .get(makeGetFacilitiesURLWithQueryString(qs, pageSize))
             .then(({ data }) => {
-                const responseHasOnlyOneFacility = get(
-                    data,
-                    'features',
-                    [],
-                ).length === 1;
+                const responseHasOnlyOneFacility =
+                    get(data, 'features', []).length === 1;
 
                 if (responseHasOnlyOneFacility) {
                     const facilityID = get(data, 'features[0].id', null);
@@ -63,31 +66,39 @@ export function fetchFacilities({
                 }
                 return data;
             })
-            .then((data) => {
+            .then(data => {
                 dispatch(completeFetchFacilities(data));
                 if (activateFacilitiesTab) {
                     dispatch(makeSidebarFacilitiesTabActive());
                 }
             })
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching facilities',
-                failFetchFacilities,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching facilities',
+                        failFetchFacilities,
+                    ),
+                ),
+            );
     };
 }
 
-export const startFetchNextPageOfFacilities = createAction('START_FETCH_NEXT_PAGE_OF_FACILITIES');
-export const failFetchNextPageOfFacilities = createAction('FAIL_FETCH_NEXT_PAGE_OF_FACILITIES');
-export const completeFetchNextPageOfFacilities = createAction('COMPLETE_FETCH_NEXT_PAGE_OF_FACILITIES');
+export const startFetchNextPageOfFacilities = createAction(
+    'START_FETCH_NEXT_PAGE_OF_FACILITIES',
+);
+export const failFetchNextPageOfFacilities = createAction(
+    'FAIL_FETCH_NEXT_PAGE_OF_FACILITIES',
+);
+export const completeFetchNextPageOfFacilities = createAction(
+    'COMPLETE_FETCH_NEXT_PAGE_OF_FACILITIES',
+);
 
 export function fetchNextPageOfFacilities() {
     return (dispatch, getState) => {
         const {
             facilities: {
-                facilities: {
-                    nextPageURL,
-                },
+                facilities: { nextPageURL },
             },
         } = getState();
 
@@ -99,34 +110,46 @@ export function fetchNextPageOfFacilities() {
 
         return apiRequest
             .get(nextPageURL)
-            .then(({ data }) => dispatch(completeFetchNextPageOfFacilities(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching the next page of facilities',
-                failFetchNextPageOfFacilities,
-            )));
+            .then(({ data }) =>
+                dispatch(completeFetchNextPageOfFacilities(data)),
+            )
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching the next page of facilities',
+                        failFetchNextPageOfFacilities,
+                    ),
+                ),
+            );
     };
 }
 
 export function fetchSingleFacility(oarID = null) {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchSingleFacility());
 
         if (!oarID) {
-            return dispatch(logErrorAndDispatchFailure(
-                null,
-                'No OAR ID was provided',
-                failFetchSingleFacility,
-            ));
+            return dispatch(
+                logErrorAndDispatchFailure(
+                    null,
+                    'No OAR ID was provided',
+                    failFetchSingleFacility,
+                ),
+            );
         }
 
         return apiRequest
             .get(makeGetFacilityByOARIdURL(oarID))
             .then(({ data }) => dispatch(completeFetchSingleFacility(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching that facility',
-                failFetchSingleFacility,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching that facility',
+                        failFetchSingleFacility,
+                    ),
+                ),
+            );
     };
 }

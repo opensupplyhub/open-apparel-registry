@@ -22,9 +22,7 @@ import {
     setDashboardListContributor,
 } from '../actions/dashboardLists';
 
-import {
-    facilitiesListTableTooltipTitles,
-} from '../util/constants';
+import { facilitiesListTableTooltipTitles } from '../util/constants';
 
 import {
     contributorOptionPropType,
@@ -66,7 +64,11 @@ const styles = {
 
 function DashboardLists({
     dashboardLists: { contributor, contributors, facilityLists },
-    history: { location: { search }, push, replace },
+    history: {
+        location: { search },
+        push,
+        replace,
+    },
     fetchContributors,
     setContributor,
     fetchLists,
@@ -89,8 +91,14 @@ function DashboardLists({
 
             const contributorID = getContributorFromQueryString(search);
 
-            if (contributorID && contributors.data.length && !contributors.fetching) {
-                setContributor(contributors.data.find(c => c.value === contributorID));
+            if (
+                contributorID &&
+                contributors.data.length &&
+                !contributors.fetching
+            ) {
+                setContributor(
+                    contributors.data.find(c => c.value === contributorID),
+                );
                 if (!facilityLists.fetching) {
                     fetchLists(contributorID);
                 }
@@ -108,7 +116,7 @@ function DashboardLists({
         fetchLists,
     ]);
 
-    const onContributorUpdate = (c) => {
+    const onContributorUpdate = c => {
         replace(makeDashboardContributorListLink(c.value));
         setContributor(c);
         fetchLists(c.value);
@@ -116,9 +124,10 @@ function DashboardLists({
 
     const when = {
         noContributorSelected: contributor === null,
-        contributorHasNoLists: contributor !== null
-            && !facilityLists.fetching
-            && facilityLists.data.length === 0,
+        contributorHasNoLists:
+            contributor !== null &&
+            !facilityLists.fetching &&
+            facilityLists.data.length === 0,
     };
 
     return (
@@ -155,106 +164,92 @@ function DashboardLists({
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>
-                            Date Created
-                        </TableCell>
-                        <TableCell>
-                            Name
-                        </TableCell>
-                        <TableCell>
-                            Description
-                        </TableCell>
-                        <TableCell>
-                            File Name
-                        </TableCell>
-                        <TableCell padding="dense">
-                            Total
-                        </TableCell>
-                        <TableCell padding="dense">
-                            Matched
-                        </TableCell>
-                        <TableCell padding="dense">
-                            Error
-                        </TableCell>
-                        <TableCell padding="dense">
-                            Potential Match
-                        </TableCell>
-                        <TableCell padding="dense">
-                            Active
-                        </TableCell>
+                        <TableCell>Date Created</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Description</TableCell>
+                        <TableCell>File Name</TableCell>
+                        <TableCell padding="dense">Total</TableCell>
+                        <TableCell padding="dense">Matched</TableCell>
+                        <TableCell padding="dense">Error</TableCell>
+                        <TableCell padding="dense">Potential Match</TableCell>
+                        <TableCell padding="dense">Active</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {
-                        facilityLists.data.map(list => (
-                            <TableRow
-                                key={list.id}
-                                hover
-                                onClick={() => push(makeFacilityListItemsDetailLink(list.id))}
-                                style={
-                                    list.is_active
-                                        ? styles.activeList
-                                        : styles.inactiveList
+                    {facilityLists.data.map(list => (
+                        <TableRow
+                            key={list.id}
+                            hover
+                            onClick={() =>
+                                push(makeFacilityListItemsDetailLink(list.id))
+                            }
+                            style={
+                                list.is_active
+                                    ? styles.activeList
+                                    : styles.inactiveList
+                            }
+                        >
+                            <TableCell>
+                                {moment(list.created_at).format('L')}
+                            </TableCell>
+                            <TableCell>{list.name}</TableCell>
+                            <TableCell>{list.description}</TableCell>
+                            <TableCell>{list.file_name}</TableCell>
+                            <FacilityListsTooltipTableCell
+                                tooltipTitle={
+                                    facilitiesListTableTooltipTitles.total
                                 }
-                            >
-                                <TableCell>
-                                    {moment(list.created_at).format('L')}
-                                </TableCell>
-                                <TableCell>
-                                    {list.name}
-                                </TableCell>
-                                <TableCell>
-                                    {list.description}
-                                </TableCell>
-                                <TableCell>
-                                    {list.file_name}
-                                </TableCell>
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={facilitiesListTableTooltipTitles.total}
-                                    tableCellText={list.item_count}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={facilitiesListTableTooltipTitles.matched}
-                                    tableCellText={
-                                        sum([
-                                            list.status_counts.MATCHED,
-                                            list.status_counts.CONFIRMED_MATCH,
-                                        ])
-                                    }
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={facilitiesListTableTooltipTitles.error}
-                                    tableCellText={
-                                        sum([
-                                            list.status_counts.ERROR,
-                                            list.status_counts.ERROR_PARSING,
-                                            list.status_counts.ERROR_GEOCODING,
-                                            list.status_counts.ERROR_MATCHING,
-                                        ])
-                                    }
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={
-                                        facilitiesListTableTooltipTitles.potentialMatch
-                                    }
-                                    tableCellText={list.status_counts.POTENTIAL_MATCH}
-                                />
-                                <TableCell padding="dense">
-                                    {list.is_active ? 'Active' : 'Inactive'}
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    }
+                                tableCellText={list.item_count}
+                            />
+                            <FacilityListsTooltipTableCell
+                                tooltipTitle={
+                                    facilitiesListTableTooltipTitles.matched
+                                }
+                                tableCellText={sum([
+                                    list.status_counts.MATCHED,
+                                    list.status_counts.CONFIRMED_MATCH,
+                                ])}
+                            />
+                            <FacilityListsTooltipTableCell
+                                tooltipTitle={
+                                    facilitiesListTableTooltipTitles.error
+                                }
+                                tableCellText={sum([
+                                    list.status_counts.ERROR,
+                                    list.status_counts.ERROR_PARSING,
+                                    list.status_counts.ERROR_GEOCODING,
+                                    list.status_counts.ERROR_MATCHING,
+                                ])}
+                            />
+                            <FacilityListsTooltipTableCell
+                                tooltipTitle={
+                                    facilitiesListTableTooltipTitles.potentialMatch
+                                }
+                                tableCellText={
+                                    list.status_counts.POTENTIAL_MATCH
+                                }
+                            />
+                            <TableCell padding="dense">
+                                {list.is_active ? 'Active' : 'Inactive'}
+                            </TableCell>
+                        </TableRow>
+                    ))}
                     <ShowOnly when={when.noContributorSelected}>
                         <TableRow>
-                            <TableCell colSpan={12} style={{ textAlign: 'center' }}>
+                            <TableCell
+                                colSpan={12}
+                                style={{ textAlign: 'center' }}
+                            >
                                 Select a contributor to see their lists.
                             </TableCell>
                         </TableRow>
                     </ShowOnly>
                     <ShowOnly when={when.contributorHasNoLists}>
                         <TableRow>
-                            <TableCell colSpan={12} style={{ textAlign: 'center' }}>
+                            <TableCell
+                                colSpan={12}
+                                style={{ textAlign: 'center' }}
+                            >
                                 This contributor has no lists.
                             </TableCell>
                         </TableRow>

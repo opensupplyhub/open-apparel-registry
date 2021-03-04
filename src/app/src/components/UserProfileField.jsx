@@ -57,46 +57,36 @@ export default function UserProfileField({
         return (
             <div className="control-panel__group">
                 <div className="form__field">
-                    <label
-                        htmlFor={id}
-                        className="form__label"
-                    >
+                    <label htmlFor={id} className="form__label">
                         {label}
                     </label>
                     <div style={userProfileFieldStyles.viewOnlyStyles}>
-                        {
-                            id === registrationFieldsEnum.website
-                                ? (
-                                    <a
-                                        href={addProtocolToWebsiteURLIfMissing(value)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {value}
-                                    </a>)
-                                : value
-                        }
+                        {id === registrationFieldsEnum.website ? (
+                            <a
+                                href={addProtocolToWebsiteURLIfMissing(value)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {value}
+                            </a>
+                        ) : (
+                            value
+                        )}
                     </div>
                 </div>
             </div>
         );
     }
 
-    const requiredIndicator = required
-        ? (
-            <span style={{ color: 'red' }}>
-                {' *'}
-            </span>)
-        : null;
+    const requiredIndicator = required ? (
+        <span style={{ color: 'red' }}>{' *'}</span>
+    ) : null;
 
     if (type === inputTypesEnum.select) {
         return (
             <div className="control-panel__group">
                 <div className="form__field">
-                    <label
-                        htmlFor={id}
-                        className="form__label"
-                    >
+                    <label htmlFor={id} className="form__label">
                         {label}
                         {requiredIndicator}
                     </label>
@@ -115,15 +105,10 @@ export default function UserProfileField({
     return (
         <div className="control-panel__group">
             <ShowOnly when={!!header}>
-                <div className="form__field-header">
-                    {header}
-                </div>
+                <div className="form__field-header">{header}</div>
             </ShowOnly>
             <div className="form__field">
-                <label
-                    htmlFor={id}
-                    className="form__label"
-                >
+                <label htmlFor={id} className="form__label">
                     {label}
                     {requiredIndicator}
                 </label>

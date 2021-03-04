@@ -161,7 +161,7 @@ export default function DashboardAdjustMatchCard({
     const getNewOARIDFromAdjustData = ({ match_id: matchID }) =>
         get(find(adjustData, { match_id: matchID }), 'new_oar_id', null);
 
-    const createButtonControls = (match) => {
+    const createButtonControls = match => {
         if (getNewOARIDFromAdjustData(match)) {
             return (
                 <Link
@@ -222,29 +222,29 @@ export default function DashboardAdjustMatchCard({
             action,
         } = matchToSplit
             ? {
-                title: `Create a new facility from Match ${get(
-                    matchToSplit,
-                    'match_id',
-                    '',
-                )}?`,
-                subtitle: 'This will create a new facility from:',
-                name: get(matchToSplit, 'name', ''),
-                address: get(matchToSplit, 'address', ''),
-                actionLabel: 'Create facility',
-                action: handleSplitMatch,
-            }
+                  title: `Create a new facility from Match ${get(
+                      matchToSplit,
+                      'match_id',
+                      '',
+                  )}?`,
+                  subtitle: 'This will create a new facility from:',
+                  name: get(matchToSplit, 'name', ''),
+                  address: get(matchToSplit, 'address', ''),
+                  actionLabel: 'Create facility',
+                  action: handleSplitMatch,
+              }
             : {
-                title: `Promote Match ${get(
-                    matchToPromote,
-                    'match_id',
-                    '',
-                )}?`,
-                subtitle: 'This will set the canonical facility info to:',
-                name: get(matchToPromote, 'name', ''),
-                address: get(matchToPromote, 'address', ''),
-                actionLabel: 'Promote match',
-                action: handlePromoteMatch,
-            };
+                  title: `Promote Match ${get(
+                      matchToPromote,
+                      'match_id',
+                      '',
+                  )}?`,
+                  subtitle: 'This will set the canonical facility info to:',
+                  name: get(matchToPromote, 'name', ''),
+                  address: get(matchToPromote, 'address', ''),
+                  actionLabel: 'Promote match',
+                  action: handlePromoteMatch,
+              };
 
         return (
             <>
