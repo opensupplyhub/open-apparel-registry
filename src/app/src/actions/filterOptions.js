@@ -1,19 +1,29 @@
 import { createAction } from 'redux-act';
+import querystring from 'querystring';
 
 import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
     makeGetContributorsURL,
+    makeGetListsURL,
     makeGetContributorTypesURL,
     makeGetCountriesURL,
     mapDjangoChoiceTuplesToSelectOptions,
+    updateListWithLabels,
 } from '../util/util';
+
+import { updateListFilter } from './filters';
 
 export const startFetchContributorOptions = createAction('START_FETCH_CONTRIBUTOR_OPTIONS');
 export const failFetchContributorOptions = createAction('FAIL_FETCH_CONTRIBUTOR_OPTIONS');
 export const completeFetchContributorOptions =
     createAction('COMPLETE_FETCH_CONTRIBUTOR_OPTIONS');
+
+export const startFetchListOptions = createAction('START_FETCH_LIST_OPTIONS');
+export const failFetchListOptions = createAction('FAIL_FETCH_LIST_OPTIONS');
+export const completeFetchListOptions =
+    createAction('COMPLETE_FETCH_LIST_OPTIONS');
 
 export const startFetchContributorTypeOptions =
     createAction('START_FETCH_CONTRIBUTOR_TYPE_OPTIONS');
@@ -40,6 +50,34 @@ export function fetchContributorOptions() {
                 err,
                 'An error prevented fetching contributor options',
                 failFetchContributorOptions,
+            )));
+    };
+}
+
+export function fetchListOptions() {
+    return (dispatch, getState) => {
+        const { filters } = getState();
+        dispatch(startFetchListOptions());
+
+        const url = makeGetListsURL();
+        const qs = `?${querystring.stringify({
+            contributors: filters.contributors.map(c => c.value),
+        })}`;
+
+        return apiRequest
+            .get(`${url}${qs}`)
+            .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
+            .then((data) => {
+                dispatch(completeFetchListOptions(data));
+
+                const payload = updateListWithLabels(filters.lists, data);
+
+                return dispatch(updateListFilter(payload));
+            })
+            .catch(err => dispatch(logErrorAndDispatchFailure(
+                err,
+                'An error prevented fetching list options',
+                failFetchListOptions,
             )));
     };
 }
@@ -81,5 +119,6 @@ export function fetchAllFilterOptions() {
         dispatch(fetchContributorOptions());
         dispatch(fetchContributorTypeOptions());
         dispatch(fetchCountryOptions());
+        dispatch(fetchListOptions());
     };
 }

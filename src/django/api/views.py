@@ -92,6 +92,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListItemsQueryParamsSerializer,
                              FacilityQueryParamsSerializer,
                              FacilityListQueryParamsSerializer,
+                             ContributorListQueryParamsSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              FacilityMatchSerializer,
@@ -523,6 +524,13 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                     type='integer',
                     required=False,
                     description='Contributor ID',
+                ),
+                coreapi.Field(
+                    name='lists',
+                    location='query',
+                    type='integer',
+                    required=False,
+                    description='List ID',
                 ),
                 coreapi.Field(
                     name='contributor_types',
@@ -3438,5 +3446,46 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
     def list(self, request):
         response_data = FacilityActivityReportSerializer(
             FacilityActivityReport.objects.all(), many=True).data
+
+        return Response(response_data)
+
+
+class ContributorFacilityListAutoSchema(AutoSchema):
+    def get_serializer_fields(self, path, method):
+        if method == 'GET':
+            return [
+                coreapi.Field(
+                    name='contributors',
+                    location='query',
+                    description=('The contributor ID.'),
+                    required=True,
+                )
+            ]
+        return super(ContributorFacilityListAutoSchema,
+                     self).get_serializer_fields(path, method)
+
+
+@schema(ContributorFacilityListAutoSchema())
+class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    View active Facility Lists filtered by Contributor.
+    """
+    queryset = FacilityList.objects.filter(source__is_active=True)
+
+    def list(self, request):
+        params = ContributorListQueryParamsSerializer(
+            data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+
+        contributors = params.data.get('contributors', [])
+
+        response_data = [
+            (list.id, list.name)
+            for list
+            in self.queryset.filter(
+                source__contributor__id__in=contributors).order_by('name')
+        ]
 
         return Response(response_data)

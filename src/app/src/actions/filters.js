@@ -11,6 +11,7 @@ export const updateFacilityFreeTextQueryFilter =
     createAction('UPDATE_FACILITY_FREE_TEXT_QUERY_FILTER');
 export const updateContributorFilter = createAction('UPDATE_CONTRIBUTOR_FILTER');
 export const updateContributorTypeFilter = createAction('UPDATE_CONTRIBUTOR_TYPE_FILTER');
+export const updateListFilter = createAction('UPDATE_LIST_FILTER');
 export const updateCountryFilter = createAction('UPDATE_COUNTRY_FILTER');
 export const updateCombineContributorsFilterOption = createAction('UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION');
 export const updateBoundaryFilter = createAction('UPDATE_BOUNDARY_FILTER');
@@ -32,15 +33,28 @@ export function setFiltersFromQueryString(qs = '') {
         // contributor data is loaded.
 
         const filters = createFiltersFromQueryString(qs);
-        const { filterOptions: { contributors: { data } } } = getState();
+        const {
+            filterOptions: {
+                contributors: { data },
+                lists,
+            },
+        } = getState();
 
-        const payload = data.length
+        let payload = data.length
             ? update(filters, {
                 contributors: {
                     $set: updateListWithLabels(filters.contributors, data),
                 },
             })
             : filters;
+
+        payload = lists.data.length
+            ? update(payload, {
+                lists: {
+                    $set: updateListWithLabels(filters.lists, lists.data),
+                },
+            })
+            : payload;
 
         return dispatch(updateAllFilters(payload));
     };

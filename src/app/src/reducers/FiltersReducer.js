@@ -4,6 +4,7 @@ import update from 'immutability-helper';
 import {
     updateFacilityFreeTextQueryFilter,
     updateContributorFilter,
+    updateListFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
     updatePPEFilter,
@@ -33,6 +34,7 @@ const initialState = Object.freeze({
     combineContributors: '',
     boundary: null,
     ppe: '',
+    lists: Object.freeze([]),
 });
 
 export const maybeSetFromQueryString = field => (state, payload) => {
@@ -55,6 +57,7 @@ export default createReducer({
     }),
     [updateContributorFilter]: (state, payload) => update(state, {
         contributors: { $set: payload },
+        lists: { $set: initialState.lists },
     }),
     [updateContributorTypeFilter]: (state, payload) => update(state, {
         contributorTypes: { $set: payload },
@@ -70,6 +73,9 @@ export default createReducer({
     }),
     [updatePPEFilter]: (state, payload) => update(state, {
         ppe: { $set: payload },
+    }),
+    [updateListFilter]: (state, payload) => update(state, {
+        lists: { $set: payload },
     }),
     [resetAllFilters]: (state, payload) => update(initialState, {
         contributors: {

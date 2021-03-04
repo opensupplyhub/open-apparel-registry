@@ -381,6 +381,10 @@ class FacilityQueryParamsSerializer(Serializer):
         child=IntegerField(required=False),
         required=False,
     )
+    lists = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )
     contributor_types = ListField(
         child=CharField(required=False),
         required=False,
@@ -1064,3 +1068,10 @@ class FacilityActivityReportSerializer(ModelSerializer):
             return instance.status_change_by.email
         else:
             return None
+
+
+class ContributorListQueryParamsSerializer(Serializer):
+    contributors = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )

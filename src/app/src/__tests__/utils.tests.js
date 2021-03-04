@@ -244,6 +244,7 @@ it('creates a set of filters from a querystring', () => {
         ],
         contributorTypes: [],
         countries: [],
+        lists: [],
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -268,6 +269,7 @@ it('creates a set of filters from a querystring', () => {
         ],
         contributorTypes: [],
         countries: [],
+        lists: [],
         combineContributors: 'AND',
         boundary: null,
         ppe: '',
@@ -277,6 +279,31 @@ it('creates a set of filters from a querystring', () => {
         createFiltersFromQueryString(combinedContributorsString),
     ).toEqual(expectedCombinedContributorsMatch);
 
+    const listsString = '?contributors=1&lists=2';
+    const expectedListsMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [
+            {
+                value: 1,
+                label: '1',
+            },
+        ],
+        contributorTypes: [],
+        countries: [],
+        lists: [
+            {
+                value: 2,
+                label: '2',
+            },
+        ],
+        combineContributors: '',
+        boundary: null,
+        ppe: '',
+    };
+
+    expect(
+        createFiltersFromQueryString(listsString),
+    ).toEqual(expectedListsMatch);
 
     const typesString = '?contributor_types=Union&contributor_types=Service Provider';
     const expectedTypesMatch = {
@@ -293,6 +320,7 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         countries: [],
+        lists: [],
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -317,6 +345,7 @@ it('creates a set of filters from a querystring', () => {
                 label: 'CN',
             },
         ],
+        lists: [],
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -337,6 +366,7 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         countries: [],
+        lists: [],
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -352,6 +382,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        lists: [],
         combineContributors: '',
         boundary: null,
         ppe: 'true',
