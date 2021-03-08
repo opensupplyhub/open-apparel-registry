@@ -1234,7 +1234,7 @@ class FacilityManager(models.Manager):
         if len(lists):
             facilities_qs = facilities_qs.filter(
                 id__in=(Source.objects.filter(
-                    facilitylistitem__source_id__in=lists).values_list(
+                    facility_list_id__in=lists).values_list(
                         'facilitylistitem__facility', flat=True)))
 
         if boundary is not None:
