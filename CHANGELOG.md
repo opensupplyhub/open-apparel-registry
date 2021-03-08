@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.39.2] - 2021-02-38
+
+### Added
+
+-  Add verbose debug logging to API block checking [#1274](https://github.com/open-apparel-registry/open-apparel-registry/pull/1274)
+
 ## [2.39.1] - 2021-02-02
 
 ### Added
