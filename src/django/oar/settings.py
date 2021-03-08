@@ -253,6 +253,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
+        'api.middleware': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False
+        }
     },
 }
 
