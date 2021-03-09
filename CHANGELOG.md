@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Align Facility Matches [#1243](https://github.com/open-apparel-registry/open-apparel-registry/pull/1243)
 - Update Reject Button Text [#1244](https://github.com/open-apparel-registry/open-apparel-registry/pull/1244)
 - Fix vagrant provisioning failure by pinning pip python version [#1262](https://github.com/open-apparel-registry/open-apparel-registry/pull/1262)
+- Fix list filtering [#1272](https://github.com/open-apparel-registry/open-apparel-registry/pull/1272)
 
 ### Security
 
