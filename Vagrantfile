@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
     ansible.compatibility_mode = "2.0"
     ansible.install = true
     ansible.install_mode = "pip_args_only"
-    ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/2.7/get-pip.py | sudo python"
+    ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | sudo python"
     ansible.pip_args = "ansible==#{ANSIBLE_VERSION}"
     ansible.playbook = "deployment/ansible/open-apparel-registry.yml"
     ansible.galaxy_role_file = "deployment/ansible/roles.yml"
