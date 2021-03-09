@@ -31,11 +31,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+
 - Align Facility Matches [#1243](https://github.com/open-apparel-registry/open-apparel-registry/pull/1243)
 - Update Reject Button Text [#1244](https://github.com/open-apparel-registry/open-apparel-registry/pull/1244)
 - Fix vagrant provisioning failure by pinning pip python version [#1262](https://github.com/open-apparel-registry/open-apparel-registry/pull/1262)
 
 ### Security
+
+- Bump elliptic from 6.5.3 to 6.5.4 in /src/app [#1277](https://github.com/open-apparel-registry/open-apparel-registry/pull/1277)
 
 ## [2.39.2] - 2021-02-38
 
