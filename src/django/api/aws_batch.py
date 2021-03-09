@@ -148,12 +148,28 @@ def submit_jobs(environment, facility_list, skip_parse=False):
     # MATCH
     started = str(datetime.utcnow())
     match_job_id = submit_job('match', depends_on=depends_on)
+    depends_on = [{'jobId': match_job_id}]
     job_ids.append(match_job_id)
     finished = str(datetime.utcnow())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
         'type': 'match',
         'job_id': match_job_id,
+        'error': False,
+        'is_array': False,
+        'started_at': started,
+        'finished_at': finished,
+    })
+
+    # NOTIFY
+    started = str(datetime.utcnow())
+    notify_job_id = submit_job('notify_complete', depends_on=depends_on)
+    job_ids.append(notify_job_id)
+    finished = str(datetime.utcnow())
+    append_processing_result({
+        'action': ProcessingAction.SUBMIT_JOB,
+        'type': 'notify_complete',
+        'job_id': notify_job_id,
         'error': False,
         'is_array': False,
         'started_at': started,
