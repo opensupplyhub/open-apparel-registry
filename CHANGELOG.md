@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.40.0] - 2021-03-10
+
+### Added
+
 - Add a management command to make CSVs from a CSV download [#1214](https://github.com/open-apparel-registry/open-apparel-registry/pull/1214)
 - Add API for reporting a facility as closed or reopened [#1231](https://github.com/open-apparel-registry/open-apparel-registry/pull/1231)
 - Confirm or reject status reports [#1235](https://github.com/open-apparel-registry/open-apparel-registry/pull/1235)
@@ -26,10 +40,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rename Taiwan
   [#1234](https://github.com/open-apparel-registry/open-apparel-registry/pull/1234) [#1238](https://github.com/open-apparel-registry/open-apparel-registry/pull/1238)
 - Update ecsmanage [#1240](https://github.com/open-apparel-registry/open-apparel-registry/pull/1240)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -725,7 +735,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.39.2...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.40.0...HEAD
+[2.40.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.40.0
 [2.39.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.2
 [2.39.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.1
 [2.39.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.0
