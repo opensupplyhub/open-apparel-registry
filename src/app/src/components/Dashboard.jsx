@@ -12,6 +12,7 @@ import DashboardMergeFacilities from './DashboardMergeFacilities';
 import DashboardAdjustFacilityMatches from './DashboardAdjustFacilityMatches';
 import DashboardUpdateFacilityLocation from './DashboardUpdateFacilityLocation';
 import DashboardApiBlocks from './DashboardApiBlocks';
+import DashboardActivityReports from './DashboardActivityReports';
 import DashboardApiBlock from './DashboardApiBlock';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
@@ -30,6 +31,7 @@ import {
     dashboardUpdateFacilityLocationRoute,
     dashboardApiBlocksRoute,
     dashboardApiBlockRoute,
+    dashboardActivityReportsRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -86,6 +88,7 @@ function Dashboard({
                 Update facility location
             </Link>
             <Link to={dashboardApiBlocksRoute}>View API Blocks</Link>
+            <Link to={dashboardActivityReportsRoute}>View Status Reports</Link>
         </div>
     );
 
@@ -170,6 +173,11 @@ function Dashboard({
                             />
                             <Route
                                 exact
+                                path={dashboardActivityReportsRoute}
+                                render={makeClickableDashboardLinkFn('Status Reports')}
+                            />
+                            <Route
+                                exact
                                 path={dashboardRoute}
                                 render={() => 'Dashboard'}
                             />
@@ -240,6 +248,11 @@ function Dashboard({
                         exact
                         path={dashboardApiBlocksRoute}
                         component={DashboardApiBlocks}
+                    />
+                    <Route
+                        exact
+                        path={dashboardActivityReportsRoute}
+                        component={DashboardActivityReports}
                     />
                     <Route
                         exact

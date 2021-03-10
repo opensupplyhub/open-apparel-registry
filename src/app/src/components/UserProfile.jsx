@@ -224,7 +224,13 @@ class UserProfile extends Component {
                 <React.Fragment>
                     <h3>Facility Lists</h3>
                     {profile.facilityLists.map(
-                        list => <FacilityListSummary key={list.id} {...list} />,
+                        list => (
+                            <FacilityListSummary
+                                key={list.id}
+                                contributor={list.contributor_id}
+                                {...list}
+                            />
+                        ),
                     )}
                 </React.Fragment>)
             : null;

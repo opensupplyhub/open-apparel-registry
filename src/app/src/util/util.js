@@ -85,9 +85,15 @@ export const makeDashboardFacilityListsURL = contributorID => `/api/facility-lis
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
 export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
 
+export const makeDashboardActivityReportsURL = () => '/api/facility-activity-reports/';
+export const makeRejectDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/reject/`;
+export const makeConfirmDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/approve/`;
+export const makeCreateDashboardActivityReportURL = oarId => `/api/facilities/${oarId}/report/`;
+
 export const makeAPITokenURL = () => '/api-token-auth/';
 
 export const makeGetContributorsURL = () => '/api/contributors/';
+export const makeGetListsURL = () => '/api/contributor-lists/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
 
@@ -141,18 +147,21 @@ export const createQueryStringFromSearchFilters = ({
     contributors = [],
     contributorTypes = [],
     countries = [],
+    lists = [],
     combineContributors = '',
     boundary = {},
     ppe = '',
-}) => {
+}, withEmbed) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
         contributors: createCompactSortedQuerystringInputObject(contributors),
+        lists: createCompactSortedQuerystringInputObject(lists),
         contributor_types: createCompactSortedQuerystringInputObject(contributorTypes),
         countries: createCompactSortedQuerystringInputObject(countries),
         combine_contributors: combineContributors,
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
         ppe,
+        embed: !withEmbed ? '' : '1',
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
@@ -193,6 +202,7 @@ export const createFiltersFromQueryString = (qs) => {
     const {
         q: facilityFreeTextQuery = '',
         contributors = [],
+        lists = [],
         contributor_types: contributorTypes = [],
         countries = [],
         combine_contributors: combineContributors = '',
@@ -203,6 +213,7 @@ export const createFiltersFromQueryString = (qs) => {
     return Object.freeze({
         facilityFreeTextQuery,
         contributors: createSelectOptionsFromParams(contributors),
+        lists: createSelectOptionsFromParams(lists),
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),
         combineContributors,
@@ -681,3 +692,6 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData => uniq
         return false;
     },
 );
+
+export const getLocationWithoutEmbedParam = () =>
+    window.location.href.replace('&embed=1', '').replace('embed=1', '');

@@ -3,8 +3,9 @@ import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-
 import FacilityListItemsDetailedTableRowCell from './FacilityListItemsDetailedTableRowCell';
+import CellElement from './CellElement';
+import ShowOnly from './ShowOnly';
 
 import {
     confirmFacilityListItemMatch,
@@ -25,50 +26,15 @@ function FacilityListItemsConfirmationTableRow({
     readOnly,
     className,
 }) {
-    const [
-        matchIDs,
-        matchOARIDs,
-        matchNames,
-        matchAddresses,
-        matchConfirmOrRejectFunctions,
-    ] = item.matches.reduce(
-        ([ids, oarIDs, names, addresses, confirmOrRejectFunctions], {
-            id,
-            oar_id, // eslint-disable-line camelcase
-            name,
-            address,
-            status,
-        }) =>
-            Object.freeze([
-                Object.freeze(ids.concat(id)),
-                Object.freeze(oarIDs.concat(oar_id)),
-                Object.freeze(names.concat(name)),
-                Object.freeze(addresses.concat(address)),
-                Object.freeze(confirmOrRejectFunctions.concat(Object.freeze({
-                    confirmMatch: makeConfirmMatchFunction(id),
-                    rejectMatch: makeRejectMatchFunction(id),
-                    id,
-                    status,
-                    matchName: name,
-                    matchAddress: address,
-                    itemName: item.name,
-                    itemAddress: item.address,
-                }))),
-            ]),
-        Object.freeze([
-            Object.freeze([]),
-            Object.freeze([]),
-            Object.freeze([]),
-            Object.freeze([]),
-            Object.freeze([]),
-        ]),
-    );
-
     return (
         <>
             <TableRow
                 hover={false}
-                style={{ background: '#dcfbff', verticalAlign: 'top' }}
+                style={{
+                    background: '#dcfbff',
+                    verticalAlign: 'top',
+                    borderTop: '1px solid #e0e0e0',
+                }}
                 className={className}
             >
                 <TableCell
@@ -76,11 +42,8 @@ function FacilityListItemsConfirmationTableRow({
                     padding="default"
                     style={listTableCellStyles.rowIndexStyles}
                 >
-                    <FacilityListItemsDetailedTableRowCell
-                        title={item.row_index}
-                        stringIsHidden
-                        data={matchIDs}
-                        hasActions={false}
+                    <CellElement
+                        item={item.row_index}
                     />
                 </TableCell>
                 <TableCell
@@ -88,11 +51,8 @@ function FacilityListItemsConfirmationTableRow({
                     padding="default"
                     style={listTableCellStyles.countryNameStyles}
                 >
-                    <FacilityListItemsDetailedTableRowCell
-                        title={item.country_name || ' '}
-                        stringIsHidden
-                        data={matchIDs}
-                        hasActions={false}
+                    <CellElement
+                        item={item.country_name || ' '}
                     />
                 </TableCell>
                 <TableCell
@@ -100,11 +60,8 @@ function FacilityListItemsConfirmationTableRow({
                     style={listTableCellStyles.nameCellStyles}
                     colSpan={2}
                 >
-                    <FacilityListItemsDetailedTableRowCell
-                        title={item.name || ' '}
-                        stringIsHidden
-                        data={matchNames}
-                        hasActions={false}
+                    <CellElement
+                        item={item.name || ' '}
                     />
                 </TableCell>
                 <TableCell
@@ -112,11 +69,8 @@ function FacilityListItemsConfirmationTableRow({
                     style={listTableCellStyles.addressCellStyles}
                     colSpan={2}
                 >
-                    <FacilityListItemsDetailedTableRowCell
-                        title={item.address || ' '}
-                        stringIsHidden
-                        data={matchAddresses}
-                        hasActions={false}
+                    <CellElement
+                        item={item.address || ' '}
                     />
                 </TableCell>
                 <TableCell
@@ -126,70 +80,107 @@ function FacilityListItemsConfirmationTableRow({
                     <FacilityListItemsDetailedTableRowCell
                         title={item.status}
                         stringIsHidden
-                        data={matchConfirmOrRejectFunctions}
                         hasActions={false}
                         fetching={fetching}
                         readOnly={readOnly}
+                        data={[]}
                     />
                 </TableCell>
             </TableRow>
             <TableRow
                 hover={false}
-                style={{ background: '#dcfbff', verticalAlign: 'top' }}
-                className={`${className} STATUS_POTENTIAL_MATCH--SUB-ROW`}
+                style={{ background: '#dcfbff', verticalAlign: 'top', border: 0 }}
+                className={className}
             >
                 <TableCell
-                    align="center"
                     padding="default"
-                    style={listTableCellStyles.rowIndexStyles}
-                />
-                <TableCell
-                    align="center"
-                    padding="default"
-                    style={listTableCellStyles.countryNameStyles}
-                />
-                <TableCell
-                    padding="default"
-                    style={listTableCellStyles.nameCellStyles}
+                    variant="head"
                     colSpan={2}
+                />
+                <TableCell
+                    padding="default"
+                    variant="head"
+                    colSpan={2}
+                    style={listTableCellStyles.headerCellStyles}
                 >
                     <b>Facility Match Name</b>
-                    <FacilityListItemsDetailedTableRowCell
-                        title=" "
-                        stringisHidden={false}
-                        data={matchNames}
-                        hasActions={false}
-                        linkURLs={matchOARIDs.map(makeFacilityDetailLink)}
-                    />
                 </TableCell>
                 <TableCell
                     padding="default"
-                    style={listTableCellStyles.addressCellStyles}
+                    variant="head"
+                    style={listTableCellStyles.headerCellStyles}
                     colSpan={2}
                 >
                     <b>Facility Match Address</b>
-                    <FacilityListItemsDetailedTableRowCell
-                        title=" "
-                        stringIsHidden={false}
-                        data={matchAddresses}
-                        hasActions={false}
-                    />
                 </TableCell>
                 <TableCell
                     padding="default"
-                    style={listTableCellStyles.statusCellStyles}
+                    variant="head"
+                    style={listTableCellStyles.headerCellStyles}
                 >
                     <b>Actions</b>
-                    <FacilityListItemsDetailedTableRowCell
-                        title=" "
-                        stringIsHidden
-                        data={matchConfirmOrRejectFunctions}
-                        hasActions
-                        fetching={fetching}
-                        readOnly={readOnly}
-                    />
                 </TableCell>
             </TableRow>
+            {item.matches.map(({
+                id, status, address, oar_id, name, // eslint-disable-line camelcase
+            }) => (
+                <TableRow
+                    hover={false}
+                    style={{ background: '#dcfbff', verticalAlign: 'top' }}
+                    className={className}
+                    key={id}
+                >
+                    <TableCell
+                        padding="default"
+                        variant="head"
+                        colSpan={2}
+                    />
+                    <TableCell
+                        padding="default"
+                        colSpan={2}
+                        style={listTableCellStyles.nameCellStyles}
+                    >
+                        <CellElement
+                            item={name}
+                            linkURL={makeFacilityDetailLink(oar_id)}
+                        />
+                    </TableCell>
+                    <TableCell
+                        padding="default"
+                        style={listTableCellStyles.addressCellStyles}
+                        colSpan={2}
+                    >
+                        <CellElement
+                            item={address}
+                        />
+                    </TableCell>
+                    <TableCell
+                        padding="default"
+                        variant="head"
+                        style={listTableCellStyles.headerCellStyles}
+                    >
+                        <ShowOnly when={!readOnly}>
+                            {
+                                <CellElement
+                                    item={{
+                                        confirmMatch: makeConfirmMatchFunction(id),
+                                        rejectMatch: makeRejectMatchFunction(id),
+                                        id,
+                                        status,
+                                        matchName: name,
+                                        matchAddress: address,
+                                        itemName: item.name,
+                                        itemAddress: item.address,
+                                    }}
+                                    fetching={fetching}
+                                    hasActions
+                                    stringIsHidden
+                                />
+                            }
+                        </ShowOnly>
+                    </TableCell>
+                </TableRow>
+            ))}
         </>
     );
 }

@@ -24,6 +24,7 @@ export const createFacilityRowFromFeature = (feature, options) => {
             country_name,
             oar_id,
             contributors,
+            is_closed,
         },
         geometry: {
             coordinates: [
@@ -41,6 +42,8 @@ export const createFacilityRowFromFeature = (feature, options) => {
                 : feature.properties[f],
         )
         : [];
+    const closureFields = options && options.includeClosureFields
+        ? [is_closed ? 'CLOSED' : null] : [];
 
     return Object.freeze([
         oar_id,
@@ -51,18 +54,22 @@ export const createFacilityRowFromFeature = (feature, options) => {
         lat,
         lng,
         contributors ? contributors.map(c => c.name).join('|') : '',
-    ].concat(ppeFields));
+    ].concat(ppeFields).concat(closureFields));
 };
 
 export const makeFacilityReducer = options => (acc, next) =>
     acc.concat([createFacilityRowFromFeature(next, options)]);
 
-export const makeHeaderRow = options =>
-    [
-        options && options.includePPEFields
-            ? csvHeaders.concat(PPE_FIELD_NAMES)
-            : csvHeaders,
-    ];
+export const makeHeaderRow = (options) => {
+    let headerRow = csvHeaders;
+    if (options && options.includePPEFields) {
+        headerRow = headerRow.concat(PPE_FIELD_NAMES);
+    }
+    if (options && options.includeClosureFields) {
+        headerRow = headerRow.concat(['is_closed']);
+    }
+    return [headerRow];
+};
 
 export const formatDataForCSV = (facilities, options = {}) =>
     facilities.reduce(

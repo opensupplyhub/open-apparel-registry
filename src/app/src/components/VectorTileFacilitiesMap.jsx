@@ -19,7 +19,10 @@ import PolygonalSearchControl from './PolygonalSearchControl';
 
 import { COUNTRY_CODES } from '../util/constants';
 
-import { makeFacilityDetailLink } from '../util/util';
+import {
+    makeFacilityDetailLink,
+    getLocationWithoutEmbedParam,
+} from '../util/util';
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
@@ -137,7 +140,7 @@ function VectorTileFacilitiesMap({
             </Control>
             <Control position="topright">
                 <CopyToClipboard
-                    text={window.location.href}
+                    text={getLocationWithoutEmbedParam()}
                     onCopy={() => toast('Copied search to clipboard')}
                 >
                     <Button

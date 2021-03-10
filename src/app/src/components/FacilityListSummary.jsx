@@ -15,10 +15,17 @@ const facilityListSummaryStyles = Object.freeze({
 });
 
 
-function FacilityListSummary({ name, description }) {
+function FacilityListSummary({ name, description, id, contributor }) {
     return (
         <div>
-            <p style={facilityListSummaryStyles.nameStyles}>{name}</p>
+            <a
+                style={facilityListSummaryStyles.nameStyles}
+                href={`/?contributors=${contributor}&lists=${id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {name}
+            </a>
             <p style={facilityListSummaryStyles.descriptionStyles}>{description}</p>
         </div>
     );

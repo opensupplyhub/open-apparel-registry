@@ -15,6 +15,7 @@ import {
     CLAIM_A_FACILITY,
     VECTOR_TILE,
     PPE,
+    REPORT_A_FACILITY,
     facilityClaimStatusChoicesEnum,
 } from './constants';
 
@@ -214,7 +215,7 @@ export const filtersPropType = shape({
 export const facilityListItemStatusPropType =
     oneOf(Object.values(facilityListItemStatusChoicesEnum).concat('Status'));
 
-export const featureFlagPropType = oneOf([CLAIM_A_FACILITY, VECTOR_TILE, PPE]);
+export const featureFlagPropType = oneOf([CLAIM_A_FACILITY, VECTOR_TILE, PPE, REPORT_A_FACILITY]);
 
 export const facilityClaimsListPropType = arrayOf(shape({
     created_at: string.isRequired,
@@ -298,4 +299,21 @@ export const apiBlockPropType = shape({
     grace_reason: string,
     until: string.isRequired,
     created_at: string.isReqired,
+});
+
+export const activityReportPropType = shape({
+    approved_at: string,
+    closure_state: string.isRequired,
+    created_at: string.isRequired,
+    facility: string.isRequired,
+    facility_name: string.isReqired,
+    id: number.isRequired,
+    reason_for_report: string.isRequired,
+    reported_by_contributor: string.isRequired,
+    reported_by_user: string.isRequired,
+    status: string.isRequired,
+    status_change_by: string,
+    status_change_date: string,
+    status_change_reason: string,
+    updated_at: string.isRequired,
 });

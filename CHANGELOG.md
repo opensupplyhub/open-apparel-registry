@@ -19,6 +19,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [2.40.0] - 2021-03-10
+
+### Added
+
+- Add a management command to make CSVs from a CSV download [#1214](https://github.com/open-apparel-registry/open-apparel-registry/pull/1214)
+- Add API for reporting a facility as closed or reopened [#1231](https://github.com/open-apparel-registry/open-apparel-registry/pull/1231)
+- Confirm or reject status reports [#1235](https://github.com/open-apparel-registry/open-apparel-registry/pull/1235)
+- Report Facility Status from Facility Details [#1239](https://github.com/open-apparel-registry/open-apparel-registry/pull/1239)
+- Add Report Waffle Switch [#1246](https://github.com/open-apparel-registry/open-apparel-registry/pull/1246)
+- Add Closure to CSV Download [#1249](https://github.com/open-apparel-registry/open-apparel-registry/pull/1249)
+- Manage Embed Parameter [#1257](https://github.com/open-apparel-registry/open-apparel-registry/pull/1257)
+- Send Notification of Facility Report Response [#1250](https://github.com/open-apparel-registry/open-apparel-registry/pull/1250)
+- Render Appropriately in Embed Mode [#1260](https://github.com/open-apparel-registry/open-apparel-registry/pull/1260)
+- Filter Facilities by List [#1264](https://github.com/open-apparel-registry/open-apparel-registry/pull/1264)
+- Assign facilities in Holland the NL country code [#1278](https://github.com/open-apparel-registry/open-apparel-registry/pull/1278)
+
+### Changed
+
+- Rename Taiwan
+  [#1234](https://github.com/open-apparel-registry/open-apparel-registry/pull/1234) [#1238](https://github.com/open-apparel-registry/open-apparel-registry/pull/1238)
+- Update ecsmanage [#1240](https://github.com/open-apparel-registry/open-apparel-registry/pull/1240)
+
+### Fixed
+
+- Align Facility Matches [#1243](https://github.com/open-apparel-registry/open-apparel-registry/pull/1243)
+- Update Reject Button Text [#1244](https://github.com/open-apparel-registry/open-apparel-registry/pull/1244)
+- Fix vagrant provisioning failure by pinning pip python version [#1262](https://github.com/open-apparel-registry/open-apparel-registry/pull/1262)
+- Fix list filtering [#1272](https://github.com/open-apparel-registry/open-apparel-registry/pull/1272)
+
+### Security
+
+- Bump elliptic from 6.5.3 to 6.5.4 in /src/app [#1277](https://github.com/open-apparel-registry/open-apparel-registry/pull/1277)
+
 ## [2.39.2] - 2021-02-38
 
 ### Added
@@ -702,7 +735,9 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.39.0...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.40.0...HEAD
+[2.40.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.40.0
+[2.39.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.2
 [2.39.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.1
 [2.39.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.0
 [2.38.3]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.38.3

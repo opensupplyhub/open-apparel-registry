@@ -18,6 +18,8 @@ const FacilitySidebarSearchTabFacilitiesCount = ({
         <div style={{
             margin: 0,
             verticalAlign: 'center',
+            marginRight: '5px',
+            flex: 1,
         }}
         >
             <p style={{

@@ -35,7 +35,8 @@ from api.models import (FacilityList,
                         ProductType,
                         ProductionType,
                         Source,
-                        ApiBlock)
+                        ApiBlock,
+                        FacilityActivityReport)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code
 from waffle import switch_is_active
@@ -225,9 +226,17 @@ class UserProfileSerializer(ModelSerializer):
 
 
 class FacilityListSummarySerializer(ModelSerializer):
+    contributor_id = SerializerMethodField()
+
     class Meta:
         model = FacilityList
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'description', 'contributor_id')
+
+    def get_contributor_id(self, facility_list):
+        try:
+            return facility_list.source.contributor.id
+        except Contributor.DoesNotExist:
+            return None
 
 
 class FacilityListSerializer(ModelSerializer):
@@ -380,6 +389,10 @@ class FacilityQueryParamsSerializer(Serializer):
         child=IntegerField(required=False),
         required=False,
     )
+    lists = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )
     contributor_types = ListField(
         child=CharField(required=False),
         required=False,
@@ -426,7 +439,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'country_name', 'contributors',
                   'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website')
+                  'ppe_contact_email', 'ppe_website', 'is_closed')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -469,6 +482,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
     other_locations = SerializerMethodField()
     country_name = SerializerMethodField()
     claim_info = SerializerMethodField()
+    activity_reports = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -476,7 +490,8 @@ class FacilityDetailsSerializer(FacilitySerializer):
                   'oar_id', 'other_names', 'other_addresses', 'contributors',
                   'country_name', 'claim_info', 'other_locations',
                   'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website')
+                  'ppe_contact_email', 'ppe_website',  'is_closed',
+                  'activity_reports')
         geo_field = 'location'
 
     def get_other_names(self, facility):
@@ -578,6 +593,10 @@ class FacilityDetailsSerializer(FacilitySerializer):
             }
         except FacilityClaim.DoesNotExist:
             return None
+
+    def get_activity_reports(self, facility):
+        return FacilityActivityReportSerializer(
+            facility.activity_reports(), many=True).data
 
 
 class FacilityCreateBodySerializer(Serializer):
@@ -1027,3 +1046,40 @@ class ApiBlockSerializer(ModelSerializer):
         instance.save()
 
         return instance
+
+
+class FacilityActivityReportSerializer(ModelSerializer):
+    reported_by_user = SerializerMethodField()
+    reported_by_contributor = SerializerMethodField()
+    facility_name = SerializerMethodField()
+    status_change_by = SerializerMethodField()
+
+    class Meta:
+        model = FacilityActivityReport
+        fields = ('facility', 'reported_by_user', 'reported_by_contributor',
+                  'closure_state', 'approved_at', 'status_change_reason',
+                  'status', 'status_change_reason', 'status_change_by',
+                  'status_change_date', 'created_at', 'updated_at', 'id',
+                  'reason_for_report', 'facility_name')
+
+    def get_reported_by_user(self, instance):
+        return instance.reported_by_user.email
+
+    def get_reported_by_contributor(self, instance):
+        return instance.reported_by_contributor.name
+
+    def get_facility_name(self, instance):
+        return instance.facility.name
+
+    def get_status_change_by(self, instance):
+        if instance.status_change_by is not None:
+            return instance.status_change_by.email
+        else:
+            return None
+
+
+class ContributorListQueryParamsSerializer(Serializer):
+    contributors = ListField(
+        child=IntegerField(required=False),
+        required=False,
+    )

@@ -35,6 +35,9 @@ router.register('facility-claims', views.FacilityClaimViewSet,
 router.register('facility-matches', views.FacilityMatchViewSet,
                 'facility-match')
 router.register('api-blocks', views.ApiBlockViewSet, 'api-block')
+router.register('facility-activity-reports',
+                views.FacilityActivityReportViewSet,
+                'facility-activity-report')
 
 public_apis = [
     url(r'^api/', include(router.urls)),
@@ -43,6 +46,9 @@ public_apis = [
     url(r'^api/contributor-types/', views.all_contributor_types,
         name='all_contributor_types'),
     url(r'^api/countries/', views.all_countries, name='all_countries'),
+    url(r'^api/contributor-lists/',
+        views.ContributorFacilityListViewSet.as_view({'get': 'list'}),
+        name='contributor_lists'),
     url(r'^api/log-download/', views.log_download, name='log_download'),
 ]
 

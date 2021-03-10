@@ -29,6 +29,7 @@ import {
 
 import {
     fetchContributorOptions,
+    fetchListOptions,
     fetchContributorTypeOptions,
     fetchCountryOptions,
     fetchAllFilterOptions,
@@ -57,8 +58,10 @@ class FilterSidebar extends Component {
             countriesData,
             fetchFilterOptions,
             fetchContributors,
+            fetchLists,
             fetchContributorTypes,
             fetchCountries,
+            contributors,
         } = this.props;
 
         if (allListsAreEmpty(contributorsData, contributorTypesData, countriesData)) {
@@ -77,7 +80,17 @@ class FilterSidebar extends Component {
             fetchCountries();
         }
 
+        if (contributors && contributors.length) {
+            fetchLists();
+        }
+
         return null;
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.contributors !== prevProps.contributors) {
+            this.props.fetchLists();
+        }
     }
 
     render() {
@@ -88,13 +101,14 @@ class FilterSidebar extends Component {
             makeFacilitiesTabActive,
             vectorTileFeatureIsActive,
             fetchingFeatureFlags,
+            embed,
         } = this.props;
 
         if (fetchingFeatureFlags) {
             return <CircularProgress />;
         }
 
-        const header = (
+        const header = !embed ? (
             <div className="panel-header results-height-subtract">
                 <h3 className="panel-header__title">
                     Open Apparel Registry
@@ -102,11 +116,15 @@ class FilterSidebar extends Component {
                 <p className="panel-header__subheading">
                     The open map of global apparel facilities.
                 </p>
-            </div>);
+            </div>) : null;
 
-        const orderedTabsForSidebar = vectorTileFeatureIsActive
+        let orderedTabsForSidebar = vectorTileFeatureIsActive
             ? filterSidebarTabs.slice().reverse()
             : filterSidebarTabs;
+
+        if (embed) {
+            orderedTabsForSidebar = orderedTabsForSidebar.filter(({ tab }) => tab !== 'guide');
+        }
 
         const activeTabIndex = orderedTabsForSidebar
             .findIndex(({ tab }) => tab === activeFilterSidebarTab);
@@ -219,6 +237,9 @@ function mapStateToProps({
         contributors: {
             data: contributorsData,
         },
+        lists: {
+            data: listsData,
+        },
         contributorTypes: {
             data: contributorTypesData,
         },
@@ -230,14 +251,21 @@ function mapStateToProps({
         flags,
         fetching: fetchingFeatureFlags,
     },
+    embeddedMap: {
+        embed,
+    },
+    filters: { contributors },
 }) {
     return {
         activeFilterSidebarTab,
         contributorsData,
         contributorTypesData,
         countriesData,
+        listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
+        embed,
+        contributors,
     };
 }
 
@@ -248,6 +276,7 @@ function mapDispatchToProps(dispatch) {
         makeFacilitiesTabActive: () => dispatch(makeSidebarFacilitiesTabActive()),
         fetchFilterOptions: () => dispatch(fetchAllFilterOptions()),
         fetchContributors: () => dispatch(fetchContributorOptions()),
+        fetchLists: () => dispatch(fetchListOptions()),
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchCountries: () => dispatch(fetchCountryOptions()),
     };
