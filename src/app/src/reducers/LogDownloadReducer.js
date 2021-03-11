@@ -12,17 +12,23 @@ const initialState = Object.freeze({
     error: null,
 });
 
-export default createReducer({
-    [startLogDownload]: state => update(state, {
-        fetching: { $set: true },
-        error: { $set: initialState.error },
-    }),
-    [failLogDownload]: (state, payload) => update(state, {
-        fetching: { $set: false },
-        error: { $set: payload },
-    }),
-    [completeLogDownload]: state => update(state, {
-        fetching: { $set: false },
-        error: { $set: initialState.error },
-    }),
-}, initialState);
+export default createReducer(
+    {
+        [startLogDownload]: state =>
+            update(state, {
+                fetching: { $set: true },
+                error: { $set: initialState.error },
+            }),
+        [failLogDownload]: (state, payload) =>
+            update(state, {
+                fetching: { $set: false },
+                error: { $set: payload },
+            }),
+        [completeLogDownload]: state =>
+            update(state, {
+                fetching: { $set: false },
+                error: { $set: initialState.error },
+            }),
+    },
+    initialState,
+);

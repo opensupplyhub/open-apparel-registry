@@ -35,25 +35,26 @@ export default function FacilityDetailsSidebarOtherLocations({ data }) {
                                 <span style={otherLocationStyles.spanStyles}>
                                     {location.lng}, {location.lat}
                                 </span>
-                                {location.contributor_id && location.contributor_name && (
-                                    <span
-                                        style={
-                                            otherLocationStyles.spanStyles
-                                        }
-                                    >
-                                        Contributed by{' '}
-                                        <Link
-                                            to={makeProfileRouteLink(
-                                                location.contributor_id,
-                                            )}
-                                            href={makeProfileRouteLink(
-                                                location.contributor_id,
-                                            )}
+                                {location.contributor_id &&
+                                    location.contributor_name && (
+                                        <span
+                                            style={
+                                                otherLocationStyles.spanStyles
+                                            }
                                         >
-                                            {location.contributor_name}
-                                        </Link>
-                                    </span>
-                                )}
+                                            Contributed by{' '}
+                                            <Link
+                                                to={makeProfileRouteLink(
+                                                    location.contributor_id,
+                                                )}
+                                                href={makeProfileRouteLink(
+                                                    location.contributor_id,
+                                                )}
+                                            >
+                                                {location.contributor_name}
+                                            </Link>
+                                        </span>
+                                    )}
                                 {location.notes && (
                                     <span
                                         style={otherLocationStyles.spanStyles}

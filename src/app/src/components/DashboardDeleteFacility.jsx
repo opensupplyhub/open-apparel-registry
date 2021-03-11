@@ -88,16 +88,8 @@ DashboardDeleteFacility.propTypes = {
 
 function mapStateToProps({
     deleteFacility: {
-        facility: {
-            oarID,
-            data,
-            fetching,
-            error,
-        },
-        delete: {
-            fetching: deletingFacility,
-            error: errorDeletingFacility,
-        },
+        facility: { oarID, data, fetching, error },
+        delete: { fetching: deletingFacility, error: errorDeletingFacility },
     },
 }) {
     return {
@@ -112,7 +104,8 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateOARID: e => dispatch(updateFacilityToDeleteOARID(getValueFromEvent(e))),
+        updateOARID: e =>
+            dispatch(updateFacilityToDeleteOARID(getValueFromEvent(e))),
         clearFacility: () => dispatch(clearFacilityToDelete()),
         fetchFacility: () => dispatch(fetchFacilityToDelete()),
         resetDeleteState: () => dispatch(resetDeleteFacilityState()),
@@ -123,4 +116,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardDeleteFacility);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(DashboardDeleteFacility);

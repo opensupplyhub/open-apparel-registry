@@ -55,7 +55,8 @@ export default function VectorTileGridLegend({
         <div id="map-legend" style={legendStyles.legendStyle}>
             <span style={legendStyles.legendLabelStyle}>Fewer facilities</span>
             {gridColorRamp.map((colorDef, i, a) =>
-                legendCell(colorDef[1], 20 - 2 * (a.length - 1 - i)))}
+                legendCell(colorDef[1], 20 - 2 * (a.length - 1 - i)),
+            )}
             <span style={legendStyles.legendLabelStyle}>More facilities</span>
         </div>
     );

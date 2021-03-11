@@ -7,7 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
-const gradient = 'linear-gradient(-90deg, rgb(224, 32, 32) 0%, rgb(163, 79, 165) 21%, rgb(0, 145, 255) 51%, rgb(91, 201, 238) 79%, rgb(109, 212, 0) 100%)';
+const gradient =
+    'linear-gradient(-90deg, rgb(224, 32, 32) 0%, rgb(163, 79, 165) 21%, rgb(0, 145, 255) 51%, rgb(91, 201, 238) 79%, rgb(109, 212, 0) 100%)';
 
 const styles = {
     message: {
@@ -126,6 +127,11 @@ function DashboardActivityReportToast({ error, message, resetReports }) {
         </>
     );
 }
+
+DashboardActivityReportToast.defaultProps = {
+    error: [],
+    message: '',
+};
 
 DashboardActivityReportToast.propTypes = {
     error: arrayOf(string),

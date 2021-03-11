@@ -17,9 +17,7 @@ const pathsToProxy = Object.freeze([
 
 const djangoProxyTarget = Object.freeze({ target: 'http://django:8081' });
 
-const createProxies = app => _.forEach(
-    pathsToProxy,
-    path => app.use(proxy(path, djangoProxyTarget)),
-);
+const createProxies = app =>
+    _.forEach(pathsToProxy, path => app.use(proxy(path, djangoProxyTarget)));
 
 module.exports = createProxies;

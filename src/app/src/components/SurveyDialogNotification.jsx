@@ -30,16 +30,16 @@ const surveyDialogStyles = Object.freeze({
 // confusion.
 const SURVEY_DIALOG_HAS_BEEN_DISPLAYED = 'SURVEY_DIALOG_HAS_BEEN_DISPLAYED';
 const removeSurveyDialogueHasBeenDisplayed = () => {
-    const surveyDialogueHasBeenDisplayed = attempt(
-        () => window.localStorage.getItem(SURVEY_DIALOG_HAS_BEEN_DISPLAYED),
+    const surveyDialogueHasBeenDisplayed = attempt(() =>
+        window.localStorage.getItem(SURVEY_DIALOG_HAS_BEEN_DISPLAYED),
     );
 
-    if (!isError(surveyDialogueHasBeenDisplayed) &&
-        !!surveyDialogueHasBeenDisplayed) {
-        attempt(
-            () => window.localStorage.removeItem(
-                SURVEY_DIALOG_HAS_BEEN_DISPLAYED,
-            ),
+    if (
+        !isError(surveyDialogueHasBeenDisplayed) &&
+        !!surveyDialogueHasBeenDisplayed
+    ) {
+        attempt(() =>
+            window.localStorage.removeItem(SURVEY_DIALOG_HAS_BEEN_DISPLAYED),
         );
     }
 };
@@ -54,25 +54,28 @@ const currentDate = moment();
 
 const SURVEY_DIALOG_DISMISSED_DATE = 'SURVEY_DIALOG_DISMISSED_DATE';
 
-const trySetDialogHasBeenDisplayedToLocalStorage = () => attempt(
-    () => window.localStorage.setItem(
-        SURVEY_DIALOG_DISMISSED_DATE,
-        currentDate.format(dateFormat),
-    ),
-);
-
-const dialogDateIsNotSavedAndCurrentInLocalStorage = () => {
-    const result = attempt(
-        () => window.localStorage.getItem(SURVEY_DIALOG_DISMISSED_DATE),
+const trySetDialogHasBeenDisplayedToLocalStorage = () =>
+    attempt(() =>
+        window.localStorage.setItem(
+            SURVEY_DIALOG_DISMISSED_DATE,
+            currentDate.format(dateFormat),
+        ),
     );
 
-    return isError(result) || moment(result).isBefore(surveyStartDate) || !result;
+const dialogDateIsNotSavedAndCurrentInLocalStorage = () => {
+    const result = attempt(() =>
+        window.localStorage.getItem(SURVEY_DIALOG_DISMISSED_DATE),
+    );
+
+    return (
+        isError(result) || moment(result).isBefore(surveyStartDate) || !result
+    );
 };
 
 export default function SurveyDialogNotification() {
     const [dialogIsOpen, setDialogIsOpen] = useState(
         currentDate.isSameOrAfter(surveyStartDate) &&
-        currentDate.isBefore(surveyEndDate) &&
+            currentDate.isBefore(surveyEndDate) &&
             dialogDateIsNotSavedAndCurrentInLocalStorage(),
     );
 
@@ -95,8 +98,8 @@ export default function SurveyDialogNotification() {
                             based on user feedback.
                         </Typography>
                         <Typography style={surveyDialogStyles.contentStyles}>
-                            Got something you&#39;d like to see on the tool? Share
-                            your feedback through our survey:{' '}
+                            Got something you&#39;d like to see on the tool?
+                            Share your feedback through our survey:{' '}
                             <a
                                 href={surveyURL}
                                 target="_blank"

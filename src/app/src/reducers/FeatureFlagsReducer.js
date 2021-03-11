@@ -13,16 +13,24 @@ const initialState = Object.freeze({
     flags: Object.freeze({}),
 });
 
-export default createReducer({
-    [startFetchFeatureFlags]: state => update(state, {
-        fetching: { $set: true },
-    }),
-    [failFetchFeatureFlags]: state => update(state, {
-        fetching: { $set: false },
-    }),
-    [clearFeatureFlags]: () => initialState,
-    [completeFetchFeatureFlags]: (state, data) => Object.freeze(update(state, {
-        fetching: { $set: false },
-        flags: { $set: data },
-    })),
-}, initialState);
+export default createReducer(
+    {
+        [startFetchFeatureFlags]: state =>
+            update(state, {
+                fetching: { $set: true },
+            }),
+        [failFetchFeatureFlags]: state =>
+            update(state, {
+                fetching: { $set: false },
+            }),
+        [clearFeatureFlags]: () => initialState,
+        [completeFetchFeatureFlags]: (state, data) =>
+            Object.freeze(
+                update(state, {
+                    fetching: { $set: false },
+                    flags: { $set: data },
+                }),
+            ),
+    },
+    initialState,
+);

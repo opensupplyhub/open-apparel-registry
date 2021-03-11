@@ -15,42 +15,61 @@ import {
 
 import { updateListFilter } from './filters';
 
-export const startFetchContributorOptions = createAction('START_FETCH_CONTRIBUTOR_OPTIONS');
-export const failFetchContributorOptions = createAction('FAIL_FETCH_CONTRIBUTOR_OPTIONS');
-export const completeFetchContributorOptions =
-    createAction('COMPLETE_FETCH_CONTRIBUTOR_OPTIONS');
+export const startFetchContributorOptions = createAction(
+    'START_FETCH_CONTRIBUTOR_OPTIONS',
+);
+export const failFetchContributorOptions = createAction(
+    'FAIL_FETCH_CONTRIBUTOR_OPTIONS',
+);
+export const completeFetchContributorOptions = createAction(
+    'COMPLETE_FETCH_CONTRIBUTOR_OPTIONS',
+);
 
 export const startFetchListOptions = createAction('START_FETCH_LIST_OPTIONS');
 export const failFetchListOptions = createAction('FAIL_FETCH_LIST_OPTIONS');
-export const completeFetchListOptions =
-    createAction('COMPLETE_FETCH_LIST_OPTIONS');
+export const completeFetchListOptions = createAction(
+    'COMPLETE_FETCH_LIST_OPTIONS',
+);
 
-export const startFetchContributorTypeOptions =
-    createAction('START_FETCH_CONTRIBUTOR_TYPE_OPTIONS');
-export const failFetchContributorTypeOptions =
-    createAction('FAIL_FETCH_CONTRIBUTOR_TYPE_OPTIONS');
-export const completeFetchContributorTypeOptions =
-    createAction('COMPLETE_FETCH_CONTRIBUTOR_TYPE_OPTIONS');
+export const startFetchContributorTypeOptions = createAction(
+    'START_FETCH_CONTRIBUTOR_TYPE_OPTIONS',
+);
+export const failFetchContributorTypeOptions = createAction(
+    'FAIL_FETCH_CONTRIBUTOR_TYPE_OPTIONS',
+);
+export const completeFetchContributorTypeOptions = createAction(
+    'COMPLETE_FETCH_CONTRIBUTOR_TYPE_OPTIONS',
+);
 
-export const startFetchCountryOptions = createAction('START_FETCH_COUNTRY_OPTIONS');
-export const failFetchCountryOptions = createAction('FAIL_FETCH_COUNTRY_OPTIONS');
-export const completeFetchCountryOptions = createAction('COMPLETE_FETCH_COUNTRY_OPTIONS');
+export const startFetchCountryOptions = createAction(
+    'START_FETCH_COUNTRY_OPTIONS',
+);
+export const failFetchCountryOptions = createAction(
+    'FAIL_FETCH_COUNTRY_OPTIONS',
+);
+export const completeFetchCountryOptions = createAction(
+    'COMPLETE_FETCH_COUNTRY_OPTIONS',
+);
 
 export const resetFilterOptions = createAction('RESET_FILTER_OPTIONS');
 
 export function fetchContributorOptions() {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchContributorOptions());
 
         return apiRequest
             .get(makeGetContributorsURL())
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
             .then(data => dispatch(completeFetchContributorOptions(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching contributor options',
-                failFetchContributorOptions,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching contributor options',
+                        failFetchContributorOptions,
+                    ),
+                ),
+            );
     };
 }
 
@@ -67,55 +86,67 @@ export function fetchListOptions() {
         return apiRequest
             .get(`${url}${qs}`)
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
-            .then((data) => {
+            .then(data => {
                 dispatch(completeFetchListOptions(data));
 
                 const payload = updateListWithLabels(filters.lists, data);
 
                 return dispatch(updateListFilter(payload));
             })
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching list options',
-                failFetchListOptions,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching list options',
+                        failFetchListOptions,
+                    ),
+                ),
+            );
     };
 }
 
 export function fetchContributorTypeOptions() {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchContributorTypeOptions());
 
         return apiRequest
             .get(makeGetContributorTypesURL())
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
             .then(data => dispatch(completeFetchContributorTypeOptions(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching contributor type options',
-                failFetchContributorTypeOptions,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching contributor type options',
+                        failFetchContributorTypeOptions,
+                    ),
+                ),
+            );
     };
 }
 
 export function fetchCountryOptions() {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchCountryOptions());
 
         return apiRequest
             .get(makeGetCountriesURL())
             .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
             .then(data => dispatch(completeFetchCountryOptions(data)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching country options',
-                failFetchCountryOptions,
-            )));
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching country options',
+                        failFetchCountryOptions,
+                    ),
+                ),
+            );
     };
 }
 
 export function fetchAllFilterOptions() {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(fetchContributorOptions());
         dispatch(fetchContributorTypeOptions());
         dispatch(fetchCountryOptions());

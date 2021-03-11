@@ -30,15 +30,9 @@ import { logDownload } from '../actions/logDownload';
 
 import { facilityCollectionPropType } from '../util/propTypes';
 
-import {
-    authLoginFormRoute,
-    authRegisterFormRoute,
-} from '../util/constants';
+import { authLoginFormRoute, authRegisterFormRoute } from '../util/constants';
 
-import {
-    makeFacilityDetailLink,
-    getValueFromEvent,
-} from '../util/util';
+import { makeFacilityDetailLink, getValueFromEvent } from '../util/util';
 
 import COLOURS from '../util/COLOURS';
 
@@ -49,29 +43,24 @@ const SEARCH_TERM_INPUT = 'SEARCH_TERM_INPUT';
 const caseInsensitiveIncludes = (target, test) =>
     includes(lowerCase(target), lowerCase(test));
 
-const sortFacilitiesAlphabeticallyByName = data => data
-    .slice()
-    .sort((
-        {
-            properties: {
-                name: firstFacilityName,
-            },
-        },
-        {
-            properties: {
-                name: secondFacilityName,
-            },
-        },
-    ) => {
-        const a = lowerCase(firstFacilityName);
-        const b = lowerCase(secondFacilityName);
+const sortFacilitiesAlphabeticallyByName = data =>
+    data
+        .slice()
+        .sort(
+            (
+                { properties: { name: firstFacilityName } },
+                { properties: { name: secondFacilityName } },
+            ) => {
+                const a = lowerCase(firstFacilityName);
+                const b = lowerCase(secondFacilityName);
 
-        if (a === b) {
-            return 0;
-        }
+                if (a === b) {
+                    return 0;
+                }
 
-        return (a < b) ? -1 : 1;
-    });
+                return a < b ? -1 : 1;
+            },
+        );
 
 const facilitiesTabStyles = Object.freeze({
     noResultsTextStyles: Object.freeze({
@@ -126,7 +115,9 @@ function NonVectorTileFilterSidebarFacilitiesTab({
     updateFilterText,
     handleDownload,
 }) {
-    const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(false);
+    const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
+        false,
+    );
     const [requestedDownload, setRequestedDownload] = useState(false);
 
     useEffect(() => {
@@ -216,65 +207,57 @@ function NonVectorTileFilterSidebarFacilitiesTab({
     }
 
     const filteredFacilities = filterText
-        ? facilities
-            .filter(({
-                properties: {
-                    address,
-                    name,
-                    country_name: countryName,
-                },
-            }) => caseInsensitiveIncludes(address, filterText)
-                || caseInsensitiveIncludes(name, filterText)
-                || caseInsensitiveIncludes(countryName, filterText))
+        ? facilities.filter(
+              ({ properties: { address, name, country_name: countryName } }) =>
+                  caseInsensitiveIncludes(address, filterText) ||
+                  caseInsensitiveIncludes(name, filterText) ||
+                  caseInsensitiveIncludes(countryName, filterText),
+          )
         : facilities;
 
-    const orderedFacilities =
-        sortFacilitiesAlphabeticallyByName(filteredFacilities);
+    const orderedFacilities = sortFacilitiesAlphabeticallyByName(
+        filteredFacilities,
+    );
 
     const facilitiesCount = get(data, 'count', null);
 
-    const headerDisplayString = facilitiesCount && (facilitiesCount !== filteredFacilities.length)
-        ? `Displaying ${filteredFacilities.length} facilities of ${facilitiesCount} results`
-        : `Displaying ${filteredFacilities.length} facilities`;
+    const headerDisplayString =
+        facilitiesCount && facilitiesCount !== filteredFacilities.length
+            ? `Displaying ${filteredFacilities.length} facilities of ${facilitiesCount} results`
+            : `Displaying ${filteredFacilities.length} facilities`;
 
     const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
-    const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
+    const RegisterLink = props => (
+        <Link to={authRegisterFormRoute} {...props} />
+    );
 
     const listHeaderInsetComponent = (
-        <div style={facilitiesTabStyles.listHeaderStyles} className="results-height-subtract">
-            <Typography
-                variant="subheading"
-                align="center"
-            >
-                <div
-                    style={facilitiesTabStyles.titleRowStyles}
-                >
+        <div
+            style={facilitiesTabStyles.listHeaderStyles}
+            className="results-height-subtract"
+        >
+            <Typography variant="subheading" align="center">
+                <div style={facilitiesTabStyles.titleRowStyles}>
                     {headerDisplayString}
                     <Button
                         variant="outlined"
                         color="primary"
                         styles={facilitiesTabStyles.listHeaderButtonStyles}
-                        onClick={
-                            () => {
-                                if (user) {
-                                    setRequestedDownload(true);
-                                    handleDownload();
-                                } else {
-                                    setLoginRequiredDialogIsOpen(true);
-                                }
+                        onClick={() => {
+                            if (user) {
+                                setRequestedDownload(true);
+                                handleDownload();
+                            } else {
+                                setLoginRequiredDialogIsOpen(true);
                             }
-                        }
+                        }}
                     >
                         Download CSV
                     </Button>
                 </div>
             </Typography>
             <div style={facilitiesTabStyles.listHeaderTextSearchStyles}>
-                <label
-                    htmlFor={SEARCH_TERM_INPUT}
-                >
-                    Filter results
-                </label>
+                <label htmlFor={SEARCH_TERM_INPUT}>Filter results</label>
                 <ControlledTextInput
                     id={SEARCH_TERM_INPUT}
                     value={filterText}
@@ -285,10 +268,9 @@ function NonVectorTileFilterSidebarFacilitiesTab({
         </div>
     );
 
-    const nonResultListComponentHeight = (
-        Array.from(document.getElementsByClassName('results-height-subtract'))
-            .reduce((sum, x) => sum + x.offsetHeight, 0)
-    );
+    const nonResultListComponentHeight = Array.from(
+        document.getElementsByClassName('results-height-subtract'),
+    ).reduce((sum, x) => sum + x.offsetHeight, 0);
 
     const resultListHeight = windowHeight - nonResultListComponentHeight;
 
@@ -299,67 +281,75 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                 <List style={facilitiesTabStyles.listStyles}>
                     <InfiniteAnyHeight
                         containerHeight={resultListHeight}
-                        list={
-                            orderedFacilities
-                                .map(({
-                                    properties: {
-                                        address,
-                                        name,
-                                        country_name: countryName,
-                                        oar_id: oarID,
-                                    },
-                                }) => (
-                                    <Fragment key={oarID}>
-                                        <Divider />
-                                        <ListItem
-                                            key={oarID}
-                                            style={facilitiesTabStyles.listItemStyles}
+                        list={orderedFacilities.map(
+                            ({
+                                properties: {
+                                    address,
+                                    name,
+                                    country_name: countryName,
+                                    oar_id: oarID,
+                                },
+                            }) => (
+                                <Fragment key={oarID}>
+                                    <Divider />
+                                    <ListItem
+                                        key={oarID}
+                                        style={
+                                            facilitiesTabStyles.listItemStyles
+                                        }
+                                    >
+                                        <Link
+                                            to={{
+                                                pathname: makeFacilityDetailLink(
+                                                    oarID,
+                                                ),
+                                                state: {
+                                                    panMapToFacilityDetails: true,
+                                                },
+                                            }}
+                                            href={makeFacilityDetailLink(oarID)}
+                                            style={
+                                                facilitiesTabStyles.linkStyles
+                                            }
                                         >
-                                            <Link
-                                                to={{
-                                                    pathname: makeFacilityDetailLink(oarID),
-                                                    state: {
-                                                        panMapToFacilityDetails: true,
-                                                    },
-                                                }}
-                                                href={makeFacilityDetailLink(oarID)}
-                                                style={facilitiesTabStyles.linkStyles}
-                                            >
-                                                <ListItemText
-                                                    primary={`${name} - ${countryName}`}
-                                                    secondary={address}
-                                                />
-                                            </Link>
-                                        </ListItem>
-                                    </Fragment>))
-                        }
+                                            <ListItemText
+                                                primary={`${name} - ${countryName}`}
+                                                secondary={address}
+                                            />
+                                        </Link>
+                                    </ListItem>
+                                </Fragment>
+                            ),
+                        )}
                     />
                 </List>
             </div>
             <Dialog open={loginRequiredDialogIsOpen}>
-                { loginRequiredDialogIsOpen ? (
+                {loginRequiredDialogIsOpen ? (
                     <>
-                        <DialogTitle>
-                          Log In To Download
-                        </DialogTitle>
+                        <DialogTitle>Log In To Download</DialogTitle>
                         <DialogContent>
                             <Typography>
-                              You must log in with an Open Apparel Registry
-                              account before downloading your search results.
+                                You must log in with an Open Apparel Registry
+                                account before downloading your search results.
                             </Typography>
                         </DialogContent>
                         <DialogActions>
                             <Button
                                 variant="outlined"
                                 color="secondary"
-                                onClick={() => setLoginRequiredDialogIsOpen(false)}
+                                onClick={() =>
+                                    setLoginRequiredDialogIsOpen(false)
+                                }
                             >
                                 Cancel
                             </Button>
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={() => setLoginRequiredDialogIsOpen(false)}
+                                onClick={() =>
+                                    setLoginRequiredDialogIsOpen(false)
+                                }
                                 component={RegisterLink}
                             >
                                 Register
@@ -367,7 +357,9 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={() => setLoginRequiredDialogIsOpen(false)}
+                                onClick={() =>
+                                    setLoginRequiredDialogIsOpen(false)
+                                }
                                 component={LoginLink}
                             >
                                 Log In
@@ -402,28 +394,16 @@ NonVectorTileFilterSidebarFacilitiesTab.propTypes = {
 
 function mapStateToProps({
     auth: {
-        user: {
-            user,
-        },
+        user: { user },
     },
     facilities: {
-        facilities: {
-            data,
-            error,
-            fetching,
-        },
+        facilities: { data, error, fetching },
     },
     ui: {
-        facilitiesSidebarTabSearch: {
-            filterText,
-        },
-        window: {
-            innerHeight: windowHeight,
-        },
+        facilitiesSidebarTabSearch: { filterText },
+        window: { innerHeight: windowHeight },
     },
-    logDownload: {
-        error: logDownloadError,
-    },
+    logDownload: { error: logDownloadError },
 }) {
     return {
         data,
@@ -440,7 +420,9 @@ function mapDispatchToProps(dispatch) {
     return {
         returnToSearchTab: () => dispatch(makeSidebarSearchTabActive()),
         updateFilterText: e =>
-            dispatch((updateSidebarFacilitiesTabTextFilter(getValueFromEvent(e)))),
+            dispatch(
+                updateSidebarFacilitiesTabTextFilter(getValueFromEvent(e)),
+            ),
         handleDownload: () => dispatch(logDownload()),
     };
 }

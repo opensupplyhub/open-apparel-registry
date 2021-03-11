@@ -9,12 +9,10 @@ const ContributeHeader = memo(() => (
         <div className="control-panel__group">
             <div className="form__field">
                 <p className="form__label">
-                    Download the OAR Contributor Template and
-                    copy and paste your list into the template.
+                    Download the OAR Contributor Template and copy and paste
+                    your list into the template.
                 </p>
-                <p>
-                    There are two Contributor Template options:
-                </p>
+                <p>There are two Contributor Template options:</p>
                 <ol>
                     <li>
                         <strong>Standard template:</strong> this is for all
@@ -29,13 +27,11 @@ const ContributeHeader = memo(() => (
                         gowns etc
                     </li>
                 </ol>
-                <p className="form__label">
-                    Guidance for all uploads
-                </p>
+                <p className="form__label">Guidance for all uploads</p>
                 <ul className="helper-list">
                     <li className="helper-list__item">
-                        Do not change the column heading titles
-                        in the first row.
+                        Do not change the column heading titles in the first
+                        row.
                     </li>
                     <li className="helper-list__item">
                         Once reviewed for style guidance, delete the row of
@@ -67,12 +63,10 @@ const ContributeHeader = memo(() => (
                         Country names must be translated into English in order
                         to be recognised by the system.
                     </li>
+                    <li className="helper-list__item">File size limit: 5MB</li>
                     <li className="helper-list__item">
-                        File size limit: 5MB
-                    </li>
-                    <li className="helper-list__item">
-                        Save your file as an Excel file (.xls, .xlsx)
-                        or as a CSV UTF-8 (.csv)
+                        Save your file as an Excel file (.xls, .xlsx) or as a
+                        CSV UTF-8 (.csv)
                     </li>
                     <li className="helper-list__item">
                         Once your upload has been processed, navigate to the “My
@@ -86,9 +80,11 @@ const ContributeHeader = memo(() => (
                             href="https://info.openapparel.org/faq/"
                             target="_blank"
                             rel="noopener noreferrer"
-                        >{' '}
+                        >
+                            {' '}
                             FAQs
-                        </a>.
+                        </a>
+                        .
                     </li>
                 </ul>
                 <div style={{ margin: '20px 0' }}>

@@ -51,8 +51,10 @@ export const profileFieldsEnum = Object.freeze({
     [registrationFieldsEnum.name]: registrationFieldsEnum.name,
     [registrationFieldsEnum.description]: registrationFieldsEnum.description,
     [registrationFieldsEnum.wesbite]: registrationFieldsEnum.website,
-    [registrationFieldsEnum.contributorType]: registrationFieldsEnum.contributorType,
-    [registrationFieldsEnum.otherContributorType]: registrationFieldsEnum.otherContributorType,
+    [registrationFieldsEnum.contributorType]:
+        registrationFieldsEnum.contributorType,
+    [registrationFieldsEnum.otherContributorType]:
+        registrationFieldsEnum.otherContributorType,
     currentPassword: 'currentPassword',
     newPassword: 'newPassword',
     confirmNewPassword: 'confirmNewPassword',
@@ -141,7 +143,8 @@ const accountConfirmPasswordField = Object.freeze({
 const accountCurrentPasswordField = Object.freeze({
     id: profileFieldsEnum.currentPassword,
     label: 'Current Password',
-    header: 'If you do not need to change your password leave these three password fields empty.',
+    header:
+        'If you do not need to change your password leave these three password fields empty.',
     type: inputTypesEnum.password,
     modelFieldName: 'current_password',
     hideOnViewOnlyProfile: true,
@@ -230,8 +233,10 @@ export const dashboardApiBlockRoute = '/dashboard/apiblocks/:blockId';
 export const dashboardClaimsRoute = '/dashboard/claims';
 export const dashboardDeleteFacilityRoute = '/dashboard/deletefacility';
 export const dashboardMergeFacilitiesRoute = '/dashboard/mergefacilities';
-export const dashboardAdjustFacilityMatchesRoute = '/dashboard/adjustfacilitymatches';
-export const dashboardUpdateFacilityLocationRoute = '/dashboard/updatefacilitylocation';
+export const dashboardAdjustFacilityMatchesRoute =
+    '/dashboard/adjustfacilitymatches';
+export const dashboardUpdateFacilityLocationRoute =
+    '/dashboard/updatefacilitylocation';
 export const dashboardActivityReportsRoute = '/dashboard/activityreports';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
@@ -246,7 +251,7 @@ export const contributeFieldsEnum = Object.freeze({
 export const contributeFileName = Object.freeze({
     id: contributeFieldsEnum.name,
     label: 'Enter the name for this facility list',
-    hint: 'example: \'Alpha Brand Facility List June 2018\'',
+    hint: "example: 'Alpha Brand Facility List June 2018'",
     type: inputTypesEnum.text,
     placeholder: 'Facility List Name',
 });
@@ -415,11 +420,14 @@ export const ENTER_KEY = 'Enter';
 export const facilitiesListTableTooltipTitles = Object.freeze({
     total: 'Total number of items in this list.',
     uploaded: 'Number of items that have been uploaded but not yet processed.',
-    parsed: 'Number of items that have had their addresses parsed but have not yet been geocoded.',
+    parsed:
+        'Number of items that have had their addresses parsed but have not yet been geocoded.',
     geocoded: 'Number of items that have been geocoded but not yet matched.',
-    matched: 'Number of items that have been matched with an existing facility or created a new facility.',
+    matched:
+        'Number of items that have been matched with an existing facility or created a new facility.',
     error: 'Number of items that have encountered errors during processing',
-    potentialMatch: 'Number of items with potential matches to confirm or reject.',
+    potentialMatch:
+        'Number of items with potential matches to confirm or reject.',
     deleted: 'Number of items where the related facility has been deleted.',
 });
 

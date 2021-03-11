@@ -29,7 +29,11 @@ const styles = {
 const currentDate = moment();
 const ALL_CONTRIBUTORS = { value: '', label: 'All Contributors' };
 
-function DashboardApiBlocks({ dashboardApiBlocks: { apiBlocks }, fetchApiBlocks, push }) {
+function DashboardApiBlocks({
+    dashboardApiBlocks: { apiBlocks },
+    fetchApiBlocks,
+    push,
+}) {
     const [contributor, setContributor] = useState(ALL_CONTRIBUTORS);
 
     useEffect(() => {
@@ -37,7 +41,10 @@ function DashboardApiBlocks({ dashboardApiBlocks: { apiBlocks }, fetchApiBlocks,
     }, [fetchApiBlocks]);
 
     const contributors = [
-        ...uniqWith(apiBlocks.data, (a, b) => a.contributor === b.contributor).map(block => ({
+        ...uniqWith(
+            apiBlocks.data,
+            (a, b) => a.contributor === b.contributor,
+        ).map(block => ({
             value: block.contributor,
             label: block.contributor,
         })),
@@ -45,12 +52,15 @@ function DashboardApiBlocks({ dashboardApiBlocks: { apiBlocks }, fetchApiBlocks,
     ];
 
     const sortedApiBlocks = apiBlocks.data.sort(
-        (a, b) => new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf(),
+        (a, b) =>
+            new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf(),
     );
 
     const contributorApiBlocks =
         contributor.value.length > 0
-            ? sortedApiBlocks.filter(block => contributor.value === block.contributor)
+            ? sortedApiBlocks.filter(
+                  block => contributor.value === block.contributor,
+              )
             : sortedApiBlocks;
 
     const filteredApiBlocks = sortedApiBlocks.filter(
@@ -125,7 +135,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(DashboardApiBlocks);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardApiBlocks);

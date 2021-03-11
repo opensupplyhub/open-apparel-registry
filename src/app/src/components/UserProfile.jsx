@@ -19,11 +19,7 @@ import COLOURS from '../util/COLOURS';
 
 import '../styles/css/specialStates.css';
 
-import {
-    profileFieldsEnum,
-    profileFormFields,
-    OTHER,
-} from '../util/constants';
+import { profileFieldsEnum, profileFormFields, OTHER } from '../util/constants';
 
 import {
     userPropType,
@@ -86,9 +82,7 @@ class UserProfile extends Component {
     componentDidUpdate(prevProps) {
         const {
             match: {
-                params: {
-                    id,
-                },
+                params: { id },
             },
             fetchProfile,
             resetProfile,
@@ -128,9 +122,7 @@ class UserProfile extends Component {
             submitFormOnEnterKeyPress,
             errorFetchingProfile,
             match: {
-                params: {
-                    id,
-                },
+                params: { id },
             },
         } = this.props;
 
@@ -147,7 +139,7 @@ class UserProfile extends Component {
         }
 
         const isEditableProfile =
-            (user && [profile.id, Number(id)].every(val => val === user.id));
+            user && [profile.id, Number(id)].every(val => val === user.id);
 
         const profileInputs = profileFormFields
             // Only show the name field on the profile page of the current user.
@@ -173,82 +165,76 @@ class UserProfile extends Component {
                     hideOnViewOnlyProfile={field.hideOnViewOnlyProfile}
                     isEditableProfile={isEditableProfile}
                     submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
-                />));
-
+                />
+            ));
 
         const title = (
             <React.Fragment>
                 {isEditableProfile ? 'My Profile' : profile.name}
                 <ShowOnly when={profile.isVerified}>
-                    <span title="Verified" style={profileStyles.badgeVerifiedStyles}>
+                    <span
+                        title="Verified"
+                        style={profileStyles.badgeVerifiedStyles}
+                    >
                         <BadgeVerified color={COLOURS.NAVY_BLUE} />
                     </span>
                 </ShowOnly>
-            </React.Fragment>);
+            </React.Fragment>
+        );
 
-        const showErrorMessages = isEditableProfile
-            && errorsUpdatingProfile
-            && errorsUpdatingProfile.length;
+        const showErrorMessages =
+            isEditableProfile &&
+            errorsUpdatingProfile &&
+            errorsUpdatingProfile.length;
 
-        const errorMessages = showErrorMessages
-            ? (
-                <ul style={profileStyles.errorMessagesStyles}>
-                    {
-                        errorsUpdatingProfile
-                            .map(error => (
-                                <li key={error}>
-                                    {error}
-                                </li>))
+        const errorMessages = showErrorMessages ? (
+            <ul style={profileStyles.errorMessagesStyles}>
+                {errorsUpdatingProfile.map(error => (
+                    <li key={error}>{error}</li>
+                ))}
+            </ul>
+        ) : null;
+
+        const submitButton = isEditableProfile ? (
+            <div style={profileStyles.submitButton}>
+                <Button
+                    text="Save Changes"
+                    onClick={updateProfile}
+                    disabled={
+                        (!isEditableProfile && fetching) || updatingProfile
                     }
-                </ul>)
-            : null;
+                    color="primary"
+                    variant="contained"
+                    disableRipple
+                >
+                    Save Changes
+                </Button>
+            </div>
+        ) : null;
 
-        const submitButton = isEditableProfile
-            ? (
-                <div style={profileStyles.submitButton}>
-                    <Button
-                        text="Save Changes"
-                        onClick={updateProfile}
-                        disabled={(!isEditableProfile && fetching) || updatingProfile}
-                        color="primary"
-                        variant="contained"
-                        disableRipple
-                    >
-                        Save Changes
-                    </Button>
-                </div>)
-            : null;
-
-        const facilityLists = !isEditableProfile && profile.facilityLists.length > 0
-            ? (
+        const facilityLists =
+            !isEditableProfile && profile.facilityLists.length > 0 ? (
                 <React.Fragment>
                     <h3>Facility Lists</h3>
-                    {profile.facilityLists.map(
-                        list => (
-                            <FacilityListSummary
-                                key={list.id}
-                                contributor={list.contributor_id}
-                                {...list}
-                            />
-                        ),
-                    )}
-                </React.Fragment>)
-            : null;
+                    {profile.facilityLists.map(list => (
+                        <FacilityListSummary
+                            key={list.id}
+                            contributor={list.contributor_id}
+                            {...list}
+                        />
+                    ))}
+                </React.Fragment>
+            ) : null;
 
-        const apiTokensSection = isEditableProfile
-            ? <UserAPITokens />
-            : null;
+        const apiTokensSection = isEditableProfile ? <UserAPITokens /> : null;
 
-        const cookiePreferences = isEditableProfile
-            ? <UserCookiePreferences />
-            : null;
+        const cookiePreferences = isEditableProfile ? (
+            <UserCookiePreferences />
+        ) : null;
 
         return (
             <AppOverflow>
-                <AppGrid
-                    title={title}
-                    style={profileStyles.appGridContainer}
-                >
+                <AppGrid title={title} style={profileStyles.appGridContainer}>
                     <Grid item xs={12} sm={7}>
                         {profileInputs}
                         {facilityLists}
@@ -290,12 +276,8 @@ UserProfile.propTypes = {
 
 function mapStateToProps({
     auth: {
-        user: {
-            user,
-        },
-        session: {
-            fetching: sessionFetching,
-        },
+        user: { user },
+        session: { fetching: sessionFetching },
         fetching: authFetching,
     },
     profile: {
@@ -318,37 +300,41 @@ function mapStateToProps({
     };
 }
 
-const mapDispatchToProps = (dispatch, {
-    match: {
-        params: {
-            id: profileID,
+const mapDispatchToProps = (
+    dispatch,
+    {
+        match: {
+            params: { id: profileID },
         },
     },
-}) => {
+) => {
     const makeInputChangeHandler = (field, getStateFromEvent) => e =>
-        dispatch(updateProfileFormInput({
-            value: getStateFromEvent(e),
-            field,
-        }));
+        dispatch(
+            updateProfileFormInput({
+                value: getStateFromEvent(e),
+                field,
+            }),
+        );
 
-    const inputUpdates = Object
-        .values(profileFieldsEnum)
-        .reduce((acc, field) => {
+    const inputUpdates = Object.values(profileFieldsEnum).reduce(
+        (acc, field) => {
             const { type } = profileFormFields.find(({ id }) => id === field);
             const getStateFromEvent = getStateFromEventForEventType[type];
 
             return Object.assign({}, acc, {
                 [field]: makeInputChangeHandler(field, getStateFromEvent),
             });
-        }, {});
+        },
+        {},
+    );
 
     return {
         inputUpdates,
         fetchProfile: () => dispatch(fetchUserProfile(Number(profileID))),
         resetProfile: () => dispatch(resetUserProfile()),
         updateProfile: () => dispatch(updateUserProfile(Number(profileID))),
-        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
-            () => dispatch(updateUserProfile(Number(profileID))),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(() =>
+            dispatch(updateUserProfile(Number(profileID))),
         ),
     };
 };

@@ -306,7 +306,9 @@ function FilterSidebarSearchTab({
                             onChange={updateContributor}
                             disabled={fetchingOptions || fetchingFacilities}
                         />
-                        <ShowOnly when={contributors && contributors.length > 1}>
+                        <ShowOnly
+                            when={contributors && contributors.length > 1}
+                        >
                             <div style={{ marginLeft: '16px' }}>
                                 <FormControlLabel
                                     control={
@@ -326,8 +328,8 @@ function FilterSidebarSearchTab({
                                             contributorPopoverAnchorEl
                                                 ? null
                                                 : setContributorPopoverAnchorEl(
-                                                    e.currentTarget,
-                                                )
+                                                      e.currentTarget,
+                                                  )
                                     }
                                 >
                                     <InfoIcon />
@@ -360,7 +362,12 @@ function FilterSidebarSearchTab({
                             !fetchingLists
                         }
                     >
-                        <div style={{ marginLeft: embed ? 0 : '16px', marginTop: '12px' }}>
+                        <div
+                            style={{
+                                marginLeft: embed ? 0 : '16px',
+                                marginTop: '12px',
+                            }}
+                        >
                             <InputLabel
                                 shrink={false}
                                 htmlFor={LISTS}
@@ -576,7 +583,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
     return {
         updateFacilityFreeTextQuery: e =>
             dispatch(updateFacilityFreeTextQueryFilter(getValueFromEvent(e))),
-        updateContributor: (v) => {
+        updateContributor: v => {
             if (!v || v.length < 2) {
                 dispatch(updateCombineContributorsFilterOption(''));
             }
@@ -593,7 +600,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
                     e.target.checked ? 'AND' : '',
                 ),
             ),
-        resetFilters: (embedded) => {
+        resetFilters: embedded => {
             dispatch(recordSearchTabResetButtonClick());
             return dispatch(resetAllFilters(embedded));
         },
@@ -607,7 +614,8 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
                 }),
             ),
         submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(() =>
-            dispatch(fetchFacilities(push))),
+            dispatch(fetchFacilities(push)),
+        ),
         activateDrawFilter: () => dispatch(showDrawFilter(true)),
         clearDrawFilter: () => {
             dispatch(showDrawFilter(false));

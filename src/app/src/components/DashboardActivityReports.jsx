@@ -146,7 +146,7 @@ function DashboardActivityReports({
 
     const handleTabChange = (e, tab) => setActiveTabIndex(tab);
 
-    const reports = activityReports.data.filter((report) => {
+    const reports = activityReports.data.filter(report => {
         if (activeTabIndex === CLOSURE_INDEX) {
             return report.closure_state === CLOSED;
         }
@@ -176,7 +176,7 @@ function DashboardActivityReports({
         closeDialog();
     };
 
-    const renderStatus = (report) => {
+    const renderStatus = report => {
         const { status } = report;
         if (status === 'PENDING') {
             return (
@@ -217,18 +217,22 @@ function DashboardActivityReports({
     const statusContent = (
         <>
             <DialogTitle id="status-dialogue">
-                {mode === PENDING ? 'Reason for request' : 'Status change reason'}
+                {mode === PENDING
+                    ? 'Reason for request'
+                    : 'Status change reason'}
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="status-dialog-description">
-                    {(mode === STATUS && selectedReport) && selectedReport.status_change_reason}
-                    {(mode === PENDING && selectedReport) && selectedReport.reason_for_report}
+                    {mode === STATUS &&
+                        selectedReport &&
+                        selectedReport.status_change_reason}
+                    {mode === PENDING &&
+                        selectedReport &&
+                        selectedReport.reason_for_report}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeDialog}>
-                  Close
-                </Button>
+                <Button onClick={closeDialog}>Close</Button>
             </DialogActions>
         </>
     );
@@ -237,8 +241,9 @@ function DashboardActivityReports({
         <>
             <DialogTitle id="status-dialog-title">
                 {`${mode === REJECT ? 'Reject' : 'Confirm'} ${
-                    selectedReport && selectedReport.closure_state === CLOSED ?
-                        'closure' : 'reopening'
+                    selectedReport && selectedReport.closure_state === CLOSED
+                        ? 'closure'
+                        : 'reopening'
                 } of facility`}
             </DialogTitle>
             <DialogContent>
@@ -259,17 +264,17 @@ function DashboardActivityReports({
                     style={styles.dialogTextFieldStyles}
                 />
             </DialogContent>
-            <DialogActions
-                style={styles.dialogActionsStyles}
-            >
-                <Button onClick={closeDialog}>
-                  Cancel
-                </Button>
-                <Button onClick={updateReport} color="primary" variant="contained">
+            <DialogActions style={styles.dialogActionsStyles}>
+                <Button onClick={closeDialog}>Cancel</Button>
+                <Button
+                    onClick={updateReport}
+                    color="primary"
+                    variant="contained"
+                >
                     {mode === REJECT ? 'Reject' : 'Confirm'}
                 </Button>
             </DialogActions>
-          </>
+        </>
     );
 
     const statusDialog = (
@@ -299,14 +304,8 @@ function DashboardActivityReports({
                             indicator: 'tabs-indicator-color',
                         }}
                     >
-                        <Tab
-                            label="Closures"
-                            className="tab-minwidth"
-                        />
-                        <Tab
-                            label="Reopenings"
-                            className="tab-minwidth"
-                        />
+                        <Tab label="Closures" className="tab-minwidth" />
+                        <Tab label="Reopenings" className="tab-minwidth" />
                     </Tabs>
                 </AppBar>
                 <Table>
@@ -322,32 +321,36 @@ function DashboardActivityReports({
                     </TableHead>
                     <TableBody>
                         {reports.map(report => (
-                            <TableRow
-                                key={report.id}
-                            >
+                            <TableRow key={report.id}>
                                 <TableCell>
                                     <Link
                                         to={{
-                                            pathname: makeFacilityDetailLink(report.facility),
+                                            pathname: makeFacilityDetailLink(
+                                                report.facility,
+                                            ),
                                         }}
-                                        href={makeFacilityDetailLink(report.facility)}
+                                        href={makeFacilityDetailLink(
+                                            report.facility,
+                                        )}
                                     >
                                         {report.facility_name}
                                     </Link>
                                 </TableCell>
                                 <TableCell>{report.reported_by_user}</TableCell>
-                                <TableCell>{report.reported_by_contributor}</TableCell>
-                                <TableCell>{report.closure_state}</TableCell>
                                 <TableCell>
-                                    {renderStatus(report)}
+                                    {report.reported_by_contributor}
                                 </TableCell>
+                                <TableCell>{report.closure_state}</TableCell>
+                                <TableCell>{renderStatus(report)}</TableCell>
                                 <TableCell>
                                     {report.status === 'PENDING' && (
                                         <div style={styles.buttonGroup}>
                                             <Button
                                                 size="small"
                                                 style={styles.button}
-                                                onClick={() => openDialog(CONFIRM, report)}
+                                                onClick={() =>
+                                                    openDialog(CONFIRM, report)
+                                                }
                                             >
                                                 Confirm
                                             </Button>
@@ -355,7 +358,9 @@ function DashboardActivityReports({
                                             <Button
                                                 size="small"
                                                 style={styles.button}
-                                                onClick={() => openDialog(REJECT, report)}
+                                                onClick={() =>
+                                                    openDialog(REJECT, report)
+                                                }
                                             >
                                                 Reject
                                             </Button>

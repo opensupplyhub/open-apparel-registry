@@ -1,6 +1,5 @@
 // polyfills for IE11
 import 'core-js';
-import 'react-hot-loader';
 import React from 'react';
 import { render } from 'react-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -12,10 +11,7 @@ import App from './App';
 
 const theme = createMuiTheme({
     typography: {
-        fontFamily: [
-            'ff-tisa-sans-web-pro',
-            'sans-serif',
-        ].join(','),
+        fontFamily: ['ff-tisa-sans-web-pro', 'sans-serif'].join(','),
     },
     palette: {
         primary: {

@@ -14,7 +14,6 @@ const facilityListSummaryStyles = Object.freeze({
     }),
 });
 
-
 function FacilityListSummary({ name, description, id, contributor }) {
     return (
         <div>
@@ -26,7 +25,9 @@ function FacilityListSummary({ name, description, id, contributor }) {
             >
                 {name}
             </a>
-            <p style={facilityListSummaryStyles.descriptionStyles}>{description}</p>
+            <p style={facilityListSummaryStyles.descriptionStyles}>
+                {description}
+            </p>
         </div>
     );
 }

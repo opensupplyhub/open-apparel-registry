@@ -25,20 +25,24 @@ export default class GDPRNotification extends Component {
             return null;
         }
 
-        return this.setState(state => Object.assign({}, state, {
-            open: true,
-        }));
+        return this.setState(state =>
+            Object.assign({}, state, {
+                open: true,
+            }),
+        );
     }
 
-    acceptGDPRAlertAndDismissSnackbar = () => this.setState(
-        state => Object.assign({}, state, { open: false }),
-        acceptGATrackingAndStartTracking,
-    );
+    acceptGDPRAlertAndDismissSnackbar = () =>
+        this.setState(
+            state => Object.assign({}, state, { open: false }),
+            acceptGATrackingAndStartTracking,
+        );
 
-    rejectGDPRAlertAndDismissSnackbar = () => this.setState(
-        state => Object.assign({}, state, { open: false }),
-        rejectGATracking,
-    );
+    rejectGDPRAlertAndDismissSnackbar = () =>
+        this.setState(
+            state => Object.assign({}, state, { open: false }),
+            rejectGATracking,
+        );
 
     render() {
         const GDPRActions = (

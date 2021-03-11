@@ -14,7 +14,10 @@ import TextField from '@material-ui/core/TextField';
 import AppGrid from './AppGrid';
 import DashboardApiBlocksTable from './DashboardApiBlocksTable';
 
-import { fetchDashboardApiBlock, updateDashboardApiBlock } from '../actions/dashboardApiBlocks';
+import {
+    fetchDashboardApiBlock,
+    updateDashboardApiBlock,
+} from '../actions/dashboardApiBlocks';
 
 import { authLoginFormRoute, dashboardApiBlocksRoute } from '../util/constants';
 
@@ -121,7 +124,7 @@ function DashboardApiBlock({
         );
     }
 
-    const updateGraceLimit = (e) => {
+    const updateGraceLimit = e => {
         let limit = e.target.value;
         if (limit.length) {
             limit = parseInt(limit, 10);
@@ -134,13 +137,16 @@ function DashboardApiBlock({
     return (
         <Paper style={styles.container}>
             <DashboardApiBlocksTable
-                title={`${apiBlock.contributor}: ${moment(apiBlock.until).format(
-                    'MMMM YYYY',
-                )} block`}
+                title={`${apiBlock.contributor}: ${moment(
+                    apiBlock.until,
+                ).format('MMMM YYYY')} block`}
                 apiBlocks={[apiBlock]}
                 renderAdditionalContent={() => (
                     <div style={styles.buttonGroupStyles}>
-                        <Button variant="outlined" onClick={() => push(dashboardApiBlocksRoute)}>
+                        <Button
+                            variant="outlined"
+                            onClick={() => push(dashboardApiBlocksRoute)}
+                        >
                             Back to API blocks
                         </Button>
                     </div>
@@ -182,7 +188,9 @@ function DashboardApiBlock({
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => updateApiBlock({ graceLimit, graceReason })}
+                        onClick={() =>
+                            updateApiBlock({ graceLimit, graceReason })
+                        }
                     >
                         Save Changes
                     </Button>
@@ -236,7 +244,4 @@ function mapDispatchToProps(
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(DashboardApiBlock);
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardApiBlock);

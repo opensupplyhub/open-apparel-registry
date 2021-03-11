@@ -48,10 +48,7 @@ function DashboardClaimsDetailsAddNote({
 
     return (
         <Paper style={dashboardClaimsDetailsAddNoteStyles.containerStyles}>
-            <Typography
-                variant="title"
-                id="add-claim-review-note"
-            >
+            <Typography variant="title" id="add-claim-review-note">
                 Add a new note about this Facility Claim
             </Typography>
             <TextField
@@ -64,15 +61,17 @@ function DashboardClaimsDetailsAddNote({
                 rows={5}
                 style={dashboardClaimsDetailsAddNoteStyles.textFieldStyles}
             />
-            <div style={dashboardClaimsDetailsAddNoteStyles.buttonContainerStyles}>
-                {fetching && <CircularProgress />}
-                {
-                    error && (
-                        <span style={{ color: 'red', marginRight: '30px' }}>
-                            An error prevented saving that note
-                        </span>
-                    )
+            <div
+                style={
+                    dashboardClaimsDetailsAddNoteStyles.buttonContainerStyles
                 }
+            >
+                {fetching && <CircularProgress />}
+                {error && (
+                    <span style={{ color: 'red', marginRight: '30px' }}>
+                        An error prevented saving that note
+                    </span>
+                )}
                 <Button
                     onClick={submitNote}
                     variant="outlined"
@@ -98,11 +97,7 @@ function DashboardClaimsDetailsAddNote({
 
 function mapStateToProps({
     claimFacilityDashboard: {
-        note: {
-            note,
-            fetching,
-            error,
-        },
+        note: { note, fetching, error },
     },
 }) {
     return {
@@ -112,18 +107,23 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    match: {
-        params: {
-            claimID,
+function mapDispatchToProps(
+    dispatch,
+    {
+        match: {
+            params: { claimID },
         },
     },
-}) {
+) {
     return {
-        updateNote: e => dispatch(updateFacilityClaimReviewNote(getValueFromEvent(e))),
+        updateNote: e =>
+            dispatch(updateFacilityClaimReviewNote(getValueFromEvent(e))),
         submitNote: () => dispatch(addNewFacilityClaimReviewNote(claimID)),
         clearNote: () => dispatch(clearFacilityClaimReviewNote()),
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardClaimsDetailsAddNote);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(DashboardClaimsDetailsAddNote);

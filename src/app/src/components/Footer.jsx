@@ -27,7 +27,7 @@ const links = [
 export default () => (
     <footer className="footerContainer results-height-subtract" xs={12}>
         <div className="links">
-            {links.map((l) => {
+            {links.map(l => {
                 if (l.external && 'prefix' in l) {
                     return (
                         <p className="link" key={l.text}>

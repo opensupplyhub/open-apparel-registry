@@ -58,9 +58,7 @@ class ResetPasswordForm extends Component {
             return (
                 <AppGrid title="Reset Password">
                     <Grid item xs={12} sm={7}>
-                        <p>
-                            Your password was reset successfully.
-                        </p>
+                        <p>Your password was reset successfully.</p>
                         <br />
                         <Link
                             to={authLoginFormRoute}
@@ -78,10 +76,7 @@ class ResetPasswordForm extends Component {
             <AppGrid title="Reset Password">
                 <Grid item xs={12} sm={7}>
                     <div className="form__field">
-                        <label
-                            className="form__label"
-                            htmlFor={NEW_PASSWORD}
-                        >
+                        <label className="form__label" htmlFor={NEW_PASSWORD}>
                             New password
                         </label>
                         <ControlledTextInput
@@ -90,7 +85,9 @@ class ResetPasswordForm extends Component {
                             type="password"
                             value={newPassword}
                             onChange={updatePassword}
-                            submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
+                            submitFormOnEnterKeyPress={
+                                submitFormOnEnterKeyPress
+                            }
                         />
                     </div>
                     <div className="form__field">
@@ -105,19 +102,16 @@ class ResetPasswordForm extends Component {
                             type="password"
                             value={newPasswordConfirmation}
                             onChange={updateConfirmPassword}
-                            submitFormOnEnterKeyPress={submitFormOnEnterKeyPress}
+                            submitFormOnEnterKeyPress={
+                                submitFormOnEnterKeyPress
+                            }
                         />
                     </div>
                     <ShowOnly when={!!(error && error.length)}>
                         <ul style={formValidationErrorMessageStyle}>
-                            {
-                                error && error.length
-                                    ? error.map(err => (
-                                        <li key={err}>
-                                            {err}
-                                        </li>))
-                                    : null
-                            }
+                            {error && error.length
+                                ? error.map(err => <li key={err}>{err}</li>)
+                                : null}
                         </ul>
                     </ShowOnly>
                     <Button
@@ -169,29 +163,34 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    match: {
-        params: {
-            uid,
+function mapDispatchToProps(
+    dispatch,
+    {
+        match: {
+            params: { uid },
+        },
+        history: {
+            location: { search },
         },
     },
-    history: {
-        location: {
-            search,
-        },
-    },
-}) {
+) {
     return {
         setUID: () => dispatch(updateResetPasswordFormUID(uid)),
         setToken: () =>
-            dispatch(updateResetPasswordFormToken(getTokenFromQueryString(search))),
+            dispatch(
+                updateResetPasswordFormToken(getTokenFromQueryString(search)),
+            ),
         updatePassword: e =>
             dispatch(updateResetPasswordFormPassword(getValueFromEvent(e))),
         updateConfirmPassword: e =>
-            dispatch(updateResetPasswordFormPasswordConfirmation(getValueFromEvent(e))),
+            dispatch(
+                updateResetPasswordFormPasswordConfirmation(
+                    getValueFromEvent(e),
+                ),
+            ),
         submitForm: () => dispatch(submitResetPassword()),
-        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
-            () => dispatch(submitResetPassword()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(() =>
+            dispatch(submitResetPassword()),
         ),
         resetForm: () => dispatch(resetResetPasswordFormState()),
     };

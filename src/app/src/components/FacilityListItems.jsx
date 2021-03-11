@@ -110,10 +110,7 @@ class FacilityListItems extends Component {
             if (!userHasSignedIn) {
                 return (
                     <AppGrid title="Unable to retrieve that list">
-                        <Link
-                            to={authLoginFormRoute}
-                            href={authLoginFormRoute}
-                        >
+                        <Link to={authLoginFormRoute} href={authLoginFormRoute}>
                             Sign in to view your Open Apparel Registry lists
                         </Link>
                     </AppGrid>
@@ -123,13 +120,9 @@ class FacilityListItems extends Component {
             return (
                 <AppGrid title="Unable to retrieve that list">
                     <ul>
-                        {
-                            error
-                                .map(err => (
-                                    <li key={err}>
-                                        {err}
-                                    </li>))
-                        }
+                        {error.map(err => (
+                            <li key={err}>{err}</li>
+                        ))}
                     </ul>
                 </AppGrid>
             );
@@ -143,41 +136,35 @@ class FacilityListItems extends Component {
             );
         }
 
-        const csvDownloadErrorMessage = (csvDownloadingError && csvDownloadingError.length)
-            ? (
+        const csvDownloadErrorMessage =
+            csvDownloadingError && csvDownloadingError.length ? (
                 <p style={{ color: 'red', textAlign: 'right' }}>
                     An error prevented downloading the CSV.
-                </p>)
-            : null;
+                </p>
+            ) : null;
 
-        const csvDownloadButton = downloadingCSV
-            ? (
-                <div>
-                    <CircularProgress size={25} />
-                </div>)
-            : (
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    style={facilityListItemsStyles.buttonStyles}
-                    onClick={downloadCSV}
-                    disabled={downloadingCSV}
-                >
-                    Download CSV
-                </Button>);
+        const csvDownloadButton = downloadingCSV ? (
+            <div>
+                <CircularProgress size={25} />
+            </div>
+        ) : (
+            <Button
+                variant="outlined"
+                color="primary"
+                style={facilityListItemsStyles.buttonStyles}
+                onClick={downloadCSV}
+                disabled={downloadingCSV}
+            >
+                Download CSV
+            </Button>
+        );
 
         const backRoute = readOnly ? dashboardListsRoute : listsRoute;
 
         return (
             <AppOverflow>
-                <Grid
-                    container
-                    justify="center"
-                >
-                    <Grid
-                        item
-                        style={facilityListItemsStyles.tableStyles}
-                    >
+                <Grid container justify="center">
+                    <Grid item style={facilityListItemsStyles.tableStyles}>
                         <div style={facilityListItemsStyles.headerStyles}>
                             <div>
                                 <h2 style={facilityListItemsStyles.titleStyles}>
@@ -185,22 +172,33 @@ class FacilityListItems extends Component {
                                 </h2>
                                 <Typography
                                     variant="subheading"
-                                    style={facilityListItemsStyles.descriptionStyles}
+                                    style={
+                                        facilityListItemsStyles.descriptionStyles
+                                    }
                                 >
                                     {list.description || ''}
                                 </Typography>
                             </div>
-                            <div style={facilityListItemsStyles.buttonGroupWithErrorStyles}>
+                            <div
+                                style={
+                                    facilityListItemsStyles.buttonGroupWithErrorStyles
+                                }
+                            >
                                 {csvDownloadErrorMessage}
-                                <div style={facilityListItemsStyles.buttonGroupStyles}>
-
+                                <div
+                                    style={
+                                        facilityListItemsStyles.buttonGroupStyles
+                                    }
+                                >
                                     {csvDownloadButton}
                                     <Button
                                         variant="outlined"
                                         component={Link}
                                         to={backRoute}
                                         href={backRoute}
-                                        style={facilityListItemsStyles.buttonStyles}
+                                        style={
+                                            facilityListItemsStyles.buttonStyles
+                                        }
                                     >
                                         Back to lists
                                     </Button>
@@ -210,17 +208,21 @@ class FacilityListItems extends Component {
                         <div style={facilityListItemsStyles.subheadStyles}>
                             Read about how your facility lists are processed and
                             matched in this&nbsp;
-                            <Link to={aboutProcessingRoute} href={aboutProcessingRoute}>guide</Link>
+                            <Link
+                                to={aboutProcessingRoute}
+                                href={aboutProcessingRoute}
+                            >
+                                guide
+                            </Link>
                         </div>
-                        {
-                            list.item_count
-                                ? (
-                                    <Route
-                                        path={facilityListItemsRoute}
-                                        component={FacilityListItemsTable}
-                                    />)
-                                : <FacilityListItemsEmpty />
-                        }
+                        {list.item_count ? (
+                            <Route
+                                path={facilityListItemsRoute}
+                                component={FacilityListItemsTable}
+                            />
+                        ) : (
+                            <FacilityListItemsEmpty />
+                        )}
                     </Grid>
                 </Grid>
             </AppOverflow>
@@ -251,23 +253,12 @@ FacilityListItems.propTypes = {
 
 function mapStateToProps({
     facilityListDetails: {
-        list: {
-            data: list,
-            fetching: fetchingList,
-            error: listError,
-        },
-        items: {
-            error: itemsError,
-        },
-        downloadCSV: {
-            fetching: downloadingCSV,
-            error: csvDownloadingError,
-        },
+        list: { data: list, fetching: fetchingList, error: listError },
+        items: { error: itemsError },
+        downloadCSV: { fetching: downloadingCSV, error: csvDownloadingError },
     },
     auth: {
-        user: {
-            user,
-        },
+        user: { user },
     },
 }) {
     return {
@@ -277,32 +268,35 @@ function mapStateToProps({
         downloadingCSV,
         csvDownloadingError,
         userHasSignedIn: !!user,
-        readOnly: user && user.is_superuser && list && user.contributor_id !== list.contributor_id,
+        readOnly:
+            user &&
+            user.is_superuser &&
+            list &&
+            user.contributor_id !== list.contributor_id,
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    match: {
-        params: {
-            listID,
+function mapDispatchToProps(
+    dispatch,
+    {
+        match: {
+            params: { listID },
+        },
+        history: {
+            location: { search },
         },
     },
-    history: {
-        location: {
-            search,
-        },
-    },
-}) {
-    const {
-        page,
-        rowsPerPage,
-    } = createPaginationOptionsFromQueryString(search);
+) {
+    const { page, rowsPerPage } = createPaginationOptionsFromQueryString(
+        search,
+    );
 
     const params = createParamsFromQueryString(search);
 
     return {
         fetchList: () => dispatch(fetchFacilityList(listID)),
-        fetchListItems: () => dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
+        fetchListItems: () =>
+            dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
         clearListItems: () => dispatch(resetFacilityListItems()),
         downloadCSV: () => dispatch(assembleAndDownloadFacilityListCSV()),
     };

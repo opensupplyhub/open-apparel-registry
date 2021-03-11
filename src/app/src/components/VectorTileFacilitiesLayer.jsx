@@ -75,7 +75,10 @@ function useUpdateTileURL(
     return vectorTileURLWithQueryParams;
 }
 
-const useUpdateTileLayerWithMarkerForSelectedOARID = (oarID, otherFacilitiesAtPoint = []) => {
+const useUpdateTileLayerWithMarkerForSelectedOARID = (
+    oarID,
+    otherFacilitiesAtPoint = [],
+) => {
     const tileLayerRef = useRef(null);
 
     const [currentSelectedMarkerID, setCurrentSelectedMarkerID] = useState(
@@ -83,8 +86,14 @@ const useUpdateTileLayerWithMarkerForSelectedOARID = (oarID, otherFacilitiesAtPo
     );
 
     useEffect(() => {
-        const oarIDsAtSamePoint = map(otherFacilitiesAtPoint, f => get(f, 'properties.oar_id', null));
-        const oarIDForSharedMarker = get(otherFacilitiesAtPoint, '[0].properties.visibleMarkerOARID', null);
+        const oarIDsAtSamePoint = map(otherFacilitiesAtPoint, f =>
+            get(f, 'properties.oar_id', null),
+        );
+        const oarIDForSharedMarker = get(
+            otherFacilitiesAtPoint,
+            '[0].properties.visibleMarkerOARID',
+            null,
+        );
 
         const tileLayer = get(tileLayerRef, 'current.leafletElement', null);
 
@@ -96,7 +105,10 @@ const useUpdateTileLayerWithMarkerForSelectedOARID = (oarID, otherFacilitiesAtPo
             });
 
             setCurrentSelectedMarkerID(null);
-        } else if (oarIDsAtSamePoint.length < 2 && oarID !== currentSelectedMarkerID) {
+        } else if (
+            oarIDsAtSamePoint.length < 2 &&
+            oarID !== currentSelectedMarkerID
+        ) {
             tileLayer.setFeatureStyle(currentSelectedMarkerID, {
                 icon: unselectedMarkerIcon,
             });
@@ -106,7 +118,10 @@ const useUpdateTileLayerWithMarkerForSelectedOARID = (oarID, otherFacilitiesAtPo
             });
 
             setCurrentSelectedMarkerID(oarID);
-        } else if (intersection(oarIDsAtSamePoint, [oarID, currentSelectedMarkerID]).length) {
+        } else if (
+            intersection(oarIDsAtSamePoint, [oarID, currentSelectedMarkerID])
+                .length
+        ) {
             if (currentSelectedMarkerID) {
                 tileLayer.setFeatureStyle(currentSelectedMarkerID, {
                     icon: unselectedMarkerIcon,
@@ -135,11 +150,7 @@ const useUpdateTileLayerWithMarkerForSelectedOARID = (oarID, otherFacilitiesAtPo
 const findFacilitiesAtSamePointFromVectorTile = (data, tileLayerRef = null) => {
     const properties = get(data, 'layer.properties', null);
 
-    const vectorTileLayer = get(
-        tileLayerRef,
-        'current.leafletElement',
-        null,
-    );
+    const vectorTileLayer = get(tileLayerRef, 'current.leafletElement', null);
 
     if (!properties || !vectorTileLayer) {
         return [];
@@ -158,29 +169,17 @@ const findFacilitiesAtSamePointFromVectorTile = (data, tileLayerRef = null) => {
         {},
     );
 
-    const clickedFeature = get(
-        featuresInVectorTile,
-        `[${id}].feature`,
-        null,
-    );
+    const clickedFeature = get(featuresInVectorTile, `[${id}].feature`, null);
 
     if (!clickedFeature) {
         return [];
     }
 
     return map(
-        filter(Object.values(featuresInVectorTile), (f) => {
-            const featureProperties = get(
-                f,
-                'feature.properties',
-                null,
-            );
+        filter(Object.values(featuresInVectorTile), f => {
+            const featureProperties = get(f, 'feature.properties', null);
             const featurePoint = get(f, 'feature._point', null);
-            const clickedFeaturePoint = get(
-                clickedFeature,
-                '_point',
-                null,
-            );
+            const clickedFeaturePoint = get(clickedFeature, '_point', null);
 
             return (
                 featureProperties &&
@@ -220,7 +219,8 @@ const VectorTileFacilitiesLayer = ({
         setMultipleFacilitiesAtPointPosition,
     ] = useState(null);
 
-    const closeMultipleFacilitiesPopup = () => setMultipleFacilitiesAtPointPosition(null);
+    const closeMultipleFacilitiesPopup = () =>
+        setMultipleFacilitiesAtPointPosition(null);
 
     const vectorTileURL = useUpdateTileURL(
         tileURL,
@@ -229,7 +229,8 @@ const VectorTileFacilitiesLayer = ({
         closeMultipleFacilitiesPopup,
     );
 
-    const selectFacilityOnClick = facilityID => pushRoute(`/facilities/${facilityID}`);
+    const selectFacilityOnClick = facilityID =>
+        pushRoute(`/facilities/${facilityID}`);
 
     const vectorTileLayerRef = useUpdateTileLayerWithMarkerForSelectedOARID(
         oarID,
@@ -243,7 +244,7 @@ const VectorTileFacilitiesLayer = ({
         throw new Error('Missing tile cache key');
     }
 
-    const handleVectorLayerClick = (data) => {
+    const handleVectorLayerClick = data => {
         try {
             setMultipleFacilitiesAtPoint(null);
 
@@ -304,8 +305,7 @@ const VectorTileFacilitiesLayer = ({
                 onClick={handleVectorLayerClick}
                 getFeatureId={f => get(f, 'properties.id', null)}
             />
-            {
-                multipleFacilitiesAtPointPosition &&
+            {multipleFacilitiesAtPointPosition &&
                 multipleFacilitiesAtPoint &&
                 multipleFacilitiesAtPoint.length && (
                     <Popup
@@ -313,19 +313,18 @@ const VectorTileFacilitiesLayer = ({
                         onClose={closeMultipleFacilitiesPopup}
                     >
                         <FacilitiesMapPopup
-                            facilities={
-                                sortBy(
-                                    multipleFacilitiesAtPoint.slice(),
-                                    f => get(f, 'properties.name', null),
-                                )
+                            facilities={sortBy(
+                                multipleFacilitiesAtPoint.slice(),
+                                f => get(f, 'properties.name', null),
+                            )}
+                            closePopup={() =>
+                                setMultipleFacilitiesAtPointPosition(null)
                             }
-                            closePopup={() => setMultipleFacilitiesAtPointPosition(null)}
                             selectFacilityOnClick={selectFacilityOnClick}
                             selectedFacilityID={oarID}
                         />
                     </Popup>
-                )
-            }
+                )}
         </>
     );
 };
@@ -356,7 +355,11 @@ function mapStateToProps({
 }) {
     const querystring = createQueryStringFromSearchFilters(filters);
     const tileCacheKey = createTileCacheKeyWithEncodedFilters(filters, key);
-    const tileURL = createTileURLWithQueryString(querystring, tileCacheKey, false);
+    const tileURL = createTileURLWithQueryString(
+        querystring,
+        tileCacheKey,
+        false,
+    );
 
     return {
         tileURL,

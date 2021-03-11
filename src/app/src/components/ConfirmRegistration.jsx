@@ -41,11 +41,7 @@ class ConfirmRegistration extends Component {
     }
 
     render() {
-        const {
-            error,
-            fetching,
-            hasLoggedInDuringSameSession,
-        } = this.props;
+        const { error, fetching, hasLoggedInDuringSameSession } = this.props;
 
         const insetComponent = (() => {
             if (fetching) {
@@ -59,23 +55,16 @@ class ConfirmRegistration extends Component {
             if (error && error.length) {
                 return (
                     <ul style={confirmRegistrationStyles.errorStyles}>
-                        {
-                            error
-                                .map(err => (
-                                    <li key={err}>
-                                        {err}
-                                    </li>
-                                ))
-                        }
+                        {error.map(err => (
+                            <li key={err}>{err}</li>
+                        ))}
                     </ul>
                 );
             }
 
             return (
                 <div style={confirmRegistrationStyles.successStyles}>
-                    <div>
-                        Account was succesfully confirmed!
-                    </div>
+                    <div>Account was succesfully confirmed!</div>
                     <ShowOnly when={hasLoggedInDuringSameSession}>
                         <div style={confirmRegistrationStyles.nextLinkStyles}>
                             You can
@@ -100,10 +89,7 @@ class ConfirmRegistration extends Component {
                         </div>
                     </ShowOnly>
                     <ShowOnly when={!hasLoggedInDuringSameSession}>
-                        <Link
-                            href={authLoginFormRoute}
-                            to={authLoginFormRoute}
-                        >
+                        <Link href={authLoginFormRoute} to={authLoginFormRoute}>
                             Click here to log in
                         </Link>
                     </ShowOnly>
@@ -137,16 +123,9 @@ ConfirmRegistration.propTypes = {
 
 function mapStateToProps({
     auth: {
-        confirmRegistration: {
-            fetching,
-            error,
-        },
-        session: {
-            fetching: sessionFetching,
-        },
-        user: {
-            user,
-        },
+        confirmRegistration: { fetching, error },
+        session: { fetching: sessionFetching },
+        user: { user },
     },
 }) {
     return {
@@ -156,17 +135,21 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    match: {
-        params: {
-            uid,
+function mapDispatchToProps(
+    dispatch,
+    {
+        match: {
+            params: { uid },
         },
     },
-}) {
+) {
     return {
         confirmRegistration: () => dispatch(confirmAccountRegistration(uid)),
         resetRegistration: () => dispatch(resetConfirmAccountRegistration()),
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConfirmRegistration);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(ConfirmRegistration);

@@ -76,9 +76,7 @@ import {
 import { claimAFacilityFormFields } from '../util/constants';
 
 const {
-    parentCompany: {
-        aside: parentCompanyAside,
-    },
+    parentCompany: { aside: parentCompanyAside },
 } = claimAFacilityFormFields;
 
 const claimedFacilitiesDetailsStyles = Object.freeze({
@@ -182,9 +180,8 @@ const InputSection = ({
             }
 
             if (!isCreatable && isMultiSelect) {
-                return filter(
-                    selectOptions,
-                    ({ value: option }) => includes(value, option),
+                return filter(selectOptions, ({ value: option }) =>
+                    includes(value, option),
                 );
             }
 
@@ -393,15 +390,13 @@ function ClaimedFacilitiesDetails({
                     value={data.facility_website}
                     onChange={updateFacilityWebsite}
                     disabled={updating}
-                    hasValidationErrorFn={
-                        () => {
-                            if (isEmpty(data.facility_website)) {
-                                return false;
-                            }
-
-                            return !isValidFacilityURL(data.facility_website);
+                    hasValidationErrorFn={() => {
+                        if (isEmpty(data.facility_website)) {
+                            return false;
                         }
-                    }
+
+                        return !isValidFacilityURL(data.facility_website);
+                    }}
                     hasSwitch
                     switchValue={data.facility_website_publicly_visible}
                     onSwitchChange={updateFacilityWebsiteVisibility}
@@ -425,9 +420,7 @@ function ClaimedFacilitiesDetails({
                     />
                 </ShowOnly>
                 <ShowOnly when={!contributorOptions}>
-                    <Typography>
-                        Parent Company / Supplier Group
-                    </Typography>
+                    <Typography>Parent Company / Supplier Group</Typography>
                     <Typography>
                         {get(data, 'facility_parent_company.name', null)}
                     </Typography>
@@ -438,9 +431,13 @@ function ClaimedFacilitiesDetails({
                     onChange={updateFacilityType}
                     disabled={updating}
                     isSelect
-                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.facility_types)}
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
+                        data.facility_types,
+                    )}
                 />
-                <ShowOnly when={isEqual(get(data, 'facility_type', null), 'Other')}>
+                <ShowOnly
+                    when={isEqual(get(data, 'facility_type', null), 'Other')}
+                >
                     <InputSection
                         label="Other Facility Type"
                         value={get(data, 'other_facility_type', null)}
@@ -465,36 +462,29 @@ function ClaimedFacilitiesDetails({
                     value={data.facility_workers_count}
                     onChange={updateFacilityWorkersCount}
                     disabled={updating}
-                    hasValidationErrorFn={
-                        () => {
-                            if (isEmpty(data.facility_workers_count)) {
-                                return false;
-                            }
-
-                            return !isInt(
-                                data.facility_workers_count,
-                                { min: 0 },
-                            );
+                    hasValidationErrorFn={() => {
+                        if (isEmpty(data.facility_workers_count)) {
+                            return false;
                         }
-                    }
+
+                        return !isInt(data.facility_workers_count, { min: 0 });
+                    }}
                 />
                 <InputSection
                     label="Percentage of female workers"
                     value={data.facility_female_workers_percentage}
                     onChange={updateFacilityFemaleWorkersPercentage}
                     disabled={updating}
-                    hasValidationErrorFn={
-                        () => {
-                            if (isEmpty(data.facility_female_workers_percentage)) {
-                                return false;
-                            }
-
-                            return !isInt(
-                                data.facility_female_workers_percentage,
-                                { min: 0, max: 100 },
-                            );
+                    hasValidationErrorFn={() => {
+                        if (isEmpty(data.facility_female_workers_percentage)) {
+                            return false;
                         }
-                    }
+
+                        return !isInt(data.facility_female_workers_percentage, {
+                            min: 0,
+                            max: 100,
+                        });
+                    }}
                 />
                 <InputSection
                     label="Affiliations"
@@ -503,7 +493,9 @@ function ClaimedFacilitiesDetails({
                     disabled={updating}
                     isSelect
                     isMultiSelect
-                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.affiliation_choices)}
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
+                        data.affiliation_choices,
+                    )}
                 />
                 <InputSection
                     label="Certifications/Standards/Regulations"
@@ -512,7 +504,9 @@ function ClaimedFacilitiesDetails({
                     disabled={updating}
                     isSelect
                     isMultiSelect
-                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.certification_choices)}
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
+                        data.certification_choices,
+                    )}
                 />
                 <InputSection
                     label="Product Types"
@@ -522,7 +516,9 @@ function ClaimedFacilitiesDetails({
                     isSelect
                     isMultiSelect
                     isCreatable
-                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(data.product_type_choices)}
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
+                        data.product_type_choices,
+                    )}
                 />
                 <InputSection
                     label="Production Types"
@@ -532,9 +528,9 @@ function ClaimedFacilitiesDetails({
                     isSelect
                     isMultiSelect
                     isCreatable
-                    selectOptions={
-                        mapDjangoChoiceTuplesToSelectOptions(data.production_type_choices)
-                    }
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
+                        data.production_type_choices,
+                    )}
                 />
                 <Typography
                     variant="title"
@@ -565,15 +561,13 @@ function ClaimedFacilitiesDetails({
                     value={data.point_of_contact_email}
                     onChange={updateContactEmail}
                     disabled={updating}
-                    hasValidationErrorFn={
-                        () => {
-                            if (isEmpty(data.point_of_contact_email)) {
-                                return false;
-                            }
-
-                            return !isEmail(data.point_of_contact_email);
+                    hasValidationErrorFn={() => {
+                        if (isEmpty(data.point_of_contact_email)) {
+                            return false;
                         }
-                    }
+
+                        return !isEmail(data.point_of_contact_email);
+                    }}
                 />
                 <Typography
                     variant="headline"
@@ -645,10 +639,11 @@ function ClaimedFacilitiesDetails({
                         variant="contained"
                         color="primary"
                         disabled={
-                            updating || (!isEmpty(data.point_of_contact_email)
-                                         && !isEmail(data.point_of_contact_email))
-                                     || (!isEmpty(data.facility_website)
-                                         && !isValidFacilityURL(data.facility_website))
+                            updating ||
+                            (!isEmpty(data.point_of_contact_email) &&
+                                !isEmail(data.point_of_contact_email)) ||
+                            (!isEmpty(data.facility_website) &&
+                                !isValidFacilityURL(data.facility_website))
                         }
                     >
                         Save
@@ -709,9 +704,10 @@ function mapStateToProps({
         data,
     },
 }) {
-    const contributorOptions = data && data.contributors
-        ? mapDjangoChoiceTuplesToSelectOptions(data.contributors)
-        : null;
+    const contributorOptions =
+        data && data.contributors
+            ? mapDjangoChoiceTuplesToSelectOptions(data.contributors)
+            : null;
 
     return {
         fetching,
@@ -732,25 +728,13 @@ function mapDispatchToProps(
     },
 ) {
     const makeDispatchValueFn = updateFn =>
-        flow(
-            getValueFromEvent,
-            updateFn,
-            dispatch,
-        );
+        flow(getValueFromEvent, updateFn, dispatch);
 
     const makeDispatchCheckedFn = updateFn =>
-        flow(
-            getCheckedFromEvent,
-            updateFn,
-            dispatch,
-        );
+        flow(getCheckedFromEvent, updateFn, dispatch);
 
     const makeDispatchMultiSelectFn = updateFn =>
-        flow(
-            selection => map(selection, 'value'),
-            updateFn,
-            dispatch,
-        );
+        flow(selection => map(selection, 'value'), updateFn, dispatch);
 
     return {
         getDetails: () => dispatch(fetchClaimedFacilityDetails(claimID)),
@@ -769,10 +753,12 @@ function mapDispatchToProps(
             updateClaimedFacilityPhoneVisibility,
         ),
         updateParentCompany: ({ label, value }) =>
-            dispatch(updateClaimedFacilityParentCompany({
-                id: value,
-                name: label,
-            })),
+            dispatch(
+                updateClaimedFacilityParentCompany({
+                    id: value,
+                    name: label,
+                }),
+            ),
         updateContactVisibility: makeDispatchCheckedFn(
             updateClaimedFacilityPointOfContactVisibility,
         ),

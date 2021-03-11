@@ -1,4 +1,13 @@
-import { arrayOf, bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
+import {
+    arrayOf,
+    bool,
+    func,
+    number,
+    oneOf,
+    oneOfType,
+    shape,
+    string,
+} from 'prop-types';
 import mapValues from 'lodash/mapValues';
 import omitBy from 'lodash/omitBy';
 import includes from 'lodash/includes';
@@ -32,10 +41,13 @@ export const registrationFormValuesPropType = shape({
     [registrationFieldsEnum.tos]: bool.isRequired,
 });
 
-export const registrationFormInputHandlersPropType = shape(Object
-    .values(registrationFieldsEnum)
-    .reduce((accumulator, key) =>
-        Object.assign({}, accumulator, { [key]: func.isRequired }), {}));
+export const registrationFormInputHandlersPropType = shape(
+    Object.values(registrationFieldsEnum).reduce(
+        (accumulator, key) =>
+            Object.assign({}, accumulator, { [key]: func.isRequired }),
+        {},
+    ),
+);
 
 export const userPropType = shape({
     email: string.isRequired,
@@ -44,15 +56,21 @@ export const userPropType = shape({
     is_superuser: bool.isRequired,
 });
 
-export const profileFormValuesPropType = shape(Object
-    .values(profileFieldsEnum)
-    .reduce((accumulator, key) =>
-        Object.assign({}, accumulator, { [key]: string.isRequired }), {}));
+export const profileFormValuesPropType = shape(
+    Object.values(profileFieldsEnum).reduce(
+        (accumulator, key) =>
+            Object.assign({}, accumulator, { [key]: string.isRequired }),
+        {},
+    ),
+);
 
-export const profileFormInputHandlersPropType = shape(Object
-    .values(profileFieldsEnum)
-    .reduce((accumulator, key) =>
-        Object.assign({}, accumulator, { [key]: func.isRequired }), {}));
+export const profileFormInputHandlersPropType = shape(
+    Object.values(profileFieldsEnum).reduce(
+        (accumulator, key) =>
+            Object.assign({}, accumulator, { [key]: func.isRequired }),
+        {},
+    ),
+);
 
 export const tokenPropType = shape({
     token: string.isRequired,
@@ -66,10 +84,12 @@ export const facilityMatchPropType = shape({
     oar_id: string.isRequired,
     name: string.isRequired,
     address: string.isRequired,
-    results: arrayOf(shape({
-        version: number.isRequired,
-        match_type: string.isRequired,
-    })),
+    results: arrayOf(
+        shape({
+            version: number.isRequired,
+            match_type: string.isRequired,
+        }),
+    ),
 });
 
 export const facilityListItemPropType = shape({
@@ -96,16 +116,18 @@ export const facilityListItemPropType = shape({
             lat: number.isRequired,
         }).isRequired,
     }),
-    matches: arrayOf(shape({
-        id: number.isRequired,
-        oar_id: string.isRequired,
-        address: string.isRequired,
-        name: string.isRequired,
-        location: shape({
-            lng: number.isRequired,
-            lat: number.isRequired,
+    matches: arrayOf(
+        shape({
+            id: number.isRequired,
+            oar_id: string.isRequired,
+            address: string.isRequired,
+            name: string.isRequired,
+            location: shape({
+                lng: number.isRequired,
+                lat: number.isRequired,
+            }).isRequired,
         }).isRequired,
-    }).isRequired),
+    ),
 });
 
 export const facilityListPropType = shape({
@@ -119,20 +141,18 @@ export const facilityListPropType = shape({
     item_count: number.isRequired,
     items_url: string.isRequired,
     statuses: arrayOf(oneOf(Object.values(facilityListItemStatusChoicesEnum))),
-    status_counts: shape(mapValues(
-        omitBy(
-            facilityListItemStatusChoicesEnum,
-            partial(
-                includes,
-                [
+    status_counts: shape(
+        mapValues(
+            omitBy(
+                facilityListItemStatusChoicesEnum,
+                partial(includes, [
                     facilityListItemStatusChoicesEnum.NEW_FACILITY,
                     facilityListItemStatusChoicesEnum.REMOVED,
-
-                ],
+                ]),
             ),
+            () => number.isRequired,
         ),
-        () => number.isRequired,
-    )).isRequired,
+    ).isRequired,
     created_at: string.isRequired,
 });
 
@@ -141,19 +161,21 @@ export const contributorOptionPropType = shape({
     label: string.isRequired,
 });
 
-export const contributorOptionsPropType = arrayOf(
-    contributorOptionPropType,
+export const contributorOptionsPropType = arrayOf(contributorOptionPropType);
+
+export const contributorTypeOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
 );
 
-export const contributorTypeOptionsPropType = arrayOf(shape({
-    value: string.isRequired,
-    label: string.isRequired,
-}));
-
-export const countryOptionsPropType = arrayOf(shape({
-    value: string.isRequired,
-    label: string.isRequired,
-}));
+export const countryOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
+);
 
 export const facilityPropType = shape({
     id: string.isRequired,
@@ -212,21 +234,29 @@ export const filtersPropType = shape({
     combineContributors: string.isRequired,
 });
 
-export const facilityListItemStatusPropType =
-    oneOf(Object.values(facilityListItemStatusChoicesEnum).concat('Status'));
+export const facilityListItemStatusPropType = oneOf(
+    Object.values(facilityListItemStatusChoicesEnum).concat('Status'),
+);
 
-export const featureFlagPropType = oneOf([CLAIM_A_FACILITY, VECTOR_TILE, PPE, REPORT_A_FACILITY]);
+export const featureFlagPropType = oneOf([
+    CLAIM_A_FACILITY,
+    VECTOR_TILE,
+    PPE,
+    REPORT_A_FACILITY,
+]);
 
-export const facilityClaimsListPropType = arrayOf(shape({
-    created_at: string.isRequired,
-    updated_at: string.isRequired,
-    id: number.isRequired,
-    oar_id: string.isRequired,
-    facility_name: string.isRequired,
-    contributor_id: number.isRequired,
-    contributor_name: string.isRequired,
-    status: oneOf(Object.values(facilityClaimStatusChoicesEnum)).isRequired,
-}).isRequired);
+export const facilityClaimsListPropType = arrayOf(
+    shape({
+        created_at: string.isRequired,
+        updated_at: string.isRequired,
+        id: number.isRequired,
+        oar_id: string.isRequired,
+        facility_name: string.isRequired,
+        contributor_id: number.isRequired,
+        contributor_name: string.isRequired,
+        status: oneOf(Object.values(facilityClaimStatusChoicesEnum)).isRequired,
+    }).isRequired,
+);
 
 export const facilityClaimNotePropType = shape({
     id: number.isRequired,

@@ -7,9 +7,13 @@ import {
     makeGetFacilitiesCountURL,
 } from '../util/util';
 
-export const startFetchFacilityCount = createAction('START_FETCH_FACILITY_COUNT');
+export const startFetchFacilityCount = createAction(
+    'START_FETCH_FACILITY_COUNT',
+);
 export const failFetchFacilityCount = createAction('FAIL_FETCH_FACILITY_COUNT');
-export const completeFetchFacilityCount = createAction('COMPLETE_FETCH_FACILITY_COUNT');
+export const completeFetchFacilityCount = createAction(
+    'COMPLETE_FETCH_FACILITY_COUNT',
+);
 export const clearFacilityCount = createAction('CLEAR_FACILITY_COUNT');
 
 export function fetchFacilityCount() {
@@ -17,9 +21,7 @@ export function fetchFacilityCount() {
         dispatch(startFetchFacilityCount());
 
         const {
-            facilityCount: {
-                data,
-            },
+            facilityCount: { data },
         } = getState();
 
         if (data) {
@@ -28,11 +30,17 @@ export function fetchFacilityCount() {
 
         return apiRequest
             .get(makeGetFacilitiesCountURL())
-            .then(({ data: { count } }) => dispatch(completeFetchFacilityCount(count)))
-            .catch(err => dispatch(logErrorAndDispatchFailure(
-                err,
-                'An error prevented fetching facility count',
-                failFetchFacilityCount,
-            )));
+            .then(({ data: { count } }) =>
+                dispatch(completeFetchFacilityCount(count)),
+            )
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching facility count',
+                        failFetchFacilityCount,
+                    ),
+                ),
+            );
     };
 }

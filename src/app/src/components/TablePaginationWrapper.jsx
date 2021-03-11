@@ -7,19 +7,19 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
 export default class TablePaginationWrapper extends Component {
-    handleFirstPageButtonClick = (event) => {
+    handleFirstPageButtonClick = event => {
         this.props.onChangePage(event, 0);
     };
 
-    handleBackButtonClick = (event) => {
+    handleBackButtonClick = event => {
         this.props.onChangePage(event, this.props.page - 1);
     };
 
-    handleNextButtonClick = (event) => {
+    handleNextButtonClick = event => {
         this.props.onChangePage(event, this.props.page + 1);
     };
 
-    handleLastPageButtonClick = (event) => {
+    handleLastPageButtonClick = event => {
         this.props.onChangePage(
             event,
             Math.max(

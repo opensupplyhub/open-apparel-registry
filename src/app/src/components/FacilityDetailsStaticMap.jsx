@@ -10,8 +10,7 @@ import { COUNTRY_CODES } from '../util/constants';
 
 import ShowOnly from './ShowOnly';
 
-const staticParams =
-    'zoom=18&size=320x200&maptype=satellite';
+const staticParams = 'zoom=18&size=320x200&maptype=satellite';
 const apiKey = `key=${GOOGLE_CLIENT_SIDE_API_KEY}`;
 
 const makeGoogleMapsStaticMapURL = ({ baseURL, countryCode, lat, lng }) =>
@@ -20,14 +19,9 @@ const makeGoogleMapsStaticMapURL = ({ baseURL, countryCode, lat, lng }) =>
 function FacilityDetailsStaticMap({
     data: {
         geometry: {
-            coordinates: [
-                lng,
-                lat,
-            ],
+            coordinates: [lng, lat],
         },
-        properties: {
-            name,
-        },
+        properties: { name },
     },
     clientInfoFetched,
     baseURL,
@@ -36,9 +30,12 @@ function FacilityDetailsStaticMap({
     return (
         <ShowOnly when={clientInfoFetched}>
             <img
-                src={makeGoogleMapsStaticMapURL(
-                    { baseURL, countryCode, lat, lng },
-                )}
+                src={makeGoogleMapsStaticMapURL({
+                    baseURL,
+                    countryCode,
+                    lat,
+                    lng,
+                })}
                 alt={`Facility ${name} at latitide ${lat} and longitude ${lng}`}
                 className="facility-detail_map"
             />
@@ -53,15 +50,11 @@ FacilityDetailsStaticMap.propTypes = {
     baseURL: string.isRequired,
 };
 
-function mapStateToProps({
-    clientInfo: {
-        fetched,
-        countryCode,
-    },
-}) {
-    const host = countryCode === COUNTRY_CODES.china
-        ? 'www.google.cn'
-        : 'maps.googleapis.com';
+function mapStateToProps({ clientInfo: { fetched, countryCode } }) {
+    const host =
+        countryCode === COUNTRY_CODES.china
+            ? 'www.google.cn'
+            : 'maps.googleapis.com';
     const baseURL = `https:///${host}/maps/api/staticmap`;
 
     return {

@@ -60,7 +60,9 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                 hover
                                 onClick={() =>
                                     push(
-                                        makeFacilityListItemsDetailLink(list.id),
+                                        makeFacilityListItemsDetailLink(
+                                            list.id,
+                                        ),
                                     )
                                 }
                                 style={

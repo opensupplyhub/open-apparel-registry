@@ -140,20 +140,18 @@ function ReportFacilityStatus({
                 </DialogContent>
             )}
             {!user ? (
-                <DialogActions
-                    style={styles.dialogActionsStyles}
-                >
+                <DialogActions style={styles.dialogActionsStyles}>
                     {loginButton}
                 </DialogActions>
             ) : (
-                <DialogActions
-                    style={styles.dialogActionsStyles}
-                >
-                    <Button onClick={closeDialog}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSubmit} color="primary" variant="contained">
-                      Report
+                <DialogActions style={styles.dialogActionsStyles}>
+                    <Button onClick={closeDialog}>Cancel</Button>
+                    <Button
+                        onClick={handleSubmit}
+                        color="primary"
+                        variant="contained"
+                    >
+                        Report
                     </Button>
                 </DialogActions>
             )}
@@ -169,7 +167,8 @@ function ReportFacilityStatus({
                 onClick={() => setShowDialog(true)}
                 type="button"
             >
-                Report facility as {data.properties.is_closed ? 'reopened' : 'closed'}
+                Report facility as{' '}
+                {data.properties.is_closed ? 'reopened' : 'closed'}
             </button>
             {dialog}
             <DashboardActivityReportToast
@@ -184,7 +183,12 @@ ReportFacilityStatus.propTypes = {
     data: facilityDetailsPropType.isRequired,
 };
 
-function mapStateToProps({ dashboardActivityReports, auth: { user: { user } } }) {
+function mapStateToProps({
+    dashboardActivityReports,
+    auth: {
+        user: { user },
+    },
+}) {
     return { dashboardActivityReports, user };
 }
 

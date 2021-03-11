@@ -33,18 +33,14 @@ function SendResetPasswordEmailForm({
     submitForm,
     submitFormOnEnterKeyPress,
 }) {
-    const errorMessages = error && error.length
-        ? (
+    const errorMessages =
+        error && error.length ? (
             <ul style={{ color: 'red' }}>
-                {
-                    error.map(err => (
-                        <li key={err}>
-                            {err}
-                        </li>
-                    ))
-                }
-            </ul>)
-        : null;
+                {error.map(err => (
+                    <li key={err}>{err}</li>
+                ))}
+            </ul>
+        ) : null;
 
     return (
         <div>
@@ -82,10 +78,7 @@ function SendResetPasswordEmailForm({
                     {errorMessages}
                 </DialogContent>
                 <DialogActions>
-                    <MaterialButton
-                        onClick={handleClose}
-                        color="primary"
-                    >
+                    <MaterialButton onClick={handleClose} color="primary">
                         Cancel
                     </MaterialButton>
                     <MaterialButton
@@ -120,9 +113,7 @@ SendResetPasswordEmailForm.propTypes = {
 function mapStateToProps({
     auth: {
         forgotPassword: {
-            form: {
-                email,
-            },
+            form: { email },
             dialogIsOpen,
             fetching,
             error,
@@ -139,14 +130,18 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateEmail: e => dispatch(updateForgotPasswordEmailAddress(getValueFromEvent(e))),
+        updateEmail: e =>
+            dispatch(updateForgotPasswordEmailAddress(getValueFromEvent(e))),
         submitForm: () => dispatch(requestForgotPasswordEmail()),
         handleOpen: () => dispatch(openForgotPasswordDialog()),
         handleClose: () => dispatch(closeForgotPasswordDialog()),
-        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
-            () => dispatch(requestForgotPasswordEmail()),
+        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(() =>
+            dispatch(requestForgotPasswordEmail()),
         ),
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendResetPasswordEmailForm);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(SendResetPasswordEmailForm);

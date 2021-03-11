@@ -17,9 +17,7 @@ export default function ControlledTextInput({
 }) {
     return (
         <Fragment>
-            <p className="form__hint">
-                {hint}
-            </p>
+            <p className="form__hint">{hint}</p>
             <input
                 autoFocus={autoFocus} // eslint-disable-line jsx-a11y/no-autofocus
                 type={type}

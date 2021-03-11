@@ -54,10 +54,7 @@ import { createListItemCSV } from './util.listItemCSV';
 import { createFacilitiesCSV } from './util.facilitiesCSV';
 
 export function DownloadCSV(data, fileName) {
-    saveAs(
-        new Blob([data], { type: 'text/csv;charset=utf-8;' }),
-        fileName,
-    );
+    saveAs(new Blob([data], { type: 'text/csv;charset=utf-8;' }), fileName);
 
     return noop();
 }
@@ -65,7 +62,7 @@ export function DownloadCSV(data, fileName) {
 export const downloadListItemCSV = (list, items) =>
     DownloadCSV(
         createListItemCSV(items),
-        `${list.id}_${list.name}_${(new Date()).toLocaleDateString()}.csv`,
+        `${list.id}_${list.name}_${new Date().toLocaleDateString()}.csv`,
     );
 
 export const downloadFacilitiesCSV = (facilities, options) =>
@@ -74,21 +71,28 @@ export const downloadFacilitiesCSV = (facilities, options) =>
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
 export const makeUserSignupURL = () => '/user-signup/';
-export const makeUserConfirmEmailURL = () => '/rest-auth/registration/verify-email/';
+export const makeUserConfirmEmailURL = () =>
+    '/rest-auth/registration/verify-email/';
 
 export const makeFacilityListsURL = () => '/api/facility-lists/';
 export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
-export const makeSingleFacilityListItemsURL = id => `/api/facility-lists/${id}/items/`;
+export const makeSingleFacilityListItemsURL = id =>
+    `/api/facility-lists/${id}/items/`;
 
-export const makeDashboardFacilityListsURL = contributorID => `/api/facility-lists/?contributor=${contributorID}`;
+export const makeDashboardFacilityListsURL = contributorID =>
+    `/api/facility-lists/?contributor=${contributorID}`;
 
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
 export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
 
-export const makeDashboardActivityReportsURL = () => '/api/facility-activity-reports/';
-export const makeRejectDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/reject/`;
-export const makeConfirmDashboardActivityReportURL = id => `/api/facility-activity-reports/${id}/approve/`;
-export const makeCreateDashboardActivityReportURL = oarId => `/api/facilities/${oarId}/report/`;
+export const makeDashboardActivityReportsURL = () =>
+    '/api/facility-activity-reports/';
+export const makeRejectDashboardActivityReportURL = id =>
+    `/api/facility-activity-reports/${id}/reject/`;
+export const makeConfirmDashboardActivityReportURL = id =>
+    `/api/facility-activity-reports/${id}/approve/`;
+export const makeCreateDashboardActivityReportURL = oarId =>
+    `/api/facilities/${oarId}/report/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 
@@ -99,10 +103,14 @@ export const makeGetCountriesURL = () => '/api/countries/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
-export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) => `/api/facilities/?${qs}&pageSize=${pageSize}`;
-export const makeClaimFacilityAPIURL = oarId => `/api/facilities/${oarId}/claim/`;
-export const makeSplitFacilityAPIURL = oarID => `/api/facilities/${oarID}/split/`;
-export const makePromoteFacilityMatchAPIURL = oarID => `/api/facilities/${oarID}/promote/`;
+export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) =>
+    `/api/facilities/?${qs}&pageSize=${pageSize}`;
+export const makeClaimFacilityAPIURL = oarId =>
+    `/api/facilities/${oarId}/claim/`;
+export const makeSplitFacilityAPIURL = oarID =>
+    `/api/facilities/${oarID}/split/`;
+export const makePromoteFacilityMatchAPIURL = oarID =>
+    `/api/facilities/${oarID}/promote/`;
 
 export const makeMergeTwoFacilitiesAPIURL = (targetOARID, toMergeOARID) =>
     `/api/facilities/merge/?target=${targetOARID}&merge=${toMergeOARID}`;
@@ -111,14 +119,21 @@ export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
 export const makeGetAPIFeatureFlagsURL = () => '/api-feature-flags/';
 export const makeGetFacilityClaimsURL = () => '/api/facility-claims/';
-export const makeGetFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/`;
-export const makeApproveFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/approve/`;
-export const makeDenyFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/deny/`;
-export const makeRevokeFacilityClaimByClaimIDURL = claimID => `/api/facility-claims/${claimID}/revoke/`;
-export const makeAddNewFacilityClaimReviewNoteURL = claimID => `/api/facility-claims/${claimID}/note/`;
+export const makeGetFacilityClaimByClaimIDURL = claimID =>
+    `/api/facility-claims/${claimID}/`;
+export const makeApproveFacilityClaimByClaimIDURL = claimID =>
+    `/api/facility-claims/${claimID}/approve/`;
+export const makeDenyFacilityClaimByClaimIDURL = claimID =>
+    `/api/facility-claims/${claimID}/deny/`;
+export const makeRevokeFacilityClaimByClaimIDURL = claimID =>
+    `/api/facility-claims/${claimID}/revoke/`;
+export const makeAddNewFacilityClaimReviewNoteURL = claimID =>
+    `/api/facility-claims/${claimID}/note/`;
 
-export const makeGetOrUpdateApprovedFacilityClaimURL = claimID => `/api/facility-claims/${claimID}/claimed/`;
-export const makeParentCompanyOptionsAPIURL = () => '/api/facility-claims/parent-company-options/';
+export const makeGetOrUpdateApprovedFacilityClaimURL = claimID =>
+    `/api/facility-claims/${claimID}/claimed/`;
+export const makeParentCompanyOptionsAPIURL = () =>
+    '/api/facility-claims/parent-company-options/';
 export const makeGetClaimedFacilitiesURL = () => '/api/facilities/claimed/';
 export const makeClaimedFacilityDetailsLink = claimID => `/claimed/${claimID}/`;
 
@@ -127,36 +142,44 @@ const clientInfoURL = 'https://api.ipgeolocation.io/ipgeo?fields=country_code2';
 // and production we use request origin validation so that we don't have to
 // expose an API key
 export const makeGetClientInfoURL = () => {
-    const clientInfoURLSuffix = !env('ENVIRONMENT') || env('ENVIRONMENT') === 'development'
-        ? `&apiKey=${env('REACT_APP_IPGEOLOCATION_API_KEY')}`
-        : '';
+    const clientInfoURLSuffix =
+        !env('ENVIRONMENT') || env('ENVIRONMENT') === 'development'
+            ? `&apiKey=${env('REACT_APP_IPGEOLOCATION_API_KEY')}`
+            : '';
     return `${clientInfoURL}${clientInfoURLSuffix}`;
 };
 
-export const makeLogDownloadUrl = (path, recordCount) => `/api/log-download/?path=${path}&record_count=${recordCount}`;
+export const makeLogDownloadUrl = (path, recordCount) =>
+    `/api/log-download/?path=${path}&record_count=${recordCount}`;
 
-export const makeUpdateFacilityLocationURL = oarID => `/api/facilities/${oarID}/update-location/`;
+export const makeUpdateFacilityLocationURL = oarID =>
+    `/api/facilities/${oarID}/update-location/`;
 
 export const getValueFromObject = ({ value }) => value;
 
 const createCompactSortedQuerystringInputObject = (inputObject = []) =>
     compact(inputObject.map(getValueFromObject).slice().sort());
 
-export const createQueryStringFromSearchFilters = ({
-    facilityFreeTextQuery = '',
-    contributors = [],
-    contributorTypes = [],
-    countries = [],
-    lists = [],
-    combineContributors = '',
-    boundary = {},
-    ppe = '',
-}, withEmbed) => {
+export const createQueryStringFromSearchFilters = (
+    {
+        facilityFreeTextQuery = '',
+        contributors = [],
+        contributorTypes = [],
+        countries = [],
+        lists = [],
+        combineContributors = '',
+        boundary = {},
+        ppe = '',
+    },
+    withEmbed,
+) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
         contributors: createCompactSortedQuerystringInputObject(contributors),
         lists: createCompactSortedQuerystringInputObject(lists),
-        contributor_types: createCompactSortedQuerystringInputObject(contributorTypes),
+        contributor_types: createCompactSortedQuerystringInputObject(
+            contributorTypes,
+        ),
         countries: createCompactSortedQuerystringInputObject(countries),
         combine_contributors: combineContributors,
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
@@ -167,7 +190,7 @@ export const createQueryStringFromSearchFilters = ({
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));
 };
 
-export const mapParamToReactSelectOption = (param) => {
+export const mapParamToReactSelectOption = param => {
     if (isEmpty(param)) {
         return null;
     }
@@ -185,19 +208,17 @@ export const mapParamToReactSelectOption = (param) => {
     });
 };
 
-export const createSelectOptionsFromParams = (params) => {
-    const paramsInArray = !isArray(params)
-        ? [params]
-        : params;
+export const createSelectOptionsFromParams = params => {
+    const paramsInArray = !isArray(params) ? [params] : params;
 
     // compact to remove empty values from querystring params like 'countries='
-    return compact(Object.freeze(paramsInArray.map(mapParamToReactSelectOption)));
+    return compact(
+        Object.freeze(paramsInArray.map(mapParamToReactSelectOption)),
+    );
 };
 
-export const createFiltersFromQueryString = (qs) => {
-    const qsToParse = startsWith(qs, '?')
-        ? qs.slice(1)
-        : qs;
+export const createFiltersFromQueryString = qs => {
+    const qsToParse = startsWith(qs, '?') ? qs.slice(1) : qs;
 
     const {
         q: facilityFreeTextQuery = '',
@@ -222,30 +243,29 @@ export const createFiltersFromQueryString = (qs) => {
     });
 };
 
-export const getNumberFromParsedQueryStringParamOrUseDefault = (inputValue, defaultValue) => {
+export const getNumberFromParsedQueryStringParamOrUseDefault = (
+    inputValue,
+    defaultValue,
+) => {
     if (!inputValue) {
         return defaultValue;
     }
 
-    const nonArrayValue = isArray(inputValue)
-        ? head(inputValue)
-        : inputValue;
+    const nonArrayValue = isArray(inputValue) ? head(inputValue) : inputValue;
 
     return Number(nonArrayValue) || defaultValue;
 };
 
-export const createPaginationOptionsFromQueryString = (qs) => {
-    const qsToParse = startsWith(qs, '?')
-        ? qs.slice(1)
-        : qs;
+export const createPaginationOptionsFromQueryString = qs => {
+    const qsToParse = startsWith(qs, '?') ? qs.slice(1) : qs;
 
-    const {
-        page,
-        rowsPerPage,
-    } = querystring.parse(qsToParse);
+    const { page, rowsPerPage } = querystring.parse(qsToParse);
 
     return Object.freeze({
-        page: getNumberFromParsedQueryStringParamOrUseDefault(page, DEFAULT_PAGE),
+        page: getNumberFromParsedQueryStringParamOrUseDefault(
+            page,
+            DEFAULT_PAGE,
+        ),
         rowsPerPage: getNumberFromParsedQueryStringParamOrUseDefault(
             rowsPerPage,
             DEFAULT_ROWS_PER_PAGE,
@@ -253,15 +273,10 @@ export const createPaginationOptionsFromQueryString = (qs) => {
     });
 };
 
-export const createParamsFromQueryString = (qs) => {
-    const qsToParse = startsWith(qs, '?')
-        ? qs.slice(1)
-        : qs;
+export const createParamsFromQueryString = qs => {
+    const qsToParse = startsWith(qs, '?') ? qs.slice(1) : qs;
 
-    const {
-        search,
-        status,
-    } = querystring.parse(qsToParse);
+    const { search, status } = querystring.parse(qsToParse);
 
     const params = {};
 
@@ -276,42 +291,32 @@ export const createParamsFromQueryString = (qs) => {
     return params;
 };
 
-export const getTokenFromQueryString = (qs) => {
-    const qsToParse = startsWith(qs, '?')
-        ? qs.slice(1)
-        : qs;
+export const getTokenFromQueryString = qs => {
+    const qsToParse = startsWith(qs, '?') ? qs.slice(1) : qs;
 
-    const {
-        token = '',
-    } = querystring.parse(qsToParse);
+    const { token = '' } = querystring.parse(qsToParse);
 
-    return isArray(token)
-        ? head(token)
-        : token;
+    return isArray(token) ? head(token) : token;
 };
 
-export const getContributorFromQueryString = (qs) => {
-    const qsToParse = startsWith(qs, '?')
-        ? qs.slice(1)
-        : qs;
+export const getContributorFromQueryString = qs => {
+    const qsToParse = startsWith(qs, '?') ? qs.slice(1) : qs;
 
-    const {
-        contributor = null,
-    } = querystring.parse(qsToParse);
+    const { contributor = null } = querystring.parse(qsToParse);
 
     return parseInt(contributor, 10);
 };
 
 export const createTileURLWithQueryString = (qs, key, grid = true) =>
-    `/tile/${grid ? 'facilitygrid' : 'facilities'}/${key}/{z}/{x}/{y}.pbf`.concat(
-        isEmpty(qs) ? '' : `?${qs}`,
-    );
+    `/tile/${
+        grid ? 'facilitygrid' : 'facilities'
+    }/${key}/{z}/{x}/{y}.pbf`.concat(isEmpty(qs) ? '' : `?${qs}`);
 
 export const createTileCacheKeyWithEncodedFilters = (filters, key) =>
     `${key}-${hash(filters).slice(0, 8)}`;
 
-export const allFiltersAreEmpty = filters => values(filters)
-    .reduce((acc, next) => {
+export const allFiltersAreEmpty = filters =>
+    values(filters).reduce((acc, next) => {
         if (!isEmpty(next)) {
             return false;
         }
@@ -321,18 +326,23 @@ export const allFiltersAreEmpty = filters => values(filters)
 
 export const getFeaturesFromFeatureCollection = ({ features }) => features;
 
-export const createErrorListFromResponseObject = data => flatten(Object
-    .entries(data)
-    .map(([field, errors]) => {
-        if (isArray(errors)) {
-            return errors.map(err => `${field}: ${err}`);
-        }
+export const createErrorListFromResponseObject = data =>
+    flatten(
+        Object.entries(data).map(([field, errors]) => {
+            if (isArray(errors)) {
+                return errors.map(err => `${field}: ${err}`);
+            }
 
-        return [];
-    }));
+            return [];
+        }),
+    );
 
-export function logErrorAndDispatchFailure(error, defaultMessage, failureAction) {
-    return (dispatch) => {
+export function logErrorAndDispatchFailure(
+    error,
+    defaultMessage,
+    failureAction,
+) {
+    return dispatch => {
         const response = get(error, 'response', { data: null, status: null });
 
         if (!response.status || response.status >= 500) {
@@ -386,8 +396,8 @@ export const getFileFromInputRef = inputRef =>
 export const getFileNameFromInputRef = inputRef =>
     get(inputRef, 'current.files[0].name', '');
 
-const makeCreateFormErrorMessagesFn = fields => form => fields
-    .reduce((acc, { id, label, required }) => {
+const makeCreateFormErrorMessagesFn = fields => form =>
+    fields.reduce((acc, { id, label, required }) => {
         if (!required) {
             return acc;
         }
@@ -407,16 +417,28 @@ const makeCreateFormErrorMessagesFn = fields => form => fields
         return acc.concat(missingFieldMessage);
     }, []);
 
-export const createSignupErrorMessages = makeCreateFormErrorMessagesFn(registrationFormFields);
-export const createProfileUpdateErrorMessages = makeCreateFormErrorMessagesFn(profileFormFields);
+export const createSignupErrorMessages = makeCreateFormErrorMessagesFn(
+    registrationFormFields,
+);
+export const createProfileUpdateErrorMessages = makeCreateFormErrorMessagesFn(
+    profileFormFields,
+);
 
-const makeCreateFormRequestDataFn = fields => form => fields
-    .reduce((acc, { id, modelFieldName }) => Object.assign({}, acc, {
-        [modelFieldName]: form[id],
-    }), {});
+const makeCreateFormRequestDataFn = fields => form =>
+    fields.reduce(
+        (acc, { id, modelFieldName }) =>
+            Object.assign({}, acc, {
+                [modelFieldName]: form[id],
+            }),
+        {},
+    );
 
-export const createSignupRequestData = makeCreateFormRequestDataFn(registrationFormFields);
-export const createProfileUpdateRequestData = makeCreateFormRequestDataFn(profileFormFields);
+export const createSignupRequestData = makeCreateFormRequestDataFn(
+    registrationFormFields,
+);
+export const createProfileUpdateRequestData = makeCreateFormRequestDataFn(
+    profileFormFields,
+);
 
 export const getStateFromEventForEventType = Object.freeze({
     [inputTypesEnum.checkbox]: getCheckedFromEvent,
@@ -425,10 +447,11 @@ export const getStateFromEventForEventType = Object.freeze({
     [inputTypesEnum.password]: getValueFromEvent,
 });
 
-const mapSingleChoiceToSelectOption = ([value, label]) => (Object.freeze({
-    value,
-    label,
-}));
+const mapSingleChoiceToSelectOption = ([value, label]) =>
+    Object.freeze({
+        value,
+        label,
+    });
 
 export const mapDjangoChoiceTuplesToSelectOptions = data =>
     Object.freeze(data.map(mapSingleChoiceToSelectOption));
@@ -437,33 +460,36 @@ export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 
 export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
 
-export const makeClaimFacilityLink = oarID => `${facilitiesRoute}/${oarID}/claim`;
+export const makeClaimFacilityLink = oarID =>
+    `${facilitiesRoute}/${oarID}/claim`;
 
 export const makeApprovedClaimDetailsLink = claimID => `/claimed/${claimID}`;
 
-export const makeFacilityClaimDetailsLink = claimID => `/dashboard/claims/${claimID}`;
+export const makeFacilityClaimDetailsLink = claimID =>
+    `/dashboard/claims/${claimID}`;
 
-export const makeDashboardContributorListLink = contributorID => `/dashboard/lists/?contributor=${contributorID}`;
+export const makeDashboardContributorListLink = contributorID =>
+    `/dashboard/lists/?contributor=${contributorID}`;
 
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
 
-export const getBBoxForArrayOfGeoJSONPoints = flow(
-    featureCollection,
-    bbox,
-);
+export const getBBoxForArrayOfGeoJSONPoints = flow(featureCollection, bbox);
 
 export const makeApiBlockDetailLink = id => `/dashboard/apiblocks/${id}`;
 
 export const makeFacilityListItemsDetailLink = id => `/lists/${id}`;
 export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (
-    id, page, rowsPerPage, params,
+    id,
+    page,
+    rowsPerPage,
+    params,
 ) =>
-    `/lists/${id}?${querystring.stringify(Object.assign({}, params, { page, rowsPerPage }))}`;
+    `/lists/${id}?${querystring.stringify(
+        Object.assign({}, params, { page, rowsPerPage }),
+    )}`;
 
-export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) => Object.freeze([
-    page * rowsPerPage,
-    (page + 1) * rowsPerPage,
-]);
+export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) =>
+    Object.freeze([page * rowsPerPage, (page + 1) * rowsPerPage]);
 
 export const makeReportADataIssueEmailLink = oarId =>
     `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${oarId}`;
@@ -471,12 +497,11 @@ export const makeReportADataIssueEmailLink = oarId =>
 export const makeDisputeClaimEmailLink = oarId =>
     `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${oarId}`;
 
-export const makeFeatureCollectionFromSingleFeature = feature => Object.freeze({
-    type: FEATURE_COLLECTION,
-    features: Object.freeze([
-        feature,
-    ]),
-});
+export const makeFeatureCollectionFromSingleFeature = feature =>
+    Object.freeze({
+        type: FEATURE_COLLECTION,
+        features: Object.freeze([feature]),
+    });
 
 export const createConfirmFacilityListItemMatchURL = matchID =>
     `/api/facility-matches/${matchID}/confirm/`;
@@ -490,8 +515,7 @@ export const createRemoveFacilityListItemURL = listID =>
 export const makeMyFacilitiesRoute = contributorID =>
     `/facilities/?contributors=${contributorID}`;
 
-export const makeResetPasswordEmailURL = () =>
-    '/rest-auth/password/reset/';
+export const makeResetPasswordEmailURL = () => '/rest-auth/password/reset/';
 
 export const makeResetPasswordConfirmURL = () =>
     '/rest-auth/password/reset/confirm/';
@@ -501,44 +525,42 @@ export const makeUserProfileURL = userID => `/user-profile/${userID}/`;
 export const escapeCSVValue = value =>
     replace(replace(value, /"/g, '""'), /\n/g, ' ');
 
-export const joinDataIntoCSVString = data => data
-    .reduce((csvAccumulator, nextRow) => {
-        const joinedColumns = nextRow
-            .reduce((rowAccumulator, nextColumn) => {
-                if (isNumber(nextColumn)) {
-                    return rowAccumulator.concat(nextColumn, ',');
-                }
+export const joinDataIntoCSVString = data =>
+    data.reduce((csvAccumulator, nextRow) => {
+        const joinedColumns = nextRow.reduce((rowAccumulator, nextColumn) => {
+            if (isNumber(nextColumn)) {
+                return rowAccumulator.concat(nextColumn, ',');
+            }
 
-                return rowAccumulator.concat(
-                    '' + '"' + escapeCSVValue(nextColumn) + '"', // eslint-disable-line
-                    ',',
-                );
-            }, '');
+            return rowAccumulator.concat(
+                '' + '"' + escapeCSVValue(nextColumn) + '"', // eslint-disable-line
+                ',',
+            );
+        }, '');
 
-        return csvAccumulator.concat(
-            trimEnd(joinedColumns, ','),
-            '\n',
-        );
+        return csvAccumulator.concat(trimEnd(joinedColumns, ','), '\n');
     }, '');
 
 // Given a list where each item is like { label: 'ABCD', value: 123 }, and
 // a payload which is a list of items like { label: '123', value: 123 },
 // returns a list of items from the payload with their labels replaced with
 // matching items found in the list.
-export const updateListWithLabels = (list, payload) => list
-    .reduce((accumulator, { value }) => {
-        const validOption = payload
-            .find(({ value: otherValue }) => value === otherValue);
+export const updateListWithLabels = (list, payload) =>
+    list.reduce((accumulator, { value }) => {
+        const validOption = payload.find(
+            ({ value: otherValue }) => value === otherValue,
+        );
 
         if (!validOption) {
             return accumulator;
         }
 
-        return accumulator
-            .concat(Object.freeze({
+        return accumulator.concat(
+            Object.freeze({
                 value,
                 label: validOption.label,
-            }));
+            }),
+        );
     }, []);
 
 export const makeSubmitFormOnEnterKeyPressFunction = fn => ({ key }) => {
@@ -555,37 +577,50 @@ export const makeFacilityListItemsRetrieveCSVItemsURL = (id, page) =>
 export const makeFacilityListDataURLs = (id, count) => {
     const maxCount = toInteger(ceil(count, -2) / 100);
 
-    return range(1, maxCount + 1)
-        .map(page => makeFacilityListItemsRetrieveCSVItemsURL(id, page));
+    return range(1, maxCount + 1).map(page =>
+        makeFacilityListItemsRetrieveCSVItemsURL(id, page),
+    );
 };
 
-export const makeFacilityListSummaryStatus = (statuses) => {
-    const errorMessage = facilityListItemErrorStatuses.some(s => statuses.includes(s)) ?
-        facilityListSummaryStatusMessages.ERROR : '';
+export const makeFacilityListSummaryStatus = statuses => {
+    const errorMessage = facilityListItemErrorStatuses.some(s =>
+        statuses.includes(s),
+    )
+        ? facilityListSummaryStatusMessages.ERROR
+        : '';
     const awaitingMessage = [
         facilityListItemStatusChoicesEnum.POTENTIAL_MATCH,
-    ].some(s => statuses.includes(s)) ?
-        facilityListSummaryStatusMessages.AWAITING : '';
-    const processingMessage = statuses.some(s => [
-        facilityListItemStatusChoicesEnum.UPLOADED,
-        facilityListItemStatusChoicesEnum.PARSED,
-        facilityListItemStatusChoicesEnum.GEOCODED,
-        facilityListItemStatusChoicesEnum.GEOCODED_NO_RESULTS,
-    ].includes(s)) ?
-        facilityListSummaryStatusMessages.PROCESSING : '';
-    const completeMessage = statuses.every(s => [
-        facilityListItemStatusChoicesEnum.MATCHED,
-        facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
-    ].includes(s)) ?
-        facilityListSummaryStatusMessages.COMPLETED : '';
+    ].some(s => statuses.includes(s))
+        ? facilityListSummaryStatusMessages.AWAITING
+        : '';
+    const processingMessage = statuses.some(s =>
+        [
+            facilityListItemStatusChoicesEnum.UPLOADED,
+            facilityListItemStatusChoicesEnum.PARSED,
+            facilityListItemStatusChoicesEnum.GEOCODED,
+            facilityListItemStatusChoicesEnum.GEOCODED_NO_RESULTS,
+        ].includes(s),
+    )
+        ? facilityListSummaryStatusMessages.PROCESSING
+        : '';
+    const completeMessage = statuses.every(s =>
+        [
+            facilityListItemStatusChoicesEnum.MATCHED,
+            facilityListItemStatusChoicesEnum.CONFIRMED_MATCH,
+        ].includes(s),
+    )
+        ? facilityListSummaryStatusMessages.COMPLETED
+        : '';
 
     return `${completeMessage}
             ${processingMessage}
             ${awaitingMessage}
-            ${errorMessage}`.replace(/\s+/g, ' ').trim();
+            ${errorMessage}`
+        .replace(/\s+/g, ' ')
+        .trim();
 };
 
-export const addProtocolToWebsiteURLIfMissing = (url) => {
+export const addProtocolToWebsiteURLIfMissing = url => {
     if (startsWith(url, 'http://')) {
         return url;
     }
@@ -600,7 +635,8 @@ export const addProtocolToWebsiteURLIfMissing = (url) => {
 export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
     keys(pickBy(featureFlags, identity));
 
-export const checkWhetherUserHasDashboardAccess = user => get(user, 'is_superuser', false);
+export const checkWhetherUserHasDashboardAccess = user =>
+    get(user, 'is_superuser', false);
 
 export const claimAFacilityFormIsValid = ({
     email,
@@ -608,41 +644,49 @@ export const claimAFacilityFormIsValid = ({
     contactPerson,
     phoneNumber,
     preferredContactMethod,
-}) => every([
-    isEmail(email),
-    !isEmpty(companyName),
-    !isEmpty(contactPerson),
-    !isEmpty(phoneNumber),
-    !isEmpty(preferredContactMethod),
-], identity);
+}) =>
+    every(
+        [
+            isEmail(email),
+            !isEmpty(companyName),
+            !isEmpty(contactPerson),
+            !isEmpty(phoneNumber),
+            !isEmpty(preferredContactMethod),
+        ],
+        identity,
+    );
 
 export const claimFacilityContactInfoStepIsValid = ({
     email,
     contactPerson,
     phoneNumber,
     jobTitle,
-}) => every([
-    isEmail(email),
-    !isEmpty(contactPerson),
-    !isEmpty(phoneNumber),
-    !isEmpty(jobTitle),
-]);
+}) =>
+    every([
+        isEmail(email),
+        !isEmpty(contactPerson),
+        !isEmpty(phoneNumber),
+        !isEmpty(jobTitle),
+    ]);
 
-export const isValidFacilityURL = url => isEmpty(url) || isURL(url, { protocols: ['http', 'https'] });
+export const isValidFacilityURL = url =>
+    isEmpty(url) || isURL(url, { protocols: ['http', 'https'] });
 
 export const claimFacilityFacilityInfoStepIsValid = ({
     companyName,
     website,
     facilityDescription,
-}) => every([
-    !isEmpty(companyName),
-    isValidFacilityURL(website),
-    !isEmpty(facilityDescription),
-]);
+}) =>
+    every([
+        !isEmpty(companyName),
+        isValidFacilityURL(website),
+        !isEmpty(facilityDescription),
+    ]);
 
-export const anyListItemMatchesAreInactive = ({ matches }) => some(matches, ['is_active', false]);
+export const anyListItemMatchesAreInactive = ({ matches }) =>
+    some(matches, ['is_active', false]);
 
-export const pluralizeResultsCount = (count) => {
+export const pluralizeResultsCount = count => {
     if (isNil(count)) {
         return null;
     }
@@ -654,7 +698,7 @@ export const pluralizeResultsCount = (count) => {
     return `${count} results`;
 };
 
-export const pluralizeFacilitiesCount = (count) => {
+export const pluralizeFacilitiesCount = count => {
     if (isNil(count)) {
         return null;
     }
@@ -666,9 +710,8 @@ export const pluralizeFacilitiesCount = (count) => {
     return `${count} facilities`;
 };
 
-export const removeDuplicatesFromOtherLocationsData = otherLocationsData => uniqWith(
-    otherLocationsData,
-    (location, otherLocation) => {
+export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
+    uniqWith(otherLocationsData, (location, otherLocation) => {
         const lat = get(location, 'lat', null);
         const lng = get(location, 'lng', null);
         const id = get(location, 'contributor_id', null);
@@ -690,8 +733,7 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData => uniq
         }
 
         return false;
-    },
-);
+    });
 
 export const getLocationWithoutEmbedParam = () =>
     window.location.href.replace('&embed=1', '').replace('embed=1', '');

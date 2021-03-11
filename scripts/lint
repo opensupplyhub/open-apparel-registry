@@ -23,8 +23,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         # Lint React frontend
         docker-compose \
-            run --rm --no-deps app \
-            yarn lint
+            run --rm --entrypoint ./node_modules/.bin/eslint \
+            app src/ --ext .js --ext .jsx
+
+        docker-compose \
+            run --rm --no-deps app yarn prettier \
+                --config .prettierrc \
+                --check 'src/**/*.js' 'src/**/*.jsx'
+
 
         if [ "${1:-}" = "--ci" ]; then
             # Lint Django app

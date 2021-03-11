@@ -22,9 +22,7 @@ import {
 
 import { completeSubmitLogOut } from '../actions/auth';
 
-import {
-    updateListWithLabels,
-} from '../util/util';
+import { updateListWithLabels } from '../util/util';
 
 const initialState = Object.freeze({
     facilityFreeTextQuery: '',
@@ -51,41 +49,58 @@ export const maybeSetFromQueryString = field => (state, payload) => {
     });
 };
 
-export default createReducer({
-    [updateFacilityFreeTextQueryFilter]: (state, payload) => update(state, {
-        facilityFreeTextQuery: { $set: payload },
-    }),
-    [updateContributorFilter]: (state, payload) => update(state, {
-        contributors: { $set: payload },
-        lists: { $set: initialState.lists },
-    }),
-    [updateContributorTypeFilter]: (state, payload) => update(state, {
-        contributorTypes: { $set: payload },
-    }),
-    [updateCountryFilter]: (state, payload) => update(state, {
-        countries: { $set: payload },
-    }),
-    [updateCombineContributorsFilterOption]: (state, payload) => update(state, {
-        combineContributors: { $set: payload },
-    }),
-    [updateBoundaryFilter]: (state, payload) => update(state, {
-        boundary: { $set: payload },
-    }),
-    [updatePPEFilter]: (state, payload) => update(state, {
-        ppe: { $set: payload },
-    }),
-    [updateListFilter]: (state, payload) => update(state, {
-        lists: { $set: payload },
-    }),
-    [resetAllFilters]: (state, payload) => update(initialState, {
-        contributors: {
-            $set: payload ? state.contributors
-                : initialState.contributors,
-        },
-    }),
-    [updateAllFilters]: (_state, payload) => payload,
-    [completeFetchContributorOptions]: maybeSetFromQueryString('contributors'),
-    [completeFetchContributorTypeOptions]: maybeSetFromQueryString('contributorTypes'),
-    [completeFetchCountryOptions]: maybeSetFromQueryString('countries'),
-    [completeSubmitLogOut]: () => initialState,
-}, initialState);
+export default createReducer(
+    {
+        [updateFacilityFreeTextQueryFilter]: (state, payload) =>
+            update(state, {
+                facilityFreeTextQuery: { $set: payload },
+            }),
+        [updateContributorFilter]: (state, payload) =>
+            update(state, {
+                contributors: { $set: payload },
+                lists: { $set: initialState.lists },
+            }),
+        [updateContributorTypeFilter]: (state, payload) =>
+            update(state, {
+                contributorTypes: { $set: payload },
+            }),
+        [updateCountryFilter]: (state, payload) =>
+            update(state, {
+                countries: { $set: payload },
+            }),
+        [updateCombineContributorsFilterOption]: (state, payload) =>
+            update(state, {
+                combineContributors: { $set: payload },
+            }),
+        [updateBoundaryFilter]: (state, payload) =>
+            update(state, {
+                boundary: { $set: payload },
+            }),
+        [updatePPEFilter]: (state, payload) =>
+            update(state, {
+                ppe: { $set: payload },
+            }),
+        [updateListFilter]: (state, payload) =>
+            update(state, {
+                lists: { $set: payload },
+            }),
+        [resetAllFilters]: (state, payload) =>
+            update(initialState, {
+                contributors: {
+                    $set: payload
+                        ? state.contributors
+                        : initialState.contributors,
+                },
+            }),
+        [updateAllFilters]: (_state, payload) => payload,
+        [completeFetchContributorOptions]: maybeSetFromQueryString(
+            'contributors',
+        ),
+        [completeFetchContributorTypeOptions]: maybeSetFromQueryString(
+            'contributorTypes',
+        ),
+        [completeFetchCountryOptions]: maybeSetFromQueryString('countries'),
+        [completeSubmitLogOut]: () => initialState,
+    },
+    initialState,
+);
