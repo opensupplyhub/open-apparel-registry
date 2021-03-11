@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Provide Constant Access to GDPR [#1279](https://github.com/open-apparel-registry/open-apparel-registry/pull/1279)
+
 ### Changed
 
 - Use Craco and Prettier [#1271](https://github.com/open-apparel-registry/open-apparel-registry/pull/1271)

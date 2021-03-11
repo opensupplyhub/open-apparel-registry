@@ -1,6 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import Button from '@material-ui/core/Button';
 import logo from '../styles/images/Creative-Commons-Attribution-ShareAlike-40-International-Public.png';
+
+import { setGDPROpen } from '../actions/ui';
+
+const linkButtonStyle = {
+    textDecoration: 'underline',
+    textTransform: 'capitalize',
+    minHeight: 'auto',
+};
 
 const links = [
     {
@@ -9,6 +19,10 @@ const links = [
         text: 'Azavea',
         external: true,
         newTab: true,
+    },
+    {
+        text: 'Cookie Preferences',
+        button: true,
     },
     {
         href: 'https://info.openapparel.org/tos/',
@@ -24,7 +38,7 @@ const links = [
     },
 ];
 
-export default () => (
+const Footer = ({ openGDPR }) => (
     <footer className="footerContainer results-height-subtract" xs={12}>
         <div className="links">
             {links.map(l => {
@@ -55,6 +69,18 @@ export default () => (
                         </p>
                     );
                 }
+                if (l.button) {
+                    return (
+                        <Button
+                            className="link"
+                            style={linkButtonStyle}
+                            key={l.text}
+                            onClick={openGDPR}
+                        >
+                            {l.text}
+                        </Button>
+                    );
+                }
                 return (
                     <Link to={l.href} href={l.href} key={l.text}>
                         {l.text}
@@ -75,3 +101,11 @@ export default () => (
         </a>
     </footer>
 );
+
+function mapDispatchToProps(dispatch) {
+    return {
+        openGDPR: () => dispatch(setGDPROpen(true)),
+    };
+}
+
+export default connect(null, mapDispatchToProps)(Footer);

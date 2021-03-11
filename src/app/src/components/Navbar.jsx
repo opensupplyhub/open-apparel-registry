@@ -3,6 +3,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Drawer from '@material-ui/core/Drawer';
+import { connect } from 'react-redux';
 
 import { Link, Route } from 'react-router-dom';
 
@@ -14,13 +15,14 @@ import {
     contributeRoute,
     aboutClaimedFacilitiesRoute,
 } from '../util/constants';
+import { setGDPROpen } from '../actions/ui';
 
 const apiDocumentationURL =
     process.env.NODE_ENV === 'development'
         ? 'http://localhost:8081/api/docs/'
         : '/api/docs/';
 
-export default function Navbar({ embed }) {
+function Navbar({ embed, openGDPR }) {
     const [drawerHandler, setDrawerHandler] = useState(false);
     const mobileMenuToggleRef = useRef();
 
@@ -148,6 +150,20 @@ export default function Navbar({ embed }) {
                     CONTRIBUTE
                 </Link>
                 <Button
+                    className="btn-text navButton"
+                    style={{
+                        minHeight: 'auto',
+                        justifyContent: 'flex-start',
+                    }}
+                    disableRipple
+                    onClick={() => {
+                        openGDPR();
+                        setDrawerHandler(false);
+                    }}
+                >
+                    Cookie Preferences
+                </Button>
+                <Button
                     style={{ marginTop: 'auto' }}
                     onClick={() => setDrawerHandler(false)}
                 >
@@ -217,3 +233,11 @@ export default function Navbar({ embed }) {
         </>
     );
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        openGDPR: () => dispatch(setGDPROpen(true)),
+    };
+}
+
+export default connect(null, mapDispatchToProps)(Navbar);

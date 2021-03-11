@@ -26,3 +26,5 @@ export const resetSidebarFacilitiesTabTextFilter = createAction(
 export const toggleZoomToSearch = createAction('TOGGLE_ZOOM_TO_SEARCH');
 
 export const showDrawFilter = createAction('SHOW_DRAW_FILTER');
+
+export const setGDPROpen = createAction('SET_GDPR_OPEN');
