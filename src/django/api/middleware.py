@@ -1,6 +1,7 @@
 import sys
 import datetime
 import logging
+import json
 
 from django.utils import timezone
 from django.conf import settings
@@ -124,7 +125,9 @@ class RequestMeterMiddleware:
         is_blocked = has_active_block(request)
 
         if is_blocked and not is_docs:
-            return HttpResponse('API limit exceeded', status=402)
+            return HttpResponse(json.dumps({'detail': 'API limit exceeded'}),
+                                content_type='application/json',
+                                status=402)
         else:
             response = self.get_response(request)
             return response
