@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+- Bump react-dev-utils from 11.0.3 to 11.0.4 in /src/app [#1281](https://github.com/open-apparel-registry/open-apparel-registry/pull/1281)
+
 ## [2.40.0] - 2021-03-10
 
 ### Added
