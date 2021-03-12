@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Look up contributor via token when checking API blocks [#1280](https://github.com/open-apparel-registry/open-apparel-registry/pull/1280)
+
 ### Security
 
 ## [2.40.0] - 2021-03-10
