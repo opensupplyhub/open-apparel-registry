@@ -9,15 +9,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.41.0] - 2021-03-12
+
+### Added
+
 - Provide Constant Access to GDPR [#1279](https://github.com/open-apparel-registry/open-apparel-registry/pull/1279)
 
 ### Changed
 
 - Use Craco and Prettier [#1271](https://github.com/open-apparel-registry/open-apparel-registry/pull/1271)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -743,7 +753,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.40.0...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.41.0...HEAD
+[2.41.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.0
 [2.40.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.40.0
 [2.39.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.2
 [2.39.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.1
