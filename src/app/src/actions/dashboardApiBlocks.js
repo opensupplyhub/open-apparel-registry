@@ -8,12 +8,18 @@ import {
     makeDashboardApiBlockURL,
 } from '../util/util';
 
-export const startFetchDashboardApiBlocks = createAction('START_FETCH_DASHBOARD_API_BLOCKS');
-export const failFetchDashboardApiBlocks = createAction('FAIL_FETCH_DASHBOARD_API_BLOCKS');
-export const completeFetchDashboardApiBlocks = createAction('COMPLETE_FETCH_DASHBOARD_API_BLOCKS');
+export const startFetchDashboardApiBlocks = createAction(
+    'START_FETCH_DASHBOARD_API_BLOCKS',
+);
+export const failFetchDashboardApiBlocks = createAction(
+    'FAIL_FETCH_DASHBOARD_API_BLOCKS',
+);
+export const completeFetchDashboardApiBlocks = createAction(
+    'COMPLETE_FETCH_DASHBOARD_API_BLOCKS',
+);
 
 export function fetchDashboardApiBlocks() {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchDashboardApiBlocks());
 
         return apiRequest
@@ -26,16 +32,23 @@ export function fetchDashboardApiBlocks() {
                         'An error prevented fetching API blocks',
                         failFetchDashboardApiBlocks,
                     ),
-                ));
+                ),
+            );
     };
 }
 
-export const startFetchDashboardApiBlock = createAction('START_FETCH_DASHBOARD_API_BLOCK');
-export const failFetchDashboardApiBlock = createAction('FAIL_FETCH_DASHBOARD_API_BLOCK');
-export const completeFetchDashboardApiBlock = createAction('COMPLETE_FETCH_DASHBOARD_API_BLOCK');
+export const startFetchDashboardApiBlock = createAction(
+    'START_FETCH_DASHBOARD_API_BLOCK',
+);
+export const failFetchDashboardApiBlock = createAction(
+    'FAIL_FETCH_DASHBOARD_API_BLOCK',
+);
+export const completeFetchDashboardApiBlock = createAction(
+    'COMPLETE_FETCH_DASHBOARD_API_BLOCK',
+);
 
 export function fetchDashboardApiBlock(blockID) {
-    return (dispatch) => {
+    return dispatch => {
         dispatch(startFetchDashboardApiBlock());
 
         return apiRequest
@@ -48,13 +61,20 @@ export function fetchDashboardApiBlock(blockID) {
                         'An error prevented fetching the API block',
                         failFetchDashboardApiBlock,
                     ),
-                ));
+                ),
+            );
     };
 }
 
-export const startUpdateDashboardApiBlock = createAction('START_UPDATE_API_BLOCK');
-export const failUpdateDashboardApiBlock = createAction('FAIL_UPDATE_API_BLOCK');
-export const completeUpdateDashboardApiBlock = createAction('COMPLETE_UPDATE_API_BLOCK');
+export const startUpdateDashboardApiBlock = createAction(
+    'START_UPDATE_API_BLOCK',
+);
+export const failUpdateDashboardApiBlock = createAction(
+    'FAIL_UPDATE_API_BLOCK',
+);
+export const completeUpdateDashboardApiBlock = createAction(
+    'COMPLETE_UPDATE_API_BLOCK',
+);
 
 export function updateDashboardApiBlock({ graceLimit, graceReason }) {
     return (dispatch, getState) => {
@@ -64,9 +84,16 @@ export function updateDashboardApiBlock({ graceLimit, graceReason }) {
             dashboardApiBlocks: { apiBlock },
         } = getState();
 
-        const block = { ...apiBlock.data, grace_limit: graceLimit, grace_reason: graceReason };
+        const block = {
+            ...apiBlock.data,
+            grace_limit: graceLimit,
+            grace_reason: graceReason,
+        };
 
-        if (block.grace_limit <= block.limit || block.grace_limit <= block.actual) {
+        if (
+            block.grace_limit <= block.limit ||
+            block.grace_limit <= block.actual
+        ) {
             return dispatch(
                 failUpdateDashboardApiBlock([
                     'Grace limit must be higher than request limit and actual count',
@@ -84,6 +111,7 @@ export function updateDashboardApiBlock({ graceLimit, graceReason }) {
                         'An error prevented signing up',
                         failUpdateDashboardApiBlock,
                     ),
-                ));
+                ),
+            );
     };
 }

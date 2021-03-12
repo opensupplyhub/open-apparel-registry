@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { bool, func, number, oneOf, oneOfType, shape, string } from 'prop-types';
+import {
+    bool,
+    func,
+    number,
+    oneOf,
+    oneOfType,
+    shape,
+    string,
+} from 'prop-types';
 import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -24,24 +32,28 @@ export default class CellElement extends Component {
     };
 
     openConfirmDialog = () =>
-        this.setState(state => Object.assign({}, state, {
-            currentDialog: confirmRejectDialogStates.confirm,
-        }));
+        this.setState(state =>
+            Object.assign({}, state, {
+                currentDialog: confirmRejectDialogStates.confirm,
+            }),
+        );
 
     openRejectDialog = () =>
-        this.setState(state => Object.assign({}, state, {
-            currentDialog: confirmRejectDialogStates.reject,
-        }));
+        this.setState(state =>
+            Object.assign({}, state, {
+                currentDialog: confirmRejectDialogStates.reject,
+            }),
+        );
 
     closeDialog = () =>
-        this.setState(state => Object.assign({}, state, {
-            currentDialog: confirmRejectDialogStates.none,
-        }));
+        this.setState(state =>
+            Object.assign({}, state, {
+                currentDialog: confirmRejectDialogStates.none,
+            }),
+        );
 
     confirmFacilityMatch = () => {
-        const {
-            item,
-        } = this.props;
+        const { item } = this.props;
 
         if (isObject(item) && item.confirmMatch) {
             item.confirmMatch();
@@ -51,9 +63,7 @@ export default class CellElement extends Component {
     };
 
     rejectFacilityMatch = () => {
-        const {
-            item,
-        } = this.props;
+        const { item } = this.props;
 
         if (isObject(item) && item.rejectMatch) {
             item.rejectMatch();
@@ -80,10 +90,7 @@ export default class CellElement extends Component {
 
                 if (linkURL) {
                     return (
-                        <Link
-                            to={linkURL}
-                            href={linkURL}
-                        >
+                        <Link to={linkURL} href={linkURL}>
                             {item}
                         </Link>
                     );
@@ -113,9 +120,7 @@ export default class CellElement extends Component {
                     style={confirmRejectMatchRowStyles.cellRowStyles}
                 >
                     <div style={confirmRejectMatchRowStyles.cellActionStyles}>
-                        <div>
-                            {item.status}
-                        </div>
+                        <div>{item.status}</div>
                     </div>
                 </div>
             );
@@ -123,7 +128,10 @@ export default class CellElement extends Component {
 
         const confirmDialog = (
             <Dialog
-                open={this.state.currentDialog === confirmRejectDialogStates.confirm}
+                open={
+                    this.state.currentDialog ===
+                    confirmRejectDialogStates.confirm
+                }
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -132,33 +140,22 @@ export default class CellElement extends Component {
                 </DialogTitle>
                 <DialogContent id="alert-dialog-description">
                     <h3>
-                        This action will confirm this facility as a match for the list item.
+                        This action will confirm this facility as a match for
+                        the list item.
                     </h3>
                     <p>
-                        <strong>
-                            Potential match:
-                        </strong>
+                        <strong>Potential match:</strong>
                     </p>
                     <ul>
-                        <li>
-                            name: {item.matchName}
-                        </li>
-                        <li>
-                            address: {item.matchAddress}
-                        </li>
+                        <li>name: {item.matchName}</li>
+                        <li>address: {item.matchAddress}</li>
                     </ul>
                     <p>
-                        <strong>
-                            List item:
-                        </strong>
+                        <strong>List item:</strong>
                     </p>
                     <ul>
-                        <li>
-                            name: {item.itemName}
-                        </li>
-                        <li>
-                            address: {item.itemAddress}
-                        </li>
+                        <li>name: {item.itemName}</li>
+                        <li>address: {item.itemAddress}</li>
                     </ul>
                 </DialogContent>
                 <DialogActions>
@@ -182,7 +179,10 @@ export default class CellElement extends Component {
 
         const rejectDialog = (
             <Dialog
-                open={this.state.currentDialog === confirmRejectDialogStates.reject}
+                open={
+                    this.state.currentDialog ===
+                    confirmRejectDialogStates.reject
+                }
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -191,37 +191,26 @@ export default class CellElement extends Component {
                 </DialogTitle>
                 <DialogContent id="alert-dialog-description">
                     <h3>
-                        This action will reject the facility as a potential match.
+                        This action will reject the facility as a potential
+                        match.
                     </h3>
                     <p>
-                        <strong>
-                            Potential match:
-                        </strong>
+                        <strong>Potential match:</strong>
                     </p>
                     <ul>
-                        <li>
-                            name: {item.matchName}
-                        </li>
-                        <li>
-                            address: {item.matchAddress}
-                        </li>
+                        <li>name: {item.matchName}</li>
+                        <li>address: {item.matchAddress}</li>
                     </ul>
                     <p>
-                        <strong>
-                            List item:
-                        </strong>
+                        <strong>List item:</strong>
                     </p>
                     <ul>
-                        <li>
-                            name: {item.itemName}
-                        </li>
-                        <li>
-                            address: {item.itemAddress}
-                        </li>
+                        <li>name: {item.itemName}</li>
+                        <li>address: {item.itemAddress}</li>
                     </ul>
                     <p>
-                        If no other potential matches remain, this will
-                        create a new facility.
+                        If no other potential matches remain, this will create a
+                        new facility.
                     </p>
                 </DialogContent>
                 <DialogActions>
@@ -289,7 +278,8 @@ CellElement.propTypes = {
             id: number.isRequired,
             confirmMatch: func.isRequired,
             rejectMatch: func.isRequired,
-            status: oneOf(Object.values(facilityMatchStatusChoicesEnum)).isRequired,
+            status: oneOf(Object.values(facilityMatchStatusChoicesEnum))
+                .isRequired,
             matchName: string.isRequird,
             matchAddress: string.isRequired,
             itemName: string.isRequired,

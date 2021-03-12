@@ -3,6 +3,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Drawer from '@material-ui/core/Drawer';
+import { connect } from 'react-redux';
 
 import { Link, Route } from 'react-router-dom';
 
@@ -14,12 +15,14 @@ import {
     contributeRoute,
     aboutClaimedFacilitiesRoute,
 } from '../util/constants';
+import { setGDPROpen } from '../actions/ui';
 
-const apiDocumentationURL = process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8081/api/docs/'
-    : '/api/docs/';
+const apiDocumentationURL =
+    process.env.NODE_ENV === 'development'
+        ? 'http://localhost:8081/api/docs/'
+        : '/api/docs/';
 
-export default function Navbar({ embed }) {
+function Navbar({ embed, openGDPR }) {
     const [drawerHandler, setDrawerHandler] = useState(false);
     const mobileMenuToggleRef = useRef();
 
@@ -60,11 +63,7 @@ export default function Navbar({ embed }) {
                     marginLeft: 'auto',
                 }}
             >
-                <Link
-                    to="/"
-                    href="/"
-                    className="navButton"
-                >
+                <Link to="/" href="/" className="navButton">
                     HOME
                 </Link>
                 <NavbarDropdown title="ABOUT" links={aboutLinks} />
@@ -150,7 +149,26 @@ export default function Navbar({ embed }) {
                 >
                     CONTRIBUTE
                 </Link>
-                <Button style={{ marginTop: 'auto' }} onClick={() => setDrawerHandler(false)}>Close Menu</Button>
+                <Button
+                    className="btn-text navButton"
+                    style={{
+                        minHeight: 'auto',
+                        justifyContent: 'flex-start',
+                    }}
+                    disableRipple
+                    onClick={() => {
+                        openGDPR();
+                        setDrawerHandler(false);
+                    }}
+                >
+                    Cookie Preferences
+                </Button>
+                <Button
+                    style={{ marginTop: 'auto' }}
+                    onClick={() => setDrawerHandler(false)}
+                >
+                    Close Menu
+                </Button>
             </div>
         </>
     );
@@ -160,7 +178,13 @@ export default function Navbar({ embed }) {
         but the appbar has an absurd one as well
         and it'll be difficult to ensure any changes
         to the appbar won't have breaking effects */
-        <Drawer anchor="right" open={drawerHandler} onClose={() => setDrawerHandler(false)} style={{ zIndex: 99999999 }} className="mobile-navigation-drawer">
+        <Drawer
+            anchor="right"
+            open={drawerHandler}
+            onClose={() => setDrawerHandler(false)}
+            style={{ zIndex: 99999999 }}
+            className="mobile-navigation-drawer"
+        >
             {mobileNavigation}
         </Drawer>
     );
@@ -181,9 +205,18 @@ export default function Navbar({ embed }) {
 
     return (
         <>
-            <AppBar position="static" className="App-header results-height-subtract">
+            <AppBar
+                position="static"
+                className="App-header results-height-subtract"
+            >
                 <Toolbar style={{ padding: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'middle', marginRight: 'auto' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'middle',
+                            marginRight: 'auto',
+                        }}
+                    >
                         <Link
                             to="/"
                             href="/"
@@ -200,3 +233,11 @@ export default function Navbar({ embed }) {
         </>
     );
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        openGDPR: () => dispatch(setGDPROpen(true)),
+    };
+}
+
+export default connect(null, mapDispatchToProps)(Navbar);

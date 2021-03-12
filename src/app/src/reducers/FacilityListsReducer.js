@@ -16,20 +16,26 @@ const initialState = Object.freeze({
     error: null,
 });
 
-export default createReducer({
-    [startFetchUserFacilityLists]: state => update(state, {
-        fetching: { $set: true },
-        error: { $set: null },
-    }),
-    [failFetchUserFacilityLists]: (state, payload) => update(state, {
-        fetching: { $set: false },
-        error: { $set: payload },
-    }),
-    [completeFetchUserFacilityLists]: (state, payload) => update(state, {
-        fetching: { $set: false },
-        error: { $set: null },
-        facilityLists: { $set: payload },
-    }),
-    [resetUserFacilityLists]: () => initialState,
-    [completeSubmitLogOut]: () => initialState,
-}, initialState);
+export default createReducer(
+    {
+        [startFetchUserFacilityLists]: state =>
+            update(state, {
+                fetching: { $set: true },
+                error: { $set: null },
+            }),
+        [failFetchUserFacilityLists]: (state, payload) =>
+            update(state, {
+                fetching: { $set: false },
+                error: { $set: payload },
+            }),
+        [completeFetchUserFacilityLists]: (state, payload) =>
+            update(state, {
+                fetching: { $set: false },
+                error: { $set: null },
+                facilityLists: { $set: payload },
+            }),
+        [resetUserFacilityLists]: () => initialState,
+        [completeSubmitLogOut]: () => initialState,
+    },
+    initialState,
+);

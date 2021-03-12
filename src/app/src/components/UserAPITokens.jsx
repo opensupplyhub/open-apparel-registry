@@ -42,57 +42,56 @@ class UserAPITokens extends Component {
     }
 
     closeDialog = () =>
-        this.setState(state => Object.assign({}, state, { deleteDialogOpen: false }));
+        this.setState(state =>
+            Object.assign({}, state, { deleteDialogOpen: false }),
+        );
 
     openDialog = () =>
-        this.setState(state => Object.assign({}, state, { deleteDialogOpen: true }));
+        this.setState(state =>
+            Object.assign({}, state, { deleteDialogOpen: true }),
+        );
 
     deleteTokenAndCloseDialog = () => {
         this.props.deleteToken();
 
-        return this.setState(state => Object.assign({}, state, {
-            deleteDialogOpen: false,
-        }));
+        return this.setState(state =>
+            Object.assign({}, state, {
+                deleteDialogOpen: false,
+            }),
+        );
     };
 
     render() {
-        const {
-            fetching,
-            error,
-            tokens,
-            createToken,
-        } = this.props;
+        const { fetching, error, tokens, createToken } = this.props;
 
         if (error) {
             window.console.warn(error);
         }
 
-        const insetComponent = tokens.length
-            ? (
-                <List>
-                    {
-                        tokens
-                            .map(token => (
-                                <UserAPITokenListItem
-                                    key={token.token}
-                                    token={token}
-                                    handleDelete={this.openDialog}
-                                />))
-                    }
-                </List>)
-            : (
-                <div style={componentStyles.generateTokenButton}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        disableRipple
-                        onClick={createToken}
-                        disabled={fetching}
-                    >
-                        Generate a new API token
-                    </Button>
-                </div>);
+        const insetComponent = tokens.length ? (
+            <List>
+                {tokens.map(token => (
+                    <UserAPITokenListItem
+                        key={token.token}
+                        token={token}
+                        handleDelete={this.openDialog}
+                    />
+                ))}
+            </List>
+        ) : (
+            <div style={componentStyles.generateTokenButton}>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    disableRipple
+                    onClick={createToken}
+                    disabled={fetching}
+                >
+                    Generate a new API token
+                </Button>
+            </div>
+        );
 
         const deleteTokenDialog = (
             <Dialog
@@ -131,9 +130,7 @@ class UserAPITokens extends Component {
         return (
             <div className="margin-bottom">
                 <Divider />
-                <h3 style={componentStyles.header}>
-                    API Tokens
-                </h3>
+                <h3 style={componentStyles.header}>API Tokens</h3>
                 {insetComponent}
                 {deleteTokenDialog}
             </div>
@@ -156,11 +153,7 @@ UserAPITokens.propTypes = {
 
 function mapStateToProps({
     profile: {
-        tokens: {
-            tokens,
-            fetching,
-            error,
-        },
+        tokens: { tokens, fetching, error },
     },
 }) {
     return {

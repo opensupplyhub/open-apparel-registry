@@ -59,7 +59,10 @@ function DashboardMergeFacilities({
                 merging={merging}
                 error={errorMerging}
                 disabled={
-                    targetFetching || toMergeFetching || !targetData || !toMergeData
+                    targetFetching ||
+                    toMergeFetching ||
+                    !targetData ||
+                    !toMergeData
                 }
                 toMergeData={toMergeData}
                 targetData={targetData}
@@ -138,10 +141,7 @@ function mapStateToProps({
             fetching: toMergeFetching,
             error: toMergeError,
         },
-        merge: {
-            fetching: merging,
-            error: errorMerging,
-        },
+        merge: { fetching: merging, error: errorMerging },
     },
 }) {
     return {
@@ -160,13 +160,15 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateTargetOARID: e => dispatch(updateMergeTargetFacilityOARID(getValueFromEvent(e))),
+        updateTargetOARID: e =>
+            dispatch(updateMergeTargetFacilityOARID(getValueFromEvent(e))),
         clearTargetFacility: () => dispatch(clearMergeTargetFacility()),
         fetchTargetFacility: () => dispatch(fetchMergeTargetFacility()),
         fetchTargetFacilityOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
             () => dispatch(fetchMergeTargetFacility()),
         ),
-        updateToMergeOARID: e => dispatch(updateFacilityToMergeOARID(getValueFromEvent(e))),
+        updateToMergeOARID: e =>
+            dispatch(updateFacilityToMergeOARID(getValueFromEvent(e))),
         clearToMergeFacility: () => dispatch(clearFacilityToMerge()),
         fetchToMergeFacility: () => dispatch(fetchFacilityToMerge()),
         fetchToMergeFacilityOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
@@ -178,4 +180,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardMergeFacilities);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(DashboardMergeFacilities);

@@ -9,13 +9,18 @@ import {
 
 const initialState = Object.freeze({ fetched: false, countryCode: null });
 
-export default createReducer({
-    [startFetchClientInfo]: () => initialState,
-    [failFetchClientInfo]: state => update(state, {
-        fetched: { $set: true },
-    }),
-    [completeFetchClientInfo]: (state, payload) => update(state, {
-        fetched: { $set: true },
-        countryCode: { $set: payload.country_code2 },
-    }),
-}, initialState);
+export default createReducer(
+    {
+        [startFetchClientInfo]: () => initialState,
+        [failFetchClientInfo]: state =>
+            update(state, {
+                fetched: { $set: true },
+            }),
+        [completeFetchClientInfo]: (state, payload) =>
+            update(state, {
+                fetched: { $set: true },
+                countryCode: { $set: payload.country_code2 },
+            }),
+    },
+    initialState,
+);

@@ -39,19 +39,20 @@ export const createMatchRowFromListItem = ({
     name,
     address,
     matched_facility,
-}) => Object.freeze([
-    row_index,
-    status,
-    country_code,
-    country_name,
-    name,
-    address,
-    get(matched_facility, 'oar_id', ''),
-    get(matched_facility, 'name', ''),
-    get(matched_facility, 'address', ''),
-    get(matched_facility, 'location.lng', ''),
-    get(matched_facility, 'location.lat', ''),
-]);
+}) =>
+    Object.freeze([
+        row_index,
+        status,
+        country_code,
+        country_name,
+        name,
+        address,
+        get(matched_facility, 'oar_id', ''),
+        get(matched_facility, 'name', ''),
+        get(matched_facility, 'address', ''),
+        get(matched_facility, 'location.lng', ''),
+        get(matched_facility, 'location.lat', ''),
+    ]);
 
 export const formatPotentialMatchData = ({
     oar_id,
@@ -59,19 +60,8 @@ export const formatPotentialMatchData = ({
     address,
     confidence,
     status,
-    location: {
-        lng,
-        lat,
-    },
-}) => Object.freeze([
-    oar_id,
-    name,
-    address,
-    lng,
-    lat,
-    confidence,
-    status,
-]);
+    location: { lng, lat },
+}) => Object.freeze([oar_id, name, address, lng, lat, confidence, status]);
 
 export const listItemReducer = (acc, next) => {
     if (isEmpty(next.matches)) {
@@ -80,14 +70,16 @@ export const listItemReducer = (acc, next) => {
         ]);
     }
 
-    const matchRows = next
-        .matches
-        .filter(({ status }) => status !== facilityMatchStatusChoicesEnum.REJECTED)
+    const matchRows = next.matches
+        .filter(
+            ({ status }) => status !== facilityMatchStatusChoicesEnum.REJECTED,
+        )
         .reduce(
-            (rows, nextRow) => rows
-                .concat([
-                    createMatchRowFromListItem(next)
-                        .concat(formatPotentialMatchData(nextRow)),
+            (rows, nextRow) =>
+                rows.concat([
+                    createMatchRowFromListItem(next).concat(
+                        formatPotentialMatchData(nextRow),
+                    ),
                 ]),
             [],
         );
@@ -95,6 +87,9 @@ export const listItemReducer = (acc, next) => {
     return acc.concat(matchRows);
 };
 
-export const formatDataForCSV = listItems => listItems.reduce(listItemReducer, [csvHeaders]);
+export const formatDataForCSV = listItems =>
+    listItems.reduce(listItemReducer, [csvHeaders]);
 
-export const createListItemCSV = flow(formatDataForCSV, data => joinDataIntoCSVString(data));
+export const createListItemCSV = flow(formatDataForCSV, data =>
+    joinDataIntoCSVString(data),
+);

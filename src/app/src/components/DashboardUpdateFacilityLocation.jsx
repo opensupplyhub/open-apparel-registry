@@ -55,21 +55,16 @@ function DashboardUpdateFacilityLocation({
         if (!contributors.data.length && !contributors.fetching) {
             fetchContributors();
         }
-    }, [
-        contributors.data,
-        contributors.fetching,
-        fetchContributors,
-    ]);
+    }, [contributors.data, contributors.fetching, fetchContributors]);
 
-    const updateDisabled = (
+    const updateDisabled =
         targetFetching ||
         updatingLocation ||
         !targetData ||
         !newLocation.lat ||
         !newLocation.lng ||
         (targetData.geometry.coordinates[0] === parseFloat(newLocation.lng) &&
-         targetData.geometry.coordinates[1] === parseFloat(newLocation.lat))
-    );
+            targetData.geometry.coordinates[1] === parseFloat(newLocation.lat));
 
     return (
         <>
@@ -114,6 +109,7 @@ function DashboardUpdateFacilityLocation({
 DashboardUpdateFacilityLocation.defaultProps = {
     targetData: null,
     targetError: null,
+    contributor: null,
 };
 
 DashboardUpdateFacilityLocation.propTypes = {
@@ -140,10 +136,7 @@ function mapStateToProps({
         error: targetError,
         newLocation,
         notes,
-        update: {
-            fetching: updatingLocation,
-            error: errorUpdatingLocation,
-        },
+        update: { fetching: updatingLocation, error: errorUpdatingLocation },
         contributors,
         contributor,
     },
@@ -173,11 +166,16 @@ function mapDispatchToProps(dispatch) {
             dispatch(updateUpdateLocationFacilityOARID(getValueFromEvent(e))),
         updateLat: e => dispatch(updateUpdateLocationLat(getValueFromEvent(e))),
         updateLng: e => dispatch(updateUpdateLocationLng(getValueFromEvent(e))),
-        updateNotes: e => dispatch(updateUpdateLocationNotes(getValueFromEvent(e))),
+        updateNotes: e =>
+            dispatch(updateUpdateLocationNotes(getValueFromEvent(e))),
         updateLocation: () => dispatch(updateFacilityLocation()),
-        fetchContributors: () => dispatch(fetchDashboardUpdateLocationContributors()),
+        fetchContributors: () =>
+            dispatch(fetchDashboardUpdateLocationContributors()),
         updateContributor: c => dispatch(updateUpdateLocationContributor(c)),
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardUpdateFacilityLocation);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(DashboardUpdateFacilityLocation);

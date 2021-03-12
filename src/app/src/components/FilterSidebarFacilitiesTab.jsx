@@ -20,9 +20,7 @@ import InfiniteAnyHeight from 'react-infinite-any-height';
 
 import FeatureFlag from './FeatureFlag';
 
-import {
-    makeSidebarSearchTabActive,
-} from '../actions/ui';
+import { makeSidebarSearchTabActive } from '../actions/ui';
 
 import { fetchNextPageOfFacilities } from '../actions/facilities';
 
@@ -36,9 +34,7 @@ import {
     authRegisterFormRoute,
 } from '../util/constants';
 
-import {
-    makeFacilityDetailLink,
-} from '../util/util';
+import { makeFacilityDetailLink } from '../util/util';
 
 import COLOURS from '../util/COLOURS';
 
@@ -116,7 +112,9 @@ function FilterSidebarFacilitiesTab({
     fetchNextPage,
     isInfiniteLoading,
 }) {
-    const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(false);
+    const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
+        false,
+    );
     const [requestedDownload, setRequestedDownload] = useState(false);
 
     useEffect(() => {
@@ -208,63 +206,63 @@ function FilterSidebarFacilitiesTab({
     const facilitiesCount = get(data, 'count', null);
 
     const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
-    const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
+    const RegisterLink = props => (
+        <Link to={authRegisterFormRoute} {...props} />
+    );
 
     const progress = facilitiesCount
-        ? get(data, 'features', []).length * 100 / facilitiesCount
+        ? (get(data, 'features', []).length * 100) / facilitiesCount
         : 0;
 
     const listHeaderInsetComponent = (
-        <div style={facilitiesTabStyles.listHeaderStyles} className="results-height-subtract">
-            <Typography
-                variant="subheading"
-                align="center"
-            >
-                <div
-                    style={facilitiesTabStyles.titleRowStyles}
-                >
-                    {
-                        downloadingCSV
-                            ? (
-                                <div style={facilitiesTabStyles.listHeaderButtonStyles}>
-                                    <div style={facilitiesTabStyles.downloadLabelStyles}>
-                                        Downloading...
-                                    </div>
-                                    <LinearProgress variant="determinate" value={progress} />
-                                </div>)
-                            : (
-                                <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    style={facilitiesTabStyles.listHeaderButtonStyles}
-                                    disabled={downloadingCSV}
-                                    onClick={
-                                        () => {
-                                            if (user) {
-                                                setRequestedDownload(true);
-                                                handleDownload();
-                                            } else {
-                                                setLoginRequiredDialogIsOpen(true);
-                                            }
-                                        }
-                                    }
-                                >
-                                    Download CSV
-                                </Button>)
-                    }
+        <div
+            style={facilitiesTabStyles.listHeaderStyles}
+            className="results-height-subtract"
+        >
+            <Typography variant="subheading" align="center">
+                <div style={facilitiesTabStyles.titleRowStyles}>
+                    {downloadingCSV ? (
+                        <div style={facilitiesTabStyles.listHeaderButtonStyles}>
+                            <div
+                                style={facilitiesTabStyles.downloadLabelStyles}
+                            >
+                                Downloading...
+                            </div>
+                            <LinearProgress
+                                variant="determinate"
+                                value={progress}
+                            />
+                        </div>
+                    ) : (
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            style={facilitiesTabStyles.listHeaderButtonStyles}
+                            disabled={downloadingCSV}
+                            onClick={() => {
+                                if (user) {
+                                    setRequestedDownload(true);
+                                    handleDownload();
+                                } else {
+                                    setLoginRequiredDialogIsOpen(true);
+                                }
+                            }}
+                        >
+                            Download CSV
+                        </Button>
+                    )}
                 </div>
             </Typography>
         </div>
     );
 
-    const nonResultListComponentHeight = (
-        Array.from(document.getElementsByClassName('results-height-subtract'))
-            .reduce((sum, x) => sum + x.offsetHeight, 0)
-    );
+    const nonResultListComponentHeight = Array.from(
+        document.getElementsByClassName('results-height-subtract'),
+    ).reduce((sum, x) => sum + x.offsetHeight, 0);
 
     const resultListHeight = windowHeight - nonResultListComponentHeight;
 
-    const loadingElement = (facilities.length !== facilitiesCount) && (
+    const loadingElement = facilities.length !== facilitiesCount && (
         <Fragment>
             <Divider />
             <ListItem style={facilitiesTabStyles.listItemStyles}>
@@ -284,75 +282,89 @@ function FilterSidebarFacilitiesTab({
                         isInfiniteLoading={fetching || isInfiniteLoading}
                         onInfiniteLoad={fetchNextPage}
                         loadingSpinnerDelegate={loadingElement}
-                        list={
-                            facilities
-                                .map(({
-                                    properties: {
-                                        address,
-                                        name,
-                                        country_name: countryName,
-                                        oar_id: oarID,
-                                        is_closed: isClosed,
-                                    },
-                                }) => (
-                                    <Fragment key={oarID}>
-                                        <Divider />
-                                        <ListItem
-                                            key={oarID}
-                                            style={facilitiesTabStyles.listItemStyles}
+                        list={facilities.map(
+                            ({
+                                properties: {
+                                    address,
+                                    name,
+                                    country_name: countryName,
+                                    oar_id: oarID,
+                                    is_closed: isClosed,
+                                },
+                            }) => (
+                                <Fragment key={oarID}>
+                                    <Divider />
+                                    <ListItem
+                                        key={oarID}
+                                        style={
+                                            facilitiesTabStyles.listItemStyles
+                                        }
+                                    >
+                                        <Link
+                                            to={{
+                                                pathname: makeFacilityDetailLink(
+                                                    oarID,
+                                                ),
+                                                state: {
+                                                    panMapToFacilityDetails: true,
+                                                },
+                                            }}
+                                            href={makeFacilityDetailLink(oarID)}
+                                            style={
+                                                facilitiesTabStyles.linkStyles
+                                            }
                                         >
-                                            <Link
-                                                to={{
-                                                    pathname: makeFacilityDetailLink(oarID),
-                                                    state: {
-                                                        panMapToFacilityDetails: true,
-                                                    },
-                                                }}
-                                                href={makeFacilityDetailLink(oarID)}
-                                                style={facilitiesTabStyles.linkStyles}
+                                            <ListItemText
+                                                primary={`${name} - ${countryName}`}
+                                                secondary={address}
+                                            />
+                                        </Link>
+                                        {isClosed ? (
+                                            <FeatureFlag
+                                                flag={REPORT_A_FACILITY}
                                             >
-                                                <ListItemText
-                                                    primary={`${name} - ${countryName}`}
-                                                    secondary={address}
-                                                />
-                                            </Link>
-                                            {isClosed ? (
-                                                <FeatureFlag flag={REPORT_A_FACILITY}>
-                                                    <div style={facilitiesTabStyles.closureRibbon}>
-                                                        Closed facility
-                                                    </div>
-                                                </FeatureFlag>
-                                            ) : null}
-                                        </ListItem>
-                                    </Fragment>))
-                        }
+                                                <div
+                                                    style={
+                                                        facilitiesTabStyles.closureRibbon
+                                                    }
+                                                >
+                                                    Closed facility
+                                                </div>
+                                            </FeatureFlag>
+                                        ) : null}
+                                    </ListItem>
+                                </Fragment>
+                            ),
+                        )}
                     />
                 </List>
             </div>
             <Dialog open={loginRequiredDialogIsOpen}>
-                { loginRequiredDialogIsOpen ? (
+                {loginRequiredDialogIsOpen ? (
                     <>
-                        <DialogTitle>
-                          Log In To Download
-                        </DialogTitle>
+                        <DialogTitle>Log In To Download</DialogTitle>
                         <DialogContent>
                             <Typography>
-                              You must log in with an Open Apparel Registry
-                              account before downloading your search results.
+                                You must log in with an Open Apparel Registry
+                                account before downloading your search results.
                             </Typography>
                         </DialogContent>
                         <DialogActions>
                             <Button
                                 variant="outlined"
                                 color="secondary"
-                                onClick={() => setLoginRequiredDialogIsOpen(false)}
+                                onClick={() =>
+                                    setLoginRequiredDialogIsOpen(false)
+                                }
                             >
                                 Cancel
                             </Button>
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={() => setLoginRequiredDialogIsOpen(false)}
+                                onClick={() =>
+                                    setLoginRequiredDialogIsOpen(false)
+                                }
                                 component={RegisterLink}
                             >
                                 Register
@@ -360,7 +372,9 @@ function FilterSidebarFacilitiesTab({
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={() => setLoginRequiredDialogIsOpen(false)}
+                                onClick={() =>
+                                    setLoginRequiredDialogIsOpen(false)
+                                }
                                 component={LoginLink}
                             >
                                 Log In
@@ -396,30 +410,16 @@ FilterSidebarFacilitiesTab.propTypes = {
 
 function mapStateToProps({
     auth: {
-        user: {
-            user,
-        },
+        user: { user },
     },
     facilities: {
-        facilities: {
-            data,
-            error,
-            fetching,
-            isInfiniteLoading,
-        },
+        facilities: { data, error, fetching, isInfiniteLoading },
     },
     ui: {
-        facilitiesSidebarTabSearch: {
-            filterText,
-        },
-        window: {
-            innerHeight: windowHeight,
-        },
+        facilitiesSidebarTabSearch: { filterText },
+        window: { innerHeight: windowHeight },
     },
-    logDownload: {
-        fetching: downloadingCSV,
-        error: logDownloadError,
-    },
+    logDownload: { fetching: downloadingCSV, error: logDownloadError },
 }) {
     return {
         data,
@@ -442,4 +442,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FilterSidebarFacilitiesTab);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(FilterSidebarFacilitiesTab);

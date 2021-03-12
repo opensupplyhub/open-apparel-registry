@@ -23,15 +23,11 @@ Translate.propTypes = {
     src: string.isRequired,
 };
 
-function mapStateToProps({
-    clientInfo: {
-        fetched,
-        countryCode,
-    },
-}) {
-    const host = countryCode === COUNTRY_CODES.china
-        ? 'translate.google.cn'
-        : 'translate.google.com';
+function mapStateToProps({ clientInfo: { fetched, countryCode } }) {
+    const host =
+        countryCode === COUNTRY_CODES.china
+            ? 'translate.google.cn'
+            : 'translate.google.com';
     const src = `//${host}/translate_a/element.js?cb=googleTranslateElementInit`;
     return {
         clientInfoFetched: fetched,

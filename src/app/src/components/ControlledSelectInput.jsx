@@ -26,7 +26,7 @@ export default class ControlledSelectInput extends Component {
         this.state = { open: false };
     }
 
-    makeSelection = (selection) => {
+    makeSelection = selection => {
         this.props.handleChange(selection);
         return this.toggleSelect();
     };
@@ -35,14 +35,8 @@ export default class ControlledSelectInput extends Component {
 
     render() {
         const {
-            props: {
-                options,
-                value,
-                disabled,
-            },
-            state: {
-                open,
-            },
+            props: { options, value, disabled },
+            state: { open },
         } = this;
         /* eslint-disable  jsx-a11y/no-noninteractive-tabindex */
         return (

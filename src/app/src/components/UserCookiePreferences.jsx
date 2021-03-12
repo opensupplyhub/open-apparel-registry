@@ -32,31 +32,31 @@ const componentStyles = Object.freeze({
 class UserCookiePreferences extends Component {
     state = {
         accepted: userHasAcceptedGATracking(),
-    }
+    };
 
-    acceptGDPRAlert = () => this.setState(
-        state => Object.assign({}, state, { accepted: true }),
-        () => {
-            clearGATrackingDecision();
-            acceptGATrackingAndStartTracking();
-        },
-    );
+    acceptGDPRAlert = () =>
+        this.setState(
+            state => Object.assign({}, state, { accepted: true }),
+            () => {
+                clearGATrackingDecision();
+                acceptGATrackingAndStartTracking();
+            },
+        );
 
-    rejectGDPRAlert = () => this.setState(
-        state => Object.assign({}, state, { accepted: false }),
-        () => {
-            clearGATrackingDecision();
-            rejectGATracking();
-        },
-    );
+    rejectGDPRAlert = () =>
+        this.setState(
+            state => Object.assign({}, state, { accepted: false }),
+            () => {
+                clearGATrackingDecision();
+                rejectGATracking();
+            },
+        );
 
     render() {
         return (
             <div className="margin-bottom">
                 <Divider />
-                <h3 style={componentStyles.header}>
-                    Cookie Preferences
-                </h3>
+                <h3 style={componentStyles.header}>Cookie Preferences</h3>
                 <div style={componentStyles.content}>
                     <CookiePreferencesText />
                     <div style={componentStyles.buttons}>

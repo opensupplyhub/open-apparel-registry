@@ -40,82 +40,97 @@ const initialState = Object.freeze({
     }),
 });
 
-export default createReducer({
-    [startFetchContributorOptions]: state => update(state, {
-        contributors: {
-            fetching: { $set: true },
-            error: { $set: null },
-        },
-    }),
-    [failFetchContributorOptions]: (state, payload) => update(state, {
-        contributors: {
-            fetching: { $set: false },
-            error: { $set: payload },
-        },
-    }),
-    [completeFetchContributorOptions]: (state, payload) => update(state, {
-        contributors: {
-            fetching: { $set: false },
-            error: { $set: null },
-            data: { $set: payload },
-        },
-    }),
-    [startFetchListOptions]: state => update(state, {
-        lists: {
-            fetching: { $set: true },
-            error: { $set: null },
-        },
-    }),
-    [failFetchListOptions]: (state, payload) => update(state, {
-        lists: {
-            fetching: { $set: false },
-            error: { $set: payload },
-        },
-    }),
-    [completeFetchListOptions]: (state, payload) => update(state, {
-        lists: {
-            fetching: { $set: false },
-            error: { $set: null },
-            data: { $set: payload },
-        },
-    }),
-    [startFetchContributorTypeOptions]: state => update(state, {
-        contributorTypes: {
-            fetching: { $set: true },
-            error: { $set: null },
-        },
-    }),
-    [failFetchContributorTypeOptions]: (state, payload) => update(state, {
-        contributorTypes: {
-            fetching: { $set: false },
-            error: { $set: payload },
-        },
-    }),
-    [completeFetchContributorTypeOptions]: (state, payload) => update(state, {
-        contributorTypes: {
-            fetching: { $set: false },
-            error: { $set: null },
-            data: { $set: payload },
-        },
-    }),
-    [startFetchCountryOptions]: state => update(state, {
-        countries: {
-            fetching: { $set: true },
-            error: { $set: null },
-        },
-    }),
-    [failFetchCountryOptions]: (state, payload) => update(state, {
-        countries: {
-            fetching: { $set: false },
-            error: { $set: payload },
-        },
-    }),
-    [completeFetchCountryOptions]: (state, payload) => update(state, {
-        countries: {
-            fetching: { $set: false },
-            error: { $set: null },
-            data: { $set: payload },
-        },
-    }),
-    [resetFilterOptions]: () => initialState,
-}, initialState);
+export default createReducer(
+    {
+        [startFetchContributorOptions]: state =>
+            update(state, {
+                contributors: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchContributorOptions]: (state, payload) =>
+            update(state, {
+                contributors: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchContributorOptions]: (state, payload) =>
+            update(state, {
+                contributors: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchListOptions]: state =>
+            update(state, {
+                lists: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchListOptions]: (state, payload) =>
+            update(state, {
+                lists: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchListOptions]: (state, payload) =>
+            update(state, {
+                lists: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchContributorTypeOptions]: state =>
+            update(state, {
+                contributorTypes: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchContributorTypeOptions]: (state, payload) =>
+            update(state, {
+                contributorTypes: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchContributorTypeOptions]: (state, payload) =>
+            update(state, {
+                contributorTypes: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchCountryOptions]: state =>
+            update(state, {
+                countries: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchCountryOptions]: (state, payload) =>
+            update(state, {
+                countries: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchCountryOptions]: (state, payload) =>
+            update(state, {
+                countries: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [resetFilterOptions]: () => initialState,
+    },
+    initialState,
+);

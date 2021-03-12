@@ -15,11 +15,9 @@ function FacilityDetailStatusList({ activityReports }) {
     return (
         <ShowOnly when={!!activityReports.length}>
             <div className="control-panel__group">
-                <h1 className="control-panel__heading">
-                    Status
-                </h1>
+                <h1 className="control-panel__heading">Status</h1>
                 <div className="control-panel__body">
-                    {activityReports.map((report) => {
+                    {activityReports.map(report => {
                         const {
                             closure_state: closureState,
                             reported_by_contributor: user,
@@ -30,10 +28,14 @@ function FacilityDetailStatusList({ activityReports }) {
                         const state = closureState.toLowerCase();
                         return (
                             <ul key={report.id} style={styles.list}>
-                                <li>Reported {state} by {user} on {formatDate(created)}</li>
+                                <li>
+                                    Reported {state} by {user} on{' '}
+                                    {formatDate(created)}
+                                </li>
                                 {status === 'CONFIRMED' && (
                                     <li>
-                                        Verified as {state} on {formatDate(statusChangeDate)}
+                                        Verified as {state} on{' '}
+                                        {formatDate(statusChangeDate)}
                                     </li>
                                 )}
                             </ul>

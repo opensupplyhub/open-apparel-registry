@@ -45,10 +45,7 @@ class FacilityLists extends Component {
 
                 if (!userHasSignedIn) {
                     return (
-                        <Link
-                            to={authLoginFormRoute}
-                            href={authLoginFormRoute}
-                        >
+                        <Link to={authLoginFormRoute} href={authLoginFormRoute}>
                             Sign in to view your Open Apparel Registry lists
                         </Link>
                     );
@@ -57,16 +54,11 @@ class FacilityLists extends Component {
                 if (error && error.length) {
                     return (
                         <ul>
-                            {
-                                error
-                                    .map(err => (
-                                        <li
-                                            key={err}
-                                            style={{ color: 'red' }}
-                                        >
-                                            {err}
-                                        </li>))
-                            }
+                            {error.map(err => (
+                                <li key={err} style={{ color: 'red' }}>
+                                    {err}
+                                </li>
+                            ))}
                         </ul>
                     );
                 }
@@ -74,21 +66,22 @@ class FacilityLists extends Component {
                 return null;
             })();
 
-            return (
-                <AppGrid title="My Lists">
-                    {insetComponent}
-                </AppGrid>
-            );
+            return <AppGrid title="My Lists">{insetComponent}</AppGrid>;
         }
 
-        const tableComponent = facilityLists && facilityLists.length
-            ? <FacilityListsTable facilityLists={facilityLists} />
-            : <FacilityListsEmpty />;
+        const tableComponent =
+            facilityLists && facilityLists.length ? (
+                <FacilityListsTable facilityLists={facilityLists} />
+            ) : (
+                <FacilityListsEmpty />
+            );
 
         return (
             <AppOverflow>
                 <AppGrid title="My Lists">
-                    <ShowOnly when={!!myFacilitiesRoute && !!facilityLists.length}>
+                    <ShowOnly
+                        when={!!myFacilitiesRoute && !!facilityLists.length}
+                    >
                         <Link
                             to={claimedFacilitiesRoute}
                             href={claimedFacilitiesRoute}
@@ -119,18 +112,10 @@ FacilityLists.propTypes = {
 };
 
 function mapStateToProps({
-    facilityLists: {
-        facilityLists,
-        fetching,
-        error,
-    },
+    facilityLists: { facilityLists, fetching, error },
     auth: {
-        user: {
-            user,
-        },
-        session: {
-            fetching: fetchingSessionSignIn,
-        },
+        user: { user },
+        session: { fetching: fetchingSessionSignIn },
     },
 }) {
     return {

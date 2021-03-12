@@ -63,12 +63,12 @@ const componentStyles = Object.freeze({
 const createUserDropdownLinks = (user, logoutAction, activeFeatureFlags) => {
     const dashboardLink = checkWhetherUserHasDashboardAccess(user)
         ? Object.freeze([
-            Object.freeze({
-                text: 'Dashboard',
-                url: dashboardRoute,
-                type: 'link',
-            }),
-        ])
+              Object.freeze({
+                  text: 'Dashboard',
+                  url: dashboardRoute,
+                  type: 'link',
+              }),
+          ])
         : [];
 
     const userLinks = Object.freeze([
@@ -86,12 +86,12 @@ const createUserDropdownLinks = (user, logoutAction, activeFeatureFlags) => {
 
     const claimedFacilityLinks = includes(activeFeatureFlags, CLAIM_A_FACILITY)
         ? Object.freeze([
-            Object.freeze({
-                text: 'My Facilities',
-                url: '/claimed',
-                type: 'link',
-            }),
-        ])
+              Object.freeze({
+                  text: 'My Facilities',
+                  url: '/claimed',
+                  type: 'link',
+              }),
+          ])
         : [];
 
     const logoutLinks = Object.freeze([
@@ -102,7 +102,10 @@ const createUserDropdownLinks = (user, logoutAction, activeFeatureFlags) => {
         }),
     ]);
 
-    return dashboardLink.concat(userLinks).concat(claimedFacilityLinks).concat(logoutLinks);
+    return dashboardLink
+        .concat(userLinks)
+        .concat(claimedFacilityLinks)
+        .concat(logoutLinks);
 };
 
 function NavbarLoginButtonGroup({
@@ -114,7 +117,10 @@ function NavbarLoginButtonGroup({
 }) {
     if (!user || sessionFetching || featureFlagsFetching) {
         return (
-            <div style={componentStyles.containerStyle} className="NavbarLoginButtonGroup">
+            <div
+                style={componentStyles.containerStyle}
+                className="NavbarLoginButtonGroup"
+            >
                 <Link
                     to={authRegisterFormRoute}
                     href={authRegisterFormRoute}
@@ -139,7 +145,11 @@ function NavbarLoginButtonGroup({
         <div style={componentStyles.containerStyle}>
             <NavbarDropdown
                 title={user.name}
-                links={createUserDropdownLinks(user, logout, activeFeatureFlags)}
+                links={createUserDropdownLinks(
+                    user,
+                    logout,
+                    activeFeatureFlags,
+                )}
             />
         </div>
     );
@@ -159,17 +169,10 @@ NavbarLoginButtonGroup.propTypes = {
 
 function mapStateToProps({
     auth: {
-        user: {
-            user,
-        },
-        session: {
-            fetching: sessionFetching,
-        },
+        user: { user },
+        session: { fetching: sessionFetching },
     },
-    featureFlags: {
-        fetching: featureFlagsFetching,
-        flags,
-    },
+    featureFlags: { fetching: featureFlagsFetching, flags },
 }) {
     return {
         user,
@@ -179,23 +182,30 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    history: {
-        push,
-        location: {
-            pathname,
+function mapDispatchToProps(
+    dispatch,
+    {
+        history: {
+            push,
+            location: { pathname },
         },
     },
-}) {
+) {
     return {
         logout: () => {
             dispatch(submitLogOut());
 
-            if (pathname !== mainRoute && !startsWith(pathname, facilitiesRoute)) {
+            if (
+                pathname !== mainRoute &&
+                !startsWith(pathname, facilitiesRoute)
+            ) {
                 push(facilitiesRoute);
             }
         },
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavbarLoginButtonGroup);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(NavbarLoginButtonGroup);

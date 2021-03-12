@@ -22,9 +22,8 @@ const FacilityListsEmpty = memo(() => (
         style={facilityListsEmptyStyles.containerStyle}
     >
         <label htmlFor={contributeRouteLink}>
-            You currently have no lists to view.
-            Please contribute a list of factories to
-            the OAR first.
+            You currently have no lists to view. Please contribute a list of
+            factories to the OAR first.
         </label>
         <Link
             id={contributeRouteLink}

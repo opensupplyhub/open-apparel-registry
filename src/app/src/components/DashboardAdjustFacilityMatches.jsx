@@ -39,7 +39,7 @@ function DashboardAdjustFacilityMatches({
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => resetAdjustState, []);
-    /* eslint-disable react-books/exhaustive-deps */
+    /* eslint-disable react-hooks/exhaustive-deps */
 
     return (
         <div style={{ width: '100%', display: 'flex' }}>
@@ -79,10 +79,12 @@ DashboardAdjustFacilityMatches.propTypes = {
     data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
-    adjustData: arrayOf(shape({
-        match_id: number.isRequired,
-        new_oar_id: string.isRequired,
-    })).isRequired,
+    adjustData: arrayOf(
+        shape({
+            match_id: number.isRequired,
+            new_oar_id: string.isRequired,
+        }),
+    ).isRequired,
     adjusting: bool.isRequired,
     errorAdjusting: arrayOf(string),
     updateOARID: func.isRequired,

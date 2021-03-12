@@ -25,58 +25,35 @@ const dashboardClaimsListTableStyles = Object.freeze({
     }),
 });
 
-function ClaimedFacilitiesListTable({
-    data,
-    history: {
-        push,
-    },
-}) {
-    const makeRowClickHandler = claimID => () => push(makeClaimedFacilityDetailsLink(claimID));
+function ClaimedFacilitiesListTable({ data, history: { push } }) {
+    const makeRowClickHandler = claimID => () =>
+        push(makeClaimedFacilityDetailsLink(claimID));
 
     return (
         <Paper style={dashboardClaimsListTableStyles.containerStyles}>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>
-                            Name
-                        </TableCell>
-                        <TableCell>
-                            OAR ID
-                        </TableCell>
-                        <TableCell>
-                            Address
-                        </TableCell>
-                        <TableCell>
-                            Country
-                        </TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>OAR ID</TableCell>
+                        <TableCell>Address</TableCell>
+                        <TableCell>Country</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {
-                        data
-                            .map(claim => (
-                                <TableRow
-                                    hover
-                                    key={claim.id}
-                                    onClick={makeRowClickHandler(claim.id)}
-                                    style={dashboardClaimsListTableStyles.rowStyles}
-                                >
-                                    <TableCell>
-                                        {claim.facility_name}
-                                    </TableCell>
-                                    <TableCell>
-                                        {claim.oar_id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {claim.facility_address}
-                                    </TableCell>
-                                    <TableCell>
-                                        {claim.facility_country_name}
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                    }
+                    {data.map(claim => (
+                        <TableRow
+                            hover
+                            key={claim.id}
+                            onClick={makeRowClickHandler(claim.id)}
+                            style={dashboardClaimsListTableStyles.rowStyles}
+                        >
+                            <TableCell>{claim.facility_name}</TableCell>
+                            <TableCell>{claim.oar_id}</TableCell>
+                            <TableCell>{claim.facility_address}</TableCell>
+                            <TableCell>{claim.facility_country_name}</TableCell>
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         </Paper>

@@ -70,10 +70,17 @@ export default createReducer(
             update(state, {
                 activityReports: {
                     error: { $set: null },
-                    data: { $apply: (data) => {
-                        const index = data.findIndex(el => el.id === payload.id);
-                        return [...data.slice(0, index), payload, ...data.slice(index + 1)];
-                    },
+                    data: {
+                        $apply: data => {
+                            const index = data.findIndex(
+                                el => el.id === payload.id,
+                            );
+                            return [
+                                ...data.slice(0, index),
+                                payload,
+                                ...data.slice(index + 1),
+                            ];
+                        },
                     },
                     message: { $set: null },
                 },

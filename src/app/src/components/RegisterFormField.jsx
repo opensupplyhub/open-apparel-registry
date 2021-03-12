@@ -1,5 +1,13 @@
 import React from 'react';
-import { arrayOf, bool, func, oneOf, oneOfType, shape, string } from 'prop-types';
+import {
+    arrayOf,
+    bool,
+    func,
+    oneOf,
+    oneOfType,
+    shape,
+    string,
+} from 'prop-types';
 
 import ControlledTextInput from './ControlledTextInput';
 import ControlledSelectInput from './ControlledSelectInput';
@@ -29,20 +37,14 @@ export default function RegisterFormField({
         return null;
     }
 
-    const requiredIndicator = required
-        ? (
-            <span style={{ color: 'red' }}>
-                {' *'}
-            </span>)
-        : null;
+    const requiredIndicator = required ? (
+        <span style={{ color: 'red' }}>{' *'}</span>
+    ) : null;
 
     if (type === inputTypesEnum.select) {
         return (
             <div className="form__field">
-                <label
-                    htmlFor={id}
-                    className="form__label"
-                >
+                <label htmlFor={id} className="form__label">
                     {label}
                     {requiredIndicator}
                 </label>
@@ -72,10 +74,7 @@ export default function RegisterFormField({
 
     return (
         <div className="form__field">
-            <label
-                htmlFor={id}
-                className="form__label"
-            >
+            <label htmlFor={id} className="form__label">
                 {label}
                 {requiredIndicator}
             </label>

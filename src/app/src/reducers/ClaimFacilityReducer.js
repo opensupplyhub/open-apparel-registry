@@ -91,7 +91,9 @@ export default createReducer(
         [failFetchParentCompanyOptions]: (state, error) =>
             update(state, {
                 parentCompanyOptions: {
-                    fetching: { $set: initialState.parentCompanyOptions.fetching },
+                    fetching: {
+                        $set: initialState.parentCompanyOptions.fetching,
+                    },
                     error: { $set: error },
                 },
             }),
@@ -99,7 +101,9 @@ export default createReducer(
             update(state, {
                 parentCompanyOptions: {
                     data: { $set: data },
-                    fetching: { $set: initialState.parentCompanyOptions.fetching },
+                    fetching: {
+                        $set: initialState.parentCompanyOptions.fetching,
+                    },
                 },
             }),
         [resetParentCompanyOptions]: state =>

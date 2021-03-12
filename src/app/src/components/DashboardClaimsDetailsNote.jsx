@@ -18,11 +18,7 @@ const dashboardClaimsDetailsNoteStyles = Object.freeze({
 });
 
 export default function DashboardClaimsDetailsNote({
-    note: {
-        author,
-        created_at: createdAt,
-        note,
-    },
+    note: { author, created_at: createdAt, note },
 }) {
     return (
         <Paper style={dashboardClaimsDetailsNoteStyles.containerStyles}>

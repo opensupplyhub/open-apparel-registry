@@ -18,10 +18,7 @@ import {
     makeFacilityListItemsDetailLink,
 } from '../util/util';
 
-import {
-    contributeFormFields,
-    contributeFieldsEnum,
-} from '../util/constants';
+import { contributeFormFields, contributeFieldsEnum } from '../util/constants';
 
 import {
     updateFileUploadName,
@@ -68,10 +65,7 @@ class ContributeForm extends Component {
     }
 
     componentDidUpdate({ fetching: wasFetching }) {
-        const {
-            fetching,
-            error,
-        } = this.props;
+        const { fetching, error } = this.props;
 
         if (fetching) {
             return null;
@@ -115,71 +109,63 @@ class ContributeForm extends Component {
             facilityLists,
         } = this.props;
 
-
-        const errorMessages = error && error.length
-            ? (
+        const errorMessages =
+            error && error.length ? (
                 <React.Fragment>
                     <ul>
-                        {
-                            error
-                                .map(err => (
-                                    <li
-                                        key={err}
-                                        style={{ color: 'red' }}
-                                    >
-                                        {err}
-                                    </li>))
-                        }
+                        {error.map(err => (
+                            <li key={err} style={{ color: 'red' }}>
+                                {err}
+                            </li>
+                        ))}
                     </ul>
                     <div style={contributeFormStyles.postErrorHelp}>
-                        If you continue to have trouble submitting your list, please check
-                        the <a href="#troubleshooting">troubleshooting</a> section
-                        on this page or email <a href="mailto:info@openapparel.org">info@openapparel.org</a>.
+                        If you continue to have trouble submitting your list,
+                        please check the{' '}
+                        <a href="#troubleshooting">troubleshooting</a> section
+                        on this page or email{' '}
+                        <a href="mailto:info@openapparel.org">
+                            info@openapparel.org
+                        </a>
+                        .
                     </div>
                 </React.Fragment>
-            )
-            : null;
+            ) : null;
 
-        const formInputs = contributeFormFields
-            .map(field => (
-                <div
-                    key={field.id}
-                    className="form__field"
-                >
-                    <label
-                        htmlFor={field.id}
-                        className="form__label"
-                    >
-                        {field.label}
-                    </label>
-                    <ControlledTextInput
-                        id={field.id}
-                        type={field.type}
-                        hint={field.hint}
-                        placeholder={field.placeholder}
-                        onChange={
-                            field.id === contributeFieldsEnum.name
-                                ? updateName
-                                : updateDescription
-                        }
-                        value={
-                            field.id === contributeFieldsEnum.name
-                                ? name
-                                : description
-                        }
-                    />
-                </div>));
+        const formInputs = contributeFormFields.map(field => (
+            <div key={field.id} className="form__field">
+                <label htmlFor={field.id} className="form__label">
+                    {field.label}
+                </label>
+                <ControlledTextInput
+                    id={field.id}
+                    type={field.type}
+                    hint={field.hint}
+                    placeholder={field.placeholder}
+                    onChange={
+                        field.id === contributeFieldsEnum.name
+                            ? updateName
+                            : updateDescription
+                    }
+                    value={
+                        field.id === contributeFieldsEnum.name
+                            ? name
+                            : description
+                    }
+                />
+            </div>
+        ));
 
-        const submitButtonIsDisabled = (fetching || fetchingFacilityLists);
+        const submitButtonIsDisabled = fetching || fetchingFacilityLists;
 
-        const replacesSection = facilityLists && facilityLists.length
-            ? (
+        const replacesSection =
+            facilityLists && facilityLists.length ? (
                 <ContributeFormSelectListToReplace
                     lists={facilityLists}
                     replaces={replaces}
                     handleChange={updateListToReplace}
-                />)
-            : null;
+                />
+            ) : null;
 
         return (
             <div className="control-panel__group">
@@ -195,9 +181,7 @@ class ContributeForm extends Component {
                     >
                         Select Facility List File
                     </MaterialButton>
-                    <p style={contributeFormStyles.fileNameText}>
-                        {filename}
-                    </p>
+                    <p style={contributeFormStyles.fileNameText}>{filename}</p>
                     <input
                         type="file"
                         accept=".csv,.xls,.xlsx"
@@ -209,20 +193,19 @@ class ContributeForm extends Component {
                 {replacesSection}
                 <div className="form__field">
                     {errorMessages}
-                    {
-                        fetching
-                            ? <CircularProgress size={30} />
-                            : (
-                                <Button
-                                    onClick={this.handleUploadList}
-                                    disabled={submitButtonIsDisabled}
-                                    text="SUBMIT"
-                                    variant="contained"
-                                    disableRipple
-                                >
-                                    SUBMIT
-                                </Button>)
-                    }
+                    {fetching ? (
+                        <CircularProgress size={30} />
+                    ) : (
+                        <Button
+                            onClick={this.handleUploadList}
+                            disabled={submitButtonIsDisabled}
+                            text="SUBMIT"
+                            variant="contained"
+                            disableRipple
+                        >
+                            SUBMIT
+                        </Button>
+                    )}
                 </div>
             </div>
         );
@@ -253,19 +236,11 @@ ContributeForm.propTypes = {
 
 function mapStateToProps({
     upload: {
-        form: {
-            name,
-            description,
-            filename,
-            replaces,
-        },
+        form: { name, description, filename, replaces },
         fetching,
         error,
     },
-    facilityLists: {
-        facilityLists,
-        fetching: fetchingFacilityLists,
-    },
+    facilityLists: { facilityLists, fetching: fetchingFacilityLists },
 }) {
     return {
         name,
@@ -279,21 +254,21 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, {
-    history: {
-        push,
-    },
-}) {
+function mapDispatchToProps(dispatch, { history: { push } }) {
     return {
         updateName: e => dispatch(updateFileUploadName(getValueFromEvent(e))),
-        updateDescription: e => dispatch(updateFileUploadDescription(getValueFromEvent(e))),
-        updateFileName: r => dispatch(updateFileUploadFileName(getFileNameFromInputRef(r))),
+        updateDescription: e =>
+            dispatch(updateFileUploadDescription(getValueFromEvent(e))),
+        updateFileName: r =>
+            dispatch(updateFileUploadFileName(getFileNameFromInputRef(r))),
         updateListToReplace: e =>
             dispatch(updateFileUploadListToReplaceID(getValueFromEvent(e))),
-        uploadList: r => dispatch(uploadFile(
-            getFileFromInputRef(r),
-            id => push(makeFacilityListItemsDetailLink(id)),
-        )),
+        uploadList: r =>
+            dispatch(
+                uploadFile(getFileFromInputRef(r), id =>
+                    push(makeFacilityListItemsDetailLink(id)),
+                ),
+            ),
         fetchLists: () => dispatch(fetchUserFacilityLists()),
         resetForm: () => {
             dispatch(resetUserFacilityLists());

@@ -17,7 +17,9 @@ class PolygonalSearchControl extends React.Component {
     }
 
     componentDidMount() {
-        const { leaflet: { map } } = this.props;
+        const {
+            leaflet: { map },
+        } = this.props;
         const editableLayers = this.editableLayers.current.leafletElement;
 
         this.drawControl = new L.Control.Draw({
@@ -56,14 +58,14 @@ class PolygonalSearchControl extends React.Component {
     }
 
     componentWillUnmount() {
-        const { leaflet: { map } } = this.props;
+        const {
+            leaflet: { map },
+        } = this.props;
         map.removeControl(this.drawControl);
     }
 
     render() {
-        return (
-            <FeatureGroup ref={this.editableLayers} />
-        );
+        return <FeatureGroup ref={this.editableLayers} />;
     }
 }
 
@@ -73,4 +75,7 @@ const mapDispatchToProps = dispatch => ({
     hideDrawFilter: () => dispatch(showDrawFilter(false)),
 });
 
-export default connect(null, mapDispatchToProps)(withLeaflet(PolygonalSearchControl));
+export default connect(
+    null,
+    mapDispatchToProps,
+)(withLeaflet(PolygonalSearchControl));

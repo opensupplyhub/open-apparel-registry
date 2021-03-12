@@ -5,31 +5,27 @@ const ContributeTroubleshooting = memo(() => (
     <Grid item xs={12}>
         <div className="control-panel__group margin-bottom-64">
             <div id="troubleshooting" className="form__field">
-                <p className="form__label">
-                    Troubleshooting Common Issues
-                </p>
+                <p className="form__label">Troubleshooting Common Issues</p>
                 <ul className="helper-list">
                     <li className="helper-list__item">
                         If uploading a CSV file, check that it uses commas to
-                        separate the individual fields, not semcolons, tabs,
-                        or other characters.
+                        separate the individual fields, not semcolons, tabs, or
+                        other characters.
                     </li>
                     <li className="helper-list__item">
-                        Check that you have not changed the
-                        column titles in the CSV template.
-                        The file must have <code>country</code>
-                        , <code>name</code>
-                        , and <code>address</code> column titles.
+                        Check that you have not changed the column titles in the
+                        CSV template. The file must have <code>country</code>,{' '}
+                        <code>name</code>, and <code>address</code> column
+                        titles.
                     </li>
                     <li className="helper-list__item">
-                        Check that you do not have any blank
-                        cells in the country, name, or address
-                        columns, or any merged cells in your
-                        Excel or CSV file.
+                        Check that you do not have any blank cells in the
+                        country, name, or address columns, or any merged cells
+                        in your Excel or CSV file.
                     </li>
                     <li>
-                        If you are still experiencing issues
-                        uploading to the OAR, please{' '}
+                        If you are still experiencing issues uploading to the
+                        OAR, please{' '}
                         <a
                             href="mailto:info@openapparel.org"
                             className="link-underline"

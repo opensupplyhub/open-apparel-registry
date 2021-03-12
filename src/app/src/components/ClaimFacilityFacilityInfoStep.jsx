@@ -77,30 +77,28 @@ function ClaimFacilityFacilityInfoStep({
                     disabled={fetching}
                 />
             </div>
-            {
-                contributorOptions && (
-                    <div style={claimAFacilityFormStyles.inputGroupStyles}>
-                        <InputLabel htmlFor={parentCompanyFormField.id}>
-                            <Typography variant="title">
-                                {parentCompanyFormField.label}
-                            </Typography>
-                        </InputLabel>
-                        <aside style={claimAFacilityFormStyles.asideStyles}>
-                            {parentCompanyFormField.aside}
-                        </aside>
-                        <div style={claimAFacilityFormStyles.textFieldStyles}>
-                            <Select
-                                options={contributorOptions}
-                                id={parentCompanyFormField.id}
-                                value={parentCompany}
-                                onChange={updateParentCompany}
-                                disabled={fetching}
-                                styles={selectStyles}
-                            />
-                        </div>
+            {contributorOptions && (
+                <div style={claimAFacilityFormStyles.inputGroupStyles}>
+                    <InputLabel htmlFor={parentCompanyFormField.id}>
+                        <Typography variant="title">
+                            {parentCompanyFormField.label}
+                        </Typography>
+                    </InputLabel>
+                    <aside style={claimAFacilityFormStyles.asideStyles}>
+                        {parentCompanyFormField.aside}
+                    </aside>
+                    <div style={claimAFacilityFormStyles.textFieldStyles}>
+                        <Select
+                            options={contributorOptions}
+                            id={parentCompanyFormField.id}
+                            value={parentCompany}
+                            onChange={updateParentCompany}
+                            disabled={fetching}
+                            styles={selectStyles}
+                        />
                     </div>
-                )
-            }
+                </div>
+            )}
             <div style={claimAFacilityFormStyles.inputGroupStyles}>
                 <InputLabel htmlFor={websiteFormField.id}>
                     <Typography variant="title">
@@ -164,12 +162,15 @@ ClaimFacilityFacilityInfoStep.propTypes = {
 function mapStateToProps({
     claimFacility: {
         claimData: {
-            formData: { companyName, website, facilityDescription, parentCompany },
+            formData: {
+                companyName,
+                website,
+                facilityDescription,
+                parentCompany,
+            },
             fetching,
         },
-        parentCompanyOptions: {
-            data: contributorOptions,
-        },
+        parentCompanyOptions: { data: contributorOptions },
     },
 }) {
     return {
@@ -186,7 +187,8 @@ function mapDispatchToProps(dispatch) {
     return {
         updateCompany: e =>
             dispatch(updateClaimAFacilityCompany(getValueFromEvent(e))),
-        updateParentCompany: v => dispatch(updateClaimAFacilityParentCompany(v)),
+        updateParentCompany: v =>
+            dispatch(updateClaimAFacilityParentCompany(v)),
         updateWebsite: e =>
             dispatch(updateClaimAFacilityWebsite(getValueFromEvent(e))),
         updateDescription: e =>

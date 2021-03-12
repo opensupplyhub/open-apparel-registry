@@ -8,7 +8,7 @@ import { listTableCellStyles } from '../util/styles';
 import { makeFacilityDetailLink } from '../util/util';
 import { facilityListItemStatusPropType } from '../util/propTypes';
 
-const makeTableRowStyle = (isRemoved) => {
+const makeTableRowStyle = isRemoved => {
     if (isRemoved) {
         return Object.freeze({
             opacity: '0.6',
@@ -134,15 +134,20 @@ const FacilityListItemsMatchTableRow = ({
             >
                 {matchedFacility ? (
                     <>
-                        <b>Facility Match Name</b><br />
+                        <b>Facility Match Name</b>
+                        <br />
                         <Link
                             to={makeFacilityDetailLink(matchedFacility.oar_id)}
-                            href={makeFacilityDetailLink(matchedFacility.oar_id)}
+                            href={makeFacilityDetailLink(
+                                matchedFacility.oar_id,
+                            )}
                         >
                             {matchedFacility.name}
                         </Link>
                     </>
-                ) : ''}
+                ) : (
+                    ''
+                )}
             </TableCell>
             <TableCell
                 padding="default"
@@ -151,10 +156,13 @@ const FacilityListItemsMatchTableRow = ({
             >
                 {matchedFacility ? (
                     <>
-                        <b>Facility Match Address</b><br />
+                        <b>Facility Match Address</b>
+                        <br />
                         {matchedFacility.address}
                     </>
-                ) : ''}
+                ) : (
+                    ''
+                )}
             </TableCell>
             <TableCell
                 padding="default"

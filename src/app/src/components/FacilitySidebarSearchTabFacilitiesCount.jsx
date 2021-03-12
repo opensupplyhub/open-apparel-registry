@@ -15,23 +15,25 @@ const FacilitySidebarSearchTabFacilitiesCount = ({
     }
 
     return (
-        <div style={{
-            margin: 0,
-            verticalAlign: 'center',
-            marginRight: '5px',
-            flex: 1,
-        }}
-        >
-            <p style={{
-                backgroundColor: 'rgb(199,209,250)',
-                paddingLeft: '5px',
-                paddingRight: '5px',
-                alignText: 'center',
-                color: 'rgb(9,24,143)',
-                minWidth: '100px',
-                overflow: 'none',
-                margin: '10px 0 0 0',
+        <div
+            style={{
+                margin: 0,
+                verticalAlign: 'center',
+                marginRight: '5px',
+                flex: 1,
             }}
+        >
+            <p
+                style={{
+                    backgroundColor: 'rgb(199,209,250)',
+                    paddingLeft: '5px',
+                    paddingRight: '5px',
+                    alignText: 'center',
+                    color: 'rgb(9,24,143)',
+                    minWidth: '100px',
+                    overflow: 'none',
+                    margin: '10px 0 0 0',
+                }}
             >
                 {pluralizeFacilitiesCount(facilitiesCount)}
             </p>
@@ -52,11 +54,7 @@ FacilitySidebarSearchTabFacilitiesCount.propTypes = {
 
 function mapStateToProps({
     facilities: {
-        facilities: {
-            data,
-            error,
-            fetching,
-        },
+        facilities: { data, error, fetching },
     },
 }) {
     return {

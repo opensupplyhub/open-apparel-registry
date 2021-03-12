@@ -4,10 +4,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
-import {
-    makeFacilityDetailLink,
-    makeProfileRouteLink,
-} from '../util/util';
+import { makeFacilityDetailLink, makeProfileRouteLink } from '../util/util';
 
 const claimedFacilitiesDetailsSidebarStyles = Object.freeze({
     containerStyles: Object.freeze({}),
@@ -19,9 +16,7 @@ const claimedFacilitiesDetailsSidebarStyles = Object.freeze({
     }),
 });
 
-export default function ClaimedFacilitiesDetailsSidebar({
-    facilityDetails,
-}) {
+export default function ClaimedFacilitiesDetailsSidebar({ facilityDetails }) {
     return (
         <div>
             <div style={claimedFacilitiesDetailsSidebarStyles.sectionStyles}>
@@ -36,9 +31,7 @@ export default function ClaimedFacilitiesDetailsSidebar({
                 </Typography>
             </div>
             <div style={claimedFacilitiesDetailsSidebarStyles.sectionStyles}>
-                <Typography variant="title">
-                    OAR ID
-                </Typography>
+                <Typography variant="title">OAR ID</Typography>
                 <Typography
                     variant="body1"
                     style={claimedFacilitiesDetailsSidebarStyles.bodyTextStyles}
@@ -52,26 +45,23 @@ export default function ClaimedFacilitiesDetailsSidebar({
                 </Typography>
             </div>
             <div style={claimedFacilitiesDetailsSidebarStyles.sectionStyles}>
-                <Typography variant="title">
-                    Contributors
-                </Typography>
-                <ul style={claimedFacilitiesDetailsSidebarStyles.bodyTextStyles}>
-                    {
-                        facilityDetails
-                            .properties
-                            .contributors
-                            .map(({ id, name }) => (
-                                <li key={id}>
-                                    <Link
-                                        to={makeProfileRouteLink(id)}
-                                        href={makeProfileRouteLink(id)}
-                                        key={id}
-                                    >
-                                        {name}
-                                    </Link>
-                                </li>
-                            ))
-                    }
+                <Typography variant="title">Contributors</Typography>
+                <ul
+                    style={claimedFacilitiesDetailsSidebarStyles.bodyTextStyles}
+                >
+                    {facilityDetails.properties.contributors.map(
+                        ({ id, name }) => (
+                            <li key={id}>
+                                <Link
+                                    to={makeProfileRouteLink(id)}
+                                    href={makeProfileRouteLink(id)}
+                                    key={id}
+                                >
+                                    {name}
+                                </Link>
+                            </li>
+                        ),
+                    )}
                 </ul>
             </div>
         </div>

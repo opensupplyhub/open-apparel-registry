@@ -12,10 +12,7 @@ import { toast } from 'react-toastify';
 import { tokenPropType } from '../util/propTypes';
 
 export default function UserAPITokenListItem({
-    token: {
-        token,
-        created,
-    },
+    token: { token, created },
     handleDelete,
 }) {
     const secondaryText = created
@@ -26,23 +23,14 @@ export default function UserAPITokenListItem({
 
     return (
         <ListItem>
-            <ListItemText
-                primary={token}
-                secondary={secondaryText}
-            />
+            <ListItemText primary={token} secondary={secondaryText} />
             <ListItemSecondaryAction>
-                <CopyToClipboard
-                    text={token}
-                    onCopy={displayToast}
-                >
+                <CopyToClipboard text={token} onCopy={displayToast}>
                     <IconButton aria-label="Copy Token to clipboard">
                         <FileCopyIcon />
                     </IconButton>
                 </CopyToClipboard>
-                <IconButton
-                    aria-label="Delete"
-                    onClick={handleDelete}
-                >
+                <IconButton aria-label="Delete" onClick={handleDelete}>
                     <DeleteIcon />
                 </IconButton>
             </ListItemSecondaryAction>

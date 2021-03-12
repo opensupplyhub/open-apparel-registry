@@ -169,28 +169,22 @@ class FacilityDetailSidebar extends Component {
         const facilityLat = last(data.geometry.coordinates);
         const facilityLng = head(data.geometry.coordinates);
 
-        const [
-            canonicalLocationsData,
-            otherLocationsData,
-        ] = partition(
+        const [canonicalLocationsData, otherLocationsData] = partition(
             data.properties.other_locations || [],
-            ({ lng, lat }) => (lng === facilityLng && lat === facilityLat),
+            ({ lng, lat }) => lng === facilityLng && lat === facilityLat,
         );
 
         const canonicalLocationData = head(canonicalLocationsData);
 
-        const canonicalFacilityLocation = canonicalLocationData
-            ? (
-                <div className="control-panel__group">
-                    <h1 className="control-panel__heading">
-                        GPS Coordinates:
-                    </h1>
-                    <span className="control-panel__body">
-                        {facilityLng}, {facilityLat}
-                    </span>
-                    <br />
-                    {canonicalLocationData.contributor_id &&
-                        canonicalLocationData.contributor_name && (
+        const canonicalFacilityLocation = canonicalLocationData ? (
+            <div className="control-panel__group">
+                <h1 className="control-panel__heading">GPS Coordinates:</h1>
+                <span className="control-panel__body">
+                    {facilityLng}, {facilityLat}
+                </span>
+                <br />
+                {canonicalLocationData.contributor_id &&
+                    canonicalLocationData.contributor_name && (
                         <span>
                             Contributed by{' '}
                             <Link
@@ -205,16 +199,15 @@ class FacilityDetailSidebar extends Component {
                             </Link>
                         </span>
                     )}
-                </div>)
-            : (
-                <div className="control-panel__group">
-                    <h1 className="control-panel__heading">
-                        GPS Coordinates:
-                    </h1>
-                    <p className="control-panel__body">
-                        {facilityLng}, {facilityLat}
-                    </p>
-                </div>);
+            </div>
+        ) : (
+            <div className="control-panel__group">
+                <h1 className="control-panel__heading">GPS Coordinates:</h1>
+                <p className="control-panel__body">
+                    {facilityLng}, {facilityLat}
+                </p>
+            </div>
+        );
 
         const facilityClaimID = get(data, 'properties.claim_info.id', null);
 
@@ -225,7 +218,8 @@ class FacilityDetailSidebar extends Component {
                 return (
                     <FeatureFlag flag={REPORT_A_FACILITY}>
                         <div style={detailsSidebarStyles.pendingRibbon}>
-                            Reported as {report.closure_state.toLowerCase()} (status pending).
+                            Reported as {report.closure_state.toLowerCase()}{' '}
+                            (status pending).
                         </div>
                     </FeatureFlag>
                 );
@@ -252,9 +246,7 @@ class FacilityDetailSidebar extends Component {
                                 href={makeDisputeClaimEmailLink(
                                     data.properties.oar_id,
                                 )}
-                                style={
-                                    detailsSidebarStyles.linkStyle
-                                }
+                                style={detailsSidebarStyles.linkStyle}
                             >
                                 Dispute claim
                             </a>
@@ -269,9 +261,7 @@ class FacilityDetailSidebar extends Component {
                                         href={makeClaimFacilityLink(
                                             data.properties.oar_id,
                                         )}
-                                        style={
-                                            detailsSidebarStyles.linkStyle
-                                        }
+                                        style={detailsSidebarStyles.linkStyle}
                                     >
                                         Claim this facility
                                     </Link>
@@ -292,7 +282,7 @@ class FacilityDetailSidebar extends Component {
                         )}
                         style={detailsSidebarStyles.linkStyle}
                     >
-                            Suggest a data edit
+                        Suggest a data edit
                     </a>
                 </>
             </ShowOnly>
@@ -315,18 +305,24 @@ class FacilityDetailSidebar extends Component {
                             {data.properties.name}
                         </h3>
                         <p className="panel-header__subheading notranslate">
-                            {data.properties.address} - {data.properties.country_name}
+                            {data.properties.address} -{' '}
+                            {data.properties.country_name}
                         </p>
                     </div>
                     <FeatureFlag flag={CLAIM_A_FACILITY}>
                         {data.properties.claim_info ? (
                             <IconButton
                                 className="color-white"
-                                style={detailsSidebarStyles.headerClaimButtonStyle}
-                                onClick={
-                                    () => push(
-                                        (facilityClaimID && facilityIsClaimedByCurrentUser)
-                                            ? makeApprovedClaimDetailsLink(facilityClaimID)
+                                style={
+                                    detailsSidebarStyles.headerClaimButtonStyle
+                                }
+                                onClick={() =>
+                                    push(
+                                        facilityClaimID &&
+                                            facilityIsClaimedByCurrentUser
+                                            ? makeApprovedClaimDetailsLink(
+                                                  facilityClaimID,
+                                              )
                                             : '/about/claimedfacilities',
                                     )
                                 }
@@ -339,7 +335,9 @@ class FacilityDetailSidebar extends Component {
                             <ShowOnly when={!userHasPendingFacilityClaim}>
                                 <IconButton
                                     className="color-white"
-                                    style={detailsSidebarStyles.headerClaimButtonStyle}
+                                    style={
+                                        detailsSidebarStyles.headerClaimButtonStyle
+                                    }
                                     onClick={() =>
                                         push(
                                             makeClaimFacilityLink(
@@ -347,7 +345,9 @@ class FacilityDetailSidebar extends Component {
                                             ),
                                         )
                                     }
-                                    disabled={fetching || userHasPendingFacilityClaim}
+                                    disabled={
+                                        fetching || userHasPendingFacilityClaim
+                                    }
                                     title={
                                         userHasPendingFacilityClaim
                                             ? 'You have a pending claim on this facility'
@@ -374,9 +374,9 @@ class FacilityDetailSidebar extends Component {
                         </div>
                         {canonicalFacilityLocation}
                         <FacilityDetailsSidebarOtherLocations
-                            data={
-                                removeDuplicatesFromOtherLocationsData(otherLocationsData)
-                            }
+                            data={removeDuplicatesFromOtherLocationsData(
+                                otherLocationsData,
+                            )}
                         />
                         <FacilityDetailSidebarInfo
                             data={data.properties.other_names}
@@ -395,7 +395,9 @@ class FacilityDetailSidebar extends Component {
                             embed={embed}
                         />
                         <FeatureFlag flag={PPE}>
-                            <FacilityDetailSidebarPPE properties={data.properties} />
+                            <FacilityDetailSidebarPPE
+                                properties={data.properties}
+                            />
                         </FeatureFlag>
                         <FeatureFlag flag={CLAIM_A_FACILITY}>
                             <ShowOnly when={!!data.properties.claim_info}>
@@ -406,20 +408,30 @@ class FacilityDetailSidebar extends Component {
                         </FeatureFlag>
                         <FeatureFlag flag={REPORT_A_FACILITY}>
                             <FacilityDetailStatusList
-                                activityReports={data.properties.activity_reports}
+                                activityReports={
+                                    data.properties.activity_reports
+                                }
                             />
                         </FeatureFlag>
                         <div className="control-panel__group">
                             <div style={detailsSidebarStyles.linkSectionStyle}>
                                 <ShowOnly when={!embed}>
                                     {claimedFacilitySection}
-                                    <ShowOnly when={facilityIsClaimedByCurrentUser}>
+                                    <ShowOnly
+                                        when={facilityIsClaimedByCurrentUser}
+                                    >
                                         <FeatureFlag flag={CLAIM_A_FACILITY}>
                                             <Link
                                                 className="link-underline small"
-                                                to={makeApprovedClaimDetailsLink(facilityClaimID)}
-                                                href={makeApprovedClaimDetailsLink(facilityClaimID)}
-                                                style={detailsSidebarStyles.linkStyle}
+                                                to={makeApprovedClaimDetailsLink(
+                                                    facilityClaimID,
+                                                )}
+                                                href={makeApprovedClaimDetailsLink(
+                                                    facilityClaimID,
+                                                )}
+                                                style={
+                                                    detailsSidebarStyles.linkStyle
+                                                }
                                             >
                                                 Update facility details
                                             </Link>
@@ -437,7 +449,8 @@ class FacilityDetailSidebar extends Component {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                            View Facility on the Open Apparel Registry
+                                        View Facility on the Open Apparel
+                                        Registry
                                     </a>
                                 </ShowOnly>
                             </div>
@@ -473,23 +486,20 @@ FacilityDetailSidebar.propTypes = {
     userHasPendingFacilityClaim: bool.isRequired,
 };
 
-function mapStateToProps({
-    facilities: {
-        singleFacility: { data, fetching, error },
+function mapStateToProps(
+    {
+        facilities: {
+            singleFacility: { data, fetching, error },
+        },
+        auth: { user },
+        embeddedMap: { embed },
     },
-    auth: {
-        user,
-    },
-    embeddedMap: {
-        embed,
-    },
-}, {
-    match: {
-        params: {
-            oarID,
+    {
+        match: {
+            params: { oarID },
         },
     },
-}) {
+) {
     const {
         approved: currentUserApprovedClaimedFacilities,
         pending: currentUserPendingClaimedFacilities,
@@ -502,10 +512,9 @@ function mapStateToProps({
 
     // Make this false if the current user has an approved claim
     // regardless of the presence of any other pending claims
-    const userHasPendingFacilityClaim = includes(
-        currentUserPendingClaimedFacilities,
-        oarID,
-    ) && !facilityIsClaimedByCurrentUser;
+    const userHasPendingFacilityClaim =
+        includes(currentUserPendingClaimedFacilities, oarID) &&
+        !facilityIsClaimedByCurrentUser;
 
     return {
         data,

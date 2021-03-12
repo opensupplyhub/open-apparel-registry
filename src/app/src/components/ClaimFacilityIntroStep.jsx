@@ -24,17 +24,18 @@ export default function ClaimFacilityIntroStep() {
         <div style={claimAFacilityFormStyles.inputGroupStyles}>
             <Typography variant="headline" style={introMessageStyles}>
                 Owners or senior management at facilities listed on the OAR are
-                able to &quot;claim&quot; their facility&#39;s profile on the site and add
-                business information to it.
+                able to &quot;claim&quot; their facility&#39;s profile on the
+                site and add business information to it.
             </Typography>
             <Typography variant="headline" style={introMessageStyles}>
                 If you are a facility owner or senior management, please work
-                your way through the following three preliminary steps to
-                verify your identity. This process should take no more than 5
-                minutes to complete.
+                your way through the following three preliminary steps to verify
+                your identity. This process should take no more than 5 minutes
+                to complete.
             </Typography>
             <Typography variant="headline" style={introMessageStyles}>
-                Once your claim has been reviewed and approved, you will be able to:
+                Once your claim has been reviewed and approved, you will be able
+                to:
             </Typography>
             <List>
                 <ListItem>
@@ -73,14 +74,15 @@ export default function ClaimFacilityIntroStep() {
                     </ListItemIcon>
                     <ListItemText>
                         <Typography variant="headline">
-                            Add information about your head office
-                            and parent company / supplier group
+                            Add information about your head office and parent
+                            company / supplier group
                         </Typography>
                     </ListItemText>
                 </ListItem>
             </List>
             <Typography variant="title" style={introMessageStyles}>
-                This information will be shown publicly on the facility details page.
+                This information will be shown publicly on the facility details
+                page.
             </Typography>
         </div>
     );

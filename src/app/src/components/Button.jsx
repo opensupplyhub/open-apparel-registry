@@ -5,9 +5,7 @@ import COLOURS from '../util/COLOURS';
 
 class Button extends PureComponent {
     render() {
-        const {
-            onClick, text, disabled, style,
-        } = this.props;
+        const { onClick, text, disabled, style } = this.props;
 
         return (
             <MaterialButton

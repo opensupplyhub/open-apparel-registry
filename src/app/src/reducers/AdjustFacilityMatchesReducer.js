@@ -35,11 +35,7 @@ const initialState = Object.freeze({
 });
 
 const handleCompleteSplitFacilityMatch = (state, data) => {
-    const existingMatches = get(
-        state,
-        'facility.data.properties.matches',
-        [],
-    );
+    const existingMatches = get(state, 'facility.data.properties.matches', []);
 
     const matchIDFromData = get(data, 'match_id', null);
 
@@ -68,68 +64,81 @@ const handleCompleteSplitFacilityMatch = (state, data) => {
     });
 };
 
-export default createReducer({
-    [startFetchFacilityToAdjust]: state => update(state, {
-        facility: {
-            fetching: { $set: true },
-            error: { $set: initialState.facility.error },
-        },
-    }),
-    [failFetchFacilityToAdjust]: (state, error) => update(state, {
-        facility: {
-            fetching: { $set: initialState.facility.fetching },
-            error: { $set: error },
-        },
-    }),
-    [completeFetchFacilityToAdjust]: (state, data) => update(state, {
-        facility: {
-            data: { $set: data },
-            fetching: { $set: initialState.facility.fetching },
-        },
-    }),
-    [updateFacilityToAdjustOARID]: (state, oarID) => update(state, {
-        facility: {
-            oarID: { $set: oarID },
-            error: { $set: initialState.facility.error },
-        },
-    }),
-    [clearFacilityToAdjust]: state => update(state, {
-        facility: {
-            $set: initialState.facility,
-        },
-    }),
-    [startSplitFacilityMatch]: state => update(state, {
-        adjustFacilities: {
-            fetching: { $set: true },
-            error: { $set: initialState.adjustFacilities.error },
-        },
-    }),
-    [failSplitFacilityMatch]: (state, error) => update(state, {
-        adjustFacilities: {
-            fetching: { $set: initialState.adjustFacilities.fetching },
-            error: { $set: error },
-        },
-    }),
-    [completeSplitFacilityMatch]: handleCompleteSplitFacilityMatch,
-    [startPromoteFacilityMatch]: state => update(state, {
-        adjustFacilities: {
-            fetching: { $set: true },
-            error: { $set: initialState.adjustFacilities.error },
-        },
-    }),
-    [failPromoteFacilityMatch]: (state, error) => update(state, {
-        adjustFacilities: {
-            fetching: { $set: initialState.adjustFacilities.fetching },
-            error: { $set: error },
-        },
-    }),
-    [completePromoteFacilityMatch]: (state, data) => update(state, {
-        adjustFacilities: {
-            fetching: { $set: initialState.adjustFacilities.fetching },
-        },
-        facility: {
-            data: { $set: data },
-        },
-    }),
-    [resetAdjustFacilityState]: constant(initialState),
-}, initialState);
+export default createReducer(
+    {
+        [startFetchFacilityToAdjust]: state =>
+            update(state, {
+                facility: {
+                    fetching: { $set: true },
+                    error: { $set: initialState.facility.error },
+                },
+            }),
+        [failFetchFacilityToAdjust]: (state, error) =>
+            update(state, {
+                facility: {
+                    fetching: { $set: initialState.facility.fetching },
+                    error: { $set: error },
+                },
+            }),
+        [completeFetchFacilityToAdjust]: (state, data) =>
+            update(state, {
+                facility: {
+                    data: { $set: data },
+                    fetching: { $set: initialState.facility.fetching },
+                },
+            }),
+        [updateFacilityToAdjustOARID]: (state, oarID) =>
+            update(state, {
+                facility: {
+                    oarID: { $set: oarID },
+                    error: { $set: initialState.facility.error },
+                },
+            }),
+        [clearFacilityToAdjust]: state =>
+            update(state, {
+                facility: {
+                    $set: initialState.facility,
+                },
+            }),
+        [startSplitFacilityMatch]: state =>
+            update(state, {
+                adjustFacilities: {
+                    fetching: { $set: true },
+                    error: { $set: initialState.adjustFacilities.error },
+                },
+            }),
+        [failSplitFacilityMatch]: (state, error) =>
+            update(state, {
+                adjustFacilities: {
+                    fetching: { $set: initialState.adjustFacilities.fetching },
+                    error: { $set: error },
+                },
+            }),
+        [completeSplitFacilityMatch]: handleCompleteSplitFacilityMatch,
+        [startPromoteFacilityMatch]: state =>
+            update(state, {
+                adjustFacilities: {
+                    fetching: { $set: true },
+                    error: { $set: initialState.adjustFacilities.error },
+                },
+            }),
+        [failPromoteFacilityMatch]: (state, error) =>
+            update(state, {
+                adjustFacilities: {
+                    fetching: { $set: initialState.adjustFacilities.fetching },
+                    error: { $set: error },
+                },
+            }),
+        [completePromoteFacilityMatch]: (state, data) =>
+            update(state, {
+                adjustFacilities: {
+                    fetching: { $set: initialState.adjustFacilities.fetching },
+                },
+                facility: {
+                    data: { $set: data },
+                },
+            }),
+        [resetAdjustFacilityState]: constant(initialState),
+    },
+    initialState,
+);

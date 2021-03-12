@@ -31,7 +31,7 @@ export default function FacilityListItemsTableSearch({
         setSearchText(term);
     };
 
-    const handleTextChange = (e) => {
+    const handleTextChange = e => {
         setSearchText(e.target.value);
     };
 
@@ -40,34 +40,25 @@ export default function FacilityListItemsTableSearch({
         onSearch('');
     };
 
-    const handleTextKeyDown = (e) => {
+    const handleTextKeyDown = e => {
         if (e.key === ENTER_KEY) {
             handleSearch();
         }
     };
 
     const searchButton = (
-        <IconButton
-            edge="end"
-            aria-label="Search"
-            onClick={handleSearch}
-        >
+        <IconButton edge="end" aria-label="Search" onClick={handleSearch}>
             <Search />
         </IconButton>
     );
     const resetButton = (
-        <IconButton
-            edge="end"
-            aria-label="Reset"
-            onClick={handleReset}
-        >
+        <IconButton edge="end" aria-label="Reset" onClick={handleReset}>
             <Close />
         </IconButton>
     );
 
-    const adornment = (searchText !== '' && isCurrent)
-        ? resetButton
-        : searchButton;
+    const adornment =
+        searchText !== '' && isCurrent ? resetButton : searchButton;
 
     return (
         <TextField
@@ -79,9 +70,7 @@ export default function FacilityListItemsTableSearch({
             value={searchText}
             InputProps={{
                 endAdornment: (
-                    <InputAdornment position="end">
-                        {adornment}
-                    </InputAdornment>
+                    <InputAdornment position="end">{adornment}</InputAdornment>
                 ),
             }}
         />

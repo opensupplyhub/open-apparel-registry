@@ -60,7 +60,13 @@ export default function DashboardMergeFacilityControls({
                 toast('Facilities were merged');
             }
         }
-    }, [merging, mergingFacilities, error, setDialogIsOpen, setMergingFacilities]);
+    }, [
+        merging,
+        mergingFacilities,
+        error,
+        setDialogIsOpen,
+        setMergingFacilities,
+    ]);
 
     const targetName = get(targetData, 'properties.name', '');
     const targetID = get(targetData, 'id', '');
@@ -101,15 +107,24 @@ export default function DashboardMergeFacilityControls({
                             {get(targetData, 'properties.name', '')}?
                         </DialogTitle>
                         <DialogContent>
-                            <Typography variant="body1" style={mergeControlsStyles.dialogContentStyles}>
+                            <Typography
+                                variant="body1"
+                                style={mergeControlsStyles.dialogContentStyles}
+                            >
                                 This action will merge facility {toMergeID} into
                                 facility {targetID}.
                             </Typography>
-                            <Typography variant="body1" style={mergeControlsStyles.dialogContentStyles}>
-                                {toMergeName} will be deleted and its OAR ID will point
-                                to {targetName}, {targetID}.
+                            <Typography
+                                variant="body1"
+                                style={mergeControlsStyles.dialogContentStyles}
+                            >
+                                {toMergeName} will be deleted and its OAR ID
+                                will point to {targetName}, {targetID}.
                             </Typography>
-                            <Typography variant="body1" style={mergeControlsStyles.dialogContentStyles}>
+                            <Typography
+                                variant="body1"
+                                style={mergeControlsStyles.dialogContentStyles}
+                            >
                                 This action is irrevocable.
                             </Typography>
                         </DialogContent>

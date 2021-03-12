@@ -5,10 +5,7 @@ import get from 'lodash/get';
 
 import { setFiltersFromQueryString } from '../actions/filters';
 
-import {
-    fetchFacilities,
-    resetFacilities,
-} from '../actions/facilities';
+import { fetchFacilities, resetFacilities } from '../actions/facilities';
 
 import { filtersPropType } from '../util/propTypes';
 
@@ -20,20 +17,13 @@ export default function withQueryStringSync(WrappedComponent) {
             const {
                 history: {
                     replace,
-                    location: {
-                        search,
-                        pathname,
-                    },
+                    location: { search, pathname },
                 },
-                match: {
-                    path,
-                },
+                match: { path },
                 filters,
                 hydrateFiltersFromQueryString,
                 vectorTileFeatureIsActive,
-                embeddedMap: {
-                    embed,
-                },
+                embeddedMap: { embed },
             } = this.props;
 
             // This check returns null when the component mounts on the facility details route
@@ -44,40 +34,52 @@ export default function withQueryStringSync(WrappedComponent) {
             // In that case, `path` will be `/facilities` and `pathname` will be
             // `/facilities/hello-world`. In other cases -- `/` and `/facilities` -- these paths
             // will match.
-            const fetchFacilitiesOnMount = (pathname === path);
+            const fetchFacilitiesOnMount = pathname === path;
 
             if (vectorTileFeatureIsActive) {
-                return hydrateFiltersFromQueryString(search, fetchFacilitiesOnMount);
+                return hydrateFiltersFromQueryString(
+                    search,
+                    fetchFacilitiesOnMount,
+                );
             }
 
             return search
                 ? hydrateFiltersFromQueryString(search, fetchFacilitiesOnMount)
-                : replace(`?${createQueryStringFromSearchFilters(filters, embed)}`);
+                : replace(
+                      `?${createQueryStringFromSearchFilters(filters, embed)}`,
+                  );
         }
 
-        componentDidUpdate({ resetButtonClickCount: prevResetButtonClickCount }) {
+        componentDidUpdate({
+            resetButtonClickCount: prevResetButtonClickCount,
+        }) {
             const {
                 filters,
                 history: {
                     replace,
-                    location: {
-                        search,
-                    },
+                    location: { search },
                 },
                 resetButtonClickCount,
                 hydrateFiltersFromQueryString,
                 vectorTileFeatureIsActive,
-                embeddedMap: {
-                    embed,
-                },
+                embeddedMap: { embed },
             } = this.props;
 
-            const newQueryString = `?${createQueryStringFromSearchFilters(filters, embed)}`;
+            const newQueryString = `?${createQueryStringFromSearchFilters(
+                filters,
+                embed,
+            )}`;
 
-            if (resetButtonClickCount !== prevResetButtonClickCount && vectorTileFeatureIsActive) {
+            if (
+                resetButtonClickCount !== prevResetButtonClickCount &&
+                vectorTileFeatureIsActive
+            ) {
                 replace(newQueryString);
                 const fetchFacilitiesOnQSChange = true;
-                return hydrateFiltersFromQueryString(newQueryString, fetchFacilitiesOnQSChange);
+                return hydrateFiltersFromQueryString(
+                    newQueryString,
+                    fetchFacilitiesOnQSChange,
+                );
             }
 
             if (search === newQueryString) {
@@ -118,14 +120,9 @@ export default function withQueryStringSync(WrappedComponent) {
     function mapStateToProps({
         filters,
         ui: {
-            facilitiesSidebarTabSearch: {
-                resetButtonClickCount,
-            },
+            facilitiesSidebarTabSearch: { resetButtonClickCount },
         },
-        featureFlags: {
-            flags,
-            fetching: fetchingFeatureFlags,
-        },
+        featureFlags: { flags, fetching: fetchingFeatureFlags },
         embeddedMap,
     }) {
         return {
@@ -137,17 +134,18 @@ export default function withQueryStringSync(WrappedComponent) {
         };
     }
 
-    function mapDispatchToProps(dispatch, {
-        history: {
-            push,
-        },
-    }) {
+    function mapDispatchToProps(dispatch, { history: { push } }) {
         return {
             hydrateFiltersFromQueryString: (qs, fetch = true) => {
                 dispatch(setFiltersFromQueryString(qs));
 
                 return fetch
-                    ? dispatch(fetchFacilities({ ...push, activateFacilitiesTab: false }))
+                    ? dispatch(
+                          fetchFacilities({
+                              ...push,
+                              activateFacilitiesTab: false,
+                          }),
+                      )
                     : null;
             },
             clearFacilities: () => dispatch(resetFacilities()),

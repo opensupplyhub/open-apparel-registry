@@ -17,27 +17,27 @@ export default function ClaimedFacilities() {
         <AppOverflow>
             <AppGrid
                 title={
-                    (
-                        <Switch>
-                            <Route
-                                exact
-                                path={claimedFacilitiesDetailRoute}
-                                render={() => 'Claimed Facility Details'}
-                            />
-                            <Route
-                                exact
-                                path={claimedFacilitiesRoute}
-                                render={() => 'My Claimed Facilities'}
-                            />
-                        </Switch>
-                    )
+                    <Switch>
+                        <Route
+                            exact
+                            path={claimedFacilitiesDetailRoute}
+                            render={() => 'Claimed Facility Details'}
+                        />
+                        <Route
+                            exact
+                            path={claimedFacilitiesRoute}
+                            render={() => 'My Claimed Facilities'}
+                        />
+                    </Switch>
                 }
             >
                 <Switch>
                     <Route
                         exact
                         path={claimedFacilitiesDetailRoute}
-                        render={() => <Route component={ClaimedFacilitiesDetails} />}
+                        render={() => (
+                            <Route component={ClaimedFacilitiesDetails} />
+                        )}
                     />
                     <Route
                         exact
