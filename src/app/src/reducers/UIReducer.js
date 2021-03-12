@@ -12,6 +12,7 @@ import {
     reportWindowResize,
     toggleZoomToSearch,
     showDrawFilter,
+    setGDPROpen,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
@@ -30,6 +31,7 @@ const initialState = Object.freeze({
     }),
     zoomToSearch: true,
     drawFilterActive: false,
+    gdprOpen: false,
 });
 
 export default createReducer(
@@ -105,6 +107,10 @@ export default createReducer(
         [showDrawFilter]: (state, payload) =>
             update(state, {
                 drawFilterActive: { $set: payload },
+            }),
+        [setGDPROpen]: (state, payload) =>
+            update(state, {
+                gdprOpen: { $set: payload },
             }),
     },
     initialState,
