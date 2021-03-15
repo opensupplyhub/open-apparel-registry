@@ -23,7 +23,7 @@
         "prop-types": "15.6.2",
         "react": "^16.13.1",
         "react-copy-to-clipboard": "5.0.1",
-        "react-dom": "16.8.6",
+        "react-dom": "16.13.1",
         "react-infinite": "0.13.0",
         "react-infinite-any-height": "2.3.0",
         "react-leaflet": "2.4.0",
@@ -45,7 +45,7 @@
         "validator": "10.11.0"
     },
     "scripts": {
-        "start": "PORT=6543 FAST_REFRESH=false CHOKIDAR_USEPOLLING=true craco start",
+        "start": "craco start",
         "build": "craco build",
         "test": "CI=1 craco test --env=node",
         "lint": "prettier --config .prettierrc --check 'src/**/*.js' 'src/**/*.jsx'",
