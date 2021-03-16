@@ -50,7 +50,8 @@ services:
     cpus: 2
 
   app:
-    image: node:10-slim
+    image: node:12-slim
+    working_dir: /usr/local/src
     volumes:
       - ./src/app:/usr/local/src
       - /var/cache/open-apparel-registry-node-modules:/usr/local/src/node_modules
@@ -59,7 +60,7 @@ services:
     environment:
       - REACT_APP_GIT_COMMIT=${REACT_APP_GIT_COMMIT:-latest}
       - CHOKIDAR_USEPOLLING=true
-      - CHOKIDAR_INTERVAL=2000
+      - CHOKIDAR_INTERVAL=100
       - PORT=6543
     ports:
       - 6543:6543
