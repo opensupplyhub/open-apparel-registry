@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+- Bump djangorestframework from 3.10.1 to 3.11.2 in /src/django [#1289](https://github.com/open-apparel-registry/open-apparel-registry/pull/1289)
+
 ## [2.41.0] - 2021-03-12
 
 ### Added
