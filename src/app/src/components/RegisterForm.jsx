@@ -136,9 +136,9 @@ class RegisterForm extends Component {
                     <Grid container className="margin-bottom-100">
                         <Grid item xs={12} sm={8}>
                             <p>
-                                Thank you for contributing to the OAR. Every
-                                contribution further improves the accuracy of
-                                the database. Create an account to begin:
+                                Thank you for your interest in the OAR. In order
+                                to download data from, or contribute to, the OAR
+                                please first set up a free account:
                             </p>
                             {formInputs}
                             <ShowOnly when={!!(error && error.length)}>

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
+- Remove Sample Data and Update Registration Text [#1291](https://github.com/open-apparel-registry/open-apparel-registry/pull/1291)
 
 ### Deprecated
 
