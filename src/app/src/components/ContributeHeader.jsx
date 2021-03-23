@@ -34,10 +34,6 @@ const ContributeHeader = memo(() => (
                         row.
                     </li>
                     <li className="helper-list__item">
-                        Once reviewed for style guidance, delete the row of
-                        example facility data.
-                    </li>
-                    <li className="helper-list__item">
                         The OAR accepts facilities throughout the supply chain,
                         including dyehouses, mills, laundries, cut and sew, RMG,
                         embellishments and printing. The OAR does not accept raw
