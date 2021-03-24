@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState } from 'react';
 import { arrayOf, bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -14,19 +14,17 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import get from 'lodash/get';
-import { toast } from 'react-toastify';
 import InfiniteAnyHeight from 'react-infinite-any-height';
 import includes from 'lodash/includes';
 import lowerCase from 'lodash/lowerCase';
 
 import ControlledTextInput from './ControlledTextInput';
+import DownloadFacilitiesButton from './DownloadFacilitiesButton';
 
 import {
     makeSidebarSearchTabActive,
     updateSidebarFacilitiesTabTextFilter,
 } from '../actions/ui';
-
-import { logDownload } from '../actions/logDownload';
 
 import { facilityCollectionPropType } from '../util/propTypes';
 
@@ -78,17 +76,6 @@ const facilitiesTabStyles = Object.freeze({
         padding: '0.25rem',
         maxHeight: '130px',
     }),
-    listStyles: Object.freeze({
-        /* overflowY: 'scroll',
-        position: 'fixed',
-        // sum heights of navbar, tab bar, panel header, and free text search control
-        top: 'calc(64px + 48px + 130px + 110px)',
-        bottom: '47px',
-        width: '33%', */
-    }),
-    listBottomPaddingStyles: Object.freeze({
-        height: '200px',
-    }),
     titleRowStyles: Object.freeze({
         display: 'flex',
         justifyContent: 'space-between',
@@ -108,24 +95,13 @@ function NonVectorTileFilterSidebarFacilitiesTab({
     data,
     error,
     windowHeight,
-    logDownloadError,
-    user,
     returnToSearchTab,
     filterText,
     updateFilterText,
-    handleDownload,
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
         false,
     );
-    const [requestedDownload, setRequestedDownload] = useState(false);
-
-    useEffect(() => {
-        if (requestedDownload && logDownloadError) {
-            toast('A problem prevented downloading the facilities');
-            setRequestedDownload(false);
-        }
-    }, [logDownloadError, requestedDownload]);
 
     if (fetching) {
         return (
@@ -239,21 +215,11 @@ function NonVectorTileFilterSidebarFacilitiesTab({
             <Typography variant="subheading" align="center">
                 <div style={facilitiesTabStyles.titleRowStyles}>
                     {headerDisplayString}
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        styles={facilitiesTabStyles.listHeaderButtonStyles}
-                        onClick={() => {
-                            if (user) {
-                                setRequestedDownload(true);
-                                handleDownload();
-                            } else {
-                                setLoginRequiredDialogIsOpen(true);
-                            }
-                        }}
-                    >
-                        Download CSV
-                    </Button>
+                    <DownloadFacilitiesButton
+                        setLoginRequiredDialogIsOpen={
+                            setLoginRequiredDialogIsOpen
+                        }
+                    />
                 </div>
             </Typography>
             <div style={facilitiesTabStyles.listHeaderTextSearchStyles}>
@@ -278,7 +244,7 @@ function NonVectorTileFilterSidebarFacilitiesTab({
         <Fragment>
             {listHeaderInsetComponent}
             <div style={filterSidebarStyles.controlPanelContentStyles}>
-                <List style={facilitiesTabStyles.listStyles}>
+                <List>
                     <InfiniteAnyHeight
                         containerHeight={resultListHeight}
                         list={orderedFacilities.map(
@@ -377,7 +343,6 @@ function NonVectorTileFilterSidebarFacilitiesTab({
 NonVectorTileFilterSidebarFacilitiesTab.defaultProps = {
     data: null,
     error: null,
-    logDownloadError: null,
 };
 
 NonVectorTileFilterSidebarFacilitiesTab.propTypes = {
@@ -385,17 +350,12 @@ NonVectorTileFilterSidebarFacilitiesTab.propTypes = {
     fetching: bool.isRequired,
     error: arrayOf(string),
     windowHeight: number.isRequired,
-    logDownloadError: arrayOf(string),
     returnToSearchTab: func.isRequired,
     filterText: string.isRequired,
     updateFilterText: func.isRequired,
-    handleDownload: func.isRequired,
 };
 
 function mapStateToProps({
-    auth: {
-        user: { user },
-    },
     facilities: {
         facilities: { data, error, fetching },
     },
@@ -403,15 +363,12 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { filterText },
         window: { innerHeight: windowHeight },
     },
-    logDownload: { error: logDownloadError },
 }) {
     return {
         data,
         error,
         fetching,
         filterText,
-        user,
-        logDownloadError,
         windowHeight,
     };
 }
@@ -423,7 +380,6 @@ function mapDispatchToProps(dispatch) {
             dispatch(
                 updateSidebarFacilitiesTabTextFilter(getValueFromEvent(e)),
             ),
-        handleDownload: () => dispatch(logDownload()),
     };
 }
 

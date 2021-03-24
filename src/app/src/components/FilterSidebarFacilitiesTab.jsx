@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState } from 'react';
 import { arrayOf, bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -15,16 +15,14 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import get from 'lodash/get';
-import { toast } from 'react-toastify';
 import InfiniteAnyHeight from 'react-infinite-any-height';
 
 import FeatureFlag from './FeatureFlag';
+import DownloadFacilitiesButton from './DownloadFacilitiesButton';
 
 import { makeSidebarSearchTabActive } from '../actions/ui';
 
 import { fetchNextPageOfFacilities } from '../actions/facilities';
-
-import { logDownload } from '../actions/logDownload';
 
 import { facilityCollectionPropType } from '../util/propTypes';
 
@@ -58,27 +56,10 @@ const facilitiesTabStyles = Object.freeze({
         padding: '0.25rem',
         maxHeight: '130px',
     }),
-    listStyles: Object.freeze({
-        /* overflowY: 'scroll',
-        position: 'fixed',
-        // sum heights of navbar, tab bar, panel header, and free text search control
-        top: 'calc(64px + 48px + 130px + 110px)',
-        bottom: '47px',
-        width: '33%', */
-    }),
-    listBottomPaddingStyles: Object.freeze({
-        height: '200px',
-    }),
     titleRowStyles: Object.freeze({
         display: 'flex',
         alignItems: 'center',
         padding: '6px 1rem',
-    }),
-    listHeaderTextSearchStyles: Object.freeze({
-        padding: '6px 1rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
     }),
     listHeaderButtonStyles: Object.freeze({
         height: '45px',
@@ -104,25 +85,14 @@ function FilterSidebarFacilitiesTab({
     data,
     error,
     windowHeight,
-    logDownloadError,
     downloadingCSV,
-    user,
     returnToSearchTab,
-    handleDownload,
     fetchNextPage,
     isInfiniteLoading,
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
         false,
     );
-    const [requestedDownload, setRequestedDownload] = useState(false);
-
-    useEffect(() => {
-        if (requestedDownload && logDownloadError) {
-            toast('A problem prevented downloading the facilities');
-            setRequestedDownload(false);
-        }
-    }, [logDownloadError, requestedDownload]);
 
     if (fetching) {
         return (
@@ -234,22 +204,11 @@ function FilterSidebarFacilitiesTab({
                             />
                         </div>
                     ) : (
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            style={facilitiesTabStyles.listHeaderButtonStyles}
-                            disabled={downloadingCSV}
-                            onClick={() => {
-                                if (user) {
-                                    setRequestedDownload(true);
-                                    handleDownload();
-                                } else {
-                                    setLoginRequiredDialogIsOpen(true);
-                                }
-                            }}
-                        >
-                            Download CSV
-                        </Button>
+                        <DownloadFacilitiesButton
+                            setLoginRequiredDialogIsOpen={
+                                setLoginRequiredDialogIsOpen
+                            }
+                        />
                     )}
                 </div>
             </Typography>
@@ -275,7 +234,7 @@ function FilterSidebarFacilitiesTab({
         <Fragment>
             {listHeaderInsetComponent}
             <div style={filterSidebarStyles.controlPanelContentStyles}>
-                <List style={facilitiesTabStyles.listStyles}>
+                <List>
                     <InfiniteAnyHeight
                         containerHeight={resultListHeight}
                         infiniteLoadBeginEdgeOffset={100}
@@ -392,7 +351,6 @@ function FilterSidebarFacilitiesTab({
 FilterSidebarFacilitiesTab.defaultProps = {
     data: null,
     error: null,
-    logDownloadError: null,
 };
 
 FilterSidebarFacilitiesTab.propTypes = {
@@ -400,18 +358,13 @@ FilterSidebarFacilitiesTab.propTypes = {
     fetching: bool.isRequired,
     error: arrayOf(string),
     windowHeight: number.isRequired,
-    logDownloadError: arrayOf(string),
     downloadingCSV: bool.isRequired,
     returnToSearchTab: func.isRequired,
-    handleDownload: func.isRequired,
     fetchNextPage: func.isRequired,
     isInfiniteLoading: bool.isRequired,
 };
 
 function mapStateToProps({
-    auth: {
-        user: { user },
-    },
     facilities: {
         facilities: { data, error, fetching, isInfiniteLoading },
     },
@@ -419,15 +372,13 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { filterText },
         window: { innerHeight: windowHeight },
     },
-    logDownload: { fetching: downloadingCSV, error: logDownloadError },
+    logDownload: { fetching: downloadingCSV },
 }) {
     return {
         data,
         error,
         fetching,
         filterText,
-        user,
-        logDownloadError,
         downloadingCSV,
         windowHeight,
         isInfiniteLoading,
@@ -437,7 +388,6 @@ function mapStateToProps({
 function mapDispatchToProps(dispatch) {
     return {
         returnToSearchTab: () => dispatch(makeSidebarSearchTabActive()),
-        handleDownload: () => dispatch(logDownload()),
         fetchNextPage: () => dispatch(fetchNextPageOfFacilities()),
     };
 }
