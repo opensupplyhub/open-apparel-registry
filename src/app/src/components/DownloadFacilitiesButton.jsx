@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { arrayOf, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import { toast } from 'react-toastify';
 
@@ -21,6 +23,7 @@ function DownloadFacilitiesButton({
     setLoginRequiredDialogIsOpen,
 }) {
     const [requestedDownload, setRequestedDownload] = useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
     useEffect(() => {
         if (requestedDownload && logDownloadError) {
@@ -29,22 +32,45 @@ function DownloadFacilitiesButton({
         }
     }, [logDownloadError, requestedDownload]);
 
+    const handleClick = event => setAnchorEl(event.currentTarget);
+    const handleClose = () => setAnchorEl(null);
+
+    const selectFormatAndDownload = format => {
+        if (user) {
+            setRequestedDownload(true);
+            handleDownload(format);
+        } else {
+            setLoginRequiredDialogIsOpen(true);
+        }
+        handleClose();
+    };
+
     return (
-        <Button
-            variant="outlined"
-            color="primary"
-            styles={downloadFacilitiesStyles.listHeaderButtonStyles}
-            onClick={() => {
-                if (user) {
-                    setRequestedDownload(true);
-                    handleDownload();
-                } else {
-                    setLoginRequiredDialogIsOpen(true);
-                }
-            }}
-        >
-            Download CSV
-        </Button>
+        <div>
+            <Button
+                variant="outlined"
+                color="primary"
+                styles={downloadFacilitiesStyles.listHeaderButtonStyles}
+                aria-owns={anchorEl ? 'download-menu' : undefined}
+                aria-haspopup="true"
+                onClick={handleClick}
+            >
+                Download
+            </Button>
+            <Menu
+                id="download-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={() => selectFormatAndDownload('csv')}>
+                    CSV
+                </MenuItem>
+                <MenuItem onClick={() => selectFormatAndDownload('xlsx')}>
+                    Excel
+                </MenuItem>
+            </Menu>
+        </div>
     );
 }
 
@@ -71,7 +97,7 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        handleDownload: () => dispatch(logDownload()),
+        handleDownload: format => dispatch(logDownload(format)),
     };
 }
 

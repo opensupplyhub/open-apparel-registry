@@ -9,15 +9,19 @@ import {
     makeLogDownloadUrl,
     logErrorAndDispatchFailure,
     downloadFacilitiesCSV,
+    downloadFacilitiesXLSX,
 } from '../util/util';
 
 export const startLogDownload = createAction('START_LOG_DOWNLOAD');
 export const failLogDownload = createAction('FAIL_LOG_DOWNLOAD');
 export const completeLogDownload = createAction('COMPLETE_LOG_DOWNLOAD');
 
-export function logDownload() {
+export function logDownload(format) {
     return async (dispatch, getState) => {
         dispatch(startLogDownload());
+
+        const downloadFacilities =
+            format === 'csv' ? downloadFacilitiesCSV : downloadFacilitiesXLSX;
 
         try {
             const {
@@ -50,7 +54,7 @@ export function logDownload() {
                 return apiRequest
                     .post(makeLogDownloadUrl(path, recordCount))
                     .then(() =>
-                        downloadFacilitiesCSV(facilities, {
+                        downloadFacilities(facilities, {
                             includePPEFields: ppeIsActive,
                             includeClosureFields: reportsAreActive,
                         }),
@@ -70,7 +74,7 @@ export function logDownload() {
             await apiRequest.post(makeLogDownloadUrl(path, count));
 
             if (!nextPageURL) {
-                downloadFacilitiesCSV(facilities, {
+                downloadFacilities(facilities, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
                 });
@@ -111,7 +115,7 @@ export function logDownload() {
                     },
                 } = getState();
 
-                downloadFacilitiesCSV(features, {
+                downloadFacilities(features, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
                 });
