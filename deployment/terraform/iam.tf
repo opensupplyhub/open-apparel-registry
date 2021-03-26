@@ -121,6 +121,11 @@ resource "aws_iam_role_policy_attachment" "ec2_service_role" {
   policy_arn = "${var.ec2_service_role_policy_arn}"
 }
 
+resource "aws_iam_role_policy_attachment" "ses_send_email_from_batch" {
+  role       = "${aws_iam_role.container_instance_ec2.name}"
+  policy_arn = "${aws_iam_role_policy.ses_send_email.policy.arn}"
+}
+
 resource "aws_iam_instance_profile" "container_instance" {
   name = "${aws_iam_role.container_instance_ec2.name}"
   role = "${aws_iam_role.container_instance_ec2.name}"
