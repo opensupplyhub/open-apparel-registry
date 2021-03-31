@@ -756,3 +756,21 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
 
 export const getLocationWithoutEmbedParam = () =>
     window.location.href.replace('&embed=1', '').replace('embed=1', '');
+
+export const getEmbeddedMapSrc = ({ font, color, contributor }) =>
+    window.location.href.replace(
+        'settings',
+        `?${querystring.stringify({
+            color,
+            contributor,
+            font: font ? font.value : '',
+            embed: 1,
+        })}`,
+    );
+
+export const createIFrameHTML = ({ width, height, fullWidth, ...options }) =>
+    `<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="${
+        fullWidth ? '100%' : width
+    }" height="${
+        fullWidth ? '100%' : height
+    }" type="text/html" src="${getEmbeddedMapSrc(options)}"></iframe>`;
