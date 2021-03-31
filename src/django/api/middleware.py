@@ -1,6 +1,5 @@
 import sys
 import datetime
-import logging
 import json
 
 from django.utils import timezone
@@ -14,8 +13,6 @@ from django.http import HttpResponse
 
 from api.models import RequestLog
 from api.limits import get_api_block
-
-logger = logging.getLogger(__name__)
 
 
 def _report_error_to_rollbar(request, auth):
@@ -73,46 +70,18 @@ def get_token(request):
 
 
 def has_active_block(request):
-    def debug_log(msg):
-        if request.path != '/health-check/':
-            logger.debug(msg)
-    debug_log('has_active_block handling request {0}'.format(
-        request.__dict__))
     try:
         token = get_token(request)
         if token is None:
-            debug_log('has_active_block did not find a token')
             return False
-        debug_log(
-            'has_active_block fetched token {0}...'.format(
-                token.pk[:4]))
 
         contributor = token.user.contributor
-        debug_log(
-            'has_active_block fetched contributor {0}'.format(
-                contributor.id))
         apiBlock = get_api_block(contributor)
-        if apiBlock is not None:
-            debug_log(
-                'has_active_block fetched block {0}'.format(
-                    apiBlock.__dict__))
-        else:
-            debug_log(
-                'has_active_block no block found for contributor {0}'
-                .format(contributor.id))
-
         at_datetime = datetime.datetime.now(tz=timezone.utc)
-        debug_log(
-            'has_active_block at_datetime is {0}'.format(
-                at_datetime))
         return (apiBlock is not None and
                 apiBlock.until > at_datetime and apiBlock.active)
-        debug_log('has_active_block did not see a token header')
     except ObjectDoesNotExist:
-        debug_log('has_active_block caught ObjectDoesNotExist exception')
-        debug_log('has_active_block returning False from the except block')
         return False
-    debug_log('has_active_block returning False')
     return False
 
 

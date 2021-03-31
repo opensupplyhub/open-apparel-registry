@@ -12,11 +12,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Download facilities list as Excel [#1293](https://github.com/open-apparel-registry/open-apparel-registry/pull/1293)
 
 ### Changed
+
 - Remove Sample Data and Update Registration Text [#1291](https://github.com/open-apparel-registry/open-apparel-registry/pull/1291)
 
 ### Deprecated
 
 ### Removed
+
+- Remove debug logging from has_active_block [#1296](https://github.com/open-apparel-registry/open-apparel-registry/pull/1296)
 
 ### Fixed
 
