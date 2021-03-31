@@ -30,6 +30,7 @@ import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 import hash from 'object-hash';
+import XLSX from 'xlsx';
 
 import env from './env';
 
@@ -51,7 +52,13 @@ import {
 
 import { createListItemCSV } from './util.listItemCSV';
 
-import { createFacilitiesCSV } from './util.facilitiesCSV';
+import { createFacilitiesCSV, formatDataForCSV } from './util.facilitiesCSV';
+
+export function DownloadXLSX(data, fileName) {
+    saveAs(new Blob([data], { type: 'application/octet-stream' }), fileName);
+
+    return noop();
+}
 
 export function DownloadCSV(data, fileName) {
     saveAs(new Blob([data], { type: 'text/csv;charset=utf-8;' }), fileName);
@@ -67,6 +74,18 @@ export const downloadListItemCSV = (list, items) =>
 
 export const downloadFacilitiesCSV = (facilities, options) =>
     DownloadCSV(createFacilitiesCSV(facilities, options), 'facilities.csv');
+
+export const createFacilitiesXLSX = (facilities, options) => {
+    const data = formatDataForCSV(facilities, options);
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'facilities');
+    const wopts = { bookType: 'xlsx', bookSST: false, type: 'array' };
+    return XLSX.write(workbook, wopts);
+};
+
+export const downloadFacilitiesXLSX = (facilities, options) =>
+    DownloadXLSX(createFacilitiesXLSX(facilities, options), 'facilities.xlsx');
 
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
