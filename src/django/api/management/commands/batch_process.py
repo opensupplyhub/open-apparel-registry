@@ -10,13 +10,14 @@ from api.matching import match_facility_list_items
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             save_match_details)
+from api.mail import notify_facility_list_complete
 
 LINE_ITEM_ACTIONS = {
     ProcessingAction.PARSE: parse_facility_list_item,
     ProcessingAction.GEOCODE: geocode_facility_list_item,
 }
 
-LIST_ACTIONS = set([ProcessingAction.MATCH])
+LIST_ACTIONS = set([ProcessingAction.MATCH, ProcessingAction.NOTIFY_COMPLETE])
 
 VALID_ACTIONS = list(LINE_ITEM_ACTIONS.keys()) + list(LIST_ACTIONS)
 
@@ -85,6 +86,8 @@ class Command(BaseCommand):
                     self.style.ERROR(
                         '{}: {} failures'.format(
                             action, fail_count)))
+        elif action == ProcessingAction.NOTIFY_COMPLETE:
+            notify_facility_list_complete(list_id)
 
     def process_items(self, facility_list, action, process):
         row_index = os.environ.get('AWS_BATCH_JOB_ARRAY_INDEX')

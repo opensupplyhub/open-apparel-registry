@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Download facilities list as Excel [#1293](https://github.com/open-apparel-registry/open-apparel-registry/pull/1293)
 - Add scripts/console [#1295](https://github.com/open-apparel-registry/open-apparel-registry/pull/1295)
+- Notify contributors when lists complete processing [#1290](https://github.com/open-apparel-registry/open-apparel-registry/pull/1290)
 
 ### Changed
 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Open Apparel Registry List Processing Completed
+        </title>
+    </head>
+    <body>
+        <p>
+            Hi there,
+        </p>
+        <p>
+            Thanks for submitting {{ list_name }} to the Open Apparel Registry. The list has now been processed by our system and the results are available here: <a href="{{ list_url }}">{{ list_url }}</a>.
+        </p>
+        <strong>What next?</strong>
+        <ul>
+            <li>
+                <strong> Review your list </strong> to see which facilities already exist in the OAR, access their unique OAR IDs and understand which other organisations share connections to the facilities you’re working with. What collaborations could you explore working on together? You’ll also see <strong> New Facilities </strong> in instances where you’ve added a new entry to the system, also allocated their own unique OAR IDs.
+            </li>
+            <li>
+                <strong> Confirm or Reject Potential Matches: </strong> In some cases, our algorithm wasn’t certain whether to identify a facility as a match, or whether to create a new entity in the tool (for more on how the OAR processes data, read this technical blog). Here we ask you to filter your list by “Potential matches” and confirm or reject the options presented to you. For more information on this process, see the “What am I supposed to do on the confirm / reject page?” section of our FAQ page.
+            </li>
+            <li>
+                <strong> Resolve Errors: </strong> Some entries may have generated an error message. You can review these entries to see whether it’s caused by an error in data entry, such as a country name being mis-spelled, or whether our geo-coder is unable to plot the facility due to the address lacking sufficient details. Once you have pin-pointed the cause, you can re-upload a list of those facilities with cleaned data.
+            </li>
+        </ul>
+        <p>
+            For any questions, feel free to reach out to the OAR team: <a href="mailto:info@openapparel.org">info@openapparel.org</a>
+        </p>
+        <p>
+            All the best,
+        </p>
+        {% include "mail/signature_block.html" %}
+    </body>
+</html>

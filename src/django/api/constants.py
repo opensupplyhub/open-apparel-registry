@@ -20,6 +20,7 @@ class ProcessingAction:
     PROMOTE_MATCH = 'promote_match'
     MERGE_FACILITY = 'merge_facility'
     SPLIT_FACILITY = 'split_facility'
+    NOTIFY_COMPLETE = 'notify_complete'
 
 
 class FacilitiesQueryParams:
