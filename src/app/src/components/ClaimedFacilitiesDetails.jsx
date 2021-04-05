@@ -19,7 +19,8 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import includes from 'lodash/includes';
 import isNull from 'lodash/isNull';
-import Select, { Creatable } from 'react-select';
+import Select from 'react-select';
+import Creatable from 'react-select/creatable';
 import { isEmail, isInt } from 'validator';
 import { toast } from 'react-toastify';
 
