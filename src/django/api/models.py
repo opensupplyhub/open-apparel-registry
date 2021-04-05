@@ -162,6 +162,12 @@ class Contributor(models.Model):
             'contributor.'
         )
     )
+    embed_config = models.OneToOneField(
+        'EmbedConfig',
+        on_delete=models.SET_NULL,
+        null=True,
+        help_text=('The embedded map configuration for the contributor'))
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -1963,4 +1969,86 @@ class FacilityActivityReport(models.Model):
         return ('FacilityActivityReport {id} - Facility {facility_id}, '
                 'Closure State: {closure_state}, '
                 'Status: {status} '
+                ).format(**self.__dict__)
+
+
+class EmbedConfig(models.Model):
+    """
+    Configuration data for an embedded map
+    """
+
+    width = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='600',
+        help_text='The width of the embedded map.')
+    height = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='400',
+        help_text='The height of the embedded map.')
+    color = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The color of the embedded map.')
+    font = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The font of the embedded map.')
+    show_other_contributor_information = models.BooleanField(
+        default=False,
+        help_text='Whether or not to show other contributor information.'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return ('EmbedConfig {id}, '
+                'Size: {width} x {height} '
+                ).format(**self.__dict__)
+
+
+class EmbedField(models.Model):
+    """
+    Data fields to include on facilities in an embedded map
+    """
+    class Meta:
+        unique_together = ('embed_config', 'order')
+
+    embed_config = models.ForeignKey(
+        'EmbedConfig',
+        null=False,
+        on_delete=models.CASCADE,
+        help_text='The embedded map configuration which uses this field'
+    )
+    column_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The column name of the field.')
+    display_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The name to display for the field.')
+    visible = models.BooleanField(
+        default=False,
+        help_text='Whether or not to display this field.'
+    )
+    order = models.IntegerField(
+        null=False,
+        blank=False,
+        help_text='The sort order of the field.')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return ('EmbedField {id} - EmbedConfig {embed_config}, '
+                'Order: {order} '
                 ).format(**self.__dict__)
