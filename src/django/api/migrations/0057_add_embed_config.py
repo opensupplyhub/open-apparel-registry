@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0055_add_report_switch'),
+        ('api', '0056_add_embed_switch'),
     ]
 
     operations = [
