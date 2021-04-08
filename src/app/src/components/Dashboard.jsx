@@ -49,6 +49,25 @@ const dashboardStyles = Object.freeze({
 
 const DASHBOARD_TITLE = 'Dashboard';
 
+const makeClickableSecondaryLink = ({ route, screenTitle }) => (
+    <React.Fragment>
+        {' / '}
+        <Link to={route} href={route}>
+            {screenTitle}
+        </Link>
+    </React.Fragment>
+);
+
+const makeClickableDashboardLinkFn = (screenTitle, secondaryLink) => () => (
+    <span>
+        <Link to={dashboardRoute} href={dashboardRoute}>
+            Dashboard
+        </Link>
+        {secondaryLink && makeClickableSecondaryLink(secondaryLink)}
+        {` / ${screenTitle}`}
+    </span>
+);
+
 function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
     if (fetchingSessionSignIn) {
         return (
@@ -81,15 +100,6 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
         </div>
     );
 
-    const makeClickableDashboardLinkFn = screenTitle => () => (
-        <span>
-            <Link to={dashboardRoute} href={dashboardRoute}>
-                Dashboard
-            </Link>
-            {` / ${screenTitle}`}
-        </span>
-    );
-
     return (
         <AppOverflow>
             <AppGrid
@@ -113,6 +123,10 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                                 >
                                     {makeClickableDashboardLinkFn(
                                         'Facility Claim Details',
+                                        {
+                                            route: dashboardClaimsRoute,
+                                            screenTitle: 'Facility Claims',
+                                        },
                                     )()}
                                 </FeatureFlag>
                             )}
