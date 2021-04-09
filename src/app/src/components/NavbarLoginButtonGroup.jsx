@@ -23,7 +23,6 @@ import {
 } from '../util/constants';
 
 import {
-    makeProfileRouteLink,
     checkWhetherUserHasDashboardAccess,
     convertFeatureFlagsObjectToListOfActiveFlags,
 } from '../util/util';
@@ -71,19 +70,6 @@ const createUserDropdownLinks = (user, logoutAction, activeFeatureFlags) => {
           ])
         : [];
 
-    const userLinks = Object.freeze([
-        Object.freeze({
-            text: 'My Profile',
-            url: makeProfileRouteLink(user.id),
-            type: 'link',
-        }),
-        Object.freeze({
-            text: 'My Lists',
-            url: '/lists',
-            type: 'link',
-        }),
-    ]);
-
     const claimedFacilityLinks = includes(activeFeatureFlags, CLAIM_A_FACILITY)
         ? Object.freeze([
               Object.freeze({
@@ -94,6 +80,19 @@ const createUserDropdownLinks = (user, logoutAction, activeFeatureFlags) => {
           ])
         : [];
 
+    const userLinks = Object.freeze([
+        Object.freeze({
+            text: 'My Lists',
+            url: '/lists',
+            type: 'link',
+        }),
+        Object.freeze({
+            text: 'Settings',
+            url: '/settings',
+            type: 'link',
+        }),
+    ]);
+
     const logoutLinks = Object.freeze([
         Object.freeze({
             text: 'Log Out',
@@ -103,8 +102,8 @@ const createUserDropdownLinks = (user, logoutAction, activeFeatureFlags) => {
     ]);
 
     return dashboardLink
-        .concat(userLinks)
         .concat(claimedFacilityLinks)
+        .concat(userLinks)
         .concat(logoutLinks);
 };
 

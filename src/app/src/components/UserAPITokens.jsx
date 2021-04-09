@@ -4,7 +4,6 @@ import { arrayOf, bool, func, string } from 'prop-types';
 
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -22,13 +21,12 @@ import {
 import { tokenPropType } from '../util/propTypes';
 
 const componentStyles = Object.freeze({
-    header: Object.freeze({
-        padding: '0 1rem',
+    container: Object.freeze({
+        width: '100%',
     }),
     generateTokenButton: Object.freeze({
         padding: '2rem 1rem',
         display: 'flex',
-        justifyContent: 'flex-end',
     }),
 });
 
@@ -128,9 +126,7 @@ class UserAPITokens extends Component {
         );
 
         return (
-            <div className="margin-bottom">
-                <Divider />
-                <h3 style={componentStyles.header}>API Tokens</h3>
+            <div className="margin-bottom" style={componentStyles.container}>
                 {insetComponent}
                 {deleteTokenDialog}
             </div>

@@ -30,6 +30,7 @@ import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
 import AboutClaimedFacilities from './components/AboutClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
+import Settings from './components/Settings';
 
 import './App.css';
 
@@ -57,6 +58,7 @@ import {
     claimedFacilitiesRoute,
     CLAIM_A_FACILITY,
     aboutClaimedFacilitiesRoute,
+    settingsRoute,
 } from './util/constants';
 
 const appStyles = Object.freeze({
@@ -166,7 +168,11 @@ class App extends Component {
                                 <Route
                                     exact
                                     path={profileRoute}
-                                    component={UserProfile}
+                                    component={({
+                                        match: {
+                                            params: { id },
+                                        },
+                                    }) => <UserProfile id={id} />}
                                 />
                                 <Route
                                     exact
@@ -201,6 +207,11 @@ class App extends Component {
                                             <AboutClaimedFacilities />
                                         </FeatureFlag>
                                     )}
+                                />
+                                <Route
+                                    exact
+                                    path={settingsRoute}
+                                    component={Settings}
                                 />
                                 <Route
                                     exact
