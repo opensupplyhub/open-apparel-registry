@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add scripts/console [#1295](https://github.com/open-apparel-registry/open-apparel-registry/pull/1295)
 - Notify contributors when lists complete processing [#1290](https://github.com/open-apparel-registry/open-apparel-registry/pull/1290)
 - Add Settings Page [#1290](https://github.com/open-apparel-registry/open-apparel-registry/pull/1298)
+- Add Back Button to Facility Claims [#1307](https://github.com/open-apparel-registry/open-apparel-registry/pull/1307)
 
 ### Changed
 
