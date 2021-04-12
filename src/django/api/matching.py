@@ -246,11 +246,10 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
         ]
 
         gazetteer = dedupe.Gazetteer(fields)
-        gazetteer.sample(messy, canonical, 15000)
         training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
                                      'training.json')
         with open(training_file) as tf:
-            gazetteer.readTraining(tf)
+            gazetteer.prepare_training(messy, canonical, tf, 15000)
         gazetteer.train()
         gazetteer.cleanupTraining()
 
