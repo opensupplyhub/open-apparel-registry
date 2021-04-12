@@ -334,8 +334,8 @@ def match_items(messy,
         no_geocoded_items = False
         try:
             gazetteer = GazetteerCache.get_latest()
-            results = gazetteer.match(messy, threshold=gazetteer_threshold,
-                                      n_matches=None, generator=True)
+            results = gazetteer.search(messy, threshold=gazetteer_threshold,
+                                       n_matches=None, generator=True)
             no_gazetteer_matches = False
         except NoCanonicalRecordsError:
             results = []
