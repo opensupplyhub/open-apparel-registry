@@ -334,7 +334,6 @@ def match_items(messy,
         no_geocoded_items = False
         try:
             gazetteer = GazetteerCache.get_latest()
-            gazetteer.threshold(messy, recall_weight=recall_weight)
             results = gazetteer.match(messy, threshold=gazetteer_threshold,
                                       n_matches=None, generator=True)
             no_gazetteer_matches = False
