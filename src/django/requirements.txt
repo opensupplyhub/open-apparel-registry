@@ -1,7 +1,7 @@
 base32-crockford==0.3.0
 boto3==1.9.92
 coreapi==2.3.3
-dedupe==1.9.4
+dedupe==2.0.8
 defusedxml==0.6.0
 django-amazon-ses==2.1.1
 django-ecsmanage==2.0.1
