@@ -252,7 +252,7 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
         with open(training_file) as tf:
             gazetteer.prepare_training(messy, canonical, tf, 15000)
         gazetteer.train()
-        gazetteer.cleanupTraining()
+        gazetteer.cleanup_training()
 
     if should_index:
         index_start = datetime.now()
