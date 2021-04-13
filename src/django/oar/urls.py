@@ -38,6 +38,7 @@ router.register('api-blocks', views.ApiBlockViewSet, 'api-block')
 router.register('facility-activity-reports',
                 views.FacilityActivityReportViewSet,
                 'facility-activity-report')
+router.register('embed-configs', views.EmbedConfigViewSet, 'embed-config')
 
 public_apis = [
     url(r'^api/', include(router.urls)),

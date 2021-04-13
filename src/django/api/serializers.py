@@ -36,7 +36,9 @@ from api.models import (FacilityList,
                         ProductionType,
                         Source,
                         ApiBlock,
-                        FacilityActivityReport)
+                        FacilityActivityReport,
+                        EmbedConfig,
+                        EmbedField)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code
 from waffle import switch_is_active
@@ -60,6 +62,7 @@ class UserSerializer(ModelSerializer):
     contributor_type = SerializerMethodField()
     other_contributor_type = SerializerMethodField()
     contributor_id = SerializerMethodField()
+    embed_config = SerializerMethodField()
     claimed_facility_ids = SerializerMethodField()
 
     class Meta:
@@ -123,6 +126,12 @@ class UserSerializer(ModelSerializer):
         except Contributor.DoesNotExist:
             return None
 
+    def get_embed_config(self, user):
+        try:
+            return EmbedConfigSerializer(user.contributor.embed_config).data
+        except Contributor.DoesNotExist:
+            return None
+
     def get_claimed_facility_ids(self, user):
         if not switch_is_active('claim_a_facility'):
             return {
@@ -162,11 +171,13 @@ class UserProfileSerializer(ModelSerializer):
     other_contributor_type = SerializerMethodField()
     facility_lists = SerializerMethodField()
     is_verified = SerializerMethodField()
+    embed_config = SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'description', 'website', 'contributor_type',
-                  'other_contributor_type', 'facility_lists', 'is_verified')
+                  'other_contributor_type', 'facility_lists', 'is_verified',
+                  'embed_config')
 
     def get_name(self, user):
         try:
@@ -223,6 +234,12 @@ class UserProfileSerializer(ModelSerializer):
             return user.contributor.is_verified
         except Contributor.DoesNotExist:
             return False
+
+    def get_embed_config(self, user):
+        try:
+            return EmbedConfigSerializer(user.contributor.embed_config).data
+        except Contributor.DoesNotExist:
+            return None
 
 
 class FacilityListSummarySerializer(ModelSerializer):
@@ -1083,3 +1100,31 @@ class ContributorListQueryParamsSerializer(Serializer):
         child=IntegerField(required=False),
         required=False,
     )
+
+
+class EmbedFieldsSerializer(ModelSerializer):
+    class Meta:
+        model = EmbedField
+        fields = ('column_name', 'display_name',
+                  'visible', 'order')
+
+
+class EmbedConfigSerializer(ModelSerializer):
+    contributor = SerializerMethodField()
+    embed_fields = SerializerMethodField()
+
+    class Meta:
+        model = EmbedConfig
+        fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
+                  'show_other_contributor_information', 'embed_fields')
+
+    def get_contributor(self, instance):
+        try:
+            return instance.contributor.id
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_embed_fields(self, instance):
+        embed_fields = EmbedField.objects.filter(
+                            embed_config=instance).order_by('order')
+        return EmbedFieldsSerializer(embed_fields, many=True).data
