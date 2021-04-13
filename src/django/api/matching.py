@@ -351,8 +351,8 @@ def match_items(messy,
     finished = str(timezone.now())
 
     item_matches = defaultdict(list)
-    for matches in results:
-        for (messy_id, canon_id), score in matches:
+    for messy_id, matches in results:
+        for canon_id, score in matches:
             # The gazetteer matcher obtained from the GazetteerCache may have
             # encountered an exception raised by Dedupe while unindexing
             # records and could therefore return matches for facility IDs that
