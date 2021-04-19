@@ -35,6 +35,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Bump djangorestframework from 3.10.1 to 3.11.2 in /src/django [#1289](https://github.com/open-apparel-registry/open-apparel-registry/pull/1289)
 
+## [2.41.1] - 2021-04-19
+
+### Fixed
+
+- Increase default gunicorn worker timeout [#1317](https://github.com/open-apparel-registry/open-apparel-registry/pull/1317)
+
 ## [2.41.0] - 2021-03-12
 
 ### Added
@@ -769,7 +775,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.41.0...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.41.1...HEAD
+[2.41.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.1
 [2.41.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.0
 [2.40.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.40.0
 [2.39.2]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.39.2
