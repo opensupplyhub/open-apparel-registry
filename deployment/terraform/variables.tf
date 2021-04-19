@@ -198,6 +198,10 @@ variable "app_port" {
   default = "8080"
 }
 
+variable "gunicorn_worker_timeout" {
+  default = "180"
+}
+
 variable "google_server_side_api_key" {}
 
 variable "google_client_side_api_key" {}
