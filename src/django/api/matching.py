@@ -334,7 +334,7 @@ def match_items(messy,
         try:
             gazetteer = GazetteerCache.get_latest()
             results = gazetteer.search(messy, threshold=gazetteer_threshold,
-                                       n_matches=None, generator=True)
+                                       n_matches=None, generator=False)
             no_gazetteer_matches = False
         except NoCanonicalRecordsError:
             results = []
