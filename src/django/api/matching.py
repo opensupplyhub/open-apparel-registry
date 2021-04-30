@@ -363,6 +363,8 @@ def match_items(messy,
                 .exists()
             if facility_exists:
                 item_matches[messy_id].append((canon_id, score))
+    if len(item_matches.keys()) == 0:
+        no_gazetteer_matches = True
 
     return {
         'processed_list_item_ids': list(messy.keys()),
