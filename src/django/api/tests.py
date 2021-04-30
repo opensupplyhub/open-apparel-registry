@@ -1731,8 +1731,18 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
         self.assertEqual(updated_confirmed_match.is_active, False)
 
 
-def junk_chars(string):
-    return 'AA' + string + 'YY'
+def add_space_to_name(string):
+    midpoint = len(string) // 2
+    return string[:midpoint] + ' ' + string[midpoint:]
+
+
+def add_junk_to_address(string):
+    segment_length = len(string) // 3
+    return (
+        string[:segment_length]
+        + 'aa'
+        + string[segment_length:(2*segment_length)]
+        + 'yy' + string[2*segment_length:])
 
 
 class DedupeMatchingTests(TestCase):
@@ -1777,11 +1787,9 @@ class DedupeMatchingTests(TestCase):
     def test_matches(self):
         facility = Facility.objects.first()
         facility_list = self.create_list([
-            (facility.country_code, junk_chars(facility.name.upper()),
-             junk_chars(facility.address.upper()))])
-        facility_list = self.create_list([
-            (facility.country_code, facility.name.upper(),
-             junk_chars(facility.address.upper()))])
+            (facility.country_code,
+             add_space_to_name(facility.name.upper()),
+             add_junk_to_address(facility.address.upper()))])
         result = match_facility_list_items(facility_list)
         matches = result['item_matches']
         item_id = str(facility_list.source.facilitylistitem_set.all()[0].id)
@@ -1798,8 +1806,9 @@ class DedupeMatchingTests(TestCase):
         # there is valid training data available after we delete records later
         # in the test case.
         facility_list = self.create_list([
-            (f.country_code, junk_chars(f.name.upper()),
-             junk_chars(f.address.upper()))
+            (f.country_code,
+             add_space_to_name(f.name.upper()),
+             add_junk_to_address(f.address.upper()))
             for f in Facility.objects.all()[:3]])
         result = match_facility_list_items(facility_list)
         matches = result['item_matches']
@@ -1851,8 +1860,9 @@ class DedupeMatchingTests(TestCase):
     def test_no_geocoded_items(self):
         facility = Facility.objects.first()
         facility_list = self.create_list([
-            (facility.country_code, junk_chars(facility.name.upper()),
-             junk_chars(facility.address.upper()))],
+            (facility.country_code,
+             add_space_to_name(facility.name.upper()),
+             add_junk_to_address(facility.address.upper()))],
                                          status=FacilityListItem.PARSED)
         result = match_facility_list_items(facility_list)
         self.assertTrue(result['results']['no_geocoded_items'])
