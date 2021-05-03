@@ -2,6 +2,8 @@ import operator
 import os
 import sys
 import traceback
+import json
+import csv
 
 from datetime import datetime
 from functools import reduce
@@ -3507,6 +3509,16 @@ def create_embed_fields(fields_data, embed_config):
         EmbedField.objects.create(embed_config=embed_config, **field_data)
 
 
+def get_contributor(request):
+    try:
+        contributor_id = request.user.contributor.id
+        contributor = Contributor.objects.get(id=contributor_id)
+    except Contributor.DoesNotExist:
+        raise ValidationError('Contributor not found for requesting user.')
+
+    return contributor
+
+
 @schema(EmbedConfigAutoSchema())
 class EmbedConfigViewSet(mixins.ListModelMixin,
                          mixins.RetrieveModelMixin,
@@ -3519,21 +3531,12 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
     queryset = EmbedConfig.objects.all()
     serializer_class = EmbedConfigSerializer
 
-    def get_contributor(self, request):
-        try:
-            contributor_id = request.user.contributor.id
-            contributor = Contributor.objects.get(id=contributor_id)
-        except Contributor.DoesNotExist:
-            raise ValidationError('Contributor not found for requesting user.')
-
-        return contributor
-
     @transaction.atomic
     def create(self, request):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        contributor = self.get_contributor(request)
+        contributor = get_contributor(request)
         if contributor.embed_config is not None:
             raise ValidationError(
                 'Contributor has an existing embed configuration.')
@@ -3562,7 +3565,7 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        contributor = self.get_contributor(request)
+        contributor = get_contributor(request)
 
         embed_config = EmbedConfig.objects.get(id=pk)
 
@@ -3576,3 +3579,82 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
         create_embed_fields(fields_data, embed_config)
 
         return super(EmbedConfigViewSet, self).update(request, pk=pk)
+
+
+class NonstandardFieldsAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+def get_list_fields(contributor):
+    list_headers = FacilityList.objects.filter(
+                                                source__contributor=contributor
+                                              ).values_list(
+                                                'header', flat=True)
+    list_fields = []
+    for header in list_headers:
+        csvreader = csv.reader(header.split('\n'), delimiter=',')
+        for row in csvreader:
+            list_fields = list_fields + row
+
+    return list_fields
+
+
+def parse_raw_data(data):
+    try:
+        # try to parse as json
+        return json.loads(data)
+    except json.decoder.JSONDecodeError:
+        try:
+            # try to parse as stringified object
+            return json.loads(data.replace("'", '"'))
+        except json.decoder.JSONDecodeError:
+            return {}
+
+
+def get_single_facility_fields(contributor):
+    single_facilities = FacilityListItem.objects.filter(
+                                            source__source_type='SINGLE',
+                                            source__contributor=contributor
+                                            ).values_list(
+                                            'raw_data', flat=True)
+    single_facility_fields = []
+    for single_facility in single_facilities:
+        fields = list(parse_raw_data(single_facility).keys())
+        single_facility_fields = single_facility_fields + fields
+
+    return single_facility_fields
+
+
+def filter_nonstandard_fields(fields):
+    unique_fields = list(set(fields))
+
+    standard_fields = ['country', 'name', 'address', 'lat', 'lng',
+                       'ppe_contact_phone', 'ppe_website',
+                       'ppe_contact_email', 'ppe_product_types']
+    nonstandard_fields = filter(lambda f: f not in standard_fields,
+                                unique_fields)
+
+    return nonstandard_fields
+
+
+@schema(NonstandardFieldsAutoSchema())
+class NonstandardFieldsViewSet(mixins.ListModelMixin,
+                               viewsets.GenericViewSet):
+    """
+    View nonstandard fields submitted by a contributor.
+    """
+
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        contributor = get_contributor(request)
+
+        list_fields = get_list_fields(contributor)
+        single_facility_fields = get_single_facility_fields(contributor)
+
+        contributor_fields = list_fields + single_facility_fields
+        nonstandard_fields = filter_nonstandard_fields(contributor_fields)
+
+        return Response(nonstandard_fields)

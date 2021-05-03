@@ -39,6 +39,8 @@ router.register('facility-activity-reports',
                 views.FacilityActivityReportViewSet,
                 'facility-activity-report')
 router.register('embed-configs', views.EmbedConfigViewSet, 'embed-config')
+router.register('nonstandard-fields', views.NonstandardFieldsViewSet,
+                'nonstandard-fields')
 
 public_apis = [
     url(r'^api/', include(router.urls)),
