@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import { func, shape, string, bool } from 'prop-types';
 
 import { userPropType } from '../util/propTypes';
 import { getEmbeddedMapSrc } from '../util/util';
@@ -29,30 +29,28 @@ const styles = {
     },
 };
 
-function EmbeddedMapConfig({ user }) {
-    // TODO: Replace with backend configuration data
-    const [fields, setFields] = useState([
-        { included: true, label: 'Years active', value: 'years_active' },
-        { included: true, label: 'num_widgets', value: 'num_widgets' },
-        {
-            included: false,
-            label: 'some_other_field_name',
-            value: 'some_other_field_name',
-        },
-    ]);
-    const [
+function EmbeddedMapConfig({
+    user,
+    embedConfig: {
         includeOtherContributorFields,
-        setIncludeOtherContributorFields,
-    ] = useState(true);
-    const [color, setColor] = useState('#C74444');
-    const [font, setFont] = useState(null);
-    const [width, setWidth] = useState('780');
-    const [fullWidth, setFullWidth] = useState(false);
-    const [height, setHeight] = useState('440');
-
-    const mapSettings = {
         color,
         font,
+        width,
+        fullWidth,
+        height,
+    },
+    setEmbedConfig,
+    fields,
+    setFields,
+    errors,
+}) {
+    const updateEmbedConfig = field => value =>
+        setEmbedConfig(config => ({
+            ...config,
+            [field]: value,
+        }));
+
+    const mapSettings = {
         width,
         height,
         fullWidth,
@@ -72,23 +70,26 @@ function EmbeddedMapConfig({ user }) {
                     includeOtherContributorFields={
                         includeOtherContributorFields
                     }
-                    setIncludeOtherContributorFields={
-                        setIncludeOtherContributorFields
-                    }
+                    setIncludeOtherContributorFields={updateEmbedConfig(
+                        'includeOtherContributorFields',
+                    )}
+                    errors={errors}
                 />
                 <EmbeddedMapThemeConfig
                     color={color}
-                    setColor={setColor}
+                    setColor={updateEmbedConfig('color')}
                     font={font}
-                    setFont={setFont}
+                    setFont={updateEmbedConfig('font')}
+                    errors={errors}
                 />
                 <EmbeddedMapSizeConfig
                     width={width}
-                    setWidth={setWidth}
+                    setWidth={updateEmbedConfig('width')}
                     height={height}
-                    setHeight={setHeight}
+                    setHeight={updateEmbedConfig('height')}
                     fullWidth={fullWidth}
-                    setFullWidth={setFullWidth}
+                    setFullWidth={updateEmbedConfig('fullWidth')}
+                    errors={errors}
                 />
             </Grid>
             <Grid item xs={6} style={{ ...styles.section, padding: '20px' }}>
@@ -122,16 +123,16 @@ EmbeddedMapConfig.defaultProps = {
 
 EmbeddedMapConfig.propTypes = {
     user: userPropType,
+    embedConfig: shape({
+        color: string.isRequired,
+        font: string.isRequired,
+        width: string.isRequired,
+        height: string.isRequired,
+        fullWidth: bool.isRequired,
+        includeOtherContributorFields: bool.isRequired,
+    }).isRequired,
+    setEmbedConfig: func.isRequired,
+    setFields: func.isRequired,
 };
 
-function mapStateToProps({
-    auth: {
-        user: { user },
-    },
-}) {
-    return {
-        user,
-    };
-}
-
-export default connect(mapStateToProps)(EmbeddedMapConfig);
+export default EmbeddedMapConfig;

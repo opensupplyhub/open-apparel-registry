@@ -40,10 +40,21 @@ function EmbeddedMapSizeConfig({
     setHeight,
     fullWidth,
     setFullWidth,
+    errors,
 }) {
     return (
         <div style={styles.section}>
             <Typography style={styles.sectionHeader}>Size</Typography>
+            {errors?.width && (
+                <Typography style={{ color: 'red' }}>
+                    Error: {errors.width.join(', ')}
+                </Typography>
+            )}
+            {errors?.height && (
+                <Typography style={{ color: 'red' }}>
+                    Error: {errors.height.join(', ')}
+                </Typography>
+            )}
             <div style={styles.contentContainer}>
                 <div style={styles.widthContainer}>
                     <TextField

@@ -1,12 +1,13 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import { shape, string, bool } from 'prop-types';
+import { string, bool } from 'prop-types';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import noop from 'lodash/noop';
 import { toast } from 'react-toastify';
 
 import { createIFrameHTML } from '../util/util';
+import { OARFont } from '../util/constants';
 
 const styles = {
     sectionHeader: {
@@ -32,7 +33,7 @@ const styles = {
         width: '90%',
         marginTop: '20px',
         color: 'rgb(0, 0, 0)',
-        fontFamily: 'ff-tisa-sans-web-pro,sans-serif',
+        fontFamily: OARFont,
         padding: '10px',
     },
     embedButton: {
@@ -43,17 +44,8 @@ const styles = {
     },
 };
 
-function EmbeddedMapCode({
-    color,
-    font,
-    width,
-    height,
-    fullWidth,
-    contributor,
-}) {
+function EmbeddedMapCode({ width, height, fullWidth, contributor }) {
     const mapSettings = {
-        color,
-        font,
         width,
         height,
         fullWidth,
@@ -82,19 +74,10 @@ function EmbeddedMapCode({
     );
 }
 
-EmbeddedMapCode.defaultProps = {
-    font: null,
-};
-
 EmbeddedMapCode.propTypes = {
     width: string.isRequired,
     height: string.isRequired,
     fullWidth: bool.isRequired,
-    color: string.isRequired,
-    font: shape({
-        label: string,
-        value: string,
-    }),
 };
 
 export default EmbeddedMapCode;

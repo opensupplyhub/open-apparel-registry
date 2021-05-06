@@ -174,6 +174,10 @@ export const makeLogDownloadUrl = (path, recordCount) =>
 export const makeUpdateFacilityLocationURL = oarID =>
     `/api/facilities/${oarID}/update-location/`;
 
+export const makeEmbedConfigURL = id =>
+    `/api/embed-configs/${id ? `${id}/` : ''}`;
+export const makeNonStandardFieldsURL = () => '/api/nonstandard-fields/';
+
 export const getValueFromObject = ({ value }) => value;
 
 const createCompactSortedQuerystringInputObject = (inputObject = []) =>
@@ -757,13 +761,11 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
 export const getLocationWithoutEmbedParam = () =>
     window.location.href.replace('&embed=1', '').replace('embed=1', '');
 
-export const getEmbeddedMapSrc = ({ font, color, contributor }) =>
+export const getEmbeddedMapSrc = ({ contributor }) =>
     window.location.href.replace(
         'settings',
         `?${querystring.stringify({
-            color,
             contributor,
-            font: font ? font.value : '',
             embed: 1,
         })}`,
     );
