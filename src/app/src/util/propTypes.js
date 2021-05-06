@@ -25,6 +25,7 @@ import {
     VECTOR_TILE,
     PPE,
     REPORT_A_FACILITY,
+    EMBEDDED_MAP_FLAG,
     facilityClaimStatusChoicesEnum,
 } from './constants';
 
@@ -243,6 +244,7 @@ export const featureFlagPropType = oneOf([
     VECTOR_TILE,
     PPE,
     REPORT_A_FACILITY,
+    EMBEDDED_MAP_FLAG,
 ]);
 
 export const facilityClaimsListPropType = arrayOf(
