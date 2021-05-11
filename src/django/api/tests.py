@@ -28,7 +28,8 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
                         RequestLog, DownloadLog, FacilityLocation, Source,
-                        ApiLimit, ApiBlock, ContributorNotifications)
+                        ApiLimit, ApiBlock, ContributorNotifications,
+                        EmbedConfig, EmbedField)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -6494,3 +6495,173 @@ class NonstandardFieldsApiTest(APITestCase):
         # We plan to only store raw data as CSV or JSON in the future. Legacy
         # data can be ignored
         self.assertNotIn('extra_2', content)
+
+
+class ContributorFieldsApiTest(APITestCase):
+    def setUp(self):
+        self.url = '/api/facilities/'
+        self.user_email = 'test@example.com'
+        self.user_password = 'example123'
+        self.user = User.objects.create(email=self.user_email)
+        self.user.set_password(self.user_password)
+        self.user.save()
+
+        self.embed_config = EmbedConfig.objects.create()
+
+        self.contributor = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='test contributor 1',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE,
+                    embed_config=self.embed_config)
+        EmbedField.objects.create(
+            embed_config=self.embed_config,
+            order=0,
+            column_name='extra_1',
+            display_name='ExtraOne',
+            visible=True
+        )
+        EmbedField.objects.create(
+            embed_config=self.embed_config,
+            order=1,
+            column_name='extra_2',
+            display_name='ExtraTwo',
+            visible=True
+        )
+
+        self.list = FacilityList \
+            .objects \
+            .create(header='country,name,address,extra_1',
+                    file_name='one',
+                    name='First List')
+
+        self.list_source = Source \
+            .objects \
+            .create(facility_list=self.list,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        raw_data = '"US","Towel Factory 42","42 Dolphin St","data one"'
+        self.list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.list_source,
+                    raw_data=raw_data)
+
+        self.facility = Facility.objects.create(
+            country_code=self.list_item.country_code,
+            created_from=self.list_item,
+            location=Point(0, 0),
+        )
+        self.list_item.facility = self.facility
+        self.list_item.save()
+
+        self.match_one = FacilityMatch.objects.create(
+            facility_list_item=self.list_item,
+            facility=self.facility,
+            is_active=True,
+            results={}
+        )
+
+        self.api_source = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        self.api_list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    raw_data=("{'country': 'US', 'name': 'Item'," +
+                              "'address': 'Address', 'extra_2': 'data two'}"),
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.api_source)
+        self.facility_two = Facility.objects.create(
+            country_code=self.api_list_item.country_code,
+            created_from=self.api_list_item,
+            location=Point(0, 0),
+        )
+        self.api_list_item.facility = self.facility_two
+        self.api_list_item.save()
+        self.match_two = FacilityMatch.objects.create(
+            facility_list_item=self.api_list_item,
+            facility=self.facility_two,
+            is_active=True,
+            results={}
+        )
+
+    def test_list_fields(self):
+        response = self.client.get(
+            self.url + self.facility.id + '/?embed=1&contributor=' +
+            str(self.contributor.id))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = json.loads(response.content)
+        contributor_fields = content['properties']['contributor_fields']
+        self.assertEquals(2, len(contributor_fields))
+        field = contributor_fields[0]
+        field_two = contributor_fields[1]
+        self.assertEquals('ExtraOne', field['label'])
+        self.assertEquals('data one', field['value'])
+        self.assertEquals('ExtraTwo', field_two['label'])
+        self.assertEquals(None, field_two['value'])
+
+    def test_single_fields(self):
+        response = self.client.get(
+            self.url + self.facility_two.id + '/?embed=1&contributor=' +
+            str(self.contributor.id))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = json.loads(response.content)
+        contributor_fields = content['properties']['contributor_fields']
+        self.assertEquals(2, len(contributor_fields))
+        field = contributor_fields[0]
+        field_two = contributor_fields[1]
+        self.assertEquals('ExtraOne', field['label'])
+        self.assertEquals(None, field['value'])
+        self.assertEquals('ExtraTwo', field_two['label'])
+        self.assertEquals('data two', field_two['value'])
+
+    def test_without_embed(self):
+        response = self.client.get(
+            self.url + self.facility.id + '/?contributor=' +
+            str(self.contributor.id))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = json.loads(response.content)
+        contributor_fields = content['properties']['contributor_fields']
+        self.assertEquals(0, len(contributor_fields))
+
+    def test_without_contributor(self):
+        response = self.client.get(
+            self.url + self.facility.id + '/?embed=1')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = json.loads(response.content)
+        contributor_fields = content['properties']['contributor_fields']
+        self.assertEquals(0, len(contributor_fields))
+
+    def test_inactive_match(self):
+        self.match_one.is_active = False
+        self.match_one.save()
+        response = self.client.get(
+            self.url + self.facility.id + '/?embed=1&contributor=' +
+            str(self.contributor.id))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = json.loads(response.content)
+        contributor_fields = content['properties']['contributor_fields']
+        self.assertEquals(2, len(contributor_fields))
+        field = contributor_fields[0]
+        field_two = contributor_fields[1]
+        self.assertEquals('ExtraOne', field['label'])
+        self.assertEquals(None, field['value'])
+        self.assertEquals('ExtraTwo', field_two['label'])
+        self.assertEquals(None, field_two['value'])
