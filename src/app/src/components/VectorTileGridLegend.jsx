@@ -1,6 +1,7 @@
 import React from 'react';
 
 import COLOURS from '../util/COLOURS';
+import { OARFont } from '../util/constants';
 
 import { maxVectorTileFacilitiesGridZoom } from '../util/constants.facilitiesMap';
 
@@ -8,7 +9,7 @@ const legendStyles = Object.freeze({
     legendStyle: Object.freeze({
         background: 'white',
         border: `1px solid ${COLOURS.NAVY_BLUE}`,
-        fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
+        fontFamily: OARFont,
         fontSize: '13px',
         display: 'flex',
         justifyContent: 'space-between',

@@ -8,10 +8,11 @@ import { unregister } from './registerServiceWorker';
 import { store } from './configureStore';
 import './index.css';
 import App from './App';
+import { OARFont } from './util/constants';
 
 const theme = createMuiTheme({
     typography: {
-        fontFamily: ['ff-tisa-sans-web-pro', 'sans-serif'].join(','),
+        fontFamily: OARFont,
     },
     palette: {
         primary: {

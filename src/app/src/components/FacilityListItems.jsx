@@ -20,6 +20,7 @@ import {
 } from '../actions/facilityListDetails';
 
 import {
+    OARFont,
     listsRoute,
     facilityListItemsRoute,
     aboutProcessingRoute,
@@ -53,7 +54,7 @@ const facilityListItemsStyles = Object.freeze({
         width: '90%',
     }),
     tableTitleStyles: Object.freeze({
-        fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
+        fontFamily: OARFont,
         fontWeight: 'normal',
         fontSize: '32px',
     }),
