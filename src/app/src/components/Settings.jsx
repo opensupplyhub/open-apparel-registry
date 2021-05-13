@@ -11,7 +11,7 @@ import UserProfile from './UserProfile';
 import UserAPITokens from './UserAPITokens';
 import AppOverflow from './AppOverflow';
 import AppGrid from './AppGrid';
-import EmbeddedMapConfig from './EmbeddedMapConfig';
+import EmbeddedMapConfigWrapper from './EmbeddedMapConfigWrapper';
 
 import { userPropType } from '../util/propTypes';
 import { authLoginFormRoute, EMBEDDED_MAP_FLAG } from '../util/constants';
@@ -86,7 +86,9 @@ function Settings({
                 {user && tabs[activeTabIndex] === PROFILE_TAB && (
                     <UserProfile allowEdits id={user.id.toString()} />
                 )}
-                {tabs[activeTabIndex] === EMBED_TAB && <EmbeddedMapConfig />}
+                {tabs[activeTabIndex] === EMBED_TAB && (
+                    <EmbeddedMapConfigWrapper />
+                )}
                 {tabs[activeTabIndex] === TOKEN_TAB && (
                     <AppGrid>
                         <UserAPITokens />

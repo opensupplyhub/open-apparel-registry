@@ -2,7 +2,9 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Select from 'react-select';
 
-import { func, shape, string } from 'prop-types';
+import { func, string } from 'prop-types';
+
+import { OARFont } from '../util/constants';
 
 const styles = {
     section: {
@@ -30,6 +32,7 @@ const styles = {
 };
 
 const fontOptions = [
+    { label: 'OAR Website Font', value: OARFont },
     { label: 'Arial', value: 'Arial,sans-serif' },
     { label: 'Georgia', value: 'Georgia,serif' },
     { label: 'Courier New', value: 'Courier New,monospace' },
@@ -47,7 +50,8 @@ const fontSelectStyles = {
     }),
 };
 
-function EmbeddedMapThemeConfig({ color, setColor, font, setFont }) {
+function EmbeddedMapThemeConfig({ color, setColor, font, setFont, errors }) {
+    const value = fontOptions.find(f => font === f.value) || OARFont;
     return (
         <div style={styles.section}>
             <Typography style={styles.sectionHeader}>Theme</Typography>
@@ -57,6 +61,11 @@ function EmbeddedMapThemeConfig({ color, setColor, font, setFont }) {
                     Use a color with sufficient contrast against white
                     backgrounds & labels.
                 </Typography>
+                {errors?.color && (
+                    <Typography style={{ color: 'red' }}>
+                        Error: {errors.color.join(', ')}
+                    </Typography>
+                )}
                 <div style={styles.colorContainer}>
                     <input
                         type="color"
@@ -73,12 +82,17 @@ function EmbeddedMapThemeConfig({ color, setColor, font, setFont }) {
                     Optional. If no font selected, OAR website font will be
                     used.
                 </Typography>
+                {errors?.font && (
+                    <Typography style={{ color: 'red' }}>
+                        Error: {errors.font.join(', ')}
+                    </Typography>
+                )}
                 <Select
                     styles={fontSelectStyles}
                     options={fontOptions}
                     id="font"
-                    value={font}
-                    onChange={item => setFont(item)}
+                    value={value}
+                    onChange={item => setFont(item.value)}
                     placeholder="Select a font"
                 />
             </div>
@@ -86,17 +100,10 @@ function EmbeddedMapThemeConfig({ color, setColor, font, setFont }) {
     );
 }
 
-EmbeddedMapThemeConfig.defaultProps = {
-    font: null,
-};
-
 EmbeddedMapThemeConfig.propTypes = {
     color: string.isRequired,
     setColor: func.isRequired,
-    font: shape({
-        label: string,
-        value: string,
-    }),
+    font: string.isRequired,
     setFont: func.isRequired,
 };
 

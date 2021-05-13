@@ -42,9 +42,10 @@ function EmbeddedMapFieldsConfig({
     includeOtherContributorFields,
     setIncludeOtherContributorFields,
     classes,
+    errors,
 }) {
     const updateItem = item => {
-        const index = fields.findIndex(f => f.value === item.value);
+        const index = fields.findIndex(f => f.columnName === item.columnName);
         const newFields = [
             ...fields.slice(0, index),
             item,
@@ -52,42 +53,49 @@ function EmbeddedMapFieldsConfig({
         ];
         setFields(newFields);
     };
-    const allSelected = !fields.some(f => !f.included);
-    const someSelected = fields.some(f => f.included) && !allSelected;
+    const allSelected = !fields.some(f => !f.visible);
+    const someSelected = fields.some(f => f.visible) && !allSelected;
 
-    const renderField = ({ included, label, value }) => (
-        <li style={styles.listItem} key={value}>
+    const renderField = ({ visible, displayName, columnName, order }) => (
+        <li style={styles.listItem} key={columnName}>
             <Checkbox
-                checked={included}
+                checked={visible}
                 onChange={e =>
-                    updateItem({ label, value, included: e.target.checked })
+                    updateItem({
+                        displayName,
+                        columnName,
+                        visible: e.target.checked,
+                        order,
+                    })
                 }
-                value="included"
+                value="visible"
                 style={styles.checkbox}
             />
             <TextField
-                id={`field-${value}`}
-                value={label}
+                id={`field-${columnName}`}
+                value={displayName}
                 onChange={e =>
                     updateItem({
-                        included,
-                        value,
-                        label: e.target.value,
+                        visible,
+                        columnName,
+                        displayName: e.target.value,
+                        order,
                     })
                 }
                 margin="normal"
                 variant="outlined"
-                disabled={!included}
+                disabled={!visible}
                 style={styles.textInput}
                 InputProps={{
-                    endAdornment: value !== label && (
+                    endAdornment: columnName !== displayName && (
                         <InputAdornment position="end">
                             <IconButton
                                 onClick={() =>
                                     updateItem({
-                                        included,
-                                        value,
-                                        label: value,
+                                        visible,
+                                        columnName,
+                                        displayName: columnName,
+                                        order,
                                     })
                                 }
                             >
@@ -109,6 +117,17 @@ function EmbeddedMapFieldsConfig({
                 Choose which fields to display – and what to call them. Facility
                 name, address, and country will always be included.
             </Typography>
+            {errors?.embed_fields && (
+                <Typography style={{ color: 'red' }}>
+                    Error: {errors.embed_fields.join(', ')}
+                </Typography>
+            )}
+            {errors?.show_other_contributor_information && (
+                <Typography style={{ color: 'red' }}>
+                    Error:{' '}
+                    {errors.show_other_contributor_information.join(', ')}
+                </Typography>
+            )}
             <ul>
                 <li style={styles.listItemNonEditable}>
                     <FormControlLabel
@@ -119,7 +138,7 @@ function EmbeddedMapFieldsConfig({
                                     setFields(
                                         fields.map(f => ({
                                             ...f,
-                                            included: e.target.checked,
+                                            visible: e.target.checked,
                                         })),
                                     )
                                 }
@@ -134,7 +153,7 @@ function EmbeddedMapFieldsConfig({
                         }}
                     />
                 </li>
-                {fields.map(renderField)}
+                {fields.sort((a, b) => a.order - b.order).map(renderField)}
                 <li style={styles.listItemNonEditable}>
                     <FormControlLabel
                         control={

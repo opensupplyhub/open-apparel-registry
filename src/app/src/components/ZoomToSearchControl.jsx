@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { OARFont } from '../util/constants';
 import { toggleZoomToSearch } from '../actions/ui';
 
 const zoomStyles = Object.freeze({
     zoomStyle: Object.freeze({
         background: 'white',
-        fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
+        fontFamily: OARFont,
         fontSize: '13px',
         display: 'flex',
         justifyContent: 'space-between',

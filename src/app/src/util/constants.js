@@ -517,3 +517,5 @@ export const PPE_FIELD_NAMES = Object.freeze([
     'ppe_contact_email',
     'ppe_website',
 ]);
+
+export const OARFont = 'ff-tisa-sans-web-pro,sans-serif';
