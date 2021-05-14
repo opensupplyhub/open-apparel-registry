@@ -29,7 +29,7 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityMatch, FacilityAlias, Contributor, User,
                         RequestLog, DownloadLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
-                        EmbedConfig, EmbedField)
+                        EmbedConfig, EmbedField, NonstandardField)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -64,7 +64,7 @@ class FacilityListCreateTest(APITestCase):
         self.contributor = Contributor(name=self.name, admin=self.user)
         self.contributor.save()
         self.test_csv_rows = [
-            'country,name,address',
+            'country,name,address,extra_1',
             'US,Somewhere,999 Park St',
             'US,Someplace Else,1234 Main St',
         ]
@@ -121,6 +121,17 @@ class FacilityListCreateTest(APITestCase):
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
                          previous_item_count + len(self.test_csv_rows) - 1)
+
+    def test_creates_nonstandard_fields(self):
+        response = self.client.post(reverse('facility-list-list'),
+                                    {'file': self.test_file},
+                                    format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        fields = NonstandardField.objects.filter(
+            contributor=self.user.contributor).values_list(
+            'column_name', flat=True)
+        self.assertEquals(1, len(fields))
+        self.assertIn('extra_1', fields)
 
     def test_creates_source(self):
         response = self.client.post(reverse('facility-list-list'),
@@ -5405,7 +5416,8 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         self.valid_facility = {
             'country': 'United States',
             'name': 'Pants Hut',
-            'address': '123 Main St, Anywhereville, PA'
+            'address': '123 Main St, Anywhereville, PA',
+            'extra_1': 'Extra data'
         }
 
     def join_group_and_login(self):
@@ -5483,6 +5495,15 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
 
         response = self.client.post(url_with_query, self.valid_facility)
         self.assertEqual(response.status_code, 201)
+
+    def test_creates_nonstandard_fields(self):
+        self.join_group_and_login()
+        self.client.post(self.url, self.valid_facility)
+        fields = NonstandardField.objects.filter(
+            contributor=self.user.contributor).values_list(
+            'column_name', flat=True)
+        self.assertEquals(1, len(fields))
+        self.assertIn('extra_1', fields)
 
 
 class FacilityCreateBodySerializerTest(TestCase):
@@ -6387,114 +6408,33 @@ class NonstandardFieldsApiTest(APITestCase):
                     name='test contributor 1',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
-        self.list = FacilityList \
-            .objects \
-            .create(header='country,name,address,extra_1',
-                    file_name='one',
-                    name='First List')
-
-        self.list_source = Source \
-            .objects \
-            .create(facility_list=self.list,
-                    source_type=Source.LIST,
-                    is_active=True,
-                    is_public=True,
-                    contributor=self.contributor)
-
-        self.list_item = FacilityListItem \
-            .objects \
-            .create(name='Item',
-                    address='Address',
-                    country_code='US',
-                    row_index=1,
-                    geocoded_point=Point(0, 0),
-                    status=FacilityListItem.CONFIRMED_MATCH,
-                    source=self.list_source)
-
-        self.api_source = Source \
-            .objects \
-            .create(source_type=Source.SINGLE,
-                    is_active=True,
-                    is_public=True,
-                    contributor=self.contributor)
-
-        self.api_list_item = FacilityListItem \
-            .objects \
-            .create(name='Item',
-                    address='Address',
-                    country_code='US',
-                    raw_data=("{'country': 'US', 'name': 'Item'," +
-                              "'address': 'Address', 'extra_2': 'data'}"),
-                    row_index=1,
-                    geocoded_point=Point(0, 0),
-                    status=FacilityListItem.CONFIRMED_MATCH,
-                    source=self.api_source)
-
     def test_nonstandard_fields(self):
+        NonstandardField.objects.create(
+            column_name='extra_1',
+            contributor=self.contributor)
+        NonstandardField.objects.create(
+            column_name='extra_2',
+            contributor=self.contributor)
         self.client.login(email=self.user_email,
                           password=self.user_password)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
-        self.assertTrue(2, len(content))
+        self.assertEquals(6, len(content))
         self.assertIn('extra_1', content)
         self.assertIn('extra_2', content)
+        self.assertIn('parent_company', content)
 
-    def test_doublequote_header(self):
-        self.list.header = '"country","name","address","extra_1"'
-        self.list.save()
-
+    def test_without_nonstandard_fields(self):
         self.client.login(email=self.user_email,
                           password=self.user_password)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
-        self.assertIn('extra_1', content)
-
-    def test_escaped_singlequote_in_api_data(self):
-        self.api_list_item.raw_data = ("{'country': 'US', 'name': 'Item', " +
-                                       "'address': 'Address', " +
-                                       "'extra_2': 'd\'ataé'}")
-        self.api_list_item.save()
-
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        content = json.loads(response.content)
-        # We plan to only store raw data as CSV or JSON in the future. Legacy
-        # data can be ignored
+        self.assertEquals(4, len(content))
+        self.assertNotIn('extra_1', content)
         self.assertNotIn('extra_2', content)
-
-    def test_json_in_api_data(self):
-        self.api_list_item.raw_data = ('{"country": "US", "name": "Item", ' +
-                                       '"address": "Address", "extra_2": ' +
-                                       '"d\'ataé"}')
-        self.api_list_item.save()
-
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        content = json.loads(response.content)
-        self.assertIn('extra_2', content)
-
-    def test_querydict_in_api_data(self):
-        # Production data at the time this test was written includes a mix of
-        # strigified dicts and stringified QueryDicts
-        self.api_list_item.raw_data = ("<QueryDict: {'name': ['Item'], " +
-                                       "'country': ['US'], 'address': " +
-                                       "['Address'], 'extra_2': ['data']}>")
-        self.api_list_item.save()
-
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        content = json.loads(response.content)
-        # We plan to only store raw data as CSV or JSON in the future. Legacy
-        # data can be ignored
-        self.assertNotIn('extra_2', content)
+        self.assertIn('parent_company', content)
 
 
 class ContributorFieldsApiTest(APITestCase):
