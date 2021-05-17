@@ -122,6 +122,11 @@ export const makeGetCountriesURL = () => '/api/countries/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
+export const makeGetFacilityByOARIdURLWithContributorId = (
+    oarId,
+    embed,
+    contributorId,
+) => `/api/facilities/${oarId}/?embed=${embed}&contributor=${contributorId}`;
 export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) =>
     `/api/facilities/?${qs}&pageSize=${pageSize}`;
 export const makeClaimFacilityAPIURL = oarId =>
