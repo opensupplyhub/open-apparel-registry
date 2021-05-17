@@ -36,7 +36,7 @@ function FacilityDetailsStaticMap({
                     lat,
                     lng,
                 })}
-                alt={`Facility ${name} at latitide ${lat} and longitude ${lng}`}
+                alt={`Facility ${name} at latitude ${lat} and longitude ${lng}`}
                 className="facility-detail_map"
             />
         </ShowOnly>
