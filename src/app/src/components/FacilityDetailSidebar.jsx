@@ -6,6 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Link } from 'react-router-dom';
 import head from 'lodash/head';
+import filter from 'lodash/filter';
 import last from 'lodash/last';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
@@ -95,7 +96,10 @@ const detailsSidebarStyles = Object.freeze({
 
 class FacilityDetailSidebar extends Component {
     componentDidMount() {
-        return this.props.fetchFacility();
+        return this.props.fetchFacility(
+            Number(this.props.embed),
+            this.props.user.user.id,
+        );
     }
 
     componentDidUpdate({
@@ -236,6 +240,11 @@ class FacilityDetailSidebar extends Component {
             return null;
         };
 
+        const contributorFields = filter(
+            get(data, 'properties.contributor_fields', null),
+            field => field.value !== null,
+        );
+
         const claimedFacilitySection = (
             <ShowOnly when={!facilityIsClaimedByCurrentUser}>
                 <>
@@ -373,6 +382,19 @@ class FacilityDetailSidebar extends Component {
                             </p>
                         </div>
                         {canonicalFacilityLocation}
+                        {contributorFields.map(field => (
+                            <div
+                                className="control-panel__group"
+                                key={field.label}
+                            >
+                                <h1 className="control-panel__heading">
+                                    {field.label}
+                                </h1>
+                                <p className="control-panel__body">
+                                    {field.value}
+                                </p>
+                            </div>
+                        ))}
                         <FacilityDetailsSidebarOtherLocations
                             data={removeDuplicatesFromOtherLocationsData(
                                 otherLocationsData,
@@ -536,7 +558,8 @@ function mapDispatchToProps(
     },
 ) {
     return {
-        fetchFacility: () => dispatch(fetchSingleFacility(oarID)),
+        fetchFacility: (embed, contributorId) =>
+            dispatch(fetchSingleFacility(oarID, embed, contributorId)),
         clearFacility: () => dispatch(resetSingleFacility()),
     };
 }
