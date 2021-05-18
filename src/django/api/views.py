@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 import csv
+import json
 
 from datetime import datetime
 from functools import reduce
@@ -1091,7 +1092,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         item = FacilityListItem.objects.create(
             source=source,
             row_index=0,
-            raw_data=request.data,
+            raw_data=json.dumps(request.data),
             status=FacilityListItem.PARSED,
             name=name,
             address=address,
