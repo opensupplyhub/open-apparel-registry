@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add API to get nonstandard fields for contributor [#1321](https://github.com/open-apparel-registry/open-apparel-registry/pull/1321)
 - Add new admin reports [#1326](https://github.com/open-apparel-registry/open-apparel-registry/pull/1326)
 - Connect embed section of settings page to API [#1329](https://github.com/open-apparel-registry/open-apparel-registry/pull/1329)
+- Show custom facility fields when in embed mode  [#1341](https://github.com/open-apparel-registry/open-apparel-registry/pull/1341)
 
 ### Changed
 
