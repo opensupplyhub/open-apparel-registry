@@ -1999,10 +1999,6 @@ class EmbedConfig(models.Model):
         null=True,
         blank=True,
         help_text='The font of the embedded map.')
-    show_other_contributor_information = models.BooleanField(
-        default=False,
-        help_text='Whether or not to show other contributor information.'
-    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -31,14 +31,7 @@ const styles = {
 
 function EmbeddedMapConfig({
     user,
-    embedConfig: {
-        includeOtherContributorFields,
-        color,
-        font,
-        width,
-        fullWidth,
-        height,
-    },
+    embedConfig: { color, font, width, fullWidth, height },
     setEmbedConfig,
     fields,
     setFields,
@@ -67,12 +60,6 @@ function EmbeddedMapConfig({
                 <EmbeddedMapFieldsConfig
                     fields={fields}
                     setFields={setFields}
-                    includeOtherContributorFields={
-                        includeOtherContributorFields
-                    }
-                    setIncludeOtherContributorFields={updateEmbedConfig(
-                        'includeOtherContributorFields',
-                    )}
                     errors={errors}
                 />
                 <EmbeddedMapThemeConfig
@@ -129,7 +116,6 @@ EmbeddedMapConfig.propTypes = {
         width: string.isRequired,
         height: string.isRequired,
         fullWidth: bool.isRequired,
-        includeOtherContributorFields: bool.isRequired,
     }).isRequired,
     setEmbedConfig: func.isRequired,
     setFields: func.isRequired,
