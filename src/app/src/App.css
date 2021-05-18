@@ -502,6 +502,26 @@ hr {
   align-items: center;
 }
 
+.footerContainerEmbedded {
+  padding: 0;
+  background-color: #fff;
+
+  z-index: 30;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: flex-between;
+  align-items: center;
+}
+
+.footerContainerEmbedded .footer-image {
+  height: 45px;
+  margin: 0;
+}
+
 .footerContainer .links {
   width: 100%;
   display: flex;

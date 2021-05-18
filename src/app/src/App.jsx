@@ -10,6 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import history from './util/history';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import EmbeddedFooter from './components/EmbeddedFooter';
 import RegisterForm from './components/RegisterForm';
 import ResetPasswordForm from './components/ResetPasswordForm';
 import LoginForm from './components/LoginForm';
@@ -94,7 +95,7 @@ class App extends Component {
         const { fetchingFeatureFlags, embed } = this.props;
 
         const mainPanelStyle = embed
-            ? { ...appStyles.mainPanelStyle, bottom: 0, top: 0 }
+            ? { ...appStyles.mainPanelStyle, top: 0 }
             : appStyles.mainPanelStyle;
         return (
             <ErrorBoundary>
@@ -229,7 +230,7 @@ class App extends Component {
                                 <Route render={() => <RouteNotFound />} />
                             </Switch>
                         </main>
-                        {embed ? null : <Footer />}
+                        {embed ? <EmbeddedFooter /> : <Footer />}
                         <ToastContainer
                             position="bottom-center"
                             transition={Slide}
