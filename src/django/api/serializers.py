@@ -56,6 +56,17 @@ def _get_parent_company(claim):
     }
 
 
+def is_embed_mode_active(serializer):
+    request = serializer.context.get('request') \
+        if serializer.context is not None else None
+
+    if request is not None and request.query_params is not None:
+        if request.query_params.get('embed') == '1':
+            return True
+
+    return False
+
+
 class UserSerializer(ModelSerializer):
     password = CharField(write_only=True)
     name = SerializerMethodField()
@@ -469,6 +480,9 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         return COUNTRY_NAMES.get(facility.country_code, '')
 
     def get_contributors(self, facility):
+        if is_embed_mode_active(self):
+            return []
+
         def format_source(source):
             if type(source) is Source:
                 return {
@@ -576,12 +590,21 @@ class FacilityDetailsSerializer(FacilitySerializer):
         geo_field = 'location'
 
     def get_other_names(self, facility):
+        if is_embed_mode_active(self):
+            return []
+
         return facility.other_names()
 
     def get_other_addresses(self, facility):
+        if is_embed_mode_active(self):
+            return []
+
         return facility.other_addresses()
 
     def get_other_locations(self, facility):
+        if is_embed_mode_active(self):
+            return []
+
         facility_locations = [
             {
                 'lat': l.location.y,
