@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove Sample Data and Update Registration Text [#1291](https://github.com/open-apparel-registry/open-apparel-registry/pull/1291)
 - Update Dependencies [#1291](https://github.com/open-apparel-registry/open-apparel-registry/pull/1303)
 - Update facility details API [#1333](https://github.com/open-apparel-registry/open-apparel-registry/pull/1333)
+- Show footer in embed mode [#1339](https://github.com/open-apparel-registry/open-apparel-registry/pull/1339)
 
 ### Deprecated
 
