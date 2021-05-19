@@ -2049,6 +2049,35 @@ class EmbedField(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return ('EmbedField {id} - EmbedConfig {embed_config}, '
-                'Order: {order} '
-                ).format(**self.__dict__)
+        return (
+            'Column Name {column_name} - Order: {order} ').format(
+            **self.__dict__)
+
+
+class NonstandardField(models.Model):
+    """
+    Nonstandard data fields available to include on facilities in an
+    embedded map
+    """
+    class Meta:
+        unique_together = ('contributor', 'column_name')
+
+    contributor = models.ForeignKey(
+        'Contributor',
+        null=False,
+        on_delete=models.CASCADE,
+        help_text='The contributor who submitted this field'
+    )
+    column_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The column name of the field.')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return (
+            'Contributor ID: {contributor_id} - ' +
+            'Column Name: {column_name}').format(**self.__dict__)

@@ -2,7 +2,6 @@ import operator
 import os
 import sys
 import traceback
-import json
 import csv
 
 from datetime import datetime
@@ -84,7 +83,8 @@ from api.models import (FacilityList,
                         Source,
                         ApiBlock,
                         EmbedConfig,
-                        EmbedField)
+                        EmbedField,
+                        NonstandardField)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -1084,6 +1084,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         ppe_contact_email = \
             body_serializer.validated_data.get('ppe_contact_email')
         ppe_website = body_serializer.validated_data.get('ppe_website')
+
+        fields = list(request.data.keys())
+        create_nonstandard_fields(fields, request.user.contributor)
 
         item = FacilityListItem.objects.create(
             source=source,
@@ -2179,6 +2182,27 @@ class FacilityListViewSetSchema(AutoSchema):
         return None
 
 
+def create_nonstandard_fields(fields, contributor):
+    unique_fields = list(set(fields))
+
+    existing_fields = NonstandardField.objects.filter(
+        contributor=contributor).values_list('column_name', flat=True)
+    new_fields = filter(lambda f: f not in existing_fields,
+                        unique_fields)
+
+    standard_fields = ['country', 'name', 'address', 'lat', 'lng',
+                       'ppe_contact_phone', 'ppe_website',
+                       'ppe_contact_email', 'ppe_product_types']
+    nonstandard_fields = filter(lambda f: f.lower() not in standard_fields,
+                                new_fields)
+
+    for f in nonstandard_fields:
+        NonstandardField.objects.create(
+            contributor=contributor,
+            column_name=f
+        )
+
+
 class FacilityListViewSet(viewsets.ModelViewSet):
     """
     Upload and update facility lists for an authenticated Contributor.
@@ -2302,6 +2326,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             header=header,
             replaces=replaces)
         new_list.save()
+
+        csvreader = csv.reader(header.split('\n'), delimiter=',')
+        for row in csvreader:
+            create_nonstandard_fields(row, contributor)
 
         source = Source.objects.create(
             contributor=contributor,
@@ -3586,64 +3614,13 @@ class NonstandardFieldsAutoSchema(AutoSchema):
         return None
 
 
-def get_list_fields(contributor):
-    list_headers = FacilityList.objects.filter(
-                                                source__contributor=contributor
-                                              ).values_list(
-                                                'header', flat=True)
-    list_fields = []
-    for header in list_headers:
-        csvreader = csv.reader(header.split('\n'), delimiter=',')
-        for row in csvreader:
-            list_fields = list_fields + row
-
-    return list_fields
-
-
-def parse_raw_data(data):
-    try:
-        # try to parse as json
-        return json.loads(data)
-    except json.decoder.JSONDecodeError:
-        try:
-            # try to parse as stringified object
-            return json.loads(data.replace("'", '"'))
-        except json.decoder.JSONDecodeError:
-            return {}
-
-
-def get_single_facility_fields(contributor):
-    single_facilities = FacilityListItem.objects.filter(
-                                            source__source_type='SINGLE',
-                                            source__contributor=contributor
-                                            ).values_list(
-                                            'raw_data', flat=True)
-    single_facility_fields = []
-    for single_facility in single_facilities:
-        fields = list(parse_raw_data(single_facility).keys())
-        single_facility_fields = single_facility_fields + fields
-
-    return single_facility_fields
-
-
-def filter_nonstandard_fields(fields):
-    unique_fields = list(set(fields))
-
-    standard_fields = ['country', 'name', 'address', 'lat', 'lng',
-                       'ppe_contact_phone', 'ppe_website',
-                       'ppe_contact_email', 'ppe_product_types']
-    nonstandard_fields = filter(lambda f: f not in standard_fields,
-                                unique_fields)
-
-    return nonstandard_fields
-
-
 @schema(NonstandardFieldsAutoSchema())
 class NonstandardFieldsViewSet(mixins.ListModelMixin,
                                viewsets.GenericViewSet):
     """
     View nonstandard fields submitted by a contributor.
     """
+    queryset = NonstandardField.objects.all()
 
     def list(self, request):
         if not request.user.is_authenticated:
@@ -3651,10 +3628,11 @@ class NonstandardFieldsViewSet(mixins.ListModelMixin,
 
         contributor = get_contributor(request)
 
-        list_fields = get_list_fields(contributor)
-        single_facility_fields = get_single_facility_fields(contributor)
+        nonstandard_fields = self.queryset.filter(
+            contributor=contributor).values_list('column_name', flat=True)
 
-        contributor_fields = list_fields + single_facility_fields
-        nonstandard_fields = filter_nonstandard_fields(contributor_fields)
+        default_nonstandard_fields = [
+            'parent_company', 'type_of_product',
+            'number_of_workers', 'type_of_facility']
 
-        return Response(nonstandard_fields)
+        return Response(list(nonstandard_fields) + default_nonstandard_fields)
