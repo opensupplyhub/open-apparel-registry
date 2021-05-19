@@ -181,6 +181,8 @@ export const makeUpdateFacilityLocationURL = oarID =>
 
 export const makeEmbedConfigURL = id =>
     `/api/embed-configs/${id ? `${id}/` : ''}`;
+export const makeContributorEmbedConfigURL = contributorId =>
+    `/api/contributor-embed-configs/${contributorId}/`;
 export const makeNonStandardFieldsURL = () => '/api/nonstandard-fields/';
 
 export const getValueFromObject = ({ value }) => value;
