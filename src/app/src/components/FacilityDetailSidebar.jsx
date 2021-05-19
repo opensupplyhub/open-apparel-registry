@@ -98,7 +98,7 @@ class FacilityDetailSidebar extends Component {
     componentDidMount() {
         return this.props.fetchFacility(
             Number(this.props.embed),
-            this.props.user.user.id,
+            this.props.contributors,
         );
     }
 
@@ -111,9 +111,13 @@ class FacilityDetailSidebar extends Component {
             match: {
                 params: { oarID },
             },
+            embed,
+            contributors,
         } = this.props;
 
-        return oarID !== prevOARID ? this.props.fetchFacility() : null;
+        return oarID !== prevOARID
+            ? this.props.fetchFacility(Number(embed), contributors)
+            : null;
     }
 
     componentWillUnmount() {
@@ -515,6 +519,7 @@ function mapStateToProps(
         },
         auth: { user },
         embeddedMap: { embed },
+        filters: { contributors },
     },
     {
         match: {
@@ -546,6 +551,7 @@ function mapStateToProps(
         userHasPendingFacilityClaim,
         user,
         embed: !!embed,
+        contributors,
     };
 }
 

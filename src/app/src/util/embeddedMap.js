@@ -22,7 +22,6 @@ export const formatExistingConfig = embedConfig => {
             width: DEFAULT_WIDTH,
             color: '#3d2f8c',
             font: OARFont,
-            includeOtherContributorFields: false,
             height: DEFAULT_HEIGHT,
         };
     }
@@ -31,8 +30,6 @@ export const formatExistingConfig = embedConfig => {
         ...formatExistingWidth(embedConfig),
         color: embedConfig.color ? embedConfig.color : '#3d2f8c',
         font: embedConfig.font ? embedConfig.font : OARFont,
-        includeOtherContributorFields:
-            embedConfig.show_other_contributor_information,
         height: getHeight(embedConfig),
     };
 };
@@ -93,8 +90,6 @@ const formatWidthForServer = ({ width, fullWidth }) => {
 
 export const formatEmbedConfigForServer = (embedConfig, embedFields) => ({
     ...embedConfig,
-    show_other_contributor_information:
-        embedConfig.includeOtherContributorFields,
     width: formatWidthForServer(embedConfig),
     height: getHeight(embedConfig),
     embed_fields: formatEmbedFieldsForServer(embedFields),

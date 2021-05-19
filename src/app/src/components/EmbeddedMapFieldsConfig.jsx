@@ -36,14 +36,7 @@ const styles = {
     },
 };
 
-function EmbeddedMapFieldsConfig({
-    fields,
-    setFields,
-    includeOtherContributorFields,
-    setIncludeOtherContributorFields,
-    classes,
-    errors,
-}) {
+function EmbeddedMapFieldsConfig({ fields, setFields, classes, errors }) {
     const updateItem = item => {
         const index = fields.findIndex(f => f.columnName === item.columnName);
         const newFields = [
@@ -154,26 +147,6 @@ function EmbeddedMapFieldsConfig({
                     />
                 </li>
                 {fields.sort((a, b) => a.order - b.order).map(renderField)}
-                <li style={styles.listItemNonEditable}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={includeOtherContributorFields}
-                                onChange={e =>
-                                    setIncludeOtherContributorFields(
-                                        e.target.checked,
-                                    )
-                                }
-                                value="includeOtherContributorFields"
-                                style={styles.checkbox}
-                            />
-                        }
-                        label="Information from other contributors"
-                        classes={{
-                            label: classes.listText,
-                        }}
-                    />
-                </li>
             </ul>
         </div>
     );
