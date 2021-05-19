@@ -129,7 +129,7 @@ export function fetchNextPageOfFacilities() {
 export function fetchSingleFacility(
     oarID = null,
     embed = 0,
-    contributorId = null,
+    contributors = null,
 ) {
     return dispatch => {
         dispatch(startFetchSingleFacility());
@@ -148,7 +148,7 @@ export function fetchSingleFacility(
             ? makeGetFacilityByOARIdURLWithContributorId(
                   oarID,
                   embed,
-                  contributorId,
+                  contributors[0].value,
               )
             : makeGetFacilityByOARIdURL(oarID);
 

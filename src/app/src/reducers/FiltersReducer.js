@@ -84,10 +84,10 @@ export default createReducer(
             update(state, {
                 lists: { $set: payload },
             }),
-        [resetAllFilters]: (state, payload) =>
+        [resetAllFilters]: (state, isEmbedded) =>
             update(initialState, {
                 contributors: {
-                    $set: payload
+                    $set: isEmbedded
                         ? state.contributors
                         : initialState.contributors,
                 },
