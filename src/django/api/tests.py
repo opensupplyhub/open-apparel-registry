@@ -14,6 +14,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.gis.geos import Point
 from django.utils import timezone
+from django.http import QueryDict
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -5409,6 +5410,14 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         )
 
 
+def is_json(myjson):
+    try:
+        json.loads(myjson)
+    except ValueError:
+        return False
+    return True
+
+
 class FacilitySubmitTest(FacilityAPITestCaseBase):
     def setUp(self):
         super(FacilitySubmitTest, self).setUp()
@@ -5474,6 +5483,46 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         self.join_group_and_login()
         response = self.client.post(self.url, self.valid_facility)
         self.assertEqual(response.status_code, 201)
+
+    def test_raw_data_json_formatted_with_singlequote(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, self.valid_facility)
+        data = json.loads(response.content)
+        list_item = FacilityListItem.objects.get(id=data['item_id'])
+        self.assertTrue(is_json(list_item.raw_data))
+
+    def test_raw_data_json_formatted_with_doublequote(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, {
+            "country": "United States",
+            "name": "Pants Hut",
+            "address": "123 Main St, Anywhereville, PA",
+            "extra_1": "Extra data"
+        })
+        data = json.loads(response.content)
+        list_item = FacilityListItem.objects.get(id=data['item_id'])
+        self.assertTrue(is_json(list_item.raw_data))
+
+    def test_raw_data_json_formatted_with_querydict(self):
+        self.join_group_and_login()
+        query_dict = QueryDict('', mutable=True)
+        query_dict.update(self.valid_facility)
+        response = self.client.post(self.url, query_dict)
+        data = json.loads(response.content)
+        list_item = FacilityListItem.objects.get(id=data['item_id'])
+        self.assertTrue(is_json(list_item.raw_data))
+
+    def text_raw_data_with_internal_quotes(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, {
+            'country': "US",
+            'name': "Item",
+            'address': "Address",
+            'extra_2': "d'ataé"
+        })
+        data = json.loads(response.content)
+        list_item = FacilityListItem.objects.get(id=data['item_id'])
+        self.assertTrue(is_json(list_item.raw_data))
 
     def test_valid_request_with_params(self):
         self.join_group_and_login()

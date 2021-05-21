@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Adjust settings so fast refresh works in development [#1284](https://github.com/open-apparel-registry/open-apparel-registry/pull/1284)
+- Fix raw data formatting [#1343](https://github.com/open-apparel-registry/open-apparel-registry/pull/1343)
 
 ### Security
 
