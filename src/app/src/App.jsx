@@ -4,6 +4,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import Routes from './Routes';
 import { fetchEmbedConfig } from './actions/embeddedMap';
+import { OARColor } from './util/constants';
 
 import './App.css';
 
@@ -13,7 +14,7 @@ function App({ embed, contributor, getEmbedConfig, config }) {
         if (embed && contributorId) {
             getEmbedConfig(contributorId);
         }
-    }, [embed, contributorId]);
+    }, [embed, contributorId, getEmbedConfig]);
 
     const theme = useMemo(
         () =>

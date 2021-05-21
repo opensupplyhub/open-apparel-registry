@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -22,38 +23,40 @@ import {
 import { facilityDetailsPropType } from '../util/propTypes';
 import { authLoginFormRoute } from '../util/constants';
 
-const styles = Object.freeze({
-    linkStyle: Object.freeze({
-        display: 'inline-block',
-        fontSize: '16px',
-        background: 'none',
-        border: 'none',
-        padding: 0,
-        cursor: 'pointer',
-    }),
-    facilityName: Object.freeze({
-        padding: '5px 0 15px',
-    }),
-    description: Object.freeze({
-        fontWeight: 'bold',
-        color: 'rgb(27, 27, 26)',
-        fontSize: '16px',
-    }),
-    dialogActionsStyles: Object.freeze({
-        display: 'flex',
-        justifyContent: 'space-evenly',
-        alignItems: 'center',
-        padding: '10px',
-    }),
-    dialogContainerStyles: Object.freeze({
-        padding: '10px',
-    }),
-    dialogTextFieldStyles: Object.freeze({
-        width: '100%',
-        marginTop: '10px',
-        minWidth: '300px',
-    }),
-});
+const styles = theme =>
+    Object.freeze({
+        linkStyle: Object.freeze({
+            display: 'inline-block',
+            fontSize: '16px',
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            fontFamily: theme.typography.fontFamily,
+        }),
+        facilityName: Object.freeze({
+            padding: '5px 0 15px',
+        }),
+        description: Object.freeze({
+            fontWeight: 'bold',
+            color: 'rgb(27, 27, 26)',
+            fontSize: '16px',
+        }),
+        dialogActionsStyles: Object.freeze({
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            padding: '10px',
+        }),
+        dialogContainerStyles: Object.freeze({
+            padding: '10px',
+        }),
+        dialogTextFieldStyles: Object.freeze({
+            width: '100%',
+            marginTop: '10px',
+            minWidth: '300px',
+        }),
+    });
 
 function ReportFacilityStatus({
     data,
@@ -61,6 +64,7 @@ function ReportFacilityStatus({
     dashboardActivityReports: { activityReports },
     submitReport,
     resetReports,
+    classes,
 }) {
     const [showDialog, setShowDialog] = useState(false);
     const [reasonForReport, setReportReason] = useState('');
@@ -95,13 +99,13 @@ function ReportFacilityStatus({
             onClose={closeDialog}
             aria-labelledby="status-dialogue"
             aria-describedby="status-dialog-description"
-            style={styles.dialogContainerStyles}
+            className={classes.dialogContainerStyles}
         >
             <DialogTitle id="status-dialog-title">
                 {`Report facility ${
                     data.properties.is_closed ? 'reopened' : 'closed'
                 }`}
-                <Typography style={styles.facilityName}>
+                <Typography className={classes.facilityName}>
                     {data.properties.name}
                 </Typography>
                 <Divider />
@@ -110,7 +114,7 @@ function ReportFacilityStatus({
                 <DialogContent>
                     <DialogContentText
                         id="status-dialog-description"
-                        style={styles.description}
+                        className={classes.description}
                     >
                         {`You must be logged in to report this facility as ${
                             data.properties.is_closed ? 'reopened' : 'closed'
@@ -121,7 +125,7 @@ function ReportFacilityStatus({
                 <DialogContent>
                     <DialogContentText
                         id="status-dialog-description"
-                        style={styles.description}
+                        className={classes.description}
                     >
                         Please provide information the OAR team can use to
                         verify this status change.
@@ -134,17 +138,17 @@ function ReportFacilityStatus({
                         multiline
                         rows={4}
                         value={reasonForReport}
-                        style={styles.dialogTextFieldStyles}
+                        className={classes.dialogTextFieldStyles}
                         onChange={e => setReportReason(e.target.value)}
                     />
                 </DialogContent>
             )}
             {!user ? (
-                <DialogActions style={styles.dialogActionsStyles}>
+                <DialogActions className={classes.dialogActionsStyles}>
                     {loginButton}
                 </DialogActions>
             ) : (
-                <DialogActions style={styles.dialogActionsStyles}>
+                <DialogActions className={classes.dialogActionsStyles}>
                     <Button onClick={closeDialog}>Cancel</Button>
                     <Button
                         onClick={handleSubmit}
@@ -161,8 +165,7 @@ function ReportFacilityStatus({
     return (
         <div>
             <button
-                className="link-underline small"
-                style={styles.linkStyle}
+                className={`link-underline small ${classes.linkStyle}`}
                 to="#"
                 onClick={() => setShowDialog(true)}
                 type="button"
@@ -202,4 +205,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(ReportFacilityStatus);
+)(withStyles(styles)(ReportFacilityStatus));

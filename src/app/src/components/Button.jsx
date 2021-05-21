@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import MaterialButton from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import COLOURS from '../util/COLOURS';
 
 class Button extends PureComponent {
     render() {
@@ -12,14 +11,14 @@ class Button extends PureComponent {
                 onClick={onClick}
                 disabled={disabled}
                 style={{
-                    background: disabled ? COLOURS.GREY : COLOURS.NAVY_BLUE,
-                    color: COLOURS.WHITE,
                     borderRadius: '0',
                     padding: '8px 16px',
                     textTransform: 'uppercase',
                     boxShadow: 'none',
                     ...style,
                 }}
+                variant="contained"
+                color="primary"
             >
                 {text}
             </MaterialButton>

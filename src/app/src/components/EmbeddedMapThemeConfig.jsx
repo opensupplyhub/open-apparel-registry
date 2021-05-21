@@ -33,10 +33,15 @@ const styles = {
 
 const fontOptions = [
     { label: 'OAR Website Font', value: OARFont },
-    { label: 'Arial', value: 'Arial,sans-serif' },
+    { label: 'Arial', value: 'Arial,Helvetica,sans-serif' },
+    { label: 'Tahoma', value: 'Tahoma,Verdana,sans-serif' },
+    { label: 'Trebuchet MS', value: '"Trebuchet MS",Helvetica,sans-serif' },
+    { label: 'Times New Roman', value: '"Times New Roman",Times,serif' },
     { label: 'Georgia', value: 'Georgia,serif' },
-    { label: 'Courier New', value: 'Courier New,monospace' },
+    { label: 'Garamond', value: 'Garamond,serif' },
+    { label: 'Courier New', value: '"Courier New",Courier,monospace' },
     { label: 'Brush Script', value: 'Brush Script,cursive' },
+    { label: 'Copperplate', value: 'Copperplate,Papyrus,fantasy' },
 ];
 
 const fontSelectStyles = {

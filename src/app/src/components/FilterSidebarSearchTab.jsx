@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import Popover from '@material-ui/core/Popover';
 import ReactSelect from 'react-select';
+import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 
 import ShowOnly from './ShowOnly';
@@ -48,19 +49,25 @@ import {
 
 import { FACILITIES_REQUEST_PAGE_SIZE } from '../util/constants';
 
-const filterSidebarSearchTabStyles = Object.freeze({
-    formStyle: Object.freeze({
-        width: '100%',
-        marginBottom: '32px',
-    }),
-    inputLabelStyle: Object.freeze({
-        fontSize: '16px',
-        fontWeight: 500,
-        color: '#000',
-        transform: 'translate(0, -8px) scale(1)',
-        paddingBottom: '0.5rem',
-    }),
-});
+const filterSidebarSearchTabStyles = theme =>
+    Object.freeze({
+        formStyle: Object.freeze({
+            width: '100%',
+            marginBottom: '32px',
+        }),
+        inputLabelStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+            fontSize: '16px',
+            fontWeight: 500,
+            color: '#000',
+            transform: 'translate(0, -8px) scale(1)',
+            paddingBottom: '0.5rem',
+        }),
+        selectStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+        }),
+        ...filterSidebarStyles,
+    });
 
 const FACILITIES = 'FACILITIES';
 const CONTRIBUTORS = 'CONTRIBUTORS';
@@ -99,6 +106,7 @@ function FilterSidebarSearchTab({
     fetchingLists,
     updateList,
     lists,
+    classes,
 }) {
     const [
         contributorPopoverAnchorEl,
@@ -199,7 +207,7 @@ function FilterSidebarSearchTab({
                 onClick={activateDrawFilter}
                 disableRipple
                 color="primary"
-                className="outlined-button outlined-button--full-width"
+                fullWidth
             >
                 DRAW AREA
             </Button>
@@ -209,7 +217,7 @@ function FilterSidebarSearchTab({
                 onClick={clearDrawFilter}
                 disableRipple
                 color="primary"
-                className="outlined-button outlined-button--full-width"
+                fullWidth
             >
                 REMOVE AREA
             </Button>
@@ -217,8 +225,7 @@ function FilterSidebarSearchTab({
 
     return (
         <div
-            className="control-panel__content"
-            style={filterSidebarStyles.controlPanelContentStyles}
+            className={`control-panel__content ${classes.controlPanelContentStyles}`}
         >
             <div>
                 <div className="form__field" style={{ marginBottom: '10px' }}>
@@ -291,7 +298,7 @@ function FilterSidebarSearchTab({
                         <InputLabel
                             shrink={false}
                             htmlFor={CONTRIBUTORS}
-                            style={filterSidebarSearchTabStyles.inputLabelStyle}
+                            className={classes.inputLabelStyle}
                         >
                             Filter by Contributor
                         </InputLabel>
@@ -299,7 +306,7 @@ function FilterSidebarSearchTab({
                             isMulti
                             id={CONTRIBUTORS}
                             name={CONTRIBUTORS}
-                            className="basic-multi-select notranslate"
+                            className={`basic-multi-select notranslate ${classes.selectStyle}`}
                             classNamePrefix="select"
                             options={contributorOptions}
                             value={contributors}
@@ -371,9 +378,7 @@ function FilterSidebarSearchTab({
                             <InputLabel
                                 shrink={false}
                                 htmlFor={LISTS}
-                                style={
-                                    filterSidebarSearchTabStyles.inputLabelStyle
-                                }
+                                className={classes.inputLabelStyle}
                             >
                                 Filter by Contributor List
                             </InputLabel>
@@ -381,7 +386,7 @@ function FilterSidebarSearchTab({
                                 isMulti
                                 id={LISTS}
                                 name={LISTS}
-                                className="basic-multi-select notranslate"
+                                className={`basic-multi-select notranslate ${classes.selectStyle}`}
                                 classNamePrefix="select"
                                 options={listOptions}
                                 value={lists}
@@ -395,7 +400,7 @@ function FilterSidebarSearchTab({
                     <InputLabel
                         shrink={false}
                         htmlFor={CONTRIBUTOR_TYPES}
-                        style={filterSidebarSearchTabStyles.inputLabelStyle}
+                        className={classes.inputLabelStyle}
                     >
                         Filter by Contributor Type
                     </InputLabel>
@@ -403,7 +408,7 @@ function FilterSidebarSearchTab({
                         isMulti
                         id={CONTRIBUTOR_TYPES}
                         name="contributorTypes"
-                        className="basic-multi-select notranslate"
+                        className={`basic-multi-select notranslate ${classes.selectStyle}`}
                         classNamePrefix="select"
                         options={contributorTypeOptions}
                         value={contributorTypes}
@@ -415,7 +420,7 @@ function FilterSidebarSearchTab({
                     <InputLabel
                         shrink={false}
                         htmlFor={COUNTRIES}
-                        style={filterSidebarSearchTabStyles.inputLabelStyle}
+                        className={classes.inputLabelStyle}
                     >
                         Filter by Country Name
                     </InputLabel>
@@ -423,7 +428,7 @@ function FilterSidebarSearchTab({
                         isMulti
                         id={COUNTRIES}
                         name={COUNTRIES}
-                        className="basic-multi-select"
+                        className={`basic-multi-select ${classes.selectStyle}`}
                         classNamePrefix="select"
                         options={countryOptions}
                         value={countries}
@@ -435,7 +440,7 @@ function FilterSidebarSearchTab({
                     <InputLabel
                         shrink={false}
                         htmlFor={CONTRIBUTORS}
-                        style={filterSidebarSearchTabStyles.inputLabelStyle}
+                        className={classes.inputLabelStyle}
                     >
                         Filter by Area
                     </InputLabel>
@@ -457,7 +462,6 @@ function FilterSidebarSearchTab({
                             onClick={() => resetFilters(embed)}
                             disableRipple
                             color="primary"
-                            className="outlined-button"
                             disabled={fetchingOptions}
                         >
                             Reset
@@ -473,7 +477,7 @@ function FilterSidebarSearchTab({
                                 size="small"
                                 type="submit"
                                 color="primary"
-                                className="margin-left-16 blue-background"
+                                className="margin-left-16"
                                 style={{ boxShadow: 'none' }}
                                 onClick={() =>
                                     searchForFacilities(vectorTileFlagIsActive)
@@ -628,4 +632,4 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(FilterSidebarSearchTab);
+)(withStyles(filterSidebarSearchTabStyles)(FilterSidebarSearchTab));
