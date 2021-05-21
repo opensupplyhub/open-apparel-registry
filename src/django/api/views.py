@@ -415,6 +415,19 @@ def all_contributors(request):
     return Response(response_data)
 
 
+@api_view(['GET'])
+def contributor_embed_config(request, pk=None):
+    """
+    Returns a contributor's embedded map configuration.
+    """
+    try:
+        contributor = Contributor.objects.get(id=pk)
+        embed_config = EmbedConfigSerializer(contributor.embed_config).data
+        return Response(embed_config)
+    except Contributor.DoesNotExist:
+        raise ValidationError('Contributor not found.')
+
+
 def getContributorTypeCount(value, counts):
     try:
         type = counts.get(contrib_type=value)
