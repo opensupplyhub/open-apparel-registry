@@ -3598,7 +3598,7 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
 
         embed_config = EmbedConfig.objects.get(id=pk)
 
-        if embed_config.contributor.id is not contributor.id:
+        if embed_config.contributor.id != contributor.id:
             error_data = {'error': (
                 f'Update failed because embed contributor ID '
                 f'{embed_config.contributor.id} does not match the '
