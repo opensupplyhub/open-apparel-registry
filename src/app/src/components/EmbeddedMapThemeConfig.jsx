@@ -55,52 +55,69 @@ const fontSelectStyles = {
     }),
 };
 
-function EmbeddedMapThemeConfig({ color, setColor, font, setFont, errors }) {
+function EmbeddedMapThemeConfig({
+    color,
+    setColor,
+    font,
+    setFont,
+    errors,
+    embedLevel,
+}) {
     const value = fontOptions.find(f => font === f.value) || OARFont;
     return (
         <div style={styles.section}>
-            <Typography style={styles.sectionHeader}>Theme</Typography>
-            <div style={styles.subsection}>
-                <Typography style={styles.subsectionHeader}>Color</Typography>
-                <Typography>
-                    Use a color with sufficient contrast against white
-                    backgrounds & labels.
-                </Typography>
-                {errors?.color && (
-                    <Typography style={{ color: 'red' }}>
-                        Error: {errors.color.join(', ')}
+            {embedLevel > 1 ? (
+                <>
+                    <Typography style={styles.sectionHeader}>Theme</Typography>
+                    <div style={styles.subsection}>
+                        <Typography style={styles.subsectionHeader}>
+                            Color
+                        </Typography>
+                        <Typography>
+                            Use a color with sufficient contrast against white
+                            backgrounds & labels.
+                        </Typography>
+                        {errors?.color && (
+                            <Typography style={{ color: 'red' }}>
+                                Error: {errors.color.join(', ')}
+                            </Typography>
+                        )}
+                        <div style={styles.colorContainer}>
+                            <input
+                                type="color"
+                                value={color}
+                                onChange={e => setColor(e.target.value)}
+                                style={{ marginRight: '10px' }}
+                            />
+                            <Typography>{color}</Typography>
+                        </div>
+                    </div>
+                </>
+            ) : null}
+            {embedLevel === 3 ? (
+                <div style={styles.subsection}>
+                    <Typography style={styles.subsectionHeader}>
+                        Font
                     </Typography>
-                )}
-                <div style={styles.colorContainer}>
-                    <input
-                        type="color"
-                        value={color}
-                        onChange={e => setColor(e.target.value)}
-                        style={{ marginRight: '10px' }}
+                    <Typography>
+                        Optional. If no font selected, OAR website font will be
+                        used.
+                    </Typography>
+                    {errors?.font && (
+                        <Typography style={{ color: 'red' }}>
+                            Error: {errors.font.join(', ')}
+                        </Typography>
+                    )}
+                    <Select
+                        styles={fontSelectStyles}
+                        options={fontOptions}
+                        id="font"
+                        value={value}
+                        onChange={item => setFont(item.value)}
+                        placeholder="Select a font"
                     />
-                    <Typography>{color}</Typography>
                 </div>
-            </div>
-            <div style={styles.subsection}>
-                <Typography style={styles.subsectionHeader}>Font</Typography>
-                <Typography>
-                    Optional. If no font selected, OAR website font will be
-                    used.
-                </Typography>
-                {errors?.font && (
-                    <Typography style={{ color: 'red' }}>
-                        Error: {errors.font.join(', ')}
-                    </Typography>
-                )}
-                <Select
-                    styles={fontSelectStyles}
-                    options={fontOptions}
-                    id="font"
-                    value={value}
-                    onChange={item => setFont(item.value)}
-                    placeholder="Select a font"
-                />
-            </div>
+            ) : null}
         </div>
     );
 }
