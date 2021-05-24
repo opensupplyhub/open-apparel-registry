@@ -59,7 +59,7 @@ function EmbeddedMapConfig({
                 include all facilities you have contributed.
             </Typography>
             <Grid item xs={6}>
-                {user.embedLevel === 3 ? (
+                {user.embed_level === 3 ? (
                     <EmbeddedMapFieldsConfig
                         fields={fields}
                         setFields={setFields}
@@ -72,7 +72,7 @@ function EmbeddedMapConfig({
                     font={font}
                     setFont={updateEmbedConfig('font')}
                     errors={errors}
-                    embedLevel={user.embedLevel}
+                    embedLevel={user.embed_level}
                 />
                 <EmbeddedMapSizeConfig
                     width={width}

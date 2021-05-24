@@ -1,10 +1,13 @@
 import React from 'react';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Radio from '@material-ui/core/Radio';
 import Typography from '@material-ui/core/Typography';
 import Select from 'react-select';
 
 import { func, string } from 'prop-types';
 
-import { OARFont } from '../util/constants';
+import { OARFont, OARColor } from '../util/constants';
 
 const styles = {
     section: {
@@ -66,13 +69,47 @@ function EmbeddedMapThemeConfig({
     const value = fontOptions.find(f => font === f.value) || OARFont;
     return (
         <div style={styles.section}>
-            {embedLevel > 1 ? (
-                <>
-                    <Typography style={styles.sectionHeader}>Theme</Typography>
-                    <div style={styles.subsection}>
-                        <Typography style={styles.subsectionHeader}>
-                            Color
+            <Typography style={styles.sectionHeader}>Theme</Typography>
+            <div style={styles.subsection}>
+                <Typography style={styles.subsectionHeader}>Color</Typography>
+                {embedLevel === 1 ? (
+                    <>
+                        <Typography>
+                            Choose the primary color for the embedded map.
                         </Typography>
+                        <FormControl>
+                            <FormControlLabel
+                                value="#00000"
+                                label="Black"
+                                control={
+                                    <Radio
+                                        checked={color === '#000000'}
+                                        onChange={e => setColor(e.target.value)}
+                                        value="#000000"
+                                        name="theme-color"
+                                        inputProps={{ 'aria-label': 'Black' }}
+                                    />
+                                }
+                            />
+                            <FormControlLabel
+                                value={OARColor}
+                                label="OAR Blue"
+                                control={
+                                    <Radio
+                                        checked={color === OARColor}
+                                        onChange={e => setColor(e.target.value)}
+                                        value={OARColor}
+                                        name="theme-color"
+                                        inputProps={{
+                                            'aria-label': 'OAR Blue',
+                                        }}
+                                    />
+                                }
+                            />
+                        </FormControl>
+                    </>
+                ) : (
+                    <>
                         <Typography>
                             Use a color with sufficient contrast against white
                             backgrounds & labels.
@@ -91,9 +128,9 @@ function EmbeddedMapThemeConfig({
                             />
                             <Typography>{color}</Typography>
                         </div>
-                    </div>
-                </>
-            ) : null}
+                    </>
+                )}
+            </div>
             {embedLevel === 3 ? (
                 <div style={styles.subsection}>
                     <Typography style={styles.subsectionHeader}>
