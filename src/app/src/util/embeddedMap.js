@@ -2,16 +2,15 @@ import sortBy from 'lodash/sortBy';
 
 import { OARFont } from './constants';
 
-const DEFAULT_WIDTH = '1000';
-const DEFAULT_HEIGHT = '800';
+export const DEFAULT_WIDTH = '1000';
+export const DEFAULT_HEIGHT = '800';
 
-const getHeight = embedConfig =>
-    embedConfig.height ? embedConfig.height : DEFAULT_HEIGHT;
+const getHeight = embedConfig => (embedConfig.height ? embedConfig.height : '');
 
 const formatExistingWidth = ({ width = DEFAULT_WIDTH }) => {
     const fullWidth = width[width.length - 1] === '%';
     if (!width) {
-        return { fullWidth, width: DEFAULT_WIDTH };
+        return { fullWidth, width: '' };
     }
     return { fullWidth, width };
 };
@@ -84,7 +83,7 @@ const formatEmbedFieldsForServer = fields =>
 
 const formatWidthForServer = ({ width, fullWidth }) => {
     if (fullWidth) return '100%';
-    if (!width || width === '100%') return DEFAULT_WIDTH;
+    if (!width || width === '100%') return '';
     return width;
 };
 

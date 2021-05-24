@@ -6,6 +6,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
+import { DEFAULT_WIDTH } from '../util/embeddedMap';
+
 const styles = {
     section: {
         marginTop: '30px',
@@ -22,7 +24,7 @@ const styles = {
         width: '150px',
     },
     sizeCheckbox: {
-        margin: '0 200px 0 10px',
+        padding: '10px',
     },
     contentContainer: { display: 'flex', alignItems: 'flex-start' },
     widthContainer: {
@@ -42,6 +44,21 @@ function EmbeddedMapSizeConfig({
     setFullWidth,
     errors,
 }) {
+    const updateFullWidth = isFullWidth => {
+        if (isFullWidth) {
+            let aspectRatio = 75;
+            if (height > 0 && width > 0) {
+                aspectRatio = (height / width) * 100;
+            }
+            setFullWidth(true);
+            setHeight(aspectRatio);
+        } else {
+            setFullWidth(false);
+            setWidth(DEFAULT_WIDTH);
+            setHeight((DEFAULT_WIDTH * height) / 100);
+        }
+    };
+
     return (
         <div style={styles.section}>
             <Typography style={styles.sectionHeader}>Size</Typography>
@@ -57,33 +74,38 @@ function EmbeddedMapSizeConfig({
             )}
             <div style={styles.contentContainer}>
                 <div style={styles.widthContainer}>
-                    <TextField
-                        id="width"
-                        label="Width"
-                        value={width}
-                        onChange={e => setWidth(e.target.value)}
-                        margin="normal"
-                        type="number"
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    px
-                                </InputAdornment>
-                            ),
-                        }}
-                        variant="outlined"
-                        style={styles.sizeInput}
-                        disabled={fullWidth}
-                    />
+                    {!fullWidth && (
+                        <TextField
+                            id="width"
+                            label="Width"
+                            value={width}
+                            onChange={e => setWidth(e.target.value)}
+                            margin="normal"
+                            type="number"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        px
+                                    </InputAdornment>
+                                ),
+                            }}
+                            variant="outlined"
+                            style={styles.sizeInput}
+                            disabled={fullWidth}
+                        />
+                    )}
                     <FormControlLabel
                         control={
                             <Checkbox
                                 checked={fullWidth}
-                                onChange={e => setFullWidth(e.target.checked)}
+                                onChange={e =>
+                                    updateFullWidth(e.target.checked)
+                                }
                                 value="fullWidth"
                             />
                         }
-                        label="100%"
+                        label={fullWidth ? '100% Width' : '100%'}
+                        style={styles.sizeCheckbox}
                     />
                 </div>
                 <div>
