@@ -3599,7 +3599,13 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
         embed_config = EmbedConfig.objects.get(id=pk)
 
         if embed_config.contributor.id is not contributor.id:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            error_data = {'error': (
+                f'Update failed because embed contributor ID '
+                f'{embed_config.contributor.id} does not match the '
+                f'contributor ID {contributor.id}')}
+            return Response(error_data,
+                            content_type='application/json',
+                            status=status.HTTP_403_FORBIDDEN)
 
         fields_data = request.data.pop('embed_fields', [])
 
