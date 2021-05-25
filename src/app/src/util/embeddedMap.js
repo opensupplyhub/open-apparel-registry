@@ -53,7 +53,7 @@ const filterAndFormatNonstandardFields = ({
         .map(field => ({
             columnName: field,
             displayName: field,
-            visible: true,
+            visible: false,
         }));
 
 export const combineEmbedAndNonstandardFields = (
