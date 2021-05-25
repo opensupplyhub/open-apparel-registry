@@ -12,6 +12,7 @@ import EmbeddedMapFieldsConfig from './EmbeddedMapFieldsConfig';
 import EmbeddedMapThemeConfig from './EmbeddedMapThemeConfig';
 import EmbeddedMapSizeConfig from './EmbeddedMapSizeConfig';
 import EmbeddedMapCode from './EmbeddedMapCode';
+import EmbeddedMapUnauthorized from './EmbeddedMapUnauthorized';
 
 const styles = {
     container: {
@@ -76,6 +77,8 @@ function EmbeddedMapConfig({
     errors,
     timestamp,
 }) {
+    if (!user.embed_level) return <EmbeddedMapUnauthorized />;
+
     const updateEmbedConfig = field => value =>
         setEmbedConfig(config => ({
             ...config,
