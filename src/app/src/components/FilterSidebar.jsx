@@ -159,14 +159,13 @@ class FilterSidebar extends Component {
             <AppBar
                 position="static"
                 className="results-height-subtract filter-sidebar-tabgroup"
+                color="default"
             >
                 <Tabs
                     value={activeTabIndex}
                     onChange={handleTabChange}
-                    classes={{
-                        root: 'tabs',
-                        indicator: 'tabs-indicator-color',
-                    }}
+                    indicatorColor="primary"
+                    textColor="primary"
                 >
                     {orderedTabsForSidebar.map(sidebarTab => (
                         <Tab

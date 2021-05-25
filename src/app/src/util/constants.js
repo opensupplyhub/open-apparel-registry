@@ -519,3 +519,4 @@ export const PPE_FIELD_NAMES = Object.freeze([
 ]);
 
 export const OARFont = 'ff-tisa-sans-web-pro,sans-serif';
+export const OARColor = '#0427a4';

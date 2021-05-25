@@ -1,15 +1,21 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 
 import COLOURS from '../util/COLOURS';
-import { OARFont } from '../util/constants';
 
 import { maxVectorTileFacilitiesGridZoom } from '../util/constants.facilitiesMap';
+
+const materialUIStyles = theme =>
+    Object.freeze({
+        legendStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+        }),
+    });
 
 const legendStyles = Object.freeze({
     legendStyle: Object.freeze({
         background: 'white',
         border: `1px solid ${COLOURS.NAVY_BLUE}`,
-        fontFamily: OARFont,
         fontSize: '13px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -31,10 +37,7 @@ const legendStyles = Object.freeze({
     }),
 });
 
-export default function VectorTileGridLegend({
-    currentZoomLevel,
-    gridColorRamp,
-}) {
+function VectorTileGridLegend({ currentZoomLevel, gridColorRamp, classes }) {
     if (
         !currentZoomLevel ||
         currentZoomLevel > maxVectorTileFacilitiesGridZoom
@@ -53,7 +56,11 @@ export default function VectorTileGridLegend({
     };
 
     return (
-        <div id="map-legend" style={legendStyles.legendStyle}>
+        <div
+            id="map-legend"
+            style={legendStyles.legendStyle}
+            className={classes.legendStyle}
+        >
             <span style={legendStyles.legendLabelStyle}>Fewer facilities</span>
             {gridColorRamp.map((colorDef, i, a) =>
                 legendCell(colorDef[1], 20 - 2 * (a.length - 1 - i)),
@@ -62,3 +69,5 @@ export default function VectorTileGridLegend({
         </div>
     );
 }
+
+export default withStyles(materialUIStyles)(VectorTileGridLegend);

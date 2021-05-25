@@ -2,39 +2,43 @@ import React from 'react';
 import { arrayOf, bool, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import get from 'lodash/get';
+import { withStyles } from '@material-ui/core/styles';
 
 import { pluralizeFacilitiesCount } from '../util/util.js';
+
+const styles = theme => ({
+    root: {
+        margin: 0,
+        verticalAlign: 'center',
+        marginRight: '5px',
+        flex: 1,
+    },
+    text: {
+        backgroundColor: theme.palette.primary.coloredBackground,
+        paddingLeft: '5px',
+        paddingRight: '5px',
+        alignText: 'center',
+        color: theme.palette.primary.main,
+        minWidth: '100px',
+        overflow: 'none',
+        fontWeight: 'bold',
+        fontFamily: theme.typography.fontFamily,
+    },
+});
 
 const FacilitySidebarSearchTabFacilitiesCount = ({
     facilitiesCount,
     fetching,
     error,
+    classes,
 }) => {
     if (!facilitiesCount || fetching || error) {
         return null;
     }
 
     return (
-        <div
-            style={{
-                margin: 0,
-                verticalAlign: 'center',
-                marginRight: '5px',
-                flex: 1,
-            }}
-        >
-            <p
-                style={{
-                    backgroundColor: 'rgb(199,209,250)',
-                    paddingLeft: '5px',
-                    paddingRight: '5px',
-                    alignText: 'center',
-                    color: 'rgb(9,24,143)',
-                    minWidth: '100px',
-                    overflow: 'none',
-                    margin: '10px 0 0 0',
-                }}
-            >
+        <div className={classes.root}>
+            <p className={classes.text}>
                 {pluralizeFacilitiesCount(facilitiesCount)}
             </p>
         </div>
@@ -65,5 +69,5 @@ function mapStateToProps({
 }
 
 export default connect(mapStateToProps)(
-    FacilitySidebarSearchTabFacilitiesCount,
+    withStyles(styles)(FacilitySidebarSearchTabFacilitiesCount),
 );
