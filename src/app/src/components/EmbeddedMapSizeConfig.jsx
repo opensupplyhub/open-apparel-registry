@@ -62,6 +62,12 @@ function EmbeddedMapSizeConfig({
     return (
         <div style={styles.section}>
             <Typography style={styles.sectionHeader}>Size</Typography>
+            <Typography>
+                Please select the desired dimensions of the embedded map for
+                your website. Checking the 100% box will ensure that the map
+                fills to whatever width is available on your website, with the
+                height automatically adjusting from there.
+            </Typography>
             {errors?.width && (
                 <Typography style={{ color: 'red' }}>
                     Error: {errors.width.join(', ')}

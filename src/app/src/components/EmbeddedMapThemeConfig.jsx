@@ -70,6 +70,10 @@ function EmbeddedMapThemeConfig({
     return (
         <div style={styles.section}>
             <Typography style={styles.sectionHeader}>Theme</Typography>
+            <Typography>
+                Availability of theme customization will depend on your Embedded
+                Map package.{' '}
+            </Typography>
             <div style={styles.subsection}>
                 <Typography style={styles.subsectionHeader}>Color</Typography>
                 {embedLevel === 1 ? (
@@ -137,8 +141,7 @@ function EmbeddedMapThemeConfig({
                         Font
                     </Typography>
                     <Typography>
-                        Optional. If no font selected, OAR website font will be
-                        used.
+                        If no font is selected, the OAR font will be used.
                     </Typography>
                     {errors?.font && (
                         <Typography style={{ color: 'red' }}>

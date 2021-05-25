@@ -5,6 +5,8 @@ import { func, shape, string, bool } from 'prop-types';
 
 import { userPropType } from '../util/propTypes';
 import { getEmbeddedMapSrc } from '../util/util';
+import { EmbeddedMapInfoLink } from '../util/constants';
+
 import AppGrid from './AppGrid';
 import EmbeddedMapFieldsConfig from './EmbeddedMapFieldsConfig';
 import EmbeddedMapThemeConfig from './EmbeddedMapThemeConfig';
@@ -90,9 +92,38 @@ function EmbeddedMapConfig({
 
     return (
         <AppGrid style={styles.container} title="">
-            <Typography>
-                Generate a custom OAR map to embed in your website. The map will
-                include all facilities you have contributed.
+            <Typography paragraph>
+                Generate a customized OAR Embedded Map for your website.
+            </Typography>
+            <Typography paragraph>
+                To begin,{' '}
+                <a href="https://openapparel.org/contribute">
+                    contribute your supplier data
+                </a>{' '}
+                (via upload or API) to the OAR with all of the data fields you
+                wish to have displayed on your map using the template supplied
+                to you by the OAR Team.{' '}
+                <strong>
+                    This list must include any additional data points you would
+                    like to display on your customized map, such as facility
+                    type, number of workers etc.
+                </strong>{' '}
+                Those fields will then populate below. The Embedded Map will
+                display all facilities included in your lists.
+            </Typography>
+            <Typography paragraph>
+                Adjust the below settings to your liking, such as the ordering
+                of the data points. You can turn individual data points on and
+                off as you wish.
+            </Typography>
+            <Typography paragraph>
+                Once complete, copy the Embed Code to add to your website.
+            </Typography>
+            <Typography paragraph style={{ width: '100%' }}>
+                <strong>Have questions?</strong> Check out the FAQs on our{' '}
+                <a href={EmbeddedMapInfoLink}>Embedded Map info page</a> or
+                email{' '}
+                <a href="mailto:info@openapparel.org">info@openapparel.org</a>.
             </Typography>
             <Grid item xs={6}>
                 {user.embed_level === 3 ? (
