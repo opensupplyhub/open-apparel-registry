@@ -59,17 +59,20 @@ function EmbeddedMapConfig({
                 include all facilities you have contributed.
             </Typography>
             <Grid item xs={6}>
-                <EmbeddedMapFieldsConfig
-                    fields={fields}
-                    setFields={setFields}
-                    errors={errors}
-                />
+                {user.embed_level === 3 ? (
+                    <EmbeddedMapFieldsConfig
+                        fields={fields}
+                        setFields={setFields}
+                        errors={errors}
+                    />
+                ) : null}
                 <EmbeddedMapThemeConfig
                     color={color}
                     setColor={updateEmbedConfig('color')}
                     font={font}
                     setFont={updateEmbedConfig('font')}
                     errors={errors}
+                    embedLevel={user.embed_level}
                 />
                 <EmbeddedMapSizeConfig
                     width={width}

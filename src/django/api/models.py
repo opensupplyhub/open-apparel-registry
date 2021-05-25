@@ -117,6 +117,12 @@ class Contributor(models.Model):
         OTHER_CONTRIB_TYPE: 'Others',
     }
 
+    EMBED_LEVEL_CHOICES = (
+        (1, 'Embed'),
+        (2, 'Embed+'),
+        (3, 'Embed Deluxe / Custom Embed'),
+    )
+
     admin = models.OneToOneField(
         'User',
         on_delete=models.PROTECT,
@@ -167,6 +173,11 @@ class Contributor(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         help_text=('The embedded map configuration for the contributor'))
+    embed_level = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=EMBED_LEVEL_CHOICES,
+        help_text='The embedded map level that is enabled for the contributor')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

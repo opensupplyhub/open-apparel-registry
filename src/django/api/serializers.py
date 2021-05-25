@@ -77,6 +77,7 @@ class UserSerializer(ModelSerializer):
     contributor_id = SerializerMethodField()
     embed_config = SerializerMethodField()
     claimed_facility_ids = SerializerMethodField()
+    embed_level = SerializerMethodField()
 
     class Meta:
         model = User
@@ -142,6 +143,12 @@ class UserSerializer(ModelSerializer):
     def get_embed_config(self, user):
         try:
             return EmbedConfigSerializer(user.contributor.embed_config).data
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_embed_level(self, user):
+        try:
+            return user.contributor.embed_level
         except Contributor.DoesNotExist:
             return None
 
