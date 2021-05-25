@@ -768,14 +768,17 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
 export const getLocationWithoutEmbedParam = () =>
     window.location.href.replace('&embed=1', '').replace('embed=1', '');
 
-export const getEmbeddedMapSrc = ({ contributor }) =>
-    window.location.href.replace(
-        'settings',
-        `?${querystring.stringify({
-            contributor,
-            embed: 1,
-        })}`,
-    );
+export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
+    const qs = timestamp
+        ? querystring.stringify({
+              contributors: contributor,
+              embed: 1,
+              timestamp,
+          })
+        : querystring.stringify({ contributors: contributor, embed: 1 });
+
+    return window.location.href.replace('settings', `?${qs}`);
+};
 
 export const createIFrameHTML = ({ width, height, fullWidth, ...options }) =>
     `<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="${

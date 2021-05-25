@@ -36,6 +36,7 @@ function EmbeddedMapConfig({
     fields,
     setFields,
     errors,
+    timestamp,
 }) {
     const updateEmbedConfig = field => value =>
         setEmbedConfig(config => ({
@@ -48,6 +49,7 @@ function EmbeddedMapConfig({
         height,
         fullWidth,
         contributor: [user?.id],
+        timestamp,
     };
 
     return (

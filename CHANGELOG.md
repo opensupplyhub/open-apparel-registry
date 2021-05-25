@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Connect embed section of settings page to API [#1329](https://github.com/open-apparel-registry/open-apparel-registry/pull/1329)
 - Show custom facility fields when in embed mode [#1341](https://github.com/open-apparel-registry/open-apparel-registry/pull/1341)
 - Add NonstandardFields model [#1340](https://github.com/open-apparel-registry/open-apparel-registry/pull/1340)
+- Enable custom styles [#1348](https://github.com/open-apparel-registry/open-apparel-registry/pull/1348)
 
 ### Changed
 

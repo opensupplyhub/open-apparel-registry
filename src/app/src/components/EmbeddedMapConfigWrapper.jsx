@@ -16,6 +16,10 @@ import {
 
 function EmbeddedMapConfigWrapper({ user }) {
     const [loading, setLoading] = useState(true);
+    // The iframe preview isn't aware when the embed config styles are updated.
+    // Using a timestamp in the iframe src forces a refresh when the config
+    // is changed.
+    const [timestamp, setTimestamp] = useState(Date.now());
     // Used for field-specific validation errors
     const [errors, setError] = useState(null);
     const [embedConfig, setEmbedConfig] = useState(
@@ -40,6 +44,7 @@ function EmbeddedMapConfigWrapper({ user }) {
     const handleSuccess = () => {
         setLoading(false);
         setError(null);
+        setTimestamp(Date.now());
     };
 
     const fetchFields = useCallback(() => {
@@ -118,6 +123,7 @@ function EmbeddedMapConfigWrapper({ user }) {
             fields={embedFields}
             setFields={setEmbedFields}
             errors={errors}
+            timestamp={timestamp}
         />
     );
 }
