@@ -397,24 +397,26 @@ function FilterSidebarSearchTab({
                     </ShowOnly>
                 </div>
                 <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={CONTRIBUTOR_TYPES}
-                        className={classes.inputLabelStyle}
-                    >
-                        Filter by Contributor Type
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={CONTRIBUTOR_TYPES}
-                        name="contributorTypes"
-                        className={`basic-multi-select notranslate ${classes.selectStyle}`}
-                        classNamePrefix="select"
-                        options={contributorTypeOptions}
-                        value={contributorTypes}
-                        onChange={updateContributorType}
-                        disabled={fetchingOptions || fetchingFacilities}
-                    />
+                    <ShowOnly when={!embed}>
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={CONTRIBUTOR_TYPES}
+                            className={classes.inputLabelStyle}
+                        >
+                            Filter by Contributor Type
+                        </InputLabel>
+                        <ReactSelect
+                            isMulti
+                            id={CONTRIBUTOR_TYPES}
+                            name="contributorTypes"
+                            className={`basic-multi-select notranslate ${classes.selectStyle}`}
+                            classNamePrefix="select"
+                            options={contributorTypeOptions}
+                            value={contributorTypes}
+                            onChange={updateContributorType}
+                            disabled={fetchingOptions || fetchingFacilities}
+                        />
+                    </ShowOnly>
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -578,7 +580,7 @@ function mapStateToProps({
             fetchingContributors ||
             fetchingContributorTypes ||
             fetchingCountries,
-        embed,
+        embed: !!embed,
         fetchingLists,
     };
 }
