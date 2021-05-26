@@ -107,8 +107,10 @@ function EmbeddedMapFieldsConfig({ fields, setFields, classes, errors }) {
                 Include these fields
             </Typography>
             <Typography>
-                Choose which fields to display – and what to call them. Facility
-                name, address, and country will always be included.
+                Choose which fields to display on your map (the number of fields
+                you are able to display corresponds to your Embedded Map
+                package). Facility name, address, and OAR ID will always be
+                included.
             </Typography>
             {errors?.embed_fields && (
                 <Typography style={{ color: 'red' }}>
