@@ -29,6 +29,42 @@ const styles = {
     },
 };
 
+const renderEmbeddedMap = ({ fullWidth, mapSettings, height, width }) =>
+    fullWidth ? (
+        <div>
+            <div
+                style={{
+                    position: 'relative',
+                    paddingTop: `${height}%`,
+                }}
+            >
+                <iframe
+                    src={getEmbeddedMapSrc(mapSettings)}
+                    frameBorder="0"
+                    allowFullScreen
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                    }}
+                    title="embedded-map"
+                />
+            </div>
+        </div>
+    ) : (
+        <iframe
+            src={getEmbeddedMapSrc(mapSettings)}
+            frameBorder="0"
+            style={{
+                width: `${width}px`,
+                height: `${height}px`,
+            }}
+            title="embedded-map"
+        />
+    );
+
 function EmbeddedMapConfig({
     user,
     embedConfig: { color, font, width, fullWidth, height },
@@ -93,17 +129,7 @@ function EmbeddedMapConfig({
                 style={{ ...styles.section, minHeight: '500px' }}
             >
                 <Typography style={styles.previewHeader}>Preview</Typography>
-                <iframe
-                    frameBorder="0"
-                    scrolling="no"
-                    marginHeight="0"
-                    marginWidth="0"
-                    width={width}
-                    height={height}
-                    type="text/html"
-                    src={getEmbeddedMapSrc(mapSettings)}
-                    title="embedded-map"
-                />
+                {renderEmbeddedMap({ fullWidth, mapSettings, height, width })}
             </Grid>
         </AppGrid>
     );

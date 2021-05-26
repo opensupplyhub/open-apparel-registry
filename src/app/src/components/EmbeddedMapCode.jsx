@@ -19,7 +19,7 @@ const styles = {
         background: 'rgb(240, 240, 240)',
         borderRadius: '0px',
         minHeight: '278px',
-        width: '360px',
+        width: '450px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',

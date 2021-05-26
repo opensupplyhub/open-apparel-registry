@@ -780,9 +780,27 @@ export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
     return window.location.href.replace('settings', `?${qs}`);
 };
 
-export const createIFrameHTML = ({ width, height, fullWidth, ...options }) =>
-    `<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="${
-        fullWidth ? '100%' : width
-    }" height="${
-        fullWidth ? '100%' : height
-    }" type="text/html" src="${getEmbeddedMapSrc(options)}"></iframe>`;
+export const createIFrameHTML = ({ fullWidth, contributor, height, width }) =>
+    fullWidth
+        ? `<div>
+            <div style="position:relative;padding-top:${height}%;">
+                <iframe
+                    src="${getEmbeddedMapSrc({
+                        contributor,
+                    })}"
+                    frameborder="0"
+                    allowfullscreen
+                    style="position:absolute;top:0;
+                           left:0;width:100%;height:100%;"
+                    title="embedded-map">
+                </iframe>
+              </div>
+            </div>`
+        : `<iframe
+                src="${getEmbeddedMapSrc({
+                    contributor,
+                })}"
+                frameBorder="0"
+                style="width:${width}px;height:${height}px"
+                title="embedded-map"
+            />`;
