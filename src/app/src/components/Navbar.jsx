@@ -22,13 +22,9 @@ const apiDocumentationURL =
         ? 'http://localhost:8081/api/docs/'
         : '/api/docs/';
 
-function Navbar({ embed, openGDPR }) {
+function Navbar({ openGDPR }) {
     const [drawerHandler, setDrawerHandler] = useState(false);
     const mobileMenuToggleRef = useRef();
-
-    if (embed) {
-        return <div id="google_translate_element" />;
-    }
 
     const aboutLinks = [
         {
