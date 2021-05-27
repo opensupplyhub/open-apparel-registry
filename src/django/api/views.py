@@ -3648,11 +3648,14 @@ class NonstandardFieldsViewSet(mixins.ListModelMixin,
 
         contributor = get_contributor(request)
 
-        nonstandard_fields = self.queryset.filter(
-            contributor=contributor).values_list('column_name', flat=True)
+        nonstandard_field_set = set(self.queryset.filter(
+            contributor=contributor).values_list('column_name', flat=True))
 
-        default_nonstandard_fields = [
+        default_nonstandard_field_set = {
             'parent_company', 'type_of_product',
-            'number_of_workers', 'type_of_facility']
+            'number_of_workers', 'type_of_facility'}
 
-        return Response(list(nonstandard_fields) + default_nonstandard_fields)
+        field_list = list(
+            default_nonstandard_field_set.union(nonstandard_field_set))
+
+        return Response(field_list)
