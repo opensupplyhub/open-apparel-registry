@@ -172,6 +172,7 @@ class Contributor(models.Model):
         'EmbedConfig',
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         help_text=('The embedded map configuration for the contributor'))
     embed_level = models.IntegerField(
         null=True,
