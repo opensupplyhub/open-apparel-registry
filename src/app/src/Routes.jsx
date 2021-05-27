@@ -99,7 +99,7 @@ class Routes extends Component {
                 <Router history={history}>
                     <div className="App">
                         <Translate />
-                        <Navbar embed={embed} />
+                        {!embed ? <Navbar /> : null}
                         <main style={mainPanelStyle} className="mainPanel">
                             <Switch>
                                 <Route
