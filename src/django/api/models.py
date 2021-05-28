@@ -172,6 +172,7 @@ class Contributor(models.Model):
         'EmbedConfig',
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         help_text=('The embedded map configuration for the contributor'))
     embed_level = models.IntegerField(
         null=True,
@@ -2068,6 +2069,15 @@ class NonstandardField(models.Model):
     """
     class Meta:
         unique_together = ('contributor', 'column_name')
+
+    # Keys in this set must be kept in sync with
+    # defaultNonstandardFieldLabels in app/src/app/util/embeddedMap.js
+    DEFAULT_FIELDS = {
+        'parent_company': 'Parent Company',
+        'type_of_product': 'Type of Product',
+        'number_of_workers': 'Number of Workers',
+        'type_of_facility': 'Type of Facility',
+    }
 
     contributor = models.ForeignKey(
         'Contributor',

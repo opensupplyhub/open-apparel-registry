@@ -40,7 +40,8 @@ from api.models import (FacilityList,
                         ApiBlock,
                         FacilityActivityReport,
                         EmbedConfig,
-                        EmbedField)
+                        EmbedField,
+                        NonstandardField)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code
 from waffle import switch_is_active
@@ -720,13 +721,21 @@ class FacilityDetailsSerializer(FacilitySerializer):
         if not embed == '1' or contributor_id is None:
             return []
 
-        contributor = Contributor.objects.get(id=contributor_id)
-        if contributor.embed_config is None:
-            return []
+        # If the contributor has not created any overriding embed config these
+        # transparency pledge fields will always be visible.
+        fields = [
+            EmbedField(column_name=column_name, display_name=display_name)
+            for (column_name, display_name)
+            in NonstandardField.DEFAULT_FIELDS.items()]
 
-        config = contributor.embed_config
-        fields = EmbedField.objects.filter(
-            embed_config=config, visible=True).order_by('order')
+        contributor = Contributor.objects.get(id=contributor_id)
+        if contributor.embed_config is not None:
+            config = contributor.embed_config
+            # If there are any configured fields, they override the defaults
+            # set above
+            if EmbedField.objects.filter(embed_config=config).count() > 0:
+                fields = EmbedField.objects.filter(
+                    embed_config=config, visible=True).order_by('order')
 
         list_item = FacilityListItem.objects.filter(
                 facility=facility,
