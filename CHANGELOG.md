@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add contributor embed level field [#1349](https://github.com/open-apparel-registry/open-apparel-registry/pull/1349)
 - Add full-width embedded map support [#1352](https://github.com/open-apparel-registry/open-apparel-registry/pull/1352)
 - Embedded map settings changes [#1353](https://github.com/open-apparel-registry/open-apparel-registry/pull/1353)
+- Disable PPE search in embed mode [#1364](https://github.com/open-apparel-registry/open-apparel-registry/pull/1364)
 
 ### Changed
 

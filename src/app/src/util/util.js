@@ -26,6 +26,7 @@ import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
 import every from 'lodash/every';
 import uniqWith from 'lodash/uniqWith';
+import filter from 'lodash/filter';
 import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
@@ -661,6 +662,10 @@ export const addProtocolToWebsiteURLIfMissing = url => {
 
     return `http://${url}`;
 };
+
+// OAR requested that the PPE features be disabled when in embedded mode
+export const filterFlagsIfAppIsEmbeded = (flags, isEmbeded) =>
+    filter(flags, f => !isEmbeded || f !== 'ppe');
 
 export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
     keys(pickBy(featureFlags, identity));
