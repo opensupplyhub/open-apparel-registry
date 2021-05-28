@@ -44,7 +44,7 @@ export const formatExistingFields = (fields = []) =>
 const doesExist = (field, existingFields) =>
     existingFields.some(f => f.columnName === field);
 
-// Keys in this object must be kept in sync with the NonstandardFieldsViewSet in django/api/views.py
+// Keys in this object must be kept in sync with the NonstandardField.DEFAULT_FIELDS in django/api/models.py
 const defaultNonstandardFieldLabels = {
     parent_company: 'Parent Company',
     type_of_product: 'Type of Product',

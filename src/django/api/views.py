@@ -3651,13 +3651,7 @@ class NonstandardFieldsViewSet(mixins.ListModelMixin,
         nonstandard_field_set = set(self.queryset.filter(
             contributor=contributor).values_list('column_name', flat=True))
 
-        # Keys in this set must be kept in sync with
-        # defaultNonstandarFieldLabels in app/src/app/util/embededMap.js
-        default_nonstandard_field_set = {
-            'parent_company', 'type_of_product',
-            'number_of_workers', 'type_of_facility'}
-
         field_list = list(
-            default_nonstandard_field_set.union(nonstandard_field_set))
+            NonstandardField.DEFAULT_FIELDS.keys() | nonstandard_field_set)
 
         return Response(field_list)
