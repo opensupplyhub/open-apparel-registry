@@ -1190,7 +1190,8 @@ class FacilityManager(models.Manager):
                 .filter(id__in=FacilityMatch
                         .objects
                         .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                            FacilityMatch.CONFIRMED])
+                                            FacilityMatch.CONFIRMED,
+                                            FacilityMatch.MERGED])
                         .filter(is_active=True)
                         .filter(facility_list_item__source__contributor__contrib_type__in=contributor_types) # NOQA
                         .filter(facility_list_item__source__is_active=True)
@@ -1208,7 +1209,8 @@ class FacilityManager(models.Manager):
                     facilitylistitem__facilitymatch__is_active=True,
                     facilitylistitem__facilitymatch__status__in=[
                         FacilityMatch.AUTOMATIC,
-                        FacilityMatch.CONFIRMED]).values(
+                        FacilityMatch.CONFIRMED,
+                        FacilityMatch.MERGED]).values(
                             'facilitylistitem__facility')
 
                 # Next, count the number of times each specified contributor
@@ -1245,7 +1247,8 @@ class FacilityManager(models.Manager):
                         facilitylistitem__facilitymatch__is_active=True,
                         facilitylistitem__facilitymatch__status__in=[
                             FacilityMatch.AUTOMATIC,
-                            FacilityMatch.CONFIRMED],
+                            FacilityMatch.CONFIRMED,
+                            FacilityMatch.MERGED],
                         contributor__in=contributors).values_list(
                             'facilitylistitem__facility', flat=True)))
 
