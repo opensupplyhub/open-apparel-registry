@@ -7,15 +7,23 @@ const styles = {
     container: {
         marginBottom: '200px',
     },
+    text: {
+        width: '100%',
+    },
 };
 
-function EmbeddedMapUnauthorized() {
+function EmbeddedMapUnauthorized({ isSettings, error = [] }) {
     return (
         <AppGrid style={styles.container} title="">
+            {error.map(e => (
+                <Typography style={styles.text} paragraph key={e}>
+                    <strong>Error:</strong> {e}
+                </Typography>
+            ))}
             <Typography paragraph>
                 Looking to display your supplier data on your website?
             </Typography>
-            <Typography paragraph style={{ width: '100%' }}>
+            <Typography paragraph style={styles.text}>
                 The Open Apparel registry offers an easy-to-use embedded map
                 option for your website.
             </Typography>
@@ -24,10 +32,12 @@ function EmbeddedMapUnauthorized() {
                 <a href={EmbeddedMapInfoLink}>OAR Embedded Map</a> page on our
                 website for packages and pricing options.
             </Typography>
-            <Typography paragraph>
-                Once you have activated it, your OAR Embedded Map Settings will
-                appear on this tab.
-            </Typography>
+            {isSettings && (
+                <Typography paragraph>
+                    Once you have activated it, your OAR Embedded Map Settings
+                    will appear on this tab.
+                </Typography>
+            )}
         </AppGrid>
     );
 }

@@ -5,10 +5,18 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Routes from './Routes';
 import { fetchEmbedConfig } from './actions/embeddedMap';
 import { OARColor } from './util/constants';
+import EmbeddedMapUnauthorized from './components/EmbeddedMapUnauthorized';
 
 import './App.css';
 
-function App({ embed, contributor, getEmbedConfig, config }) {
+function App({
+    embed,
+    contributor,
+    getEmbedConfig,
+    config,
+    embedError,
+    embedLoading,
+}) {
     const contributorId = contributor?.value;
     useEffect(() => {
         if (embed && contributorId) {
@@ -33,6 +41,14 @@ function App({ embed, contributor, getEmbedConfig, config }) {
         [config],
     );
 
+    if (embed && embedLoading) {
+        return null;
+    }
+
+    if (embed && embedError) {
+        return <EmbeddedMapUnauthorized error={embedError} />;
+    }
+
     return (
         <MuiThemeProvider theme={theme}>
             <Routes />
@@ -40,11 +56,16 @@ function App({ embed, contributor, getEmbedConfig, config }) {
     );
 }
 
-function mapStateToProps({ embeddedMap: { embed, config }, filters }) {
+function mapStateToProps({
+    embeddedMap: { embed, config, error, loading },
+    filters,
+}) {
     return {
         embed: !!embed,
         contributor: filters?.contributors[0],
         config,
+        embedError: error,
+        embedLoading: loading,
     };
 }
 

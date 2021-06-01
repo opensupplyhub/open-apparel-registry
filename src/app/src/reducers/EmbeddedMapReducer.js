@@ -32,16 +32,19 @@ export default createReducer(
             update(state, {
                 loading: { $set: true },
                 config: { $set: initialConfig },
+                error: { $set: initialState.error },
             }),
         [completeFetchEmbedConfig]: (state, config) =>
             update(state, {
                 loading: { $set: false },
                 config: { $set: config },
+                error: { $set: initialState.error },
             }),
-        [failFetchEmbedConfig]: state =>
+        [failFetchEmbedConfig]: (state, error) =>
             update(state, {
-                loading: { $set: true },
+                loading: { $set: false },
                 config: { $set: initialConfig },
+                error: { $set: error },
             }),
         [completeSubmitLogOut]: () => initialState,
     },

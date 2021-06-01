@@ -422,6 +422,10 @@ def contributor_embed_config(request, pk=None):
     """
     try:
         contributor = Contributor.objects.get(id=pk)
+        if contributor.embed_level is None:
+            raise PermissionDenied(
+                'Embedded map is not configured for provided contributor.'
+            )
         embed_config = EmbedConfigSerializer(contributor.embed_config).data
         return Response(embed_config)
     except Contributor.DoesNotExist:
