@@ -72,13 +72,20 @@ function Settings({
                 <Tabs
                     value={activeTabIndex}
                     onChange={handleTabChange}
+                    centered
                     classes={{
-                        root: 'tabs',
-                        indicator: 'tabs-indicator-color',
+                        root: 'settings-tabs',
+                        indicator: 'settings-tabs-indicator',
                     }}
                 >
                     {tabs.map(tab => (
-                        <Tab label={tab} key={tab} className="tab-minwidth" />
+                        <Tab
+                            label={tab}
+                            key={tab}
+                            classes={{
+                                label: 'settings-tabs-label',
+                            }}
+                        />
                     ))}
                 </Tabs>
             </AppGrid>

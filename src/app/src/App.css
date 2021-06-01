@@ -31,6 +31,10 @@
   background: none !important;
 }
 
+.inline-link {
+  color: #0427a4;
+}
+
 li.dropdown-list-item {
   padding: 0;
   display: flex;
@@ -775,4 +779,21 @@ hr {
 
 .STATUS_PARSED:not(:hover) {
   background: #fff !important;
+}
+
+.settings-tabs {
+  margin-bottom: 10px;
+  color: #000;
+  width: 100%;
+}
+
+.settings-tabs-indicator {
+  background-color: #000 !important;
+  height: 3px !important;
+}
+
+.settings-tabs-label {
+  color: #000;
+  font-size: 18px;
+  text-transform: capitalize;
 }

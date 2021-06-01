@@ -13,13 +13,12 @@ const styles = {
     sectionHeader: {
         color: 'rgb(0, 0, 0)',
         fontSize: '18px',
-        margin: '10px 0',
+        fontWeight: 'bold',
+        marginBottom: '20px',
     },
     embedContainer: {
         background: 'rgb(240, 240, 240)',
         borderRadius: '0px',
-        minHeight: '278px',
-        width: '450px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -30,8 +29,8 @@ const styles = {
         borderRadius: 0,
         border: '1px solid rgb(214, 216, 221)',
         flex: 1,
-        width: '90%',
-        marginTop: '20px',
+        width: 'auto',
+        minHeight: '140px',
         color: 'rgb(0, 0, 0)',
         fontFamily: OARFont,
         padding: '10px',
@@ -39,8 +38,11 @@ const styles = {
     embedButton: {
         background: 'rgb(0, 0, 0)',
         borderRadius: 0,
-        marginTop: '10px',
+        marginTop: '20px',
+        padding: '12px 0',
         color: 'white',
+        fontSize: '16px',
+        textTransform: 'none',
     },
 };
 
@@ -54,7 +56,9 @@ function EmbeddedMapCode({ width, height, fullWidth, contributor }) {
 
     return (
         <div style={styles.embedContainer}>
-            <Typography style={styles.sectionHeader}>Embed code</Typography>
+            <Typography style={styles.sectionHeader}>
+                Embed code for your website
+            </Typography>
             <Typography style={styles.embedTextBox}>
                 {createIFrameHTML(mapSettings)}
             </Typography>

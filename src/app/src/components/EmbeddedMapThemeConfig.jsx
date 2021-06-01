@@ -15,7 +15,7 @@ const styles = {
     },
     sectionHeader: {
         color: 'rgb(0, 0, 0)',
-        fontSize: '18px',
+        fontSize: '24px',
         margin: '10px 0',
     },
     subsection: {
@@ -31,6 +31,16 @@ const styles = {
         display: 'flex',
         marginTop: '10px',
         alignItems: 'center',
+    },
+    radios: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    radioItem: {
+        marginRight: '30px',
+    },
+    radio: {
+        color: 'rgb(0, 0, 0)',
     },
 };
 
@@ -81,10 +91,11 @@ function EmbeddedMapThemeConfig({
                         <Typography>
                             Choose the primary color for the embedded map.
                         </Typography>
-                        <FormControl>
+                        <FormControl style={styles.radios}>
                             <FormControlLabel
                                 value="#00000"
                                 label="Black"
+                                style={styles.radioItem}
                                 control={
                                     <Radio
                                         checked={color === '#000000'}
@@ -92,12 +103,14 @@ function EmbeddedMapThemeConfig({
                                         value="#000000"
                                         name="theme-color"
                                         inputProps={{ 'aria-label': 'Black' }}
+                                        style={styles.radio}
                                     />
                                 }
                             />
                             <FormControlLabel
                                 value={OARColor}
                                 label="OAR Blue"
+                                style={styles.radioItem}
                                 control={
                                     <Radio
                                         checked={color === OARColor}
@@ -107,6 +120,7 @@ function EmbeddedMapThemeConfig({
                                         inputProps={{
                                             'aria-label': 'OAR Blue',
                                         }}
+                                        style={styles.radio}
                                     />
                                 }
                             />
