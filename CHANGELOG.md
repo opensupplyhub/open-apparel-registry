@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [42] - 2021-06-02
+
+### Added
+
 - Download facilities list as Excel [#1293](https://github.com/open-apparel-registry/open-apparel-registry/pull/1293)
 - Add scripts/console [#1295](https://github.com/open-apparel-registry/open-apparel-registry/pull/1295)
 - Notify contributors when lists complete processing [#1290](https://github.com/open-apparel-registry/open-apparel-registry/pull/1290)
@@ -40,8 +54,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove "show other contributor info" embed option and hide other contributor information in embed mode [#1342](https://github.com/open-apparel-registry/open-apparel-registry/pull/1342)
 - Hide "filter by contributor type" control in embed mode [#1358](https://github.com/open-apparel-registry/open-apparel-registry/pull/1358)
 
-### Deprecated
-
 ### Removed
 
 - Remove debug logging from has_active_block [#1296](https://github.com/open-apparel-registry/open-apparel-registry/pull/1296)
@@ -57,6 +69,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 - Bump djangorestframework from 3.10.1 to 3.11.2 in /src/django [#1289](https://github.com/open-apparel-registry/open-apparel-registry/pull/1289)
+- Bump ssri from 6.0.1 to 6.0.2 in /src/app [#1324](https://github.com/open-apparel-registry/open-apparel-registry/pull/1324)
+- Bump dns-packet from 1.3.1 to 1.3.4 in /src/app [#1360](https://github.com/open-apparel-registry/open-apparel-registry/pull/1360)
+- Bump hosted-git-info from 2.8.8 to 2.8.9 in /src/app [#1332](https://github.com/open-apparel-registry/open-apparel-registry/pull/1332)
+- Bump lodash from 4.17.19 to 4.17.21 in /src/app [#1331](https://github.com/open-apparel-registry/open-apparel-registry/pull/1331)
 
 ## [2.41.1] - 2021-04-19
 
@@ -798,7 +814,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/2.41.1...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/42...HEAD
+[42]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/42
 [2.41.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.1
 [2.41.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.0
 [2.40.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.40.0
