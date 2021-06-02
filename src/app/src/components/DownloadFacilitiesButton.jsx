@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { arrayOf, func, string } from 'prop-types';
+import { arrayOf, string } from 'prop-types';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
@@ -17,9 +17,12 @@ const downloadFacilitiesStyles = Object.freeze({
 });
 
 function DownloadFacilitiesButton({
+    /* from state */
+    dispatch,
+    isEmbedded,
     logDownloadError,
     user,
-    handleDownload,
+    /* from props */
     setLoginRequiredDialogIsOpen,
 }) {
     const [requestedDownload, setRequestedDownload] = useState(false);
@@ -35,8 +38,11 @@ function DownloadFacilitiesButton({
     const handleClick = event => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
 
+    const handleDownload = format =>
+        dispatch(logDownload(format, { isEmbedded }));
+
     const selectFormatAndDownload = format => {
-        if (user) {
+        if (user || isEmbedded) {
             setRequestedDownload(true);
             handleDownload(format);
         } else {
@@ -80,7 +86,6 @@ DownloadFacilitiesButton.defaultProps = {
 
 DownloadFacilitiesButton.propTypes = {
     logDownloadError: arrayOf(string),
-    handleDownload: func.isRequired,
 };
 
 function mapStateToProps({
@@ -88,20 +93,13 @@ function mapStateToProps({
         user: { user },
     },
     logDownload: { error: logDownloadError },
+    embeddedMap: { embed: isEmbedded },
 }) {
     return {
         user,
         logDownloadError,
+        isEmbedded,
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        handleDownload: format => dispatch(logDownload(format)),
-    };
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(DownloadFacilitiesButton);
+export default connect(mapStateToProps)(DownloadFacilitiesButton);

@@ -63,6 +63,7 @@ function VectorTileFacilitiesMap({
     zoomToSearch,
     drawFilterActive,
     boundary,
+    isEmbedded,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -146,18 +147,20 @@ function VectorTileFacilitiesMap({
                     gridColorRamp={gridColorRamp}
                 />
             </Control>
-            <Control position="topright">
-                <CopyToClipboard
-                    text={getLocationWithoutEmbedParam()}
-                    onCopy={() => toast('Copied search to clipboard')}
-                >
-                    <Button
-                        text="Share This Search"
-                        onClick={noop}
-                        style={mapComponentStyles.copySearchButtonStyle}
-                    />
-                </CopyToClipboard>
-            </Control>
+            {isEmbedded ? null : (
+                <Control position="topright">
+                    <CopyToClipboard
+                        text={getLocationWithoutEmbedParam()}
+                        onCopy={() => toast('Copied search to clipboard')}
+                    >
+                        <Button
+                            text="Share This Search"
+                            onClick={noop}
+                            style={mapComponentStyles.copySearchButtonStyle}
+                        />
+                    </CopyToClipboard>
+                </Control>
+            )}
             <ZoomControl position="bottomright" />
             <VectorTileFacilitiesLayer
                 handleMarkerClick={handleMarkerClick}
@@ -225,6 +228,7 @@ function mapStateToProps({
     },
     vectorTileLayer: { gridColorRamp },
     filters: { boundary },
+    embeddedMap: { embed: isEmbedded },
 }) {
     return {
         resetButtonClickCount,
@@ -236,6 +240,7 @@ function mapStateToProps({
         zoomToSearch,
         drawFilterActive,
         boundary,
+        isEmbedded,
     };
 }
 
