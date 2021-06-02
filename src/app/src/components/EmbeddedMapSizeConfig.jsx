@@ -51,7 +51,6 @@ function EmbeddedMapSizeConfig({
     setHeight,
     fullWidth,
     setFullWidth,
-    errors,
 }) {
     const updateFullWidth = isFullWidth => {
         if (isFullWidth) {
@@ -77,16 +76,6 @@ function EmbeddedMapSizeConfig({
                 fills to whatever width is available on your website, with the
                 height automatically adjusting from there.
             </Typography>
-            {errors?.width && (
-                <Typography style={{ color: 'red' }}>
-                    Error: {errors.width.join(', ')}
-                </Typography>
-            )}
-            {errors?.height && (
-                <Typography style={{ color: 'red' }}>
-                    Error: {errors.height.join(', ')}
-                </Typography>
-            )}
             <div style={styles.contentContainer}>
                 <div style={styles.widthContainer}>
                     {!fullWidth && (

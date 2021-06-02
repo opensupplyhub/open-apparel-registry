@@ -46,7 +46,13 @@ const styles = {
     },
 };
 
-function EmbeddedMapCode({ width, height, fullWidth, contributor }) {
+function EmbeddedMapCode({
+    width,
+    height,
+    fullWidth,
+    contributor,
+    minimumConfigurationIsComplete,
+}) {
     const mapSettings = {
         width,
         height,
@@ -59,21 +65,30 @@ function EmbeddedMapCode({ width, height, fullWidth, contributor }) {
             <Typography style={styles.sectionHeader}>
                 Embed code for your website
             </Typography>
-            <Typography style={styles.embedTextBox}>
-                {createIFrameHTML(mapSettings)}
-            </Typography>
-            <CopyToClipboard
-                text={createIFrameHTML(mapSettings)}
-                onCopy={() => toast('Copied code to clipboard')}
-            >
-                <Button
-                    variant="contained"
-                    style={styles.embedButton}
-                    onClick={noop}
-                >
-                    Copy to clipboard
-                </Button>
-            </CopyToClipboard>
+            {minimumConfigurationIsComplete ? (
+                <>
+                    <Typography style={styles.embedTextBox}>
+                        {createIFrameHTML(mapSettings)}
+                    </Typography>
+                    <CopyToClipboard
+                        text={createIFrameHTML(mapSettings)}
+                        onCopy={() => toast('Copied code to clipboard')}
+                    >
+                        <Button
+                            variant="contained"
+                            style={styles.embedButton}
+                            onClick={noop}
+                        >
+                            Copy to clipboard
+                        </Button>
+                    </CopyToClipboard>
+                </>
+            ) : (
+                <Typography paragraph>
+                    Choose a color and enter a width and height to view the
+                    embed code.
+                </Typography>
+            )}
         </div>
     );
 }
