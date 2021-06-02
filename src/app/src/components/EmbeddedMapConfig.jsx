@@ -84,12 +84,15 @@ function EmbeddedMapConfig({
             [field]: value,
         }));
 
+    const minimumConfigurationIsComplete = !!(width && height && color);
+
     const mapSettings = {
         width,
         height,
         fullWidth,
         contributor: [user?.id],
         timestamp,
+        minimumConfigurationIsComplete,
     };
 
     return (
@@ -167,7 +170,14 @@ function EmbeddedMapConfig({
                 style={{ ...styles.section, minHeight: '500px' }}
             >
                 <Typography style={styles.previewHeader}>Preview</Typography>
-                {renderEmbeddedMap({ fullWidth, mapSettings, height, width })}
+                {minimumConfigurationIsComplete ? (
+                    renderEmbeddedMap({ fullWidth, mapSettings, height, width })
+                ) : (
+                    <Typography paragraph>
+                        Choose a color and enter a width and height to see a
+                        preview.
+                    </Typography>
+                )}
             </Grid>
         </AppGrid>
     );
