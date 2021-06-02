@@ -34,8 +34,8 @@ function EmbeddedMapUnauthorized({ isSettings, error = [] }) {
             </Typography>
             {isSettings && (
                 <Typography paragraph>
-                    Once you have activated it, your OAR Embedded Map Settings
-                    will appear on this tab.
+                    Once Embedded Map has been activated for your account, your
+                    OAR Embedded Map Settings will appear on this tab.
                 </Typography>
             )}
         </AppGrid>
