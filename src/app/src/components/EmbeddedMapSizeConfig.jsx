@@ -10,11 +10,11 @@ import { DEFAULT_WIDTH } from '../util/embeddedMap';
 
 const styles = {
     section: {
-        marginTop: '30px',
+        marginTop: '40px',
     },
     sectionHeader: {
         color: 'rgb(0, 0, 0)',
-        fontSize: '18px',
+        fontSize: '24px',
         margin: '10px 0',
     },
     subsection: {
@@ -22,11 +22,20 @@ const styles = {
     },
     sizeInput: {
         width: '150px',
+        margin: '0',
     },
     sizeCheckbox: {
-        padding: '10px',
+        marginLeft: '8px',
     },
-    contentContainer: { display: 'flex', alignItems: 'flex-start' },
+    checkbox: {
+        padding: '8px',
+        color: 'rgb(0, 0, 0)',
+    },
+    contentContainer: {
+        display: 'flex',
+        alignItems: 'flex-start',
+        marginTop: '20px',
+    },
     widthContainer: {
         display: 'flex',
         flexDirection: 'row',
@@ -108,9 +117,10 @@ function EmbeddedMapSizeConfig({
                                     updateFullWidth(e.target.checked)
                                 }
                                 value="fullWidth"
+                                style={styles.checkbox}
                             />
                         }
-                        label={fullWidth ? '100% Width' : '100%'}
+                        label={fullWidth ? '100% width' : '100%'}
                         style={styles.sizeCheckbox}
                     />
                 </div>

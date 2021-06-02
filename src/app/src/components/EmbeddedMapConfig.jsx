@@ -19,16 +19,15 @@ const styles = {
         marginBottom: '200px',
     },
     section: {
-        marginTop: '30px',
-    },
-    sectionHeader: {
-        color: 'rgb(0, 0, 0)',
-        fontSize: '18px',
-        margin: '10px 0',
+        marginTop: '40px',
     },
     previewHeader: {
+        marginBottom: '20px',
         color: 'rgb(0, 0, 0)',
         fontSize: '24px',
+    },
+    code: {
+        padding: '20px',
     },
 };
 
@@ -100,7 +99,10 @@ function EmbeddedMapConfig({
             </Typography>
             <Typography paragraph>
                 To begin,{' '}
-                <a href="https://openapparel.org/contribute">
+                <a
+                    href="https://openapparel.org/contribute"
+                    className="inline-link"
+                >
                     contribute your supplier data
                 </a>{' '}
                 (via upload or API) to the OAR with all of the data fields you
@@ -121,9 +123,14 @@ function EmbeddedMapConfig({
             </Typography>
             <Typography paragraph style={{ width: '100%' }}>
                 <strong>Have questions?</strong> Check out the FAQs on our{' '}
-                <a href={EmbeddedMapInfoLink}>Embedded Map info page</a> or
-                email{' '}
-                <a href="mailto:info@openapparel.org">info@openapparel.org</a>.
+                <a href={EmbeddedMapInfoLink} className="inline-link">
+                    Embedded Map info page
+                </a>{' '}
+                or email{' '}
+                <a href="mailto:info@openapparel.org" className="inline-link">
+                    info@openapparel.org
+                </a>
+                .
             </Typography>
             <Grid item xs={6}>
                 {user.embed_level === 3 ? (
@@ -151,7 +158,7 @@ function EmbeddedMapConfig({
                     errors={errors}
                 />
             </Grid>
-            <Grid item xs={6} style={{ ...styles.section, padding: '20px' }}>
+            <Grid item xs={6} style={styles.code}>
                 <EmbeddedMapCode {...mapSettings} />
             </Grid>
             <Grid

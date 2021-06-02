@@ -11,12 +11,16 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
     section: {
-        marginTop: '30px',
+        marginTop: '20px',
     },
     sectionHeader: {
         color: 'rgb(0, 0, 0)',
-        fontSize: '18px',
+        fontSize: '24px',
         margin: '10px 0',
+    },
+    list: {
+        marginTop: '10px',
+        padding: 0,
     },
     listItem: {
         listStyleType: 'none',
@@ -123,7 +127,7 @@ function EmbeddedMapFieldsConfig({ fields, setFields, classes, errors }) {
                     {errors.show_other_contributor_information.join(', ')}
                 </Typography>
             )}
-            <ul>
+            <ul style={styles.list}>
                 <li style={styles.listItemNonEditable}>
                     <FormControlLabel
                         control={
