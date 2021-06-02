@@ -111,16 +111,13 @@ function EmbeddedMapConfig({
                     like to display on your customized map, such as facility
                     type, number of workers etc.
                 </strong>{' '}
-                Those fields will then populate below. The Embedded Map will
-                display all facilities included in your lists.
+                The Embedded Map will display all facilities included in your
+                lists.
             </Typography>
             <Typography paragraph>
-                Adjust the below settings to your liking, such as the ordering
-                of the data points. You can turn individual data points on and
-                off as you wish.
-            </Typography>
-            <Typography paragraph>
-                Once complete, copy the Embed Code to add to your website.
+                Adjust the below settings to your liking, such as the map color
+                and size. Once complete, copy the Embed Code to add to your
+                website.
             </Typography>
             <Typography paragraph style={{ width: '100%' }}>
                 <strong>Have questions?</strong> Check out the FAQs on our{' '}
