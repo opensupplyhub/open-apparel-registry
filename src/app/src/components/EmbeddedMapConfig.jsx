@@ -77,7 +77,7 @@ function EmbeddedMapConfig({
     errors,
     timestamp,
 }) {
-    if (!user.embed_level) return <EmbeddedMapUnauthorized />;
+    if (!user.embed_level) return <EmbeddedMapUnauthorized isSettings />;
 
     const updateEmbedConfig = field => value =>
         setEmbedConfig(config => ({
