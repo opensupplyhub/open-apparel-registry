@@ -49,7 +49,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adjust settings so fast refresh works in development [#1284](https://github.com/open-apparel-registry/open-apparel-registry/pull/1284)
 - Fix raw data formatting [#1343](https://github.com/open-apparel-registry/open-apparel-registry/pull/1343)
 - Update embed permission check and return a detail message when returing 403 from an embed update [#1350](https://github.com/open-apparel-registry/open-apparel-registry/pull/1350)
-Hide translation element on embedded map [#1357](https://github.com/open-apparel-registry/open-apparel-registry/pull/1357)
+- Hide translation element on embedded map [#1357](https://github.com/open-apparel-registry/open-apparel-registry/pull/1357)
+- Returned merged facilities in contributor searches [#1369](https://github.com/open-apparel-registry/open-apparel-registry/pull/1369)
 
 ### Security
 
