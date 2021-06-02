@@ -158,7 +158,6 @@ function EmbeddedMapConfig({
                     setHeight={updateEmbedConfig('height')}
                     fullWidth={fullWidth}
                     setFullWidth={updateEmbedConfig('fullWidth')}
-                    errors={errors}
                 />
             </Grid>
             <Grid item xs={6} style={styles.code}>
