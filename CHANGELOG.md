@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Enable the default embed map custom fields by default [#1365](https://github.com/open-apparel-registry/open-apparel-registry/pull/1365)
 - Allow IFrames [#1367](https://github.com/open-apparel-registry/open-apparel-registry/pull/1367)
 - Prevent embedded map use without authorization [#1370](https://github.com/open-apparel-registry/open-apparel-registry/pull/1370)
+- Show messages when the embed config is incomplete [#1376](https://github.com/open-apparel-registry/open-apparel-registry/pull/1376)
 
 ### Changed
 
