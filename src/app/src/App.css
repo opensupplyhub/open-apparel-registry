@@ -629,13 +629,13 @@ hr {
   justify-content: middle;
 }
 
-@media (min-width: 850px) {
+@media (min-width: 600px) {
   .mobileMenuToggle {
     display: none;
   }
 }
 
-@media (max-width: 849px) {
+@media (max-width: 599px) {
   .mainNavigation {
     display: none !important;
   }

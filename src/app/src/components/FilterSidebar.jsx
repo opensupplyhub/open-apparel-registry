@@ -179,7 +179,7 @@ class FilterSidebar extends Component {
                             <Tab
                                 key={tab}
                                 label={label}
-                                className="tab-minwidth"
+                                className="search-tab"
                             />
                         );
                     })}

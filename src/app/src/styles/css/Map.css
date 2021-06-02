@@ -7,9 +7,10 @@
   flex-direction: column;
 }
 
-@media (min-width: 775px) {
+@media (min-width: 600px) {
   #panel-container {
-    min-width: 400px;
+    width: 360px;
+    max-width: 100%;
     flex: none;
   }
 
@@ -150,6 +151,11 @@
 
 .tab-minwidth {
   min-width: 107px !important;
+}
+
+.search-tab {
+  min-width: 0 !important;
+  font-size: 0.8rem !important;
 }
 
 .tabs {
