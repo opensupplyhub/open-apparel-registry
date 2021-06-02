@@ -9,7 +9,7 @@
 
 @media (min-width: 775px) {
   #panel-container {
-    min-width: 450px;
+    min-width: 400px;
     flex: none;
   }
 
@@ -30,7 +30,7 @@
   background: -webkit-linear-gradient(-45deg, #003de5 0%,#7964ff 100%); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(135deg, #003de5 0%,#7964ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#003de5', endColorstr='#7964ff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-  padding: 24px 20px;
+  padding: 20px 16px;
   max-height: 110px;
 }
 

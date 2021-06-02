@@ -59,7 +59,7 @@ const detailsSidebarStyles = theme =>
         headerButtonStyle: Object.freeze({
             width: '30px',
             marginRight: '14px',
-            marginLeft: '8px',
+            marginLeft: '-8px',
             background: 'unset !important',
             color: theme.palette.primary.contrastText,
         }),

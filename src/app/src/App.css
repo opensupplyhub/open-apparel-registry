@@ -75,7 +75,7 @@ li.dropdown-list-item button {
 }
 
 .control-panel__content {
-  padding: 24px 32px;
+  padding: 24px 16px;
 }
 
 .control-panel__group {
@@ -507,7 +507,7 @@ hr {
 }
 
 .footerContainerEmbedded {
-  padding: 0;
+  padding: 10px 0;
   background-color: #fff;
 
   z-index: 30;
