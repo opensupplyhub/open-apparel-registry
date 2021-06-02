@@ -733,18 +733,6 @@ export const pluralizeResultsCount = count => {
     return `${count} results`;
 };
 
-export const pluralizeFacilitiesCount = count => {
-    if (isNil(count)) {
-        return null;
-    }
-
-    if (count === 1) {
-        return '1 facility';
-    }
-
-    return `${count} facilities`;
-};
-
 export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
     uniqWith(otherLocationsData, (location, otherLocation) => {
         const lat = get(location, 'lat', null);
