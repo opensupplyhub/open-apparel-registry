@@ -82,7 +82,7 @@ it('creates a 2-d array including headers for exporting as a CSV', () => {
     ];
 
     const expected2DArray = [
-        csvHeaders,
+        csvHeaders.concat(['contributors']),
         [
             'oar_id',
             'name',
@@ -127,7 +127,7 @@ it('creates a 2-d array including PPE headers', () => {
         },
     ];
 
-    const expectedHeader = csvHeaders.concat(PPE_FIELD_NAMES);
+    const expectedHeader = csvHeaders.concat(['contributors']).concat(PPE_FIELD_NAMES);
     const expectedRow = [
         'oar_id',
         'name',
@@ -182,6 +182,7 @@ it('creates a 2-d array including PPE headers and values', () => {
 
     const expected2DArray = [
         csvHeaders.concat([
+            'contributors',
             'ppe_product_types',
             'ppe_contact_phone',
             'ppe_contact_email',
@@ -260,6 +261,7 @@ it('creates a 2-d array including closure headers and values', () => {
 
     const expected2DArray = [
         csvHeaders.concat([
+            'contributors',
             'is_closed',
         ]),
         [

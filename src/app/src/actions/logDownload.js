@@ -16,12 +16,14 @@ export const startLogDownload = createAction('START_LOG_DOWNLOAD');
 export const failLogDownload = createAction('FAIL_LOG_DOWNLOAD');
 export const completeLogDownload = createAction('COMPLETE_LOG_DOWNLOAD');
 
-export function logDownload(format) {
+export function logDownload(format, options) {
     return async (dispatch, getState) => {
         dispatch(startLogDownload());
 
         const downloadFacilities =
             format === 'csv' ? downloadFacilitiesCSV : downloadFacilitiesXLSX;
+
+        const isEmbedded = options?.isEmbedded || false;
 
         try {
             const {
@@ -34,49 +36,23 @@ export function logDownload(format) {
                 featureFlags,
             } = getState();
 
-            const vectorTileFlagIsActive = get(
-                featureFlags,
-                'flags.vector_tile',
-                false,
-            );
-            const ppeIsActive = get(featureFlags, 'flags.ppe', false);
-            const reportsAreActive = get(
-                featureFlags,
-                'flags.report_a_facility',
-                false,
-            );
+            const ppeIsActive =
+                get(featureFlags, 'flags.ppe', false) && !isEmbedded;
+            const reportsAreActive =
+                get(featureFlags, 'flags.report_a_facility', false) &&
+                !isEmbedded;
 
             const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
-            if (!vectorTileFlagIsActive) {
-                const recordCount = facilities ? facilities.length : 0;
-
-                return apiRequest
-                    .post(makeLogDownloadUrl(path, recordCount))
-                    .then(() =>
-                        downloadFacilities(facilities, {
-                            includePPEFields: ppeIsActive,
-                            includeClosureFields: reportsAreActive,
-                        }),
-                    )
-                    .then(() => dispatch(completeLogDownload()))
-                    .catch(err =>
-                        dispatch(
-                            logErrorAndDispatchFailure(
-                                err,
-                                'An error prevented the download',
-                                failLogDownload,
-                            ),
-                        ),
-                    );
+            if (!isEmbedded) {
+                await apiRequest.post(makeLogDownloadUrl(path, count));
             }
-
-            await apiRequest.post(makeLogDownloadUrl(path, count));
 
             if (!nextPageURL) {
                 downloadFacilities(facilities, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
+                    isEmbedded,
                 });
             } else {
                 let nextFacilitiesSetURL = nextPageURL;
@@ -118,6 +94,7 @@ export function logDownload(format) {
                 downloadFacilities(features, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
+                    isEmbedded,
                 });
             }
 
