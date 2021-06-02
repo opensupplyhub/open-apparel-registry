@@ -90,7 +90,7 @@ function EmbeddedMapConfig({
         width,
         height,
         fullWidth,
-        contributor: [user?.id],
+        contributor: [user?.contributor_id],
         timestamp,
         minimumConfigurationIsComplete,
     };
