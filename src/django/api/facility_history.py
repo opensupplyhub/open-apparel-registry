@@ -341,6 +341,7 @@ def create_facility_history_list(entries, facility_id, user=None):
         .filter(status__in=[
             FacilityMatch.CONFIRMED,
             FacilityMatch.AUTOMATIC,
+            FacilityMatch.MERGED,
         ])
         .filter(facility_id=facility_id)
     ]

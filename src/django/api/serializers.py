@@ -644,6 +644,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
             .filter(status__in=[
                 FacilityMatch.CONFIRMED,
                 FacilityMatch.AUTOMATIC,
+                FacilityMatch.MERGED,
             ])
             .filter(is_active=True)
             if l.facility_list_item.geocoded_point != facility.location

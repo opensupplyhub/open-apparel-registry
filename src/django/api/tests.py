@@ -4706,7 +4706,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             len(data),
-            3,
+            4,
         )
 
     @override_flag('can_get_facility_history', active=True)
@@ -4756,7 +4756,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
         self.assertEqual(
             len(data),
-            3,
+            4,
         )
 
     @override_flag('can_get_facility_history', active=True)
