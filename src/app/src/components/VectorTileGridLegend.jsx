@@ -18,14 +18,22 @@ const legendStyles = Object.freeze({
         border: `1px solid ${COLOURS.NAVY_BLUE}`,
         fontSize: '13px',
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '10px',
-    }),
-    legendLabelStyle: Object.freeze({
+        flexDirection: 'column',
+        alignItems: 'stretch',
         padding: '5px',
+        textAlign: 'center',
         textTransform: 'uppercase',
     }),
+    ramp: {
+        display: 'flex',
+        margin: '6px 0',
+        alignItems: 'center',
+    },
+    axisLabels: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        margin: '0 4px',
+    },
     legendCellStyle: Object.freeze({
         width: '20px',
         height: '20px',
@@ -33,7 +41,7 @@ const legendStyles = Object.freeze({
         opacity: '0.8',
         background: 'red',
         padding: '5px',
-        margin: '3px',
+        margin: '0 6px',
     }),
 });
 
@@ -61,11 +69,16 @@ function VectorTileGridLegend({ currentZoomLevel, gridColorRamp, classes }) {
             style={legendStyles.legendStyle}
             className={classes.legendStyle}
         >
-            <span style={legendStyles.legendLabelStyle}>Fewer facilities</span>
-            {gridColorRamp.map((colorDef, i, a) =>
-                legendCell(colorDef[1], 20 - 2 * (a.length - 1 - i)),
-            )}
-            <span style={legendStyles.legendLabelStyle}>More facilities</span>
+            <div style={legendStyles.mainLabel}># facilities</div>
+            <div style={legendStyles.ramp}>
+                {gridColorRamp.map((colorDef, i, a) =>
+                    legendCell(colorDef[1], 20 - 2 * (a.length - 1 - i)),
+                )}
+            </div>
+            <div style={legendStyles.axisLabels}>
+                <span>Fewer</span>
+                <span>More</span>
+            </div>
         </div>
     );
 }
