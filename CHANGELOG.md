@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Show messages when the embed config is incomplete [#1376](https://github.com/open-apparel-registry/open-apparel-registry/pull/1376)
 - Download and map changes for embed mode [#1378](https://github.com/open-apparel-registry/open-apparel-registry/pull/1378)
 - Use contributor ID rather than user ID when building embed code [#1380](https://github.com/open-apparel-registry/open-apparel-registry/pull/1380)
+- Disable claim a facility in embed mode [#1382](https://github.com/open-apparel-registry/open-apparel-registry/pull/1382)
 
 ### Changed
 
