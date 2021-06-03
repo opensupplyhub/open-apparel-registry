@@ -665,7 +665,7 @@ export const addProtocolToWebsiteURLIfMissing = url => {
 
 // OAR requested that the PPE features be disabled when in embedded mode
 export const filterFlagsIfAppIsEmbeded = (flags, isEmbeded) =>
-    filter(flags, f => !isEmbeded || f !== 'ppe');
+    filter(flags, f => !isEmbeded || (f !== 'ppe' && f !== 'claim_a_facility'));
 
 export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
     keys(pickBy(featureFlags, identity));
