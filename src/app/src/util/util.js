@@ -26,10 +26,12 @@ import keys from 'lodash/keys';
 import pickBy from 'lodash/pickBy';
 import every from 'lodash/every';
 import uniqWith from 'lodash/uniqWith';
+import filter from 'lodash/filter';
 import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 import hash from 'object-hash';
+import XLSX from 'xlsx';
 
 import env from './env';
 
@@ -51,7 +53,13 @@ import {
 
 import { createListItemCSV } from './util.listItemCSV';
 
-import { createFacilitiesCSV } from './util.facilitiesCSV';
+import { createFacilitiesCSV, formatDataForCSV } from './util.facilitiesCSV';
+
+export function DownloadXLSX(data, fileName) {
+    saveAs(new Blob([data], { type: 'application/octet-stream' }), fileName);
+
+    return noop();
+}
 
 export function DownloadCSV(data, fileName) {
     saveAs(new Blob([data], { type: 'text/csv;charset=utf-8;' }), fileName);
@@ -67,6 +75,18 @@ export const downloadListItemCSV = (list, items) =>
 
 export const downloadFacilitiesCSV = (facilities, options) =>
     DownloadCSV(createFacilitiesCSV(facilities, options), 'facilities.csv');
+
+export const createFacilitiesXLSX = (facilities, options) => {
+    const data = formatDataForCSV(facilities, options);
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'facilities');
+    const wopts = { bookType: 'xlsx', bookSST: false, type: 'array' };
+    return XLSX.write(workbook, wopts);
+};
+
+export const downloadFacilitiesXLSX = (facilities, options) =>
+    DownloadXLSX(createFacilitiesXLSX(facilities, options), 'facilities.xlsx');
 
 export const makeUserLoginURL = () => '/user-login/';
 export const makeUserLogoutURL = () => '/user-logout/';
@@ -103,6 +123,11 @@ export const makeGetCountriesURL = () => '/api/countries/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
+export const makeGetFacilityByOARIdURLWithContributorId = (
+    oarId,
+    embed,
+    contributorId,
+) => `/api/facilities/${oarId}/?embed=${embed}&contributor=${contributorId}`;
 export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) =>
     `/api/facilities/?${qs}&pageSize=${pageSize}`;
 export const makeClaimFacilityAPIURL = oarId =>
@@ -154,6 +179,12 @@ export const makeLogDownloadUrl = (path, recordCount) =>
 
 export const makeUpdateFacilityLocationURL = oarID =>
     `/api/facilities/${oarID}/update-location/`;
+
+export const makeEmbedConfigURL = id =>
+    `/api/embed-configs/${id ? `${id}/` : ''}`;
+export const makeContributorEmbedConfigURL = contributorId =>
+    `/api/contributor-embed-configs/${contributorId}/`;
+export const makeNonStandardFieldsURL = () => '/api/nonstandard-fields/';
 
 export const getValueFromObject = ({ value }) => value;
 
@@ -632,6 +663,10 @@ export const addProtocolToWebsiteURLIfMissing = url => {
     return `http://${url}`;
 };
 
+// OAR requested that the PPE features be disabled when in embedded mode
+export const filterFlagsIfAppIsEmbeded = (flags, isEmbeded) =>
+    filter(flags, f => !isEmbeded || (f !== 'ppe' && f !== 'claim_a_facility'));
+
 export const convertFeatureFlagsObjectToListOfActiveFlags = featureFlags =>
     keys(pickBy(featureFlags, identity));
 
@@ -698,18 +733,6 @@ export const pluralizeResultsCount = count => {
     return `${count} results`;
 };
 
-export const pluralizeFacilitiesCount = count => {
-    if (isNil(count)) {
-        return null;
-    }
-
-    if (count === 1) {
-        return '1 facility';
-    }
-
-    return `${count} facilities`;
-};
-
 export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
     uniqWith(otherLocationsData, (location, otherLocation) => {
         const lat = get(location, 'lat', null);
@@ -737,3 +760,40 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
 
 export const getLocationWithoutEmbedParam = () =>
     window.location.href.replace('&embed=1', '').replace('embed=1', '');
+
+export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
+    const qs = timestamp
+        ? querystring.stringify({
+              contributors: contributor,
+              embed: 1,
+              timestamp,
+          })
+        : querystring.stringify({ contributors: contributor, embed: 1 });
+
+    return window.location.href.replace('settings', `?${qs}`);
+};
+
+export const createIFrameHTML = ({ fullWidth, contributor, height, width }) =>
+    fullWidth
+        ? `<div>
+            <div style="position:relative;padding-top:${height}%;">
+                <iframe
+                    src="${getEmbeddedMapSrc({
+                        contributor,
+                    })}"
+                    frameborder="0"
+                    allowfullscreen
+                    style="position:absolute;top:0;
+                           left:0;width:100%;height:100%;"
+                    title="embedded-map">
+                </iframe>
+              </div>
+            </div>`
+        : `<iframe
+                src="${getEmbeddedMapSrc({
+                    contributor,
+                })}"
+                frameBorder="0"
+                style="width:${width}px;height:${height}px"
+                title="embedded-map"
+            />`;

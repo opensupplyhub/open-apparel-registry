@@ -1,263 +1,78 @@
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, { useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
-import { bool, func } from 'prop-types';
-import { Router, Route, Switch } from 'react-router-dom';
-import { ToastContainer, Slide } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // eslint-disable-line import/first
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
-import history from './util/history';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import RegisterForm from './components/RegisterForm';
-import ResetPasswordForm from './components/ResetPasswordForm';
-import LoginForm from './components/LoginForm';
-import UserProfile from './components/UserProfile';
-import Contribute from './components/Contribute';
-import MapAndSidebar from './components/MapAndSidebar';
-import FacilityLists from './components/FacilityLists';
-import FacilityListItems from './components/FacilityListItems';
-import ErrorBoundary from './components/ErrorBoundary';
-import GDPRNotification from './components/GDPRNotification';
-import ConfirmRegistration from './components/ConfirmRegistration';
-import AboutProcessing from './components/AboutProcessing';
-import RouteNotFound from './components/RouteNotFound';
-import Dashboard from './components/Dashboard';
-import Translate from './components/Translate';
-import FeatureFlag from './components/FeatureFlag';
-import ClaimFacility from './components/ClaimFacility';
-import ClaimedFacilities from './components/ClaimedFacilities';
-import AboutClaimedFacilities from './components/AboutClaimedFacilities';
-import SurveyDialogNotification from './components/SurveyDialogNotification';
+import Routes from './Routes';
+import { fetchEmbedConfig } from './actions/embeddedMap';
+import { OARColor } from './util/constants';
+import EmbeddedMapUnauthorized from './components/EmbeddedMapUnauthorized';
 
 import './App.css';
 
-import { sessionLogin } from './actions/auth';
-import { fetchFeatureFlags } from './actions/featureFlags';
-import { fetchClientInfo } from './actions/clientInfo';
-import { reportWindowResize } from './actions/ui';
+function App({
+    embed,
+    contributor,
+    getEmbedConfig,
+    config,
+    embedError,
+    embedLoading,
+}) {
+    const contributorId = contributor?.value;
+    useEffect(() => {
+        if (embed && contributorId) {
+            getEmbedConfig(contributorId);
+        }
+    }, [embed, contributorId, getEmbedConfig]);
 
-import { setFacilityGridRamp } from './actions/vectorTileLayer';
-
-import {
-    mainRoute,
-    authLoginFormRoute,
-    authRegisterFormRoute,
-    authResetPasswordFormRoute,
-    authConfirmRegistrationRoute,
-    contributeRoute,
-    listsRoute,
-    facilityListItemsRoute,
-    facilitiesRoute,
-    profileRoute,
-    aboutProcessingRoute,
-    dashboardRoute,
-    claimFacilityRoute,
-    claimedFacilitiesRoute,
-    CLAIM_A_FACILITY,
-    aboutClaimedFacilitiesRoute,
-} from './util/constants';
-
-const appStyles = Object.freeze({
-    root: Object.freeze({
-        flexGrow: 1,
-    }),
-    mainPanelStyle: Object.freeze({
-        top: '64px',
-        right: '0',
-        left: '0',
-        position: 'fixed',
-        bottom: '51px',
-    }),
-});
-
-class App extends Component {
-    componentDidMount() {
-        window.addEventListener('resize', () =>
-            this.props.handleWindowResize({
-                innerHeight: window.innerHeight,
-                innerWidth: window.innerWidth,
+    const theme = useMemo(
+        () =>
+            createMuiTheme({
+                typography: {
+                    fontFamily: config.font,
+                },
+                palette: {
+                    primary: {
+                        main: config.color || OARColor,
+                        coloredBackground:
+                            config.color === OARColor ? '#c7d2fa' : '',
+                    },
+                },
             }),
-        );
+        [config],
+    );
 
-        window.setGridColorRamp = this.props.setRamp;
-
-        this.props.getFeatureFlags();
-        this.props.getClientInfo();
-        return this.props.logIn();
+    if (embed && embedLoading) {
+        return null;
     }
 
-    render() {
-        const { fetchingFeatureFlags, embed } = this.props;
-
-        const mainPanelStyle = embed
-            ? { ...appStyles.mainPanelStyle, bottom: 0, top: 0 }
-            : appStyles.mainPanelStyle;
-        return (
-            <ErrorBoundary>
-                <Router history={history}>
-                    <div className="App">
-                        <Translate />
-                        <Navbar embed={embed} />
-                        <main style={mainPanelStyle} className="mainPanel">
-                            <Switch>
-                                <Route
-                                    exact
-                                    path={claimFacilityRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={CLAIM_A_FACILITY}
-                                            alternative={
-                                                <Route
-                                                    component={MapAndSidebar}
-                                                />
-                                            }
-                                        >
-                                            <Route component={ClaimFacility} />
-                                        </FeatureFlag>
-                                    )}
-                                />
-                                <Route
-                                    path={claimedFacilitiesRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={CLAIM_A_FACILITY}
-                                            alternative={<RouteNotFound />}
-                                        >
-                                            <Route
-                                                component={ClaimedFacilities}
-                                            />
-                                        </FeatureFlag>
-                                    )}
-                                />
-                                <Route
-                                    path={facilitiesRoute}
-                                    render={() => {
-                                        if (fetchingFeatureFlags) {
-                                            return <CircularProgress />;
-                                        }
-
-                                        return (
-                                            <Route component={MapAndSidebar} />
-                                        );
-                                    }}
-                                />
-                                <Route
-                                    exact
-                                    path={authRegisterFormRoute}
-                                    component={RegisterForm}
-                                />
-                                <Route
-                                    exact
-                                    path={authLoginFormRoute}
-                                    component={LoginForm}
-                                />
-                                <Route
-                                    exact
-                                    path={authResetPasswordFormRoute}
-                                    component={ResetPasswordForm}
-                                />
-                                <Route
-                                    exact
-                                    path={authConfirmRegistrationRoute}
-                                    component={ConfirmRegistration}
-                                />
-                                <Route
-                                    exact
-                                    path={profileRoute}
-                                    component={UserProfile}
-                                />
-                                <Route
-                                    exact
-                                    path={contributeRoute}
-                                    component={Contribute}
-                                />
-                                <Route
-                                    path={dashboardRoute}
-                                    component={Dashboard}
-                                />
-                                <Route
-                                    path={facilityListItemsRoute}
-                                    component={FacilityListItems}
-                                />
-                                <Route
-                                    path={listsRoute}
-                                    component={FacilityLists}
-                                />
-                                <Route
-                                    exact
-                                    path={aboutProcessingRoute}
-                                    component={AboutProcessing}
-                                />
-                                <Route
-                                    exact
-                                    path={aboutClaimedFacilitiesRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={CLAIM_A_FACILITY}
-                                            alternative={<RouteNotFound />}
-                                        >
-                                            <AboutClaimedFacilities />
-                                        </FeatureFlag>
-                                    )}
-                                />
-                                <Route
-                                    exact
-                                    path={mainRoute}
-                                    render={() => {
-                                        if (fetchingFeatureFlags) {
-                                            return <CircularProgress />;
-                                        }
-
-                                        return (
-                                            <Route component={MapAndSidebar} />
-                                        );
-                                    }}
-                                />
-                                <Route render={() => <RouteNotFound />} />
-                            </Switch>
-                        </main>
-                        {embed ? null : <Footer />}
-                        <ToastContainer
-                            position="bottom-center"
-                            transition={Slide}
-                        />
-                        <GDPRNotification />
-                        <SurveyDialogNotification />
-                    </div>
-                </Router>
-            </ErrorBoundary>
-        );
+    if (embed && embedError) {
+        return <EmbeddedMapUnauthorized error={embedError} />;
     }
+
+    return (
+        <MuiThemeProvider theme={theme}>
+            <Routes />
+        </MuiThemeProvider>
+    );
 }
 
-App.propTypes = {
-    logIn: func.isRequired,
-    fetchingFeatureFlags: bool.isRequired,
-};
-
 function mapStateToProps({
-    featureFlags: { fetching: fetchingFeatureFlags },
-    embeddedMap: { embed },
+    embeddedMap: { embed, config, error, loading },
+    filters,
 }) {
     return {
-        fetchingFeatureFlags,
         embed: !!embed,
+        contributor: filters?.contributors[0],
+        config,
+        embedError: error,
+        embedLoading: loading,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getFeatureFlags: () => dispatch(fetchFeatureFlags()),
-        getClientInfo: () => dispatch(fetchClientInfo()),
-        logIn: () => dispatch(sessionLogin()),
-        handleWindowResize: data => dispatch(reportWindowResize(data)),
-        setRamp: ramp => dispatch(setFacilityGridRamp(ramp)),
+        getEmbedConfig: id => dispatch(fetchEmbedConfig(id)),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(withStyles(appStyles)(App));
+export default connect(mapStateToProps, mapDispatchToProps)(App);

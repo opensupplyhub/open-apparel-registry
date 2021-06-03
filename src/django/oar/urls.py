@@ -38,11 +38,16 @@ router.register('api-blocks', views.ApiBlockViewSet, 'api-block')
 router.register('facility-activity-reports',
                 views.FacilityActivityReportViewSet,
                 'facility-activity-report')
+router.register('embed-configs', views.EmbedConfigViewSet, 'embed-config')
+router.register('nonstandard-fields', views.NonstandardFieldsViewSet,
+                'nonstandard-fields')
 
 public_apis = [
     url(r'^api/', include(router.urls)),
     url(r'^api/contributors/', views.all_contributors,
         name='all_contributors'),
+    url(r'^api/contributor-embed-configs/(?P<pk>\d+)/$',
+        views.contributor_embed_config, name='contributor-embed-config'),
     url(r'^api/contributor-types/', views.all_contributor_types,
         name='all_contributor_types'),
     url(r'^api/countries/', views.all_countries, name='all_countries'),

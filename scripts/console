@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n "Usage: $(basename "$0")
+Login to a running Docker container's shell.
+Options:
+    app           Webpack dev server container
+    django        Gunicorn/Django container
+"
+}
+
+case $1 in
+    app)                APP_CONTAINER=1 ;;
+    django)             DJANGO_CONTAINER=1 ;;
+    help|*)             usage; exit 1 ;;
+esac
+
+if [ -n "$APP_CONTAINER" ] || [ -n "$DJANGO_CONTAINER" ]; then
+    docker-compose exec "${1}" /bin/bash
+fi

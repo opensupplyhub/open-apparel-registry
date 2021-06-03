@@ -1,6 +1,7 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import get_template
+from api.models import FacilityList
 
 from api.countries import COUNTRY_NAMES
 
@@ -21,6 +22,19 @@ def make_facility_url(request, facility):
         make_oar_url(request),
         facility.id,
     )
+
+
+def make_facility_list_url(list_id):
+    if settings.ENVIRONMENT == 'Development':
+        protocol = 'http'
+        host = 'localhost:6543'
+    else:
+        protocol = 'https'
+        if settings.ENVIRONMENT == 'Staging':
+            host = 'staging.openapparel.org'
+        else:
+            host = 'openapparel.org'
+    return '{}://{}/lists/{}'.format(protocol, host, list_id)
 
 
 def make_claimed_url(request):
@@ -336,6 +350,31 @@ def send_report_result(report):
         subj_template.render().rstrip(),
         text_template.render(report_dictionary),
         settings.DEFAULT_FROM_EMAIL,
-        [settings.NOTIFICATION_EMAIL_TO],
+        [report.reported_by_contributor.admin.email],
         html_message=html_template.render(report_dictionary)
+    )
+
+
+def notify_facility_list_complete(list_id):
+    subj_template = get_template(
+        'mail/facility_list_complete_subject.txt')
+    text_template = get_template(
+        'mail/facility_list_complete_body.txt')
+    html_template = get_template(
+        'mail/facility_list_complete_body.html')
+
+    facility_list = FacilityList.objects.get(id=list_id)
+    notification_to = facility_list.source.contributor.admin.email
+
+    notification_dictionary = {
+        'list_url': make_facility_list_url(list_id),
+        'list_name': facility_list.name
+    }
+
+    send_mail(
+        subj_template.render().rstrip(),
+        text_template.render(notification_dictionary),
+        settings.DEFAULT_FROM_EMAIL,
+        [notification_to],
+        html_message=html_template.render(notification_dictionary)
     )

@@ -12,7 +12,6 @@ export const csvHeaders = Object.freeze([
     'country_name',
     'lat',
     'lng',
-    'contributors',
 ]);
 
 export const createFacilityRowFromFeature = (feature, options) => {
@@ -31,6 +30,10 @@ export const createFacilityRowFromFeature = (feature, options) => {
         },
     } = feature;
 
+    const contributorFields =
+        options && options.isEmbedded
+            ? []
+            : [contributors ? contributors.map(c => c.name).join('|') : ''];
     const ppeFields =
         options && options.includePPEFields
             ? PPE_FIELD_NAMES.map(f =>
@@ -47,16 +50,8 @@ export const createFacilityRowFromFeature = (feature, options) => {
             : [];
 
     return Object.freeze(
-        [
-            oar_id,
-            name,
-            address,
-            country_code,
-            country_name,
-            lat,
-            lng,
-            contributors ? contributors.map(c => c.name).join('|') : '',
-        ]
+        [oar_id, name, address, country_code, country_name, lat, lng]
+            .concat(contributorFields)
             .concat(ppeFields)
             .concat(closureFields),
     );
@@ -67,6 +62,9 @@ export const makeFacilityReducer = options => (acc, next) =>
 
 export const makeHeaderRow = options => {
     let headerRow = csvHeaders;
+    if (!options || !options.isEmbedded) {
+        headerRow = headerRow.concat(['contributors']);
+    }
     if (options && options.includePPEFields) {
         headerRow = headerRow.concat(PPE_FIELD_NAMES);
     }

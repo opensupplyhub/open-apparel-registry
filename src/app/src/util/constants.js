@@ -214,6 +214,7 @@ export const profileFormFields = Object.freeze([
 ]);
 
 export const mainRoute = '/';
+export const settingsRoute = '/settings';
 export const authLoginFormRoute = '/auth/login';
 export const authRegisterFormRoute = '/auth/register';
 export const authResetPasswordFormRoute = '/auth/resetpassword/:uid';
@@ -435,6 +436,7 @@ export const CLAIM_A_FACILITY = 'claim_a_facility';
 export const VECTOR_TILE = 'vector_tile';
 export const PPE = 'ppe';
 export const REPORT_A_FACILITY = 'report_a_facility';
+export const EMBEDDED_MAP_FLAG = 'embedded_map';
 
 export const COUNTRY_CODES = Object.freeze({
     default: 'IE',
@@ -515,3 +517,8 @@ export const PPE_FIELD_NAMES = Object.freeze([
     'ppe_contact_email',
     'ppe_website',
 ]);
+
+export const OARFont = 'ff-tisa-sans-web-pro,sans-serif';
+export const OARColor = '#0427a4';
+
+export const EmbeddedMapInfoLink = 'https://info.openapparel.org/embedded-map';

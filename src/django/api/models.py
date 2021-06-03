@@ -117,6 +117,12 @@ class Contributor(models.Model):
         OTHER_CONTRIB_TYPE: 'Others',
     }
 
+    EMBED_LEVEL_CHOICES = (
+        (1, 'Embed'),
+        (2, 'Embed+'),
+        (3, 'Embed Deluxe / Custom Embed'),
+    )
+
     admin = models.OneToOneField(
         'User',
         on_delete=models.PROTECT,
@@ -162,6 +168,18 @@ class Contributor(models.Model):
             'contributor.'
         )
     )
+    embed_config = models.OneToOneField(
+        'EmbedConfig',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text=('The embedded map configuration for the contributor'))
+    embed_level = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=EMBED_LEVEL_CHOICES,
+        help_text='The embedded map level that is enabled for the contributor')
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -1172,7 +1190,8 @@ class FacilityManager(models.Manager):
                 .filter(id__in=FacilityMatch
                         .objects
                         .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                            FacilityMatch.CONFIRMED])
+                                            FacilityMatch.CONFIRMED,
+                                            FacilityMatch.MERGED])
                         .filter(is_active=True)
                         .filter(facility_list_item__source__contributor__contrib_type__in=contributor_types) # NOQA
                         .filter(facility_list_item__source__is_active=True)
@@ -1190,7 +1209,8 @@ class FacilityManager(models.Manager):
                     facilitylistitem__facilitymatch__is_active=True,
                     facilitylistitem__facilitymatch__status__in=[
                         FacilityMatch.AUTOMATIC,
-                        FacilityMatch.CONFIRMED]).values(
+                        FacilityMatch.CONFIRMED,
+                        FacilityMatch.MERGED]).values(
                             'facilitylistitem__facility')
 
                 # Next, count the number of times each specified contributor
@@ -1227,7 +1247,8 @@ class FacilityManager(models.Manager):
                         facilitylistitem__facilitymatch__is_active=True,
                         facilitylistitem__facilitymatch__status__in=[
                             FacilityMatch.AUTOMATIC,
-                            FacilityMatch.CONFIRMED],
+                            FacilityMatch.CONFIRMED,
+                            FacilityMatch.MERGED],
                         contributor__in=contributors).values_list(
                             'facilitylistitem__facility', flat=True)))
 
@@ -1964,3 +1985,119 @@ class FacilityActivityReport(models.Model):
                 'Closure State: {closure_state}, '
                 'Status: {status} '
                 ).format(**self.__dict__)
+
+
+class EmbedConfig(models.Model):
+    """
+    Configuration data for an embedded map
+    """
+
+    width = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='600',
+        help_text='The width of the embedded map.')
+    height = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='400',
+        help_text='The height of the embedded map.')
+    color = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The color of the embedded map.')
+    font = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='The font of the embedded map.')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return ('EmbedConfig {id}, '
+                'Size: {width} x {height} '
+                ).format(**self.__dict__)
+
+
+class EmbedField(models.Model):
+    """
+    Data fields to include on facilities in an embedded map
+    """
+    class Meta:
+        unique_together = ('embed_config', 'order')
+
+    embed_config = models.ForeignKey(
+        'EmbedConfig',
+        null=False,
+        on_delete=models.CASCADE,
+        help_text='The embedded map configuration which uses this field'
+    )
+    column_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The column name of the field.')
+    display_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The name to display for the field.')
+    visible = models.BooleanField(
+        default=False,
+        help_text='Whether or not to display this field.'
+    )
+    order = models.IntegerField(
+        null=False,
+        blank=False,
+        help_text='The sort order of the field.')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return (
+            'Column Name {column_name} - Order: {order} ').format(
+            **self.__dict__)
+
+
+class NonstandardField(models.Model):
+    """
+    Nonstandard data fields available to include on facilities in an
+    embedded map
+    """
+    class Meta:
+        unique_together = ('contributor', 'column_name')
+
+    # Keys in this set must be kept in sync with
+    # defaultNonstandardFieldLabels in app/src/app/util/embeddedMap.js
+    DEFAULT_FIELDS = {
+        'parent_company': 'Parent Company',
+        'type_of_product': 'Type of Product',
+        'number_of_workers': 'Number of Workers',
+        'type_of_facility': 'Type of Facility',
+    }
+
+    contributor = models.ForeignKey(
+        'Contributor',
+        null=False,
+        on_delete=models.CASCADE,
+        help_text='The contributor who submitted this field'
+    )
+    column_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='The column name of the field.')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return (
+            'Contributor ID: {contributor_id} - ' +
+            'Column Name: {column_name}').format(**self.__dict__)

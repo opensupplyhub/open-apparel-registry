@@ -2,6 +2,8 @@ import operator
 import os
 import sys
 import traceback
+import csv
+import json
 
 from datetime import datetime
 from functools import reduce
@@ -80,7 +82,10 @@ from api.models import (FacilityList,
                         Version,
                         FacilityLocation,
                         Source,
-                        ApiBlock)
+                        ApiBlock,
+                        EmbedConfig,
+                        EmbedField,
+                        NonstandardField)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -107,7 +112,8 @@ from api.serializers import (FacilityListSerializer,
                              LogDownloadQueryParamsSerializer,
                              FacilityUpdateLocationParamsSerializer,
                              ApiBlockSerializer,
-                             FacilityActivityReportSerializer)
+                             FacilityActivityReportSerializer,
+                             EmbedConfigSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
@@ -407,6 +413,23 @@ def all_contributors(request):
     ]
 
     return Response(response_data)
+
+
+@api_view(['GET'])
+def contributor_embed_config(request, pk=None):
+    """
+    Returns a contributor's embedded map configuration.
+    """
+    try:
+        contributor = Contributor.objects.get(id=pk)
+        if contributor.embed_level is None:
+            raise PermissionDenied(
+                'Embedded map is not configured for provided contributor.'
+            )
+        embed_config = EmbedConfigSerializer(contributor.embed_config).data
+        return Response(embed_config)
+    except Contributor.DoesNotExist:
+        raise ValidationError('Contributor not found.')
 
 
 def getContributorTypeCount(value, counts):
@@ -1080,10 +1103,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             body_serializer.validated_data.get('ppe_contact_email')
         ppe_website = body_serializer.validated_data.get('ppe_website')
 
+        fields = list(request.data.keys())
+        create_nonstandard_fields(fields, request.user.contributor)
+
         item = FacilityListItem.objects.create(
             source=source,
             row_index=0,
-            raw_data=request.data,
+            raw_data=json.dumps(request.data),
             status=FacilityListItem.PARSED,
             name=name,
             address=address,
@@ -2174,6 +2200,27 @@ class FacilityListViewSetSchema(AutoSchema):
         return None
 
 
+def create_nonstandard_fields(fields, contributor):
+    unique_fields = list(set(fields))
+
+    existing_fields = NonstandardField.objects.filter(
+        contributor=contributor).values_list('column_name', flat=True)
+    new_fields = filter(lambda f: f not in existing_fields,
+                        unique_fields)
+
+    standard_fields = ['country', 'name', 'address', 'lat', 'lng',
+                       'ppe_contact_phone', 'ppe_website',
+                       'ppe_contact_email', 'ppe_product_types']
+    nonstandard_fields = filter(lambda f: f.lower() not in standard_fields,
+                                new_fields)
+
+    for f in nonstandard_fields:
+        NonstandardField.objects.create(
+            contributor=contributor,
+            column_name=f
+        )
+
+
 class FacilityListViewSet(viewsets.ModelViewSet):
     """
     Upload and update facility lists for an authenticated Contributor.
@@ -2297,6 +2344,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             header=header,
             replaces=replaces)
         new_list.save()
+
+        csvreader = csv.reader(header.split('\n'), delimiter=',')
+        for row in csvreader:
+            create_nonstandard_fields(row, contributor)
 
         source = Source.objects.create(
             contributor=contributor,
@@ -3489,3 +3540,122 @@ class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
         ]
 
         return Response(response_data)
+
+
+class EmbedConfigAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+def create_embed_fields(fields_data, embed_config):
+    if len(fields_data) != len(set([f['order'] for f in fields_data])):
+        raise ValidationError('Fields cannot have the same order.')
+
+    for field_data in fields_data:
+        EmbedField.objects.create(embed_config=embed_config, **field_data)
+
+
+def get_contributor(request):
+    try:
+        contributor_id = request.user.contributor.id
+        contributor = Contributor.objects.get(id=contributor_id)
+    except Contributor.DoesNotExist:
+        raise ValidationError('Contributor not found for requesting user.')
+
+    return contributor
+
+
+@schema(EmbedConfigAutoSchema())
+class EmbedConfigViewSet(mixins.ListModelMixin,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         mixins.CreateModelMixin,
+                         viewsets.GenericViewSet):
+    """
+    View EmbedConfig.
+    """
+    queryset = EmbedConfig.objects.all()
+    serializer_class = EmbedConfigSerializer
+
+    @transaction.atomic
+    def create(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        contributor = get_contributor(request)
+        if contributor.embed_config is not None:
+            raise ValidationError(
+                'Contributor has an existing embed configuration.')
+
+        fields_data = request.data.pop('embed_fields', [])
+
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+            embed_config = EmbedConfig.objects.get(id=serializer.data['id'])
+
+            # Assign embed config to contributor
+            contributor.embed_config = embed_config
+            contributor.save()
+
+            create_embed_fields(fields_data, embed_config)
+
+            response_data = self.get_serializer(embed_config).data
+
+            return Response(response_data)
+
+    @transaction.atomic
+    def update(self, request, pk=None):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        contributor = get_contributor(request)
+
+        embed_config = EmbedConfig.objects.get(id=pk)
+
+        if embed_config.contributor.id != contributor.id:
+            error_data = {'error': (
+                f'Update failed because embed contributor ID '
+                f'{embed_config.contributor.id} does not match the '
+                f'contributor ID {contributor.id}')}
+            return Response(error_data,
+                            content_type='application/json',
+                            status=status.HTTP_403_FORBIDDEN)
+
+        fields_data = request.data.pop('embed_fields', [])
+
+        # Update field data by deleting and recreating
+        EmbedField.objects.filter(embed_config=embed_config).delete()
+        create_embed_fields(fields_data, embed_config)
+
+        return super(EmbedConfigViewSet, self).update(request, pk=pk)
+
+
+class NonstandardFieldsAutoSchema(AutoSchema):
+    def get_link(self, path, method, base_url):
+        return None
+
+
+@schema(NonstandardFieldsAutoSchema())
+class NonstandardFieldsViewSet(mixins.ListModelMixin,
+                               viewsets.GenericViewSet):
+    """
+    View nonstandard fields submitted by a contributor.
+    """
+    queryset = NonstandardField.objects.all()
+
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        contributor = get_contributor(request)
+
+        nonstandard_field_set = set(self.queryset.filter(
+            contributor=contributor).values_list('column_name', flat=True))
+
+        field_list = list(
+            NonstandardField.DEFAULT_FIELDS.keys() | nonstandard_field_set)
+
+        return Response(field_list)

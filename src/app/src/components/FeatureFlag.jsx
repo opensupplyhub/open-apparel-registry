@@ -5,7 +5,10 @@ import includes from 'lodash/includes';
 
 import { featureFlagPropType } from '../util/propTypes';
 
-import { convertFeatureFlagsObjectToListOfActiveFlags } from '../util/util';
+import {
+    convertFeatureFlagsObjectToListOfActiveFlags,
+    filterFlagsIfAppIsEmbeded,
+} from '../util/util';
 
 function FeatureFlag({
     flag,
@@ -37,9 +40,18 @@ FeatureFlag.propTypes = {
     fetching: bool.isRequired,
 };
 
-function mapStateToProps({ featureFlags: { fetching, flags } }) {
+function mapStateToProps({
+    featureFlags: { fetching, flags },
+    embeddedMap: { embed: isEmbeded },
+}) {
+    const activeFeatureFlags = convertFeatureFlagsObjectToListOfActiveFlags(
+        flags,
+    );
     return {
-        activeFeatureFlags: convertFeatureFlagsObjectToListOfActiveFlags(flags),
+        activeFeatureFlags: filterFlagsIfAppIsEmbeded(
+            activeFeatureFlags,
+            isEmbeded,
+        ),
         fetching,
     };
 }

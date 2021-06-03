@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { arrayOf, bool, func, shape, string } from 'prop-types';
+import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { toast } from 'react-toastify';
@@ -10,7 +11,6 @@ import AppOverflow from './AppOverflow';
 import Button from './Button';
 import FacilityListSummary from './FacilityListSummary';
 import UserProfileField from './UserProfileField';
-import UserAPITokens from './UserAPITokens';
 import UserCookiePreferences from './UserCookiePreferences';
 import BadgeVerified from './BadgeVerified';
 import ShowOnly from './ShowOnly';
@@ -81,16 +81,14 @@ class UserProfile extends Component {
 
     componentDidUpdate(prevProps) {
         const {
-            match: {
-                params: { id },
-            },
+            id,
             fetchProfile,
             resetProfile,
             updatingProfile,
             errorsUpdatingProfile,
         } = this.props;
 
-        if (prevProps.match.params.id !== id) {
+        if (prevProps.id !== id) {
             resetProfile();
             return fetchProfile();
         }
@@ -121,9 +119,8 @@ class UserProfile extends Component {
             errorsUpdatingProfile,
             submitFormOnEnterKeyPress,
             errorFetchingProfile,
-            match: {
-                params: { id },
-            },
+            id,
+            allowEdits,
         } = this.props;
 
         if (fetching) {
@@ -138,8 +135,10 @@ class UserProfile extends Component {
             return <RouteNotFound />;
         }
 
-        const isEditableProfile =
+        const isCurrentUsersProfile =
             user && [profile.id, Number(id)].every(val => val === user.id);
+
+        const isEditableProfile = allowEdits && isCurrentUsersProfile;
 
         const profileInputs = profileFormFields
             // Only show the name field on the profile page of the current user.
@@ -170,7 +169,7 @@ class UserProfile extends Component {
 
         const title = (
             <React.Fragment>
-                {isEditableProfile ? 'My Profile' : profile.name}
+                {!isEditableProfile && profile.name}
                 <ShowOnly when={profile.isVerified}>
                     <span
                         title="Verified"
@@ -181,6 +180,13 @@ class UserProfile extends Component {
                 </ShowOnly>
             </React.Fragment>
         );
+
+        const toolbar =
+            isCurrentUsersProfile && !allowEdits ? (
+                <Link to="/settings" href="/settings">
+                    Edit
+                </Link>
+            ) : null;
 
         const showErrorMessages =
             isEditableProfile &&
@@ -226,8 +232,6 @@ class UserProfile extends Component {
                 </React.Fragment>
             ) : null;
 
-        const apiTokensSection = isEditableProfile ? <UserAPITokens /> : null;
-
         const cookiePreferences = isEditableProfile ? (
             <UserCookiePreferences />
         ) : null;
@@ -236,12 +240,12 @@ class UserProfile extends Component {
             <AppOverflow>
                 <AppGrid title={title} style={profileStyles.appGridContainer}>
                     <Grid item xs={12} sm={7}>
+                        {toolbar}
                         {profileInputs}
                         {facilityLists}
                         {errorMessages}
                         {submitButton}
                         {cookiePreferences}
-                        {apiTokensSection}
                     </Grid>
                 </AppGrid>
             </AppOverflow>
@@ -257,11 +261,7 @@ UserProfile.defaultProps = {
 
 UserProfile.propTypes = {
     user: userPropType,
-    match: shape({
-        params: shape({
-            id: string.isRequired,
-        }).isRequired,
-    }).isRequired,
+    id: string.isRequired,
     fetching: bool.isRequired,
     profile: profileFormValuesPropType.isRequired,
     inputUpdates: profileFormInputHandlersPropType.isRequired,
@@ -300,14 +300,7 @@ function mapStateToProps({
     };
 }
 
-const mapDispatchToProps = (
-    dispatch,
-    {
-        match: {
-            params: { id: profileID },
-        },
-    },
-) => {
+const mapDispatchToProps = (dispatch, { id: profileID }) => {
     const makeInputChangeHandler = (field, getStateFromEvent) => e =>
         dispatch(
             updateProfileFormInput({

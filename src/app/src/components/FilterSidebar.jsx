@@ -11,7 +11,6 @@ import get from 'lodash/get';
 import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
-import FacilitySidebarSearchTabFacilitiesCount from './FacilitySidebarSearchTabFacilitiesCount';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
 import FeatureFlag from './FeatureFlag';
 
@@ -108,6 +107,7 @@ class FilterSidebar extends Component {
             vectorTileFeatureIsActive,
             fetchingFeatureFlags,
             embed,
+            facilitiesCount,
         } = this.props;
 
         if (fetchingFeatureFlags) {
@@ -159,23 +159,30 @@ class FilterSidebar extends Component {
             <AppBar
                 position="static"
                 className="results-height-subtract filter-sidebar-tabgroup"
+                color="default"
             >
                 <Tabs
                     value={activeTabIndex}
                     onChange={handleTabChange}
-                    classes={{
-                        root: 'tabs',
-                        indicator: 'tabs-indicator-color',
-                    }}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    fullWidth
                 >
-                    {orderedTabsForSidebar.map(sidebarTab => (
-                        <Tab
-                            key={sidebarTab.tab}
-                            label={sidebarTab.tab}
-                            className="tab-minwidth"
-                        />
-                    ))}
-                    <FacilitySidebarSearchTabFacilitiesCount />
+                    {orderedTabsForSidebar.map(({ tab }) => {
+                        const label =
+                            tab === filterSidebarTabsEnum.facilities &&
+                            facilitiesCount &&
+                            facilitiesCount > -1
+                                ? `${tab} (${facilitiesCount})`
+                                : tab;
+                        return (
+                            <Tab
+                                key={tab}
+                                label={label}
+                                className="search-tab"
+                            />
+                        );
+                    })}
                 </Tabs>
             </AppBar>
         );
@@ -256,6 +263,9 @@ function mapStateToProps({
     featureFlags: { flags, fetching: fetchingFeatureFlags },
     embeddedMap: { embed },
     filters: { contributors },
+    facilities: {
+        facilities: { data: facilities },
+    },
 }) {
     return {
         activeFilterSidebarTab,
@@ -267,6 +277,7 @@ function mapStateToProps({
         fetchingFeatureFlags,
         embed,
         contributors,
+        facilitiesCount: get(facilities, 'count', null),
     };
 }
 

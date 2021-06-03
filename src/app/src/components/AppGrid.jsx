@@ -2,6 +2,8 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 
+import { OARFont } from '../util/constants';
+
 export default function AppGrid({
     style,
     title,
@@ -23,7 +25,7 @@ export default function AppGrid({
                     <Grid item xs={12}>
                         <h2
                             style={{
-                                fontFamily: 'ff-tisa-sans-web-pro, sans-serif',
+                                fontFamily: OARFont,
                                 fontWeight: 'normal',
                                 fontSize: '32px',
                             }}

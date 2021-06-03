@@ -6,10 +6,12 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Link } from 'react-router-dom';
 import head from 'lodash/head';
+import filter from 'lodash/filter';
 import last from 'lodash/last';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
 import partition from 'lodash/partition';
+import { withStyles } from '@material-ui/core/styles';
 
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarInfo from './FacilityDetailSidebarInfo';
@@ -49,53 +51,72 @@ import {
 
 import COLOURS from '../util/COLOURS';
 
-const detailsSidebarStyles = Object.freeze({
-    headerButtonStyle: Object.freeze({
-        width: '30px',
-        marginRight: '14px',
-        marginLeft: '8px',
-    }),
-    headerClaimButtonStyle: Object.freeze({
-        margin: 0,
-        marginLeft: 'auto',
-        padding: '3px',
-        flex: 'none',
-        alignSelf: 'baseline',
-    }),
-    linkSectionStyle: Object.freeze({
-        display: 'flex',
-        flexDirection: 'column',
-    }),
-    linkStyle: Object.freeze({
-        display: 'inline-block',
-        fontSize: '16px',
-    }),
-    closureRibbon: Object.freeze({
-        background: 'rgb(255, 218, 162)',
-        borderRadius: '4px',
-        border: '1px solid rgb(134, 65, 15)',
-        color: 'rgb(85, 43, 12)',
-        fontSize: '14px',
-        fontWeight: 'bold',
-        padding: '5px',
-        margin: '10px 5px 0 5px',
-        textAlign: 'center',
-    }),
-    pendingRibbon: Object.freeze({
-        borderRadius: '4px',
-        border: '1px solid rgb(134, 65, 15)',
-        color: 'rgb(85, 43, 12)',
-        fontSize: '14px',
-        fontWeight: 'bold',
-        padding: '5px',
-        margin: '10px 5px 0 5px',
-        textAlign: 'center',
-    }),
-});
+const detailsSidebarStyles = theme =>
+    Object.freeze({
+        root: {
+            fontFamily: theme.typography.fontFamily,
+        },
+        headerButtonStyle: Object.freeze({
+            width: '30px',
+            marginRight: '14px',
+            marginLeft: '-8px',
+            background: 'unset !important',
+            color: theme.palette.primary.contrastText,
+        }),
+        headerClaimButtonStyle: Object.freeze({
+            margin: 0,
+            marginLeft: 'auto',
+            padding: '3px',
+            flex: 'none',
+            alignSelf: 'baseline',
+        }),
+        linkSectionStyle: Object.freeze({
+            display: 'flex',
+            flexDirection: 'column',
+        }),
+        linkStyle: Object.freeze({
+            display: 'inline-block',
+            fontSize: '16px',
+            color: `${theme.palette.primary.main} !important`,
+        }),
+        closureRibbon: Object.freeze({
+            background: 'rgb(255, 218, 162)',
+            borderRadius: '4px',
+            border: '1px solid rgb(134, 65, 15)',
+            color: 'rgb(85, 43, 12)',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            padding: '5px',
+            margin: '10px 5px 0 5px',
+            textAlign: 'center',
+        }),
+        pendingRibbon: Object.freeze({
+            borderRadius: '4px',
+            border: '1px solid rgb(134, 65, 15)',
+            color: 'rgb(85, 43, 12)',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            padding: '5px',
+            margin: '10px 5px 0 5px',
+            textAlign: 'center',
+        }),
+        error: {
+            color: theme.palette.error,
+        },
+        panelHeader: {
+            backgroundColor: theme.palette.primary.main,
+            padding: '24px 20px',
+            maxHeight: '110px',
+            color: theme.palette.primary.contrastText,
+        },
+    });
 
 class FacilityDetailSidebar extends Component {
     componentDidMount() {
-        return this.props.fetchFacility();
+        return this.props.fetchFacility(
+            Number(this.props.embed),
+            this.props.contributors,
+        );
     }
 
     componentDidUpdate({
@@ -107,9 +128,13 @@ class FacilityDetailSidebar extends Component {
             match: {
                 params: { oarID },
             },
+            embed,
+            contributors,
         } = this.props;
 
-        return oarID !== prevOARID ? this.props.fetchFacility() : null;
+        return oarID !== prevOARID
+            ? this.props.fetchFacility(Number(embed), contributors)
+            : null;
     }
 
     componentWillUnmount() {
@@ -128,6 +153,7 @@ class FacilityDetailSidebar extends Component {
             facilityIsClaimedByCurrentUser,
             userHasPendingFacilityClaim,
             embed,
+            classes,
         } = this.props;
 
         if (fetching) {
@@ -146,7 +172,7 @@ class FacilityDetailSidebar extends Component {
                     <div className="control-panel__content">
                         <ul>
                             {error.map(err => (
-                                <li key={err} style={{ color: 'red' }}>
+                                <li key={err} classNames={classes.errror}>
                                     {err}
                                 </li>
                             ))}
@@ -217,7 +243,7 @@ class FacilityDetailSidebar extends Component {
             if (report.status === 'PENDING') {
                 return (
                     <FeatureFlag flag={REPORT_A_FACILITY}>
-                        <div style={detailsSidebarStyles.pendingRibbon}>
+                        <div className={classes.pendingRibbon}>
                             Reported as {report.closure_state.toLowerCase()}{' '}
                             (status pending).
                         </div>
@@ -227,7 +253,7 @@ class FacilityDetailSidebar extends Component {
             if (data.properties.is_closed) {
                 return (
                     <FeatureFlag flag={REPORT_A_FACILITY}>
-                        <div style={detailsSidebarStyles.closureRibbon}>
+                        <div className={classes.closureRibbon}>
                             This facility is closed.
                         </div>
                     </FeatureFlag>
@@ -236,17 +262,21 @@ class FacilityDetailSidebar extends Component {
             return null;
         };
 
+        const contributorFields = filter(
+            get(data, 'properties.contributor_fields', null),
+            field => field.value !== null,
+        );
+
         const claimedFacilitySection = (
             <ShowOnly when={!facilityIsClaimedByCurrentUser}>
                 <>
                     <FeatureFlag flag={CLAIM_A_FACILITY}>
                         {data.properties.claim_info ? (
                             <a
-                                className="link-underline small"
+                                className={`link-underline small ${classes.linkStyle}`}
                                 href={makeDisputeClaimEmailLink(
                                     data.properties.oar_id,
                                 )}
-                                style={detailsSidebarStyles.linkStyle}
                             >
                                 Dispute claim
                             </a>
@@ -254,14 +284,13 @@ class FacilityDetailSidebar extends Component {
                             <>
                                 <ShowOnly when={!userHasPendingFacilityClaim}>
                                     <Link
-                                        className="link-underline small"
+                                        className={`link-underline small ${classes.linkStyle}`}
                                         to={makeClaimFacilityLink(
                                             data.properties.oar_id,
                                         )}
                                         href={makeClaimFacilityLink(
                                             data.properties.oar_id,
                                         )}
-                                        style={detailsSidebarStyles.linkStyle}
                                     >
                                         Claim this facility
                                     </Link>
@@ -276,11 +305,10 @@ class FacilityDetailSidebar extends Component {
                         )}
                     </FeatureFlag>
                     <a
-                        className="link-underline small"
+                        className={`link-underline small ${classes.linkStyle}`}
                         href={makeReportADataIssueEmailLink(
                             data.properties.oar_id,
                         )}
-                        style={detailsSidebarStyles.linkStyle}
                     >
                         Suggest a data edit
                     </a>
@@ -289,12 +317,17 @@ class FacilityDetailSidebar extends Component {
         );
 
         return (
-            <div className="control-panel facility-detail">
-                <div className="panel-header display-flex">
+            <div className={`control-panel facility-detail ${classes.root}`}>
+                <div
+                    className={
+                        embed
+                            ? `${classes.panelHeader} display-flex`
+                            : 'panel-header display-flex'
+                    }
+                >
                     <IconButton
                         aria-label="ArrowBack"
-                        className="color-white"
-                        style={detailsSidebarStyles.headerButtonStyle}
+                        className={classes.headerButtonStyle}
                         onClick={() => push(facilitiesRoute)}
                         disabled={fetching}
                     >
@@ -312,10 +345,7 @@ class FacilityDetailSidebar extends Component {
                     <FeatureFlag flag={CLAIM_A_FACILITY}>
                         {data.properties.claim_info ? (
                             <IconButton
-                                className="color-white"
-                                style={
-                                    detailsSidebarStyles.headerClaimButtonStyle
-                                }
+                                className={classes.headerClaimButtonStyle}
                                 onClick={() =>
                                     push(
                                         facilityClaimID &&
@@ -334,10 +364,7 @@ class FacilityDetailSidebar extends Component {
                         ) : (
                             <ShowOnly when={!userHasPendingFacilityClaim}>
                                 <IconButton
-                                    className="color-white"
-                                    style={
-                                        detailsSidebarStyles.headerClaimButtonStyle
-                                    }
+                                    className={classes.headerClaimButtonStyle}
                                     onClick={() =>
                                         push(
                                             makeClaimFacilityLink(
@@ -373,6 +400,19 @@ class FacilityDetailSidebar extends Component {
                             </p>
                         </div>
                         {canonicalFacilityLocation}
+                        {contributorFields.map(field => (
+                            <div
+                                className="control-panel__group"
+                                key={field.label}
+                            >
+                                <h1 className="control-panel__heading">
+                                    {field.label}
+                                </h1>
+                                <p className="control-panel__body">
+                                    {field.value}
+                                </p>
+                            </div>
+                        ))}
                         <FacilityDetailsSidebarOtherLocations
                             data={removeDuplicatesFromOtherLocationsData(
                                 otherLocationsData,
@@ -414,7 +454,7 @@ class FacilityDetailSidebar extends Component {
                             />
                         </FeatureFlag>
                         <div className="control-panel__group">
-                            <div style={detailsSidebarStyles.linkSectionStyle}>
+                            <div className={classes.linkSectionStyle}>
                                 <ShowOnly when={!embed}>
                                     {claimedFacilitySection}
                                     <ShowOnly
@@ -422,16 +462,13 @@ class FacilityDetailSidebar extends Component {
                                     >
                                         <FeatureFlag flag={CLAIM_A_FACILITY}>
                                             <Link
-                                                className="link-underline small"
+                                                className={`link-underline small ${classes.linkStyle}`}
                                                 to={makeApprovedClaimDetailsLink(
                                                     facilityClaimID,
                                                 )}
                                                 href={makeApprovedClaimDetailsLink(
                                                     facilityClaimID,
                                                 )}
-                                                style={
-                                                    detailsSidebarStyles.linkStyle
-                                                }
                                             >
                                                 Update facility details
                                             </Link>
@@ -443,9 +480,8 @@ class FacilityDetailSidebar extends Component {
                                 </ShowOnly>
                                 <ShowOnly when={embed}>
                                     <a
-                                        className="link-underline small"
+                                        className={`link-underline small ${classes.linkStyle}`}
                                         href={getLocationWithoutEmbedParam()}
-                                        style={detailsSidebarStyles.linkStyle}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
@@ -493,6 +529,7 @@ function mapStateToProps(
         },
         auth: { user },
         embeddedMap: { embed },
+        filters: { contributors },
     },
     {
         match: {
@@ -524,6 +561,7 @@ function mapStateToProps(
         userHasPendingFacilityClaim,
         user,
         embed: !!embed,
+        contributors,
     };
 }
 
@@ -536,7 +574,8 @@ function mapDispatchToProps(
     },
 ) {
     return {
-        fetchFacility: () => dispatch(fetchSingleFacility(oarID)),
+        fetchFacility: (embed, contributorId) =>
+            dispatch(fetchSingleFacility(oarID, embed, contributorId)),
         clearFacility: () => dispatch(resetSingleFacility()),
     };
 }
@@ -544,4 +583,4 @@ function mapDispatchToProps(
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(FacilityDetailSidebar);
+)(withStyles(detailsSidebarStyles)(FacilityDetailSidebar));

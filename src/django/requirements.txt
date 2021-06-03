@@ -14,7 +14,7 @@ django-spa==0.2.0
 django-waffle==0.17.0
 django-watchman==0.17.0
 djangorestframework-gis==0.14
-djangorestframework==3.10.1
+djangorestframework==3.11.2
 flake8==3.6.0
 mccabe==0.6.1
 mercantile==1.1.2

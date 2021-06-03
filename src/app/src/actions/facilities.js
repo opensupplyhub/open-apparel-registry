@@ -14,6 +14,7 @@ import {
     makeGetFacilityByOARIdURL,
     makeFacilityDetailLink,
     createQueryStringFromSearchFilters,
+    makeGetFacilityByOARIdURLWithContributorId,
 } from '../util/util';
 
 import { makeSidebarFacilitiesTabActive } from './ui';
@@ -125,7 +126,11 @@ export function fetchNextPageOfFacilities() {
     };
 }
 
-export function fetchSingleFacility(oarID = null) {
+export function fetchSingleFacility(
+    oarID = null,
+    embed = 0,
+    contributors = null,
+) {
     return dispatch => {
         dispatch(startFetchSingleFacility());
 
@@ -139,8 +144,16 @@ export function fetchSingleFacility(oarID = null) {
             );
         }
 
+        const fetchUrl = embed
+            ? makeGetFacilityByOARIdURLWithContributorId(
+                  oarID,
+                  embed,
+                  contributors[0].value,
+              )
+            : makeGetFacilityByOARIdURL(oarID);
+
         return apiRequest
-            .get(makeGetFacilityByOARIdURL(oarID))
+            .get(fetchUrl)
             .then(({ data }) => dispatch(completeFetchSingleFacility(data)))
             .catch(err =>
                 dispatch(
