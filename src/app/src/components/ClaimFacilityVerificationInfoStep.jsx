@@ -106,6 +106,16 @@ function ClaimFacilityVerificationInfoStep({
                     onChange={updateVerification}
                     disabled={fetching}
                 />
+                <Typography style={{ marginRight: '20px' }}>
+                    If you do not have a website or LinkedIn page for your
+                    facility, or if those pages do not list the address of the
+                    facility you wish to claim, please email{' '}
+                    <a href="mailto:info@openapparel.org">
+                        info@openapparel.org
+                    </a>{' '}
+                    with documentation confirming the address of your facility,
+                    to assist the OAR team in verifying your claim.
+                </Typography>
             </div>
         </>
     );

@@ -679,10 +679,14 @@ class FacilityClaim(models.Model):
             Affiliations.ETHICAL_TRADING_INITIATIVE,
             Affiliations.FAIR_LABOR_ASSOCIATION,
             Affiliations.FAIR_WEAR_FOUNDATION,
+            Affiliations.HERFINANCE,
+            Affiliations.HERHEATH,
+            Affiliations.HERRESPECT,
             Affiliations.SEDEX,
             Affiliations.SOCIAL_LABOR_CONVERGENCE_PLAN,
             Affiliations.SUSTAINABLE_APPAREL_COALITION,
             Affiliations.SWEATFREE_PURCHASING_CONSORTIUM,
+            Affiliations.ZDHC,
         ]
     ]
 
@@ -696,9 +700,11 @@ class FacilityClaim(models.Model):
             Certifications.CANOPY,
             Certifications.CRADLE_TO_CRADLE,
             Certifications.EU_ECOLABEL,
+            Certifications.FAIRTRADE_USA,
             Certifications.FSC,
             Certifications.GLOBAL_RECYCLING_STANDARD,
             Certifications.GOTS,
+            Certifications.GREEN_BUTTON,
             Certifications.GREEN_SCREEN,
             Certifications.HIGG_INDEX,
             Certifications.IMO_CONTROL,
