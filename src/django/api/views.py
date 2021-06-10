@@ -1747,6 +1747,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         m.facility_list_item.source.contributor.id
                         if m.facility_list_item.source.contributor else None,
                         'match_id': m.id,
+                        'facility_created_by_item':
+                        Facility.objects.filter(
+                            created_from=m.facility_list_item.id)[0].id
+                        if Facility.objects.filter(
+                            created_from=m.facility_list_item.id).exists()
+                        else None,
                     }
                     for m
                     in facility.get_other_matches()
@@ -1767,18 +1773,29 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             list_item_for_match = match_for_new_facility.facility_list_item
 
-            new_facility = Facility \
-                .objects \
-                .create(
-                    name=list_item_for_match.name,
-                    address=list_item_for_match.address,
-                    country_code=list_item_for_match.country_code,
-                    location=list_item_for_match.geocoded_point,
-                    ppe_product_types=list_item_for_match.ppe_product_types,
-                    ppe_contact_phone=list_item_for_match.ppe_contact_phone,
-                    ppe_contact_email=list_item_for_match.ppe_contact_email,
-                    ppe_website=list_item_for_match.ppe_website,
-                    created_from=list_item_for_match)
+            facility_qs = Facility.objects.filter(
+                created_from=list_item_for_match)
+            if facility_qs.exists():
+                # `Facility.created_by` must be unique. If the item was
+                # previously used to create a facility, we must related it to
+                # that existing facility rather than creating a new facility
+                new_facility = facility_qs[0]
+            else:
+                new_facility = Facility \
+                    .objects \
+                    .create(
+                        name=list_item_for_match.name,
+                        address=list_item_for_match.address,
+                        country_code=list_item_for_match.country_code,
+                        location=list_item_for_match.geocoded_point,
+                        ppe_product_types=(
+                            list_item_for_match.ppe_product_types),
+                        ppe_contact_phone=(
+                            list_item_for_match.ppe_contact_phone),
+                        ppe_contact_email=(
+                            list_item_for_match.ppe_contact_email),
+                        ppe_website=list_item_for_match.ppe_website,
+                        created_from=list_item_for_match)
 
             match_for_new_facility.facility = new_facility
             match_for_new_facility.confidence = 1.0

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Conditionally change split operation to revert [#1386](https://github.com/open-apparel-registry/open-apparel-registry/pull/1386)
+
 ### Changed
 
 - Update claim a facility [#1385](https://github.com/open-apparel-registry/open-apparel-registry/pull/1385)
