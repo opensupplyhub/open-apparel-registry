@@ -111,55 +111,34 @@ export default function useUpdateLeafletMapImperatively(
         }
     }, [data, shouldSetViewOnReceivingData, setShouldSetViewOnReceivingData]);
 
-    // Set the map view to center on the facility at zoom level 15 if
-    // the user has clicked on a facility list item in the sidebar for a
-    // facility that is currently off-screen or when the vector tile map
-    // is zoomed out a level low enough to show the grid layer.
-    const [
-        panMapOnGettingFacilityData,
-        setPanMapOnGettingFacilityData,
-    ] = useState(shouldPanMapToFacilityDetails);
-
     useEffect(() => {
-        if (shouldPanMapToFacilityDetails && !panMapOnGettingFacilityData) {
-            setPanMapOnGettingFacilityData(true);
-        } else if (data && panMapOnGettingFacilityData) {
-            const leafletMap = get(mapRef, 'current.leafletElement', null);
+        const leafletMap = get(mapRef, 'current.leafletElement', null);
 
-            const facilityLocation = get(data, 'geometry.coordinates', null);
+        const facilityLocation = get(data, 'geometry.coordinates', null);
 
-            if (leafletMap && facilityLocation) {
-                const facilityLatLng = {
-                    lng: head(facilityLocation),
-                    lat: last(facilityLocation),
-                };
+        if (leafletMap && facilityLocation) {
+            const facilityLatLng = {
+                lng: head(facilityLocation),
+                lat: last(facilityLocation),
+            };
 
-                const mapBoundsContainsFacility = leafletMap
-                    .getBounds()
-                    .contains(facilityLatLng);
+            const mapBoundsContainsFacility = leafletMap
+                .getBounds()
+                .contains(facilityLatLng);
 
-                const currentMapZoomLevel = leafletMap.getZoom();
+            const currentMapZoomLevel = leafletMap.getZoom();
 
-                const shouldSetMapView =
-                    (isVectorTileMap &&
-                        currentMapZoomLevel <
-                            maxVectorTileFacilitiesGridZoom + 1) ||
-                    !mapBoundsContainsFacility;
+            const shouldSetMapView =
+                (isVectorTileMap &&
+                    currentMapZoomLevel <
+                        maxVectorTileFacilitiesGridZoom + 1) ||
+                !mapBoundsContainsFacility;
 
-                if (shouldSetMapView) {
-                    leafletMap.setView(facilityLatLng, detailsZoomLevel);
-                }
+            if (shouldSetMapView) {
+                leafletMap.setView(facilityLatLng, detailsZoomLevel);
             }
-
-            setPanMapOnGettingFacilityData(false);
         }
-    }, [
-        data,
-        shouldPanMapToFacilityDetails,
-        panMapOnGettingFacilityData,
-        setPanMapOnGettingFacilityData,
-        isVectorTileMap,
-    ]);
+    }, [data, shouldPanMapToFacilityDetails, isVectorTileMap]);
 
     return mapRef;
 }

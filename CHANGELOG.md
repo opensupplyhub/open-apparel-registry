@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Remove state flag from useUpdateLeafletMapImperatively to avoid loop [#1393](https://github.com/open-apparel-registry/open-apparel-registry/pull/1393)
+
 ### Security
 
 ## [42] - 2021-06-02
