@@ -19,6 +19,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [43] - 2021-06-11
+
+### Added
+
+- Conditionally change split operation to revert [#1386](https://github.com/open-apparel-registry/open-apparel-registry/pull/1386)
+
+### Changed
+
+- Update claim a facility [#1385](https://github.com/open-apparel-registry/open-apparel-registry/pull/1385)
+
+### Fixed
+
+- Remove state flag from useUpdateLeafletMapImperatively to avoid loop [#1393](https://github.com/open-apparel-registry/open-apparel-registry/pull/1393)
+- Pass request as context to FacilitySerializer [#1396](https://github.com/open-apparel-registry/open-apparel-registry/pull/1396)
+
 ## [42] - 2021-06-02
 
 ### Added
@@ -816,7 +831,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/42...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/43...HEAD
+[43]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/43
 [42]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/42
 [2.41.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.1
 [2.41.0]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.0

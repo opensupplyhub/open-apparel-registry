@@ -3334,6 +3334,42 @@ class FacilitySplitTest(APITestCase):
         post_response = self.client.post(self.split_url, {})
         self.assertEqual(post_response.status_code, 400)
 
+    def test_post_reverts_to_created_facility(self):
+        self.facility_two = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    ppe_product_types=['two_a', 'two_b'],
+                    ppe_contact_phone='222-222-2222',
+                    ppe_contact_email='ppe_two@example.com',
+                    ppe_website='https://example.com/ppe_two',
+                    created_from=self.list_item_two)
+
+        initial_facility_count = Facility \
+            .objects \
+            .all() \
+            .count()
+        self.assertEqual(initial_facility_count, 2)
+        self.assertEqual(self.match_two.facility, self.facility_one)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url,
+                                         {'match_id': self.match_two.id})
+        self.assertEqual(post_response.status_code, 200)
+
+        updated_facility_count = Facility \
+            .objects \
+            .all() \
+            .count()
+
+        self.assertEqual(updated_facility_count, initial_facility_count)
+
+        self.match_two.refresh_from_db()
+        self.assertEqual(self.match_two.facility, self.facility_two)
+
     def test_post_creates_a_new_facility(self):
         initial_facility_count = Facility \
             .objects \

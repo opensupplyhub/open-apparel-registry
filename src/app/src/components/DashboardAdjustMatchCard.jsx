@@ -131,10 +131,15 @@ export default function DashboardAdjustMatchCard({
         promoteMatch(matchToPromote.match_id);
     };
 
+    const successfulSplitMessage = match =>
+        match.facility_created_by_item
+            ? 'Reverted match to original facility'
+            : 'New facility was created';
+
     useEffect(() => {
         if (!adjusting && loading) {
             const toastMessage = matchToSplit
-                ? 'New facility was created'
+                ? successfulSplitMessage(matchToSplit)
                 : 'Match was promoted';
 
             setMatchToSplit(null);
@@ -188,7 +193,7 @@ export default function DashboardAdjustMatchCard({
                     }
                     style={adjustMatchCardStyles.buttonStyles}
                 >
-                    Split
+                    {match.facility_created_by_item ? 'Revert' : 'Split'}
                 </Button>
                 <Button
                     variant="contained"
@@ -222,15 +227,21 @@ export default function DashboardAdjustMatchCard({
             action,
         } = matchToSplit
             ? {
-                  title: `Create a new facility from Match ${get(
-                      matchToSplit,
-                      'match_id',
-                      '',
-                  )}?`,
-                  subtitle: 'This will create a new facility from:',
+                  title: matchToSplit.facility_created_by_item
+                      ? `Revert match to original facility ${matchToSplit.facility_created_by_item}`
+                      : `Create a new facility from Match ${get(
+                            matchToSplit,
+                            'match_id',
+                            '',
+                        )}?`,
+                  subtitle: matchToSplit.facility_created_by_item
+                      ? 'This will connect the item to the original facility'
+                      : 'This will create a new facility from:',
                   name: get(matchToSplit, 'name', ''),
                   address: get(matchToSplit, 'address', ''),
-                  actionLabel: 'Create facility',
+                  actionLabel: matchToSplit.facility_created_by_item
+                      ? 'Revert match'
+                      : 'Create facility',
                   action: handleSplitMatch,
               }
             : {

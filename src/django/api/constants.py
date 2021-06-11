@@ -89,6 +89,10 @@ class Affiliations:
     SOCIAL_LABOR_CONVERGENCE_PLAN = 'Social and Labor Convergence Plan (SLCP)'
     SUSTAINABLE_APPAREL_COALITION = 'Sustainable Apparel Coalition'
     SWEATFREE_PURCHASING_CONSORTIUM = 'Sweatfree Purchasing Consortium'
+    HERHEATH = 'HERhealth'
+    HERFINANCE = 'HERfinance'
+    HERRESPECT = 'HERrespect'
+    ZDHC = 'ZDHC'
 
 
 class Certifications:
@@ -119,6 +123,8 @@ class Certifications:
     RESPONSIBLE_DOWN_STANDARD = 'Responsible Down Standard (RDS)'
     RESPONSIBLE_WOOL_STANDARD = 'Responsible Wool Standard (RWS)'
     SAB8000 = 'SA8000'
+    GREEN_BUTTON = 'Green Button'
+    FAIRTRADE_USA = 'Fairtrade USA'
 
 
 class LogDownloadQueryParams:
