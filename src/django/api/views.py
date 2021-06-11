@@ -786,13 +786,17 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         extent = queryset.aggregate(Extent('location'))['location__extent']
 
+        context = {'request': request}
+
         if page_queryset is not None:
-            serializer = FacilitySerializer(page_queryset, many=True)
+            serializer = FacilitySerializer(page_queryset, many=True,
+                                            context=context)
             response = self.get_paginated_response(serializer.data)
             response.data['extent'] = extent
             return response
 
-        response_data = FacilitySerializer(queryset, many=True).data
+        response_data = FacilitySerializer(queryset, many=True,
+                                           context=context).data
         response_data['extent'] = extent
         return Response(response_data)
 
