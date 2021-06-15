@@ -137,3 +137,10 @@ class UpdateLocationParams:
     LNG = 'lng'
     NOTES = 'notes'
     CONTRIBUTOR_ID = 'contributor_id'
+
+
+class DateFormats:
+    STANDARD = '%Y-%m-%d %H:%M:%S.%f'
+    SECOND = '%Y-%m-%d %H:%M:%S'
+    MONTH = '%Y-%m'
+    WEEK = '%Y-%W'
