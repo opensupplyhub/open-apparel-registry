@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Correct contributor types [#1397](https://github.com/open-apparel-registry/open-apparel-registry/pull/1397)
+
 ### Security
 
 ## [43] - 2021-06-11
