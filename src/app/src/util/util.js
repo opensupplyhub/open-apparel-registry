@@ -774,6 +774,7 @@ export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
     return window.location.href.replace('settings', `?${qs}`);
 };
 
+// This must be kept in sync with renderEmbeddedMap in EmbeddedMapConfig.jsx
 export const createIFrameHTML = ({ fullWidth, contributor, height, width }) =>
     fullWidth
         ? `<div>
