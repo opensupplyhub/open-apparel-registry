@@ -520,3 +520,7 @@ export const OARFont = 'ff-tisa-sans-web-pro,sans-serif';
 export const OARColor = '#0427a4';
 
 export const EmbeddedMapInfoLink = 'https://info.openapparel.org/embedded-map';
+
+// A CSS size value that is used to set a lower bound on the iframe height
+// when the width is set to 100%
+export const minimum100PercentWidthEmbedHeight = '500px';

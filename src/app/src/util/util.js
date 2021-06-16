@@ -49,6 +49,7 @@ import {
     facilityListItemStatusChoicesEnum,
     facilityListItemErrorStatuses,
     facilityListSummaryStatusMessages,
+    minimum100PercentWidthEmbedHeight,
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
@@ -776,7 +777,7 @@ export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
 export const createIFrameHTML = ({ fullWidth, contributor, height, width }) =>
     fullWidth
         ? `<div>
-            <div style="position:relative;padding-top:${height}%;">
+            <div style="position:relative;padding-top:max(${height}%,${minimum100PercentWidthEmbedHeight});">
                 <iframe
                     src="${getEmbeddedMapSrc({
                         contributor,
