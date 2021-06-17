@@ -227,7 +227,7 @@ function FilterSidebarSearchTab({
         <div
             className={`control-panel__content ${classes.controlPanelContentStyles}`}
         >
-            <div>
+            <div style={{ marginBottom: '60px' }}>
                 <div className="form__field" style={{ marginBottom: '10px' }}>
                     <InputLabel htmlFor={FACILITIES} className="form__label">
                         <FeatureFlag
