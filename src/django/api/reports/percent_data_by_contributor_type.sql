@@ -1,7 +1,9 @@
 SELECT
     match.month,
     contrib_type,
-    ROUND(CAST((COUNT(*)*100) as decimal)/total, 2) as percent_of_data
+    ROUND(CAST((COUNT(*)*100) as decimal)/total, 2) as percent_of_data,
+    COUNT(*) as type_count,
+    total
 FROM (
     SELECT
         MIN(to_char(m.created_at, 'YYYY-MM')) AS month,
@@ -32,4 +34,5 @@ JOIN (
     GROUP BY month
     ORDER BY month
 ) t ON t.month = match.month
-GROUP BY match.month, contrib_type, total;
+GROUP BY match.month, contrib_type, total
+ORDER BY month;
