@@ -5,14 +5,12 @@ export const FACILITIES_REQUEST_PAGE_SIZE = 50;
 // This choices must be kept in sync with the identical list
 // kept in the Django API's models.py file
 export const contributorTypeOptions = Object.freeze([
-    'Auditor',
-    'Brand/Retailer',
+    'Academic / Researcher / Journalist / Student',
+    'Auditor / Certification Scheme / Service Provider',
+    'Brand / Retailer',
     'Civil Society Organization',
-    'Factory / Facility',
-    'Manufacturing Group / Supplier / Vendor',
-    'Multi Stakeholder Initiative',
-    'Researcher / Academic',
-    'Service Provider',
+    'Facility / Factory / Manufacturing Group / Supplier / Vendor',
+    'Multi-Stakeholder Initiative',
     'Union',
     OTHER,
 ]);
@@ -522,3 +520,7 @@ export const OARFont = 'ff-tisa-sans-web-pro,sans-serif';
 export const OARColor = '#0427a4';
 
 export const EmbeddedMapInfoLink = 'https://info.openapparel.org/embedded-map';
+
+// A CSS size value that is used to set a lower bound on the iframe height
+// when the width is set to 100%
+export const minimum100PercentWidthEmbedHeight = '500px';

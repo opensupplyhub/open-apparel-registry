@@ -1,5 +1,5 @@
 SELECT
-  fm.month,
+  z.month,
   ROUND(CAST(
             (COUNT(CASE WHEN fm.is_public_list THEN 1 ELSE NULL END)*100)
         as decimal)/COUNT(*), 2) AS oar_data,
@@ -11,7 +11,8 @@ SELECT
   FROM (
       SELECT
           MIN(to_char(m.created_at, 'YYYY-MM')) AS month,
-          u.email LIKE '%openapparel.org%' AS is_public_list
+          u.email LIKE '%openapparel.org%' AS is_public_list,
+          m.facility_id
       FROM api_facilitymatch m
           JOIN api_facilitylistitem i on m.facility_list_item_id = i.id
           JOIN api_source s on i.source_id = s.id
@@ -20,5 +21,10 @@ SELECT
       WHERE m.status NOT IN ('REJECTED', 'PENDING')
       GROUP BY m.facility_id, u.email
   ) as fm
- GROUP BY fm.month
- ORDER BY fm.month
+  JOIN (
+      SELECT to_char(m.created_at, 'YYYY-MM') AS month
+      FROM api_facilitymatch m
+      GROUP BY month
+  ) z on fm.month <= z.month
+ GROUP BY z.month
+ ORDER BY z.month;

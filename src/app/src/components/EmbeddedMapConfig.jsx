@@ -5,7 +5,10 @@ import { func, shape, string, bool } from 'prop-types';
 
 import { userPropType } from '../util/propTypes';
 import { getEmbeddedMapSrc } from '../util/util';
-import { EmbeddedMapInfoLink } from '../util/constants';
+import {
+    EmbeddedMapInfoLink,
+    minimum100PercentWidthEmbedHeight,
+} from '../util/constants';
 
 import AppGrid from './AppGrid';
 import EmbeddedMapFieldsConfig from './EmbeddedMapFieldsConfig';
@@ -31,15 +34,24 @@ const styles = {
     },
 };
 
+// This must be kept in sync with createIFrameHTML in util.js
+// We use a separate function to avoid using dangerouslySetInnerHTML
 const renderEmbeddedMap = ({ fullWidth, mapSettings, height, width }) =>
     fullWidth ? (
         <div>
-            <div
-                style={{
-                    position: 'relative',
-                    paddingTop: `${height}%`,
-                }}
-            >
+            <style>
+                {`\
+                #oar-embed-0d4dc3a7-e3cd-4acc-88f0-422f5aeefa48 {\
+                    position: relative;\
+                    padding-top: ${height}%;\
+                }\
+                @media (max-width: 600px) { /* mobile breakpoint */\
+                    #oar-embed-0d4dc3a7-e3cd-4acc-88f0-422f5aeefa48 {\
+                        padding-top: ${minimum100PercentWidthEmbedHeight}\
+                    }\
+                }`}
+            </style>
+            <div id="oar-embed-0d4dc3a7-e3cd-4acc-88f0-422f5aeefa48">
                 <iframe
                     src={getEmbeddedMapSrc(mapSettings)}
                     frameBorder="0"

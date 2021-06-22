@@ -49,6 +49,7 @@ import {
     facilityListItemStatusChoicesEnum,
     facilityListItemErrorStatuses,
     facilityListSummaryStatusMessages,
+    minimum100PercentWidthEmbedHeight,
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
@@ -773,22 +774,34 @@ export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
     return window.location.href.replace('settings', `?${qs}`);
 };
 
+// This must be kept in sync with renderEmbeddedMap in EmbeddedMapConfig.jsx
 export const createIFrameHTML = ({ fullWidth, contributor, height, width }) =>
     fullWidth
         ? `<div>
-            <div style="position:relative;padding-top:${height}%;">
-                <iframe
-                    src="${getEmbeddedMapSrc({
-                        contributor,
-                    })}"
-                    frameborder="0"
-                    allowfullscreen
-                    style="position:absolute;top:0;
-                           left:0;width:100%;height:100%;"
-                    title="embedded-map">
-                </iframe>
-              </div>
-            </div>`
+               <style>
+                   #oar-embed-0d4dc3a7-e3cd-4acc-88f0-422f5aeefa48 {
+                       position: relative;
+                       padding-top: ${height}%;
+                   }
+                   @media (max-width: 600px) { /* mobile breakpoint */
+                       #oar-embed-0d4dc3a7-e3cd-4acc-88f0-422f5aeefa48 {
+                           padding-top: ${minimum100PercentWidthEmbedHeight}
+                       }
+                   }
+               </style>
+               <div id="oar-embed-0d4dc3a7-e3cd-4acc-88f0-422f5aeefa48">
+                   <iframe
+                       src="${getEmbeddedMapSrc({
+                           contributor,
+                       })}"
+                       frameborder="0"
+                       allowfullscreen
+                       style="position:absolute;top:0;
+                              left:0;width:100%;height:100%;"
+                       title="embedded-map">
+                   </iframe>
+               </div>
+           </div>`
         : `<iframe
                 src="${getEmbeddedMapSrc({
                     contributor,

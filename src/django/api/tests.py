@@ -5664,18 +5664,21 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         self.source.is_active = False
         self.source.save()
 
-        self.contributor.contrib_type = 'Auditor'
+        self.contributor.contrib_type = (
+            'Auditor / Certification Scheme / Service Provider'
+        )
         self.contributor.save()
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(1, len(contributors))
-        self.assertEqual('An Auditor',
-                         contributors[0].get('name'))
+        self.assertEqual(
+                'An Auditor / Certification Scheme / Service Provider',
+                contributors[0].get('name'))
 
-        self.contributor.contrib_type = 'Brand/Retailer'
+        self.contributor.contrib_type = 'Brand / Retailer'
         self.contributor.save()
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(1, len(contributors))
-        self.assertEqual('A Brand/Retailer',
+        self.assertEqual('A Brand / Retailer',
                          contributors[0].get('name'))
 
     def test_inactive_contributor(self):

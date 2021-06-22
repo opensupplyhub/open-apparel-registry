@@ -90,29 +90,29 @@ class Contributor(models.Model):
     OTHER_CONTRIB_TYPE = 'Other'
 
     CONTRIB_TYPE_CHOICES = (
-        ('Auditor', 'Auditor'),
-        ('Brand/Retailer', 'Brand/Retailer'),
+        ('Academic / Researcher / Journalist / Student',
+         'Academic / Researcher / Journalist / Student'),
+        ('Auditor / Certification Scheme / Service Provider',
+         'Auditor / Certification Scheme / Service Provider'),
+        ('Brand / Retailer', 'Brand / Retailer'),
         ('Civil Society Organization', 'Civil Society Organization'),
-        ('Factory / Facility', 'Factory / Facility'),
-        ('Manufacturing Group / Supplier / Vendor',
-         'Manufacturing Group / Supplier / Vendor'),
-        ('Multi Stakeholder Initiative', 'Multi Stakeholder Initiative'),
-        ('Researcher / Academic', 'Researcher / Academic'),
-        ('Service Provider', 'Service Provider'),
+        ('Facility / Factory / Manufacturing Group / Supplier / Vendor',
+         'Facility / Factory / Manufacturing Group / Supplier / Vendor'),
+        ('Multi-Stakeholder Initiative', 'Multi-Stakeholder Initiative'),
         ('Union', 'Union'),
         (OTHER_CONTRIB_TYPE, OTHER_CONTRIB_TYPE),
     )
 
     PLURAL_CONTRIB_TYPE = {
-        'Auditor': 'Auditors',
-        'Brand/Retailer': 'Brands/Retailers',
+        'Academic / Researcher / Journalist / Student':
+        'Academics / Researchers / Journalists / Students',
+        'Auditor / Certification Scheme / Service Provider':
+        'Auditors / Certification Schemes / Service Providers',
+        'Brand / Retailer': 'Brands / Retailers',
         'Civil Society Organization': 'Civil Society Organizations',
-        'Factory / Facility': 'Factories / Facilities',
-        'Manufacturing Group / Supplier / Vendor':
-        'Manufacturing Groups / Suppliers / Vendors',
-        'Multi Stakeholder Initiative': 'Multi Stakeholder Initiatives',
-        'Researcher / Academic': 'Researchers / Academics',
-        'Service Provider': 'Service Providers',
+        'Facility / Factory / Manufacturing Group / Supplier / Vendor':
+        'Facilities / Factories / Manufacturing Groups / Suppliers / Vendors',
+        'Multi-Stakeholder Initiative': 'Multi-Stakeholder Initiatives',
         'Union': 'Unions',
         OTHER_CONTRIB_TYPE: 'Others',
     }
