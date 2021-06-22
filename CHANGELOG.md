@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [44] 2021-06-22
+
+### Added
+
 - Add new admin reports [#1391](https://github.com/open-apparel-registry/open-apparel-registry/pull/1391)
 - Reorder contributor fields [#1398](https://github.com/open-apparel-registry/open-apparel-registry/pull/1398)
 - Add additional new admin reports [#1399](https://github.com/open-apparel-registry/open-apparel-registry/pull/1399)
@@ -18,16 +32,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Consolidate contributor type options [#1395](https://github.com/open-apparel-registry/open-apparel-registry/pull/1395)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Correct contributor types [#1397](https://github.com/open-apparel-registry/open-apparel-registry/pull/1397)
 - Set a minimum height when using a 100% width embed [#1401](https://github.com/open-apparel-registry/open-apparel-registry/pull/1401)
 
 ### Security
+
+- Bump ws from 6.2.1 to 6.2.2 in /src/app [#1383](https://github.com/open-apparel-registry/open-apparel-registry/pull/1383)
 
 ## [43] - 2021-06-11
 
@@ -841,7 +853,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/43...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/44...HEAD
+[44]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/44
 [43]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/43
 [42]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/42
 [2.41.1]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/2.41.1
