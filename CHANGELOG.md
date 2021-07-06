@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Anonymize other_locations contributors [#1415](https://github.com/open-apparel-registry/open-apparel-registry/pull/1415)
+
 ### Security
 
 ## [44] 2021-06-22
