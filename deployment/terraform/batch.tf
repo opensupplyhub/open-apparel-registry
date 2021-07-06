@@ -64,6 +64,9 @@ data "template_file" "default_job_definition" {
     google_server_side_api_key = "${var.google_server_side_api_key}"
     oar_client_key             = "${var.oar_client_key}"
 
+    mailchimp_api_key = "${var.mailchimp_api_key}"
+    mailchimp_list_id = "${var.mailchimp_list_id}"
+    
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
 
     aws_region = "${var.aws_region}"

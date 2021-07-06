@@ -4,11 +4,12 @@ import sys
 import traceback
 import csv
 import json
+import requests
+from requests.auth import HTTPBasicAuth
 
 from datetime import datetime
 from functools import reduce
 
-from django.conf import settings
 from django.core.files.uploadedfile import (InMemoryUploadedFile,
                                             TemporaryUploadedFile)
 from django.db import transaction
@@ -20,6 +21,7 @@ from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models import Extent
+from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
@@ -147,6 +149,43 @@ def _report_facility_claim_email_error_to_rollbar(claim):
         )
 
 
+def _report_mailchimp_error_to_rollbar(email, name, contrib_type):
+    ROLLBAR = getattr(settings, 'ROLLBAR', {})
+
+    if ROLLBAR:
+        import rollbar
+        rollbar.report_exc_info(
+            sys.exc_info(),
+            extra_data={
+                'email': email,
+                'name': name,
+                'contrib_type': contrib_type,
+            }
+        )
+
+
+def add_user_to_mailing_list(email, name, contrib_type):
+    try:
+        if settings.MAILCHIMP_API_KEY is None:
+            return None
+        # The data center for API calls is at the end of the API key
+        DC = settings.MAILCHIMP_API_KEY.split('-')[-1]
+        endpoint = "https://" + DC + ".api.mailchimp.com/3.0/lists/" + \
+                   settings.MAILCHIMP_LIST_ID + "/members/"
+        data = json.dumps({
+            "email_address": email,
+            "status": "subscribed",
+            "merge_fields": {
+                "ORGANISATI": name,
+                "ORGTYPE": contrib_type
+            }
+        })
+        auth = HTTPBasicAuth('randomstringuser', settings.MAILCHIMP_API_KEY)
+        requests.post(endpoint, data=data, auth=auth)
+    except Exception:
+        _report_mailchimp_error_to_rollbar(email, name, contrib_type)
+
+
 @api_view()
 @permission_classes([AllowAny])
 @renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
@@ -201,6 +240,9 @@ class SubmitNewUserForm(CreateAPIView):
                 contrib_type=contrib_type,
                 other_contrib_type=other_contrib_type,
             )
+
+            if user.should_receive_newsletter:
+                add_user_to_mailing_list(user.email, name, contrib_type)
 
             complete_signup(self.request._request, user, 'optional', None)
 

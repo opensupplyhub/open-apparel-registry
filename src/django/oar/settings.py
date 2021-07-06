@@ -368,3 +368,7 @@ OAR_CLIENT_KEY = os.getenv('OAR_CLIENT_KEY')
 if OAR_CLIENT_KEY is None:
     raise ImproperlyConfigured(
         'Invalid OAR_CLIENT_KEY provided, must be set')
+
+# Mailchimp settings
+MAILCHIMP_API_KEY = os.getenv('MAILCHIMP_API_KEY')
+MAILCHIMP_LIST_ID = os.getenv('MAILCHIMP_LIST_ID')

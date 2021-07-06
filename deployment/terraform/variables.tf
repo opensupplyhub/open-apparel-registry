@@ -220,6 +220,14 @@ variable "default_from_email" {}
 
 variable "notification_email_to" {}
 
+variable "mailchimp_api_key" {
+    default = ""
+}
+
+variable "mailchimp_list_id" {
+    default = ""
+}
+
 variable "batch_default_ce_spot_fleet_bid_percentage" {
   default = "40"
 }
