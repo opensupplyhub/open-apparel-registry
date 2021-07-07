@@ -44,6 +44,7 @@ from api.models import (FacilityList,
                         NonstandardField)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code
+from api.helpers import prefix_a_an
 from waffle import switch_is_active
 
 
@@ -578,6 +579,32 @@ def assign_contributor_field_values(list_item, fields):
             } for f in contributor_fields]
 
 
+def can_user_see_detail(serializer):
+    request = serializer.context.get('request') \
+        if serializer.context is not None else None
+    user = request.user if request is not None else None
+
+    if user is not None and not user.is_anonymous:
+        return user.can_view_full_contrib_details
+    else:
+        return True
+
+
+def get_contributor_name(contributor, user_can_see_detail):
+    if contributor is None:
+        return None
+    if user_can_see_detail:
+        return contributor.name
+    s = prefix_a_an(contributor.contrib_type)
+    return s[0].lower() + s[1:]
+
+
+def get_contributor_id(contributor, user_can_see_detail):
+    if contributor is not None and user_can_see_detail:
+        return contributor.admin.id
+    return None
+
+
 class FacilityDetailsSerializer(FacilitySerializer):
     other_names = SerializerMethodField()
     other_addresses = SerializerMethodField()
@@ -613,14 +640,16 @@ class FacilityDetailsSerializer(FacilitySerializer):
         if is_embed_mode_active(self):
             return []
 
+        user_can_see_detail = can_user_see_detail(self)
+
         facility_locations = [
             {
                 'lat': l.location.y,
                 'lng': l.location.x,
-                'contributor_id': l.contributor.admin.id if l.contributor
-                else None,
-                'contributor_name': l.contributor.name if l.contributor
-                else None,
+                'contributor_id': get_contributor_id(l.contributor,
+                                                     user_can_see_detail),
+                'contributor_name': get_contributor_name(l.contributor,
+                                                         user_can_see_detail),
                 'notes': l.notes,
             }
             for l
@@ -631,12 +660,12 @@ class FacilityDetailsSerializer(FacilitySerializer):
             {
                 'lat': l.facility_list_item.geocoded_point.y,
                 'lng': l.facility_list_item.geocoded_point.x,
-                'contributor_id':
-                l.facility_list_item.source.contributor.admin.id
-                if l.facility_list_item.source.contributor else None,
-                'contributor_name':
-                l.facility_list_item.source.contributor.name
-                if l.facility_list_item.source.contributor else None,
+                'contributor_id': get_contributor_id(
+                    l.facility_list_item.source.contributor,
+                    user_can_see_detail),
+                'contributor_name': get_contributor_name(
+                    l.facility_list_item.source.contributor,
+                    user_can_see_detail),
                 'notes': None,
             }
             for l

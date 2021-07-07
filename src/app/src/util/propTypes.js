@@ -194,9 +194,9 @@ export const facilityPropType = shape({
 });
 
 export const facilityDetailsContributorPropType = shape({
-    id: number.isRequired,
+    id: number,
     name: string.isRequired,
-    is_verified: bool.isRequired,
+    is_verified: bool,
 });
 
 export const facilityDetailsPropType = shape({

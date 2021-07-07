@@ -35,14 +35,12 @@ export default function FacilityDetailsSidebarOtherLocations({ data }) {
                                 <span style={otherLocationStyles.spanStyles}>
                                     {location.lng}, {location.lat}
                                 </span>
-                                {location.contributor_id &&
-                                    location.contributor_name && (
-                                        <span
-                                            style={
-                                                otherLocationStyles.spanStyles
-                                            }
-                                        >
-                                            Contributed by{' '}
+                                {location.contributor_name && (
+                                    <span
+                                        style={otherLocationStyles.spanStyles}
+                                    >
+                                        Contributed by{' '}
+                                        {location.contributor_id ? (
                                             <Link
                                                 to={makeProfileRouteLink(
                                                     location.contributor_id,
@@ -53,8 +51,11 @@ export default function FacilityDetailsSidebarOtherLocations({ data }) {
                                             >
                                                 {location.contributor_name}
                                             </Link>
-                                        </span>
-                                    )}
+                                        ) : (
+                                            location.contributor_name
+                                        )}
+                                    </span>
+                                )}
                                 {location.notes && (
                                     <span
                                         style={otherLocationStyles.spanStyles}

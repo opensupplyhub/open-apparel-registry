@@ -29,7 +29,7 @@ const FacilityDetailSidebarInfo = memo(
             name,
             is_verified: isVerified,
         }) => (
-            <li key={id} className="word-break">
+            <li key={id || name} className="word-break">
                 <ShowOnly when={isVerified}>
                     <span title="Verified">
                         <BadgeVerified
