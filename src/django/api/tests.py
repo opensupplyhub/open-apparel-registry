@@ -4,6 +4,7 @@ import os
 import xlrd
 
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -6414,12 +6415,14 @@ class ApiLimitTest(TestCase):
             .create(admin=self.user_two,
                     name='contributor two',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
-
+        now = timezone.now()
         self.limit_one = ApiLimit.objects.create(contributor=self.contrib_one,
-                                                 yearly_limit=10)
+                                                 yearly_limit=10,
+                                                 period_start_date=now)
 
         self.limit_two = ApiLimit.objects.create(contributor=self.contrib_two,
-                                                 yearly_limit=10)
+                                                 yearly_limit=10,
+                                                 period_start_date=now)
 
         self.notification_time = timezone.now()
         self.notification = ContributorNotifications \
@@ -6434,12 +6437,29 @@ class ApiLimitTest(TestCase):
         self.assertEqual(ApiBlock.objects.filter(
                          contributor=self.contrib_one).count(), 0)
 
+    def test_limit_only_applies_within_period(self):
+        last_month = timezone.now() - relativedelta(months=1)
+        for x in range(10):
+            r = RequestLog.objects.create(user=self.user_one,
+                                          response_code=200)
+            r.created_at = last_month
+            r.save()
+
+        check_api_limits(timezone.now())
+
+        self.assertEqual(ApiBlock.objects.filter(
+                         contributor=self.contrib_one).count(), 0)
+
+        warning = ContributorNotifications.objects.get(
+                  contributor=self.contrib_one)
+        self.assertIsNone(warning.api_limit_warning_sent_on)
+
     def test_limit_warning_sent_once(self):
         for x in range(10):
             RequestLog.objects.create(user=self.user_one, response_code=200)
             RequestLog.objects.create(user=self.user_two, response_code=200)
-        else:
-            check_api_limits(timezone.now())
+
+        check_api_limits(timezone.now())
 
         self.assertEqual(ApiBlock.objects.filter(
                          contributor=self.contrib_one).count(), 0)
@@ -6463,8 +6483,8 @@ class ApiLimitTest(TestCase):
         for x in range(11):
             RequestLog.objects.create(user=self.user_one, response_code=200)
             RequestLog.objects.create(user=self.user_two, response_code=200)
-        else:
-            check_api_limits(timezone.now())
+
+        check_api_limits(timezone.now())
 
         self.assertEqual(ApiBlock.objects.filter(
                          contributor=self.contrib_one).count(), 1)
