@@ -58,6 +58,12 @@ li.dropdown-list-item button {
   text-transform: none;
 }
 
+li.dropdown-list-item button.logout {
+    padding-left: 0 !important;
+    margin-left: -5px;
+    border: none;
+}
+
 li.dropdown-list-item a:hover,
 li.dropdown-list-item button:hover {
   background: none !important;
