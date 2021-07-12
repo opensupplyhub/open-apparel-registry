@@ -32,7 +32,6 @@
   background: linear-gradient(135deg, #003de5 0%,#7964ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#003de5', endColorstr='#7964ff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
   padding: 20px 16px;
-  max-height: 110px;
 }
 
 .panel-header__title {
