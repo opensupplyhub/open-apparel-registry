@@ -1,4 +1,5 @@
 from django.db.models import F
+from django.core.exceptions import ObjectDoesNotExist
 
 from api.constants import ProcessingAction, FacilityHistoryActions
 from api.models import (FacilityMatch,
@@ -292,6 +293,13 @@ def create_facility_claim_entry(claim):
     return None
 
 
+def is_claim_for_facility(c, facility_id):
+    try:
+        return c.facility.id == facility_id
+    except ObjectDoesNotExist:
+        return False
+
+
 def create_facility_history_list(entries, facility_id, user=None):
     if user is not None and not user.is_anonymous:
         user_can_see_detail = user.can_view_full_contrib_details
@@ -376,7 +384,7 @@ def create_facility_history_list(entries, facility_id, user=None):
             FacilityClaim.APPROVED,
             FacilityClaim.REVOKED,
         ])
-        if c.facility.id == facility_id
+        if is_claim_for_facility(c, facility_id)
         if create_facility_claim_entry(c) is not None
     ]
 
