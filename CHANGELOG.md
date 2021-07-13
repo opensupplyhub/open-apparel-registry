@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Conditionally hide remove button [#1417](https://github.com/open-apparel-registry/open-apparel-registry/pull/1417)
+- Align logout button [#1420](https://github.com/open-apparel-registry/open-apparel-registry/pull/1420)
 
 ### Deprecated
 

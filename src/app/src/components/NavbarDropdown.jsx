@@ -58,7 +58,7 @@ const itemMap = item => {
                 <Button
                     color="primary"
                     onClick={item.action}
-                    style={{ border: 'none' }}
+                    className="logout"
                 >
                     {item.text}
                 </Button>
