@@ -305,7 +305,7 @@ export default function DashboardAdjustMatchCard({
                 </Typography>
                 {errorAdjusting && (
                     <Typography style={adjustMatchCardStyles.errorStyles}>
-                        An error prevented adjusting that facility match
+                        {errorAdjusting[0]}
                     </Typography>
                 )}
                 <CardContent style={adjustMatchCardStyles.contentStyles}>

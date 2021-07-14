@@ -1819,6 +1819,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             list_item_for_match = match_for_new_facility.facility_list_item
 
+            if list_item_for_match.geocoded_point is None:
+                raise ValidationError('The match can not be split because '
+                                      'it does not have a location.')
+
             facility_qs = Facility.objects.filter(
                 created_from=list_item_for_match)
             if facility_qs.exists():
