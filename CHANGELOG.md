@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Conditionally hide remove button [#1417](https://github.com/open-apparel-registry/open-apparel-registry/pull/1417)
 - Align logout button [#1420](https://github.com/open-apparel-registry/open-apparel-registry/pull/1420)
 - Use contractual limit tracking [#1418](https://github.com/open-apparel-registry/open-apparel-registry/pull/1418)
+- Handle error when splitting match w/o location [#1424](https://github.com/open-apparel-registry/open-apparel-registry/pull/1424)
 
 ### Deprecated
 
