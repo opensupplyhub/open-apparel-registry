@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Anonymize other_locations contributors [#1415](https://github.com/open-apparel-registry/open-apparel-registry/pull/1415)
 - Fix facility detail header [#1419](https://github.com/open-apparel-registry/open-apparel-registry/pull/1419)
+- Fix facility history bug [#1421](https://github.com/open-apparel-registry/open-apparel-registry/pull/1421)
 
 ### Security
 

@@ -5178,6 +5178,111 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
     @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
+    def test_handles_deleted_facility(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='List')
+
+        source = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=list,
+                    contributor=self.contributor)
+
+        list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=source)
+
+        facility = Facility \
+            .objects \
+            .create(name='Name Two',
+                    address='Address Two',
+                    country_code='US',
+                    location=Point(5, 5),
+                    created_from=list_item)
+
+        FacilityClaim.history.update(facility=facility)
+        facility.delete()
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'ASSOCIATE',
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_flag('can_get_facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_revocation(self):
         self.client.logout()
         self.client.login(email=self.user_email,
