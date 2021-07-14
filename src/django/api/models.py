@@ -1804,6 +1804,7 @@ class ApiLimit(models.Model):
         null=False,
         blank=False,
         help_text='The number of requests a contributor can make per year.')
+    period_start_date = models.DateTimeField(auto_now_add=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
