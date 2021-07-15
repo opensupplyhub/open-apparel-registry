@@ -85,6 +85,16 @@ def has_active_block(request):
     return False
 
 
+def token_has_contributor(request):
+    try:
+        token = get_token(request)
+        if token is None:
+            return True
+        return token.user.contributor is not None
+    except ObjectDoesNotExist:
+        return False
+
+
 class RequestMeterMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -92,11 +102,16 @@ class RequestMeterMiddleware:
     def __call__(self, request):
         is_docs = request.get_full_path() == '/api/docs/?format=openapi'
         is_blocked = has_active_block(request)
-
         if is_blocked and not is_docs:
             return HttpResponse(json.dumps({'detail': 'API limit exceeded'}),
                                 content_type='application/json',
                                 status=402)
-        else:
-            response = self.get_response(request)
-            return response
+
+        if not token_has_contributor(request) and not is_docs:
+            return HttpResponse(json.dumps({'detail': 'User has no ' +
+                                            'associated contributor'}),
+                                content_type='application/json',
+                                status=402)
+
+        response = self.get_response(request)
+        return response

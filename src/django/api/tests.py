@@ -350,7 +350,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
-    def test_upload_by_user_with_no_contributor_returns_400(self):
+    def test_upload_by_user_with_no_contributor_returns_402(self):
         Contributor.objects.all().delete()
         token = Token.objects.create(user=self.user)
         self.client.post('/user-logout/')
@@ -359,7 +359,7 @@ class FacilityListCreateTest(APITestCase):
                                     {'file': self.test_file},
                                     format='multipart',
                                     **header)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 402)
 
     def test_list_request_by_user_with_no_contributor_returns_400(self):
         Contributor.objects.all().delete()
