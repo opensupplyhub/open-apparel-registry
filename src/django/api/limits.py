@@ -33,7 +33,13 @@ def get_start_date(period_start_date):
 
 @transaction.atomic
 def check_contributor_api_limit(at_datetime, c):
-    contributor = Contributor.objects.get(id=c.get('contributor'))
+    try:
+        contributor = Contributor.objects.get(id=c.get('contributor'))
+    except Contributor.DoesNotExist:
+        # API Limits and Blocks are linked to contributors.
+        # Users without contributors are blocked from the system
+        # in middleware and don't need to be handled here.
+        return
     log_dates = c.get('log_dates')
     notification, created = ContributorNotifications \
         .objects \
