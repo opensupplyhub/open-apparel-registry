@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Integrate Mailchimp signup [#1412](https://github.com/open-apparel-registry/open-apparel-registry/pull/1412)
+- Close all facilities on a list [#1429](https://github.com/open-apparel-registry/open-apparel-registry/pull/1429)
 
 ### Changed
 
