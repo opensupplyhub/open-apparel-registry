@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix facility detail header [#1419](https://github.com/open-apparel-registry/open-apparel-registry/pull/1419)
 - Fix facility history bug [#1421](https://github.com/open-apparel-registry/open-apparel-registry/pull/1421)
 - Block users without contributors [#1426](https://github.com/open-apparel-registry/open-apparel-registry/pull/1426)
+- Extend geocoding report results [#1428](https://github.com/open-apparel-registry/open-apparel-registry/pull/1428)
 
 ### Security
 
