@@ -137,6 +137,9 @@ data "template_file" "app" {
     default_from_email = "${var.default_from_email}"
     notification_email_to = "${var.notification_email_to}"
 
+    mailchimp_api_key = "${var.mailchimp_api_key}"
+    mailchimp_list_id = "${var.mailchimp_list_id}"
+
     app_port = "${var.app_port}"
 
     aws_region = "${var.aws_region}"
@@ -184,6 +187,9 @@ data "template_file" "app_cli" {
 
     default_from_email = "${var.default_from_email}"
     notification_email_to = "${var.notification_email_to}"
+
+    mailchimp_api_key = "${var.mailchimp_api_key}"
+    mailchimp_list_id = "${var.mailchimp_list_id}"
 
     app_port = "${var.app_port}"
 

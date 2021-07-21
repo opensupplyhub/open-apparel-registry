@@ -4,6 +4,7 @@ import os
 import xlrd
 
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -30,7 +31,8 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityMatch, FacilityAlias, Contributor, User,
                         RequestLog, DownloadLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
-                        EmbedConfig, EmbedField, NonstandardField)
+                        EmbedConfig, EmbedField, NonstandardField,
+                        FacilityActivityReport)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -46,6 +48,7 @@ from api.serializers import (ApprovedFacilityClaimSerializer,
                              FacilityCreateBodySerializer,
                              FacilityListSerializer)
 from api.limits import check_api_limits, get_end_of_year
+from api.close_list import close_list
 
 
 class FacilityListCreateTest(APITestCase):
@@ -349,7 +352,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
-    def test_upload_by_user_with_no_contributor_returns_400(self):
+    def test_upload_by_user_with_no_contributor_returns_402(self):
         Contributor.objects.all().delete()
         token = Token.objects.create(user=self.user)
         self.client.post('/user-logout/')
@@ -358,7 +361,7 @@ class FacilityListCreateTest(APITestCase):
                                     {'file': self.test_file},
                                     format='multipart',
                                     **header)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 402)
 
     def test_list_request_by_user_with_no_contributor_returns_400(self):
         Contributor.objects.all().delete()
@@ -5177,6 +5180,111 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
 
     @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
+    def test_handles_deleted_facility(self):
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility_two.id,
+        )
+
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
+
+        claim_response = self.client.post(
+            claim_facility_url,
+            claim_facility_data,
+        )
+
+        self.assertEqual(
+            claim_response.status_code,
+            200,
+        )
+
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        claim = FacilityClaim.objects.first()
+
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
+
+        approve_claim_response = self.client.post(
+            approve_claim_url,
+            {'reason': 'reason'},
+        )
+
+        self.assertEqual(
+            approve_claim_response.status_code,
+            200,
+        )
+
+        list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='List')
+
+        source = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=list,
+                    contributor=self.contributor)
+
+        list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=source)
+
+        facility = Facility \
+            .objects \
+            .create(name='Name Two',
+                    address='Address Two',
+                    country_code='US',
+                    location=Point(5, 5),
+                    created_from=list_item)
+
+        FacilityClaim.history.update(facility=facility)
+        facility.delete()
+
+        history_response = self.client.get(self.facility_two_history_url)
+
+        self.assertEqual(
+            history_response.status_code,
+            200
+        )
+
+        data = json.loads(history_response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'ASSOCIATE',
+        )
+
+        self.assertEqual(
+            len(data),
+            2,
+        )
+
+    @override_flag('can_get_facility_history', active=True)
+    @override_switch('claim_a_facility', active=True)
     def test_includes_entry_for_claim_revocation(self):
         self.client.logout()
         self.client.login(email=self.user_email,
@@ -6414,12 +6522,14 @@ class ApiLimitTest(TestCase):
             .create(admin=self.user_two,
                     name='contributor two',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
-
+        now = timezone.now()
         self.limit_one = ApiLimit.objects.create(contributor=self.contrib_one,
-                                                 yearly_limit=10)
+                                                 yearly_limit=10,
+                                                 period_start_date=now)
 
         self.limit_two = ApiLimit.objects.create(contributor=self.contrib_two,
-                                                 yearly_limit=10)
+                                                 yearly_limit=10,
+                                                 period_start_date=now)
 
         self.notification_time = timezone.now()
         self.notification = ContributorNotifications \
@@ -6434,12 +6544,29 @@ class ApiLimitTest(TestCase):
         self.assertEqual(ApiBlock.objects.filter(
                          contributor=self.contrib_one).count(), 0)
 
+    def test_limit_only_applies_within_period(self):
+        last_month = timezone.now() - relativedelta(months=1)
+        for x in range(10):
+            r = RequestLog.objects.create(user=self.user_one,
+                                          response_code=200)
+            r.created_at = last_month
+            r.save()
+
+        check_api_limits(timezone.now())
+
+        self.assertEqual(ApiBlock.objects.filter(
+                         contributor=self.contrib_one).count(), 0)
+
+        warning = ContributorNotifications.objects.get(
+                  contributor=self.contrib_one)
+        self.assertIsNone(warning.api_limit_warning_sent_on)
+
     def test_limit_warning_sent_once(self):
         for x in range(10):
             RequestLog.objects.create(user=self.user_one, response_code=200)
             RequestLog.objects.create(user=self.user_two, response_code=200)
-        else:
-            check_api_limits(timezone.now())
+
+        check_api_limits(timezone.now())
 
         self.assertEqual(ApiBlock.objects.filter(
                          contributor=self.contrib_one).count(), 0)
@@ -6463,8 +6590,8 @@ class ApiLimitTest(TestCase):
         for x in range(11):
             RequestLog.objects.create(user=self.user_one, response_code=200)
             RequestLog.objects.create(user=self.user_two, response_code=200)
-        else:
-            check_api_limits(timezone.now())
+
+        check_api_limits(timezone.now())
 
         self.assertEqual(ApiBlock.objects.filter(
                          contributor=self.contrib_one).count(), 1)
@@ -6479,6 +6606,105 @@ class ApiLimitTest(TestCase):
                      contributor=self.contrib_two)
         self.assertEqual(notice_two.api_limit_exceeded_sent_on,
                          self.notification_time)
+
+
+class CloseListTest(TestCase):
+    def setUp(self):
+        self.country_code = 'US'
+
+        self.user = User.objects.create(email='one@example.com')
+
+        self.contrib = Contributor \
+            .objects \
+            .create(admin=self.user,
+                    name='contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_one = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name='list 1')
+
+        self.source_one = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_one,
+                    contributor=self.contrib)
+
+        self.list_item_one = FacilityListItem \
+            .objects \
+            .create(row_index=0,
+                    source=self.source_one,
+                    status=FacilityListItem.MATCHED)
+
+        self.facility_one = Facility.objects.create(
+            country_code=self.country_code,
+            created_from=self.list_item_one,
+            facilitylistitem=self.list_item_one,
+            location=Point(0, 0),
+            is_closed=False,
+        )
+        self.list_item_one.facility = self.facility_one
+        self.list_item_one.save()
+
+        self.list_item_one_b = FacilityListItem \
+            .objects \
+            .create(row_index=0,
+                    source=self.source_one,
+                    status=FacilityListItem.MATCHED)
+
+        self.facility_one_b = Facility.objects.create(
+            country_code=self.country_code,
+            created_from=self.list_item_one_b,
+            facilitylistitem=self.list_item_one_b,
+            location=Point(0, 0),
+            is_closed=False,
+        )
+        self.list_item_one_b.facility = self.facility_one_b
+        self.list_item_one_b.save()
+
+        self.list_two = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one-b",
+                    name='list 2')
+
+        self.source_two = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=self.list_two,
+                    contributor=self.contrib)
+
+        self.list_item_two = FacilityListItem \
+            .objects \
+            .create(row_index=0,
+                    source=self.source_two,
+                    status=FacilityListItem.MATCHED)
+
+        self.facility_two = Facility.objects.create(
+            country_code=self.country_code,
+            created_from=self.list_item_two,
+            facilitylistitem=self.list_item_two,
+            location=Point(0, 0),
+            is_closed=False,
+        )
+        self.list_item_two.facility = self.facility_two
+        self.list_item_two.save()
+
+    def test_closes_list(self):
+        close_list(self.list_one.id, self.user.id)
+
+        f_one = Facility.objects.get(id=self.facility_one.id)
+        f_one_b = Facility.objects.get(id=self.facility_one_b.id)
+        f_two = Facility.objects.get(id=self.facility_two.id)
+
+        self.assertTrue(f_one.is_closed)
+        self.assertTrue(f_one_b.is_closed)
+        self.assertFalse(f_two.is_closed)
+
+        activity = FacilityActivityReport.objects.all().count()
+        self.assertEquals(2, activity)
 
 
 class NonstandardFieldsApiTest(APITestCase):

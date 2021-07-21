@@ -2,10 +2,13 @@ import os
 import pytz
 
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 from glob import glob
 from urllib.parse import quote
 
 from django.db import connection
+from django.db.models import Func, F
 from api.models import HistoricalFacility, FacilityListItem
 from api.constants import ProcessingAction, DateFormats
 
@@ -43,21 +46,28 @@ def monthly_promoted_name_and_address():
 
 def geocoding_time_without_queue(date_format):
     temp_data = dict()
-    listitems = FacilityListItem.objects.order_by(
-        '-created_at').values_list('processing_results', flat=True)[:1000]
-    for processing_results in listitems:
-        for r in processing_results:
-            if r['action'] == ProcessingAction.GEOCODE:
-                try:
-                    started = try_parsing_date(r['started_at'])
-                    finished = try_parsing_date(r['finished_at'])
-                    date = started.strftime(date_format)
-                    time = finished - started
-                    counts = temp_data.get(date, (0, 0))
-                    temp_data[date] = (counts[0] + 1,
-                                       counts[1] + time.total_seconds())
-                except ValueError:
-                    pass
+
+    start_date = datetime.now(tz=timezone.utc) - relativedelta(months=4)
+    processing_results = FacilityListItem.objects.filter(
+        created_at__gte=start_date,
+        processing_results__contains=[{"action": "geocode"}]
+    ).annotate(pr_element=Func(
+        F('processing_results'),
+        function='jsonb_array_elements')
+    ).values_list('pr_element', flat=True)
+
+    for r in processing_results:
+        if r['action'] == ProcessingAction.GEOCODE:
+            try:
+                started = try_parsing_date(r['started_at'])
+                finished = try_parsing_date(r['finished_at'])
+                date = started.strftime(date_format)
+                time = finished - started
+                counts = temp_data.get(date, (0, 0))
+                temp_data[date] = (counts[0] + 1,
+                                   counts[1] + time.total_seconds())
+            except ValueError:
+                pass
     data = dict()
     for d, c in temp_data.items():
         data[d] = c[1] / c[0]
@@ -76,8 +86,11 @@ def weekly_geocoding_time_without_queue():
 
 def geocoding_time_with_queue(date_format):
     temp_data = dict()
-    listitems = FacilityListItem.objects.order_by(
-        '-created_at').values_list('created_at', 'processing_results')[:1000]
+    start_date = datetime.now(tz=timezone.utc) - relativedelta(months=4)
+    listitems = FacilityListItem.objects.filter(
+        created_at__gte=start_date,
+        processing_results__contains=[{"action": "geocode"}]
+    ).order_by('-created_at').values_list('created_at', 'processing_results')
     for (created_at, processing_results) in listitems:
         for r in processing_results:
             if r['action'] == ProcessingAction.GEOCODE:

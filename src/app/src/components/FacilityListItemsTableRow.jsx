@@ -12,6 +12,8 @@ import { listTableCellStyles } from '../util/styles';
 
 import { makeFacilityDetailLink } from '../util/util';
 
+import { facilityListItemErrorStatuses } from '../util/constants';
+
 const makeTableRowStyles = ({ handleSelectRow, isRemoved }) => ({
     cursor: isFunction(handleSelectRow) ? 'pointer' : 'auto',
     opacity: isRemoved ? '0.6' : '1.0',
@@ -101,15 +103,20 @@ const FacilityListItemsTableRow = ({
                         <span style={{ marginRight: '5px' }}>
                             {newFacility ? 'NEW_FACILITY' : status}
                         </span>
-                        <Button
-                            color="primary"
-                            onClick={handleRemoveItem}
-                            style={{ marginLeft: '5px', marginRight: '5px' }}
-                            disabled={removeButtonDisabled}
-                            id={removeButtonID}
-                        >
-                            Remove
-                        </Button>
+                        {!facilityListItemErrorStatuses.includes(status) && (
+                            <Button
+                                color="primary"
+                                onClick={handleRemoveItem}
+                                style={{
+                                    marginLeft: '5px',
+                                    marginRight: '5px',
+                                }}
+                                disabled={removeButtonDisabled}
+                                id={removeButtonID}
+                            >
+                                Remove
+                            </Button>
+                        )}
                     </div>
                 );
             })()}

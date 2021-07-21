@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import Q, Count
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils.dateformat import format
+from django.utils import timezone
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
 from waffle import switch_is_active
@@ -1804,6 +1805,10 @@ class ApiLimit(models.Model):
         null=False,
         blank=False,
         help_text='The number of requests a contributor can make per year.')
+    period_start_date = models.DateTimeField(
+        null=False,
+        default=timezone.now,
+        help_text='The date when the contract began.')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

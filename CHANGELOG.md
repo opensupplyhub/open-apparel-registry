@@ -19,6 +19,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [45] 2021-07-21
+
+### Added
+
+- Integrate Mailchimp signup [#1412](https://github.com/open-apparel-registry/open-apparel-registry/pull/1412)
+- Close all facilities on a list [#1429](https://github.com/open-apparel-registry/open-apparel-registry/pull/1429)
+
+### Changed
+
+- Conditionally hide remove button [#1417](https://github.com/open-apparel-registry/open-apparel-registry/pull/1417)
+- Align logout button [#1420](https://github.com/open-apparel-registry/open-apparel-registry/pull/1420)
+- Use contractual limit tracking [#1418](https://github.com/open-apparel-registry/open-apparel-registry/pull/1418)
+- Handle error when splitting match w/o location [#1424](https://github.com/open-apparel-registry/open-apparel-registry/pull/1424)
+- Make period_start_date editable [#1430](https://github.com/open-apparel-registry/open-apparel-registry/pull/1430)
+
+### Fixed
+
+- Anonymize other_locations contributors [#1415](https://github.com/open-apparel-registry/open-apparel-registry/pull/1415)
+- Fix facility detail header [#1419](https://github.com/open-apparel-registry/open-apparel-registry/pull/1419)
+- Fix facility history bug [#1421](https://github.com/open-apparel-registry/open-apparel-registry/pull/1421)
+- Block users without contributors [#1426](https://github.com/open-apparel-registry/open-apparel-registry/pull/1426)
+- Extend geocoding report results [#1428](https://github.com/open-apparel-registry/open-apparel-registry/pull/1428)
+
 ## [44] 2021-06-22
 
 ### Added
@@ -853,7 +876,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/44...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/45...HEAD
+[45]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/45
 [44]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/44
 [43]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/43
 [42]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/42
