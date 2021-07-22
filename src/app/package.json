@@ -44,7 +44,7 @@
         "redux-persist": "5.10.0",
         "redux-thunk": "2.3.0",
         "validator": "10.11.0",
-        "xlsx": "^0.16.9"
+        "xlsx": "^0.17.0"
     },
     "scripts": {
         "start": "craco start",
