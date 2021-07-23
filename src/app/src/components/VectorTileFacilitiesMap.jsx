@@ -116,6 +116,7 @@ function VectorTileFacilitiesMap({
             ref={mapRef}
             center={initialCenter}
             zoom={initialZoom}
+            scrollWheelZoom={!isEmbedded}
             minZoom={minimumZoom}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
