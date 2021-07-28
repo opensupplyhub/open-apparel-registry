@@ -84,6 +84,7 @@ function FacilitiesMap({
     match: {
         params: { oarID },
     },
+    isEmbedded,
 }) {
     const mapRef = useRef(null);
 
@@ -247,6 +248,7 @@ function FacilitiesMap({
             center={initialCenter}
             zoom={initialZoom}
             minZoom={minimumZoom}
+            scrollWheelZoom={!isEmbedded}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
             zoomControl={false}
@@ -394,6 +396,7 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { resetButtonClickCount },
     },
     clientInfo: { fetched, countryCode },
+    embeddedMap: { embed: isEmbedded },
 }) {
     return {
         fetching,
@@ -402,6 +405,7 @@ function mapStateToProps({
         resetButtonClickCount,
         clientInfoFetched: fetched,
         countryCode: countryCode || COUNTRY_CODES.default,
+        isEmbedded,
     };
 }
 
