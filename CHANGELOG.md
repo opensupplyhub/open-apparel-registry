@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Add custom marker colors [#1445](https://github.com/open-apparel-registry/open-apparel-registry/pull/1445)
+
 ### Changed
 
 - Disable scrolling in embed mode (#1437)[https://github.com/open-apparel-registry/open-apparel-registry/pull/1437]
