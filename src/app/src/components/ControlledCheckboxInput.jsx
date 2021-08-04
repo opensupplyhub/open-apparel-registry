@@ -1,23 +1,27 @@
 import React, { Fragment } from 'react';
 import { bool, func, shape, string } from 'prop-types';
 import MaterialCheckbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { withStyles } from '@material-ui/core/styles';
 
 const controlledCheckboxInputStyles = Object.freeze({
     p: Object.freeze({
         display: 'inline-block',
         margin: '8px 0',
+        fontSize: '15px',
     }),
     checkbox: Object.freeze({
-        marginLeft: '-15px',
+        marginLeft: '0px',
     }),
 });
 
-export default function ControlledCheckboxInput({
+function ControlledCheckboxInput({
     onChange,
     text,
     link,
     checked,
     id,
+    classes,
 }) {
     const labelElement = link ? (
         <Fragment>
@@ -37,16 +41,21 @@ export default function ControlledCheckboxInput({
 
     return (
         <Fragment>
-            <MaterialCheckbox
-                id={id}
-                color="primary"
-                onChange={onChange}
-                style={controlledCheckboxInputStyles.checkbox}
-                checked={checked}
+            <FormControlLabel
+                control={
+                    <MaterialCheckbox
+                        id={id}
+                        color="primary"
+                        onChange={onChange}
+                        className={classes.checkbox}
+                        checked={checked}
+                    />
+                }
+                label={labelElement}
+                classes={{
+                    label: classes.p,
+                }}
             />
-            <label htmlFor={id} style={controlledCheckboxInputStyles.p}>
-                {labelElement}
-            </label>
         </Fragment>
     );
 }
@@ -65,3 +74,7 @@ ControlledCheckboxInput.propTypes = {
     }),
     id: string.isRequired,
 };
+
+export default withStyles(controlledCheckboxInputStyles)(
+    ControlledCheckboxInput,
+);
