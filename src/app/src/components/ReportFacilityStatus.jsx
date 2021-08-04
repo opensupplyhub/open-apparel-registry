@@ -128,7 +128,12 @@ function ReportFacilityStatus({
                         className={classes.description}
                     >
                         Please provide information the OAR team can use to
-                        verify this status change.
+                        verify this status change. Should you need to share or
+                        attach a document or screenshot, please email it to{' '}
+                        <a href="mailto:info@openapparel.org">
+                            info@openapparel.org
+                        </a>{' '}
+                        after completing this form.
                     </DialogContentText>
                     <TextField
                         autoFocus
