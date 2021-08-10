@@ -12,6 +12,7 @@ const EmbeddedFooter = () => (
                 className="footer-image"
                 src={logo}
                 alt="Powered by Open Apparel Registry"
+                style={{ paddingLeft: '10px' }}
             />
         </a>
     </footer>

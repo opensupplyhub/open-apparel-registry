@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Disable scrolling in embed mode (#1437)[https://github.com/open-apparel-registry/open-apparel-registry/pull/1437]
+- Disable scrolling in embed mode [#1437](https://github.com/open-apparel-registry/open-apparel-registry/pull/1437)
+- Update logo and copy [#1449](https://github.com/open-apparel-registry/open-apparel-registry/pull/1449)
 
 ### Deprecated
 

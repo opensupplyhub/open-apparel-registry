@@ -169,7 +169,8 @@ const accountConfirmNewPasswordField = Object.freeze({
 
 const accountNewsletterField = Object.freeze({
     id: registrationFieldsEnum.newsletter,
-    label: 'Sign up for OAR newsletter',
+    label:
+        "I'd like to receive important email updates about OAR features and data.",
     modelFieldName: 'should_receive_newsletter',
     type: inputTypesEnum.checkbox,
 });
