@@ -218,11 +218,7 @@ function Navbar({ openGDPR }) {
                             href="/"
                             style={{ display: 'inline-flex' }}
                         >
-                            <img
-                                src={logo}
-                                style={{ height: '60px' }}
-                                alt="logo"
-                            />
+                            <img src={logo} className="logo" alt="logo" />
                         </Link>
                     </div>
                     {mainNavigation}
