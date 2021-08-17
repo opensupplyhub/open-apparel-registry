@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
 import VectorGridDefault from 'react-leaflet-vectorgrid';
@@ -12,6 +12,7 @@ import isEqual from 'lodash/isEqual';
 import intersection from 'lodash/intersection';
 import sortBy from 'lodash/sortBy';
 
+import { OARColor } from '../util/constants';
 import FacilitiesMapPopup from './FacilitiesMapPopup';
 
 import {
@@ -22,15 +23,16 @@ import {
 
 const VectorGrid = withLeaflet(VectorGridDefault);
 
-const createMarkerIcon = iconUrl =>
-    L.icon({
-        iconUrl,
+const createMarkerIcon = (color = '#838BA5') => {
+    const fill = color.replace('#', '%23');
+    return L.icon({
+        iconUrl: `data:image/svg+xml;utf8,<svg fill="${fill}" height="506" viewBox="0 0 384 506" width="384" xmlns="http://www.w3.org/2000/svg"><path d="m0 192c0-106.039 85.961-192 192-192s192 85.961 192 192c0 70.692667-64 175.359373-192 314.00012-128-138.640747-192-243.307453-192-314.00012zm192 80c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/></svg>`,
         iconSize: [30, 40],
         iconAnchor: [15, 40],
     });
+};
 
-const selectedMarkerIcon = createMarkerIcon('/images/selectedmarker.png');
-const unselectedMarkerIcon = createMarkerIcon('/images/marker.png');
+const unselectedMarkerIcon = createMarkerIcon();
 
 function useUpdateTileURL(
     tileURL,
@@ -77,6 +79,7 @@ function useUpdateTileURL(
 
 const useUpdateTileLayerWithMarkerForSelectedOARID = (
     oarID,
+    selectedMarkerIcon,
     otherFacilitiesAtPoint = [],
 ) => {
     const tileLayerRef = useRef(null);
@@ -136,6 +139,8 @@ const useUpdateTileLayerWithMarkerForSelectedOARID = (
                 setCurrentSelectedMarkerID(oarIDForSharedMarker);
             }
         }
+        /* eslint-disable react-hooks/exhaustive-deps */
+        // Disabled to prevent rerendering due to marker changes
     }, [
         oarID,
         currentSelectedMarkerID,
@@ -209,6 +214,7 @@ const VectorTileFacilitiesLayer = ({
     pushRoute,
     minZoom,
     maxZoom,
+    iconColor,
 }) => {
     const [multipleFacilitiesAtPoint, setMultipleFacilitiesAtPoint] = useState(
         null,
@@ -218,6 +224,10 @@ const VectorTileFacilitiesLayer = ({
         multipleFacilitiesAtPointPosition,
         setMultipleFacilitiesAtPointPosition,
     ] = useState(null);
+
+    const selectedMarkerIcon = useMemo(() => createMarkerIcon(iconColor), [
+        iconColor,
+    ]);
 
     const closeMultipleFacilitiesPopup = () =>
         setMultipleFacilitiesAtPointPosition(null);
@@ -234,6 +244,7 @@ const VectorTileFacilitiesLayer = ({
 
     const vectorTileLayerRef = useUpdateTileLayerWithMarkerForSelectedOARID(
         oarID,
+        selectedMarkerIcon,
         multipleFacilitiesAtPoint,
     );
 
@@ -352,6 +363,7 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { resetButtonClickCount },
     },
     vectorTileLayer: { key },
+    embeddedMap: { config },
 }) {
     const querystring = createQueryStringFromSearchFilters(filters);
     const tileCacheKey = createTileCacheKeyWithEncodedFilters(filters, key);
@@ -366,6 +378,7 @@ function mapStateToProps({
         tileCacheKey,
         fetching,
         resetButtonClickCount,
+        iconColor: config.color || OARColor,
     };
 }
 

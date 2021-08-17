@@ -635,19 +635,23 @@ hr {
   justify-content: middle;
 }
 
+.logo {
+    height: 35px;
+}
+
 @media (min-width: 600px) {
   .mobileMenuToggle {
     display: none;
+  }
+
+  .logo {
+      height: 60px;
   }
 }
 
 @media (max-width: 599px) {
   .mainNavigation {
     display: none !important;
-  }
-
-  .App-logo {
-    height: 30px;
   }
 
   .App-header {

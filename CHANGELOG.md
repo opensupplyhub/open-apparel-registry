@@ -19,6 +19,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [46] 2021-08-17
+
+### Added
+
+- Add custom marker colors [#1445](https://github.com/open-apparel-registry/open-apparel-registry/pull/1445)
+
+### Changed
+
+- Disable scrolling in embed mode [#1437](https://github.com/open-apparel-registry/open-apparel-registry/pull/1437)
+- Update logo and copy [#1449](https://github.com/open-apparel-registry/open-apparel-registry/pull/1449)
+
+### Fixed
+
+- Fix mobile header [#1454](https://github.com/open-apparel-registry/open-apparel-registry/pull/1454)
+
 ## [45] 2021-07-21
 
 ### Added
@@ -876,7 +891,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/45...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/46...HEAD
+[46]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/46
 [45]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/45
 [44]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/44
 [43]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/43

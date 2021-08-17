@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import { Link, Route } from 'react-router-dom';
 
-import logo from '../styles/images/OpenApparelRegistry_logo.png';
+import logo from '../styles/images/OpenApparelRegistry_logo.svg';
 import NavbarDropdown from './NavbarDropdown';
 import NavbarLoginButtonGroup from './NavbarLoginButtonGroup';
 
@@ -218,7 +218,7 @@ function Navbar({ openGDPR }) {
                             href="/"
                             style={{ display: 'inline-flex' }}
                         >
-                            <img src={logo} className="App-logo" alt="logo" />
+                            <img src={logo} className="logo" alt="logo" />
                         </Link>
                     </div>
                     {mainNavigation}
