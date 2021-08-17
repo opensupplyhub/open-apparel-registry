@@ -635,9 +635,17 @@ hr {
   justify-content: middle;
 }
 
+.logo {
+    height: 35px;
+}
+
 @media (min-width: 600px) {
   .mobileMenuToggle {
     display: none;
+  }
+
+  .logo {
+      height: 60px;
   }
 }
 

@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix mobile header [#1454](https://github.com/open-apparel-registry/open-apparel-registry/pull/1454)
+
 ### Security
 
 ## [45] 2021-07-21
