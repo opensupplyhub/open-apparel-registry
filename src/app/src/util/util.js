@@ -135,6 +135,8 @@ export const makeClaimFacilityAPIURL = oarId =>
     `/api/facilities/${oarId}/claim/`;
 export const makeSplitFacilityAPIURL = oarID =>
     `/api/facilities/${oarID}/split/`;
+export const makeTransferFacilityAPIURL = oarID =>
+    `/api/facilities/${oarID}/move/`;
 export const makePromoteFacilityMatchAPIURL = oarID =>
     `/api/facilities/${oarID}/promote/`;
 

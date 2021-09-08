@@ -699,6 +699,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'split' in path:
             return None
 
+        if 'move' in path:
+            return None
+
         if 'promote' in path:
             return None
 
@@ -1793,6 +1796,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         m.facility_list_item.source.contributor.id
                         if m.facility_list_item.source.contributor else None,
                         'match_id': m.id,
+                        'is_geocoded':
+                        m.facility_list_item.geocoded_point is not None,
                         'facility_created_by_item':
                         Facility.objects.filter(
                             created_from=m.facility_list_item.id)[0].id
@@ -1877,6 +1882,60 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'match_id': match_for_new_facility.id,
                 'new_oar_id': new_facility.id,
             })
+        except FacilityListItem.DoesNotExist:
+            raise NotFound()
+        except FacilityMatch.DoesNotExist:
+            raise NotFound()
+        except Facility.DoesNotExist:
+            raise NotFound()
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def move(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            match_id = request.data.get('match_id')
+
+            if match_id is None:
+                raise BadRequestException('Missing required param match_id')
+
+            match = FacilityMatch.objects.get(pk=match_id)
+            old_facility = match.facility
+            list_item_for_match = match.facility_list_item
+
+            new_facility = Facility.objects.get(pk=pk)
+
+            match.facility = new_facility
+            match.confidence = 1.0
+            match.status = FacilityMatch.CONFIRMED
+            match.results = {
+                'match_type': 'moved_by_administator',
+                'move_to_oar_id': match.facility.id,
+            }
+
+            match.save()
+
+            now = str(datetime.utcnow())
+
+            list_item_for_match.facility = new_facility
+            list_item_for_match.processing_results.append({
+                'action': ProcessingAction.MOVE_FACILITY,
+                'started_at': now,
+                'error': False,
+                'finished_at': now,
+                'previous_facility_oar_id': old_facility.id,
+            })
+
+            list_item_for_match.save()
+
+            return Response({
+                'match_id': match.id,
+                'new_oar_id': new_facility.id,
+            })
+
         except FacilityListItem.DoesNotExist:
             raise NotFound()
         except FacilityMatch.DoesNotExist:

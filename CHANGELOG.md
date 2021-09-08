@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Allow users to transfer matches between facilities [#1464](https://github.com/open-apparel-registry/open-apparel-registry/pull/1464)
+
 ### Changed
 
 ### Deprecated
