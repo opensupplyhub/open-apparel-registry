@@ -20,6 +20,7 @@ class ProcessingAction:
     PROMOTE_MATCH = 'promote_match'
     MERGE_FACILITY = 'merge_facility'
     SPLIT_FACILITY = 'split_facility'
+    MOVE_FACILITY = 'move_facility'
     NOTIFY_COMPLETE = 'notify_complete'
 
 
@@ -68,6 +69,7 @@ class FacilityHistoryActions:
     DELETE = 'DELETE'
     MERGE = 'MERGE'
     SPLIT = 'SPLIT'
+    MOVE = 'MOVE'
     OTHER = 'OTHER'
     ASSOCIATE = 'ASSOCIATE'
     DISSOCIATE = 'DISSOCIATE'

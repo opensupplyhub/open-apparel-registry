@@ -15,6 +15,8 @@ import find from 'lodash/find';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import MoveMatchDialog from './MoveMatchDialog';
+
 import { makeFacilityDetailLink } from '../util/util';
 
 import { facilityDetailsPropType } from '../util/propTypes';
@@ -107,6 +109,7 @@ export default function DashboardAdjustMatchCard({
     const [matchToSplit, setMatchToSplit] = useState(null);
     const [matchToPromote, setMatchToPromote] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [matchToMove, setMatchToMove] = useState(null);
 
     const closeDialog = () => {
         setMatchToSplit(null);
@@ -183,17 +186,36 @@ export default function DashboardAdjustMatchCard({
         }
 
         return (
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}
+            >
+                {(match.facility_created_by_item || match.is_geocoded) && (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={adjusting}
+                        onClick={() =>
+                            openDialogForMatchToAdjust(
+                                match,
+                                dialogTypesEnum.split,
+                            )
+                        }
+                        style={adjustMatchCardStyles.buttonStyles}
+                    >
+                        {match.facility_created_by_item ? 'Revert' : 'Split'}
+                    </Button>
+                )}
                 <Button
                     variant="contained"
                     color="primary"
                     disabled={adjusting}
-                    onClick={() =>
-                        openDialogForMatchToAdjust(match, dialogTypesEnum.split)
-                    }
+                    onClick={() => setMatchToMove(match)}
                     style={adjustMatchCardStyles.buttonStyles}
                 >
-                    {match.facility_created_by_item ? 'Revert' : 'Split'}
+                    Transfer to Alternate Facility
                 </Button>
                 <Button
                     variant="contained"
@@ -320,8 +342,8 @@ export default function DashboardAdjustMatchCard({
                                 <Typography variant="title">
                                     Match {match.match_id}
                                 </Typography>
-                                {createButtonControls(match)}
                             </div>
+                            <div>{createButtonControls(match)}</div>
                             <div style={adjustMatchCardStyles.nameRowStyles}>
                                 <MatchDetailItem
                                     label="Contributor Name"
@@ -354,6 +376,10 @@ export default function DashboardAdjustMatchCard({
             <Dialog open={Boolean(matchToSplit) || Boolean(matchToPromote)}>
                 {dialogContent}
             </Dialog>
+            <MoveMatchDialog
+                matchToMove={matchToMove}
+                handleClose={() => setMatchToMove(null)}
+            />
         </>
     );
 }

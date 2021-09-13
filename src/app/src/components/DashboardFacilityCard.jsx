@@ -2,16 +2,13 @@ import React from 'react';
 import { arrayOf, bool, func, string } from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import get from 'lodash/get';
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
-import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
+import DashboardFacilityCardDetails from './DashboardFacilityCardDetails';
 
 const dashboardFacilityCardStyles = Object.freeze({
     cardStyles: Object.freeze({
@@ -107,87 +104,6 @@ export default function DashboardFacilityCard({
         </>
     );
 
-    const cardContent = (() => {
-        if (fetching) {
-            return <CircularProgress />;
-        }
-
-        if (error && error.length) {
-            return (
-                <ul style={dashboardFacilityCardStyles.errorStyles}>
-                    {error.map(err => (
-                        <li key={err}>
-                            <span
-                                style={dashboardFacilityCardStyles.errorStyles}
-                            >
-                                {err}
-                            </span>
-                        </li>
-                    ))}
-                </ul>
-            );
-        }
-
-        if (!data) {
-            return null;
-        }
-
-        const contributorContent = get(data, 'properties.contributors', [])
-            .length && (
-            <ul style={dashboardFacilityCardStyles.listStyles}>
-                {data.properties.contributors.map(({ name }) => (
-                    <li key={name}>
-                        <Typography
-                            style={dashboardFacilityCardStyles.fieldStyles}
-                        >
-                            {name}
-                        </Typography>
-                    </li>
-                ))}
-            </ul>
-        );
-
-        return (
-            <>
-                <div style={dashboardFacilityCardStyles.mapStyles}>
-                    <FacilityDetailsStaticMap data={data} />
-                </div>
-                <div style={dashboardFacilityCardStyles.infoContainerStyles}>
-                    <Typography style={dashboardFacilityCardStyles.labelStyles}>
-                        Name
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.fieldStyles}>
-                        {get(data, 'properties.name', null)}
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.labelStyles}>
-                        Address
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.fieldStyles}>
-                        {get(data, 'properties.address', null)}
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.labelStyles}>
-                        Country
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.fieldStyles}>
-                        {get(data, 'properties.country_name', null)}
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.labelStyles}>
-                        Location
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.fieldStyles}>
-                        {get(data, 'geometry.coordinates', []).join(', ')}
-                    </Typography>
-                    <Typography style={dashboardFacilityCardStyles.labelStyles}>
-                        Contributors
-                    </Typography>
-                    <div style={dashboardFacilityCardStyles.fieldStyles}>
-                        {contributorContent}
-                    </div>
-                </div>
-            </>
-        );
-    })();
-
     return (
         <Card style={dashboardFacilityCardStyles.cardStyles}>
             <Typography
@@ -199,9 +115,11 @@ export default function DashboardFacilityCard({
             <CardActions style={dashboardFacilityCardStyles.cardActionsStyles}>
                 {cardActions}
             </CardActions>
-            <CardContent style={dashboardFacilityCardStyles.cardContentStyles}>
-                {cardContent}
-            </CardContent>
+            <DashboardFacilityCardDetails
+                data={data}
+                fetching={fetching}
+                error={error}
+            />
         </Card>
     );
 }

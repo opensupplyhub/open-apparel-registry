@@ -6,6 +6,7 @@ import {
     logErrorAndDispatchFailure,
     makeSplitFacilityAPIURL,
     makePromoteFacilityMatchAPIURL,
+    makeTransferFacilityAPIURL,
 } from '../util/util';
 
 export const startFetchFacilityToAdjust = createAction(
@@ -48,6 +49,37 @@ export function fetchFacilityToAdjust() {
                         err,
                         'An error prevented fetching that facility',
                         failFetchFacilityToAdjust,
+                    ),
+                ),
+            );
+    };
+}
+
+export const startFetchFacilityToTransfer = createAction(
+    'START_FETCH_FACILITY_TO_TRANSFER',
+);
+export const failFetchFacilityToTransfer = createAction(
+    'FAIL_FETCH_FACILITY_TO_TRANSFER',
+);
+export const completeFetchFacilityToTransfer = createAction(
+    'COMPLETE_FETCH_FACILITY_TO_TRANSFER',
+);
+export const clearFacilityToTransfer = createAction(
+    'CLEAR_FACILITY_TO_TRANSFER',
+);
+export function fetchFacilityToTransfer(oarID) {
+    return dispatch => {
+        dispatch(startFetchFacilityToTransfer());
+
+        return apiRequest
+            .get(makeSplitFacilityAPIURL(oarID))
+            .then(({ data }) => dispatch(completeFetchFacilityToTransfer(data)))
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching that facility',
+                        failFetchFacilityToTransfer,
                     ),
                 ),
             );
@@ -124,6 +156,43 @@ export function promoteFacilityMatch(matchID) {
                         err,
                         'An error prevented promoting that facility match',
                         failPromoteFacilityMatch,
+                    ),
+                ),
+            );
+    };
+}
+
+export const startTransferFacilityMatch = createAction(
+    'START_TRANSFER_FACILITY_MATCH',
+);
+export const failTransferFacilityMatch = createAction(
+    'FAIL_TRANSFER_FACILITY_MATCH',
+);
+export const completeTransferFacilityMatch = createAction(
+    'COMPLETE_TRANSFER_FACILITY_MATCH',
+);
+
+export function transferFacilityMatch({ matchID, oarID }) {
+    return dispatch => {
+        if (!oarID || !matchID) {
+            return null;
+        }
+
+        dispatch(startTransferFacilityMatch());
+
+        return apiRequest
+            .post(makeTransferFacilityAPIURL(oarID), { match_id: matchID })
+            .then(({ data }) => {
+                dispatch(completeTransferFacilityMatch(data));
+                // Refresh facility to show match is no longer present
+                dispatch(fetchFacilityToAdjust());
+            })
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented moving that facility match',
+                        failTransferFacilityMatch,
                     ),
                 ),
             );

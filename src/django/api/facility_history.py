@@ -225,12 +225,32 @@ def maybe_get_split_action_time_from_processing_results(item):
     return next(iter(split_processing_times), None)
 
 
+def maybe_get_move_action_time_from_processing_results(item):
+    move_processing_times = [
+        r.get('finished_at', None)
+        for r
+        in item.processing_results
+        if r.get('action', None) == ProcessingAction.MOVE_FACILITY
+    ]
+
+    return next(iter(move_processing_times), None)
+
+
 def processing_results_has_split_action_for_oar_id(list_item, facility_id):
     return facility_id in [
         r.get('previous_facility_oar_id', None)
         for r
         in list_item.processing_results
         if r.get('action', None) == ProcessingAction.SPLIT_FACILITY
+    ]
+
+
+def processing_results_has_move_action_for_oar_id(list_item, facility_id):
+    return facility_id in [
+        r.get('previous_facility_oar_id', None)
+        for r
+        in list_item.processing_results
+        if r.get('action', None) == ProcessingAction.MOVE_FACILITY
     ]
 
 
@@ -330,6 +350,35 @@ def create_facility_history_list(entries, facility_id, user=None):
         )
     ]
 
+    facility_move_entries = [
+        {
+            'updated_at': maybe_get_move_action_time_from_processing_results(
+                m.facility_list_item
+            ),
+            'action': FacilityHistoryActions.MOVE,
+            'detail': 'Match {} was moved from {}'.format(
+                m.id,
+                facility_id,
+            )
+        }
+        for m
+        in FacilityMatch
+        .objects
+        .filter(status__in=[
+            FacilityMatch.CONFIRMED,
+            FacilityMatch.AUTOMATIC,
+            FacilityMatch.MERGED,
+        ])
+        .annotate(
+            processing_results=F('facility_list_item__processing_results'))
+        .extra(
+            where=['processing_results @> \'[{"action": "move_facility"}]\''])
+        if processing_results_has_move_action_for_oar_id(
+            m.facility_list_item,
+            facility_id,
+        )
+    ]
+
     facility_match_entries = [
         {
             'updated_at': str(m.history_date),
@@ -395,6 +444,6 @@ def create_facility_history_list(entries, facility_id, user=None):
     ]
 
     return sorted(history_entries + facility_split_entries +
-                  facility_match_entries + facility_claim_entries +
-                  replaced_entries,
+                  facility_move_entries + facility_match_entries +
+                  facility_claim_entries + replaced_entries,
                   key=lambda entry: entry['updated_at'], reverse=True)
