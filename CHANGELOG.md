@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+- Bump axios from 0.21.1 to 0.21.2 in /src/app [#1466](https://github.com/open-apparel-registry/open-apparel-registry/pull/1466)
+
 ## [47] 2021-09-14
 
 ### Added
