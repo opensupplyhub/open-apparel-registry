@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Allow users to transfer matches between facilities [#1464](https://github.com/open-apparel-registry/open-apparel-registry/pull/1464)
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [47] 2021-09-14
+
+### Added
+
+- Allow users to transfer matches between facilities [#1464](https://github.com/open-apparel-registry/open-apparel-registry/pull/1464)
 
 ## [46] 2021-08-17
 
@@ -894,7 +898,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/46...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/47...HEAD
+[47]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/47
 [46]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/46
 [45]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/45
 [44]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/44
