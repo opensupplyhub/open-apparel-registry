@@ -4799,6 +4799,45 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         )
 
     @override_flag('can_get_facility_history', active=True)
+    def test_serializes_facility_match_move(self):
+        move_facility_url = '/api/facilities/{}/move/'.format(
+            self.facility.id)
+
+        move_facility_data = {
+            'match_id': self.match_two.id,
+        }
+
+        move_facility_response = self.client.post(
+            move_facility_url,
+            move_facility_data,
+        )
+
+        self.assertEqual(move_facility_response.status_code, 200)
+
+        self.match_two.refresh_from_db()
+
+        response = self.client.get(self.facility_two_history_url)
+        data = json.loads(response.content)
+
+        self.assertEqual(
+            data[0]['action'],
+            'MOVE',
+        )
+
+        self.assertEqual(
+            data[0]['detail'],
+            'Match {} was moved from {}'.format(
+                self.match_two.id,
+                self.facility_two.id,
+            )
+        )
+
+        self.assertEqual(
+            len(data),
+            3,
+        )
+
+    @override_flag('can_get_facility_history', active=True)
     def test_handles_request_for_invalid_facility_id(self):
         invalid_history_url = '/api/facilities/hello/history/'
         invalid_history_response = self.client.get(invalid_history_url)

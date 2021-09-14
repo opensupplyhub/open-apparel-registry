@@ -6,8 +6,12 @@ from django.contrib.auth.models import (AbstractBaseUser,
                                         PermissionsMixin)
 from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
-from django.db import models
-from django.db.models import Q, Count
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.aggregates.general import ArrayAgg
+from django.db import models, transaction
+from django.db.models import F, Q, CharField
+from django.db.models.signals import post_save
+from django.db.models.functions import Concat
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils.dateformat import format
 from django.utils import timezone
@@ -186,6 +190,15 @@ class Contributor(models.Model):
 
     history = HistoricalRecords()
 
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        f_ids = Facility.objects \
+            .filter(facilitylistitem__source__contributor=instance)\
+            .values_list('id', flat=True)
+        if len(f_ids) > 0:
+            index_facilities(f_ids)
+
     def __str__(self):
         return '{name} ({id})'.format(**self.__dict__)
 
@@ -355,6 +368,15 @@ class Source(models.Model):
         if self.facility_list:
             return '{} ({})'.format(name, self.facility_list.name)
         return name
+
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        f_ids = Facility.objects \
+                        .filter(facilitylistitem__source=instance) \
+                        .values_list('id', flat=True)
+        if len(f_ids) > 0:
+            index_facilities(f_ids)
 
     def __str__(self):
         return '{0} ({1})'.format(
@@ -1169,14 +1191,14 @@ class FacilityManager(models.Manager):
         ppe = (True if params.get(FacilitiesQueryParams.PPE, '') == 'true'
                else False)
 
-        facilities_qs = Facility.objects.all()
+        facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
             if switch_is_active('ppe'):
                 facilities_qs = facilities_qs \
                     .filter(Q(name__icontains=free_text_query) |
                             Q(id__icontains=free_text_query) |
-                            Q(ppe_product_types__icontains=free_text_query))
+                            Q(ppe__icontains=free_text_query))
             else:
                 facilities_qs = facilities_qs \
                     .filter(Q(name__icontains=free_text_query) |
@@ -1194,76 +1216,18 @@ class FacilityManager(models.Manager):
 
         if len(contributor_types):
             facilities_qs = facilities_qs \
-                .filter(id__in=FacilityMatch
-                        .objects
-                        .filter(status__in=[FacilityMatch.AUTOMATIC,
-                                            FacilityMatch.CONFIRMED,
-                                            FacilityMatch.MERGED])
-                        .filter(is_active=True)
-                        .filter(facility_list_item__source__contributor__contrib_type__in=contributor_types) # NOQA
-                        .filter(facility_list_item__source__is_active=True)
-                        .filter(facility_list_item__source__is_public=True)
-                        .values('facility__id')
-                )
+                .filter(contrib_types__overlap=contributor_types)
 
         if len(contributors):
             if combine_contributors.upper() == 'AND':
-                # Build an inner query for facility IDs in 4 steps.
-                # First filter sources/matches by flags and status
-                facility_ids = Source.objects.filter(
-                    is_active=True,
-                    is_public=True,
-                    facilitylistitem__facilitymatch__is_active=True,
-                    facilitylistitem__facilitymatch__status__in=[
-                        FacilityMatch.AUTOMATIC,
-                        FacilityMatch.CONFIRMED,
-                        FacilityMatch.MERGED]).values(
-                            'facilitylistitem__facility')
-
-                # Next, count the number of times each specified contributor
-                # appears in the list of sources for each facility. This is
-                # done by annotating a filtered count for each contributor,
-                # which is required because a contributor could submit the same
-                # facility multiple times and we do not want that to throw off
-                # the total count
-                annotate_kwargs = {
-                    'contributor{}_count'.format(index):
-                    Count('contributor', filter=Q(contributor=c))
-                    for (index, c) in enumerate(contributors)}
-                facility_ids = facility_ids.annotate(**annotate_kwargs)
-
-                # Next filter out records where any one of the specified
-                # contributors has zero matches.
-                filter_kwargs = {
-                    'contributor{}_count__gte'.format(index): 1
-                    for (index, c) in enumerate(contributors)}
-                facility_ids = facility_ids.filter(**filter_kwargs)
-
-                # Finally, use key relationships to get a flat list of facility
-                # IDs associated with the filtered sources.
-                facility_ids = facility_ids.values_list(
-                    'facilitylistitem__facility', flat=True)
-
-                facilities_qs = facilities_qs.filter(id__in=facility_ids)
-
+                facilities_qs = facilities_qs.filter(
+                    contributors__contains=contributors)
             else:
                 facilities_qs = facilities_qs.filter(
-                    id__in=(Source.objects.filter(
-                        is_active=True,
-                        is_public=True,
-                        facilitylistitem__facilitymatch__is_active=True,
-                        facilitylistitem__facilitymatch__status__in=[
-                            FacilityMatch.AUTOMATIC,
-                            FacilityMatch.CONFIRMED,
-                            FacilityMatch.MERGED],
-                        contributor__in=contributors).values_list(
-                            'facilitylistitem__facility', flat=True)))
+                    contributors__overlap=contributors)
 
         if len(lists):
-            facilities_qs = facilities_qs.filter(
-                id__in=(Source.objects.filter(
-                    facility_list_id__in=lists).values_list(
-                        'facilitylistitem__facility', flat=True)))
+            facilities_qs = facilities_qs.filter(lists__overlap=lists)
 
         if boundary is not None:
             facilities_qs = facilities_qs.filter(
@@ -1273,9 +1237,10 @@ class FacilityManager(models.Manager):
         if ppe:
             # Include a facility if any of the PPE fields have a non-empty
             # value.
-            facilities_qs = facilities_qs.annotate(
-                ppe_product_types_len=ArrayLength('ppe_product_types')
-            ).filter(PPEMixin.PPE_FILTER)
+            facilities_qs = facilities_qs.filter(~Q(ppe=''))
+
+        facility_ids = facilities_qs.values_list('id', flat=True)
+        facilities_qs = Facility.objects.filter(id__in=facility_ids)
 
         print(facilities_qs.query)
         return facilities_qs
@@ -1533,6 +1498,62 @@ class Facility(PPEMixin):
                                         FacilityActivityReport.CONFIRMED]) \
                     .order_by('-created_at')
 
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        index_facilities([instance.id])
+
+
+class FacilityIndex(models.Model):
+    """
+    Stores denormalized indexes for the facility's name, id, country_code,
+    location, contrib_types, contributors, ppe_product_types, and lists
+    """
+    id = models.CharField(
+        max_length=32,
+        primary_key=True,
+        editable=False,
+        db_index=True,
+        help_text='The OAR ID of a facility.')
+    name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        db_index=True,
+        help_text='The name of the facility.')
+    country_code = models.CharField(
+        max_length=2,
+        null=False,
+        blank=False,
+        db_index=True,
+        choices=COUNTRY_CHOICES,
+        help_text='The ISO 3166-1 alpha-2 country code of the facility.')
+    location = gis_models.PointField(
+        null=False,
+        db_index=True,
+        help_text='The lat/lng point location of the facility')
+    contrib_types = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=True,
+        blank=False,
+        choices=Contributor.CONTRIB_TYPE_CHOICES,
+        help_text='The categories to which the contributors belong.'))
+    contributors = postgres.ArrayField(models.IntegerField(
+        null=True,
+        help_text='The contributor who submitted the facility data.'))
+    ppe = models.TextField(
+            null=True,
+            help_text=('A type of personal protective equipment produced at '
+                       'the facility'),
+            verbose_name='ppe product type')
+    lists = postgres.ArrayField(models.IntegerField(
+        null=True,
+        editable=False,
+        help_text='The related list if the type of the source is LIST.'))
+
+    class Meta:
+        indexes = [GinIndex(fields=['contrib_types', 'contributors', 'lists'])]
+
 
 class FacilityMatch(models.Model):
     """
@@ -1623,6 +1644,11 @@ class FacilityMatch(models.Model):
         return (self.is_active
                 and self.facility_list_item.source.is_active
                 and self.facility_list_item.source.is_public)
+
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        index_facilities([instance.facility.id])
 
     def __str__(self):
         return '{0} - {1} - {2}'.format(self.facility_list_item, self.facility,
@@ -2112,3 +2138,53 @@ class NonstandardField(models.Model):
         return (
             'Contributor ID: {contributor_id} - ' +
             'Column Name: {column_name}').format(**self.__dict__)
+
+
+@transaction.atomic
+def index_facilities(facility_ids=list):
+    # If passed an empty array, create or update all existing facilities
+    if len(facility_ids) == 0:
+        print('Indexing all facilities...')
+        facility_ids = Facility.objects.all().values_list('id', flat=True)
+
+    contrib_type = 'facility_list_item__source__contributor__contrib_type'
+    contributor = 'facility_list_item__source__contributor'
+    list = 'facility_list_item__source__facility_list_id'
+    filter = (Q(is_active=True)
+              & Q(status__in=[FacilityMatch.AUTOMATIC,
+                              FacilityMatch.CONFIRMED,
+                              FacilityMatch.MERGED])
+              & Q(facility_list_item__source__is_active=True)
+              & Q(facility_list_item__source__is_public=True))
+
+    # Create a list of dictionaries in the structure of FacilityIndexes
+    data = FacilityMatch.objects \
+                        .filter(facility_id__in=facility_ids) \
+                        .annotate(name=F('facility__name'),
+                                  country_code=F('facility__country_code'),
+                                  location=F('facility__location')) \
+                        .values('name', 'country_code', 'location') \
+                        .annotate(contrib_types=ArrayAgg(
+                                    contrib_type,
+                                    filter=filter),
+                                  contributors=ArrayAgg(
+                                    contributor,
+                                    filter=filter),
+                                  lists=ArrayAgg(
+                                    list,
+                                    filter=filter),
+                                  id=F('facility_id'),
+                                  ppe=Concat('facility__ppe_product_types',
+                                             'facility__ppe_contact_phone',
+                                             'facility__ppe_contact_email',
+                                             'facility__ppe_website',
+                                             output_field=CharField()))
+
+    FacilityIndex.objects.filter(id__in=facility_ids).delete()
+    FacilityIndex.objects.bulk_create([FacilityIndex(**kv) for kv in data])
+
+
+post_save.connect(Facility.post_save, sender=Facility)
+post_save.connect(Source.post_save, sender=Source)
+post_save.connect(FacilityMatch.post_save, sender=FacilityMatch)
+post_save.connect(Contributor.post_save, sender=Contributor)

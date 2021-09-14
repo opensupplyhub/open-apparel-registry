@@ -18,6 +18,10 @@ import {
     startPromoteFacilityMatch,
     failPromoteFacilityMatch,
     completePromoteFacilityMatch,
+    startFetchFacilityToTransfer,
+    failFetchFacilityToTransfer,
+    completeFetchFacilityToTransfer,
+    clearFacilityToTransfer,
 } from '../actions/adjustFacilityMatches';
 
 const initialState = Object.freeze({
@@ -29,6 +33,11 @@ const initialState = Object.freeze({
     }),
     adjustFacilities: Object.freeze({
         data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    transferFacility: Object.freeze({
+        data: null,
         fetching: false,
         error: null,
     }),
@@ -137,6 +146,31 @@ export default createReducer(
                 facility: {
                     data: { $set: data },
                 },
+            }),
+        [startFetchFacilityToTransfer]: state =>
+            update(state, {
+                transferFacility: {
+                    fetching: { $set: true },
+                    error: { $set: initialState.transferFacility.error },
+                },
+            }),
+        [failFetchFacilityToTransfer]: (state, error) =>
+            update(state, {
+                transferFacility: {
+                    fetching: { $set: initialState.transferFacility.fetching },
+                    error: { $set: error },
+                },
+            }),
+        [completeFetchFacilityToTransfer]: (state, data) =>
+            update(state, {
+                transferFacility: {
+                    data: { $set: data },
+                    fetching: { $set: initialState.transferFacility.fetching },
+                },
+            }),
+        [clearFacilityToTransfer]: state =>
+            update(state, {
+                transferFacility: { $set: initialState.transferFacility },
             }),
         [resetAdjustFacilityState]: constant(initialState),
     },
