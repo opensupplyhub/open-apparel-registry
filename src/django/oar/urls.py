@@ -84,7 +84,8 @@ internal_apis = [
     path(r'tile/<layer>/<cachekey>/<int:z>/<int:x>/<int:y>.<ext>',
          views.get_tile, name='tile'),
     url(r'^api/current_tile_cache_key', views.current_tile_cache_key),
-    url(r'api-blocks', views.ApiBlockViewSet, 'api-block')
+    url(r'api-blocks', views.ApiBlockViewSet, 'api-block'),
+    url(r'^api/geocoder/', views.get_geocoding, name='get_geocoding'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns = public_apis + internal_apis

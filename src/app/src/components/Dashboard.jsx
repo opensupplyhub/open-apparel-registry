@@ -14,6 +14,7 @@ import DashboardUpdateFacilityLocation from './DashboardUpdateFacilityLocation';
 import DashboardApiBlocks from './DashboardApiBlocks';
 import DashboardActivityReports from './DashboardActivityReports';
 import DashboardApiBlock from './DashboardApiBlock';
+import DashboardGeocoder from './DashboardGeocoder';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
 
@@ -32,6 +33,7 @@ import {
     dashboardApiBlocksRoute,
     dashboardApiBlockRoute,
     dashboardActivityReportsRoute,
+    dashboardGeocoderRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -87,16 +89,17 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
             <FeatureFlag flag={CLAIM_A_FACILITY}>
                 <Link to={dashboardClaimsRoute}>View Facility Claims</Link>
             </FeatureFlag>
-            <Link to={dashboardDeleteFacilityRoute}>Delete a facility</Link>
-            <Link to={dashboardMergeFacilitiesRoute}>Merge two facilities</Link>
+            <Link to={dashboardDeleteFacilityRoute}>Delete a Facility</Link>
+            <Link to={dashboardMergeFacilitiesRoute}>Merge Two Facilities</Link>
             <Link to={dashboardAdjustFacilityMatchesRoute}>
-                Adjust facility matches
+                Adjust Facility mMtches
             </Link>
             <Link to={dashboardUpdateFacilityLocationRoute}>
-                Update facility location
+                Update Facility Location
             </Link>
             <Link to={dashboardApiBlocksRoute}>View API Blocks</Link>
             <Link to={dashboardActivityReportsRoute}>View Status Reports</Link>
+            <Link to={dashboardGeocoderRoute}>Geocode</Link>
         </div>
     );
 
@@ -192,6 +195,11 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                         />
                         <Route
                             exact
+                            path={dashboardGeocoderRoute}
+                            render={makeClickableDashboardLinkFn('Geocoder')}
+                        />
+                        <Route
+                            exact
                             path={dashboardRoute}
                             render={() => 'Dashboard'}
                         />
@@ -262,6 +270,11 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                         exact
                         path={dashboardActivityReportsRoute}
                         component={DashboardActivityReports}
+                    />
+                    <Route
+                        exact
+                        path={dashboardGeocoderRoute}
+                        component={DashboardGeocoder}
                     />
                     <Route
                         exact

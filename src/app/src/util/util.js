@@ -106,6 +106,8 @@ export const makeDashboardFacilityListsURL = contributorID =>
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
 export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
 
+export const makeDashboardGeocoderURL = () => '/api/geocoder/';
+
 export const makeDashboardActivityReportsURL = () =>
     '/api/facility-activity-reports/';
 export const makeRejectDashboardActivityReportURL = id =>
