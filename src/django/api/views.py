@@ -1395,7 +1395,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 best_match = max(
                     other_matches.filter(
                         status__in=(FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED)),
+                                    FacilityMatch.CONFIRMED)).exclude(
+                        facility_list_item__geocoded_point__isnull=True),
                     key=lambda m: m.confidence)
             except ValueError:
                 # Raised when there are no AUTOMATIC or CONFIRMED matches
