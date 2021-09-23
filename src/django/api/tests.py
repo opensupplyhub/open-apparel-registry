@@ -2744,6 +2744,60 @@ class FacilityDeleteTest(APITestCase):
         alias.refresh_from_db()
         self.assertEqual(match_3.facility, alias.facility)
 
+    def test_matches_without_locations_are_ignored(self):
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List')
+
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=None,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility,
+                    source=source_2)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
+
+        self.list_item.refresh_from_db()
+        self.assertEqual(
+            FacilityListItem.DELETED, self.list_item.status)
+        self.assertEqual(
+            ProcessingAction.DELETE_FACILITY,
+            self.list_item.processing_results[-1]['action'])
+        self.assertEqual(
+            self.facility.id,
+            self.list_item.processing_results[-1]['deleted_oar_id'])
+
     def test_other_inactive_match_is_promoted(self):
         initial_facility_count = Facility.objects.all().count()
         list_2 = FacilityList \
