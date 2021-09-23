@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import { arrayOf, bool, func, shape, string } from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -155,6 +156,13 @@ class FacilityDetailSidebar extends Component {
             embed,
             classes,
         } = this.props;
+
+        if (data?.id && data?.id !== oarID) {
+            // When redirecting to a facility alias from a deleted facility,
+            // the OAR ID in the url will not match the facility data id;
+            // redirect to the appropriate facility URL.
+            return <Redirect to={`/facilities/${data.id}`} />;
+        }
 
         if (fetching) {
             return (
