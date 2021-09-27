@@ -141,6 +141,7 @@ export const makeTransferFacilityAPIURL = oarID =>
     `/api/facilities/${oarID}/move/`;
 export const makePromoteFacilityMatchAPIURL = oarID =>
     `/api/facilities/${oarID}/promote/`;
+export const makeLinkFacilityAPIURL = oarID => `/api/facilities/${oarID}/link/`;
 
 export const makeMergeTwoFacilitiesAPIURL = (targetOARID, toMergeOARID) =>
     `/api/facilities/merge/?target=${targetOARID}&merge=${toMergeOARID}`;
