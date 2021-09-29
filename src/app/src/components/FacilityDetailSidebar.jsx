@@ -246,6 +246,7 @@ class FacilityDetailSidebar extends Component {
         const facilityClaimID = get(data, 'properties.claim_info.id', null);
 
         const report = get(data, 'properties.activity_reports[0]');
+        const newOarId = get(data, 'properties.new_oar_id');
         const renderStatusRibbon = () => {
             if (!report) return null;
             if (report.status === 'PENDING') {
@@ -262,7 +263,17 @@ class FacilityDetailSidebar extends Component {
                 return (
                     <FeatureFlag flag={REPORT_A_FACILITY}>
                         <div className={classes.closureRibbon}>
-                            This facility is closed.
+                            This facility is closed
+                            {!!newOarId && (
+                                <span>
+                                    {' '}
+                                    and has moved to{' '}
+                                    <a href={`/facilities/${newOarId}`}>
+                                        {newOarId}
+                                    </a>
+                                </span>
+                            )}
+                            .
                         </div>
                     </FeatureFlag>
                 );

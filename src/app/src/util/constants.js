@@ -238,6 +238,7 @@ export const dashboardAdjustFacilityMatchesRoute =
 export const dashboardUpdateFacilityLocationRoute =
     '/dashboard/updatefacilitylocation';
 export const dashboardActivityReportsRoute = '/dashboard/activityreports';
+export const dashboardLinkOarIdRoute = '/dashboard/linkid';
 export const dashboardGeocoderRoute = '/dashboard/geocoder';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';

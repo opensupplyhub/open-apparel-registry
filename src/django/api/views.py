@@ -709,6 +709,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'update-location' in path:
             return None
 
+        if 'link' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -2308,6 +2311,33 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         serializer = FacilityActivityReportSerializer(facility_activity_report)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def link(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            new_oar_id = request.data.get('new_oar_id')
+            if new_oar_id is None:
+                raise BadRequestException('Missing required param new_oar_id')
+            if not Facility.objects.filter(pk=new_oar_id).exists():
+                raise BadRequestException('Invalid param new_oar_id')
+
+            source_facility = Facility.objects.get(pk=pk)
+            source_facility.new_oar_id = new_oar_id
+
+            source_facility.save()
+
+            context = {'request': request}
+            facility_data = FacilityDetailsSerializer(
+                source_facility, context=context).data
+            return Response(facility_data)
+
+        except Facility.DoesNotExist:
+            raise NotFound()
 
 
 class FacilityListViewSetSchema(AutoSchema):

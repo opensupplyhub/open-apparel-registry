@@ -14,6 +14,7 @@ import DashboardUpdateFacilityLocation from './DashboardUpdateFacilityLocation';
 import DashboardApiBlocks from './DashboardApiBlocks';
 import DashboardActivityReports from './DashboardActivityReports';
 import DashboardApiBlock from './DashboardApiBlock';
+import DashboardLinkToOarId from './DashboardLinkToOarId';
 import DashboardGeocoder from './DashboardGeocoder';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
@@ -34,6 +35,7 @@ import {
     dashboardApiBlockRoute,
     dashboardActivityReportsRoute,
     dashboardGeocoderRoute,
+    dashboardLinkOarIdRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -92,13 +94,14 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
             <Link to={dashboardDeleteFacilityRoute}>Delete a Facility</Link>
             <Link to={dashboardMergeFacilitiesRoute}>Merge Two Facilities</Link>
             <Link to={dashboardAdjustFacilityMatchesRoute}>
-                Adjust Facility mMtches
+                Adjust Facility Matches
             </Link>
             <Link to={dashboardUpdateFacilityLocationRoute}>
                 Update Facility Location
             </Link>
             <Link to={dashboardApiBlocksRoute}>View API Blocks</Link>
             <Link to={dashboardActivityReportsRoute}>View Status Reports</Link>
+            <Link to={dashboardLinkOarIdRoute}>Link to New OAR ID</Link>
             <Link to={dashboardGeocoderRoute}>Geocode</Link>
         </div>
     );
@@ -195,6 +198,13 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                         />
                         <Route
                             exact
+                            path={dashboardLinkOarIdRoute}
+                            render={makeClickableDashboardLinkFn(
+                                'Link to New OAR ID',
+                            )}
+                        />
+                        <Route
+                            exact
                             path={dashboardGeocoderRoute}
                             render={makeClickableDashboardLinkFn('Geocoder')}
                         />
@@ -270,6 +280,11 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                         exact
                         path={dashboardActivityReportsRoute}
                         component={DashboardActivityReports}
+                    />
+                    <Route
+                        exact
+                        path={dashboardLinkOarIdRoute}
+                        component={DashboardLinkToOarId}
                     />
                     <Route
                         exact

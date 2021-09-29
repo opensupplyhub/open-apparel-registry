@@ -621,7 +621,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
                   'country_name', 'claim_info', 'other_locations',
                   'ppe_product_types', 'ppe_contact_phone',
                   'ppe_contact_email', 'ppe_website',  'is_closed',
-                  'activity_reports', 'contributor_fields')
+                  'activity_reports', 'contributor_fields', 'new_oar_id')
         geo_field = 'location'
 
     def get_other_names(self, facility):
