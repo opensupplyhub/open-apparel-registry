@@ -25,6 +25,7 @@ from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
+from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -882,7 +883,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 queryset, context=context).data
             return Response(response_data)
         except Facility.DoesNotExist:
-            raise NotFound()
+            # If the facility is not found but an alias is available,
+            # redirect to the alias
+            aliases = FacilityAlias.objects.filter(oar_id=pk)
+            if len(aliases) == 0:
+                raise NotFound()
+            oar_id = aliases.first().facility.id
+            return redirect('/api/facilities/' + oar_id)
 
     @transaction.atomic
     def create(self, request):

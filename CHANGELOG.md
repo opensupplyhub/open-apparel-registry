@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Add Geocoding Dashboard [#1469](https://github.com/open-apparel-registry/open-apparel-registry/pull/1469)
+- Redirect to alias for deleted facilities [#1473](https://github.com/open-apparel-registry/open-apparel-registry/pull/1473)
 
 ### Changed
 
