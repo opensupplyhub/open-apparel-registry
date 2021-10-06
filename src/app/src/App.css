@@ -21,7 +21,7 @@
   color: #0427a4;
   cursor: pointer;
   text-decoration: none;
-  font-family: ff-tisa-sans-web-pro, sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   padding: 0 16px;
 }
@@ -160,7 +160,7 @@ li.dropdown-list-item button {
   font-weight: 400;
   color: #000;
   font-weight: 400;
-  font-family: ff-tisa-sans-web-pro, sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .form__select-input--selected {
@@ -168,7 +168,7 @@ li.dropdown-list-item button {
   transition: .4s;
   font-weight: 400;
   color: #9B9B9B;
-  font-family: ff-tisa-sans-web-pro, sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .form__select-input--selected:hover {
@@ -183,7 +183,7 @@ li.dropdown-list-item button {
   font-size: 16px;
   padding: 8px 16px;
   font-weight: 400;
-  font-family: ff-tisa-sans-web-pro, sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .form__text-input:focus {

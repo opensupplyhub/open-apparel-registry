@@ -69,7 +69,7 @@
     font-size: 12px !important;
     color: #0427a4;
     text-decoration: none;
-    font-family: ff-tisa-sans-web-pro,sans-serif;
+    font-family: 'DM Sans',sans-serif;
     font-weight: 500;
     padding: 0 16px !important;
     border: none !important;
@@ -155,6 +155,10 @@
 .search-tab {
   min-width: 0 !important;
   font-size: 0.8rem !important;
+}
+
+.search-tab span, .inherit-font {
+    font-family: inherit !important;
 }
 
 .tabs {

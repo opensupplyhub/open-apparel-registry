@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { bool, func, oneOf } from 'prop-types';
 import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -42,12 +43,19 @@ import {
 
 import { allListsAreEmpty } from '../util/util';
 
-const filterSidebarStyles = Object.freeze({
-    controlPanelStyles: Object.freeze({
-        height: 'inherit',
-        width: 'inherit',
-    }),
+const controlPanelStyles = Object.freeze({
+    height: 'inherit',
+    width: 'inherit',
 });
+
+const filterSidebarStyles = theme =>
+    Object.freeze({
+        searchTab: Object.freeze({
+            '*': {
+                fontFamily: theme.typography.fontFamily,
+            },
+        }),
+    });
 
 class FilterSidebar extends Component {
     componentDidMount() {
@@ -108,6 +116,7 @@ class FilterSidebar extends Component {
             fetchingFeatureFlags,
             embed,
             facilitiesCount,
+            classes,
         } = this.props;
 
         if (fetchingFeatureFlags) {
@@ -179,7 +188,7 @@ class FilterSidebar extends Component {
                             <Tab
                                 key={tab}
                                 label={label}
-                                className="search-tab"
+                                className={`search-tab ${classes.searchTab}`}
                             />
                         );
                     })}
@@ -223,10 +232,7 @@ class FilterSidebar extends Component {
         })();
 
         return (
-            <div
-                className="control-panel"
-                style={filterSidebarStyles.controlPanelStyles}
-            >
+            <div className="control-panel" style={controlPanelStyles}>
                 {header}
                 {tabBar}
                 {insetComponent}
@@ -295,4 +301,6 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FilterSidebar);
+export default withStyles(filterSidebarStyles)(
+    connect(mapStateToProps, mapDispatchToProps)(FilterSidebar),
+);
