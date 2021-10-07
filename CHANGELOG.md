@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Fix delete facility endpoint [#1472](https://github.com/open-apparel-registry/open-apparel-registry/pull/1472)
+- Allow blank new_oar_ids [#1485](https://github.com/open-apparel-registry/open-apparel-registry/pull/1485)
 
 ### Security
 
