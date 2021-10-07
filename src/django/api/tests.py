@@ -546,6 +546,16 @@ class GeocodingTest(TestCase):
         results = geocode_address('@#$^@#$^', 'XX')
         self.assertEqual(0, results['result_count'])
 
+    def test_incorrect_country_code_raises_error(self):
+        with self.assertRaises(ValueError) as cm:
+            geocode_address('Datong Bridge, Qiucun town, Fenghua District, ' +
+                            'Tirupur, Tamilnadu, 641604', 'IN')
+
+        self.assertEqual(
+            cm.exception.args,
+            ("Geocoding results did not match provided country code.",)
+        )
+
 
 class FacilityListItemGeocodingTest(ProcessingTestCase):
     def test_invalid_argument_raises_error(self):
@@ -573,6 +583,24 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
             cm.exception.args,
             ('Items to be geocoded must be in the PARSED status',),
         )
+
+    def test_incorrect_country_code_has_error_status(self):
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        item = FacilityListItem(
+            raw_data='"Linjiacun Town, Zhucheng City Weifang, Daman, ' +
+                     'Daman, 396210",IN,Shirts!',
+            source=source
+        )
+        parse_facility_list_item(item)
+        geocode_facility_list_item(item)
+
+        self.assertEqual(item.status, FacilityListItem.ERROR_GEOCODING)
+        self.assertIsNone(item.geocoded_address)
+        self.assertIsNone(item.geocoded_point)
 
     def test_successfully_geocoded_item_has_correct_results(self):
         facility_list = FacilityList.objects.create(

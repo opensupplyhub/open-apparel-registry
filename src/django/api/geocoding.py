@@ -38,6 +38,14 @@ def format_no_geocode_results(data):
     }
 
 
+def validate_country_code(data, country_code):
+    address_components = data["results"][0]['address_components']
+    for component in address_components:
+        if component['short_name'] == country_code:
+            return True
+    raise ValueError("Geocoding results did not match provided country code.")
+
+
 def geocode_address(address, country_code):
     params = create_geocoding_params(address, country_code)
     r = requests.get(GEOCODING_URL, params=params)
@@ -50,5 +58,7 @@ def geocode_address(address, country_code):
 
     if data["status"] == ZERO_RESULTS or len(data["results"]) == 0:
         return format_no_geocode_results(data)
+
+    validate_country_code(data, country_code)
 
     return format_geocoded_address_data(data)
