@@ -112,6 +112,8 @@ const detailsSidebarStyles = theme =>
         },
     });
 
+const SUGGEST_A_DATA_EDIT = 'Suggest a data edit';
+
 class FacilityDetailSidebar extends Component {
     componentDidMount() {
         return this.props.fetchFacility(
@@ -208,6 +210,16 @@ class FacilityDetailSidebar extends Component {
             ({ lng, lat }) => lng === facilityLng && lat === facilityLat,
         );
 
+        const inexactCoordinatesWarning = data.properties
+            .has_inexact_coordinates ? (
+            <em>
+                Unable to locate exact GPS coordinates for this facility. If you
+                have access to accurate coordinates for this facility, please
+                report them using the &quot;{SUGGEST_A_DATA_EDIT}&quot; link
+                below.
+            </em>
+        ) : null;
+
         const canonicalLocationData = head(canonicalLocationsData);
 
         const canonicalFacilityLocation = canonicalLocationData ? (
@@ -216,6 +228,7 @@ class FacilityDetailSidebar extends Component {
                 <span className="control-panel__body">
                     {facilityLng}, {facilityLat}
                 </span>
+                {inexactCoordinatesWarning}
                 <br />
                 {canonicalLocationData.contributor_id &&
                     canonicalLocationData.contributor_name && (
@@ -240,6 +253,7 @@ class FacilityDetailSidebar extends Component {
                 <p className="control-panel__body">
                     {facilityLng}, {facilityLat}
                 </p>
+                {inexactCoordinatesWarning}
             </div>
         );
 
@@ -329,7 +343,7 @@ class FacilityDetailSidebar extends Component {
                             data.properties.oar_id,
                         )}
                     >
-                        Suggest a data edit
+                        {SUGGEST_A_DATA_EDIT}
                     </a>
                 </>
             </ShowOnly>
