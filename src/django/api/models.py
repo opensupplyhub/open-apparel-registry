@@ -1291,7 +1291,8 @@ class Facility(PPEMixin):
     new_oar_id = models.CharField(
         max_length=32,
         null=True,
-        help_text=('The new OAR ID where this facility can be found if it has'
+        blank=True,
+        help_text=('The new OAR ID where this facility can be found if it has '
                    'been moved.'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
