@@ -19,6 +19,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [48] 2021-10-08
+
+### Added
+
+- Add Geocoding Dashboard [#1469](https://github.com/open-apparel-registry/open-apparel-registry/pull/1469)
+- Redirect to alias for deleted facilities [#1473](https://github.com/open-apparel-registry/open-apparel-registry/pull/1473)
+- Add linkings IDs for relocated facilities [#1474](https://github.com/open-apparel-registry/open-apparel-registry/pull/1474)
+- Add script to merge identified duplicates [#1477](https://github.com/open-apparel-registry/open-apparel-registry/pull/1477)
+
+### Fixed
+
+- Fix delete facility endpoint [#1472](https://github.com/open-apparel-registry/open-apparel-registry/pull/1472)
+- Allow blank new_oar_ids [#1485](https://github.com/open-apparel-registry/open-apparel-registry/pull/1485)
+- Fix invalid country/address combinations [#1482](https://github.com/open-apparel-registry/open-apparel-registry/pull/1482)
+
+### Security
+
+- Bump axios from 0.21.1 to 0.21.2 in /src/app [#1466](https://github.com/open-apparel-registry/open-apparel-registry/pull/1466)
+
 ## [47] 2021-09-14
 
 ### Added

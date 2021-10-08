@@ -25,6 +25,7 @@ from django.conf import settings
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
+from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins, schemas
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -708,6 +709,9 @@ class FacilitiesAutoSchema(AutoSchema):
         if 'update-location' in path:
             return None
 
+        if 'link' in path:
+            return None
+
         return super(FacilitiesAutoSchema, self).get_link(
             path, method, base_url)
 
@@ -882,7 +886,13 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 queryset, context=context).data
             return Response(response_data)
         except Facility.DoesNotExist:
-            raise NotFound()
+            # If the facility is not found but an alias is available,
+            # redirect to the alias
+            aliases = FacilityAlias.objects.filter(oar_id=pk)
+            if len(aliases) == 0:
+                raise NotFound()
+            oar_id = aliases.first().facility.id
+            return redirect('/api/facilities/' + oar_id)
 
     @transaction.atomic
     def create(self, request):
@@ -1395,7 +1405,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 best_match = max(
                     other_matches.filter(
                         status__in=(FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED)),
+                                    FacilityMatch.CONFIRMED)).exclude(
+                        facility_list_item__geocoded_point__isnull=True),
                     key=lambda m: m.confidence)
             except ValueError:
                 # Raised when there are no AUTOMATIC or CONFIRMED matches
@@ -2300,6 +2311,33 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         serializer = FacilityActivityReportSerializer(facility_activity_report)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsRegisteredAndConfirmed,))
+    @transaction.atomic
+    def link(self, request, pk=None):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        try:
+            new_oar_id = request.data.get('new_oar_id')
+            if new_oar_id is None:
+                raise BadRequestException('Missing required param new_oar_id')
+            if not Facility.objects.filter(pk=new_oar_id).exists():
+                raise BadRequestException('Invalid param new_oar_id')
+
+            source_facility = Facility.objects.get(pk=pk)
+            source_facility.new_oar_id = new_oar_id
+
+            source_facility.save()
+
+            context = {'request': request}
+            facility_data = FacilityDetailsSerializer(
+                source_facility, context=context).data
+            return Response(facility_data)
+
+        except Facility.DoesNotExist:
+            raise NotFound()
 
 
 class FacilityListViewSetSchema(AutoSchema):
@@ -3785,3 +3823,22 @@ class NonstandardFieldsViewSet(mixins.ListModelMixin,
             NonstandardField.DEFAULT_FIELDS.keys() | nonstandard_field_set)
 
         return Response(field_list)
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_geocoding(request):
+    """
+    Returns geocoded name and address.
+    """
+    country_code = request.query_params.get('country_code', None)
+    address = request.query_params.get('address', None)
+
+    if country_code is None:
+        raise BadRequestException('Missing country code')
+
+    if address is None:
+        raise BadRequestException('Missing address')
+
+    geocode_result = geocode_address(address, country_code)
+    return Response(geocode_result)

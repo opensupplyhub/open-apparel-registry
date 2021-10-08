@@ -106,6 +106,8 @@ export const makeDashboardFacilityListsURL = contributorID =>
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
 export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
 
+export const makeDashboardGeocoderURL = () => '/api/geocoder/';
+
 export const makeDashboardActivityReportsURL = () =>
     '/api/facility-activity-reports/';
 export const makeRejectDashboardActivityReportURL = id =>
@@ -139,6 +141,7 @@ export const makeTransferFacilityAPIURL = oarID =>
     `/api/facilities/${oarID}/move/`;
 export const makePromoteFacilityMatchAPIURL = oarID =>
     `/api/facilities/${oarID}/promote/`;
+export const makeLinkFacilityAPIURL = oarID => `/api/facilities/${oarID}/link/`;
 
 export const makeMergeTwoFacilitiesAPIURL = (targetOARID, toMergeOARID) =>
     `/api/facilities/merge/?target=${targetOARID}&merge=${toMergeOARID}`;

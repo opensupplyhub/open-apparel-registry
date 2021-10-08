@@ -546,6 +546,16 @@ class GeocodingTest(TestCase):
         results = geocode_address('@#$^@#$^', 'XX')
         self.assertEqual(0, results['result_count'])
 
+    def test_incorrect_country_code_raises_error(self):
+        with self.assertRaises(ValueError) as cm:
+            geocode_address('Datong Bridge, Qiucun town, Fenghua District, ' +
+                            'Tirupur, Tamilnadu, 641604', 'IN')
+
+        self.assertEqual(
+            cm.exception.args,
+            ("Geocoding results did not match provided country code.",)
+        )
+
 
 class FacilityListItemGeocodingTest(ProcessingTestCase):
     def test_invalid_argument_raises_error(self):
@@ -573,6 +583,24 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
             cm.exception.args,
             ('Items to be geocoded must be in the PARSED status',),
         )
+
+    def test_incorrect_country_code_has_error_status(self):
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        item = FacilityListItem(
+            raw_data='"Linjiacun Town, Zhucheng City Weifang, Daman, ' +
+                     'Daman, 396210",IN,Shirts!',
+            source=source
+        )
+        parse_facility_list_item(item)
+        geocode_facility_list_item(item)
+
+        self.assertEqual(item.status, FacilityListItem.ERROR_GEOCODING)
+        self.assertIsNone(item.geocoded_address)
+        self.assertIsNone(item.geocoded_point)
 
     def test_successfully_geocoded_item_has_correct_results(self):
         facility_list = FacilityList.objects.create(
@@ -2743,6 +2771,60 @@ class FacilityDeleteTest(APITestCase):
         # facility
         alias.refresh_from_db()
         self.assertEqual(match_3.facility, alias.facility)
+
+    def test_matches_without_locations_are_ignored(self):
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List')
+
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=None,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility,
+                    source=source_2)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
+
+        self.list_item.refresh_from_db()
+        self.assertEqual(
+            FacilityListItem.DELETED, self.list_item.status)
+        self.assertEqual(
+            ProcessingAction.DELETE_FACILITY,
+            self.list_item.processing_results[-1]['action'])
+        self.assertEqual(
+            self.facility.id,
+            self.list_item.processing_results[-1]['deleted_oar_id'])
 
     def test_other_inactive_match_is_promoted(self):
         initial_facility_count = Facility.objects.all().count()

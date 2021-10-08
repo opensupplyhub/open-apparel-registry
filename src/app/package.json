@@ -9,7 +9,7 @@
         "@material-ui/icons": "3.0.1",
         "@turf/distance": "6.0.1",
         "@turf/turf": "5.1.6",
-        "axios": "0.21.1",
+        "axios": "0.21.2",
         "core-js": "3.9.1",
         "file-saver": "2.0.0",
         "http-proxy-middleware": "0.19.1",
