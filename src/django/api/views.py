@@ -88,7 +88,8 @@ from api.models import (FacilityList,
                         ApiBlock,
                         EmbedConfig,
                         EmbedField,
-                        NonstandardField)
+                        NonstandardField,
+                        FacilityIndex)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -433,6 +434,13 @@ class APIAuthToken(ObtainAuthToken):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+def active_contributors():
+    valid_sources = Source.objects.filter(
+        is_active=True, is_public=True, create=True,
+        facilitylistitem__status__in=FacilityListItem.COMPLETE_STATUSES)
+    return Contributor.objects.filter(source__in=valid_sources).distinct()
+
+
 @api_view(['GET'])
 def all_contributors(request):
     """
@@ -445,17 +453,25 @@ def all_contributors(request):
             [2, "Contributor Two"]
         ]
     """
-    valid_sources = Source.objects.filter(
-        is_active=True, is_public=True, create=True,
-        facilitylistitem__status__in=FacilityListItem.COMPLETE_STATUSES)
     response_data = [
         (contributor.id, contributor.name)
         for contributor
-        in Contributor.objects.filter(
-            source__in=valid_sources).distinct().order_by('name')
+        in active_contributors().order_by('name')
     ]
 
     return Response(response_data)
+
+
+@api_view(['GET'])
+def active_contributors_count(request):
+    """
+    Returns count of active contributors
+
+    ## Sample Response
+
+        { "count": 14 }
+    """
+    return Response({"count": active_contributors().count()})
 
 
 @api_view(['GET'])
@@ -529,6 +545,21 @@ def all_countries(request):
 
     """
     return Response(COUNTRY_CHOICES)
+
+
+@api_view(['GET'])
+def active_countries_count(request):
+    """
+    Returns a count of disctinct country codes for active facilities.
+    ## Sample Response
+
+        { "count": 52 }
+    """
+
+    count = FacilityIndex.objects.values_list('country_code') \
+                                 .distinct().count()
+
+    return Response({"count": count})
 
 
 @api_view(['GET'])
