@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Add warning about inexact facility coordinates [#1488](https://github.com/open-apparel-registry/open-apparel-registry/pull/1488)
+- Add endpoints for info website [#1487](https://github.com/open-apparel-registry/open-apparel-registry/pull/1487)
 
 ### Changed
 
