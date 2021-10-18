@@ -123,15 +123,6 @@ class FilterSidebar extends Component {
             return <CircularProgress />;
         }
 
-        const header = !embed ? (
-            <div className="panel-header results-height-subtract">
-                <h3 className="panel-header__title">Open Apparel Registry</h3>
-                <p className="panel-header__subheading">
-                    The open map of global apparel facilities.
-                </p>
-            </div>
-        ) : null;
-
         let orderedTabsForSidebar = vectorTileFeatureIsActive
             ? filterSidebarTabs.slice().reverse()
             : filterSidebarTabs;
@@ -233,7 +224,6 @@ class FilterSidebar extends Component {
 
         return (
             <div className="control-panel" style={controlPanelStyles}>
-                {header}
                 {tabBar}
                 {insetComponent}
             </div>

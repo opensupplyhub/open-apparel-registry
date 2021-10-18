@@ -1,239 +1,67 @@
-import React, { useState, useRef } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import Toolbar from '@material-ui/core/Toolbar';
-import Drawer from '@material-ui/core/Drawer';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import { Link, Route } from 'react-router-dom';
+import Logo from './Navbar/Logo';
+import NavParent from './Navbar/NavParent';
+import AuthMenu from './Navbar/AuthMenu';
+import MobileAuthMenu from './Navbar/MobileAuthMenu';
+import GoogleTranslateButton from './Navbar/GoogleTranslateButton';
+import MainMobileNav from './Navbar/MainMobileNav';
 
-import logo from '../styles/images/OpenApparelRegistry_logo.svg';
-import NavbarDropdown from './NavbarDropdown';
-import NavbarLoginButtonGroup from './NavbarLoginButtonGroup';
+import '../styles/css/header.css';
 
-import {
-    contributeRoute,
-    aboutClaimedFacilitiesRoute,
-} from '../util/constants';
-import { setGDPROpen } from '../actions/ui';
+import { InfoLink } from '../util/constants';
 
-const apiDocumentationURL =
-    process.env.NODE_ENV === 'development'
-        ? 'http://localhost:8081/api/docs/'
-        : '/api/docs/';
-
-function Navbar({ openGDPR }) {
-    const [drawerHandler, setDrawerHandler] = useState(false);
-    const mobileMenuToggleRef = useRef();
-
-    const aboutLinks = [
-        {
-            text: 'Team',
-            url: 'https://info.openapparel.org/team',
-            type: 'external',
-        },
-        {
-            text: 'Board & Governance',
-            url: 'https://info.openapparel.org/board',
-            type: 'external',
-        },
-        {
-            text: 'Processing',
-            url: '/about/processing',
-            type: 'link',
-        },
-        {
-            text: 'Claimed Facilities',
-            url: aboutClaimedFacilitiesRoute,
-            type: 'link',
-        },
-    ];
-
-    const mainNavigation = (
-        <>
-            <div
-                className="mainNavigation"
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginLeft: 'auto',
-                }}
-            >
-                <Link to="/" href="/" className="navButton">
-                    HOME
-                </Link>
-                <NavbarDropdown title="ABOUT" links={aboutLinks} />
-                <a
-                    target="_blank"
-                    className="navButton"
-                    rel="noopener noreferrer"
-                    href="https://info.openapparel.org/faq/"
-                >
-                    FAQs
-                </a>
-                <a
-                    target="_blank"
-                    className="navButton"
-                    rel="noopener noreferrer"
-                    href={apiDocumentationURL}
-                >
-                    API
-                </a>
-                <Link
-                    className="navButton"
-                    to={contributeRoute}
-                    href={contributeRoute}
-                >
-                    CONTRIBUTE
-                </Link>
-            </div>
-            <div id="google_translate_element" />
-            <Route component={NavbarLoginButtonGroup} />
-        </>
-    );
-
-    const mobileNavigation = (
-        <>
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                    width: '250px',
-                }}
-            >
-                <Link
-                    to="/"
-                    href="/"
-                    className="navButton"
-                    onClick={() => setDrawerHandler(false)}
-                >
-                    HOME
-                </Link>
-                <a
-                    target="_blank"
-                    className="navButton"
-                    rel="noopener noreferrer"
-                    href="https://info.openapparel.org/"
-                    onClick={() => setDrawerHandler(false)}
-                >
-                    ABOUT
-                </a>
-                <a
-                    target="_blank"
-                    className="navButton"
-                    rel="noopener noreferrer"
-                    href="https://info.openapparel.org/faq/"
-                    onClick={() => setDrawerHandler(false)}
-                >
-                    FAQs
-                </a>
-                <a
-                    target="_blank"
-                    className="navButton"
-                    rel="noopener noreferrer"
-                    href={apiDocumentationURL}
-                    onClick={() => setDrawerHandler(false)}
-                >
-                    API
-                </a>
-                <Link
-                    className="navButton"
-                    to={contributeRoute}
-                    href={contributeRoute}
-                    onClick={() => setDrawerHandler(false)}
-                >
-                    CONTRIBUTE
-                </Link>
-                <Button
-                    className="btn-text navButton"
-                    style={{
-                        minHeight: 'auto',
-                        justifyContent: 'flex-start',
-                    }}
-                    disableRipple
-                    onClick={() => {
-                        openGDPR();
-                        setDrawerHandler(false);
-                    }}
-                >
-                    Cookie Preferences
-                </Button>
-                <Button
-                    style={{ marginTop: 'auto' }}
-                    onClick={() => setDrawerHandler(false)}
-                >
-                    Close Menu
-                </Button>
-            </div>
-        </>
-    );
-
-    const mobileMenu = (
-        /* Im aware this is an absurd zindex,
-        but the appbar has an absurd one as well
-        and it'll be difficult to ensure any changes
-        to the appbar won't have breaking effects */
-        <Drawer
-            anchor="right"
-            open={drawerHandler}
-            onClose={() => setDrawerHandler(false)}
-            style={{ zIndex: 99999999 }}
-            className="mobile-navigation-drawer"
-        >
-            {mobileNavigation}
-        </Drawer>
-    );
-
-    const mobileMenuToggle = (
-        <div className="mobileMenuToggle">
-            <Button
-                className="btn-text navButton"
-                disableRipple
-                buttonRef={mobileMenuToggleRef}
-                aria-haspopup="true"
-                onClick={() => setDrawerHandler(true)}
-            >
-                MENU
-            </Button>
-        </div>
-    );
+function Navbar() {
+    const [activeSubmenu, setActiveSubmenu] = useState(null);
+    const [mobileNavActive, setMobileNavActive] = useState(null);
 
     return (
-        <>
-            <AppBar
-                position="static"
-                className="App-header results-height-subtract"
-            >
-                <Toolbar style={{ padding: 0 }}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'middle',
-                            marginRight: 'auto',
-                        }}
-                    >
-                        <Link
-                            to="/"
-                            href="/"
-                            style={{ display: 'inline-flex' }}
-                        >
-                            <img src={logo} className="logo" alt="logo" />
-                        </Link>
-                    </div>
-                    {mainNavigation}
-                    {mobileMenuToggle}
-                </Toolbar>
-            </AppBar>
-            {mobileMenu}
-        </>
+        <header
+            className={`app-header results-height-subtract ${
+                mobileNavActive && 'mobile-nav-is-active'
+            }`}
+            id="app-header"
+        >
+            <Logo />
+            <nav className="app-header-nav" id="nav" role="navigation">
+                <NavParent
+                    title="How It Works"
+                    activeSubmenu={activeSubmenu}
+                    setActiveSubmenu={setActiveSubmenu}
+                />
+                <NavParent
+                    title="About Us"
+                    activeSubmenu={activeSubmenu}
+                    setActiveSubmenu={setActiveSubmenu}
+                />
+                <a
+                    className="nav__link nav__link--level-1"
+                    href={`${InfoLink}/resources`}
+                    target=""
+                >
+                    Resources
+                </a>
+                <AuthMenu
+                    activeSubmenu={activeSubmenu}
+                    setActiveSubmenu={setActiveSubmenu}
+                />
+                <GoogleTranslateButton />
+            </nav>
+            <div className="mobile-toggles">
+                <MobileAuthMenu
+                    mobileNavActive={mobileNavActive}
+                    setMobileNavActive={setMobileNavActive}
+                />
+                <MainMobileNav
+                    mobileNavActive={mobileNavActive}
+                    setMobileNavActive={setMobileNavActive}
+                    activeSubmenu={activeSubmenu}
+                    setActiveSubmenu={setActiveSubmenu}
+                />
+            </div>
+        </header>
     );
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        openGDPR: () => dispatch(setGDPROpen(true)),
-    };
-}
-
-export default connect(null, mapDispatchToProps)(Navbar);
+export default connect(null)(Navbar);

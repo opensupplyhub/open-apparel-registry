@@ -97,6 +97,19 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script type="text/javascript">
+        var defaultLanguage = 'en';
+        function getLangFromTranslateElement(translateElement) {
+            const innerText = translateElement?.M?.innerText?.slice(0, -2);
+            const shortNameDict = translateElement?.B;
+            if (!innerText || !shortNameDict) return defaultLanguage;
+            for (const [key, value] of Object.entries(shortNameDict)) {
+                if (value.toLowerCase().trim() == innerText.toLowerCase().trim()) {
+                    return key;
+                }
+            }
+             return defaultLanguage;
+        }
+
         function googleTranslateElementInit() {
             var translateElementID = 'google_translate_element';
 
@@ -106,16 +119,21 @@
                 autoDisplay: true,
             }, translateElementID);
 
+            var translateButton = document.getElementById('google-translate-language-display');
+
             var callback = function () {
-                var el = document.getElementsByClassName('goog-te-menu-value');
+                setInterval(function(){
+                    var language = getLangFromTranslateElement(translateElement);
 
-                if (el.length) {
-                    var navbarElement = el[0];
+                    if (!translateButton) return;
+                    if (language.toUpperCase() === translateButton.innerText) return;
 
-                    while (navbarElement.childNodes.length > 1) {
-                        navbarElement.removeChild(navbarElement.childNodes[1]);
+                    if (!language) {
+                        translateButton.innerText = defaultLanguage.toUpperCase();
+                    } else {
+                        translateButton.innerText = language.toUpperCase();
                     }
-                }
+                }, 200);
 
                 removeObserver();
             };
@@ -132,6 +150,7 @@
             );
 
             function removeObserver() {
+                if (!observer) return;
                 observer.disconnect();
             };
         }

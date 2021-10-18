@@ -58,20 +58,27 @@ import {
     CLAIM_A_FACILITY,
     aboutClaimedFacilitiesRoute,
     settingsRoute,
+    WEB_HEADER_HEIGHT,
+    MOBILE_HEADER_HEIGHT,
 } from './util/constants';
 
-const appStyles = Object.freeze({
-    root: Object.freeze({
-        flexGrow: 1,
-    }),
-    mainPanelStyle: Object.freeze({
-        top: '64px',
-        right: '0',
-        left: '0',
-        position: 'fixed',
-        bottom: '51px',
-    }),
-});
+const appStyles = theme =>
+    Object.freeze({
+        root: Object.freeze({
+            flexGrow: 1,
+        }),
+        mainPanelStyle: Object.freeze({
+            right: '0',
+            top: MOBILE_HEADER_HEIGHT,
+            bottom: 0,
+            left: '0',
+            position: 'fixed',
+            [theme.breakpoints.up('lg')]: {
+                top: WEB_HEADER_HEIGHT,
+                bottom: '51px',
+            },
+        }),
+    });
 
 class Routes extends Component {
     componentDidMount() {
@@ -89,18 +96,20 @@ class Routes extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags, embed } = this.props;
+        const { fetchingFeatureFlags, embed, classes } = this.props;
 
-        const mainPanelStyle = embed
-            ? { ...appStyles.mainPanelStyle, top: 0 }
-            : appStyles.mainPanelStyle;
+        const mainPanelStyle = embed ? { top: 0 } : {};
+
         return (
             <ErrorBoundary>
                 <Router history={history}>
                     <div className="App">
                         <Translate />
                         {!embed ? <Navbar /> : null}
-                        <main style={mainPanelStyle} className="mainPanel">
+                        <main
+                            style={mainPanelStyle}
+                            className={`mainPanel ${classes.mainPanelStyle}`}
+                        >
                             <Switch>
                                 <Route
                                     exact

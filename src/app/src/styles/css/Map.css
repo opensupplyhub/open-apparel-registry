@@ -61,27 +61,6 @@
     border-radius: 0 !important;
 }
 
-.goog-te-gadget-icon {
-    display: none;
-}
-
-.goog-te-gadget-simple {
-    font-size: 12px !important;
-    color: #0427a4;
-    text-decoration: none;
-    font-family: 'DM Sans',sans-serif;
-    font-weight: 500;
-    padding: 0 16px !important;
-    border: none !important;
-    text-transform: uppercase;
-    background-color: unset !important;
-    vertical-align: middle !important;
-}
-
-.goog-te-menu-value {
-    color: #0427a4 !important;
-}
-
 .popup-container {
   max-height: 235px;
   max-width: 235px;

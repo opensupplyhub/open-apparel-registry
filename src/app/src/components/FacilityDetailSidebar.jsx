@@ -44,6 +44,7 @@ import {
 } from '../util/util';
 
 import {
+    aboutClaimedFacilitiesRoute,
     CLAIM_A_FACILITY,
     PPE,
     REPORT_A_FACILITY,
@@ -70,6 +71,7 @@ const detailsSidebarStyles = theme =>
             padding: '3px',
             flex: 'none',
             alignSelf: 'baseline',
+            color: 'white',
         }),
         linkSectionStyle: Object.freeze({
             display: 'flex',
@@ -351,13 +353,7 @@ class FacilityDetailSidebar extends Component {
 
         return (
             <div className={`control-panel facility-detail ${classes.root}`}>
-                <div
-                    className={
-                        embed
-                            ? `${classes.panelHeader} display-flex`
-                            : 'panel-header display-flex'
-                    }
-                >
+                <div className={`${classes.panelHeader} display-flex`}>
                     <IconButton
                         aria-label="ArrowBack"
                         className={classes.headerButtonStyle}
@@ -386,7 +382,7 @@ class FacilityDetailSidebar extends Component {
                                             ? makeApprovedClaimDetailsLink(
                                                   facilityClaimID,
                                               )
-                                            : '/about/claimedfacilities',
+                                            : aboutClaimedFacilitiesRoute,
                                     )
                                 }
                                 disabled={fetching}

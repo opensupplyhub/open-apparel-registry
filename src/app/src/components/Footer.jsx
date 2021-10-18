@@ -1,21 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import logo from '../styles/images/Creative-Commons-Attribution-ShareAlike-40-International-Public.png';
 
 import { setGDPROpen } from '../actions/ui';
+import { InfoLink } from '../util/constants';
 
 const linkButtonStyle = {
-    textDecoration: 'underline',
-    textTransform: 'capitalize',
     minHeight: 'auto',
+    color: 'white',
+    padding: 0,
+    fontSize: 'inherit',
+    margin: '0 1rem 0 0',
+    verticalAlign: 'center',
+    textTransform: 'uppercase',
+    fontWeight: 700,
 };
+
+const apiDocumentationURL =
+    process.env.NODE_ENV === 'development'
+        ? 'http://localhost:8081/api/docs/'
+        : '/api/docs/';
 
 const links = [
     {
         href: 'https://www.azavea.com/',
-        prefix: 'powered by ',
+        prefix: 'Built by ',
         text: 'Azavea',
         external: true,
         newTab: true,
@@ -25,26 +35,77 @@ const links = [
         button: true,
     },
     {
-        href: 'https://info.openapparel.org/tos/',
-        text: 'Terms of Service',
+        text: 'API',
+        href: apiDocumentationURL,
         external: true,
         newTab: true,
     },
     {
-        href: 'https://info.openapparel.org/contactus/',
-        text: 'Support',
+        href: `${InfoLink}/funding`,
+        text: 'Funding',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/contact`,
+        text: 'Contact us',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/donate`,
+        text: 'Donate',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/work-with-us`,
+        text: 'Work with us',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/press`,
+        text: 'Press',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/faqs`,
+        text: 'FAQs',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/privacy-policy`,
+        text: 'Privacy policy',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/terms-of-use`,
+        text: 'Terms of use',
         external: true,
         newTab: true,
     },
 ];
 
 const Footer = ({ openGDPR }) => (
-    <footer className="footerContainer results-height-subtract" xs={12}>
-        <div className="links">
+    <footer className="results-height-subtract" xs={12}>
+        <div className="simple-footer">
             {links.map(l => {
                 if (l.external && 'prefix' in l) {
                     return (
-                        <p className="link" key={l.text}>
+                        <span
+                            className="simple-footer__link"
+                            key={l.text}
+                            style={{
+                                fontSize: '0.875rem',
+                                letterSpacing: 0,
+                                fontWeight: 500,
+                                lineHeight: 1.4,
+                            }}
+                        >
                             {l.prefix}
                             <a
                                 href={l.href}
@@ -53,52 +114,61 @@ const Footer = ({ openGDPR }) => (
                             >
                                 {l.text}
                             </a>
-                        </p>
+                        </span>
                     );
                 }
                 if (l.external) {
                     return (
-                        <p className="link" key={l.text}>
-                            <a
-                                href={l.href}
-                                target={l.newTab ? '_blank' : null}
-                                rel="noopener noreferrer"
-                            >
-                                {l.text}
-                            </a>
-                        </p>
+                        <a
+                            className="simple-footer__link"
+                            href={l.href}
+                            target={l.newTab ? '_blank' : null}
+                            rel="noopener noreferrer"
+                            key={l.text}
+                            style={{ textTransform: 'uppercase' }}
+                        >
+                            {l.text}
+                        </a>
                     );
                 }
                 if (l.button) {
                     return (
-                        <Button
-                            className="link"
+                        <button
+                            type="button"
+                            className="simple-footer__link"
                             style={linkButtonStyle}
                             key={l.text}
                             onClick={openGDPR}
                         >
                             {l.text}
-                        </Button>
+                        </button>
                     );
                 }
                 return (
-                    <Link to={l.href} href={l.href} key={l.text}>
+                    <Link
+                        className="simple-footer__link"
+                        to={l.href}
+                        href={l.href}
+                        key={l.text}
+                        style={{ textTransform: 'uppercase' }}
+                    >
                         {l.text}
                     </Link>
                 );
             })}
+            <a
+                href="https://creativecommons.org/licenses/by-sa/4.0/legalcode"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <span className="visually-hidden">Creative Commons</span>
+                <img
+                    className="simple-footer__cc"
+                    src={logo}
+                    alt="Creative Commons Attribution"
+                />
+            </a>
         </div>
-        <a
-            href="https://creativecommons.org/licenses/by-sa/4.0/legalcode"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <img
-                className="footer-image"
-                src={logo}
-                alt="Creative Commons Attribution"
-            />
-        </a>
     </footer>
 );
 

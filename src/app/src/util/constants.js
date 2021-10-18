@@ -1,6 +1,12 @@
+import includes from 'lodash/includes';
+import { checkWhetherUserHasDashboardAccess } from './util';
+
 export const OTHER = 'Other';
 
 export const FACILITIES_REQUEST_PAGE_SIZE = 50;
+
+export const WEB_HEADER_HEIGHT = '80px';
+export const MOBILE_HEADER_HEIGHT = '68px';
 
 // This choices must be kept in sync with the identical list
 // kept in the Django API's models.py file
@@ -527,3 +533,123 @@ export const EmbeddedMapInfoLink = 'https://info.openapparel.org/embedded-map';
 // A CSS size value that is used to set a lower bound on the iframe height
 // when the width is set to 100%
 export const minimum100PercentWidthEmbedHeight = '500px';
+
+export const InfoLink =
+    process.env.NODE_ENV === 'development'
+        ? 'https://oar.niceandserious.com'
+        : 'https://info.openapparel.org';
+
+export const SubmenuLinks = {
+    'How It Works': [
+        {
+            url: 'getting-started',
+            text: 'Getting Started',
+            external: true,
+        },
+        {
+            url: 'data-technology',
+            text: 'Data & Technology',
+            external: true,
+        },
+        { url: 'api', text: 'API', external: true },
+        {
+            url: 'embedded-map',
+            text: 'Embedded Map',
+            external: true,
+        },
+        { url: 'faqs', text: 'FAQs', external: true },
+    ],
+    'About Us': [
+        {
+            url: 'our-mission',
+            text: 'Our Mission',
+            external: true,
+        },
+        {
+            url: 'our-people',
+            text: 'Our People',
+            external: true,
+        },
+        {
+            url: 'governance',
+            text: 'Governance',
+            external: true,
+        },
+        { url: 'funding', text: 'Funding', external: true },
+        { url: 'press', text: 'Press', external: true },
+        {
+            url: 'work-with-us',
+            text: 'Work With Us',
+            external: true,
+        },
+        { url: 'contact', text: 'Contact Us', external: true },
+    ],
+    More: [
+        {
+            text: 'Cookie Preferences',
+            button: true,
+        },
+        {
+            href: `${InfoLink}/privacy-policy`,
+            text: 'Privacy policy',
+            external: true,
+        },
+        {
+            href: `${InfoLink}/terms-of-use`,
+            text: 'Terms of use',
+            external: true,
+        },
+    ],
+};
+
+export const createUserDropdownLinks = (
+    user,
+    logoutAction,
+    activeFeatureFlags,
+) => {
+    const dashboardLink = checkWhetherUserHasDashboardAccess(user)
+        ? Object.freeze([
+              Object.freeze({
+                  text: 'Dashboard',
+                  url: dashboardRoute,
+                  type: 'link',
+              }),
+          ])
+        : [];
+
+    const claimedFacilityLinks = includes(activeFeatureFlags, CLAIM_A_FACILITY)
+        ? Object.freeze([
+              Object.freeze({
+                  text: 'My Facilities',
+                  url: '/claimed',
+                  type: 'link',
+              }),
+          ])
+        : [];
+
+    const userLinks = Object.freeze([
+        Object.freeze({
+            text: 'My Lists',
+            url: '/lists',
+            type: 'link',
+        }),
+        Object.freeze({
+            text: 'Settings',
+            url: '/settings',
+            type: 'link',
+        }),
+    ]);
+
+    const logoutLinks = Object.freeze([
+        Object.freeze({
+            text: 'Log Out',
+            type: 'button',
+            action: logoutAction,
+        }),
+    ]);
+
+    return dashboardLink
+        .concat(claimedFacilityLinks)
+        .concat(userLinks)
+        .concat(logoutLinks);
+};
