@@ -231,7 +231,7 @@ export const facilitiesRoute = '/facilities';
 export const facilityDetailsRoute = '/facilities/:oarID';
 export const claimFacilityRoute = '/facilities/:oarID/claim';
 export const profileRoute = '/profile/:id';
-export const aboutProcessingRoute = '/about/processing';
+export const aboutProcessingRoute = 'https://info.openapparel.org/processing';
 export const dashboardRoute = '/dashboard';
 export const dashboardListsRoute = '/dashboard/lists';
 export const dashboardApiBlocksRoute = '/dashboard/apiblocks';
@@ -249,7 +249,8 @@ export const dashboardGeocoderRoute = '/dashboard/geocoder';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
 export const dashboardClaimsDetailsRoute = '/dashboard/claims/:claimID';
-export const aboutClaimedFacilitiesRoute = '/about/claimedfacilities';
+export const aboutClaimedFacilitiesRoute =
+    'https://info.openapparel.org/claimed-facilities';
 
 export const contributeFieldsEnum = Object.freeze({
     name: 'name',

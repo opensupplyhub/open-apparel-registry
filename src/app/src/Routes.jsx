@@ -22,14 +22,12 @@ import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
 import GDPRNotification from './components/GDPRNotification';
 import ConfirmRegistration from './components/ConfirmRegistration';
-import AboutProcessing from './components/AboutProcessing';
 import RouteNotFound from './components/RouteNotFound';
 import Dashboard from './components/Dashboard';
 import Translate from './components/Translate';
 import FeatureFlag from './components/FeatureFlag';
 import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
-import AboutClaimedFacilities from './components/AboutClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
 import Settings from './components/Settings';
 
@@ -51,12 +49,10 @@ import {
     facilityListItemsRoute,
     facilitiesRoute,
     profileRoute,
-    aboutProcessingRoute,
     dashboardRoute,
     claimFacilityRoute,
     claimedFacilitiesRoute,
     CLAIM_A_FACILITY,
-    aboutClaimedFacilitiesRoute,
     settingsRoute,
     WEB_HEADER_HEIGHT,
     MOBILE_HEADER_HEIGHT,
@@ -197,23 +193,6 @@ class Routes extends Component {
                                 <Route
                                     path={listsRoute}
                                     component={FacilityLists}
-                                />
-                                <Route
-                                    exact
-                                    path={aboutProcessingRoute}
-                                    component={AboutProcessing}
-                                />
-                                <Route
-                                    exact
-                                    path={aboutClaimedFacilitiesRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={CLAIM_A_FACILITY}
-                                            alternative={<RouteNotFound />}
-                                        >
-                                            <AboutClaimedFacilities />
-                                        </FeatureFlag>
-                                    )}
                                 />
                                 <Route
                                     exact
