@@ -14,6 +14,7 @@ import os
 import requests
 
 from django.core.exceptions import ImproperlyConfigured
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,7 +45,7 @@ GIT_COMMIT = os.getenv('GIT_COMMIT', 'UNKNOWN')
 DEBUG = (ENVIRONMENT == 'Development')
 
 ALLOWED_HOSTS = [
-    '.openapparel.org'
+    '.openapparel.org',
 ]
 
 if ENVIRONMENT == 'Development':
@@ -81,6 +82,7 @@ if ENVIRONMENT in ['Production', 'Staging'] and BATCH_MODE == '':
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -159,6 +161,7 @@ SWAGGER_SETTINGS = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -365,6 +368,7 @@ if not DEBUG:
     rollbar.init(**ROLLBAR)
 
 OAR_CLIENT_KEY = os.getenv('OAR_CLIENT_KEY')
+
 if OAR_CLIENT_KEY is None:
     raise ImproperlyConfigured(
         'Invalid OAR_CLIENT_KEY provided, must be set')
@@ -372,3 +376,24 @@ if OAR_CLIENT_KEY is None:
 # Mailchimp settings
 MAILCHIMP_API_KEY = os.getenv('MAILCHIMP_API_KEY')
 MAILCHIMP_LIST_ID = os.getenv('MAILCHIMP_LIST_ID')
+
+# CORS
+# Regex defining which endpoints enable CORS
+CORS_URLS_REGEX = r"^/api/info/.*$"
+# allows X-OAR-Client-Key to be sent as a header on CORS requests
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-OAR-Client-Key',
+]
+# methods that can be used at CORS-enabled endpoints
+CORS_ALLOW_METHODS = [
+    "GET",
+    "OPTIONS",
+]
+# origins that are authorized to make cross-site HTTP
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.openapparel\.org$",
+    r"^https://oar\.niceandserious\.com$",
+    r"^http://localhost",
+    r"http://127.0.0.1",
+]
+CORS_REPLACE_HTTPS_REFERER = True
