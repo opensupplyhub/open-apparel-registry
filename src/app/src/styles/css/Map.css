@@ -61,27 +61,6 @@
     border-radius: 0 !important;
 }
 
-.goog-te-gadget-icon {
-    display: none;
-}
-
-.goog-te-gadget-simple {
-    font-size: 12px !important;
-    color: #0427a4;
-    text-decoration: none;
-    font-family: ff-tisa-sans-web-pro,sans-serif;
-    font-weight: 500;
-    padding: 0 16px !important;
-    border: none !important;
-    text-transform: uppercase;
-    background-color: unset !important;
-    vertical-align: middle !important;
-}
-
-.goog-te-menu-value {
-    color: #0427a4 !important;
-}
-
 .popup-container {
   max-height: 235px;
   max-width: 235px;
@@ -155,6 +134,10 @@
 .search-tab {
   min-width: 0 !important;
   font-size: 0.8rem !important;
+}
+
+.search-tab span, .inherit-font {
+    font-family: inherit !important;
 }
 
 .tabs {

@@ -17,9 +17,10 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
-    <link rel="stylesheet" href="https://use.typekit.net/osn8oln.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -96,6 +97,19 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script type="text/javascript">
+        var defaultLanguage = 'en';
+        function getLangFromTranslateElement(translateElement) {
+            const innerText = translateElement?.M?.innerText?.slice(0, -2);
+            const shortNameDict = translateElement?.B;
+            if (!innerText || !shortNameDict) return defaultLanguage;
+            for (const [key, value] of Object.entries(shortNameDict)) {
+                if (value.toLowerCase().trim() == innerText.toLowerCase().trim()) {
+                    return key;
+                }
+            }
+             return defaultLanguage;
+        }
+
         function googleTranslateElementInit() {
             var translateElementID = 'google_translate_element';
 
@@ -105,16 +119,21 @@
                 autoDisplay: true,
             }, translateElementID);
 
+            var translateButton = document.getElementById('google-translate-language-display');
+
             var callback = function () {
-                var el = document.getElementsByClassName('goog-te-menu-value');
+                setInterval(function(){
+                    var language = getLangFromTranslateElement(translateElement);
 
-                if (el.length) {
-                    var navbarElement = el[0];
+                    if (!translateButton) return;
+                    if (language.toUpperCase() === translateButton.innerText) return;
 
-                    while (navbarElement.childNodes.length > 1) {
-                        navbarElement.removeChild(navbarElement.childNodes[1]);
+                    if (!language) {
+                        translateButton.innerText = defaultLanguage.toUpperCase();
+                    } else {
+                        translateButton.innerText = language.toUpperCase();
                     }
-                }
+                }, 200);
 
                 removeObserver();
             };
@@ -131,6 +150,7 @@
             );
 
             function removeObserver() {
+                if (!observer) return;
                 observer.disconnect();
             };
         }

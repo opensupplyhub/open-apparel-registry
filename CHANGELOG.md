@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Update header, footer, and font [#1495](https://github.com/open-apparel-registry/open-apparel-registry/pull/1495)
+
 ### Deprecated
 
 ### Removed
