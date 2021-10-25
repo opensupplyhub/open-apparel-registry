@@ -61,6 +61,16 @@ public_apis = [
     url(r'^api/log-download/', views.log_download, name='log_download'),
 ]
 
+info_apis = [
+    url(r'^api/info/contributors/', views.active_contributors_count,
+        name='active_contributors_count'),
+    url(r'^api/info/countries/', views.active_countries_count,
+        name='active_countries_count'),
+    url(r'^api/info/facilities/',
+        views.FacilitiesViewSet.as_view({'get': 'count'}),
+        name='facilities_count'),
+]
+
 schema_view = get_swagger_view(title='Open Apparel Registry API Documentation',
                                patterns=public_apis)
 
@@ -92,4 +102,4 @@ internal_apis = [
     url(r'^api/geocoder/', views.get_geocoding, name='get_geocoding'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns = public_apis + internal_apis
+urlpatterns = public_apis + internal_apis + info_apis
