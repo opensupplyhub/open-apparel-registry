@@ -2152,6 +2152,73 @@ class NonstandardField(models.Model):
             'Column Name: {column_name}').format(**self.__dict__)
 
 
+class ExtendedField(models.Model):
+    """
+    Extended data fields available to include on facilities.
+    Fields will be related to either a claim or list item; they must reference
+    one, but not both.
+    """
+    COUNTRY = 'country'
+    NAME = 'name'
+    ADDRESS = 'address'
+    NUMBER_OF_WORKERS = 'number_of_workers'
+    NATIVE_LANGUAGE_NAME = 'native_language_name'
+
+    FIELD_CHOICES = (
+        (COUNTRY, COUNTRY),
+        (NAME, NAME),
+        (ADDRESS, ADDRESS),
+        (NUMBER_OF_WORKERS, NUMBER_OF_WORKERS),
+        (NATIVE_LANGUAGE_NAME, NATIVE_LANGUAGE_NAME))
+
+    contributor = models.ForeignKey(
+        'Contributor',
+        null=False,
+        on_delete=models.CASCADE,
+        help_text='The contributor who submitted this field'
+    )
+    facility = models.ForeignKey(
+        'Facility',
+        null=False,
+        on_delete=models.CASCADE,
+        help_text='The facility to which this field belongs.'
+    )
+    facility_list_item = models.ForeignKey(
+        'FacilityListItem',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        help_text='The list item from which the field was obtained.')
+    facility_claim = models.ForeignKey(
+        'FacilityClaim',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        help_text='The claim from which the field was obtained.')
+    verified = models.BooleanField(
+        default=False,
+        null=False,
+        help_text='Whether or not this field has been verified.'
+    )
+    field_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=FIELD_CHOICES,
+        help_text='The name of the field, chosen from a strict list.')
+    value = postgres.JSONField(
+        null=False,
+        blank=False,
+        help_text=('The value of the field. An  object with different '
+                   'structure for different fields.'
+                   'Numeric fields are stored as {"min": 1, "max": 2}.'
+                   'If there is a single numeric value, set both min '
+                   'and max to it.'))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
+
+
 @transaction.atomic
 def index_facilities(facility_ids=list):
     # If passed an empty array, create or update all existing facilities
