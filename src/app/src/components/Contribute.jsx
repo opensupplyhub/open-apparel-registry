@@ -53,12 +53,9 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
                         <p>
                             Read about how your facility lists are processed and
                             matched in{' '}
-                            <Link
-                                to={aboutProcessingRoute}
-                                href={aboutProcessingRoute}
-                            >
+                            <a href={aboutProcessingRoute} target="">
                                 this guide
-                            </Link>
+                            </a>
                         </p>
 
                         <p>
