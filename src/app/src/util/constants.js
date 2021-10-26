@@ -543,6 +543,11 @@ export const InfoLink =
 export const SubmenuLinks = {
     'How It Works': [
         {
+            url: '',
+            text: 'Home',
+            external: true,
+        },
+        {
             url: 'getting-started',
             text: 'Getting Started',
             external: true,
@@ -561,21 +566,7 @@ export const SubmenuLinks = {
         { url: 'faqs', text: 'FAQs', external: true },
     ],
     'About Us': [
-        {
-            url: 'our-mission',
-            text: 'Our Mission',
-            external: true,
-        },
-        {
-            url: 'our-people',
-            text: 'Our People',
-            external: true,
-        },
-        {
-            url: 'governance',
-            text: 'Governance',
-            external: true,
-        },
+        { url: 'about', text: 'About Us', external: true },
         { url: 'funding', text: 'Funding', external: true },
         { url: 'press', text: 'Press', external: true },
         {

@@ -40,7 +40,7 @@ function Navbar() {
                     href={`${InfoLink}/resources`}
                     target=""
                 >
-                    Resources
+                    Stories + Resources
                 </a>
                 <AuthMenu
                     activeSubmenu={activeSubmenu}

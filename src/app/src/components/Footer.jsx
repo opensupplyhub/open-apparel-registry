@@ -17,11 +17,6 @@ const linkButtonStyle = {
     fontWeight: 700,
 };
 
-const apiDocumentationURL =
-    process.env.NODE_ENV === 'development'
-        ? 'http://localhost:8081/api/docs/'
-        : '/api/docs/';
-
 const links = [
     {
         href: 'https://www.azavea.com/',
@@ -35,38 +30,14 @@ const links = [
         button: true,
     },
     {
-        text: 'API',
-        href: apiDocumentationURL,
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/funding`,
-        text: 'Funding',
-        external: true,
-        newTab: true,
-    },
-    {
         href: `${InfoLink}/contact`,
         text: 'Contact us',
         external: true,
         newTab: true,
     },
     {
-        href: `${InfoLink}/donate`,
-        text: 'Donate',
-        external: true,
-        newTab: true,
-    },
-    {
         href: `${InfoLink}/work-with-us`,
         text: 'Work with us',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/press`,
-        text: 'Press',
         external: true,
         newTab: true,
     },

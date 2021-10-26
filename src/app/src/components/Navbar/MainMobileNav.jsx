@@ -57,7 +57,7 @@ function MainMobileNav({
                         target=""
                         onClick={handleClose}
                     >
-                        <span>Resources</span>
+                        <span>Stories + Resources</span>
                     </a>
                 </div>
                 <MobileNavParent
