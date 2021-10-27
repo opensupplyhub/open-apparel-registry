@@ -9,14 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Add warning about inexact facility coordinates [#1488](https://github.com/open-apparel-registry/open-apparel-registry/pull/1488)
-- Add endpoints for info website [#1487](https://github.com/open-apparel-registry/open-apparel-registry/pull/1487)
-
 ### Changed
-
-- Update header, footer, and font [#1495](https://github.com/open-apparel-registry/open-apparel-registry/pull/1495)
-- Provide access to info endpoints [#1499](https://github.com/open-apparel-registry/open-apparel-registry/pull/1499)
-- Update and fix links [#1502](https://github.com/open-apparel-registry/open-apparel-registry/pull/1502)
 
 ### Deprecated
 
@@ -25,6 +18,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [49] 2021-10-27
+
+### Added
+
+- Add warning about inexact facility coordinates [#1488](https://github.com/open-apparel-registry/open-apparel-registry/pull/1488)
+- Add endpoints for info website [#1487](https://github.com/open-apparel-registry/open-apparel-registry/pull/1487)
+
+### Changed
+
+- Update header, footer, and font [#1495](https://github.com/open-apparel-registry/open-apparel-registry/pull/1495)
+- Provide access to info endpoints [#1499](https://github.com/open-apparel-registry/open-apparel-registry/pull/1499)
+- Update and fix links [#1502](https://github.com/open-apparel-registry/open-apparel-registry/pull/1502)
 
 ## [48] 2021-10-08
 
@@ -924,7 +930,9 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/47...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/49...HEAD
+[49]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/49
+[48]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/48
 [47]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/47
 [46]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/46
 [45]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/45
