@@ -535,10 +535,7 @@ export const EmbeddedMapInfoLink = 'https://info.openapparel.org/embedded-map';
 // when the width is set to 100%
 export const minimum100PercentWidthEmbedHeight = '500px';
 
-export const InfoLink =
-    process.env.NODE_ENV === 'development'
-        ? 'https://oar.niceandserious.com'
-        : 'https://info.openapparel.org';
+export const InfoLink = 'https://info.openapparel.org';
 
 export const SubmenuLinks = {
     'How It Works': [
@@ -582,12 +579,12 @@ export const SubmenuLinks = {
             button: true,
         },
         {
-            href: `${InfoLink}/privacy-policy`,
+            url: 'privacy-policy',
             text: 'Privacy policy',
             external: true,
         },
         {
-            href: `${InfoLink}/terms-of-use`,
+            url: 'terms-of-use',
             text: 'Terms of use',
             external: true,
         },
