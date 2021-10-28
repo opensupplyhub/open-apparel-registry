@@ -1,7 +1,11 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: ff-tisa-sans-web-pro, sans-serif;
+  font-family: 'DM Sans', sans-serif;
   top: 0px !important;
   color: #282827;
+}
+
+p, a, label, input, select, button {
+    font-family: 'DM Sans', sans-serif;
 }

@@ -22,14 +22,12 @@ import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
 import GDPRNotification from './components/GDPRNotification';
 import ConfirmRegistration from './components/ConfirmRegistration';
-import AboutProcessing from './components/AboutProcessing';
 import RouteNotFound from './components/RouteNotFound';
 import Dashboard from './components/Dashboard';
 import Translate from './components/Translate';
 import FeatureFlag from './components/FeatureFlag';
 import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
-import AboutClaimedFacilities from './components/AboutClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
 import Settings from './components/Settings';
 
@@ -51,27 +49,32 @@ import {
     facilityListItemsRoute,
     facilitiesRoute,
     profileRoute,
-    aboutProcessingRoute,
     dashboardRoute,
     claimFacilityRoute,
     claimedFacilitiesRoute,
     CLAIM_A_FACILITY,
-    aboutClaimedFacilitiesRoute,
     settingsRoute,
+    WEB_HEADER_HEIGHT,
+    MOBILE_HEADER_HEIGHT,
 } from './util/constants';
 
-const appStyles = Object.freeze({
-    root: Object.freeze({
-        flexGrow: 1,
-    }),
-    mainPanelStyle: Object.freeze({
-        top: '64px',
-        right: '0',
-        left: '0',
-        position: 'fixed',
-        bottom: '51px',
-    }),
-});
+const appStyles = theme =>
+    Object.freeze({
+        root: Object.freeze({
+            flexGrow: 1,
+        }),
+        mainPanelStyle: Object.freeze({
+            right: '0',
+            top: MOBILE_HEADER_HEIGHT,
+            bottom: 0,
+            left: '0',
+            position: 'fixed',
+            [theme.breakpoints.up('lg')]: {
+                top: WEB_HEADER_HEIGHT,
+                bottom: '51px',
+            },
+        }),
+    });
 
 class Routes extends Component {
     componentDidMount() {
@@ -89,18 +92,20 @@ class Routes extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags, embed } = this.props;
+        const { fetchingFeatureFlags, embed, classes } = this.props;
 
-        const mainPanelStyle = embed
-            ? { ...appStyles.mainPanelStyle, top: 0 }
-            : appStyles.mainPanelStyle;
+        const mainPanelStyle = embed ? { top: 0 } : {};
+
         return (
             <ErrorBoundary>
                 <Router history={history}>
                     <div className="App">
                         <Translate />
                         {!embed ? <Navbar /> : null}
-                        <main style={mainPanelStyle} className="mainPanel">
+                        <main
+                            style={mainPanelStyle}
+                            className={`mainPanel ${classes.mainPanelStyle}`}
+                        >
                             <Switch>
                                 <Route
                                     exact
@@ -188,23 +193,6 @@ class Routes extends Component {
                                 <Route
                                     path={listsRoute}
                                     component={FacilityLists}
-                                />
-                                <Route
-                                    exact
-                                    path={aboutProcessingRoute}
-                                    component={AboutProcessing}
-                                />
-                                <Route
-                                    exact
-                                    path={aboutClaimedFacilitiesRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={CLAIM_A_FACILITY}
-                                            alternative={<RouteNotFound />}
-                                        >
-                                            <AboutClaimedFacilities />
-                                        </FeatureFlag>
-                                    )}
                                 />
                                 <Route
                                     exact

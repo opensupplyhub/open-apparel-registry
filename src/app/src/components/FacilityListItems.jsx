@@ -209,12 +209,9 @@ class FacilityListItems extends Component {
                         <div style={facilityListItemsStyles.subheadStyles}>
                             Read about how your facility lists are processed and
                             matched in this&nbsp;
-                            <Link
-                                to={aboutProcessingRoute}
-                                href={aboutProcessingRoute}
-                            >
+                            <a href={aboutProcessingRoute} target="">
                                 guide
-                            </Link>
+                            </a>
                         </div>
                         {list.item_count ? (
                             <Route

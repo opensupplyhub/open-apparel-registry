@@ -32,6 +32,9 @@ class IsAuthenticatedOrWebClient(permissions.BasePermission):
         if settings.OAR_CLIENT_KEY == '':
             return True
 
+        if request.path.startswith("/api/info"):
+            return True
+
         client_key = request.META.get('HTTP_X_OAR_CLIENT_KEY')
         if client_key == settings.OAR_CLIENT_KEY:
             host = referring_host(request)

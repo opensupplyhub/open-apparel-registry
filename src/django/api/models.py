@@ -1294,6 +1294,12 @@ class Facility(PPEMixin):
         blank=True,
         help_text=('The new OAR ID where this facility can be found if it has '
                    'been moved.'))
+    has_inexact_coordinates = models.BooleanField(
+        null=False,
+        default=False,
+        help_text=('Whether this facility has manually adjusted coordinates '
+                   'known to be inexact.')
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
 

@@ -44,17 +44,31 @@ router.register('nonstandard-fields', views.NonstandardFieldsViewSet,
 
 public_apis = [
     url(r'^api/', include(router.urls)),
+    url(r'^api/contributors/active_count', views.active_contributors_count,
+        name='active_contributors_count'),
     url(r'^api/contributors/', views.all_contributors,
         name='all_contributors'),
     url(r'^api/contributor-embed-configs/(?P<pk>\d+)/$',
         views.contributor_embed_config, name='contributor-embed-config'),
     url(r'^api/contributor-types/', views.all_contributor_types,
         name='all_contributor_types'),
+    url(r'^api/countries/active_count', views.active_countries_count,
+        name='active_countries_count'),
     url(r'^api/countries/', views.all_countries, name='all_countries'),
     url(r'^api/contributor-lists/',
         views.ContributorFacilityListViewSet.as_view({'get': 'list'}),
         name='contributor_lists'),
     url(r'^api/log-download/', views.log_download, name='log_download'),
+]
+
+info_apis = [
+    url(r'^api/info/contributors/', views.active_contributors_count,
+        name='active_contributors_count'),
+    url(r'^api/info/countries/', views.active_countries_count,
+        name='active_countries_count'),
+    url(r'^api/info/facilities/',
+        views.FacilitiesViewSet.as_view({'get': 'count'}),
+        name='facilities_count'),
 ]
 
 schema_view = get_swagger_view(title='Open Apparel Registry API Documentation',
@@ -88,4 +102,4 @@ internal_apis = [
     url(r'^api/geocoder/', views.get_geocoding, name='get_geocoding'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns = public_apis + internal_apis
+urlpatterns = public_apis + internal_apis + info_apis

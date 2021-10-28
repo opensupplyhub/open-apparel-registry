@@ -66,6 +66,9 @@ const filterSidebarSearchTabStyles = theme =>
         selectStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
         }),
+        font: Object.freeze({
+            fontFamily: `${theme.typography.fontFamily} !important`,
+        }),
         ...filterSidebarStyles,
     });
 
@@ -451,7 +454,7 @@ function FilterSidebarSearchTab({
                 <div className="form__action">
                     {!embed ? (
                         <a
-                            className="control-link"
+                            className="control-link inherit-font"
                             href="mailto:info@openapparel.org?subject=Reporting an issue"
                         >
                             Report an issue
@@ -463,6 +466,7 @@ function FilterSidebarSearchTab({
                             variant="outlined"
                             onClick={() => resetFilters(embed)}
                             disableRipple
+                            className={classes.font}
                             color="primary"
                             disabled={fetchingOptions}
                         >
@@ -479,8 +483,10 @@ function FilterSidebarSearchTab({
                                 size="small"
                                 type="submit"
                                 color="primary"
-                                className="margin-left-16"
-                                style={{ boxShadow: 'none' }}
+                                className={`margin-left-16 ${classes.font}`}
+                                style={{
+                                    boxShadow: 'none',
+                                }}
                                 onClick={() =>
                                     searchForFacilities(vectorTileFlagIsActive)
                                 }
