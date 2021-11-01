@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Update copy [#1515](https://github.com/open-apparel-registry/open-apparel-registry/pull/1515)
+
 ### Deprecated
 
 ### Removed

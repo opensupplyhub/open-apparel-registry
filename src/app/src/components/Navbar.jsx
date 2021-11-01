@@ -38,7 +38,8 @@ function Navbar() {
                 <a
                     className="nav__link nav__link--level-1"
                     href={`${InfoLink}/resources`}
-                    target=""
+                    target="_blank"
+                    rel="noreferrer"
                 >
                     Stories + Resources
                 </a>

@@ -54,7 +54,8 @@ function MainMobileNav({
                     <a
                         className="mobile-nav__link"
                         href={`${InfoLink}/resources`}
-                        target=""
+                        target="_blank"
+                        rel="noreferrer"
                         onClick={handleClose}
                     >
                         <span>Stories + Resources</span>

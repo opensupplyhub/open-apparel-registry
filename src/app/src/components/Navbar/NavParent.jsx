@@ -35,7 +35,8 @@ const NavParent = ({ title, activeSubmenu, setActiveSubmenu }) => {
                         className="nav__link nav__link--level-2"
                         href={`${InfoLink}/${url}`}
                         key={url}
-                        target=""
+                        target="_blank"
+                        rel="noreferrer"
                         onClick={() => setActiveSubmenu(null)}
                     >
                         {text}
