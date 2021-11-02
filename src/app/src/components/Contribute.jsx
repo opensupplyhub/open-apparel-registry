@@ -8,15 +8,9 @@ import Paper from '@material-ui/core/Paper';
 
 import AppGrid from './AppGrid';
 import AppOverflow from './AppOverflow';
-import ContributeHeader from './ContributeHeader';
 import ContributeForm from './ContributeForm';
-import ContributeTroubleshooting from './ContributeTroubleshooting';
 
-import {
-    listsRoute,
-    authLoginFormRoute,
-    aboutProcessingRoute,
-} from '../util/constants';
+import { listsRoute, authLoginFormRoute, InfoLink } from '../util/constants';
 
 function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
     if (fetchingSessionSignIn) {
@@ -51,25 +45,26 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
                 <Grid container className="margin-bottom-64">
                     <Grid item xs={12}>
                         <p>
-                            Read about how your facility lists are processed and
-                            matched in{' '}
-                            <a href={aboutProcessingRoute} target="">
-                                this guide
-                            </a>
+                            Thank you for contributing your data to the Open
+                            Apparel Registry.
                         </p>
 
                         <p>
-                            To contribute your supplier list to the OAR, please
-                            complete the following steps:
+                            <a
+                                href={`${InfoLink}/resources/how-to-contribute-data-to-the-oar`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Please follow these step-by-step instructions
+                            </a>{' '}
+                            to prepare and upload your data to the OAR via CSV
+                            or Excel file.
                         </p>
-                        <Paper
-                            style={{
-                                padding: '20px',
-                                marginBottom: '20px',
-                            }}
-                        >
-                            <ContributeHeader />
-                        </Paper>
+
+                        <p>
+                            Once you have read the instructions and prepared
+                            your file, submit your list using the fields below.
+                        </p>
                         <Paper
                             style={{
                                 padding: '20px',
@@ -86,8 +81,18 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
                             <div className="form__field">
                                 <p className="form__label">
                                     Once the list has been successfully
-                                    uploaded, view your list and confirm or
-                                    reject matches.
+                                    uploaded, you will receive an email letting
+                                    you know{' '}
+                                    <a
+                                        href={`${InfoLink}/how-the-oar-improves-data-quality`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        your list processing
+                                    </a>{' '}
+                                    is complete. You can then view your list,
+                                    resolve errors, and confirm or reject
+                                    matches.
                                 </p>
                             </div>
                             <div className="form__field">
@@ -101,7 +106,6 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
                             </div>
                         </Paper>
                     </Grid>
-                    <ContributeTroubleshooting />
                 </Grid>
             </AppGrid>
         </AppOverflow>
