@@ -23,9 +23,9 @@ import {
     OARFont,
     listsRoute,
     facilityListItemsRoute,
-    aboutProcessingRoute,
     authLoginFormRoute,
     dashboardListsRoute,
+    InfoLink,
 } from '../util/constants';
 
 import { facilityListPropType } from '../util/propTypes';
@@ -207,11 +207,15 @@ class FacilityListItems extends Component {
                             </div>
                         </div>
                         <div style={facilityListItemsStyles.subheadStyles}>
-                            Read about how your facility lists are processed and
-                            matched in this&nbsp;
-                            <a href={aboutProcessingRoute} target="">
-                                guide
+                            Read about how your facility data is{' '}
+                            <a
+                                href={`${InfoLink}/how-the-oar-improves-data-quality`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                processed and matched
                             </a>
+                            .
                         </div>
                         {list.item_count ? (
                             <Route
