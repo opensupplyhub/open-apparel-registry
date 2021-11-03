@@ -29,8 +29,10 @@ function EmbeddedMapUnauthorized({ isSettings, error = [] }) {
             </Typography>
             <Typography paragraph>
                 To activate this paid-for feature, check out the{' '}
-                <a href={EmbeddedMapInfoLink}>OAR Embedded Map</a> page on our
-                website for packages and pricing options.
+                <a href={EmbeddedMapInfoLink} target="_blank" rel="noreferrer">
+                    OAR Embedded Map
+                </a>{' '}
+                page on our website for packages and pricing options.
             </Typography>
             {isSettings && (
                 <Typography paragraph>

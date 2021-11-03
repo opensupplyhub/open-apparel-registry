@@ -8,6 +8,28 @@ export const FACILITIES_REQUEST_PAGE_SIZE = 50;
 export const WEB_HEADER_HEIGHT = '80px';
 export const MOBILE_HEADER_HEIGHT = '68px';
 
+export const InfoLink = 'https://info.openapparel.org';
+
+export const InfoPaths = {
+    home: '',
+    gettingStarted: 'getting-started',
+    dataTechnology: 'data-technology',
+    api: 'api',
+    embeddedMap: 'embedded-map',
+    faqs: 'faqs',
+    aboutUs: 'about-us',
+    funding: 'funding',
+    press: 'press',
+    workWithUs: 'work-with-us',
+    contactUs: 'contact-us',
+    storiesResources: 'stories-resources',
+    privacyPolicy: 'privacy-policy',
+    termsOfUse: 'terms-of-use',
+    contribute: 'stories-resources/how-to-contribute-data-to-the-oar',
+    dataQuality: 'how-the-oar-improves-data-quality',
+    claimedFacilities: 'stories-resources/claim-a-facility',
+};
+
 // This choices must be kept in sync with the identical list
 // kept in the Django API's models.py file
 export const contributorTypeOptions = Object.freeze([
@@ -186,7 +208,7 @@ const accountTOSField = Object.freeze({
     label: 'Terms of Service',
     link: Object.freeze({
         prefixText: 'Agree to ',
-        url: 'https://info.openapparel.org/tos/',
+        url: `${InfoLink}/${InfoPaths.termsOfUse}`,
     }),
     required: true,
     modelFieldName: 'has_agreed_to_terms_of_service',
@@ -231,7 +253,7 @@ export const facilitiesRoute = '/facilities';
 export const facilityDetailsRoute = '/facilities/:oarID';
 export const claimFacilityRoute = '/facilities/:oarID/claim';
 export const profileRoute = '/profile/:id';
-export const aboutProcessingRoute = 'https://info.openapparel.org/processing';
+export const aboutProcessingRoute = `${InfoLink}/${InfoPaths.dataQuality}`;
 export const dashboardRoute = '/dashboard';
 export const dashboardListsRoute = '/dashboard/lists';
 export const dashboardApiBlocksRoute = '/dashboard/apiblocks';
@@ -249,8 +271,7 @@ export const dashboardGeocoderRoute = '/dashboard/geocoder';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
 export const dashboardClaimsDetailsRoute = '/dashboard/claims/:claimID';
-export const aboutClaimedFacilitiesRoute =
-    'https://info.openapparel.org/claimed-facilities';
+export const aboutClaimedFacilitiesRoute = `${InfoLink}/${InfoPaths.claimedFacilities}`;
 
 export const contributeFieldsEnum = Object.freeze({
     name: 'name',
@@ -528,49 +549,47 @@ export const PPE_FIELD_NAMES = Object.freeze([
 export const OARFont = "'DM Sans',sans-serif";
 export const OARColor = '#0427a4';
 
-export const EmbeddedMapInfoLink = 'https://info.openapparel.org/embedded-map';
-
 // A CSS size value that is used to set a lower bound on the iframe height
 // when the width is set to 100%
 export const minimum100PercentWidthEmbedHeight = '500px';
 
-export const InfoLink = 'https://info.openapparel.org';
+export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 
 export const SubmenuLinks = {
     'How It Works': [
         {
-            url: '',
+            url: InfoPaths.home,
             text: 'Home',
             external: true,
         },
         {
-            url: 'getting-started',
+            url: InfoPaths.gettingStarted,
             text: 'Getting Started',
             external: true,
         },
         {
-            url: 'data-technology',
+            url: InfoPaths.dataTechnology,
             text: 'Data & Technology',
             external: true,
         },
-        { url: 'api', text: 'API', external: true },
+        { url: InfoPaths.api, text: 'API', external: true },
         {
-            url: 'embedded-map',
+            url: InfoPaths.embeddedMap,
             text: 'Embedded Map',
             external: true,
         },
-        { url: 'faqs', text: 'FAQs', external: true },
+        { url: InfoPaths.faqs, text: 'FAQs', external: true },
     ],
     'About Us': [
-        { url: 'about', text: 'About Us', external: true },
-        { url: 'funding', text: 'Funding', external: true },
-        { url: 'press', text: 'Press', external: true },
+        { url: InfoPaths.aboutUs, text: 'About Us', external: true },
+        { url: InfoPaths.funding, text: 'Funding', external: true },
+        { url: InfoPaths.press, text: 'Press', external: true },
         {
-            url: 'work-with-us',
+            url: InfoPaths.workWithUs,
             text: 'Work With Us',
             external: true,
         },
-        { url: 'contact', text: 'Contact Us', external: true },
+        { url: InfoPaths.contactUs, text: 'Contact Us', external: true },
     ],
     More: [
         {
@@ -578,17 +597,61 @@ export const SubmenuLinks = {
             button: true,
         },
         {
-            url: 'privacy-policy',
+            url: InfoPaths.privacyPolicy,
             text: 'Privacy policy',
             external: true,
         },
         {
-            url: 'terms-of-use',
+            url: InfoPaths.termsOfUse,
             text: 'Terms of use',
             external: true,
         },
     ],
 };
+
+export const FooterLinks = [
+    {
+        href: 'https://www.azavea.com/',
+        prefix: 'Built by ',
+        text: 'Azavea',
+        external: true,
+        newTab: true,
+    },
+    {
+        text: 'Cookie Preferences',
+        button: true,
+    },
+    {
+        href: `${InfoLink}/${InfoPaths.contactUs}`,
+        text: 'Contact us',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/${InfoPaths.workWithUs}`,
+        text: 'Work with us',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/${InfoPaths.faqs}`,
+        text: 'FAQs',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/${InfoPaths.privacyPolicy}`,
+        text: 'Privacy policy',
+        external: true,
+        newTab: true,
+    },
+    {
+        href: `${InfoLink}/${InfoPaths.termsOfUse}`,
+        text: 'Terms of use',
+        external: true,
+        newTab: true,
+    },
+];
 
 export const createUserDropdownLinks = (
     user,

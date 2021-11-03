@@ -10,7 +10,12 @@ import AppGrid from './AppGrid';
 import AppOverflow from './AppOverflow';
 import ContributeForm from './ContributeForm';
 
-import { listsRoute, authLoginFormRoute, InfoLink } from '../util/constants';
+import {
+    listsRoute,
+    authLoginFormRoute,
+    InfoLink,
+    InfoPaths,
+} from '../util/constants';
 
 function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
     if (fetchingSessionSignIn) {
@@ -51,7 +56,7 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
 
                         <p>
                             <a
-                                href={`${InfoLink}/resources/how-to-contribute-data-to-the-oar`}
+                                href={`${InfoLink}/${InfoPaths.contribute}`}
                                 target="_blank"
                                 rel="noreferrer"
                             >
@@ -84,7 +89,7 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
                                     uploaded, you will receive an email letting
                                     you know{' '}
                                     <a
-                                        href={`${InfoLink}/how-the-oar-improves-data-quality`}
+                                        href={`${InfoLink}/${InfoPaths.dataQuality}`}
                                         target="_blank"
                                         rel="noreferrer"
                                     >
