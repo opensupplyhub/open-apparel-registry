@@ -30,6 +30,7 @@ import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
 import Settings from './components/Settings';
+import ExternalRedirect from './components/ExternalRedirect';
 
 import { sessionLogin } from './actions/auth';
 import { fetchFeatureFlags } from './actions/featureFlags';
@@ -56,6 +57,8 @@ import {
     settingsRoute,
     WEB_HEADER_HEIGHT,
     MOBILE_HEADER_HEIGHT,
+    InfoLink,
+    InfoPaths,
 } from './util/constants';
 
 const appStyles = theme =>
@@ -199,6 +202,21 @@ class Routes extends Component {
                                     path={settingsRoute}
                                     component={Settings}
                                 />
+                                <Route exact path="/about/processing">
+                                    <ExternalRedirect
+                                        to={`${InfoLink}/${InfoPaths.dataQuality}`}
+                                    />
+                                </Route>
+                                <Route exact path="/about/claimedfacilities">
+                                    <ExternalRedirect
+                                        to={`${InfoLink}/${InfoPaths.claimedFacilities}`}
+                                    />
+                                </Route>
+                                <Route exact path="/tos">
+                                    <ExternalRedirect
+                                        to={`${InfoLink}/${InfoPaths.termsOfUse}`}
+                                    />
+                                </Route>
                                 <Route
                                     exact
                                     path={mainRoute}
