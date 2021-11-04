@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [51] 2021-11-04
+
+### Added
+
+- Add ExtendedFields model [#1503](https://github.com/open-apparel-registry/open-apparel-registry/pull/1503)
+
+### Changed
+
+- Update copy [#1515](https://github.com/open-apparel-registry/open-apparel-registry/pull/1515)
+- Update My Lists link/copy [#1516](https://github.com/open-apparel-registry/open-apparel-registry/pull/1516)
+
 ## [50] 2021-10-28
 
 ### Fixed
@@ -936,7 +947,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/50...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/51...HEAD
+[51]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/51
 [50]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/50
 [49]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/49
 [48]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/48

@@ -1,4 +1,5 @@
 import React from 'react';
+import { InfoLink } from '../util/constants';
 
 const CookiePreferencesText = () => (
     <div>
@@ -6,13 +7,14 @@ const CookiePreferencesText = () => (
         performance and usage. By clicking the Accept button, you agree to allow
         us to place cookies and share information with Google Analytics. For
         more information, please visit our{' '}
-        <a
-            href="https://info.openapparel.org/tos/"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            Terms and Conditions of Use and Privacy Policy.
+        <a href={`${InfoLink}/terms-of-use`} target="_blank" rel="noreferrer">
+            Terms of Use
+        </a>{' '}
+        and{' '}
+        <a href={`${InfoLink}/privacy-policy`} target="_blank" rel="noreferrer">
+            Privacy Policy
         </a>
+        .
     </div>
 );
 
