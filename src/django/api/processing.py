@@ -16,6 +16,8 @@ from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
 from api.matching import normalize_extended_facility_id, clean
+from api.extended_fields import (create_extendedfields_for_listitem,
+                                 update_extendedfields_for_list_item)
 
 
 def _report_error_to_rollbar(file, request):
@@ -137,6 +139,8 @@ def parse_facility_list_item(item):
         if CsvHeaderField.PPE_WEBSITE in fields:
             item.ppe_website = values[
                 fields.index(CsvHeaderField.PPE_WEBSITE)]
+
+        create_extendedfields_for_listitem(item, fields, values)
 
         try:
             item.full_clean(exclude=('processing_started_at',
@@ -481,5 +485,10 @@ def save_match_details(match_results, text_only_matches=None):
                 'finished_at': finished
             })
         item.save()
+
+    items = FacilityListItem.objects.filter(id__in=processed_list_item_ids) \
+                                    .exclude(facility__isnull=True)
+    for item in items:
+        update_extendedfields_for_list_item(item)
 
     return all_matches
