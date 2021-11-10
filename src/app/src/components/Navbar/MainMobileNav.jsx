@@ -4,7 +4,11 @@ import MobileNavParent from './MobileNavParent';
 import BurgerButton from './BurgerButton';
 import MobileContributeButton from './MobileContributeButton';
 
-import { MOBILE_HEADER_HEIGHT, InfoLink } from '../../util/constants';
+import {
+    MOBILE_HEADER_HEIGHT,
+    InfoLink,
+    InfoPaths,
+} from '../../util/constants';
 
 const styles = {
     mobileNavActive: {
@@ -53,7 +57,7 @@ function MainMobileNav({
                 <div className="mobile-nav__item">
                     <a
                         className="mobile-nav__link"
-                        href={`${InfoLink}/resources`}
+                        href={`${InfoLink}/${InfoPaths.storiesResources}`}
                         target="_blank"
                         rel="noreferrer"
                         onClick={handleClose}

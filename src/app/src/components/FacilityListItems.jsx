@@ -26,6 +26,7 @@ import {
     authLoginFormRoute,
     dashboardListsRoute,
     InfoLink,
+    InfoPaths,
 } from '../util/constants';
 
 import { facilityListPropType } from '../util/propTypes';
@@ -209,7 +210,7 @@ class FacilityListItems extends Component {
                         <div style={facilityListItemsStyles.subheadStyles}>
                             Read about how your facility data is{' '}
                             <a
-                                href={`${InfoLink}/how-the-oar-improves-data-quality`}
+                                href={`${InfoLink}/${InfoPaths.dataQuality}`}
                                 target="_blank"
                                 rel="noreferrer"
                             >

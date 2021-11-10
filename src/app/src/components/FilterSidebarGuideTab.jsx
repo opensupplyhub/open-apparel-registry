@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { filterSidebarStyles } from '../util/styles';
-import { authRegisterFormRoute } from '../util/constants';
+import { authRegisterFormRoute, InfoLink, InfoPaths } from '../util/constants';
 
 export default function FilterSidebarGuideTab({ vectorTile }) {
     if (!vectorTile) {
@@ -36,7 +36,7 @@ export default function FilterSidebarGuideTab({ vectorTile }) {
                     are able to search the site without creating an account.
                 </p>
                 <a
-                    href="http://info.openapparel.org/about"
+                    href={`${InfoLink}/${InfoPaths.aboutUs}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="link-underline"
@@ -120,7 +120,7 @@ export default function FilterSidebarGuideTab({ vectorTile }) {
                 the OAR map.
             </p>
             <a
-                href="http://info.openapparel.org/about"
+                href={`${InfoLink}/${InfoPaths.aboutUs}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="link-underline"

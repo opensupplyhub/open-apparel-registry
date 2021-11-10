@@ -10,7 +10,7 @@ import MainMobileNav from './Navbar/MainMobileNav';
 
 import '../styles/css/header.css';
 
-import { InfoLink } from '../util/constants';
+import { InfoLink, InfoPaths } from '../util/constants';
 
 function Navbar() {
     const [activeSubmenu, setActiveSubmenu] = useState(null);
@@ -37,7 +37,7 @@ function Navbar() {
                 />
                 <a
                     className="nav__link nav__link--level-1"
-                    href={`${InfoLink}/resources`}
+                    href={`${InfoLink}/${InfoPaths.storiesResources}`}
                     target="_blank"
                     rel="noreferrer"
                 >

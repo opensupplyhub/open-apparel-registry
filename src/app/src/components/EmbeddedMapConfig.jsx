@@ -138,7 +138,12 @@ function EmbeddedMapConfig({
             </Typography>
             <Typography paragraph style={{ width: '100%' }}>
                 <strong>Have questions?</strong> Check out the FAQs on our{' '}
-                <a href={EmbeddedMapInfoLink} className="inline-link">
+                <a
+                    href={EmbeddedMapInfoLink}
+                    className="inline-link"
+                    target="_blank"
+                    rel="noreferrer"
+                >
                     Embedded Map info page
                 </a>{' '}
                 or email{' '}
