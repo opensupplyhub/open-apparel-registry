@@ -1,13 +1,10 @@
 import React from 'react';
 import logo from '../styles/images/OAR_PoweredBy_white.svg';
+import { InfoLink } from '../util/constants';
 
 const EmbeddedFooter = () => (
     <footer className="footerContainerEmbedded results-height-subtract" xs={12}>
-        <a
-            href="https://info.openapparel.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
+        <a href={`${InfoLink}`} target="_blank" rel="noopener noreferrer">
             <img
                 className="footer-image"
                 src={logo}

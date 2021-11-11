@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [52] 2021-11-10
+
+### Added
+
+- Redirect to new info site [#1523](https://github.com/open-apparel-registry/open-apparel-registry/pull/1523)
+
+### Fixed
+
+- Correct info site routes [#1520](https://github.com/open-apparel-registry/open-apparel-registry/pull/1520)
+
 ## [51] 2021-11-04
 
 ### Added
@@ -947,7 +957,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/51...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/52...HEAD
+[52]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/52
 [51]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/51
 [50]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/50
 [49]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/49

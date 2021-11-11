@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import logo from '../styles/images/Creative-Commons-Attribution-ShareAlike-40-International-Public.png';
 
 import { setGDPROpen } from '../actions/ui';
-import { InfoLink } from '../util/constants';
+import { FooterLinks } from '../util/constants';
 
 const linkButtonStyle = {
     minHeight: 'auto',
@@ -17,54 +17,10 @@ const linkButtonStyle = {
     fontWeight: 700,
 };
 
-const links = [
-    {
-        href: 'https://www.azavea.com/',
-        prefix: 'Built by ',
-        text: 'Azavea',
-        external: true,
-        newTab: true,
-    },
-    {
-        text: 'Cookie Preferences',
-        button: true,
-    },
-    {
-        href: `${InfoLink}/contact`,
-        text: 'Contact us',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/work-with-us`,
-        text: 'Work with us',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/faqs`,
-        text: 'FAQs',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/privacy-policy`,
-        text: 'Privacy policy',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/terms-of-use`,
-        text: 'Terms of use',
-        external: true,
-        newTab: true,
-    },
-];
-
 const Footer = ({ openGDPR }) => (
     <footer className="results-height-subtract" xs={12}>
         <div className="simple-footer">
-            {links.map(l => {
+            {FooterLinks.map(l => {
                 if (l.external && 'prefix' in l) {
                     return (
                         <span
