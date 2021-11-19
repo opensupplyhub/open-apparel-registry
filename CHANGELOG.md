@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Create ExtendedFields [#1527](https://github.com/open-apparel-registry/open-apparel-registry/pull/1527)
+- Include ExtendedFields in Facility Details [#1530](https://github.com/open-apparel-registry/open-apparel-registry/pull/1530)
 
 ### Changed
 

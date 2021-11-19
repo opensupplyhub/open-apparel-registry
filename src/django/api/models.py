@@ -9,7 +9,7 @@ from django.contrib.postgres import fields as postgres
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.db import models, transaction
-from django.db.models import F, Q, CharField
+from django.db.models import (F, Q, ExpressionWrapper)
 from django.db.models.signals import post_save
 from django.db.models.functions import Concat
 from django.contrib.gis.geos import GEOSGeometry
@@ -1343,6 +1343,27 @@ class Facility(PPEMixin):
             and item.source.is_public
         }
 
+    def extended_fields(self):
+        active_items = self.facilitymatch_set \
+                           .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                               FacilityMatch.CONFIRMED,
+                                               FacilityMatch.MERGED]) \
+                           .filter(is_active=True) \
+                           .values_list('facility_list_item')
+
+        fields = ExtendedField.objects \
+                              .filter(facility=self) \
+                              .annotate(is_from_claim=ExpressionWrapper(
+                                Q(facility_list_item__isnull=True),
+                                output_field=models.BooleanField())) \
+                              .annotate(is_active=ExpressionWrapper(
+                                Q(facility_list_item__in=active_items),
+                                output_field=models.BooleanField())) \
+                              .filter(Q(is_from_claim=True) |
+                                      Q(is_active=True))
+
+        return fields
+
     def other_addresses(self):
         facility_list_item_matches = [
             FacilityListItem.objects.get(pk=pk)
@@ -2215,6 +2236,7 @@ class ExtendedField(models.Model):
                    'Numeric fields are stored as {"min": 1, "max": 2}.'
                    'If there is a single numeric value, set both min '
                    'and max to it.'))
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
@@ -2258,7 +2280,7 @@ def index_facilities(facility_ids=list):
                                              'facility__ppe_contact_phone',
                                              'facility__ppe_contact_email',
                                              'facility__ppe_website',
-                                             output_field=CharField()))
+                                             output_field=models.CharField()))
 
     FacilityIndex.objects.filter(id__in=facility_ids).delete()
     FacilityIndex.objects.bulk_create([FacilityIndex(**kv) for kv in data])
