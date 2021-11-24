@@ -32,7 +32,7 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         RequestLog, DownloadLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
-                        FacilityActivityReport)
+                        FacilityActivityReport, ExtendedField)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -724,6 +724,26 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     location=Point(0, 0),
                     created_from=self.list_item_one)
 
+        self.extended_field_one = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value=self.name_one,
+                contributor=self.contrib_one,
+                facility=self.facility,
+                facility_list_item=self.list_item_one
+            )
+
+        self.extended_field_two = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value=self.name_two,
+                contributor=self.contrib_two,
+                facility=self.facility,
+                facility_list_item=self.list_item_two
+            )
+
         self.facility_match_one = FacilityMatch \
             .objects \
             .create(status=FacilityMatch.CONFIRMED,
@@ -743,6 +763,12 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.assertIn(self.source_one, sources)
         self.assertIn(self.source_two, sources)
         self.assertEqual(len(sources), 2)
+
+    def test_returns_extended_fields(self):
+        fields = self.facility.extended_fields()
+        self.assertIn(self.extended_field_one, fields)
+        self.assertIn(self.extended_field_two, fields)
+        self.assertEqual(len(fields), 2)
 
     def test_excludes_canonical_name_from_other_names(self):
         other_names = self.facility.other_names()
@@ -835,6 +861,11 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         other_addresses = self.facility.other_addresses()
         self.assertNotIn(self.address_two, other_addresses)
         self.assertEqual(len(other_addresses), 0)
+
+        fields = self.facility.extended_fields()
+        self.assertIn(self.extended_field_one, fields)
+        self.assertNotIn(self.extended_field_two, fields)
+        self.assertEqual(len(fields), 1)
 
     def test_excludes_private_matches_from_details(self):
         self.source_two.is_public = False
@@ -4435,6 +4466,37 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                     confidence=0.85,
                     results='')
 
+        self.extended_field_one = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name one',
+                contributor=self.contributor,
+                facility=self.facility,
+                facility_list_item=self.list_item,
+                verified=True
+            )
+
+        self.extended_field_two = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name two',
+                contributor=self.other_contributor,
+                facility=self.facility,
+                facility_list_item=self.other_list_item
+            )
+
+        self.extended_field_three = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name two',
+                contributor=self.contributor,
+                facility=self.facility,
+                facility_list_item=self.list_item
+            )
+
     def test_excludes_match_if_geocoded_point_is_none(self):
         self.other_list_item.geocoded_point = None
         self.other_list_item.save()
@@ -4571,6 +4633,28 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
             data['properties']['other_locations'][0]['contributor_name'],
             None,
         )
+
+    def test_serializes_extended_fields_in_facility_details(self):
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        fields = data['properties']['extended_fields']['native_language_name']
+
+        self.assertEqual(len(fields), 3)
+        self.assertEqual(fields[0]['value'], 'name one')
+
+        self.extended_field_one.verified = False
+        self.extended_field_one.save()
+
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        fields = data['properties']['extended_fields']['native_language_name']
+
+        self.assertEqual(len(fields), 3)
+        self.assertEqual(fields[0]['value'], 'name two')
 
 
 class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
