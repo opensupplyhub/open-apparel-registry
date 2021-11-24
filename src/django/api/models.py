@@ -2179,7 +2179,8 @@ class ExtendedField(models.Model):
     )
     facility = models.ForeignKey(
         'Facility',
-        null=False,
+        null=True,
+        blank=True,
         on_delete=models.CASCADE,
         help_text='The facility to which this field belongs.'
     )
