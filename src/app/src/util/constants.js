@@ -465,6 +465,7 @@ export const VECTOR_TILE = 'vector_tile';
 export const PPE = 'ppe';
 export const REPORT_A_FACILITY = 'report_a_facility';
 export const EMBEDDED_MAP_FLAG = 'embedded_map';
+export const EXTENDED_PROFILE_FLAG = 'extended_profile';
 
 export const COUNTRY_CODES = Object.freeze({
     default: 'IE',
