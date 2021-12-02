@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix broken geocoding test [#1546](https://github.com/open-apparel-registry/open-apparel-registry/pull/1546)
+
 ### Security
 
 ## [52] 2021-11-10
