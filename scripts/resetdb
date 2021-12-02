@@ -27,6 +27,7 @@ function enableswitches() {
     ./scripts/manage waffle_switch ppe on
     ./scripts/manage waffle_switch report_a_facility on
     ./scripts/manage waffle_switch embedded_map on
+    ./scripts/manage waffle_switch extended_profile on
 }
 
 function assigngroups() {
