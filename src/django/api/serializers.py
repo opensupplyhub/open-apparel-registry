@@ -571,6 +571,10 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                     'name': source.display_name,
                     'is_verified': source.contributor.is_verified
                     if source.contributor else False,
+                    'contributor_name': source.contributor.name
+                    if source.contributor else '[Unknown Contributor]',
+                    'list_name': source.facility_list.name
+                    if source.facility_list else None,
                 }
             return {
                 'name': source,
@@ -685,6 +689,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
     activity_reports = SerializerMethodField()
     contributor_fields = SerializerMethodField()
     extended_fields = SerializerMethodField()
+    created_from = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -694,7 +699,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
                   'ppe_product_types', 'ppe_contact_phone',
                   'ppe_contact_email', 'ppe_website',  'is_closed',
                   'activity_reports', 'contributor_fields', 'new_oar_id',
-                  'has_inexact_coordinates', 'extended_fields')
+                  'has_inexact_coordinates', 'extended_fields', 'created_from')
         geo_field = 'location'
 
     def get_other_names(self, facility):
@@ -765,6 +770,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
             return None
 
         try:
+            user_can_see_detail = can_user_see_detail(self)
             claim = FacilityClaim \
                 .objects \
                 .filter(status=FacilityClaim.APPROVED) \
@@ -805,6 +811,8 @@ class FacilityDetailsSerializer(FacilitySerializer):
                     'country': claim.office_country_code,
                     'phone_number': claim.office_phone_number,
                 } if claim.office_info_publicly_visible else None,
+                'contributor': get_contributor_name(claim.contributor,
+                                                    user_can_see_detail)
             }
         except FacilityClaim.DoesNotExist:
             return None
@@ -868,6 +876,20 @@ class FacilityDetailsSerializer(FacilitySerializer):
             grouped_data[field_name] = data
 
         return grouped_data
+
+    def get_created_from(self, facility):
+        user_can_see_detail = can_user_see_detail(self)
+        list_item = facility.created_from
+        matches = facility.facilitymatch_set \
+                          .filter(facility_list_item=list_item)
+        should_display_associations = \
+            any([m.should_display_association for m in matches])
+        display_detail = user_can_see_detail and should_display_associations
+        return {
+            'created_at': list_item.created_at,
+            'contributor': get_contributor_name(list_item.source.contributor,
+                                                display_detail)
+        }
 
 
 class FacilityCreateBodySerializer(Serializer):
@@ -1366,15 +1388,23 @@ class EmbedFieldsSerializer(ModelSerializer):
 class EmbedConfigSerializer(ModelSerializer):
     contributor = SerializerMethodField()
     embed_fields = SerializerMethodField()
+    contributor_name = SerializerMethodField()
 
     class Meta:
         model = EmbedConfig
         fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
-                  'embed_fields', 'prefer_contributor_name')
+                  'embed_fields', 'prefer_contributor_name',
+                  'contributor_name')
 
     def get_contributor(self, instance):
         try:
             return instance.contributor.id
+        except Contributor.DoesNotExist:
+            return None
+
+    def get_contributor_name(self, instance):
+        try:
+            return instance.contributor.name
         except Contributor.DoesNotExist:
             return None
 
