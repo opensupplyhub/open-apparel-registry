@@ -24,6 +24,8 @@ import {
     getLocationWithoutEmbedParam,
 } from '../util/util';
 
+import { resetSingleFacility } from '../actions/facilities';
+
 import { facilityDetailsPropType } from '../util/propTypes';
 
 import {
@@ -245,12 +247,17 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(_, { history: { push } }) {
+function mapDispatchToProps(dispatch, { history: { push } }) {
     return {
         handleMarkerClick: e => {
             const oarID = get(e, 'layer.properties.id', null);
 
-            return oarID ? push(makeFacilityDetailLink(oarID)) : noop();
+            if (oarID) {
+                dispatch(resetSingleFacility());
+                return push(makeFacilityDetailLink(oarID));
+            }
+
+            return noop();
         },
     };
 }

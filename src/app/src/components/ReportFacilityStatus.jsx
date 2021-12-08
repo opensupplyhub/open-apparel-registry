@@ -14,6 +14,8 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 
 import DashboardActivityReportToast from './DashboardActivityReportToast';
+import FeatureFlag from './FeatureFlag';
+import FacilityDetailSidebarAction from './FacilityDetailSidebarAction';
 
 import {
     createDashboardActivityReport,
@@ -21,7 +23,11 @@ import {
 } from '../actions/dashboardActivityReports';
 
 import { facilityDetailsPropType } from '../util/propTypes';
-import { authLoginFormRoute } from '../util/constants';
+import {
+    EXTENDED_PROFILE_FLAG,
+    authLoginFormRoute,
+    facilitySidebarActions,
+} from '../util/constants';
 
 const styles = theme =>
     Object.freeze({
@@ -169,15 +175,30 @@ function ReportFacilityStatus({
 
     return (
         <div>
-            <button
-                className={`link-underline small ${classes.linkStyle}`}
-                to="#"
-                onClick={() => setShowDialog(true)}
-                type="button"
+            <FeatureFlag
+                flag={EXTENDED_PROFILE_FLAG}
+                alternative={
+                    <button
+                        className={`link-underline small ${classes.linkStyle}`}
+                        to="#"
+                        onClick={() => setShowDialog(true)}
+                        type="button"
+                    >
+                        Report facility as{' '}
+                        {data.properties.is_closed ? 'reopened' : 'closed'}
+                    </button>
+                }
             >
-                Report facility as{' '}
-                {data.properties.is_closed ? 'reopened' : 'closed'}
-            </button>
+                <FacilityDetailSidebarAction
+                    onClick={() => setShowDialog(true)}
+                    iconName="store-slash"
+                    text={
+                        data.properties.is_closed
+                            ? facilitySidebarActions.REPORT_AS_REOPENED
+                            : facilitySidebarActions.REPORT_AS_CLOSED
+                    }
+                />
+            </FeatureFlag>
             {dialog}
             <DashboardActivityReportToast
                 {...activityReports}
