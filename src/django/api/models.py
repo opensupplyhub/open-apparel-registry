@@ -2084,6 +2084,12 @@ class EmbedConfig(models.Model):
         null=True,
         blank=True,
         help_text='The font of the embedded map.')
+    prefer_contributor_name = models.BooleanField(
+        null=True,
+        blank=True,
+        help_text='Whether to use the contributor\'s facility name ' +
+                  'before other names.'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

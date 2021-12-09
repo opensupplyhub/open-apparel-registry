@@ -1301,7 +1301,7 @@ class EmbedConfigSerializer(ModelSerializer):
     class Meta:
         model = EmbedConfig
         fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
-                  'embed_fields')
+                  'embed_fields', 'prefer_contributor_name')
 
     def get_contributor(self, instance):
         try:
