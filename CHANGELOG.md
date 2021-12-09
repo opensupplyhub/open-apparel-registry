@@ -9,10 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Create ExtendedFields [#1527](https://github.com/open-apparel-registry/open-apparel-registry/pull/1527)
-- Include ExtendedFields in Facility Details [#1530](https://github.com/open-apparel-registry/open-apparel-registry/pull/1530)
-- Add extended profile feature flag [#1542](https://github.com/open-apparel-registry/open-apparel-registry/pull/1542)
-
 ### Changed
 
 ### Deprecated
@@ -21,9 +17,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Fix broken geocoding test [#1546](https://github.com/open-apparel-registry/open-apparel-registry/pull/1546)
-
 ### Security
+
+## [53] 2021-12-09
+
+### Added
+
+- Create ExtendedFields [#1527](https://github.com/open-apparel-registry/open-apparel-registry/pull/1527)
+- Include ExtendedFields in Facility Details [#1530](https://github.com/open-apparel-registry/open-apparel-registry/pull/1530)
+- Add extended profile feature flag [#1542](https://github.com/open-apparel-registry/open-apparel-registry/pull/1542)
+
+### Fixed
+
+- Fix broken geocoding test [#1546](https://github.com/open-apparel-registry/open-apparel-registry/pull/1546)
+- Correctly position and size embed footer badge [#1547](https://github.com/open-apparel-registry/open-apparel-registry/pull/1547)
 
 ## [52] 2021-11-10
 
@@ -963,7 +970,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/52...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/53...HEAD
+[53]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/53
 [52]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/52
 [51]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/51
 [50]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/50
