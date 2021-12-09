@@ -1,6 +1,7 @@
 from itertools import chain
 import csv
 import json
+from collections import defaultdict
 
 from django.conf import settings
 from django.core import exceptions
@@ -41,7 +42,8 @@ from api.models import (FacilityList,
                         FacilityActivityReport,
                         EmbedConfig,
                         EmbedField,
-                        NonstandardField)
+                        NonstandardField,
+                        ExtendedField)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code
 from api.helpers import prefix_a_an
@@ -613,6 +615,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
     claim_info = SerializerMethodField()
     activity_reports = SerializerMethodField()
     contributor_fields = SerializerMethodField()
+    extended_fields = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -622,7 +625,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
                   'ppe_product_types', 'ppe_contact_phone',
                   'ppe_contact_email', 'ppe_website',  'is_closed',
                   'activity_reports', 'contributor_fields', 'new_oar_id',
-                  'has_inexact_coordinates')
+                  'has_inexact_coordinates', 'extended_fields')
         geo_field = 'location'
 
     def get_other_names(self, facility):
@@ -775,6 +778,27 @@ class FacilityDetailsSerializer(FacilitySerializer):
                 facilitymatch__is_active=True).order_by('-created_at').first()
 
         return assign_contributor_field_values(list_item, fields)
+
+    def get_extended_fields(self, facility):
+        fields = facility.extended_fields()
+        user_can_see_detail = can_user_see_detail(self)
+
+        grouped_data = defaultdict(list)
+
+        def sort_order(k):
+            return (k['verified'], k['value_count'],
+                    k['is_from_claim'], k['updated_at'])
+
+        for field_name, _ in ExtendedField.FIELD_CHOICES:
+            serializer = ExtendedFieldListSerializer(
+                        fields.filter(field_name=field_name),
+                        many=True,
+                        context={'user_can_see_detail': user_can_see_detail}
+                    )
+            data = sorted(serializer.data, key=sort_order, reverse=True)
+            grouped_data[field_name] = data
+
+        return grouped_data
 
 
 class FacilityCreateBodySerializer(Serializer):
@@ -1289,3 +1313,33 @@ class EmbedConfigSerializer(ModelSerializer):
         embed_fields = EmbedField.objects.filter(
                             embed_config=instance).order_by('order')
         return EmbedFieldsSerializer(embed_fields, many=True).data
+
+
+class ExtendedFieldListSerializer(ModelSerializer):
+    contributor_name = SerializerMethodField()
+    contributor_id = SerializerMethodField()
+    value_count = SerializerMethodField()
+    is_from_claim = SerializerMethodField()
+
+    class Meta:
+        model = ExtendedField
+        fields = ('id', 'verified', 'value', 'updated_at',
+                  'contributor_name', 'contributor_id', 'value_count',
+                  'is_from_claim', 'field_name')
+
+    def get_contributor_name(self, instance):
+        user_can_see_detail = self.context.get("user_can_see_detail")
+        return get_contributor_name(instance.contributor, user_can_see_detail)
+
+    def get_contributor_id(self, instance):
+        user_can_see_detail = self.context.get("user_can_see_detail")
+        return get_contributor_id(instance.contributor, user_can_see_detail)
+
+    def get_value_count(self, instance):
+        return ExtendedField.objects.filter(facility=instance.facility) \
+                                    .filter(field_name=instance.field_name) \
+                                    .filter(value=instance.value) \
+                                    .count()
+
+    def get_is_from_claim(self, instance):
+        return instance.facility_list_item is None

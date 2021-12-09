@@ -5,6 +5,7 @@ import xlrd
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -32,7 +33,7 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         RequestLog, DownloadLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
-                        FacilityActivityReport)
+                        FacilityActivityReport, ExtendedField)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -533,8 +534,41 @@ class GeocodingUtilsTest(TestCase):
         self.assertEqual(formatted_data, parsed_city_hall_data)
 
 
+geocoding_data = {'results': [{'address_components': [
+    {'long_name': '990', 'short_name': '990', 'types': ['street_number']},
+    {'long_name': 'Spring Garden Street', 'short_name': 'Spring Garden St',
+     'types': ['route']},
+    {'long_name': 'Center City', 'short_name': 'Center City',
+     'types': ['neighborhood', 'political']},
+    {'long_name': 'Philadelphia', 'short_name': 'Philadelphia',
+     'types': ['locality', 'political']},
+    {'long_name': 'Philadelphia County', 'short_name': 'Philadelphia County',
+     'types': ['administrative_area_level_2', 'political']},
+    {'long_name': 'Pennsylvania', 'short_name': 'PA',
+     'types': ['administrative_area_level_1', 'political']},
+    {'long_name': 'United States', 'short_name': 'US',
+     'types': ['country', 'political']},
+    {'long_name': '19123', 'short_name': '19123', 'types': ['postal_code']}
+    ],
+    'formatted_address': '990 Spring Garden St, Philadelphia, PA 19123, USA',
+    'geometry': {'bounds': {
+        'northeast': {'lat': 39.9614743, 'lng': -75.15379639999999},
+        'southwest': {'lat': 39.9611391, 'lng': -75.1545269}},
+        'location': {'lat': 39.961265, 'lng': -75.15412760000001},
+    'location_type': 'ROOFTOP',
+    'viewport': {
+        'northeast': {'lat': 39.9626556802915, 'lng': -75.1528126697085},
+        'southwest': {'lat': 39.9599577197085, 'lng': -75.1555106302915}}},
+    'place_id': 'ChIJ8cV_ZH_IxokRA_ETpdB5R3Y',
+    'types': ['premise']}],
+    'status': 'OK'}
+
+
 class GeocodingTest(TestCase):
-    def test_geocode_response_contains_expected_keys(self):
+    @patch('api.geocoding.requests.get')
+    def test_geocode_response_contains_expected_keys(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         geocoded_data = geocode_address('990 Spring Garden St, Philly', 'US')
         self.assertIn('full_response', geocoded_data)
         self.assertIn('geocoded_address', geocoded_data)
@@ -542,11 +576,19 @@ class GeocodingTest(TestCase):
         self.assertIn('lat', geocoded_data['geocoded_point'])
         self.assertIn('lng', geocoded_data['geocoded_point'])
 
-    def test_ungeocodable_address_returns_zero_resusts(self):
+    @patch('api.geocoding.requests.get')
+    def test_ungeocodable_address_returns_zero_resusts(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = {'results': [],
+                                                   'status': 'ZERO_RESULTS'}
         results = geocode_address('@#$^@#$^', 'XX')
         self.assertEqual(0, results['result_count'])
 
-    def test_incorrect_country_code_raises_error(self):
+    @patch('api.geocoding.requests.get')
+    def test_incorrect_country_code_raises_error(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+
         with self.assertRaises(ValueError) as cm:
             geocode_address('Datong Bridge, Qiucun town, Fenghua District, ' +
                             'Tirupur, Tamilnadu, 641604', 'IN')
@@ -724,6 +766,26 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     location=Point(0, 0),
                     created_from=self.list_item_one)
 
+        self.extended_field_one = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value=self.name_one,
+                contributor=self.contrib_one,
+                facility=self.facility,
+                facility_list_item=self.list_item_one
+            )
+
+        self.extended_field_two = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value=self.name_two,
+                contributor=self.contrib_two,
+                facility=self.facility,
+                facility_list_item=self.list_item_two
+            )
+
         self.facility_match_one = FacilityMatch \
             .objects \
             .create(status=FacilityMatch.CONFIRMED,
@@ -743,6 +805,12 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         self.assertIn(self.source_one, sources)
         self.assertIn(self.source_two, sources)
         self.assertEqual(len(sources), 2)
+
+    def test_returns_extended_fields(self):
+        fields = self.facility.extended_fields()
+        self.assertIn(self.extended_field_one, fields)
+        self.assertIn(self.extended_field_two, fields)
+        self.assertEqual(len(fields), 2)
 
     def test_excludes_canonical_name_from_other_names(self):
         other_names = self.facility.other_names()
@@ -835,6 +903,11 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
         other_addresses = self.facility.other_addresses()
         self.assertNotIn(self.address_two, other_addresses)
         self.assertEqual(len(other_addresses), 0)
+
+        fields = self.facility.extended_fields()
+        self.assertIn(self.extended_field_one, fields)
+        self.assertNotIn(self.extended_field_two, fields)
+        self.assertEqual(len(fields), 1)
 
     def test_excludes_private_matches_from_details(self):
         self.source_two.is_public = False
@@ -4435,6 +4508,37 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                     confidence=0.85,
                     results='')
 
+        self.extended_field_one = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name one',
+                contributor=self.contributor,
+                facility=self.facility,
+                facility_list_item=self.list_item,
+                verified=True
+            )
+
+        self.extended_field_two = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name two',
+                contributor=self.other_contributor,
+                facility=self.facility,
+                facility_list_item=self.other_list_item
+            )
+
+        self.extended_field_three = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name two',
+                contributor=self.contributor,
+                facility=self.facility,
+                facility_list_item=self.list_item
+            )
+
     def test_excludes_match_if_geocoded_point_is_none(self):
         self.other_list_item.geocoded_point = None
         self.other_list_item.save()
@@ -4571,6 +4675,28 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
             data['properties']['other_locations'][0]['contributor_name'],
             None,
         )
+
+    def test_serializes_extended_fields_in_facility_details(self):
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        fields = data['properties']['extended_fields']['native_language_name']
+
+        self.assertEqual(len(fields), 3)
+        self.assertEqual(fields[0]['value'], 'name one')
+
+        self.extended_field_one.verified = False
+        self.extended_field_one.save()
+
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        fields = data['properties']['extended_fields']['native_language_name']
+
+        self.assertEqual(len(fields), 3)
+        self.assertEqual(fields[0]['value'], 'name two')
 
 
 class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):

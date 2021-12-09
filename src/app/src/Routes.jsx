@@ -97,7 +97,7 @@ class Routes extends Component {
     render() {
         const { fetchingFeatureFlags, embed, classes } = this.props;
 
-        const mainPanelStyle = embed ? { top: 0 } : {};
+        const mainPanelStyle = embed ? { top: 0, bottom: '64px' } : {};
 
         return (
             <ErrorBoundary>

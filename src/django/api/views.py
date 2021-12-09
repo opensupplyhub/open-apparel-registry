@@ -136,6 +136,9 @@ from api.renderers import MvtRenderer
 from api.facility_history import (create_facility_history_list,
                                   create_associate_match_change_reason,
                                   create_dissociate_match_change_reason)
+from api.extended_fields import (create_extendedfields_for_single_item,
+                                 update_extendedfields_for_list_item,
+                                 create_extendedfields_for_claim)
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -1217,6 +1220,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             }]
         )
 
+        create_extendedfields_for_single_item(item, request.data)
+
         result = {
             'matches': [],
             'item_id': item.id,
@@ -1373,7 +1378,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         item.refresh_from_db()
         result['item_id'] = item.id
         result['status'] = item.status
+
         if item.facility is not None:
+            # If the item has been linked to a facility,
+            # update the ExtendedFields
+            update_extendedfields_for_list_item(item)
             result['oar_id'] = item.facility.id
             if item.facility.created_from == item:
                 result['status'] = FacilityListItem.NEW_FACILITY
@@ -3156,6 +3165,8 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.save()
 
+            create_extendedfields_for_claim(claim)
+
             try:
                 send_claim_update_notice_to_list_contributors(request, claim)
             except Exception:
@@ -3339,6 +3350,8 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
         facility_list_item.facility = facility_match.facility
         facility_list_item.save()
 
+        update_extendedfields_for_list_item(facility_list_item)
+
         response_data = FacilityListItemSerializer(facility_list_item).data
 
         if facility_list_item.source.source_type == Source.LIST:
@@ -3492,6 +3505,8 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                     .CONFIRMED_MATCH
 
             facility_list_item.save()
+
+            update_extendedfields_for_list_item(facility_list_item)
 
         response_data = FacilityListItemSerializer(facility_list_item).data
 

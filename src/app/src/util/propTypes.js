@@ -26,6 +26,7 @@ import {
     PPE,
     REPORT_A_FACILITY,
     EMBEDDED_MAP_FLAG,
+    EXTENDED_PROFILE_FLAG,
     facilityClaimStatusChoicesEnum,
 } from './constants';
 
@@ -245,6 +246,7 @@ export const featureFlagPropType = oneOf([
     PPE,
     REPORT_A_FACILITY,
     EMBEDDED_MAP_FLAG,
+    EXTENDED_PROFILE_FLAG,
 ]);
 
 export const facilityClaimsListPropType = arrayOf(
