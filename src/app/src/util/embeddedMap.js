@@ -30,6 +30,7 @@ export const formatExistingConfig = embedConfig => {
         color: embedConfig.color ? embedConfig.color : '#3d2f8c',
         font: embedConfig.font ? embedConfig.font : OARFont,
         height: getHeight(embedConfig),
+        preferContributorName: embedConfig.prefer_contributor_name,
     };
 };
 
@@ -101,6 +102,7 @@ export const formatEmbedConfigForServer = (embedConfig, embedFields) => ({
     ...embedConfig,
     width: formatWidthForServer(embedConfig),
     height: getHeight(embedConfig),
+    prefer_contributor_name: embedConfig.preferContributorName,
     embed_fields: formatEmbedFieldsForServer(embedFields),
 });
 
