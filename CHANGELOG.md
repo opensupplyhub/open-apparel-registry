@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Update extended fields when matches are adjusted [#1544](https://github.com/open-apparel-registry/open-apparel-registry/pull/1544)
+
 ### Changed
 
 ### Deprecated

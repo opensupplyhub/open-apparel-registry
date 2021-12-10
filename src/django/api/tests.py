@@ -3195,6 +3195,27 @@ class FacilityMergeTest(APITestCase):
                     facility=self.facility_2,
                     source=self.source_3)
 
+        self.extended_field_1 = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name one',
+                contributor=self.contributor_1,
+                facility=self.facility_1,
+                facility_list_item=self.list_item_1,
+                verified=True
+            )
+
+        self.extended_field_2 = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name two',
+                contributor=self.contributor_2,
+                facility=self.facility_2,
+                facility_list_item=self.list_item_2
+            )
+
         self.existing_alias = FacilityAlias.objects.create(
             facility=self.facility_2,
             oar_id='US1234567ABCDEF')
@@ -3269,6 +3290,24 @@ class FacilityMergeTest(APITestCase):
         # The pending claim on the merge facility should have been updated
         self.assertEqual(self.facility_1, self.facility_2_claim.facility)
         self.assertEqual(FacilityClaim.DENIED, self.facility_2_claim.status)
+
+    def test_merge_with_extended_fields(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(200, response.status_code)
+
+        # Fields pointing to target facility should be unchanged
+        self.extended_field_1.refresh_from_db()
+        self.assertEqual(self.extended_field_1.facility, self.facility_1)
+        self.assertEqual(self.extended_field_1.facility_list_item,
+                         self.list_item_1)
+
+        # Fields pointing to merge facility should be updated
+        self.extended_field_2.refresh_from_db()
+        self.assertEqual(self.extended_field_2.facility, self.facility_1)
+        self.assertEqual(self.extended_field_2.facility_list_item,
+                         self.list_item_2)
 
     def test_merge_with_two_approved_claims(self):
         self.facility_1_claim.status = FacilityClaim.APPROVED
@@ -3449,6 +3488,27 @@ class FacilitySplitTest(APITestCase):
         self.list_item_two.facility = self.facility_one
         self.list_item_two.save()
 
+        self.extended_field_one = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name one',
+                contributor=self.contributor_one,
+                facility=self.facility_one,
+                facility_list_item=self.list_item_one,
+                verified=True
+            )
+
+        self.extended_field_two = ExtendedField \
+            .objects \
+            .create(
+                field_name='native_language_name',
+                value='name two',
+                contributor=self.contributor_two,
+                facility=self.facility_one,
+                facility_list_item=self.list_item_two
+            )
+
         self.split_url = '/api/facilities/{}/split/'.format(
             self.facility_one.id,
         )
@@ -3604,6 +3664,27 @@ class FacilitySplitTest(APITestCase):
                          self.facility_one.ppe_contact_email)
         self.assertEqual(self.facility_one.created_from.ppe_website,
                          self.facility_one.ppe_website)
+
+    def test_post_updates_extended_fields(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url,
+                                         {'match_id': self.match_two.id})
+        self.assertEqual(post_response.status_code, 200)
+        data = json.loads(post_response.content)
+        new_facility_id = data['new_oar_id']
+
+        # Fields not associated with the split-off match should be unchanged
+        self.extended_field_one.refresh_from_db()
+        self.assertEqual(self.extended_field_one.facility, self.facility_one)
+        self.assertEqual(self.extended_field_one.facility_list_item,
+                         self.list_item_one)
+
+        # Field associated with the split-off match should be updated
+        self.extended_field_two.refresh_from_db()
+        self.assertEqual(self.extended_field_two.facility.id, new_facility_id)
+        self.assertEqual(self.extended_field_two.facility_list_item,
+                         self.list_item_two)
 
 
 class FacilityMatchPromoteTest(APITestCase):
