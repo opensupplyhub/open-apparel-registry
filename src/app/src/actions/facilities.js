@@ -46,9 +46,12 @@ export function fetchFacilities({
         dispatch(fetchCurrentTileCacheKey());
         dispatch(startFetchFacilities());
 
-        const { filters } = getState();
+        const {
+            filters,
+            embeddedMap: { embed },
+        } = getState();
 
-        const qs = createQueryStringFromSearchFilters(filters);
+        const qs = createQueryStringFromSearchFilters(filters, embed);
 
         return apiRequest
             .get(makeGetFacilitiesURLWithQueryString(qs, pageSize))
