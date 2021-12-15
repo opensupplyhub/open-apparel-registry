@@ -4,16 +4,16 @@ import Typography from '@material-ui/core/Typography';
 
 import FacilityDetailSidebarDetail from './FacilityDetailSidebarDetail';
 
-const detailsSidebarStyles = theme =>
+const detailsSidebarStyles = () =>
     Object.freeze({
         item: {
-            paddingTop: '12px',
+            paddingTop: '16px',
         },
         label: {
-            padding: '12px 24px 6px 24px',
+            padding: '12px 24px 4px 24px',
             fontSize: '0.75rem',
             textTransform: 'uppercase',
-            fontWeight: theme.typography.fontWeightMedium,
+            fontWeight: 'bold',
         },
     });
 

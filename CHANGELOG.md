@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Update extended fields when matches are adjusted [#1544](https://github.com/open-apparel-registry/open-apparel-registry/pull/1544)
 - Allow prefer contributor name in embed [#1557](https://github.com/open-apparel-registry/open-apparel-registry/pull/1557)
+- Add new facility details sidebar [#1552](https://github.com/open-apparel-registry/open-apparel-registry/pull/1552)
 
 ### Changed
 

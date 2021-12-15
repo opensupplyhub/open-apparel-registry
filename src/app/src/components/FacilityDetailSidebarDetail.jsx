@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForwardIos';
+import ArrowForwardIcon from '@material-ui/icons/ChevronRight';
 
 import ShowOnly from './ShowOnly';
 import BadgeVerified from './BadgeVerified';
@@ -20,6 +20,9 @@ const detailsSidebarStyles = () =>
             fontSize: '12px',
             justify: 'flex-end',
         },
+        divider: {
+            backgroundColor: 'rgba(0, 0, 0, 0.06)',
+        },
     });
 
 const FacilityDetailSidebarDetail = ({
@@ -34,7 +37,7 @@ const FacilityDetailSidebarDetail = ({
 }) => (
     <>
         <ShowOnly when={!hideTopDivider}>
-            <Divider />
+            <Divider className={classes.divider} />
         </ShowOnly>
         <ListItem
             button={hasAdditionalContent}
@@ -58,7 +61,7 @@ const FacilityDetailSidebarDetail = ({
                 </div>
             </ShowOnly>
         </ListItem>
-        <Divider />
+        <Divider className={classes.divider} />
     </>
 );
 
