@@ -71,6 +71,35 @@ def is_embed_mode_active(serializer):
     return False
 
 
+def get_embed_contributor_id(serializer):
+    request = serializer.context.get('request') \
+        if serializer.context is not None else None
+
+    if request is None or request.query_params is None:
+        return None
+
+    contributor = request.query_params.get('contributor', None)
+    if contributor is None:
+        contributors = request.query_params.get('contributors', [])
+        if contributors is not None and len(contributors) > 0:
+            contributor = contributors[0]
+
+    return contributor
+
+
+def prefer_contributor_name(serializer):
+    try:
+        contributor_id = get_embed_contributor_id(serializer)
+        if is_embed_mode_active(serializer) and contributor_id is not None:
+            contributor = Contributor.objects.get(id=contributor_id)
+            if contributor.embed_level is not None:
+                config = EmbedConfig.objects.get(contributor=contributor)
+                return config.prefer_contributor_name
+        return False
+    except EmbedConfig.DoesNotExist or Contributor.DoesNotExist:
+        return False
+
+
 class UserSerializer(ModelSerializer):
     password = CharField(write_only=True)
     name = SerializerMethodField()
@@ -470,10 +499,47 @@ class FacilityListItemsQueryParamsSerializer(Serializer):
                         item, ', '.join(valid_statuses)))
 
 
+def get_facility_name(serializer, facility):
+    if prefer_contributor_name(serializer):
+        contributor = get_embed_contributor_id(serializer)
+        facility_list_item_matches = [
+            FacilityListItem.objects.get(pk=pk)
+            for (pk,)
+            in facility
+            .facilitymatch_set
+            .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED],
+                    is_active=True,
+                    facility_list_item__source__is_active=True,
+                    facility_list_item__source__is_public=True,
+                    facility_list_item__source__contributor_id=contributor)
+            .order_by('-created_at')
+            .values_list('facility_list_item')
+        ]
+
+        valid_names = []
+        for item in facility_list_item_matches:
+            if len(item.name) != 0 and item.name is not None:
+                # If the contributor has submitted a name matching the
+                # assigned facility name, use the assigned facility name
+                if item.name == facility.name:
+                    return facility.name
+                valid_names.append(item.name)
+
+        # Return the first item with a valid name if it exists
+        if len(valid_names) > 0:
+            return valid_names[0]
+
+    # Return the assigned facility name
+    return facility.name
+
+
 class FacilitySerializer(GeoFeatureModelSerializer):
     oar_id = SerializerMethodField()
     country_name = SerializerMethodField()
     contributors = SerializerMethodField()
+    name = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -489,6 +555,9 @@ class FacilitySerializer(GeoFeatureModelSerializer):
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')
+
+    def get_name(self, facility):
+        return get_facility_name(self, facility)
 
     def get_contributors(self, facility):
         if is_embed_mode_active(self):
@@ -1301,7 +1370,7 @@ class EmbedConfigSerializer(ModelSerializer):
     class Meta:
         model = EmbedConfig
         fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
-                  'embed_fields')
+                  'embed_fields', 'prefer_contributor_name')
 
     def get_contributor(self, instance):
         try:

@@ -23,6 +23,12 @@ const styles = {
         fontSize: '24px',
         margin: '10px 0',
     },
+    subsectionHeader: {
+        color: 'rgb(0, 0, 0)',
+        fontSize: '15px',
+        fontWeight: 'bold',
+        margin: '10px 0',
+    },
     list: {
         marginTop: '10px',
         padding: 0,
@@ -74,7 +80,14 @@ const reorder = (list, startIndex, endIndex) => {
     return result.map((el, i) => ({ ...el, order: i }));
 };
 
-function EmbeddedMapFieldsConfig({ fields, setFields, classes, errors }) {
+function EmbeddedMapFieldsConfig({
+    fields,
+    setFields,
+    preferContributorName,
+    setPreferContributorName,
+    classes,
+    errors,
+}) {
     const updateItem = item => {
         const index = fields.findIndex(f => f.columnName === item.columnName);
         const newFields = [
@@ -206,65 +219,94 @@ function EmbeddedMapFieldsConfig({ fields, setFields, classes, errors }) {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <div style={styles.section}>
-                <Typography style={styles.sectionHeader}>
-                    Include these fields
-                </Typography>
-                <Typography>
-                    Choose which fields to display on your map (the number of
-                    fields you are able to display corresponds to your Embedded
-                    Map package). Facility name, address, and OAR ID will always
-                    be included.
-                </Typography>
-                {errors?.embed_fields && (
-                    <Typography style={{ color: 'red' }}>
-                        Error: {errors.embed_fields.join(', ')}
+                <Typography style={styles.sectionHeader}>Fields</Typography>
+                <div style={styles.section}>
+                    <Typography style={styles.subsectionHeader}>
+                        Include these fields
                     </Typography>
-                )}
-                {errors?.show_other_contributor_information && (
-                    <Typography style={{ color: 'red' }}>
-                        Error:{' '}
-                        {errors.show_other_contributor_information.join(', ')}
+                    <Typography>
+                        Choose which fields to display on your map (the number
+                        of fields you are able to display corresponds to your
+                        Embedded Map package). Facility name, address, and OAR
+                        ID will always be included.
                     </Typography>
-                )}
-                <Droppable droppableId="droppable">
-                    {provided => (
-                        <ul
-                            className={classes.list}
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                        >
-                            <li style={styles.listItemNonEditable}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={allSelected}
-                                            onChange={e =>
-                                                setFields(
-                                                    fields.map(f => ({
-                                                        ...f,
-                                                        visible:
-                                                            e.target.checked,
-                                                    })),
-                                                )
-                                            }
-                                            style={styles.checkbox}
-                                            value="allSelected"
-                                            indeterminate={someSelected}
-                                        />
-                                    }
-                                    label="Select All"
-                                    classes={{
-                                        label: classes.listText,
-                                    }}
-                                />
-                            </li>
-                            {fields
-                                .sort((a, b) => a.order - b.order)
-                                .map(renderField)}
-                            {provided.placeholder}
-                        </ul>
+                    {errors?.embed_fields && (
+                        <Typography style={{ color: 'red' }}>
+                            Error: {errors.embed_fields.join(', ')}
+                        </Typography>
                     )}
-                </Droppable>
+                    {errors?.show_other_contributor_information && (
+                        <Typography style={{ color: 'red' }}>
+                            Error:{' '}
+                            {errors.show_other_contributor_information.join(
+                                ', ',
+                            )}
+                        </Typography>
+                    )}
+                    <Droppable droppableId="droppable">
+                        {provided => (
+                            <ul
+                                className={classes.list}
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                            >
+                                <li style={styles.listItemNonEditable}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={allSelected}
+                                                onChange={e =>
+                                                    setFields(
+                                                        fields.map(f => ({
+                                                            ...f,
+                                                            visible:
+                                                                e.target
+                                                                    .checked,
+                                                        })),
+                                                    )
+                                                }
+                                                style={styles.checkbox}
+                                                value="allSelected"
+                                                indeterminate={someSelected}
+                                            />
+                                        }
+                                        label="Select All"
+                                        classes={{
+                                            label: classes.listText,
+                                        }}
+                                    />
+                                </li>
+                                {fields
+                                    .sort((a, b) => a.order - b.order)
+                                    .map(renderField)}
+                                {provided.placeholder}
+                            </ul>
+                        )}
+                    </Droppable>
+                </div>
+                <div style={styles.section}>
+                    <Typography style={styles.subsectionHeader}>
+                        Promoted Fields
+                    </Typography>
+                    <Typography>
+                        Choose whether to display your provided data instead of
+                        the default information.
+                    </Typography>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={preferContributorName}
+                                onChange={e =>
+                                    setPreferContributorName(e.target.checked)
+                                }
+                                style={styles.checkbox}
+                                value="preferContributorName"
+                            />
+                        }
+                        label="Use my facility name"
+                        classes={{ label: classes.listText }}
+                    />
+                </div>
             </div>
         </DragDropContext>
     );
