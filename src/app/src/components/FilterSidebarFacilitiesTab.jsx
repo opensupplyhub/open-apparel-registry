@@ -234,7 +234,7 @@ function FilterSidebarFacilitiesTab({
         <Fragment>
             {listHeaderInsetComponent}
             <div style={filterSidebarStyles.controlPanelContentStyles}>
-                <List>
+                <List component="div">
                     <InfiniteAnyHeight
                         containerHeight={resultListHeight}
                         infiniteLoadBeginEdgeOffset={100}
