@@ -540,13 +540,15 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     country_name = SerializerMethodField()
     contributors = SerializerMethodField()
     name = SerializerMethodField()
+    contributor_fields = SerializerMethodField()
 
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'country_name', 'contributors',
                   'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website', 'is_closed')
+                  'ppe_contact_email', 'ppe_website', 'is_closed',
+                  'contributor_fields')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -591,6 +593,42 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                 distinct_names.append(formatted_source['name'])
                 distinct_sources.append(formatted_source)
         return distinct_sources
+
+    def get_contributor_fields(self, facility):
+        try:
+            contributor_id = get_embed_contributor_id(self)
+            if contributor_id is None or not is_embed_mode_active(self):
+                return []
+            contributor = Contributor.objects.get(id=contributor_id)
+            if contributor.embed_level is None:
+                return []
+        except Contributor.DoesNotExist:
+            return []
+
+        # If the contributor has not created any overriding embed config
+        # these transparency pledge fields will always be visible.
+        fields = [
+            EmbedField(column_name=column_name, display_name=display_name)
+            for (column_name, display_name)
+            in NonstandardField.DEFAULT_FIELDS.items()]
+
+        try:
+            config = EmbedConfig.objects.get(contributor=contributor)
+            # If there are any configured fields, they override the defaults
+            # set above
+            if EmbedField.objects.filter(embed_config=config).count() > 0:
+                fields = EmbedField.objects.filter(
+                    embed_config=config, visible=True).order_by('order')
+        except EmbedConfig.DoesNotExist:
+            return fields
+
+        list_item = FacilityListItem.objects.filter(
+                facility=facility,
+                source__contributor=contributor,
+                source__is_active=True,
+                facilitymatch__is_active=True).order_by('-created_at').first()
+
+        return assign_contributor_field_values(list_item, fields)
 
 
 def parse_raw_data(data):
