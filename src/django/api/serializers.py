@@ -80,7 +80,7 @@ def get_embed_contributor_id(serializer):
 
     contributor = request.query_params.get('contributor', None)
     if contributor is None:
-        contributors = request.query_params.get('contributors', [])
+        contributors = request.query_params.getlist('contributors', [])
         if contributors is not None and len(contributors) > 0:
             contributor = contributors[0]
 

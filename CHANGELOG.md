@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Use newer version of terraform container to avoid CI error [#1566](https://github.com/open-apparel-registry/open-apparel-registry/pull/1566)
 - Add contributor fields to facility downloads [#1565](https://github.com/open-apparel-registry/open-apparel-registry/pull/1565)
+- Fix contributor id bug [#1567](https://github.com/open-apparel-registry/open-apparel-registry/pull/1567)
 
 ### Security
 
