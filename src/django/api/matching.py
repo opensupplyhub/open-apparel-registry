@@ -10,7 +10,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction
-from django.db.models import Q, Max
+from django.db.models import Q, Max, ExpressionWrapper, BooleanField
 from unidecode import unidecode
 
 from api.models import (Facility,
@@ -109,6 +109,72 @@ def get_canonical_items():
     items.update(confirmed_items)
 
     return items
+
+
+def exact_match_items(messy, contributor):
+    started = str(datetime.utcnow())
+
+    matched_items = FacilityListItem.objects \
+        .filter(status__in=[FacilityListItem.MATCHED,
+                            FacilityListItem.CONFIRMED_MATCH])
+    active_item_ids = FacilityMatch.objects \
+        .filter(status__in=[FacilityMatch.AUTOMATIC,
+                            FacilityMatch.CONFIRMED,
+                            FacilityMatch.MERGED],
+                is_active=True,
+                facility_list_item__source__is_active=True) \
+        .values_list('facility_list_item')
+
+    results = dict()
+
+    for messy_id, item in messy.items():
+        clean_name = clean(item.get('name', ''))
+        clean_address = clean(item.get('address', ''))
+        country_code = item.get('country').upper()
+        exact_matches = matched_items.filter(clean_name=clean_name,
+                                             clean_address=clean_address,
+                                             country_code=country_code) \
+            .annotate(is_active=ExpressionWrapper(
+                Q(id__in=active_item_ids),
+                output_field=BooleanField())) \
+            .annotate(has_same_contributor=ExpressionWrapper(
+                Q(source__contributor=contributor),
+                output_field=BooleanField())) \
+            .order_by('-is_active',
+                      '-has_same_contributor',
+                      'updated_at') \
+            .values('facility_id')
+
+        if len(exact_matches) > 0:
+            results[messy_id] = exact_matches
+
+    finished = str(datetime.utcnow())
+
+    return {
+        'processed_list_item_ids': list(results.keys()),
+        'item_matches': results,
+        'started': started,
+        'finished': finished
+    }
+
+
+def identify_exact_matches(facility_list):
+    messy = get_messy_items_from_facility_list(facility_list)
+    contributor = facility_list.source.contributor
+
+    return exact_match_items(messy, contributor)
+
+
+def exact_match_item(country, name, address, contributor, id='id'):
+    return exact_match_items(
+        {
+            str(id): {
+                "country": clean(country),
+                "name": clean(name),
+                "address": clean(address)
+            }
+        },
+        contributor)
 
 
 def get_messy_items_from_facility_list(facility_list):

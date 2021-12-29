@@ -69,8 +69,10 @@ from api.constants import (CsvHeaderField,
                            FeatureGroups)
 from api.geocoding import geocode_address
 from api.matching import (match_item,
+                          exact_match_item,
                           text_match_item,
-                          GazetteerCacheTimeoutError)
+                          GazetteerCacheTimeoutError,
+                          clean)
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -96,6 +98,7 @@ from api.processing import (parse_csv_line,
                             parse_excel,
                             get_country_code,
                             save_match_details,
+                            save_exact_match_details,
                             reduce_matches)
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
@@ -1206,7 +1209,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raw_data=json.dumps(request.data),
             status=FacilityListItem.PARSED,
             name=name,
+            clean_name=clean(name),
             address=address,
+            clean_address=clean(address),
             country_code=country_code,
             ppe_product_types=ppe_product_types,
             ppe_contact_phone=ppe_contact_phone,
@@ -1279,71 +1284,94 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         match_started = str(datetime.utcnow())
+
         try:
-            match_results = match_item(country_code, name, address, item.id)
-            item_matches = match_results['item_matches']
-
-            gazetteer_match_count = len(item_matches.keys())
-
-            if gazetteer_match_count == 0 and text_only_fallback:
-                # When testing with more realistic data the text matching
-                # was returning dozens of results. Limiting to the first 5 is
-                # reasonable because the results are sorted with the highest
-                # confidence first.
-                text_only_matches = {
-                    item.id:
-                    list(text_match_item(item.country_code, item.name)[:5])}
-            else:
-                text_only_matches = {}
-
-            match_objects = save_match_details(
-                match_results, text_only_matches=text_only_matches)
-
-            automatic_threshold = \
-                match_results['results']['automatic_threshold']
-
-            for item_id, matches in item_matches.items():
-                result['item_id'] = item_id
-                result['status'] = item.status
-                for (facility_id, score), match in zip(reduce_matches(matches),
-                                                       match_objects):
-                    facility = Facility.objects.get(id=facility_id)
-                    context = {'request': request}
-                    facility_dict = FacilityDetailsSerializer(
-                        facility, context=context).data
-                    # calling `round` alone was not trimming digits
-                    facility_dict['confidence'] = float(str(round(score, 4)))
-                    # If there is a single match for an item, it only needs to
-                    # be confirmed if it has a low score.
-                    if score < automatic_threshold or len(match_objects) > 1:
-                        if should_create:
-                            facility_dict['confirm_match_url'] = reverse(
-                                'facility-match-confirm',
-                                kwargs={'pk': match.pk})
-                            facility_dict['reject_match_url'] = reverse(
-                                'facility-match-reject',
-                                kwargs={'pk': match.pk})
-                    result['matches'].append(facility_dict)
-
-            # Append the text only match results to the response if there were
-            # no gazetteer matches
-            if gazetteer_match_count == 0:
-                for match in match_objects:
-                    if match.results and match.results['text_only_match']:
-                        item.status = FacilityListItem.POTENTIAL_MATCH
+            exact_match_results = exact_match_item(country_code, name, address,
+                                                   request.user.contributor,
+                                                   item.id)
+            item_matches = exact_match_results['item_matches']
+            exact_match_count = len(item_matches.keys())
+            if exact_match_count > 0:
+                match_objects = save_exact_match_details(exact_match_results)
+                for item_id, matches in item_matches.items():
+                    result['item_id'] = item_id
+                    result['status'] = item.status
+                    for m in matches:
+                        facility_id = m.get('facility_id')
+                        facility = Facility.objects.get(id=facility_id)
                         context = {'request': request}
                         facility_dict = FacilityDetailsSerializer(
-                            match.facility, context=context).data
-                        facility_dict['confidence'] = match.confidence
-                        facility_dict['text_only_match'] = True
-                        if should_create:
-                            facility_dict['confirm_match_url'] = reverse(
-                                'facility-match-confirm',
-                                kwargs={'pk': match.pk})
-                            facility_dict['reject_match_url'] = reverse(
-                                'facility-match-reject',
-                                kwargs={'pk': match.pk})
+                            facility, context=context).data
                         result['matches'].append(facility_dict)
+            else:
+                match_results = match_item(country_code, name, address,
+                                           item.id)
+                item_matches = match_results['item_matches']
+
+                gazetteer_match_count = len(item_matches.keys())
+
+                if gazetteer_match_count == 0 and text_only_fallback:
+                    # When testing with more realistic data the text matching
+                    # was returning dozens of results. Limiting to the first 5
+                    # is reasonable because the results are sorted with the
+                    # highest confidence first.
+                    text_only_matches = {
+                        item.id:
+                        list(text_match_item(item.country_code,
+                                             item.name)[:5])}
+                else:
+                    text_only_matches = {}
+
+                match_objects = save_match_details(
+                    match_results, text_only_matches=text_only_matches)
+
+                automatic_threshold = \
+                    match_results['results']['automatic_threshold']
+
+                for item_id, matches in item_matches.items():
+                    result['item_id'] = item_id
+                    result['status'] = item.status
+                    for (facility_id, score), match in \
+                            zip(reduce_matches(matches), match_objects):
+                        facility = Facility.objects.get(id=facility_id)
+                        context = {'request': request}
+                        facility_dict = FacilityDetailsSerializer(
+                            facility, context=context).data
+                        # calling `round` alone was not trimming digits
+                        facility_dict['confidence'] = float(str(round(score,
+                                                                      4)))
+                        # If there is a single match for an item, it only needs
+                        # to be confirmed if it has a low score.
+                        if score < automatic_threshold or \
+                                len(match_objects) > 1:
+                            if should_create:
+                                facility_dict['confirm_match_url'] = reverse(
+                                    'facility-match-confirm',
+                                    kwargs={'pk': match.pk})
+                                facility_dict['reject_match_url'] = reverse(
+                                    'facility-match-reject',
+                                    kwargs={'pk': match.pk})
+                        result['matches'].append(facility_dict)
+
+                # Append the text only match results to the response if there
+                # were no gazetteer matches
+                if gazetteer_match_count == 0:
+                    for match in match_objects:
+                        if match.results and match.results['text_only_match']:
+                            item.status = FacilityListItem.POTENTIAL_MATCH
+                            context = {'request': request}
+                            facility_dict = FacilityDetailsSerializer(
+                                match.facility, context=context).data
+                            facility_dict['confidence'] = match.confidence
+                            facility_dict['text_only_match'] = True
+                            if should_create:
+                                facility_dict['confirm_match_url'] = reverse(
+                                    'facility-match-confirm',
+                                    kwargs={'pk': match.pk})
+                                facility_dict['reject_match_url'] = reverse(
+                                    'facility-match-reject',
+                                    kwargs={'pk': match.pk})
+                            result['matches'].append(facility_dict)
 
         except GazetteerCacheTimeoutError as te:
             item.status = FacilityListItem.ERROR_MATCHING

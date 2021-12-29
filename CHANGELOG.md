@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Identify exact matches pre-dedupe [#1568](https://github.com/open-apparel-registry/open-apparel-registry/pull/1568)
+
 ### Deprecated
 
 ### Removed
