@@ -81,7 +81,14 @@ const renderEmbeddedMap = ({ fullWidth, mapSettings, height, width }) =>
 
 function EmbeddedMapConfig({
     user,
-    embedConfig: { color, font, width, fullWidth, height },
+    embedConfig: {
+        color,
+        font,
+        width,
+        fullWidth,
+        height,
+        preferContributorName,
+    },
     setEmbedConfig,
     fields,
     setFields,
@@ -157,6 +164,10 @@ function EmbeddedMapConfig({
                     <EmbeddedMapFieldsConfig
                         fields={fields}
                         setFields={setFields}
+                        preferContributorName={preferContributorName}
+                        setPreferContributorName={updateEmbedConfig(
+                            'preferContributorName',
+                        )}
                         errors={errors}
                     />
                 ) : null}

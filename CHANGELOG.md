@@ -19,6 +19,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [54] 2022-01-05
+
+### Added
+
+- Update extended fields when matches are adjusted [#1544](https://github.com/open-apparel-registry/open-apparel-registry/pull/1544)
+- Allow prefer contributor name in embed [#1557](https://github.com/open-apparel-registry/open-apparel-registry/pull/1557)
+- Add new facility details sidebar [#1552](https://github.com/open-apparel-registry/open-apparel-registry/pull/1552)
+
+### Fixed
+
+- Use newer version of terraform container to avoid CI error [#1566](https://github.com/open-apparel-registry/open-apparel-registry/pull/1566)
+- Add contributor fields to facility downloads [#1565](https://github.com/open-apparel-registry/open-apparel-registry/pull/1565)
+- Fix contributor id bug [#1567](https://github.com/open-apparel-registry/open-apparel-registry/pull/1567)
+
 ## [53] 2021-12-09
 
 ### Added

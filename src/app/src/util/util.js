@@ -534,6 +534,9 @@ export const makeReportADataIssueEmailLink = oarId =>
 export const makeDisputeClaimEmailLink = oarId =>
     `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${oarId}`;
 
+export const makeReportADuplicateEmailLink = oarId =>
+    `mailto:info@openapparel.org?subject=Reporting ID ${oarId} as a duplicate facility`;
+
 export const makeFeatureCollectionFromSingleFeature = feature =>
     Object.freeze({
         type: FEATURE_COLLECTION,

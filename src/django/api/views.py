@@ -89,7 +89,8 @@ from api.models import (FacilityList,
                         EmbedConfig,
                         EmbedField,
                         NonstandardField,
-                        FacilityIndex)
+                        FacilityIndex,
+                        ExtendedField)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -1786,6 +1787,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     'Merging {} into {}'.format(merge.id, target.id)
             claim.save()
 
+        for field in ExtendedField.objects.filter(facility=merge):
+            field.facility = target
+            field.save()
+
         for alias in FacilityAlias.objects.filter(facility=merge):
             oar_id = alias.oar_id
             alias.changeReason = 'Merging {} into {}'.format(
@@ -1929,6 +1934,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             if old_facility.revert_ppe(list_item_for_match):
                 old_facility.save()
 
+            fields = ExtendedField.objects.filter(
+                facility_list_item=list_item_for_match)
+            for field in fields:
+                field.facility = new_facility
+                field.save()
+
             return Response({
                 'match_id': match_for_new_facility.id,
                 'new_oar_id': new_facility.id,
@@ -1981,6 +1992,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             })
 
             list_item_for_match.save()
+
+            fields = ExtendedField.objects.filter(
+                facility_list_item=list_item_for_match)
+            for field in fields:
+                field.facility = new_facility
+                field.save()
 
             return Response({
                 'match_id': match.id,
