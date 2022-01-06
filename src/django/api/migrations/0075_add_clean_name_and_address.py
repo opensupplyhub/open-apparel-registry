@@ -4,18 +4,6 @@ from django.db import migrations, models
 from api.matching import clean
 
 
-def populate_cleaned_fields(apps, schema_editor):
-    FacilityListItem = apps.get_model('api', 'FacilityListItem')
-    for list_item in FacilityListItem.objects.all():
-        list_item.clean_name = clean(list_item.name)
-        list_item.clean_address = clean(list_item.address)
-        list_item.save()
-
-
-def do_nothing_on_reverse(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -26,16 +14,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='facilitylistitem',
             name='clean_address',
-            field=models.CharField(default='', help_text='The cleaned address of the facility.', max_length=200),
+            field=models.CharField(default='', help_text='The cleaned address of the facility.', max_length=2000),
         ),
         migrations.AddField(
             model_name='facilitylistitem',
             name='clean_name',
-            field=models.CharField(default='', help_text='The cleaned name of the facility.', max_length=200),
+            field=models.CharField(default='', help_text='The cleaned name of the facility.', max_length=2000),
         ),
         migrations.AddIndex(
             model_name='facilitylistitem',
             index=models.Index(fields=['country_code', 'clean_name', 'clean_address'], name='api_fli_match_fields_idx'),
-        ),
-        migrations.RunPython(populate_cleaned_fields, do_nothing_on_reverse)
+        )
     ]
