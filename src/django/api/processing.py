@@ -115,8 +115,10 @@ def parse_facility_list_item(item):
                 values[fields.index(CsvHeaderField.COUNTRY)])
         if CsvHeaderField.NAME in fields:
             item.name = values[fields.index(CsvHeaderField.NAME)]
+            item.clean_name = clean(item.name)
         if CsvHeaderField.ADDRESS in fields:
             item.address = values[fields.index(CsvHeaderField.ADDRESS)]
+            item.clean_address = clean(item.address)
         if CsvHeaderField.LAT in fields and CsvHeaderField.LNG in fields:
             lat = float(values[fields.index(CsvHeaderField.LAT)])
             lng = float(values[fields.index(CsvHeaderField.LNG)])
@@ -485,6 +487,75 @@ def save_match_details(match_results, text_only_matches=None):
                 'finished_at': finished
             })
         item.save()
+
+    items = FacilityListItem.objects.filter(id__in=processed_list_item_ids) \
+                                    .exclude(facility__isnull=True)
+    for item in items:
+        update_extendedfields_for_list_item(item)
+
+    return all_matches
+
+
+def save_exact_match_details(exact_results):
+    """
+    Save the results of a call to identify_exact_matches by creating
+    Facility and FacilityMatch instances and updating the state of the affected
+    FacilityListItems.
+
+    Should be called in a transaction to ensure that all the updates are
+    applied atomically.
+
+    Arguments:
+    exact_results -- The dict return value from a call to
+                    identify_exact_matches
+
+    Returns:
+    The list of `FacilityMatch` objects created
+    """
+    processed_list_item_ids = exact_results['processed_list_item_ids']
+    item_matches = exact_results['item_matches']
+    started = exact_results['started']
+    finished = exact_results['finished']
+
+    def make_pending_match(item_id, facility_id):
+        return FacilityMatch(
+            facility_list_item_id=item_id,
+            facility_id=facility_id,
+            confidence=1.0,
+            status=FacilityMatch.PENDING,
+            results={})
+
+    all_matches = []
+    for item_id, exact_matches in item_matches.items():
+        item = FacilityListItem.objects.get(id=item_id)
+        item.status = FacilityListItem.POTENTIAL_MATCH
+
+        matches = [make_pending_match(item_id, m.get('facility_id'))
+                   for m in exact_matches]
+        matches[0].status = FacilityMatch.AUTOMATIC
+        item.status = FacilityListItem.MATCHED
+        item.facility_id = matches[0].facility_id
+
+        if len(matches) == 1:
+            matches[0].results['match_type'] = 'single_exact_match'
+        else:
+            matches[0].results['match_type'] = 'multiple_exact_matches'
+
+        item.processing_results.append({
+            'action': ProcessingAction.MATCH,
+            'started_at': started,
+            'error': False,
+            'finished_at': finished,
+            'exact_match': True
+        })
+        item.save()
+
+        if item.source.create:
+            for m in matches:
+                m.save()
+                # TODO: handle PPE if needed
+
+        all_matches.extend(matches)
 
     items = FacilityListItem.objects.filter(id__in=processed_list_item_ids) \
                                     .exclude(facility__isnull=True)

@@ -552,6 +552,9 @@ class FacilityListItem(PPEMixin):
         indexes = [
             models.Index(fields=['source', 'row_index'],
                          name='api_fli_facility_list_row_idx'),
+            models.Index(fields=['country_code', 'clean_name',
+                                 'clean_address'],
+                         name='api_fli_match_fields_idx')
         ]
 
     source = models.ForeignKey(
@@ -621,6 +624,18 @@ class FacilityListItem(PPEMixin):
         help_text=('The facility created from this list item or the '
                    'previously existing facility to which this list '
                    'item was matched.'))
+    clean_name = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='',
+        help_text='The cleaned name of the facility.')
+    clean_address = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='',
+        help_text='The cleaned address of the facility.')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

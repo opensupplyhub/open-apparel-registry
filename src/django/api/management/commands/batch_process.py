@@ -6,10 +6,11 @@ from django.db import transaction
 
 from api.constants import ProcessingAction
 from api.models import FacilityList, FacilityListItem
-from api.matching import match_facility_list_items
+from api.matching import match_facility_list_items, identify_exact_matches
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
-                            save_match_details)
+                            save_match_details,
+                            save_exact_match_details)
 from api.mail import notify_facility_list_complete
 
 LINE_ITEM_ACTIONS = {
@@ -69,13 +70,17 @@ class Command(BaseCommand):
             total_item_count = \
                 facility_list.source.facilitylistitem_set.count()
 
-            result = match_facility_list_items(facility_list)
-            success_count = len(result['processed_list_item_ids'])
-            fail_count = total_item_count - success_count
+            exact_result = identify_exact_matches(facility_list)
+            with transaction.atomic():
+                save_exact_match_details(exact_result)
 
+            result = match_facility_list_items(facility_list)
             with transaction.atomic():
                 save_match_details(result)
 
+            success_count = len(result['processed_list_item_ids']) + \
+                len(exact_result['processed_list_item_ids'])
+            fail_count = total_item_count - success_count
             if success_count > 0:
                 self.stdout.write(
                     self.style.SUCCESS(
