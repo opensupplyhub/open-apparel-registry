@@ -625,13 +625,13 @@ class FacilityListItem(PPEMixin):
                    'previously existing facility to which this list '
                    'item was matched.'))
     clean_name = models.CharField(
-        max_length=200,
+        max_length=2000,
         null=False,
         blank=False,
         default='',
         help_text='The cleaned name of the facility.')
     clean_address = models.CharField(
-        max_length=200,
+        max_length=2000,
         null=False,
         blank=False,
         default='',
