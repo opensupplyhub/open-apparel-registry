@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
+import filter from 'lodash/filter';
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
@@ -22,7 +23,10 @@ import {
     resetSingleFacility,
 } from '../actions/facilities';
 
-import { facilitySidebarActions } from '../util/constants';
+import {
+    facilitySidebarActions,
+    EXTENDED_FIELD_TYPES,
+} from '../util/constants';
 
 import {
     makeReportADataIssueEmailLink,
@@ -80,6 +84,31 @@ const detailsSidebarStyles = theme =>
 const formatAttribution = (createdAt, contributor) =>
     `${moment(createdAt).format('LL')} by ${contributor}`;
 
+/* eslint-disable camelcase */
+const formatExtendedField = ({
+    value,
+    updated_at,
+    contributor_name,
+    verified,
+    id,
+    formatValue = v => v,
+}) => ({
+    primary: formatValue(value),
+    secondary: formatAttribution(updated_at, contributor_name),
+    verified,
+    key: id,
+});
+
+const formatOtherValues = (data, fieldName, extendedFieldName) => [
+    ...get(data, `properties.${fieldName}`, []).map(item => ({
+        primary: item,
+        key: item,
+    })),
+    ...get(data, `properties.extended_fields.${extendedFieldName}`, []).map(
+        formatExtendedField,
+    ),
+];
+
 const FacilityDetailSidebar = ({
     classes,
     data,
@@ -104,6 +133,16 @@ const FacilityDetailSidebar = ({
 
     // Clears the selected facility when unmounted
     useEffect(() => () => clearFacility(), []);
+
+    const otherNames = useMemo(
+        () => formatOtherValues(data, 'other_names', 'name'),
+        [data],
+    );
+
+    const otherAddresses = useMemo(
+        () => formatOtherValues(data, 'other_addresses', 'address'),
+        [data],
+    );
 
     if (fetching) {
         return (
@@ -153,6 +192,30 @@ const FacilityDetailSidebar = ({
     const isClaimed = !!data?.properties?.claim_info;
     const claimFacility = () => push(makeClaimFacilityLink(oarId));
 
+    const renderExtendedField = ({ label, fieldName, formatValue }) => {
+        const values = get(data, `properties.extended_fields.${fieldName}`, []);
+        if (!values.length || !values[0]) return null;
+
+        const formatField = item =>
+            formatExtendedField({ ...item, formatValue });
+
+        const topValue = formatField(values[0]);
+
+        return (
+            <FacilityDetailSidebarItem
+                {...topValue}
+                label={label}
+                additionalContent={values.slice(1).map(formatField)}
+                embed={embed}
+            />
+        );
+    };
+
+    const contributorFields = filter(
+        get(data, 'properties.contributor_fields', null),
+        field => field.value !== null,
+    );
+
     return (
         <div className={classes.root}>
             <List className={classes.list}>
@@ -171,28 +234,45 @@ const FacilityDetailSidebar = ({
                     oarId={data.properties.oar_id}
                     onClaimFacility={claimFacility}
                 />
-                <FacilityDetailSidebarItem label="OAR ID" primary={oarId} />
+                <FacilityDetailSidebarItem
+                    label="OAR ID"
+                    primary={oarId}
+                    embed={embed}
+                />
                 <FacilityDetailSidebarItem
                     label="Name"
                     primary={data.properties.name}
                     secondary={createdFrom}
-                    additionalContent={data.properties.other_names}
+                    additionalContent={otherNames}
+                    embed={embed}
                 />
                 <FacilityDetailSidebarItem
                     label="Address"
                     primary={`${data.properties.address} - ${data.properties.country_name}`}
                     secondary={createdFrom}
-                    additionalContent={data.properties.other_addresses}
+                    additionalContent={otherAddresses}
+                    embed={embed}
                 />
                 <div style={{ padding: '0 16px' }}>
                     <FacilityDetailsStaticMap data={data} />
                 </div>
                 <FacilityDetailSidebarLocation data={data} embed={embed} />
                 <ShowOnly when={!embed}>
+                    {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
+
                     <FacilityDetailSidebarContributors
                         contributors={data.properties.contributors}
                         push={push}
                     />
+                </ShowOnly>
+                <ShowOnly when={embed}>
+                    {contributorFields.map(field => (
+                        <FacilityDetailSidebarItem
+                            label={field.label}
+                            primary={field.value}
+                            key={field.label}
+                        />
+                    ))}
                 </ShowOnly>
                 <div className={classes.actions}>
                     <ShowOnly when={!embed}>

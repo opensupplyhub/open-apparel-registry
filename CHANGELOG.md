@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Add extended field handling to facility details [#1593](https://github.com/open-apparel-registry/open-apparel-registry/pull/1593)
+
 ### Changed
 
 - Identify exact matches pre-dedupe [#1568](https://github.com/open-apparel-registry/open-apparel-registry/pull/1568)

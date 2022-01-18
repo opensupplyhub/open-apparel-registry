@@ -90,7 +90,7 @@ const getContent = ({
         secondary: 'Claim this facility',
         icon: <BadgeUnclaimed />,
         style: {
-            background: 'rgb(9, 18, 50)',
+            background: 'rgb(61, 50, 138)',
             color: 'rgb(255, 255, 255)',
         },
     };
