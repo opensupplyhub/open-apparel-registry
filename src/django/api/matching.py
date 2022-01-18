@@ -116,7 +116,8 @@ def exact_match_items(messy, contributor):
 
     matched_items = FacilityListItem.objects \
         .filter(status__in=[FacilityListItem.MATCHED,
-                            FacilityListItem.CONFIRMED_MATCH])
+                            FacilityListItem.CONFIRMED_MATCH]) \
+        .exclude(facility_id=None)
     active_item_ids = FacilityMatch.objects \
         .filter(status__in=[FacilityMatch.AUTOMATIC,
                             FacilityMatch.CONFIRMED,
