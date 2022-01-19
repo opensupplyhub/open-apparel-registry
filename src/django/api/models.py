@@ -2205,13 +2205,21 @@ class ExtendedField(models.Model):
     ADDRESS = 'address'
     NUMBER_OF_WORKERS = 'number_of_workers'
     NATIVE_LANGUAGE_NAME = 'native_language_name'
+    FACILITY_TYPE = 'facility_type'
+    PROCESSING_TYPE = 'processing_type'
+    PRODUCT_TYPE = 'product_type'
+    PARENT_COMPANY = 'parent_company'
 
     FIELD_CHOICES = (
         (COUNTRY, COUNTRY),
         (NAME, NAME),
         (ADDRESS, ADDRESS),
         (NUMBER_OF_WORKERS, NUMBER_OF_WORKERS),
-        (NATIVE_LANGUAGE_NAME, NATIVE_LANGUAGE_NAME))
+        (NATIVE_LANGUAGE_NAME, NATIVE_LANGUAGE_NAME),
+        (FACILITY_TYPE, FACILITY_TYPE),
+        (PROCESSING_TYPE, PROCESSING_TYPE),
+        (PRODUCT_TYPE, PRODUCT_TYPE),
+        (PARENT_COMPANY, PARENT_COMPANY))
 
     contributor = models.ForeignKey(
         'Contributor',
