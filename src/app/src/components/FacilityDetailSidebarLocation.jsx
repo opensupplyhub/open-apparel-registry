@@ -33,7 +33,12 @@ const FacilityDetailSidebarLocation = ({ data, embed }) => {
                 label="GPS"
                 primary={`${facilityLng}, ${facilityLat}`}
                 secondary={attribution}
-                additionalContent={otherLocationsData}
+                embed={embed}
+                additionalContent={otherLocationsData.map((item, i) => ({
+                    primary: `${item.lng}, ${item.lat}`,
+                    secondary: item.contributor_name,
+                    key: `${item.lng}, ${item.lat} - ${i}`,
+                }))}
             />
         </>
     );
