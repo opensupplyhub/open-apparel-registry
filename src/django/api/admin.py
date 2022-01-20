@@ -146,11 +146,16 @@ class ApiLimitAdmin(admin.ModelAdmin):
             return []
 
 
+class ExtendedFieldAdmin(admin.ModelAdmin):
+    readonly_fields = ('contributor', 'facility', 'facility_list_item',
+                       'facility_claim')
+
+
 admin_site.register(models.Version)
 admin_site.register(models.User, OarUserAdmin)
 admin_site.register(models.Contributor, ContributorAdmin)
 admin_site.register(models.FacilityList)
-admin_site.register(models.ExtendedField)
+admin_site.register(models.ExtendedField, ExtendedFieldAdmin)
 admin_site.register(models.Source, SourceAdmin)
 admin_site.register(models.FacilityListItem, FacilityListItemAdmin)
 admin_site.register(models.Facility, FacilityHistoryAdmin)
