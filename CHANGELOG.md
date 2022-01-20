@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Split clean field migration in two and handle real world data [#1571](https://github.com/open-apparel-registry/open-apparel-registry/pull/1571)
 - Fix the Percent Data by Source Type report [#1575](https://github.com/open-apparel-registry/open-apparel-registry/pull/1575)
 - Handle create=false when exact matching [#1594](https://github.com/open-apparel-registry/open-apparel-registry/pull/1594)
+- Fix ExtendedField admin [#1596](https://github.com/open-apparel-registry/open-apparel-registry/pull/1596)
 
 ### Security
 
