@@ -6026,6 +6026,14 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         self.assertEquals(1, len(fields))
         self.assertIn('extra_1', fields)
 
+    def test_exact_matches_with_create_false(self):
+        self.join_group_and_login()
+        url_with_query = '{}?create=false&public=true'.format(self.url)
+        response = self.client.post(url_with_query, self.valid_facility)
+        self.assertEqual(response.status_code, 200)
+        response_two = self.client.post(url_with_query, self.valid_facility)
+        self.assertEqual(response_two.status_code, 200)
+
 
 class FacilityCreateBodySerializerTest(TestCase):
     def test_valid_data(self):
