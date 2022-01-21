@@ -1420,7 +1420,7 @@ class EmbedFieldsSerializer(ModelSerializer):
     class Meta:
         model = EmbedField
         fields = ('column_name', 'display_name',
-                  'visible', 'order')
+                  'visible', 'order', 'searchable')
 
 
 class EmbedConfigSerializer(ModelSerializer):
@@ -1432,7 +1432,7 @@ class EmbedConfigSerializer(ModelSerializer):
         model = EmbedConfig
         fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
                   'embed_fields', 'prefer_contributor_name',
-                  'contributor_name')
+                  'contributor_name', 'text_search_label')
 
     def get_contributor(self, instance):
         try:

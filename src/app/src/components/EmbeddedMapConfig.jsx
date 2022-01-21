@@ -31,6 +31,7 @@ const styles = {
     },
     code: {
         padding: '20px',
+        minWidth: '300px',
     },
 };
 
@@ -159,37 +160,39 @@ function EmbeddedMapConfig({
                 </a>
                 .
             </Typography>
-            <Grid item xs={6}>
-                {user.embed_level === 3 ? (
-                    <EmbeddedMapFieldsConfig
-                        fields={fields}
-                        setFields={setFields}
-                        preferContributorName={preferContributorName}
-                        setPreferContributorName={updateEmbedConfig(
-                            'preferContributorName',
-                        )}
+            <Grid container direction="row-reverse">
+                <Grid item xs={12} md={5} lg={6} style={styles.code}>
+                    <EmbeddedMapCode {...mapSettings} />
+                </Grid>
+                <Grid item xs={12} md={7} lg={6}>
+                    {user.embed_level === 3 ? (
+                        <EmbeddedMapFieldsConfig
+                            fields={fields}
+                            setFields={setFields}
+                            preferContributorName={preferContributorName}
+                            setPreferContributorName={updateEmbedConfig(
+                                'preferContributorName',
+                            )}
+                            errors={errors}
+                        />
+                    ) : null}
+                    <EmbeddedMapThemeConfig
+                        color={color}
+                        setColor={updateEmbedConfig('color')}
+                        font={font}
+                        setFont={updateEmbedConfig('font')}
                         errors={errors}
+                        embedLevel={user.embed_level}
                     />
-                ) : null}
-                <EmbeddedMapThemeConfig
-                    color={color}
-                    setColor={updateEmbedConfig('color')}
-                    font={font}
-                    setFont={updateEmbedConfig('font')}
-                    errors={errors}
-                    embedLevel={user.embed_level}
-                />
-                <EmbeddedMapSizeConfig
-                    width={width}
-                    setWidth={updateEmbedConfig('width')}
-                    height={height}
-                    setHeight={updateEmbedConfig('height')}
-                    fullWidth={fullWidth}
-                    setFullWidth={updateEmbedConfig('fullWidth')}
-                />
-            </Grid>
-            <Grid item xs={6} style={styles.code}>
-                <EmbeddedMapCode {...mapSettings} />
+                    <EmbeddedMapSizeConfig
+                        width={width}
+                        setWidth={updateEmbedConfig('width')}
+                        height={height}
+                        setHeight={updateEmbedConfig('height')}
+                        fullWidth={fullWidth}
+                        setFullWidth={updateEmbedConfig('fullWidth')}
+                    />
+                </Grid>
             </Grid>
             <Grid
                 item
