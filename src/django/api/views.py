@@ -1165,6 +1165,23 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         body_serializer = FacilityCreateBodySerializer(data=request.data)
         body_serializer.is_valid(raise_exception=True)
 
+        clean_name = clean(body_serializer.validated_data.get('name'))
+        if clean_name is None:
+            clean_name = ''
+            raise ValidationError({
+              "clean_name": [
+                "This field may not be blank."
+              ]
+            })
+        clean_address = clean(body_serializer.validated_data.get('address'))
+        if clean_address is None:
+            clean_address = ''
+            raise ValidationError({
+              "clean_address": [
+                "This field may not be blank."
+              ]
+            })
+
         params_serializer = FacilityCreateQueryParamsSerializer(
             data=request.query_params)
         params_serializer.is_valid(raise_exception=True)
@@ -1209,9 +1226,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raw_data=json.dumps(request.data),
             status=FacilityListItem.PARSED,
             name=name,
-            clean_name=clean(name),
+            clean_name=clean_name,
             address=address,
-            clean_address=clean(address),
+            clean_address=clean_address,
             country_code=country_code,
             ppe_product_types=ppe_product_types,
             ppe_contact_phone=ppe_contact_phone,

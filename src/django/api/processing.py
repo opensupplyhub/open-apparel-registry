@@ -116,9 +116,13 @@ def parse_facility_list_item(item):
         if CsvHeaderField.NAME in fields:
             item.name = values[fields.index(CsvHeaderField.NAME)]
             item.clean_name = clean(item.name)
+            if item.clean_name is None:
+                item.clean_name = ''
         if CsvHeaderField.ADDRESS in fields:
             item.address = values[fields.index(CsvHeaderField.ADDRESS)]
             item.clean_address = clean(item.address)
+            if item.clean_address is None:
+                item.clean_address = ''
         if CsvHeaderField.LAT in fields and CsvHeaderField.LNG in fields:
             lat = float(values[fields.index(CsvHeaderField.LAT)])
             lng = float(values[fields.index(CsvHeaderField.LNG)])
