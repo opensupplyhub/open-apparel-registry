@@ -7377,3 +7377,52 @@ class ContributorManagerTest(TestCase):
         self.assertEqual(2, matches.count())
         # A verified contributor sorts before one with a source
         self.assertEqual(c2, matches[0])
+
+
+class ParentCompanyTestCase(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(ParentCompanyTestCase, self).setUp()
+        self.url = reverse('facility-list')
+
+    def join_group_and_login(self):
+        self.client.logout()
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_FACILITY,
+        )
+        self.user.groups.set([group.id])
+        self.user.save()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+    def test_submit_parent_company_no_match(self):
+        self.join_group_and_login()
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'A random value'
+        })
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PARENT_COMPANY, ef.field_name)
+        self.assertEqual({
+            'raw_value': 'A random value',
+            'name': 'A random value'
+        }, ef.value)
+
+    def test_submit_parent_company_fuzzy_match(self):
+        self.join_group_and_login()
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PARENT_COMPANY, ef.field_name)
+        self.assertEqual({
+            'raw_value': 'TEST CNTRIBUTOR',
+            'contributor_name': self.contributor.name,
+            'contributor_id': self.contributor.id
+        }, ef.value)
