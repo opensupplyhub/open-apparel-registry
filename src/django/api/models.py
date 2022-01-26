@@ -24,7 +24,9 @@ from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
 from api.constants import Affiliations, Certifications, FacilitiesQueryParams
-from api.helpers import prefix_a_an
+from api.helpers import (prefix_a_an,
+                         get_single_contributor_field_values,
+                         get_list_contributor_field_values)
 
 
 class ArrayLength(models.Func):
@@ -667,6 +669,12 @@ class FacilityListItem(PPEMixin):
         help_text='The cleaned address of the facility.')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        if instance.facility is not None:
+            index_custom_text([instance.facility.id])
 
     def __str__(self):
         return 'FacilityListItem {id} - {status}'.format(**self.__dict__)
@@ -2315,6 +2323,73 @@ class ExtendedField(models.Model):
 
 
 @transaction.atomic
+def index_custom_text(facility_ids=list):
+    # If passed an empty array, update all facilities (where applicable)
+    if len(facility_ids) == 0:
+        print('Indexing custom text for all facilities...')
+        facility_ids = Facility.objects.all().values_list('id', flat=True)
+
+    # Get a list of searchable embed fields
+    fields_filter = (Q(searchable=True) & Q(visible=True)
+                     & Q(embed_config__isnull=False))
+    fields = EmbedField.objects.filter(fields_filter)
+
+    # Get a list of contributors with searchable fields
+    contributor_ids = fields.values_list('embed_config__contributor',
+                                         flat=True).distinct()
+
+    # Get a list of active FacilityListItems for the given facilities.
+    # Only include list items where the contributors have searchable fields.
+    # Select the most recent item for each facility for each contributor.
+    items_filter = (Q(facility_id__in=facility_ids)
+                    & Q(source__contributor_id__in=contributor_ids)
+                    & Q(source__is_active=True)
+                    & Q(facilitymatch__is_active=True))
+    items = FacilityListItem.objects.filter(items_filter) \
+        .distinct('facility__id', 'source__contributor__id') \
+        .order_by('facility__id', 'source__contributor__id', '-created_at') \
+        .iterator()
+
+    custom_fields = defaultdict(str)
+    contributor_fields = defaultdict(list)
+
+    for item in items:
+        contributor_id = item.source.contributor.id
+
+        # Calculate a list of searchable fields for the item's contributor
+        if len(contributor_fields[contributor_id]) == 0:
+            contributor_fields[contributor_id] = fields.filter(
+                    Q(embed_config__contributor__id=contributor_id)) \
+                    .values_list('column_name', flat=True)
+
+        formatted_fields = [{'value': '', 'column_name': f} for f
+                            in contributor_fields[contributor_id]]
+
+        # Get the field values from the item for all of the submitting
+        # contributor's searchable fields
+        if item.source.source_type == 'SINGLE':
+            item_fields = get_single_contributor_field_values(
+                                    item,
+                                    formatted_fields
+                                )
+        else:
+            item_fields = get_list_contributor_field_values(
+                                    item,
+                                    formatted_fields
+                                 )
+        item_fields_string = ''.join([f['value'] for f in item_fields])
+
+        # Add the values to the dictionary entry for the item's facility
+        custom_fields[item.facility.id] += item_fields_string
+
+    facilities = FacilityIndex.objects.filter(id__in=custom_fields.keys()) \
+                                      .iterator()
+    for facility in facilities:
+        facility.custom_text = custom_fields.get(facility.id, '')
+        facility.save()
+
+
+@transaction.atomic
 def index_facilities(facility_ids=list):
     # If passed an empty array, create or update all existing facilities
     if len(facility_ids) == 0:
@@ -2356,9 +2431,11 @@ def index_facilities(facility_ids=list):
 
     FacilityIndex.objects.filter(id__in=facility_ids).delete()
     FacilityIndex.objects.bulk_create([FacilityIndex(**kv) for kv in data])
+    index_custom_text(facility_ids)
 
 
 post_save.connect(Facility.post_save, sender=Facility)
 post_save.connect(Source.post_save, sender=Source)
 post_save.connect(FacilityMatch.post_save, sender=FacilityMatch)
 post_save.connect(Contributor.post_save, sender=Contributor)
+post_save.connect(FacilityListItem.post_save, sender=FacilityListItem)

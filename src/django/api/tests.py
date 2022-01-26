@@ -33,8 +33,9 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         RequestLog, DownloadLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
-                        FacilityActivityReport, ExtendedField,
-                        ContributorManager)
+                        FacilityActivityReport, ExtendedField, FacilityIndex,
+                        ContributorManager, index_custom_text)
+
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -7193,19 +7194,21 @@ class ContributorFieldsApiTest(APITestCase):
                     name='test contributor 1',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE,
                     embed_config=self.embed_config)
-        EmbedField.objects.create(
+        self.embed_one = EmbedField.objects.create(
             embed_config=self.embed_config,
             order=0,
             column_name='extra_1',
             display_name='ExtraOne',
-            visible=True
+            visible=True,
+            searchable=True
         )
-        EmbedField.objects.create(
+        self.embed_two = EmbedField.objects.create(
             embed_config=self.embed_config,
             order=1,
             column_name='extra_2',
             display_name='ExtraTwo',
-            visible=True
+            visible=True,
+            searchable=True
         )
 
         self.list = FacilityList \
@@ -7344,6 +7347,104 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEquals(None, field['value'])
         self.assertEquals('ExtraTwo', field_two['label'])
         self.assertEquals(None, field_two['value'])
+
+    def test_custom_text(self):
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertEquals(2, len(indexes))
+        self.assertIn('data one', indexes)
+        self.assertIn('data two', indexes)
+
+    def test_custom_text_excludes_unsearchable(self):
+        self.embed_two.searchable = False
+        self.embed_two.save()
+
+        # Run indexing manually because we don't use a post_save signal for
+        # embed fields (since they are deleted and recreated each time the
+        # config is updated, it creates a lot of overhead) and instead update
+        # the index directly in the embed config update views
+        f_ids = Facility.objects \
+            .filter(facilitylistitem__source__contributor=self.contributor)\
+            .values_list('id', flat=True)
+        if len(f_ids) > 0:
+            index_custom_text(f_ids)
+
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertIn('data one', indexes)
+        self.assertNotIn('data two', indexes)
+
+    def test_custom_text_excludes_inactive(self):
+        self.match_one.is_active = False
+        self.match_one.save()
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertNotIn('data one', indexes)
+        self.assertIn('data two', indexes)
+
+    def test_custom_text_uses_most_recent(self):
+        new_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    raw_data=("{'country': 'US', 'name': 'Item'," +
+                              "'address': 'Address'," +
+                              " 'extra_2': 'data three'}"),
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.api_source)
+        new_item.facility = self.facility_two
+        new_item.save()
+        FacilityMatch.objects.create(
+            facility_list_item=new_item,
+            facility=self.facility_two,
+            is_active=True,
+            results={}
+        )
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertIn('data one', indexes)
+        self.assertNotIn('data two', indexes)
+        self.assertIn('data three', indexes)
+
+    def test_custom_text_uses_field_contributor(self):
+        user_two = User.objects.create(email='test2@example.com')
+        contributor_two = Contributor \
+            .objects \
+            .create(admin=user_two,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        api_source_two = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=contributor_two)
+
+        new_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    raw_data=("{'country': 'US', 'name': 'Item'," +
+                              "'address': 'Address'," +
+                              " 'extra_2': 'data three'}"),
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=api_source_two)
+        new_item.facility = self.facility_two
+        new_item.save()
+        FacilityMatch.objects.create(
+            facility_list_item=new_item,
+            facility=self.facility_two,
+            is_active=True,
+            results={}
+        )
+
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertIn('data one', indexes)
+        self.assertIn('data two', indexes)
+        self.assertNotIn('data three', indexes)
 
 
 class ContributorManagerTest(TestCase):
