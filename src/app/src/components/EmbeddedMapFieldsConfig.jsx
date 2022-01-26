@@ -4,6 +4,8 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
+import Tooltip from '@material-ui/core/Tooltip';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import UndoIcon from '@material-ui/icons/Undo';
@@ -33,6 +35,7 @@ const styles = {
         marginTop: '10px',
         padding: 0,
         listStyleType: 'none',
+        minWidth: '550px',
     },
     listItem: {
         listStyleType: 'none',
@@ -63,6 +66,15 @@ const styles = {
     textInput: {
         width: '250px',
     },
+    searchable: {
+        marginLeft: '15px',
+    },
+    icon: {
+        color: 'rgba(0, 0, 0, 0.38)',
+    },
+    tooltip: {
+        fontSize: '0.875rem',
+    },
 };
 
 const getItemStyle = (isDragging, draggableStyle) => ({
@@ -78,6 +90,11 @@ const reorder = (list, startIndex, endIndex) => {
     result.splice(endIndex, 0, removed);
 
     return result.map((el, i) => ({ ...el, order: i }));
+};
+
+const isFieldSearchable = ({ searchable, visible }) => {
+    if (!visible) return false;
+    return searchable;
 };
 
 function EmbeddedMapFieldsConfig({
@@ -120,7 +137,7 @@ function EmbeddedMapFieldsConfig({
     };
 
     const renderField = (
-        { visible, displayName, columnName, order },
+        { visible, displayName, columnName, order, searchable },
         index,
     ) => (
         <Draggable key={columnName} draggableId={columnName} index={index}>
@@ -148,6 +165,10 @@ function EmbeddedMapFieldsConfig({
                                     displayName,
                                     columnName,
                                     visible: e.target.checked,
+                                    searchable: isFieldSearchable({
+                                        searchable,
+                                        visible: e.target.checked,
+                                    }),
                                     order,
                                 })
                             }
@@ -162,6 +183,7 @@ function EmbeddedMapFieldsConfig({
                                     visible,
                                     columnName,
                                     displayName: e.target.value,
+                                    searchable,
                                     order,
                                 })
                             }
@@ -178,6 +200,7 @@ function EmbeddedMapFieldsConfig({
                                                     visible,
                                                     columnName,
                                                     displayName: columnName,
+                                                    searchable,
                                                     order,
                                                 })
                                             }
@@ -188,8 +211,35 @@ function EmbeddedMapFieldsConfig({
                                 ),
                             }}
                         />
+
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={searchable}
+                                    onChange={e =>
+                                        updateItem({
+                                            displayName,
+                                            columnName,
+                                            searchable: e.target.checked,
+                                            visible,
+                                            order,
+                                        })
+                                    }
+                                    value="searchable"
+                                    style={{
+                                        color: visible
+                                            ? 'rgb(0, 0, 0)'
+                                            : 'rgba(0, 0, 0, 0.1)',
+                                        paddingRight: 0,
+                                    }}
+                                    disabled={!visible}
+                                />
+                            }
+                            style={styles.searchable}
+                        />
                         <IconButton
                             className="draggable"
+                            style={{ marginLeft: 0 }}
                             {...provided.dragHandleProps}
                         >
                             <MenuIcon />
@@ -197,6 +247,7 @@ function EmbeddedMapFieldsConfig({
                         {index !== fields.length - 1 && (
                             <IconButton
                                 className="drag-arrow"
+                                style={{ padding: '10px 5px' }}
                                 onClick={() => reorderDownward(index)}
                             >
                                 <ArrowDownwardIcon />
@@ -205,6 +256,7 @@ function EmbeddedMapFieldsConfig({
                         {index !== 0 && (
                             <IconButton
                                 className="drag-arrow"
+                                style={{ padding: '10px 5px' }}
                                 onClick={() => reorderUpward(index)}
                             >
                                 <ArrowUpwardIcon />
@@ -262,6 +314,15 @@ function EmbeddedMapFieldsConfig({
                                                             visible:
                                                                 e.target
                                                                     .checked,
+                                                            searchable: isFieldSearchable(
+                                                                {
+                                                                    searchable:
+                                                                        f.searchable,
+                                                                    visible:
+                                                                        e.target
+                                                                            .checked,
+                                                                },
+                                                            ),
                                                         })),
                                                     )
                                                 }
@@ -271,10 +332,24 @@ function EmbeddedMapFieldsConfig({
                                             />
                                         }
                                         label="Select All"
+                                        style={{ width: '284px' }}
                                         classes={{
                                             label: classes.listText,
                                         }}
                                     />
+                                    <Tooltip
+                                        title="Choose which visible fields to include in text search for your map. Facility name, address, and OAR ID will always be included."
+                                        classes={{ tooltip: classes.tooltip }}
+                                    >
+                                        <FormLabel
+                                            style={{ color: 'rgb(0,0,0)' }}
+                                        >
+                                            Searchable{' '}
+                                            <i
+                                                className={`${classes.icon} fas fa-fw fa-question-circle`}
+                                            />
+                                        </FormLabel>
+                                    </Tooltip>
                                 </li>
                                 {fields
                                     .sort((a, b) => a.order - b.order)

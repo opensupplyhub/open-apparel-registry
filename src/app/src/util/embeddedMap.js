@@ -31,6 +31,7 @@ export const formatExistingConfig = embedConfig => {
         font: embedConfig.font ? embedConfig.font : OARFont,
         height: getHeight(embedConfig),
         preferContributorName: embedConfig.prefer_contributor_name,
+        textSearchLabel: embedConfig.text_search_label,
     };
 };
 
@@ -40,6 +41,7 @@ export const formatExistingFields = (fields = []) =>
         displayName: field.display_name,
         visible: field.visible,
         order: field.order,
+        searchable: field.searchable,
     }));
 
 const doesExist = (field, existingFields) =>
@@ -87,6 +89,7 @@ export const combineEmbedAndNonstandardFields = (
 const formatEmbedFieldsForServer = fields =>
     sortBy(fields, f => f.order).map((f, i) => ({
         visible: f.visible,
+        searchable: f.searchable,
         order: i,
         display_name: f.displayName,
         column_name: f.columnName,
@@ -104,6 +107,7 @@ export const formatEmbedConfigForServer = (embedConfig, embedFields) => ({
     height: getHeight(embedConfig),
     prefer_contributor_name: embedConfig.preferContributorName,
     embed_fields: formatEmbedFieldsForServer(embedFields),
+    text_search_label: embedConfig.textSearchLabel,
 });
 
 export const getErrorMessage = e => e.response.data || e.message;

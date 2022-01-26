@@ -1598,6 +1598,10 @@ class FacilityIndex(models.Model):
         null=True,
         editable=False,
         help_text='The related list if the type of the source is LIST.'))
+    custom_text = models.TextField(
+            null=True,
+            help_text=('A collection of custom values to search for the '
+                       'facility'))
 
     class Meta:
         indexes = [GinIndex(fields=['contrib_types', 'contributors', 'lists'])]
@@ -2105,6 +2109,12 @@ class EmbedConfig(models.Model):
         help_text='Whether to use the contributor\'s facility name ' +
                   'before other names.'
     )
+    text_search_label = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        default='Facility name or OAR ID',
+        help_text='The label for the search box.')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -2146,6 +2156,10 @@ class EmbedField(models.Model):
         null=False,
         blank=False,
         help_text='The sort order of the field.')
+    searchable = models.BooleanField(
+        default=False,
+        help_text='Whether or not to include this field in search.'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
