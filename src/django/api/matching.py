@@ -131,10 +131,15 @@ def exact_match_items(messy, contributor):
     for messy_id, item in messy.items():
         clean_name = clean(item.get('name', ''))
         clean_address = clean(item.get('address', ''))
-        country_code = item.get('country').upper()
+        country_code = item.get('country', '').upper()
+        empty_text_fields = Q(Q(clean_name__isnull=True) |
+                              Q(clean_name__exact='') |
+                              Q(clean_name__isnull=True) |
+                              Q(clean_name__exact=''))
         exact_matches = matched_items.filter(clean_name=clean_name,
                                              clean_address=clean_address,
                                              country_code=country_code) \
+            .exclude(empty_text_fields) \
             .annotate(is_active=ExpressionWrapper(
                 Q(id__in=active_item_ids),
                 output_field=BooleanField())) \
@@ -170,9 +175,9 @@ def exact_match_item(country, name, address, contributor, id='id'):
     return exact_match_items(
         {
             str(id): {
-                "country": clean(country),
-                "name": clean(name),
-                "address": clean(address)
+                "country": country,
+                "name": name,
+                "address": address
             }
         },
         contributor)

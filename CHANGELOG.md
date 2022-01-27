@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix the Percent Data by Source Type report [#1575](https://github.com/open-apparel-registry/open-apparel-registry/pull/1575)
 - Handle create=false when exact matching [#1594](https://github.com/open-apparel-registry/open-apparel-registry/pull/1594)
 - Fix ExtendedField admin [#1596](https://github.com/open-apparel-registry/open-apparel-registry/pull/1596)
+- Prevent 'clean' field error when parsing [#1600](https://github.com/open-apparel-registry/open-apparel-registry/pull/1600)
 
 ### Security
 
