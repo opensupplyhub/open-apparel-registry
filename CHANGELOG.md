@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [55] 2022-01-27
+
+### Added
+
 - Add extended field handling to facility details [#1593](https://github.com/open-apparel-registry/open-apparel-registry/pull/1593)
 - Add searchability to embed config [#1598](https://github.com/open-apparel-registry/open-apparel-registry/pull/1598)
 
@@ -17,10 +31,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Identify exact matches pre-dedupe [#1568](https://github.com/open-apparel-registry/open-apparel-registry/pull/1568)
 - Expand ExtendedField.FIELD_CHOICES [#1595](https://github.com/open-apparel-registry/open-apparel-registry/pull/1595)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Split clean field migration in two and handle real world data [#1571](https://github.com/open-apparel-registry/open-apparel-registry/pull/1571)
@@ -28,8 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Handle create=false when exact matching [#1594](https://github.com/open-apparel-registry/open-apparel-registry/pull/1594)
 - Fix ExtendedField admin [#1596](https://github.com/open-apparel-registry/open-apparel-registry/pull/1596)
 - Prevent 'clean' field error when parsing [#1600](https://github.com/open-apparel-registry/open-apparel-registry/pull/1600)
-
-### Security
 
 ## [54] 2022-01-05
 
@@ -996,7 +1004,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/53...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/55...HEAD
+[55]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/55
 [54]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/54
 [53]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/53
 [52]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/52
