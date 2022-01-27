@@ -552,6 +552,9 @@ class FacilityListItem(PPEMixin):
         indexes = [
             models.Index(fields=['source', 'row_index'],
                          name='api_fli_facility_list_row_idx'),
+            models.Index(fields=['country_code', 'clean_name',
+                                 'clean_address'],
+                         name='api_fli_match_fields_idx')
         ]
 
     source = models.ForeignKey(
@@ -621,6 +624,18 @@ class FacilityListItem(PPEMixin):
         help_text=('The facility created from this list item or the '
                    'previously existing facility to which this list '
                    'item was matched.'))
+    clean_name = models.CharField(
+        max_length=2000,
+        null=False,
+        blank=False,
+        default='',
+        help_text='The cleaned name of the facility.')
+    clean_address = models.CharField(
+        max_length=2000,
+        null=False,
+        blank=False,
+        default='',
+        help_text='The cleaned address of the facility.')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -1583,6 +1598,10 @@ class FacilityIndex(models.Model):
         null=True,
         editable=False,
         help_text='The related list if the type of the source is LIST.'))
+    custom_text = models.TextField(
+            null=True,
+            help_text=('A collection of custom values to search for the '
+                       'facility'))
 
     class Meta:
         indexes = [GinIndex(fields=['contrib_types', 'contributors', 'lists'])]
@@ -2090,6 +2109,12 @@ class EmbedConfig(models.Model):
         help_text='Whether to use the contributor\'s facility name ' +
                   'before other names.'
     )
+    text_search_label = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        default='Facility name or OAR ID',
+        help_text='The label for the search box.')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -2131,6 +2156,10 @@ class EmbedField(models.Model):
         null=False,
         blank=False,
         help_text='The sort order of the field.')
+    searchable = models.BooleanField(
+        default=False,
+        help_text='Whether or not to include this field in search.'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -2190,13 +2219,21 @@ class ExtendedField(models.Model):
     ADDRESS = 'address'
     NUMBER_OF_WORKERS = 'number_of_workers'
     NATIVE_LANGUAGE_NAME = 'native_language_name'
+    FACILITY_TYPE = 'facility_type'
+    PROCESSING_TYPE = 'processing_type'
+    PRODUCT_TYPE = 'product_type'
+    PARENT_COMPANY = 'parent_company'
 
     FIELD_CHOICES = (
         (COUNTRY, COUNTRY),
         (NAME, NAME),
         (ADDRESS, ADDRESS),
         (NUMBER_OF_WORKERS, NUMBER_OF_WORKERS),
-        (NATIVE_LANGUAGE_NAME, NATIVE_LANGUAGE_NAME))
+        (NATIVE_LANGUAGE_NAME, NATIVE_LANGUAGE_NAME),
+        (FACILITY_TYPE, FACILITY_TYPE),
+        (PROCESSING_TYPE, PROCESSING_TYPE),
+        (PRODUCT_TYPE, PRODUCT_TYPE),
+        (PARENT_COMPANY, PARENT_COMPANY))
 
     contributor = models.ForeignKey(
         'Contributor',

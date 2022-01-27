@@ -1,9 +1,11 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
-import FacilityDetailSidebarDetail from './FacilityDetailSidebarDetail';
+import ShowOnly from './ShowOnly';
+import BadgeVerified from './BadgeVerified';
 
 import { makeProfileRouteLink } from '../util/util';
 
@@ -18,6 +20,9 @@ const detailsSidebarStyles = theme =>
             textTransform: 'uppercase',
             fontWeight: theme.typography.fontWeightMedium,
         },
+        primaryText: {
+            wordWrap: 'break-word',
+        },
         secondaryText: {
             color: 'rgba(0, 0, 0, 0.54)',
             display: 'flex',
@@ -25,8 +30,14 @@ const detailsSidebarStyles = theme =>
             fontSize: '12px',
             justify: 'flex-end',
         },
-        divider: {
-            backgroundColor: 'rgba(0, 0, 0, 0.06)',
+        icon: {
+            color: 'rgb(106, 106, 106)',
+            fontSize: '24px',
+            fontWeight: 300,
+            textAlign: 'center',
+        },
+        contributor: {
+            boxShadow: '0px -1px 0px 0px rgb(240, 240, 240)',
         },
     });
 
@@ -38,18 +49,30 @@ const FacilityDetailSidebarContributors = ({ classes, contributors, push }) => {
     return (
         <div className={classes.item}>
             <Typography className={classes.label}>Contributors</Typography>
-            <Divider className={classes.divider} />
-            {contributors.map(contributor => (
-                <FacilityDetailSidebarDetail
-                    primary={contributor.contributor_name}
-                    secondary={contributor.list_name}
-                    hasAdditionalContent={!!contributor.id}
-                    hideTopDivider
-                    additionalContentCount=""
-                    onClick={() => push(makeProfileRouteLink(contributor.id))}
-                    key={contributor.id}
-                    verified={contributor.is_verified}
-                />
+            {visibleContributors.map(contributor => (
+                <ListItem
+                    button={!!contributor.id}
+                    onClick={() => {
+                        if (!contributor.id) return;
+                        push(makeProfileRouteLink(contributor.id));
+                    }}
+                    key={`${contributor.id} ${contributor.list_name}`}
+                    className={classes.contributor}
+                >
+                    <ShowOnly when={contributor.is_verified}>
+                        <BadgeVerified />
+                    </ShowOnly>
+                    <ListItemText
+                        primary={contributor.contributor_name}
+                        secondary={contributor.list_name}
+                        classes={{ primary: classes.primaryText }}
+                    />
+                    <ShowOnly when={!!contributor.id}>
+                        <i
+                            className={`${classes.icon} far fa-fw fa-angle-right`}
+                        />
+                    </ShowOnly>
+                </ListItem>
             ))}
         </div>
     );

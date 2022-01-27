@@ -715,3 +715,37 @@ export const facilitySidebarActions = {
     CLAIM_FACILITY: 'Claim this facility',
     VIEW_ON_OAR: 'View on the Open Apparel Registry',
 };
+
+export const EXTENDED_FIELD_TYPES = [
+    {
+        label: 'Parent Company',
+        fieldName: 'parent_company',
+        formatValue: v => v,
+    },
+    {
+        label: 'Facility Type',
+        fieldName: 'facility_type',
+        formatValue: v => v,
+    },
+    {
+        label: 'Product Type',
+        fieldName: 'product_type',
+        formatValue: v => v,
+    },
+    {
+        label: 'Processing Type',
+        fieldName: 'processing_type',
+        formatValue: v => v,
+    },
+    {
+        label: 'Number of Workers',
+        fieldName: 'number_of_workers',
+        formatValue: ({ min, max }) =>
+            max === min ? `${max} workers` : `${min}-${max} workers`,
+    },
+    {
+        label: 'Native Language Name',
+        fieldName: 'native_language_name',
+        formatValue: v => v,
+    },
+];
