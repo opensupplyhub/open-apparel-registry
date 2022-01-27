@@ -720,7 +720,7 @@ export const EXTENDED_FIELD_TYPES = [
     {
         label: 'Parent Company',
         fieldName: 'parent_company',
-        formatValue: v => v,
+        formatValue: v => v.contributor_name || v.name || v.raw_value,
     },
     {
         label: 'Facility Type',

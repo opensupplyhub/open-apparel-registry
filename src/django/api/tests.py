@@ -33,7 +33,8 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         RequestLog, DownloadLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
-                        FacilityActivityReport, ExtendedField)
+                        FacilityActivityReport, ExtendedField,
+                        ContributorManager)
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -7273,3 +7274,155 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEquals(None, field['value'])
         self.assertEquals('ExtraTwo', field_two['label'])
         self.assertEquals(None, field_two['value'])
+
+
+class ContributorManagerTest(TestCase):
+    fixtures = ['users', 'contributors']
+
+    def test_filter_by_name(self):
+        matches = Contributor.objects.filter_by_name('factory a')
+        self.assertGreater(matches.count(), 0)
+        self.assertEquals(1.0, matches[0].similarity)
+
+        matches = Contributor.objects.filter_by_name('factory')
+        self.assertGreater(matches.count(), 0)
+        self.assertLess(matches[0].similarity, 1.0)
+        self.assertGreater(matches[0].similarity,
+                           ContributorManager.TRIGRAM_SIMILARITY_THRESHOLD)
+
+    def test_filter_by_name_verified(self):
+        user1 = User.objects.create(email='test1@test.com')
+        user2 = User.objects.create(email='test2@test.com')
+        c1 = Contributor \
+            .objects \
+            .create(admin=user1,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+        c2 = Contributor \
+            .objects \
+            .create(admin=user2,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # When the names are the same and neither is verified than the second
+        # contributor happens to sort first
+        self.assertEqual(c2, matches[0])
+
+        c1.is_verified = True
+        c1.save()
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # Marking c1 as verified forces it to sort first
+        self.assertEqual(c1, matches[0])
+
+    def test_filter_by_name_source(self):
+        user1 = User.objects.create(email='test1@test.com')
+        user2 = User.objects.create(email='test2@test.com')
+        c1 = Contributor \
+            .objects \
+            .create(admin=user1,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+        c2 = Contributor \
+            .objects \
+            .create(admin=user2,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # When the names are the same and neither is verified than the second
+        # contributor happens to sort first
+        self.assertEqual(c2, matches[0])
+
+        Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=c1)
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # An active source forces it to sort first
+        self.assertEqual(c1, matches[0])
+
+    def test_filter_by_name_verified_and_source(self):
+        user1 = User.objects.create(email='test1@test.com')
+        user2 = User.objects.create(email='test2@test.com')
+        c1 = Contributor \
+            .objects \
+            .create(admin=user1,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+        c2 = Contributor \
+            .objects \
+            .create(admin=user2,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=c1)
+
+        c2.is_verified = True
+        c2.save()
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # A verified contributor sorts before one with a source
+        self.assertEqual(c2, matches[0])
+
+
+class ParentCompanyTestCase(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(ParentCompanyTestCase, self).setUp()
+        self.url = reverse('facility-list')
+
+    def join_group_and_login(self):
+        self.client.logout()
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_FACILITY,
+        )
+        self.user.groups.set([group.id])
+        self.user.save()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+    def test_submit_parent_company_no_match(self):
+        self.join_group_and_login()
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'A random value'
+        })
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PARENT_COMPANY, ef.field_name)
+        self.assertEqual({
+            'raw_value': 'A random value',
+            'name': 'A random value'
+        }, ef.value)
+
+    def test_submit_parent_company_fuzzy_match(self):
+        self.join_group_and_login()
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PARENT_COMPANY, ef.field_name)
+        self.assertEqual({
+            'raw_value': 'TEST CNTRIBUTOR',
+            'contributor_name': self.contributor.name,
+            'contributor_id': self.contributor.id
+        }, ef.value)

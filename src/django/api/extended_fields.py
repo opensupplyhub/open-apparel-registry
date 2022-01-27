@@ -1,5 +1,5 @@
 import re
-from api.models import ExtendedField
+from api.models import Contributor, ExtendedField
 
 
 def extract_range_value(value):
@@ -12,6 +12,19 @@ def create_extendedfield(field, field_value, item, contributor):
     if field_value is not None and field_value != "":
         if field == ExtendedField.NUMBER_OF_WORKERS:
             field_value = extract_range_value(field_value)
+        elif field == ExtendedField.PARENT_COMPANY:
+            matches = Contributor.objects.filter_by_name(field_value)
+            if matches.exists():
+                field_value = {
+                    'raw_value': field_value,
+                    'contributor_name': matches[0].name,
+                    'contributor_id': matches[0].id
+                }
+            else:
+                field_value = {
+                    'raw_value': field_value,
+                    'name': field_value
+                }
         ExtendedField.objects.create(
             contributor=contributor,
             facility_list_item=item,
@@ -21,7 +34,8 @@ def create_extendedfield(field, field_value, item, contributor):
 
 
 RAW_DATA_FIELDS = (ExtendedField.NUMBER_OF_WORKERS,
-                   ExtendedField.NATIVE_LANGUAGE_NAME)
+                   ExtendedField.NATIVE_LANGUAGE_NAME,
+                   ExtendedField.PARENT_COMPANY)
 
 
 def create_extendedfields_for_single_item(item, raw_data):
