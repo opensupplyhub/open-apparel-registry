@@ -47,7 +47,10 @@ import {
     makeSubmitFormOnEnterKeyPressFunction,
 } from '../util/util';
 
-import { FACILITIES_REQUEST_PAGE_SIZE } from '../util/constants';
+import {
+    FACILITIES_REQUEST_PAGE_SIZE,
+    DEFAULT_SEARCH_TEXT,
+} from '../util/constants';
 
 const filterSidebarSearchTabStyles = theme =>
     Object.freeze({
@@ -110,6 +113,7 @@ function FilterSidebarSearchTab({
     updateList,
     lists,
     classes,
+    textSearchLabel,
 }) {
     const [
         contributorPopoverAnchorEl,
@@ -235,14 +239,20 @@ function FilterSidebarSearchTab({
                     <InputLabel htmlFor={FACILITIES} className="form__label">
                         <FeatureFlag
                             flag="ppe"
-                            alternative="Search a Facility Name or OAR ID"
+                            alternative={
+                                embed ? textSearchLabel : DEFAULT_SEARCH_TEXT
+                            }
                         >
                             Search a Facility Name, OAR ID, or PPE Product Type
                         </FeatureFlag>
                     </InputLabel>
                     <TextField
                         id={FACILITIES}
-                        placeholder="Facility Name or OAR ID"
+                        placeholder={
+                            embed && textSearchLabel !== DEFAULT_SEARCH_TEXT
+                                ? textSearchLabel
+                                : 'Facility Name or OAR ID'
+                        }
                         className="full-width margin-bottom-16 form__text-input"
                         value={facilityFreeTextQuery}
                         onChange={updateFacilityFreeTextQuery}
@@ -558,7 +568,7 @@ function mapStateToProps({
         facilities: { data: facilities, fetching: fetchingFacilities },
     },
     featureFlags,
-    embeddedMap: { embed },
+    embeddedMap: { embed, config },
 }) {
     const vectorTileFlagIsActive = get(
         featureFlags,
@@ -588,6 +598,7 @@ function mapStateToProps({
             fetchingCountries,
         embed: !!embed,
         fetchingLists,
+        textSearchLabel: config.text_search_label,
     };
 }
 

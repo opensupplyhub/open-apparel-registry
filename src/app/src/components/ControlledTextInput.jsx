@@ -14,6 +14,7 @@ export default function ControlledTextInput({
     disabled,
     submitFormOnEnterKeyPress,
     autoFocus,
+    onBlur,
 }) {
     return (
         <Fragment>
@@ -28,6 +29,7 @@ export default function ControlledTextInput({
                 placeholder={placeholder}
                 disabled={disabled}
                 onKeyPress={submitFormOnEnterKeyPress}
+                onBlur={onBlur}
             />
         </Fragment>
     );
