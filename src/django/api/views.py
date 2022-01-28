@@ -1243,8 +1243,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             }]
         )
 
-        create_extendedfields_for_single_item(item, request.data)
-
         result = {
             'matches': [],
             'item_id': item.id,
@@ -1252,6 +1250,24 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             'geocoded_address': None,
             'status': item.status,
         }
+
+        try:
+            create_extendedfields_for_single_item(item, request.data)
+        except core_exceptions.ValidationError as e:
+            item.status = FacilityListItem.ERROR_PARSING
+            item.processing_results.append({
+                'action': ProcessingAction.PARSE,
+                'started_at': parse_started,
+                'error': True,
+                'message': e.message,
+                'trace': traceback.format_exc(),
+                'finished_at': str(datetime.utcnow()),
+            })
+            item.save()
+            result['status'] = item.status
+            result['message'] = e.message
+            return Response(result,
+                            status=status.HTTP_400_BAD_REQUEST)
 
         geocode_started = str(datetime.utcnow())
         try:

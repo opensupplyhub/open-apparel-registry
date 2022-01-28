@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Add facility/processing type taxonomy and look-up function [#1601](https://github.com/open-apparel-registry/open-apparel-registry/pull/1601)
+- Create product type extended field [#1605](https://github.com/open-apparel-registry/open-apparel-registry/pull/1605)
 
 ### Changed
 
