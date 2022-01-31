@@ -51,6 +51,14 @@ from api.serializers import (ApprovedFacilityClaimSerializer,
                              FacilityListSerializer)
 from api.limits import check_api_limits, get_end_of_year
 from api.close_list import close_list
+from api.facility_type_processing_type import (
+    FACILITY_TYPE, PROCESSING_TYPE, EXACT_MATCH, ALIAS_MATCH,
+    FUZZY_MATCH, ALL_PROCESSING_TYPES, ALL_FACILITY_TYPES,
+    PROCESSING_TYPES_TO_FACILITY_TYPES, ASSEMBLY,
+    RAW_MATERIAL_PROCESSING_OR_PRODUCTION,
+    WET_ROLLER_PRINTING,
+    get_facility_and_processing_type
+)
 
 
 class FacilityListCreateTest(APITestCase):
@@ -598,6 +606,68 @@ class GeocodingTest(TestCase):
             cm.exception.args,
             ("Geocoding results did not match provided country code.",)
         )
+
+
+class FacilityAndProcessingTypeTest(TestCase):
+    def test_exact_processing_type_match(self):
+        processing_type_input = 'assembly'
+        expected_output = (
+            PROCESSING_TYPE, EXACT_MATCH,
+            PROCESSING_TYPES_TO_FACILITY_TYPES[
+                ALL_PROCESSING_TYPES[ASSEMBLY]
+            ],
+            ALL_PROCESSING_TYPES[ASSEMBLY]
+        )
+        output = get_facility_and_processing_type(processing_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_exact_facility_type_match(self):
+        facility_type_input = 'raw material processing or production'
+        facility_type_value = ALL_FACILITY_TYPES[facility_type_input]
+        expected_output = (
+            FACILITY_TYPE, EXACT_MATCH,
+            facility_type_value,
+            facility_type_value,
+        )
+        output = get_facility_and_processing_type(facility_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_alias_processing_type_match(self):
+        processing_type_input = 'wet printing'
+        expected_output = (
+            PROCESSING_TYPE, ALIAS_MATCH,
+            PROCESSING_TYPES_TO_FACILITY_TYPES[
+                ALL_PROCESSING_TYPES[WET_ROLLER_PRINTING]
+            ],
+            ALL_PROCESSING_TYPES[WET_ROLLER_PRINTING]
+        )
+        output = get_facility_and_processing_type(processing_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_fuzzy_processing_type_match(self):
+        processing_type_input = 'asembley'
+        expected_output = (
+            PROCESSING_TYPE, FUZZY_MATCH,
+            PROCESSING_TYPES_TO_FACILITY_TYPES[
+                ALL_PROCESSING_TYPES[ASSEMBLY]
+            ],
+            ALL_PROCESSING_TYPES[ASSEMBLY]
+        )
+        output = get_facility_and_processing_type(processing_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_fuzzy_facility_type_match(self):
+        facility_type_input = 'raw mater process'
+        facility_type_value = ALL_FACILITY_TYPES[
+            RAW_MATERIAL_PROCESSING_OR_PRODUCTION
+        ]
+        expected_output = (
+            FACILITY_TYPE, FUZZY_MATCH,
+            facility_type_value,
+            facility_type_value,
+        )
+        output = get_facility_and_processing_type(facility_type_input)
+        self.assertEqual(output, expected_output)
 
 
 class FacilityListItemGeocodingTest(ProcessingTestCase):
