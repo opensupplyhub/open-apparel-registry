@@ -2260,6 +2260,8 @@ class ExtendedField(models.Model):
     PROCESSING_TYPE = 'processing_type'
     PRODUCT_TYPE = 'product_type'
     PARENT_COMPANY = 'parent_company'
+    FACILITY_TYPE = 'facility_type'
+    PROCESSING_TYPE = 'processing_type'
 
     FIELD_CHOICES = (
         (COUNTRY, COUNTRY),
@@ -2270,7 +2272,9 @@ class ExtendedField(models.Model):
         (FACILITY_TYPE, FACILITY_TYPE),
         (PROCESSING_TYPE, PROCESSING_TYPE),
         (PRODUCT_TYPE, PRODUCT_TYPE),
-        (PARENT_COMPANY, PARENT_COMPANY))
+        (PARENT_COMPANY, PARENT_COMPANY),
+        (FACILITY_TYPE, FACILITY_TYPE),
+        (PROCESSING_TYPE, PROCESSING_TYPE))
 
     contributor = models.ForeignKey(
         'Contributor',
