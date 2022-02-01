@@ -731,7 +731,7 @@ export const EXTENDED_FIELD_TYPES = [
     {
         label: 'Product Type',
         fieldName: 'product_type',
-        formatValue: v => v,
+        formatValue: v => v.raw_values,
     },
     {
         label: 'Processing Type',

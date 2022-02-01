@@ -1,4 +1,5 @@
 import re
+from django.core import exceptions as core_exceptions
 from api.models import Contributor, ExtendedField
 
 
@@ -6,6 +7,9 @@ def extract_range_value(value):
     values = [int(x) for x
               in re.findall(r'([0-9]+)', str(value).replace(',', ''))]
     return {"min": min(values, default=0), "max": max(values, default=0)}
+
+
+MAX_PRODUCT_TYPE_COUNT = 50
 
 
 def create_extendedfield(field, field_value, item, contributor):
@@ -25,6 +29,20 @@ def create_extendedfield(field, field_value, item, contributor):
                     'raw_value': field_value,
                     'name': field_value
                 }
+        elif field == ExtendedField.PRODUCT_TYPE:
+            if isinstance(field_value, str):
+                field_value = field_value.split('|')
+            if not isinstance(field_value, list):
+                raise core_exceptions.ValidationError(
+                    'Expected product_type to be a list or string '
+                    f'but got {field_value}')
+            if len(field_value) > MAX_PRODUCT_TYPE_COUNT:
+                raise core_exceptions.ValidationError(
+                    f'You may submit a maximum of {MAX_PRODUCT_TYPE_COUNT} '
+                    f'product types, not {len(field_value)}')
+            field_value = {
+                'raw_values':  field_value,
+            }
         ExtendedField.objects.create(
             contributor=contributor,
             facility_list_item=item,
@@ -35,7 +53,8 @@ def create_extendedfield(field, field_value, item, contributor):
 
 RAW_DATA_FIELDS = (ExtendedField.NUMBER_OF_WORKERS,
                    ExtendedField.NATIVE_LANGUAGE_NAME,
-                   ExtendedField.PARENT_COMPANY)
+                   ExtendedField.PARENT_COMPANY,
+                   ExtendedField.PRODUCT_TYPE)
 
 
 def create_extendedfields_for_single_item(item, raw_data):

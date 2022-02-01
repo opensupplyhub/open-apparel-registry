@@ -84,6 +84,9 @@ const detailsSidebarStyles = theme =>
 const formatAttribution = (createdAt, contributor) =>
     `${moment(createdAt).format('LL')} by ${contributor}`;
 
+const formatIfList = value =>
+    Array.isArray(value) ? value.map(v => <li>{v}</li>) : value;
+
 /* eslint-disable camelcase */
 const formatExtendedField = ({
     value,
@@ -93,7 +96,7 @@ const formatExtendedField = ({
     id,
     formatValue = v => v,
 }) => ({
-    primary: formatValue(value),
+    primary: formatIfList(formatValue(value)),
     secondary: formatAttribution(updated_at, contributor_name),
     verified,
     key: id,

@@ -60,6 +60,7 @@ from api.facility_type_processing_type import (
     WET_ROLLER_PRINTING,
     get_facility_and_processing_type
 )
+from api.extended_fields import MAX_PRODUCT_TYPE_COUNT
 
 
 class FacilityListCreateTest(APITestCase):
@@ -4436,6 +4437,16 @@ class FacilityAPITestCaseBase(APITestCase):
         self.list_item.facility = self.facility
         self.list_item.save()
 
+    def join_group_and_login(self):
+        self.client.logout()
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_FACILITY,
+        )
+        self.user.groups.set([group.id])
+        self.user.save()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
 
 class SearchByList(APITestCase):
     def setUp(self):
@@ -5972,16 +5983,6 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
             'address': '123 Main St, Anywhereville, PA',
             'extra_1': 'Extra data'
         }
-
-    def join_group_and_login(self):
-        self.client.logout()
-        group = auth.models.Group.objects.get(
-            name=FeatureGroups.CAN_SUBMIT_FACILITY,
-        )
-        self.user.groups.set([group.id])
-        self.user.save()
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
 
     def test_unauthenticated_receives_401(self):
         self.client.logout()
@@ -7555,16 +7556,6 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         super(ParentCompanyTestCase, self).setUp()
         self.url = reverse('facility-list')
 
-    def join_group_and_login(self):
-        self.client.logout()
-        group = auth.models.Group.objects.get(
-            name=FeatureGroups.CAN_SUBMIT_FACILITY,
-        )
-        self.user.groups.set([group.id])
-        self.user.save()
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
-
     def test_submit_parent_company_no_match(self):
         self.join_group_and_login()
         self.client.post(self.url, {
@@ -7597,3 +7588,69 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'contributor_name': self.contributor.name,
             'contributor_id': self.contributor.id
         }, ef.value)
+
+
+class ProductTypeTestCase(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(ProductTypeTestCase, self).setUp()
+        self.url = reverse('facility-list')
+
+    def test_array(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': ['a', 'b']
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': ['a', 'b']
+        }, ef.value)
+
+    def test_string(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': 'a|b'
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': ['a', 'b']
+        }, ef.value)
+
+    def test_list_validation(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': {}
+        }), content_type='application/json')
+        self.assertEqual(0, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)
+
+    def test_max_count(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': [str(a) for a in range(MAX_PRODUCT_TYPE_COUNT)]
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': [str(a) for a in range(MAX_PRODUCT_TYPE_COUNT + 1)]
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)
