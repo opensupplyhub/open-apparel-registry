@@ -1,6 +1,6 @@
 import sortBy from 'lodash/sortBy';
 
-import { OARFont } from './constants';
+import { OARFont, DEFAULT_SEARCH_TEXT } from './constants';
 
 export const DEFAULT_WIDTH = '1000';
 export const DEFAULT_HEIGHT = '800';
@@ -31,7 +31,9 @@ export const formatExistingConfig = embedConfig => {
         font: embedConfig.font ? embedConfig.font : OARFont,
         height: getHeight(embedConfig),
         preferContributorName: embedConfig.prefer_contributor_name,
-        textSearchLabel: embedConfig.text_search_label,
+        textSearchLabel: embedConfig.text_search_label
+            ? embedConfig.text_search_label
+            : DEFAULT_SEARCH_TEXT,
     };
 };
 

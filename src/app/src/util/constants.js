@@ -466,6 +466,7 @@ export const PPE = 'ppe';
 export const REPORT_A_FACILITY = 'report_a_facility';
 export const EMBEDDED_MAP_FLAG = 'embedded_map';
 export const EXTENDED_PROFILE_FLAG = 'extended_profile';
+export const DEFAULT_SEARCH_TEXT = 'Search a Facility Name or OAR ID';
 
 export const COUNTRY_CODES = Object.freeze({
     default: 'IE',

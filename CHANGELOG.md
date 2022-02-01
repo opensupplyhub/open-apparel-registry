@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add extended field handling to facility details [#1593](https://github.com/open-apparel-registry/open-apparel-registry/pull/1593)
 - Add searchability to embed config [#1598](https://github.com/open-apparel-registry/open-apparel-registry/pull/1598)
 - Create parent company extended fields [#1602](https://github.com/open-apparel-registry/open-apparel-registry/pull/1602)
+- Edit search label in embed config [#1604](https://github.com/open-apparel-registry/open-apparel-registry/pull/1604)
 
 ### Changed
 

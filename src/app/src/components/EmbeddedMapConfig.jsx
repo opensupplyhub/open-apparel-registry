@@ -87,6 +87,7 @@ function EmbeddedMapConfig({
         font,
         width,
         fullWidth,
+        textSearchLabel,
         height,
         preferContributorName,
     },
@@ -173,9 +174,17 @@ function EmbeddedMapConfig({
                             setPreferContributorName={updateEmbedConfig(
                                 'preferContributorName',
                             )}
+                            textSearchLabel={textSearchLabel}
+                            setTextSearchLabel={updateEmbedConfig(
+                                'textSearchLabel',
+                            )}
+                            anyFieldSearchable={fields.some(
+                                field => field.searchable,
+                            )}
                             errors={errors}
                         />
                     ) : null}
+
                     <EmbeddedMapThemeConfig
                         color={color}
                         setColor={updateEmbedConfig('color')}
@@ -225,6 +234,7 @@ EmbeddedMapConfig.propTypes = {
         width: string.isRequired,
         height: string.isRequired,
         fullWidth: bool.isRequired,
+        textSearchLabel: string.isRequired,
     }).isRequired,
     setEmbedConfig: func.isRequired,
     setFields: func.isRequired,
