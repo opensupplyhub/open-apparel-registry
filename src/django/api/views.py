@@ -92,7 +92,8 @@ from api.models import (FacilityList,
                         EmbedField,
                         NonstandardField,
                         FacilityIndex,
-                        ExtendedField)
+                        ExtendedField,
+                        index_custom_text)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -3841,6 +3842,14 @@ def create_embed_fields(fields_data, embed_config):
 
     for field_data in fields_data:
         EmbedField.objects.create(embed_config=embed_config, **field_data)
+
+    contributor = embed_config.contributor
+    f_ids = FacilityListItem.objects \
+        .filter(source__contributor=contributor, facility__isnull=False) \
+        .values_list('facility__id', flat=True)
+
+    if len(f_ids) > 0:
+        index_custom_text(f_ids)
 
 
 def get_contributor(request):
