@@ -7654,3 +7654,80 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
         self.assertEqual(response.status_code, 400)
+
+
+class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(FacilityAndProcessingTypeAPITest, self).setUp()
+        self.url = reverse('facility-list')
+
+    def test_single_processing_value(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'processing_type': ['cutting']
+        }), content_type='application/json')
+        self.assertEqual(2, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.FACILITY_TYPE, ef.field_name)
+        self.assertEqual(
+            {'matched_values': [
+                [
+                    'PROCESSING_TYPE',
+                    'EXACT',
+                    'Final Product Assembly',
+                    'Cutting'
+                ]
+            ], 'raw_values': ['cutting']}, ef.value)
+        ef = ExtendedField.objects.last()
+        self.assertEqual(ExtendedField.PROCESSING_TYPE, ef.field_name)
+        self.assertEqual(
+            {'matched_values': [
+                [
+                    'PROCESSING_TYPE',
+                    'EXACT',
+                    'Final Product Assembly',
+                    'Cutting'
+                ]
+            ], 'raw_values': ['cutting']}, ef.value)
+
+    def test_multiple_facility_values(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'facility_type': ['office hq', 'final product assembly']
+        }), content_type='application/json')
+        self.assertEqual(2, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.FACILITY_TYPE, ef.field_name)
+        self.assertEqual(
+            {'matched_values': [
+                [
+                    'FACILITY_TYPE',
+                    'EXACT',
+                    'Office / HQ',
+                    'Office / HQ'
+                ],
+                [
+                    'FACILITY_TYPE',
+                    'EXACT',
+                    'Final Product Assembly',
+                    'Final Product Assembly'
+                ]
+            ], 'raw_values': ['office hq', 'final product assembly']},
+            ef.value)
+
+    def test_invalid_value(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'processing_type': 'sadfjhasdf'
+        }), content_type='application/json')
+        self.assertEqual(0, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)
