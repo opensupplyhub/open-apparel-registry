@@ -610,7 +610,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         fields = [
             EmbedField(column_name=column_name, display_name=display_name)
             for (column_name, display_name)
-            in NonstandardField.DEFAULT_FIELDS.items()]
+            in NonstandardField.EXTENDED_FIELDS.items()]
 
         try:
             config = EmbedConfig.objects.get(contributor=contributor)
@@ -836,7 +836,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
         fields = [
             EmbedField(column_name=column_name, display_name=display_name)
             for (column_name, display_name)
-            in NonstandardField.DEFAULT_FIELDS.items()]
+            in NonstandardField.EXTENDED_FIELDS.items()]
 
         contributor = Contributor.objects.get(id=contributor_id)
         if contributor.embed_config is not None:

@@ -2217,11 +2217,12 @@ class NonstandardField(models.Model):
 
     # Keys in this set must be kept in sync with
     # defaultNonstandardFieldLabels in app/src/app/util/embeddedMap.js
-    DEFAULT_FIELDS = {
+    EXTENDED_FIELDS = {
         'parent_company': 'Parent Company',
-        'type_of_product': 'Type of Product',
+        'product_type': 'Product Type',
         'number_of_workers': 'Number of Workers',
-        'type_of_facility': 'Type of Facility',
+        'facility_type': 'Facility Type',
+        'processing_type': 'Processing Type',
     }
 
     contributor = models.ForeignKey(
