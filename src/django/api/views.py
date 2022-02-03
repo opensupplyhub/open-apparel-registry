@@ -1254,19 +1254,26 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         try:
             create_extendedfields_for_single_item(item, request.data)
-        except core_exceptions.ValidationError as e:
+        except (core_exceptions.ValidationError, ValueError) as e:
+            error_message = ''
+
+            if isinstance(e, ValueError):
+                error_message = str(e)
+            else:
+                error_message = e.message
+
             item.status = FacilityListItem.ERROR_PARSING
             item.processing_results.append({
                 'action': ProcessingAction.PARSE,
                 'started_at': parse_started,
                 'error': True,
-                'message': e.message,
+                'message': error_message,
                 'trace': traceback.format_exc(),
                 'finished_at': str(datetime.utcnow()),
             })
             item.save()
             result['status'] = item.status
-            result['message'] = e.message
+            result['message'] = error_message
             return Response(result,
                             status=status.HTTP_400_BAD_REQUEST)
 

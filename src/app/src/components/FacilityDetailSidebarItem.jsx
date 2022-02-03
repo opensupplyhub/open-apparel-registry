@@ -50,6 +50,11 @@ const FacilityDetailSidebarItem = ({
     const hasAdditionalContent = !embed && !!additionalContent?.length;
     const additionalContentCount = additionalContent?.length;
 
+    // Temporary, until these field types can be handled
+    if (label === 'Processing Type' || label === 'Facility Type') {
+        return null;
+    }
+
     return (
         <div className={classes.item}>
             <ListItem
