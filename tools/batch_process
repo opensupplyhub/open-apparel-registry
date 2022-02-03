@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0") {list-id}
+Run parse, geocode, and match via the batch_process Django management command
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        ./scripts/manage batch_process --list-id "$1" --action parse \
+            && ./scripts/manage batch_process --list-id "$1" --action geocode \
+            && ./scripts/manage batch_process --list-id "$1" --action match
+    fi
+fi

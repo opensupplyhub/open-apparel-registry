@@ -97,7 +97,8 @@ The [Django](https://www.djangoproject.com) app runs inside a [Gunicorn](https:/
 
 ## Tools ⚒️
 
-| Name                                                   | Description                                                                                                                                                                                  |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `postfacilitiescsv.py`                                 | POST the rows of a CSV containing facility information to the facilities API                                                                                                                 |
-| `devhealthcheck.sh`                                    | Simulate application load balancer health checks in development                                                                                                                              |
+| Name                   | Description                                                                                            |
+|------------------------|--------------------------------------------------------------------------------------------------------|
+| `batch_process`        | Given a list id argument run parse, geocode, and match via the batch_process Django management command |
+| `devhealthcheck.sh`    | Simulate application load balancer health checks in development                                        |
+| `postfacilitiescsv.py` | POST the rows of a CSV containing facility information to the facilities API                           |
