@@ -831,13 +831,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
         if not embed == '1' or contributor_id is None:
             return []
 
-        # If the contributor has not created any overriding embed config these
-        # transparency pledge fields will always be visible.
-        fields = [
-            EmbedField(column_name=column_name, display_name=display_name)
-            for (column_name, display_name)
-            in NonstandardField.EXTENDED_FIELDS.items()]
-
+        fields = []
         contributor = Contributor.objects.get(id=contributor_id)
         if contributor.embed_config is not None:
             config = contributor.embed_config
@@ -856,7 +850,14 @@ class FacilityDetailsSerializer(FacilitySerializer):
         return assign_contributor_field_values(list_item, fields)
 
     def get_extended_fields(self, facility):
-        fields = facility.extended_fields()
+        request = self.context.get('request') \
+            if self.context is not None else None
+        embed = request.query_params.get('embed') \
+            if request is not None else None
+        contributor_id = request.query_params.get('contributor', None) \
+            if request is not None and embed == '1' else None
+
+        fields = facility.extended_fields(contributor_id=contributor_id)
         user_can_see_detail = can_user_see_detail(self)
 
         grouped_data = defaultdict(list)

@@ -1395,7 +1395,7 @@ class Facility(PPEMixin):
             and item.source.is_public
         }
 
-    def extended_fields(self):
+    def extended_fields(self, contributor_id=None):
         active_items = self.facilitymatch_set \
                            .filter(status__in=[FacilityMatch.AUTOMATIC,
                                                FacilityMatch.CONFIRMED,
@@ -1403,16 +1403,21 @@ class Facility(PPEMixin):
                            .filter(is_active=True) \
                            .values_list('facility_list_item')
 
-        fields = ExtendedField.objects \
-                              .filter(facility=self) \
-                              .annotate(is_from_claim=ExpressionWrapper(
-                                Q(facility_list_item__isnull=True),
-                                output_field=models.BooleanField())) \
-                              .annotate(is_active=ExpressionWrapper(
-                                Q(facility_list_item__in=active_items),
-                                output_field=models.BooleanField())) \
-                              .filter(Q(is_from_claim=True) |
-                                      Q(is_active=True))
+        base_qs = ExtendedField.objects \
+                               .filter(facility=self)
+
+        if contributor_id is not None:
+            base_qs = base_qs.filter(contributor_id=contributor_id)
+
+        fields = base_qs \
+            .annotate(is_from_claim=ExpressionWrapper(
+                Q(facility_list_item__isnull=True),
+                output_field=models.BooleanField())) \
+            .annotate(is_active=ExpressionWrapper(
+                Q(facility_list_item__in=active_items),
+                output_field=models.BooleanField())) \
+            .filter(Q(is_from_claim=True) |
+                    Q(is_active=True))
 
         return fields
 
