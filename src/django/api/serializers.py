@@ -648,9 +648,14 @@ def assign_contributor_field_values(list_item, fields):
                                 list_item, contributor_fields
                              )
 
-    return [{
-                'value': f['value'], 'label': f['label']
-            } for f in contributor_fields]
+    return [
+        {
+            'value': f['value'],
+            'label': f['label'],
+            'fieldName': f['column_name'],
+        }
+        for f in contributor_fields
+    ]
 
 
 def can_user_see_detail(serializer):

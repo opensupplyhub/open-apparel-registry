@@ -76,7 +76,7 @@ const FacilityDetailSidebarItem = ({
             </ListItem>
             <FacilityDetailSidebarDetail
                 primary={primary}
-                secondary={secondary}
+                secondary={!embed ? secondary : null}
                 verified={verified}
             />
             {isOpen &&
