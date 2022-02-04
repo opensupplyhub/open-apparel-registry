@@ -44,7 +44,7 @@ const FacilityDetailSidebarItem = ({
     secondary,
     classes,
     embed,
-    verified,
+    isVerified,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const hasAdditionalContent = !embed && !!additionalContent?.length;
@@ -77,7 +77,7 @@ const FacilityDetailSidebarItem = ({
             <FacilityDetailSidebarDetail
                 primary={primary}
                 secondary={!embed ? secondary : null}
-                verified={verified}
+                isVerified={isVerified}
             />
             {isOpen &&
                 additionalContent.map(item => (

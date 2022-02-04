@@ -2307,7 +2307,7 @@ class ExtendedField(models.Model):
         blank=True,
         on_delete=models.PROTECT,
         help_text='The claim from which the field was obtained.')
-    verified = models.BooleanField(
+    is_verified = models.BooleanField(
         default=False,
         null=False,
         help_text='Whether or not this field has been verified.'

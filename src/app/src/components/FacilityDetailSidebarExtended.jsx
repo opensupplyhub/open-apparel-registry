@@ -92,13 +92,13 @@ const formatExtendedField = ({
     value,
     updated_at,
     contributor_name,
-    verified,
+    is_verified,
     id,
     formatValue = v => v,
 }) => ({
     primary: formatIfListAndRemoveDuplicates(formatValue(value)),
     secondary: formatAttribution(updated_at, contributor_name),
-    verified,
+    isVerified: is_verified,
     key: id,
 });
 

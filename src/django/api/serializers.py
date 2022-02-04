@@ -868,7 +868,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
         grouped_data = defaultdict(list)
 
         def sort_order(k):
-            return (k['verified'], k['value_count'],
+            return (k['is_verified'], k['value_count'],
                     k['is_from_claim'], k['updated_at'])
 
         for field_name, _ in ExtendedField.FIELD_CHOICES:
@@ -1427,7 +1427,7 @@ class ExtendedFieldListSerializer(ModelSerializer):
 
     class Meta:
         model = ExtendedField
-        fields = ('id', 'verified', 'value', 'updated_at',
+        fields = ('id', 'is_verified', 'value', 'updated_at',
                   'contributor_name', 'contributor_id', 'value_count',
                   'is_from_claim', 'field_name')
 
