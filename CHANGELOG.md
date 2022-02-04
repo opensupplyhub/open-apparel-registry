@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Create product type extended field [#1605](https://github.com/open-apparel-registry/open-apparel-registry/pull/1605)
 - Index custom text [#1607](https://github.com/open-apparel-registry/open-apparel-registry/pull/1607)
 - Create extended field values for processing/facility type [#1616](https://github.com/open-apparel-registry/open-apparel-registry/pull/1616)
+- Add batch_process tool [#1625](https://github.com/open-apparel-registry/open-apparel-registry/pull/1625)
 
 ### Changed
 
