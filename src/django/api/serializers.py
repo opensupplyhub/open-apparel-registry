@@ -868,8 +868,8 @@ class FacilityDetailsSerializer(FacilitySerializer):
         grouped_data = defaultdict(list)
 
         def sort_order(k):
-            return (k['is_verified'], k['value_count'],
-                    k['is_from_claim'], k['updated_at'])
+            return (k['verified_count'], k['is_from_claim'],
+                    k['value_count'], k['updated_at'])
 
         for field_name, _ in ExtendedField.FIELD_CHOICES:
             serializer = ExtendedFieldListSerializer(
@@ -1424,12 +1424,13 @@ class ExtendedFieldListSerializer(ModelSerializer):
     contributor_id = SerializerMethodField()
     value_count = SerializerMethodField()
     is_from_claim = SerializerMethodField()
+    verified_count = SerializerMethodField()
 
     class Meta:
         model = ExtendedField
         fields = ('id', 'is_verified', 'value', 'updated_at',
                   'contributor_name', 'contributor_id', 'value_count',
-                  'is_from_claim', 'field_name')
+                  'is_from_claim', 'field_name', 'verified_count')
 
     def get_contributor_name(self, instance):
         user_can_see_detail = self.context.get("user_can_see_detail")
@@ -1447,3 +1448,11 @@ class ExtendedFieldListSerializer(ModelSerializer):
 
     def get_is_from_claim(self, instance):
         return instance.facility_list_item is None
+
+    def get_verified_count(self, instance):
+        count = 0
+        if instance.contributor.is_verified:
+            count += 1
+        if instance.is_verified:
+            count += 1
+        return count
