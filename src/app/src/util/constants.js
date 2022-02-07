@@ -724,19 +724,19 @@ export const EXTENDED_FIELD_TYPES = [
         formatValue: v => v.contributor_name || v.name || v.raw_value,
     },
     {
+        label: 'Processing Type',
+        fieldName: 'processing_type',
+        formatValue: v => v.matched_values.map(val => val[3]),
+    },
+    {
         label: 'Facility Type',
         fieldName: 'facility_type',
-        formatValue: v => v,
+        formatValue: v => v.matched_values.map(val => val[2]),
     },
     {
         label: 'Product Type',
         fieldName: 'product_type',
         formatValue: v => v.raw_values,
-    },
-    {
-        label: 'Processing Type',
-        fieldName: 'processing_type',
-        formatValue: v => v,
     },
     {
         label: 'Number of Workers',

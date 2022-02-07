@@ -84,8 +84,8 @@ const detailsSidebarStyles = theme =>
 const formatAttribution = (createdAt, contributor) =>
     `${moment(createdAt).format('LL')} by ${contributor}`;
 
-const formatIfList = value =>
-    Array.isArray(value) ? value.map(v => <li>{v}</li>) : value;
+const formatIfListAndRemoveDuplicates = value =>
+    Array.isArray(value) ? [...new Set(value)].map(v => <li>{v}</li>) : value;
 
 /* eslint-disable camelcase */
 const formatExtendedField = ({
@@ -96,7 +96,7 @@ const formatExtendedField = ({
     id,
     formatValue = v => v,
 }) => ({
-    primary: formatIfList(formatValue(value)),
+    primary: formatIfListAndRemoveDuplicates(formatValue(value)),
     secondary: formatAttribution(updated_at, contributor_name),
     verified,
     key: id,
