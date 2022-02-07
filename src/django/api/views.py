@@ -3960,7 +3960,7 @@ class NonstandardFieldsViewSet(mixins.ListModelMixin,
             contributor=contributor).values_list('column_name', flat=True))
 
         field_list = list(
-            NonstandardField.DEFAULT_FIELDS.keys() | nonstandard_field_set)
+            NonstandardField.EXTENDED_FIELDS.keys() | nonstandard_field_set)
 
         return Response(field_list)
 

@@ -128,6 +128,7 @@ const FacilityDetailSidebar = ({
     userHasPendingFacilityClaim,
     facilityIsClaimedByCurrentUser,
     embedContributor,
+    embedConfig,
 }) => {
     useEffect(() => {
         fetchFacility(Number(embed), contributors);
@@ -214,10 +215,39 @@ const FacilityDetailSidebar = ({
         );
     };
 
+    const renderContributorField = ({ label, value }) =>
+        value !== null ? (
+            <FacilityDetailSidebarItem
+                label={label}
+                primary={value}
+                key={label}
+            />
+        ) : null;
+
     const contributorFields = filter(
         get(data, 'properties.contributor_fields', null),
         field => field.value !== null,
     );
+
+    const renderEmbedFields = () => {
+        const fields = embedConfig?.embed_fields?.filter(f => f.visible) || [];
+        return fields.map(({ column_name: fieldName, display_name: label }) => {
+            // If there is an extended field for that name, render and return it
+            const eft = EXTENDED_FIELD_TYPES.find(
+                x => x.fieldName === fieldName,
+            );
+            const ef = eft ? renderExtendedField({ ...eft, label }) : null;
+            if (ef) {
+                return ef;
+            }
+            // Otherwise, try rendering it as a contributor field
+            const cf = contributorFields.find(x => x.fieldName === fieldName);
+            if (cf) {
+                return renderContributorField(cf);
+            }
+            return null;
+        });
+    };
 
     return (
         <div className={classes.root}>
@@ -261,22 +291,13 @@ const FacilityDetailSidebar = ({
                 </div>
                 <FacilityDetailSidebarLocation data={data} embed={embed} />
                 <ShowOnly when={!embed}>
-                    {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
-
                     <FacilityDetailSidebarContributors
                         contributors={data.properties.contributors}
                         push={push}
                     />
+                    {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
                 </ShowOnly>
-                <ShowOnly when={embed}>
-                    {contributorFields.map(field => (
-                        <FacilityDetailSidebarItem
-                            label={field.label}
-                            primary={field.value}
-                            key={field.label}
-                        />
-                    ))}
-                </ShowOnly>
+                <ShowOnly when={embed}>{renderEmbedFields()}</ShowOnly>
                 <div className={classes.actions}>
                     <ShowOnly when={!embed}>
                         <FacilityDetailSidebarAction
@@ -364,6 +385,7 @@ function mapStateToProps(
         error,
         embed: !!embed,
         embedContributor: config?.contributor_name,
+        embedConfig: config,
         contributors,
         userHasPendingFacilityClaim,
         facilityIsClaimedByCurrentUser,
