@@ -1409,14 +1409,15 @@ class Facility(PPEMixin):
         if contributor_id is not None:
             base_qs = base_qs.filter(contributor_id=contributor_id)
 
+        has_active_claim = Q(facility_claim__status=FacilityClaim.APPROVED)
         fields = base_qs \
-            .annotate(is_from_claim=ExpressionWrapper(
-                Q(facility_list_item__isnull=True),
-                output_field=models.BooleanField())) \
+            .annotate(has_active_claim=ExpressionWrapper(
+              has_active_claim,
+              output_field=models.BooleanField())) \
             .annotate(is_active=ExpressionWrapper(
                 Q(facility_list_item__in=active_items),
                 output_field=models.BooleanField())) \
-            .filter(Q(is_from_claim=True) |
+            .filter(Q(has_active_claim=True) |
                     Q(is_active=True))
 
         return fields

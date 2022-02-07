@@ -531,6 +531,16 @@ def get_facility_name(serializer, facility):
         if len(valid_names) > 0:
             return valid_names[0]
 
+    names = ExtendedField.objects \
+        .filter(facility=facility,
+                field_name=ExtendedField.NAME,
+                facility_claim__status=FacilityClaim.APPROVED) \
+        .order_by('-updated_at') \
+        .values_list('value', flat=True)
+
+    if len(names) > 0:
+        return names[0]
+
     # Return the assigned facility name
     return facility.name
 
@@ -682,6 +692,64 @@ def get_contributor_id(contributor, user_can_see_detail):
     if contributor is not None and user_can_see_detail:
         return contributor.admin.id
     return None
+
+
+def create_name_field(name, contributor, user_can_see_detail):
+    return {
+      'value': name,
+      'field_name': ExtendedField.NAME,
+      'contributor_id': get_contributor_id(contributor, user_can_see_detail),
+      'contributor_name':
+      get_contributor_name(contributor, user_can_see_detail),
+    }
+
+
+def get_facility_names(facility):
+    facility_list_item_matches = [
+        FacilityListItem.objects.get(pk=pk)
+        for (pk,)
+        in facility
+        .facilitymatch_set
+        .filter(status__in=[FacilityMatch.AUTOMATIC,
+                            FacilityMatch.CONFIRMED,
+                            FacilityMatch.MERGED])
+        .filter(is_active=True)
+        .exclude(facility_list_item__source__is_active=False)
+        .exclude(facility_list_item__source__is_public=False)
+        .exclude(facility_list_item__name__isnull=True)
+        .values_list('facility_list_item')
+    ]
+
+    return facility_list_item_matches
+
+
+def create_address_field(address, contributor, user_can_see_detail):
+    return {
+      'value': address,
+      'field_name': ExtendedField.ADDRESS,
+      'contributor_id': get_contributor_id(contributor, user_can_see_detail),
+      'contributor_name':
+      get_contributor_name(contributor, user_can_see_detail),
+    }
+
+
+def get_facility_addresses(facility):
+    facility_list_item_matches = [
+        FacilityListItem.objects.get(pk=pk)
+        for (pk,)
+        in facility
+        .facilitymatch_set
+        .filter(status__in=[FacilityMatch.AUTOMATIC,
+                            FacilityMatch.CONFIRMED,
+                            FacilityMatch.MERGED])
+        .filter(is_active=True)
+        .exclude(facility_list_item__source__is_active=False)
+        .exclude(facility_list_item__source__is_public=False)
+        .exclude(facility_list_item__address__isnull=True)
+        .values_list('facility_list_item')
+    ]
+
+    return facility_list_item_matches
 
 
 class FacilityDetailsSerializer(FacilitySerializer):
@@ -864,20 +932,43 @@ class FacilityDetailsSerializer(FacilitySerializer):
 
         fields = facility.extended_fields(contributor_id=contributor_id)
         user_can_see_detail = can_user_see_detail(self)
+        embed_mode_active = is_embed_mode_active(self)
 
         grouped_data = defaultdict(list)
 
         def sort_order(k):
-            return (k['verified_count'], k['is_from_claim'],
-                    k['value_count'], k['updated_at'])
+            return (k.get('verified_count', 0), k.get('is_from_claim', False),
+                    k.get('value_count', 1), k.get('updated_at', None))
 
         for field_name, _ in ExtendedField.FIELD_CHOICES:
             serializer = ExtendedFieldListSerializer(
                         fields.filter(field_name=field_name),
                         many=True,
-                        context={'user_can_see_detail': user_can_see_detail}
+                        context={'user_can_see_detail': user_can_see_detail,
+                                 'embed_mode_active': embed_mode_active}
                     )
-            data = sorted(serializer.data, key=sort_order, reverse=True)
+
+            if field_name == ExtendedField.NAME and not embed_mode_active:
+                unsorted_data = serializer.data
+                for item in get_facility_names(facility):
+                    if item.name is not None and len(item.name) != 0:
+                        unsorted_data.append(
+                            create_name_field(item.name,
+                                              item.source.contributor,
+                                              user_can_see_detail))
+                data = sorted(unsorted_data, key=sort_order, reverse=True)
+            elif field_name == ExtendedField.ADDRESS and not embed_mode_active:
+                unsorted_data = serializer.data
+                for item in get_facility_addresses(facility):
+                    if item.address is not None and len(item.address) != 0:
+                        unsorted_data.append(
+                            create_address_field(item.address,
+                                                 item.source.contributor,
+                                                 user_can_see_detail))
+                data = sorted(unsorted_data, key=sort_order, reverse=True)
+            else:
+                data = sorted(serializer.data, key=sort_order, reverse=True)
+
             grouped_data[field_name] = data
 
         return grouped_data
@@ -889,7 +980,8 @@ class FacilityDetailsSerializer(FacilitySerializer):
                           .filter(facility_list_item=list_item)
         should_display_associations = \
             any([m.should_display_association for m in matches])
-        display_detail = user_can_see_detail and should_display_associations
+        display_detail = user_can_see_detail and should_display_associations \
+            and not is_embed_mode_active(self)
         return {
             'created_at': list_item.created_at,
             'contributor': get_contributor_name(list_item.source.contributor,
@@ -1433,10 +1525,16 @@ class ExtendedFieldListSerializer(ModelSerializer):
                   'is_from_claim', 'field_name', 'verified_count')
 
     def get_contributor_name(self, instance):
+        embed_mode_active = self.context.get("embed_mode_active")
+        if embed_mode_active:
+            return None
         user_can_see_detail = self.context.get("user_can_see_detail")
         return get_contributor_name(instance.contributor, user_can_see_detail)
 
     def get_contributor_id(self, instance):
+        embed_mode_active = self.context.get("embed_mode_active")
+        if embed_mode_active:
+            return None
         user_can_see_detail = self.context.get("user_can_see_detail")
         return get_contributor_id(instance.contributor, user_can_see_detail)
 
