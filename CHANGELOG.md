@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Update embed facility detail rendering to support extended fields [#1627](https://github.com/open-apparel-registry/open-apparel-registry/pull/1627)
+
 ### Deprecated
 
 ### Removed
