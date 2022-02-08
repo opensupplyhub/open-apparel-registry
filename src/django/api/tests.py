@@ -3565,7 +3565,7 @@ class FacilityMergeTest(APITestCase):
                 contributor=self.contributor_1,
                 facility=self.facility_1,
                 facility_list_item=self.list_item_1,
-                verified=True
+                is_verified=True
             )
 
         self.extended_field_2 = ExtendedField \
@@ -3858,7 +3858,7 @@ class FacilitySplitTest(APITestCase):
                 contributor=self.contributor_one,
                 facility=self.facility_one,
                 facility_list_item=self.list_item_one,
-                verified=True
+                is_verified=True
             )
 
         self.extended_field_two = ExtendedField \
@@ -4969,7 +4969,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                 contributor=self.contributor,
                 facility=self.facility,
                 facility_list_item=self.list_item,
-                verified=True
+                is_verified=True
             )
 
         self.extended_field_two = ExtendedField \
@@ -5139,7 +5139,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         self.assertEqual(len(fields), 3)
         self.assertEqual(fields[0]['value'], 'name one')
 
-        self.extended_field_one.verified = False
+        self.extended_field_one.is_verified = False
         self.extended_field_one.save()
 
         response = self.client.get(

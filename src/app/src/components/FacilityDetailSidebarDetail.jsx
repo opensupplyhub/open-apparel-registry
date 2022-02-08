@@ -19,11 +19,11 @@ const detailsSidebarStyles = () =>
 const FacilityDetailSidebarDetail = ({
     primary,
     secondary,
-    verified,
+    isVerified,
     classes,
 }) => (
     <ListItem className={classes.item}>
-        <ShowOnly when={verified}>
+        <ShowOnly when={isVerified}>
             <BadgeVerified />
         </ShowOnly>
         <ListItemText
