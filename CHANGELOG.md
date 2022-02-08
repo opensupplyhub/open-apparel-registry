@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Handle country code geocoding errors [#1619](https://github.com/open-apparel-registry/open-apparel-registry/pull/1619)
+- Fix custom text processing [#1631](https://github.com/open-apparel-registry/open-apparel-registry/pull/1631)
 
 ### Security
 

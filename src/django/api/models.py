@@ -2410,7 +2410,7 @@ def index_custom_text(facility_ids=list):
         # Add the values to the dictionary entry for the item's facility
         custom_fields[item.facility.id] += item_fields_string
 
-    facilities = FacilityIndex.objects.filter(id__in=custom_fields.keys()) \
+    facilities = FacilityIndex.objects.filter(id__in=facility_ids) \
                                       .iterator()
     for facility in facilities:
         facility.custom_text = custom_fields.get(facility.id, '')
