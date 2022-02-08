@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Create extended field values for processing/facility type [#1616](https://github.com/open-apparel-registry/open-apparel-registry/pull/1616)
 - Add batch_process tool [#1625](https://github.com/open-apparel-registry/open-apparel-registry/pull/1625)
 - Display processing and facility type [#1624](https://github.com/open-apparel-registry/open-apparel-registry/pull/1624)
+- Search custom_text in embedded map [#1629](https://github.com/open-apparel-registry/open-apparel-registry/pull/1629)
 
 ### Changed
 

@@ -34,6 +34,7 @@ class FacilitiesQueryParams:
     COMBINE_CONTRIBUTORS = 'combine_contributors'
     BOUNDARY = 'boundary'
     PPE = 'ppe'
+    EMBED = 'embed'
 
 
 class FacilityListQueryParams:
