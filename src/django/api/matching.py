@@ -1,7 +1,6 @@
 import dedupe
 import logging
 import os
-import re
 import sys
 import traceback
 
@@ -11,7 +10,6 @@ from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction
 from django.db.models import Q, Max, ExpressionWrapper, BooleanField
-from unidecode import unidecode
 
 from api.models import (Facility,
                         FacilityList,
@@ -19,6 +17,7 @@ from api.models import (Facility,
                         FacilityMatch,
                         HistoricalFacility,
                         HistoricalFacilityMatch)
+from api.helpers import clean
 
 logger = logging.getLogger(__name__)
 
@@ -34,26 +33,6 @@ def _try_reporting_error_to_rollbar(extra_data=dict):
     except Exception:
         logger.error('Failed to post exception to Rollbar: {} {}'.format(
             str(extra_data), traceback.format_exc()))
-
-
-def clean(column):
-    """
-    Remove punctuation and excess whitespace from a value before using it to
-    find matches. This should be the same function used when developing the
-    training data read from training.json as part of train_gazetteer.
-    """
-    column = unidecode(column)
-    column = re.sub('\n', ' ', column)
-    column = re.sub('-', '', column)
-    column = re.sub('/', ' ', column)
-    column = re.sub("'", '', column)
-    column = re.sub(",", '', column)
-    column = re.sub(":", ' ', column)
-    column = re.sub(' +', ' ', column)
-    column = column.strip().strip('"').strip("'").lower().strip()
-    if not column:
-        column = None
-    return column
 
 
 def match_detail_to_extended_facility_id(facility_id, match_id):

@@ -1,4 +1,4 @@
-from api.matching import clean
+from api.helpers import clean
 from thefuzz import process
 
 HEADQUARTERS = 'headquarters'
