@@ -33,7 +33,6 @@ import {
     updateClaimedFacilityOfficePhone,
     updateClaimedFacilityParentCompany,
     updateClaimedFacilityFacilityType,
-    updateClaimedFacilityOtherFacilityType,
     updateClaimedFacilityAffiliations,
     updateClaimedFacilityCertifications,
     updateClaimedFacilityProductTypes,
@@ -285,15 +284,6 @@ export default createReducer(
                 },
                 data: {
                     facility_type: { $set: type },
-                },
-            }),
-        [updateClaimedFacilityOtherFacilityType]: (state, otherType) =>
-            update(state, {
-                updateData: {
-                    error: { $set: initialState.updateData.error },
-                },
-                data: {
-                    other_facility_type: { $set: otherType },
                 },
             }),
         [updateClaimedFacilityContactPersonName]: (state, person) =>

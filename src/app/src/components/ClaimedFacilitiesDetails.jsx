@@ -13,7 +13,6 @@ import memoize from 'lodash/memoize';
 import find from 'lodash/find';
 import stubFalse from 'lodash/stubFalse';
 import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
 import get from 'lodash/get';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
@@ -50,7 +49,6 @@ import {
     updateClaimedFacilityMinimumOrder,
     updateClaimedFacilityAverageLeadTime,
     updateClaimedFacilityFacilityType,
-    updateClaimedFacilityOtherFacilityType,
     updateClaimedFacilityContactPersonName,
     updateClaimedFacilityContactEmail,
     updateClaimedFacilityPointOfContactVisibility,
@@ -298,7 +296,6 @@ function ClaimedFacilitiesDetails({
     updateParentCompany,
     contributorOptions,
     updateFacilityType,
-    updateFacilityOtherType,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -436,16 +433,6 @@ function ClaimedFacilitiesDetails({
                         data.facility_types,
                     )}
                 />
-                <ShowOnly
-                    when={isEqual(get(data, 'facility_type', null), 'Other')}
-                >
-                    <InputSection
-                        label="Other Facility Type"
-                        value={get(data, 'other_facility_type', null)}
-                        onChange={updateFacilityOtherType}
-                        disabled={updating}
-                    />
-                </ShowOnly>
                 <InputSection
                     label="Minimum order quantity"
                     value={data.facility_minimum_order_quantity}
@@ -695,7 +682,6 @@ ClaimedFacilitiesDetails.propTypes = {
     updateOfficeVisibility: func.isRequired,
     contributorOptions: contributorOptionsPropType,
     updateFacilityType: func.isRequired,
-    updateFacilityOtherType: func.isRequired,
 };
 
 function mapStateToProps({
@@ -777,9 +763,6 @@ function mapDispatchToProps(
         ),
         updateFacilityType: ({ value }) =>
             dispatch(updateClaimedFacilityFacilityType(value)),
-        updateFacilityOtherType: makeDispatchValueFn(
-            updateClaimedFacilityOtherFacilityType,
-        ),
         updateFacilityMinimumOrder: makeDispatchValueFn(
             updateClaimedFacilityMinimumOrder,
         ),

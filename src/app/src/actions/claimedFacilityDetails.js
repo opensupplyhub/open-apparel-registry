@@ -196,9 +196,6 @@ export const updateClaimedFacilityParentCompany = createAction(
 export const updateClaimedFacilityFacilityType = createAction(
     'UPDATE_CLAIMED_FACILITY_FACILITY_TYPE',
 );
-export const updateClaimedFacilityOtherFacilityType = createAction(
-    'UPDATE_CLAIMED_FACILITY_OTHER_FACILITY_TYPE',
-);
 export const updateClaimedFacilityAffiliations = createAction(
     'UPDATE_CLAIMED_FACILITY_AFFILIATIONS',
 );

@@ -316,7 +316,6 @@ export const approvedFacilityClaimPropType = shape({
     office_info_publicly_visible: bool.isRequired,
     facility: facilityDetailsPropType.isRequired,
     facility_type: string.isRequired,
-    other_facility_type: string.isRequired,
     facility_types: arrayOf(arrayOf(string)).isRequired,
     affiliation_choices: arrayOf(arrayOf(string)).isRequired,
     certification_choices: arrayOf(arrayOf(string)).isRequired,
