@@ -32,7 +32,7 @@ import {
     updateClaimedFacilityOfficeCountry,
     updateClaimedFacilityOfficePhone,
     updateClaimedFacilityParentCompany,
-    updateClaimedFacilityFacilityType,
+    updateClaimedFacilityFacilityTypes,
     updateClaimedFacilityAffiliations,
     updateClaimedFacilityCertifications,
     updateClaimedFacilityProductTypes,
@@ -277,7 +277,7 @@ export default createReducer(
                     facility_average_lead_time: { $set: avgLeadTime },
                 },
             }),
-        [updateClaimedFacilityFacilityType]: (state, type) =>
+        [updateClaimedFacilityFacilityTypes]: (state, type) =>
             update(state, {
                 updateData: {
                     error: { $set: initialState.updateData.error },

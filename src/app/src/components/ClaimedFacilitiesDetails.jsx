@@ -48,7 +48,7 @@ import {
     updateClaimedFacilityDescription,
     updateClaimedFacilityMinimumOrder,
     updateClaimedFacilityAverageLeadTime,
-    updateClaimedFacilityFacilityType,
+    updateClaimedFacilityFacilityTypes,
     updateClaimedFacilityContactPersonName,
     updateClaimedFacilityContactEmail,
     updateClaimedFacilityPointOfContactVisibility,
@@ -425,10 +425,11 @@ function ClaimedFacilitiesDetails({
                 </ShowOnly>
                 <InputSection
                     label="Facility Type"
-                    value={get(data, 'facility_type', null)}
+                    value={get(data, 'facility_type', [])}
                     onChange={updateFacilityType}
                     disabled={updating}
                     isSelect
+                    isMultiSelect
                     selectOptions={mapDjangoChoiceTuplesToSelectOptions(
                         data.facility_types,
                     )}
@@ -509,13 +510,12 @@ function ClaimedFacilitiesDetails({
                     )}
                 />
                 <InputSection
-                    label="Production Types"
+                    label="Processing Types"
                     value={get(data, 'facility_production_types', [])}
                     onChange={updateFacilityProductionTypes}
                     disabled={updating}
                     isSelect
                     isMultiSelect
-                    isCreatable
                     selectOptions={mapDjangoChoiceTuplesToSelectOptions(
                         data.production_type_choices,
                     )}
@@ -761,8 +761,9 @@ function mapDispatchToProps(
         updateFacilityDescription: makeDispatchValueFn(
             updateClaimedFacilityDescription,
         ),
-        updateFacilityType: ({ value }) =>
-            dispatch(updateClaimedFacilityFacilityType(value)),
+        updateFacilityType: makeDispatchMultiSelectFn(
+            updateClaimedFacilityFacilityTypes,
+        ),
         updateFacilityMinimumOrder: makeDispatchValueFn(
             updateClaimedFacilityMinimumOrder,
         ),

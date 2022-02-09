@@ -34,7 +34,6 @@ from api.models import (FacilityList,
                         User,
                         Contributor,
                         ProductType,
-                        ProductionType,
                         Source,
                         ApiBlock,
                         FacilityActivityReport,
@@ -47,6 +46,10 @@ from api.processing import get_country_code
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
+from api.facility_type_processing_type import (
+    ALL_FACILITY_TYPE_CHOICES,
+    ALL_PROCESSING_TYPE_CHOICES
+)
 from waffle import switch_is_active
 
 
@@ -1152,7 +1155,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
         ]
 
     def get_facility_types(self, claim):
-        return FacilityClaim.FACILITY_TYPE_CHOICES
+        return ALL_FACILITY_TYPE_CHOICES
 
     def get_facility_parent_company(self, claim):
         return _get_parent_company(claim)
@@ -1194,34 +1197,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
         ]
 
     def get_production_type_choices(self, claim):
-        seeds = [
-            seed
-            for seed
-            in ProductionType.objects.all().values_list('value', flat=True)
-            or []
-        ]
-
-        new_values = FacilityClaim \
-            .objects \
-            .all() \
-            .values_list('facility_production_types', flat=True)
-
-        values = [
-            new_value
-            for new_value
-            in new_values if new_value is not None
-        ]
-
-        # Using `chain` flattens nested lists
-        union_of_seeds_and_values = list(
-            set(chain.from_iterable(values)).union(seeds))
-        union_of_seeds_and_values.sort()
-
-        return [
-            (choice, choice)
-            for choice
-            in union_of_seeds_and_values
-        ]
+        return ALL_PROCESSING_TYPE_CHOICES
 
 
 class FacilityMatchSerializer(ModelSerializer):

@@ -16,62 +16,78 @@ def extract_range_value(value):
 MAX_PRODUCT_TYPE_COUNT = 50
 
 
+def get_facility_and_processing_type_extendfield_value(field, field_value):
+    values = field_value
+
+    if isinstance(field_value, str):
+        values = (field_value.split('|') if '|' in field_value
+                  else [field_value])
+
+    deduped_values = list(dict.fromkeys(values))
+    results = []
+
+    for value in deduped_values:
+        result = get_facility_and_processing_type(value)
+        if result[0] is None:
+            raise ValueError(
+                f'No match found for {field}. Value must '
+                'be one of the following: '
+                f'{", ".join(list(ALL_PROCESSING_TYPES.keys()))}'
+            )
+        results.append(result)
+
+    return {
+        'raw_values': field_value,
+        'matched_values': results,
+    }
+
+
+def get_parent_company_extendedfield_value(field_value):
+    matches = Contributor.objects.filter_by_name(field_value)
+
+    if matches.exists():
+        return {
+            'raw_value': field_value,
+            'contributor_name': matches[0].name,
+            'contributor_id': matches[0].id
+        }
+    else:
+        return {
+            'raw_value': field_value,
+            'name': field_value
+        }
+
+
+def get_product_type_extendedfield_value(field_value):
+    if isinstance(field_value, str):
+        field_value = field_value.split('|')
+    if not isinstance(field_value, list):
+        raise core_exceptions.ValidationError(
+            'Expected product_type to be a list or string '
+            f'but got {field_value}')
+    if len(field_value) > MAX_PRODUCT_TYPE_COUNT:
+        raise core_exceptions.ValidationError(
+            f'You may submit a maximum of {MAX_PRODUCT_TYPE_COUNT} '
+            f'product types, not {len(field_value)}')
+
+    return {
+        'raw_values':  field_value,
+    }
+
+
 def create_extendedfield(field, field_value, item, contributor):
     if field_value is not None and field_value != "":
         if field == ExtendedField.NUMBER_OF_WORKERS:
             field_value = extract_range_value(field_value)
         elif field == ExtendedField.PARENT_COMPANY:
-            matches = Contributor.objects.filter_by_name(field_value)
-            if matches.exists():
-                field_value = {
-                    'raw_value': field_value,
-                    'contributor_name': matches[0].name,
-                    'contributor_id': matches[0].id
-                }
-            else:
-                field_value = {
-                    'raw_value': field_value,
-                    'name': field_value
-                }
+            field_value = get_parent_company_extendedfield_value(field_value)
         elif field == ExtendedField.PRODUCT_TYPE:
-            if isinstance(field_value, str):
-                field_value = field_value.split('|')
-            if not isinstance(field_value, list):
-                raise core_exceptions.ValidationError(
-                    'Expected product_type to be a list or string '
-                    f'but got {field_value}')
-            if len(field_value) > MAX_PRODUCT_TYPE_COUNT:
-                raise core_exceptions.ValidationError(
-                    f'You may submit a maximum of {MAX_PRODUCT_TYPE_COUNT} '
-                    f'product types, not {len(field_value)}')
-            field_value = {
-                'raw_values':  field_value,
-            }
+            field_value = get_product_type_extendedfield_value(field_value)
         elif (field == ExtendedField.FACILITY_TYPE or
               field == ExtendedField.PROCESSING_TYPE):
-            values = field_value
-
-            if isinstance(field_value, str):
-                values = (field_value.split('|') if '|' in field_value
-                          else [field_value])
-
-            deduped_values = list(dict.fromkeys(values))
-            results = []
-
-            for value in deduped_values:
-                result = get_facility_and_processing_type(value)
-                if result[0] is None:
-                    raise ValueError(
-                        f'No match found for {field}. Value must '
-                        'be one of the following: '
-                        f'{", ".join(list(ALL_PROCESSING_TYPES.keys()))}'
-                    )
-                results.append(result)
-
-            field_value = {
-                'raw_values': field_value,
-                'matched_values': results,
-            }
+            field_value = get_facility_and_processing_type_extendfield_value(
+                field, field_value
+            )
 
         ExtendedField.objects.create(
             contributor=contributor,
@@ -142,11 +158,15 @@ def update_extendedfields_for_list_item(list_item):
 
 
 CLAIM_FIELDS = (
-          ('facility_name_english', ExtendedField.NAME),
-          ('facility_address', ExtendedField.ADDRESS),
-          ('facility_workers_count', ExtendedField.NUMBER_OF_WORKERS),
-          ('facility_name_native_language', ExtendedField.NATIVE_LANGUAGE_NAME)
-         )
+    ('facility_name_english', ExtendedField.NAME),
+    ('facility_address', ExtendedField.ADDRESS),
+    ('facility_workers_count', ExtendedField.NUMBER_OF_WORKERS),
+    ('facility_name_native_language', ExtendedField.NATIVE_LANGUAGE_NAME),
+    ('facility_production_types', ExtendedField.PROCESSING_TYPE),
+    ('facility_type', ExtendedField.FACILITY_TYPE),
+    ('parent_company', ExtendedField.PARENT_COMPANY),
+    ('facility_product_types', ExtendedField.PRODUCT_TYPE),
+)
 
 
 def create_extendedfields_for_claim(claim):
@@ -160,6 +180,20 @@ def create_extendedfields_for_claim(claim):
         if field_value is not None and field_value != "":
             if extended_field == ExtendedField.NUMBER_OF_WORKERS:
                 field_value = extract_range_value(field_value)
+            elif extended_field == ExtendedField.PARENT_COMPANY:
+                field_value = get_parent_company_extendedfield_value(
+                    field_value.name
+                )
+            elif extended_field in [ExtendedField.PROCESSING_TYPE,
+                                    ExtendedField.FACILITY_TYPE]:
+                field_value = (
+                    get_facility_and_processing_type_extendfield_value(
+                        extended_field, field_value
+                    )
+                )
+            elif extended_field == ExtendedField.PRODUCT_TYPE:
+                field_value = get_product_type_extendedfield_value(field_value)
+
             try:
                 field = ExtendedField.objects.get(facility_claim=claim,
                                                   field_name=extended_field)
