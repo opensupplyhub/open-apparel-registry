@@ -17,7 +17,7 @@ import VectorTileGridLegend from './VectorTileGridLegend';
 import ZoomToSearchControl from './ZoomToSearchControl';
 import PolygonalSearchControl from './PolygonalSearchControl';
 
-import { COUNTRY_CODES } from '../util/constants';
+import { COUNTRY_CODES, SILVER_MAP_STYLE } from '../util/constants';
 
 import {
     makeFacilityDetailLink,
@@ -67,6 +67,7 @@ function VectorTileFacilitiesMap({
     drawFilterActive,
     boundary,
     isEmbedded,
+    mapStyle,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -138,6 +139,7 @@ function VectorTileFacilitiesMap({
                     VERSION: 3.37,
                 }}
                 type="roadmap"
+                styles={mapStyle === 'silver' ? SILVER_MAP_STYLE : null}
                 continuousWorld
                 minZoom={1}
                 zIndex={1}
@@ -233,7 +235,7 @@ function mapStateToProps({
     },
     vectorTileLayer: { gridColorRamp },
     filters: { boundary },
-    embeddedMap: { embed: isEmbedded },
+    embeddedMap: { embed: isEmbedded, config },
 }) {
     return {
         resetButtonClickCount,
@@ -246,6 +248,7 @@ function mapStateToProps({
         drawFilterActive,
         boundary,
         isEmbedded,
+        mapStyle: config.map_style,
     };
 }
 

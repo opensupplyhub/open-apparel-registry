@@ -34,6 +34,7 @@ export const formatExistingConfig = embedConfig => {
         textSearchLabel: embedConfig.text_search_label
             ? embedConfig.text_search_label
             : DEFAULT_SEARCH_TEXT,
+        mapStyle: embedConfig.map_style ? embedConfig.map_style : 'default',
     };
 };
 
@@ -111,6 +112,7 @@ export const formatEmbedConfigForServer = (embedConfig, embedFields) => ({
     prefer_contributor_name: embedConfig.preferContributorName,
     embed_fields: formatEmbedFieldsForServer(embedFields),
     text_search_label: embedConfig.textSearchLabel,
+    map_style: embedConfig.mapStyle,
 });
 
 export const getErrorMessage = e => e.response.data || e.message;
