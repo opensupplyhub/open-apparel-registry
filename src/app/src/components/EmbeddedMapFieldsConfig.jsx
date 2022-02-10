@@ -15,10 +15,15 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import { withStyles } from '@material-ui/core/styles';
 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import EmbeddedMapSearchLabelConfig from './EmbeddedMapTextSearchLabelConfig';
 
 const styles = {
     section: {
         marginTop: '20px',
+    },
+    sectionDisabled: {
+        marginTop: '20px',
+        opacity: '30%',
     },
     sectionHeader: {
         color: 'rgb(0, 0, 0)',
@@ -104,6 +109,9 @@ function EmbeddedMapFieldsConfig({
     setPreferContributorName,
     classes,
     errors,
+    textSearchLabel,
+    setTextSearchLabel,
+    anyFieldSearchable,
 }) {
     const updateItem = item => {
         const index = fields.findIndex(f => f.columnName === item.columnName);
@@ -380,6 +388,19 @@ function EmbeddedMapFieldsConfig({
                         }
                         label="Use my facility name"
                         classes={{ label: classes.listText }}
+                    />
+                </div>
+                <div
+                    style={
+                        anyFieldSearchable
+                            ? styles.section
+                            : styles.sectionDisabled
+                    }
+                >
+                    <EmbeddedMapSearchLabelConfig
+                        anyFieldSearchable={anyFieldSearchable}
+                        textSearchLabel={textSearchLabel}
+                        setTextSearchLabel={setTextSearchLabel}
                     />
                 </div>
             </div>

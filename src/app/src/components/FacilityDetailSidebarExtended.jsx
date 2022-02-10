@@ -3,6 +3,8 @@ import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
+import uniqBy from 'lodash/uniqBy';
+import partition from 'lodash/partition';
 import includes from 'lodash/includes';
 import filter from 'lodash/filter';
 import moment from 'moment';
@@ -81,33 +83,48 @@ const detailsSidebarStyles = theme =>
         },
     });
 
-const formatAttribution = (createdAt, contributor) =>
-    `${moment(createdAt).format('LL')} by ${contributor}`;
+const formatAttribution = (createdAt, contributor) => {
+    if (contributor) {
+        return `${moment(createdAt).format('LL')} by ${contributor}`;
+    }
+    return moment(createdAt).format('LL');
+};
+
+const formatIfListAndRemoveDuplicates = value =>
+    Array.isArray(value)
+        ? [...new Set(value)].map(v => (
+              <p style={{ margin: 0 }} key={v}>
+                  {v}
+              </p>
+          ))
+        : value;
 
 /* eslint-disable camelcase */
 const formatExtendedField = ({
     value,
     updated_at,
     contributor_name,
-    verified,
+    is_verified,
     id,
     formatValue = v => v,
-}) => ({
-    primary: formatValue(value),
-    secondary: formatAttribution(updated_at, contributor_name),
-    verified,
-    key: id,
-});
-
-const formatOtherValues = (data, fieldName, extendedFieldName) => [
-    ...get(data, `properties.${fieldName}`, []).map(item => ({
-        primary: item,
-        key: item,
-    })),
-    ...get(data, `properties.extended_fields.${extendedFieldName}`, []).map(
-        formatExtendedField,
-    ),
-];
+}) => {
+    const primary = formatIfListAndRemoveDuplicates(formatValue(value));
+    const secondary = formatAttribution(updated_at, contributor_name);
+    return {
+        primary,
+        secondary,
+        embeddedSecondary: formatAttribution(updated_at),
+        isVerified: is_verified,
+        key: id || primary + secondary,
+    };
+};
+const filterByUniqueField = (data, extendedFieldName) =>
+    uniqBy(
+        get(data, `properties.extended_fields.${extendedFieldName}`, []).map(
+            formatExtendedField,
+        ),
+        item => item.primary + item.secondary,
+    );
 
 const FacilityDetailSidebar = ({
     classes,
@@ -125,6 +142,7 @@ const FacilityDetailSidebar = ({
     userHasPendingFacilityClaim,
     facilityIsClaimedByCurrentUser,
     embedContributor,
+    embedConfig,
 }) => {
     useEffect(() => {
         fetchFacility(Number(embed), contributors);
@@ -134,15 +152,52 @@ const FacilityDetailSidebar = ({
     // Clears the selected facility when unmounted
     useEffect(() => () => clearFacility(), []);
 
-    const otherNames = useMemo(
-        () => formatOtherValues(data, 'other_names', 'name'),
-        [data],
-    );
+    const createdFrom = embed
+        ? formatAttribution(get(data, 'properties.created_from.created_at', ''))
+        : formatAttribution(
+              get(data, 'properties.created_from.created_at', ''),
+              get(data, 'properties.created_from.contributor', ''),
+          );
 
-    const otherAddresses = useMemo(
-        () => formatOtherValues(data, 'other_addresses', 'address'),
-        [data],
-    );
+    const [nameField, otherNames] = useMemo(() => {
+        const coreName = get(data, 'properties.name', '');
+        const nameFields = filterByUniqueField(data, 'name');
+        const [defaultNameField, otherNameFields] = partition(
+            nameFields,
+            field => field.primary === coreName,
+        );
+        if (!defaultNameField.length) {
+            return [
+                {
+                    primary: coreName,
+                    secondary: createdFrom,
+                    key: coreName + createdFrom,
+                },
+                otherNameFields,
+            ];
+        }
+        return [defaultNameField[0], otherNameFields];
+    }, [data]);
+
+    const [addressField, otherAddresses] = useMemo(() => {
+        const coreAddress = get(data, 'properties.address', '');
+        const addressFields = filterByUniqueField(data, 'address');
+        const [defaultAddressField, otherAddressFields] = partition(
+            addressFields,
+            field => field.primary === coreAddress,
+        );
+        if (!defaultAddressField.length) {
+            return [
+                {
+                    primary: coreAddress,
+                    secondary: createdFrom,
+                    key: coreAddress + createdFrom,
+                },
+                otherAddressFields,
+            ];
+        }
+        return [defaultAddressField[0], otherAddressFields];
+    }, [data]);
 
     if (fetching) {
         return (
@@ -183,11 +238,6 @@ const FacilityDetailSidebar = ({
         return <Redirect to={`/facilities/${data.id}`} />;
     }
 
-    const createdFrom = formatAttribution(
-        data.properties.created_from.created_at,
-        data.properties.created_from.contributor,
-    );
-
     const oarId = data.properties.oar_id;
     const isClaimed = !!data?.properties?.claim_info;
     const claimFacility = () => push(makeClaimFacilityLink(oarId));
@@ -211,10 +261,39 @@ const FacilityDetailSidebar = ({
         );
     };
 
+    const renderContributorField = ({ label, value }) =>
+        value !== null ? (
+            <FacilityDetailSidebarItem
+                label={label}
+                primary={value}
+                key={label}
+            />
+        ) : null;
+
     const contributorFields = filter(
         get(data, 'properties.contributor_fields', null),
         field => field.value !== null,
     );
+
+    const renderEmbedFields = () => {
+        const fields = embedConfig?.embed_fields?.filter(f => f.visible) || [];
+        return fields.map(({ column_name: fieldName, display_name: label }) => {
+            // If there is an extended field for that name, render and return it
+            const eft = EXTENDED_FIELD_TYPES.find(
+                x => x.fieldName === fieldName,
+            );
+            const ef = eft ? renderExtendedField({ ...eft, label }) : null;
+            if (ef) {
+                return ef;
+            }
+            // Otherwise, try rendering it as a contributor field
+            const cf = contributorFields.find(x => x.fieldName === fieldName);
+            if (cf) {
+                return renderContributorField(cf);
+            }
+            return null;
+        });
+    };
 
     return (
         <div className={classes.root}>
@@ -241,15 +320,18 @@ const FacilityDetailSidebar = ({
                 />
                 <FacilityDetailSidebarItem
                     label="Name"
-                    primary={data.properties.name}
-                    secondary={createdFrom}
+                    {...nameField}
                     additionalContent={otherNames}
                     embed={embed}
                 />
                 <FacilityDetailSidebarItem
                     label="Address"
-                    primary={`${data.properties.address} - ${data.properties.country_name}`}
-                    secondary={createdFrom}
+                    {...addressField}
+                    primary={`${addressField.primary} - ${get(
+                        data,
+                        'properties.country_name',
+                        '',
+                    )}`}
                     additionalContent={otherAddresses}
                     embed={embed}
                 />
@@ -258,22 +340,13 @@ const FacilityDetailSidebar = ({
                 </div>
                 <FacilityDetailSidebarLocation data={data} embed={embed} />
                 <ShowOnly when={!embed}>
-                    {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
-
                     <FacilityDetailSidebarContributors
                         contributors={data.properties.contributors}
                         push={push}
                     />
+                    {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
                 </ShowOnly>
-                <ShowOnly when={embed}>
-                    {contributorFields.map(field => (
-                        <FacilityDetailSidebarItem
-                            label={field.label}
-                            primary={field.value}
-                            key={field.label}
-                        />
-                    ))}
-                </ShowOnly>
+                <ShowOnly when={embed}>{renderEmbedFields()}</ShowOnly>
                 <div className={classes.actions}>
                     <ShowOnly when={!embed}>
                         <FacilityDetailSidebarAction
@@ -361,6 +434,7 @@ function mapStateToProps(
         error,
         embed: !!embed,
         embedContributor: config?.contributor_name,
+        embedConfig: config,
         contributors,
         userHasPendingFacilityClaim,
         facilityIsClaimedByCurrentUser,

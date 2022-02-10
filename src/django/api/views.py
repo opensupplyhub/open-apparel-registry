@@ -92,7 +92,8 @@ from api.models import (FacilityList,
                         EmbedField,
                         NonstandardField,
                         FacilityIndex,
-                        ExtendedField)
+                        ExtendedField,
+                        index_custom_text)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -1243,8 +1244,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             }]
         )
 
-        create_extendedfields_for_single_item(item, request.data)
-
         result = {
             'matches': [],
             'item_id': item.id,
@@ -1252,6 +1251,31 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             'geocoded_address': None,
             'status': item.status,
         }
+
+        try:
+            create_extendedfields_for_single_item(item, request.data)
+        except (core_exceptions.ValidationError, ValueError) as e:
+            error_message = ''
+
+            if isinstance(e, ValueError):
+                error_message = str(e)
+            else:
+                error_message = e.message
+
+            item.status = FacilityListItem.ERROR_PARSING
+            item.processing_results.append({
+                'action': ProcessingAction.PARSE,
+                'started_at': parse_started,
+                'error': True,
+                'message': error_message,
+                'trace': traceback.format_exc(),
+                'finished_at': str(datetime.utcnow()),
+            })
+            item.save()
+            result['status'] = item.status
+            result['message'] = error_message
+            return Response(result,
+                            status=status.HTTP_400_BAD_REQUEST)
 
         geocode_started = str(datetime.utcnow())
         try:
@@ -3826,6 +3850,14 @@ def create_embed_fields(fields_data, embed_config):
     for field_data in fields_data:
         EmbedField.objects.create(embed_config=embed_config, **field_data)
 
+    contributor = embed_config.contributor
+    f_ids = FacilityListItem.objects \
+        .filter(source__contributor=contributor, facility__isnull=False) \
+        .values_list('facility__id', flat=True)
+
+    if len(f_ids) > 0:
+        index_custom_text(f_ids)
+
 
 def get_contributor(request):
     try:
@@ -3928,7 +3960,7 @@ class NonstandardFieldsViewSet(mixins.ListModelMixin,
             contributor=contributor).values_list('column_name', flat=True))
 
         field_list = list(
-            NonstandardField.DEFAULT_FIELDS.keys() | nonstandard_field_set)
+            NonstandardField.EXTENDED_FIELDS.keys() | nonstandard_field_set)
 
         return Response(field_list)
 

@@ -145,8 +145,9 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { resetButtonClickCount },
     },
     vectorTileLayer: { key, gridColorRamp },
+    embeddedMap: { embed },
 }) {
-    const querystring = createQueryStringFromSearchFilters(filters);
+    const querystring = createQueryStringFromSearchFilters(filters, embed);
     const tileCacheKey = createTileCacheKeyWithEncodedFilters(filters, key);
     const tileURL = createTileURLWithQueryString(querystring, tileCacheKey);
 

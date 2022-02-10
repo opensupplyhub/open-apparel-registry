@@ -8,6 +8,7 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates.general import ArrayAgg
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models, transaction
 from django.db.models import (F, Q, ExpressionWrapper)
 from django.db.models.signals import post_save
@@ -23,7 +24,9 @@ from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
 from api.constants import Affiliations, Certifications, FacilitiesQueryParams
-from api.helpers import prefix_a_an
+from api.helpers import (prefix_a_an,
+                         get_single_contributor_field_values,
+                         get_list_contributor_field_values)
 
 
 class ArrayLength(models.Func):
@@ -83,6 +86,33 @@ class EmailAsUsernameUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self._create_user(email, password, **extra_fields)
+
+
+class ContributorManager(models.Manager):
+    TRIGRAM_SIMILARITY_THRESHOLD = 0.5
+
+    def filter_by_name(self, name):
+        """
+        Perform a fuzzy match on contributor name where the match exceeds a
+        confidence trheshold. The results are ordered by similarity, then
+        whether the Contirbutor is verified, then by whether the contributor
+        has active sources.
+
+        False is less than True so we order_by boolean fields in descending
+        order
+        """
+        threshold = ContributorManager.TRIGRAM_SIMILARITY_THRESHOLD
+        matches = self \
+            .annotate(active_source_count=models.Count(
+                Q(source__is_active=True))) \
+            .annotate(
+                has_active_sources=ExpressionWrapper(
+                    Q(active_source_count__gt=0),
+                    models.BooleanField())) \
+            .annotate(similarity=TrigramSimilarity('name', name)) \
+            .filter(similarity__gte=threshold) \
+            .order_by('-similarity', '-is_verified', '-has_active_sources')
+        return matches
 
 
 class Contributor(models.Model):
@@ -188,6 +218,7 @@ class Contributor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    objects = ContributorManager()
     history = HistoricalRecords()
 
     @staticmethod
@@ -638,6 +669,12 @@ class FacilityListItem(PPEMixin):
         help_text='The cleaned address of the facility.')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        if instance.facility is not None:
+            index_custom_text([instance.facility.id])
 
     def __str__(self):
         return 'FacilityListItem {id} - {status}'.format(**self.__dict__)
@@ -1197,6 +1234,10 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.BOUNDARY, None
         )
 
+        embed = params.get(
+            FacilitiesQueryParams.EMBED, None
+        )
+
         # The `ppe` query argument is defined as an optional boolean at the
         # swagger level which is the built in field type option that most
         # closely matches our desired behavior. Our intended use of the
@@ -1210,14 +1251,27 @@ class FacilityManager(models.Manager):
 
         if free_text_query is not None:
             if switch_is_active('ppe'):
-                facilities_qs = facilities_qs \
-                    .filter(Q(name__icontains=free_text_query) |
-                            Q(id__icontains=free_text_query) |
-                            Q(ppe__icontains=free_text_query))
+                if embed is not None:
+                    facilities_qs = facilities_qs \
+                        .filter(Q(name__icontains=free_text_query) |
+                                Q(id__icontains=free_text_query) |
+                                Q(ppe__icontains=free_text_query) |
+                                Q(custom_text__icontains=free_text_query))
+                else:
+                    facilities_qs = facilities_qs \
+                        .filter(Q(name__icontains=free_text_query) |
+                                Q(id__icontains=free_text_query) |
+                                Q(ppe__icontains=free_text_query))
             else:
-                facilities_qs = facilities_qs \
-                    .filter(Q(name__icontains=free_text_query) |
-                            Q(id__icontains=free_text_query))
+                if embed is not None:
+                    facilities_qs = facilities_qs \
+                        .filter(Q(name__icontains=free_text_query) |
+                                Q(id__icontains=free_text_query) |
+                                Q(custom_text__icontains=free_text_query))
+                else:
+                    facilities_qs = facilities_qs \
+                        .filter(Q(name__icontains=free_text_query) |
+                                Q(id__icontains=free_text_query))
 
         # `name` is deprecated in favor of `q`. We keep `name` available for
         # backward compatibility.
@@ -1358,7 +1412,7 @@ class Facility(PPEMixin):
             and item.source.is_public
         }
 
-    def extended_fields(self):
+    def extended_fields(self, contributor_id=None):
         active_items = self.facilitymatch_set \
                            .filter(status__in=[FacilityMatch.AUTOMATIC,
                                                FacilityMatch.CONFIRMED,
@@ -1366,16 +1420,22 @@ class Facility(PPEMixin):
                            .filter(is_active=True) \
                            .values_list('facility_list_item')
 
-        fields = ExtendedField.objects \
-                              .filter(facility=self) \
-                              .annotate(is_from_claim=ExpressionWrapper(
-                                Q(facility_list_item__isnull=True),
-                                output_field=models.BooleanField())) \
-                              .annotate(is_active=ExpressionWrapper(
-                                Q(facility_list_item__in=active_items),
-                                output_field=models.BooleanField())) \
-                              .filter(Q(is_from_claim=True) |
-                                      Q(is_active=True))
+        base_qs = ExtendedField.objects \
+                               .filter(facility=self)
+
+        if contributor_id is not None:
+            base_qs = base_qs.filter(contributor_id=contributor_id)
+
+        has_active_claim = Q(facility_claim__status=FacilityClaim.APPROVED)
+        fields = base_qs \
+            .annotate(has_active_claim=ExpressionWrapper(
+              has_active_claim,
+              output_field=models.BooleanField())) \
+            .annotate(is_active=ExpressionWrapper(
+                Q(facility_list_item__in=active_items),
+                output_field=models.BooleanField())) \
+            .filter(Q(has_active_claim=True) |
+                    Q(is_active=True))
 
         return fields
 
@@ -2180,11 +2240,12 @@ class NonstandardField(models.Model):
 
     # Keys in this set must be kept in sync with
     # defaultNonstandardFieldLabels in app/src/app/util/embeddedMap.js
-    DEFAULT_FIELDS = {
+    EXTENDED_FIELDS = {
         'parent_company': 'Parent Company',
-        'type_of_product': 'Type of Product',
+        'product_type': 'Product Type',
         'number_of_workers': 'Number of Workers',
-        'type_of_facility': 'Type of Facility',
+        'facility_type': 'Facility Type',
+        'processing_type': 'Processing Type',
     }
 
     contributor = models.ForeignKey(
@@ -2223,6 +2284,8 @@ class ExtendedField(models.Model):
     PROCESSING_TYPE = 'processing_type'
     PRODUCT_TYPE = 'product_type'
     PARENT_COMPANY = 'parent_company'
+    FACILITY_TYPE = 'facility_type'
+    PROCESSING_TYPE = 'processing_type'
 
     FIELD_CHOICES = (
         (COUNTRY, COUNTRY),
@@ -2233,7 +2296,9 @@ class ExtendedField(models.Model):
         (FACILITY_TYPE, FACILITY_TYPE),
         (PROCESSING_TYPE, PROCESSING_TYPE),
         (PRODUCT_TYPE, PRODUCT_TYPE),
-        (PARENT_COMPANY, PARENT_COMPANY))
+        (PARENT_COMPANY, PARENT_COMPANY),
+        (FACILITY_TYPE, FACILITY_TYPE),
+        (PROCESSING_TYPE, PROCESSING_TYPE))
 
     contributor = models.ForeignKey(
         'Contributor',
@@ -2260,7 +2325,7 @@ class ExtendedField(models.Model):
         blank=True,
         on_delete=models.PROTECT,
         help_text='The claim from which the field was obtained.')
-    verified = models.BooleanField(
+    is_verified = models.BooleanField(
         default=False,
         null=False,
         help_text='Whether or not this field has been verified.'
@@ -2283,6 +2348,73 @@ class ExtendedField(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
+
+
+@transaction.atomic
+def index_custom_text(facility_ids=list):
+    # If passed an empty array, update all facilities (where applicable)
+    if len(facility_ids) == 0:
+        print('Indexing custom text for all facilities...')
+        facility_ids = Facility.objects.all().values_list('id', flat=True)
+
+    # Get a list of searchable embed fields
+    fields_filter = (Q(searchable=True) & Q(visible=True)
+                     & Q(embed_config__isnull=False))
+    fields = EmbedField.objects.filter(fields_filter)
+
+    # Get a list of contributors with searchable fields
+    contributor_ids = fields.values_list('embed_config__contributor',
+                                         flat=True).distinct()
+
+    # Get a list of active FacilityListItems for the given facilities.
+    # Only include list items where the contributors have searchable fields.
+    # Select the most recent item for each facility for each contributor.
+    items_filter = (Q(facility_id__in=facility_ids)
+                    & Q(source__contributor_id__in=contributor_ids)
+                    & Q(source__is_active=True)
+                    & Q(facilitymatch__is_active=True))
+    items = FacilityListItem.objects.filter(items_filter) \
+        .distinct('facility__id', 'source__contributor__id') \
+        .order_by('facility__id', 'source__contributor__id', '-created_at') \
+        .iterator()
+
+    custom_fields = defaultdict(str)
+    contributor_fields = defaultdict(list)
+
+    for item in items:
+        contributor_id = item.source.contributor.id
+
+        # Calculate a list of searchable fields for the item's contributor
+        if len(contributor_fields[contributor_id]) == 0:
+            contributor_fields[contributor_id] = fields.filter(
+                    Q(embed_config__contributor__id=contributor_id)) \
+                    .values_list('column_name', flat=True)
+
+        formatted_fields = [{'value': '', 'column_name': f} for f
+                            in contributor_fields[contributor_id]]
+
+        # Get the field values from the item for all of the submitting
+        # contributor's searchable fields
+        if item.source.source_type == 'SINGLE':
+            item_fields = get_single_contributor_field_values(
+                                    item,
+                                    formatted_fields
+                                )
+        else:
+            item_fields = get_list_contributor_field_values(
+                                    item,
+                                    formatted_fields
+                                 )
+        item_fields_string = ''.join([f['value'] for f in item_fields])
+
+        # Add the values to the dictionary entry for the item's facility
+        custom_fields[item.facility.id] += item_fields_string
+
+    facilities = FacilityIndex.objects.filter(id__in=facility_ids) \
+                                      .iterator()
+    for facility in facilities:
+        facility.custom_text = custom_fields.get(facility.id, '')
+        facility.save()
 
 
 @transaction.atomic
@@ -2327,9 +2459,11 @@ def index_facilities(facility_ids=list):
 
     FacilityIndex.objects.filter(id__in=facility_ids).delete()
     FacilityIndex.objects.bulk_create([FacilityIndex(**kv) for kv in data])
+    index_custom_text(facility_ids)
 
 
 post_save.connect(Facility.post_save, sender=Facility)
 post_save.connect(Source.post_save, sender=Source)
 post_save.connect(FacilityMatch.post_save, sender=FacilityMatch)
 post_save.connect(Contributor.post_save, sender=Contributor)
+post_save.connect(FacilityListItem.post_save, sender=FacilityListItem)

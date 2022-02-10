@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+NOTE: Releases should be deployed to production until after 1:00 PM Eastern timeto not conflict with demonstrations or webinars.
+
 - [ ] Start a new release branch:
 ```bash
 $ git flow release start X.Y.Z
@@ -23,6 +25,7 @@ $ git commit -m "X.Y.Z"
 $ git flow release publish X.Y.Z
 ```
 - [ ] Test the release branch on staging
+- [ ] Make sure that the OAR team is not doing a demo or webinar on production
 - [ ] Start a new [release pipeline job](http://civicci01.internal.azavea.com/view/oar/job/Open%20Apparel%20Registry%20Release%20Pipeline/build?delay=0sec) with the SHA (see command below) of `release/X.Y.Z` that was tested on staging
 ```bash
 $ git rev-parse --short HEAD
@@ -35,5 +38,5 @@ $ ./scripts/manage ecsmanage -e production migrate
     - When prompted, keep default commit messages
     - Use `X.Y.Z` as the tag message
 ```bash
-$ git flow release finish -p X.Y.Z 
+$ git flow release finish -p X.Y.Z
 ```

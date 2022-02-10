@@ -1,6 +1,6 @@
 import sortBy from 'lodash/sortBy';
 
-import { OARFont } from './constants';
+import { OARFont, DEFAULT_SEARCH_TEXT } from './constants';
 
 export const DEFAULT_WIDTH = '1000';
 export const DEFAULT_HEIGHT = '800';
@@ -31,7 +31,9 @@ export const formatExistingConfig = embedConfig => {
         font: embedConfig.font ? embedConfig.font : OARFont,
         height: getHeight(embedConfig),
         preferContributorName: embedConfig.prefer_contributor_name,
-        textSearchLabel: embedConfig.text_search_label,
+        textSearchLabel: embedConfig.text_search_label
+            ? embedConfig.text_search_label
+            : DEFAULT_SEARCH_TEXT,
     };
 };
 
@@ -47,12 +49,13 @@ export const formatExistingFields = (fields = []) =>
 const doesExist = (field, existingFields) =>
     existingFields.some(f => f.columnName === field);
 
-// Keys in this object must be kept in sync with the NonstandardField.DEFAULT_FIELDS in django/api/models.py
+// Keys in this object must be kept in sync with the NonstandardField.EXENDED_FIELDS in django/api/models.py
 const defaultNonstandardFieldLabels = {
     parent_company: 'Parent Company',
-    type_of_product: 'Type of Product',
+    product_type: 'Product Type',
     number_of_workers: 'Number of Workers',
-    type_of_facility: 'Type of Facility',
+    facility_type: 'Facility Type',
+    processing_type: 'Processing Type',
 };
 
 const defaultFormatForNonstandardField = field => ({

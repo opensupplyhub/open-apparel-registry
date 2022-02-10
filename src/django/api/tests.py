@@ -33,7 +33,9 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         RequestLog, DownloadLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
-                        FacilityActivityReport, ExtendedField)
+                        FacilityActivityReport, ExtendedField, FacilityIndex,
+                        ContributorManager, index_custom_text)
+
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import match_facility_list_items, GazetteerCache
 from api.processing import (parse_facility_list_item,
@@ -50,6 +52,15 @@ from api.serializers import (ApprovedFacilityClaimSerializer,
                              FacilityListSerializer)
 from api.limits import check_api_limits, get_end_of_year
 from api.close_list import close_list
+from api.facility_type_processing_type import (
+    FACILITY_TYPE, PROCESSING_TYPE, EXACT_MATCH, ALIAS_MATCH,
+    FUZZY_MATCH, ALL_PROCESSING_TYPES, ALL_FACILITY_TYPES,
+    PROCESSING_TYPES_TO_FACILITY_TYPES, ASSEMBLY,
+    RAW_MATERIAL_PROCESSING_OR_PRODUCTION,
+    WET_ROLLER_PRINTING,
+    get_facility_and_processing_type
+)
+from api.extended_fields import MAX_PRODUCT_TYPE_COUNT
 
 
 class FacilityListCreateTest(APITestCase):
@@ -529,8 +540,9 @@ class GeocodingUtilsTest(TestCase):
         )
 
     def test_geocoded_address_data_is_formatted_correctly(self):
+        data = parsed_city_hall_data['full_response']
         formatted_data = format_geocoded_address_data(
-            parsed_city_hall_data['full_response'])
+            data, data['results'][0])
         self.assertEqual(formatted_data, parsed_city_hall_data)
 
 
@@ -562,6 +574,142 @@ geocoding_data = {'results': [{'address_components': [
     'place_id': 'ChIJ8cV_ZH_IxokRA_ETpdB5R3Y',
     'types': ['premise']}],
     'status': 'OK'}
+
+geocoding_data_no_country = {
+   "results": [
+      {
+         "address_components": [
+            {
+               "long_name": "4WHM+QCX",
+               "short_name": "4WHM+QCX",
+               "types": ["plus_code"]
+            },
+            {
+               "long_name": "Famagusta",
+               "short_name": "Famagusta",
+               "types": ["locality", "political"]
+            },
+            {
+               "long_name": "99450",
+               "short_name": "99450",
+               "types": ["postal_code"]
+            }
+         ],
+         "formatted_address": "4WHM+QCX, Famagusta 99450",
+         "geometry": {
+            "location": {"lat": 35.1294866, "lng": 33.9336133},
+            "location_type": "GEOMETRIC_CENTER",
+            "viewport": {
+               "northeast": {
+                  "lat": 35.1308355802915,
+                  "lng": 33.9349622802915
+               },
+               "southwest": {
+                  "lat": 35.1281376197085,
+                  "lng": 33.9322643197085
+               }
+            }
+         },
+         "partial_match": True,
+         "place_id": "ChIJDzTqezLI3xQRW5kjGEGLRzA",
+         "types": ["establishment", "point_of_interest"]
+      }
+   ],
+   "status": "OK"
+}
+
+geocoding_data_second_country = {
+   "results": [
+      {
+         "address_components": [
+            {
+               "long_name": "Noor Bagh",
+               "short_name": "Noor Bagh",
+               "types": ["political", "sublocality", "sublocality_level_1"]
+            },
+            {
+               "long_name": "Srinagar",
+               "short_name": "Srinagar",
+               "types": ["locality", "political"]
+            },
+            {
+               "long_name": "190009",
+               "short_name": "190009",
+               "types": ["postal_code"]
+            }
+         ],
+         "formatted_address": "Noor Bagh, Srinagar 190009",
+         "geometry": {
+            "bounds": {
+               "northeast": {"lat": 34.07490560000001, "lng": 74.8043599},
+               "southwest": {"lat": 34.0734423, "lng": 74.8023449}
+            },
+            "location": {"lat": 34.0742387, "lng": 74.8035549},
+            "location_type": "APPROXIMATE",
+            "viewport": {
+               "northeast": {
+                  "lat": 34.07552293029151,
+                  "lng": 74.8047013802915
+               },
+               "southwest": {
+                  "lat": 34.07282496970851,
+                  "lng": 74.80200341970848
+               }
+            }
+         },
+         "partial_match": True,
+         "place_id": "ChIJmQlkN-2P4TgR6u3glWeOMTE",
+         "types": ["political", "sublocality", "sublocality_level_1"]
+      },
+      {
+         "address_components": [
+            {
+               "long_name": "Kaliakair",
+               "short_name": "Kaliakair",
+               "types": ["locality", "political"]
+            },
+            {
+               "long_name": "Gazipur District",
+               "short_name": "Gazipur District",
+               "types": ["administrative_area_level_2", "political"]
+            },
+            {
+               "long_name": "Dhaka Division",
+               "short_name": "Dhaka Division",
+               "types": ["administrative_area_level_1", "political"]
+            },
+            {
+               "long_name": "Bangladesh",
+               "short_name": "BD",
+               "types": ["country", "political"]
+            }
+         ],
+         "formatted_address": "Kaliakair, Bangladesh",
+         "geometry": {
+            "bounds": {
+               "northeast": {"lat": 24.0840819, "lng": 90.2365494},
+               "southwest": {"lat": 24.0535966, "lng": 90.2030754}
+            },
+            "location": {"lat": 24.0694528, "lng": 90.2221213},
+            "location_type": "APPROXIMATE",
+            "viewport": {
+               "northeast": {
+                  "lat": 24.0840819,
+                  "lng": 90.2365494
+               },
+               "southwest": {
+                  "lat": 24.0535966,
+                  "lng": 90.2030754
+               }
+            }
+         },
+         "partial_match":  True,
+         "place_id": "ChIJTfs3ierjVTcRysKYnbOKmZM",
+         "types": ["locality", "political"]
+      }
+   ],
+   "status": "OK"
+}
 
 
 class GeocodingTest(TestCase):
@@ -595,8 +743,195 @@ class GeocodingTest(TestCase):
 
         self.assertEqual(
             cm.exception.args,
-            ("Geocoding results did not match provided country code.",)
+            ("Geocoding results of US did not match " +
+             "provided country code of IN.",)
         )
+
+    @patch('api.geocoding.requests.get')
+    def test_accepts_inexact_address(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data_no_country
+
+        expected_result = geocoding_data_no_country['results'][0]
+        expected_point = expected_result["geometry"]["location"]
+        expected_address = expected_result["formatted_address"]
+
+        results = geocode_address('PortİSBİ Serbest Bölge Office:4, ' +
+                                  'Gazimağusa, North Cyprus, 99450',
+                                  'TR')
+        self.assertEqual(expected_point, results["geocoded_point"])
+        self.assertEqual(expected_address, results['geocoded_address'])
+
+    @patch('api.geocoding.requests.get')
+    def test_accepts_alternate_address(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data_second_country
+
+        expected_result = geocoding_data_second_country['results'][1]
+        expected_point = expected_result["geometry"]["location"]
+        expected_address = expected_result["formatted_address"]
+
+        results = geocode_address('Noorbagh, Kaliakoir Gazipur Dhaka 1704',
+                                  'BD')
+        self.assertEqual(expected_point, results["geocoded_point"])
+        self.assertEqual(expected_address, results['geocoded_address'])
+
+
+class FacilityAndProcessingTypeTest(TestCase):
+    def test_exact_processing_type_match(self):
+        processing_type_input = 'assembly'
+        expected_output = (
+            PROCESSING_TYPE, EXACT_MATCH,
+            PROCESSING_TYPES_TO_FACILITY_TYPES[
+                ALL_PROCESSING_TYPES[ASSEMBLY]
+            ],
+            ALL_PROCESSING_TYPES[ASSEMBLY]
+        )
+        output = get_facility_and_processing_type(processing_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_exact_facility_type_match(self):
+        facility_type_input = 'raw material processing or production'
+        facility_type_value = ALL_FACILITY_TYPES[facility_type_input]
+        expected_output = (
+            FACILITY_TYPE, EXACT_MATCH,
+            facility_type_value,
+            facility_type_value,
+        )
+        output = get_facility_and_processing_type(facility_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_alias_processing_type_match(self):
+        processing_type_input = 'wet printing'
+        expected_output = (
+            PROCESSING_TYPE, ALIAS_MATCH,
+            PROCESSING_TYPES_TO_FACILITY_TYPES[
+                ALL_PROCESSING_TYPES[WET_ROLLER_PRINTING]
+            ],
+            ALL_PROCESSING_TYPES[WET_ROLLER_PRINTING]
+        )
+        output = get_facility_and_processing_type(processing_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_fuzzy_processing_type_match(self):
+        processing_type_input = 'asembley'
+        expected_output = (
+            PROCESSING_TYPE, FUZZY_MATCH,
+            PROCESSING_TYPES_TO_FACILITY_TYPES[
+                ALL_PROCESSING_TYPES[ASSEMBLY]
+            ],
+            ALL_PROCESSING_TYPES[ASSEMBLY]
+        )
+        output = get_facility_and_processing_type(processing_type_input)
+        self.assertEqual(output, expected_output)
+
+    def test_fuzzy_facility_type_match(self):
+        facility_type_input = 'raw mater process'
+        facility_type_value = ALL_FACILITY_TYPES[
+            RAW_MATERIAL_PROCESSING_OR_PRODUCTION
+        ]
+        expected_output = (
+            FACILITY_TYPE, FUZZY_MATCH,
+            facility_type_value,
+            facility_type_value,
+        )
+        output = get_facility_and_processing_type(facility_type_input)
+        self.assertEqual(output, expected_output)
+
+
+listitem_geocode_data = {
+   "results": [
+      {
+         "address_components": [
+            {
+               "long_name": "Linjiacunzhen",
+               "short_name": "Linjiacunzhen",
+               "types": ["political", "sublocality", "sublocality_level_2"]
+            },
+            {
+               "long_name": "Zhucheng",
+               "short_name": "Zhucheng",
+               "types": ["political", "sublocality", "sublocality_level_1"]
+            },
+            {
+               "long_name": "Weifang",
+               "short_name": "Weifang",
+               "types": ["locality", "political"]
+            },
+            {
+               "long_name": "Shandong",
+               "short_name": "Shandong",
+               "types": ["administrative_area_level_1", "political"]
+            },
+            {
+               "long_name": "China",
+               "short_name": "CN",
+               "types": ["country", "political"]
+            },
+            {
+               "long_name": "262232",
+               "short_name": "262232",
+               "types": ["postal_code"]
+            }
+         ],
+         "formatted_address": "Linjiacunzhen, Zhucheng, " +
+                              "Weifang, Shandong, China, 262232",
+         "geometry": {
+            "location": {"lat": 35.994813, "lng": 119.65418},
+            "location_type": "APPROXIMATE",
+            "viewport": {
+               "northeast": {"lat": 36.0038401, "lng": 119.6701874},
+               "southwest": {"lat": 35.9857849, "lng": 119.6381726}
+            }
+         },
+         "partial_match": True,
+         "place_id": "ChIJV5SPiTEkvjUR7ErhmnSRTR8",
+         "types": ["political", "sublocality", "sublocality_level_2"]
+      },
+      {
+         "address_components": [
+            {
+               "long_name": "396210",
+               "short_name": "396210",
+               "types": ["postal_code"]
+            },
+            {
+               "long_name": "Daman",
+               "short_name": "Daman",
+               "types": ["administrative_area_level_2", "political"]
+            },
+            {
+               "long_name": "Dadra and Nagar Haveli and Daman and Diu",
+               "short_name": "DH",
+               "types": ["administrative_area_level_1", "political"]
+            },
+            {
+               "long_name": "India",
+               "short_name": "IN",
+               "types": ["country", "political"]
+            }
+         ],
+         "formatted_address":  "Dadra and Nagar Haveli and Daman and " +
+                               "Diu 396210, India",
+         "geometry": {
+            "bounds": {
+               "northeast": {"lat": 20.4696847, "lng": 72.8751228},
+               "southwest": {"lat": 20.4051972, "lng": 72.82805549999999}
+            },
+            "location": {"lat": 20.4346424, "lng": 72.8456399},
+            "location_type": "APPROXIMATE",
+            "viewport": {
+               "northeast": {"lat": 20.4696847, "lng": 72.8751228},
+               "southwest": {"lat": 20.4051972, "lng": 72.82805549999999}
+            }
+         },
+         "partial_match": True,
+         "place_id": "ChIJ8d4EeIra4DsR3xkUSZh_-ng",
+         "types": ["postal_code"]
+      }
+   ],
+   "status": "OK"
+}
 
 
 class FacilityListItemGeocodingTest(ProcessingTestCase):
@@ -626,7 +961,10 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
             ('Items to be geocoded must be in the PARSED status',),
         )
 
-    def test_incorrect_country_code_has_error_status(self):
+    @patch('api.geocoding.requests.get')
+    def test_nested_correct_country_code_succeeds(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = listitem_geocode_data
         facility_list = FacilityList.objects.create(
             header='address,country,name')
         source = Source.objects.create(
@@ -635,6 +973,30 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         item = FacilityListItem(
             raw_data='"Linjiacun Town, Zhucheng City Weifang, Daman, ' +
                      'Daman, 396210",IN,Shirts!',
+            source=source
+        )
+        parse_facility_list_item(item)
+        geocode_facility_list_item(item)
+
+        expected_result = listitem_geocode_data['results'][1]
+        expected_address = expected_result['formatted_address']
+
+        self.assertEqual(item.status, FacilityListItem.GEOCODED)
+        self.assertEqual(item.geocoded_address, expected_address)
+        self.assertIsInstance(item.geocoded_point, Point)
+
+    @patch('api.geocoding.requests.get')
+    def test_incorrect_country_code_has_error_status(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = listitem_geocode_data
+        facility_list = FacilityList.objects.create(
+            header='address,country,name')
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        item = FacilityListItem(
+            raw_data='"Linjiacun Town, Zhucheng City Weifang, Daman, ' +
+                     'Daman, 396210",BD,Shirts!',
             source=source
         )
         parse_facility_list_item(item)
@@ -3203,7 +3565,7 @@ class FacilityMergeTest(APITestCase):
                 contributor=self.contributor_1,
                 facility=self.facility_1,
                 facility_list_item=self.list_item_1,
-                verified=True
+                is_verified=True
             )
 
         self.extended_field_2 = ExtendedField \
@@ -3496,7 +3858,7 @@ class FacilitySplitTest(APITestCase):
                 contributor=self.contributor_one,
                 facility=self.facility_one,
                 facility_list_item=self.list_item_one,
-                verified=True
+                is_verified=True
             )
 
         self.extended_field_two = ExtendedField \
@@ -4364,6 +4726,16 @@ class FacilityAPITestCaseBase(APITestCase):
         self.list_item.facility = self.facility
         self.list_item.save()
 
+    def join_group_and_login(self):
+        self.client.logout()
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_FACILITY,
+        )
+        self.user.groups.set([group.id])
+        self.user.save()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
 
 class SearchByList(APITestCase):
     def setUp(self):
@@ -4597,7 +4969,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                 contributor=self.contributor,
                 facility=self.facility,
                 facility_list_item=self.list_item,
-                verified=True
+                is_verified=True
             )
 
         self.extended_field_two = ExtendedField \
@@ -4767,7 +5139,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         self.assertEqual(len(fields), 3)
         self.assertEqual(fields[0]['value'], 'name one')
 
-        self.extended_field_one.verified = False
+        self.extended_field_one.is_verified = False
         self.extended_field_one.save()
 
         response = self.client.get(
@@ -5900,16 +6272,6 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
             'address': '123 Main St, Anywhereville, PA',
             'extra_1': 'Extra data'
         }
-
-    def join_group_and_login(self):
-        self.client.logout()
-        group = auth.models.Group.objects.get(
-            name=FeatureGroups.CAN_SUBMIT_FACILITY,
-        )
-        self.user.groups.set([group.id])
-        self.user.save()
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
 
     def test_unauthenticated_receives_401(self):
         self.client.logout()
@@ -7088,7 +7450,7 @@ class NonstandardFieldsApiTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
-        self.assertEquals(6, len(content))
+        self.assertEquals(7, len(content))
         self.assertIn('extra_1', content)
         self.assertIn('extra_2', content)
         self.assertIn('parent_company', content)
@@ -7099,7 +7461,7 @@ class NonstandardFieldsApiTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
-        self.assertEquals(4, len(content))
+        self.assertEquals(5, len(content))
         self.assertNotIn('extra_1', content)
         self.assertNotIn('extra_2', content)
         self.assertIn('parent_company', content)
@@ -7122,19 +7484,21 @@ class ContributorFieldsApiTest(APITestCase):
                     name='test contributor 1',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE,
                     embed_config=self.embed_config)
-        EmbedField.objects.create(
+        self.embed_one = EmbedField.objects.create(
             embed_config=self.embed_config,
             order=0,
             column_name='extra_1',
             display_name='ExtraOne',
-            visible=True
+            visible=True,
+            searchable=True
         )
-        EmbedField.objects.create(
+        self.embed_two = EmbedField.objects.create(
             embed_config=self.embed_config,
             order=1,
             column_name='extra_2',
             display_name='ExtraTwo',
-            visible=True
+            visible=True,
+            searchable=True
         )
 
         self.list = FacilityList \
@@ -7273,3 +7637,386 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEquals(None, field['value'])
         self.assertEquals('ExtraTwo', field_two['label'])
         self.assertEquals(None, field_two['value'])
+
+    def test_custom_text(self):
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertEquals(2, len(indexes))
+        self.assertIn('data one', indexes)
+        self.assertIn('data two', indexes)
+
+    def test_custom_text_excludes_unsearchable(self):
+        self.embed_two.searchable = False
+        self.embed_two.save()
+
+        # Run indexing manually because we don't use a post_save signal for
+        # embed fields (since they are deleted and recreated each time the
+        # config is updated, it creates a lot of overhead) and instead update
+        # the index directly in the embed config update views
+        f_ids = Facility.objects \
+            .filter(facilitylistitem__source__contributor=self.contributor)\
+            .values_list('id', flat=True)
+        if len(f_ids) > 0:
+            index_custom_text(f_ids)
+
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertIn('data one', indexes)
+        self.assertNotIn('data two', indexes)
+
+    def test_custom_text_excludes_inactive(self):
+        self.match_one.is_active = False
+        self.match_one.save()
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertNotIn('data one', indexes)
+        self.assertIn('data two', indexes)
+
+    def test_custom_text_uses_most_recent(self):
+        new_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    raw_data=("{'country': 'US', 'name': 'Item'," +
+                              "'address': 'Address'," +
+                              " 'extra_2': 'data three'}"),
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.api_source)
+        new_item.facility = self.facility_two
+        new_item.save()
+        FacilityMatch.objects.create(
+            facility_list_item=new_item,
+            facility=self.facility_two,
+            is_active=True,
+            results={}
+        )
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertIn('data one', indexes)
+        self.assertNotIn('data two', indexes)
+        self.assertIn('data three', indexes)
+
+    def test_custom_text_uses_field_contributor(self):
+        user_two = User.objects.create(email='test2@example.com')
+        contributor_two = Contributor \
+            .objects \
+            .create(admin=user_two,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        api_source_two = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=contributor_two)
+
+        new_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    raw_data=("{'country': 'US', 'name': 'Item'," +
+                              "'address': 'Address'," +
+                              " 'extra_2': 'data three'}"),
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=api_source_two)
+        new_item.facility = self.facility_two
+        new_item.save()
+        FacilityMatch.objects.create(
+            facility_list_item=new_item,
+            facility=self.facility_two,
+            is_active=True,
+            results={}
+        )
+
+        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
+        self.assertIn('data one', indexes)
+        self.assertIn('data two', indexes)
+        self.assertNotIn('data three', indexes)
+
+
+class ContributorManagerTest(TestCase):
+    fixtures = ['users', 'contributors']
+
+    def test_filter_by_name(self):
+        matches = Contributor.objects.filter_by_name('factory a')
+        self.assertGreater(matches.count(), 0)
+        self.assertEquals(1.0, matches[0].similarity)
+
+        matches = Contributor.objects.filter_by_name('factory')
+        self.assertGreater(matches.count(), 0)
+        self.assertLess(matches[0].similarity, 1.0)
+        self.assertGreater(matches[0].similarity,
+                           ContributorManager.TRIGRAM_SIMILARITY_THRESHOLD)
+
+    def test_filter_by_name_verified(self):
+        user1 = User.objects.create(email='test1@test.com')
+        user2 = User.objects.create(email='test2@test.com')
+        c1 = Contributor \
+            .objects \
+            .create(admin=user1,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+        c2 = Contributor \
+            .objects \
+            .create(admin=user2,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # When the names are the same and neither is verified than the second
+        # contributor happens to sort first
+        self.assertEqual(c2, matches[0])
+
+        c1.is_verified = True
+        c1.save()
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # Marking c1 as verified forces it to sort first
+        self.assertEqual(c1, matches[0])
+
+    def test_filter_by_name_source(self):
+        user1 = User.objects.create(email='test1@test.com')
+        user2 = User.objects.create(email='test2@test.com')
+        c1 = Contributor \
+            .objects \
+            .create(admin=user1,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+        c2 = Contributor \
+            .objects \
+            .create(admin=user2,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # When the names are the same and neither is verified than the second
+        # contributor happens to sort first
+        self.assertEqual(c2, matches[0])
+
+        Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=c1)
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # An active source forces it to sort first
+        self.assertEqual(c1, matches[0])
+
+    def test_filter_by_name_verified_and_source(self):
+        user1 = User.objects.create(email='test1@test.com')
+        user2 = User.objects.create(email='test2@test.com')
+        c1 = Contributor \
+            .objects \
+            .create(admin=user1,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+        c2 = Contributor \
+            .objects \
+            .create(admin=user2,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=c1)
+
+        c2.is_verified = True
+        c2.save()
+
+        matches = Contributor.objects.filter_by_name('TESTING')
+        self.assertEqual(2, matches.count())
+        # A verified contributor sorts before one with a source
+        self.assertEqual(c2, matches[0])
+
+
+class ParentCompanyTestCase(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(ParentCompanyTestCase, self).setUp()
+        self.url = reverse('facility-list')
+
+    def test_submit_parent_company_no_match(self):
+        self.join_group_and_login()
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'A random value'
+        })
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PARENT_COMPANY, ef.field_name)
+        self.assertEqual({
+            'raw_value': 'A random value',
+            'name': 'A random value'
+        }, ef.value)
+
+    def test_submit_parent_company_fuzzy_match(self):
+        self.join_group_and_login()
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PARENT_COMPANY, ef.field_name)
+        self.assertEqual({
+            'raw_value': 'TEST CNTRIBUTOR',
+            'contributor_name': self.contributor.name,
+            'contributor_id': self.contributor.id
+        }, ef.value)
+
+
+class ProductTypeTestCase(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(ProductTypeTestCase, self).setUp()
+        self.url = reverse('facility-list')
+
+    def test_array(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': ['a', 'b']
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': ['a', 'b']
+        }, ef.value)
+
+    def test_string(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': 'a|b'
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': ['a', 'b']
+        }, ef.value)
+
+    def test_list_validation(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': {}
+        }), content_type='application/json')
+        self.assertEqual(0, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)
+
+    def test_max_count(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': [str(a) for a in range(MAX_PRODUCT_TYPE_COUNT)]
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': [str(a) for a in range(MAX_PRODUCT_TYPE_COUNT + 1)]
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)
+
+
+class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(FacilityAndProcessingTypeAPITest, self).setUp()
+        self.url = reverse('facility-list')
+
+    def test_single_processing_value(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'processing_type': ['cutting']
+        }), content_type='application/json')
+        self.assertEqual(2, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.FACILITY_TYPE, ef.field_name)
+        self.assertEqual(
+            {'matched_values': [
+                [
+                    'PROCESSING_TYPE',
+                    'EXACT',
+                    'Final Product Assembly',
+                    'Cutting'
+                ]
+            ], 'raw_values': ['cutting']}, ef.value)
+        ef = ExtendedField.objects.last()
+        self.assertEqual(ExtendedField.PROCESSING_TYPE, ef.field_name)
+        self.assertEqual(
+            {'matched_values': [
+                [
+                    'PROCESSING_TYPE',
+                    'EXACT',
+                    'Final Product Assembly',
+                    'Cutting'
+                ]
+            ], 'raw_values': ['cutting']}, ef.value)
+
+    def test_multiple_facility_values(self):
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'facility_type': ['office hq', 'final product assembly']
+        }), content_type='application/json')
+        self.assertEqual(2, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.FACILITY_TYPE, ef.field_name)
+        self.assertEqual(
+            {'matched_values': [
+                [
+                    'FACILITY_TYPE',
+                    'EXACT',
+                    'Office / HQ',
+                    'Office / HQ'
+                ],
+                [
+                    'FACILITY_TYPE',
+                    'EXACT',
+                    'Final Product Assembly',
+                    'Final Product Assembly'
+                ]
+            ], 'raw_values': ['office hq', 'final product assembly']},
+            ef.value)
+
+    def test_invalid_value(self):
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'processing_type': 'sadfjhasdf'
+        }), content_type='application/json')
+        self.assertEqual(0, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)

@@ -19,12 +19,43 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [56] 2022-02-10
+
+### Added
+
+- Add facility/processing type taxonomy and look-up function [#1601](https://github.com/open-apparel-registry/open-apparel-registry/pull/1601)
+- Create product type extended field [#1605](https://github.com/open-apparel-registry/open-apparel-registry/pull/1605)
+- Index custom text [#1607](https://github.com/open-apparel-registry/open-apparel-registry/pull/1607)
+- Create extended field values for processing/facility type [#1616](https://github.com/open-apparel-registry/open-apparel-registry/pull/1616)
+- Add batch_process tool [#1625](https://github.com/open-apparel-registry/open-apparel-registry/pull/1625)
+- Display processing and facility type [#1624](https://github.com/open-apparel-registry/open-apparel-registry/pull/1624)
+- Search custom_text in embedded map [#1629](https://github.com/open-apparel-registry/open-apparel-registry/pull/1629)
+
+### Changed
+
+- Update embed facility detail rendering to support extended fields [#1627](https://github.com/open-apparel-registry/open-apparel-registry/pull/1627)
+- Update field handling [#1630](https://github.com/open-apparel-registry/open-apparel-registry/pull/1630)
+- Add an item to the release checklist to avoid deploys during demos [#1633](https://github.com/open-apparel-registry/open-apparel-registry/pull/1633)
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Handle country code geocoding errors [#1619](https://github.com/open-apparel-registry/open-apparel-registry/pull/1619)
+- Fix custom text processing [#1631](https://github.com/open-apparel-registry/open-apparel-registry/pull/1631)
+
+### Security
+
 ## [55] 2022-01-27
 
 ### Added
 
 - Add extended field handling to facility details [#1593](https://github.com/open-apparel-registry/open-apparel-registry/pull/1593)
 - Add searchability to embed config [#1598](https://github.com/open-apparel-registry/open-apparel-registry/pull/1598)
+- Create parent company extended fields [#1602](https://github.com/open-apparel-registry/open-apparel-registry/pull/1602)
+- Edit search label in embed config [#1604](https://github.com/open-apparel-registry/open-apparel-registry/pull/1604)
 
 ### Changed
 
@@ -1004,7 +1035,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/55...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/56...HEAD
+[56]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/56
 [55]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/55
 [54]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/54
 [53]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/53

@@ -363,9 +363,9 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { resetButtonClickCount },
     },
     vectorTileLayer: { key },
-    embeddedMap: { config },
+    embeddedMap: { config, embed },
 }) {
-    const querystring = createQueryStringFromSearchFilters(filters);
+    const querystring = createQueryStringFromSearchFilters(filters, embed);
     const tileCacheKey = createTileCacheKeyWithEncodedFilters(filters, key);
     const tileURL = createTileURLWithQueryString(
         querystring,

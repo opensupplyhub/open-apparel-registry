@@ -108,7 +108,7 @@ function EmbeddedMapConfigWrapper({ user }) {
             } else {
                 createConfig();
             }
-        }, 500);
+        }, 1000);
 
         return () => {
             clearTimeout(handler);
