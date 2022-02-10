@@ -54,6 +54,7 @@ function VectorTileFacilitiesMap({
     clientInfoFetched,
     countryCode,
     handleMarkerClick,
+    handleFacilityClick,
     match: {
         params: { oarID },
     },
@@ -167,6 +168,7 @@ function VectorTileFacilitiesMap({
             <ZoomControl position="bottomright" />
             <VectorTileFacilitiesLayer
                 handleMarkerClick={handleMarkerClick}
+                handleFacilityClick={handleFacilityClick}
                 oarID={oarID}
                 pushRoute={push}
                 minZoom={maxVectorTileFacilitiesGridZoom + 1}
@@ -247,18 +249,24 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch, { history: { push } }) {
+function mapDispatchToProps(
+    dispatch,
+    { history: { push }, match: { params } },
+) {
+    const visitFacility = oarID => {
+        if (oarID && oarID !== params?.oarID) {
+            dispatch(resetSingleFacility());
+            return push(makeFacilityDetailLink(oarID));
+        }
+
+        return noop();
+    };
     return {
         handleMarkerClick: e => {
             const oarID = get(e, 'layer.properties.id', null);
-
-            if (oarID) {
-                dispatch(resetSingleFacility());
-                return push(makeFacilityDetailLink(oarID));
-            }
-
-            return noop();
+            visitFacility(oarID);
         },
+        handleFacilityClick: visitFacility,
     };
 }
 

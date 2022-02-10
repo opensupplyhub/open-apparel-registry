@@ -25,12 +25,14 @@ import FeatureFlag from './FeatureFlag';
 import {
     fetchSingleFacility,
     resetSingleFacility,
+    fetchFacilities,
 } from '../actions/facilities';
 
 import {
     facilitySidebarActions,
     EXTENDED_FIELD_TYPES,
     REPORT_A_FACILITY,
+    FACILITIES_REQUEST_PAGE_SIZE,
 } from '../util/constants';
 
 import {
@@ -176,6 +178,8 @@ const FacilityDetailSidebar = ({
     facilityIsClaimedByCurrentUser,
     embedContributor,
     embedConfig,
+    searchForFacilities,
+    vectorTileFlagIsActive,
 }) => {
     useEffect(() => {
         fetchFacility(Number(embed), contributors);
@@ -350,6 +354,10 @@ const FacilityDetailSidebar = ({
                     push={push}
                     oarId={data.properties.oar_id}
                     onClaimFacility={claimFacility}
+                    onBack={() => {
+                        clearFacility();
+                        searchForFacilities(vectorTileFlagIsActive);
+                    }}
                 />
                 <FacilityDetailSidebarClosureStatus
                     data={data}
@@ -457,6 +465,7 @@ function mapStateToProps(
         auth: { user },
         embeddedMap: { embed, config },
         filters: { contributors },
+        featureFlags,
     },
     {
         match: {
@@ -480,6 +489,12 @@ function mapStateToProps(
         includes(currentUserPendingClaimedFacilities, oarID) &&
         !facilityIsClaimedByCurrentUser;
 
+    const vectorTileFlagIsActive = get(
+        featureFlags,
+        'flags.vector_tile',
+        false,
+    );
+
     return {
         data,
         fetching,
@@ -490,6 +505,7 @@ function mapStateToProps(
         contributors,
         userHasPendingFacilityClaim,
         facilityIsClaimedByCurrentUser,
+        vectorTileFlagIsActive,
     };
 }
 
@@ -499,12 +515,22 @@ function mapDispatchToProps(
         match: {
             params: { oarID },
         },
+        history: { push },
     },
 ) {
     return {
         fetchFacility: (embed, contributorId) =>
             dispatch(fetchSingleFacility(oarID, embed, contributorId)),
         clearFacility: () => dispatch(resetSingleFacility()),
+        searchForFacilities: vectorTilesAreActive =>
+            dispatch(
+                fetchFacilities({
+                    pageSize: vectorTilesAreActive
+                        ? FACILITIES_REQUEST_PAGE_SIZE
+                        : 50,
+                    pushNewRoute: push,
+                }),
+            ),
     };
 }
 

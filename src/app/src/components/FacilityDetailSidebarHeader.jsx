@@ -104,8 +104,9 @@ const FacilityDetailSidebarHeader = ({
     claimantName,
     embedContributor,
     fetching,
-    push,
     oarId,
+    onBack,
+    push,
 }) => {
     const content = getContent({
         isEmbed,
@@ -121,7 +122,10 @@ const FacilityDetailSidebarHeader = ({
                 <IconButton
                     aria-label="Back"
                     disabled={fetching}
-                    onClick={() => push(facilitiesRoute)}
+                    onClick={() => {
+                        onBack();
+                        push(facilitiesRoute);
+                    }}
                 >
                     <ListItemIcon>
                         <ArrowBackIcon className={classes.backArrow} />
