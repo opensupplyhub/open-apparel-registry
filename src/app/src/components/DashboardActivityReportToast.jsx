@@ -13,6 +13,7 @@ const gradient =
 const styles = {
     message: {
         bottom: '75px',
+        left: 0,
     },
     messageGradient: {
         minWidth: '368px',

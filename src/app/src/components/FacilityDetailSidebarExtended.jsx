@@ -11,6 +11,7 @@ import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
 
+import FacilityDetailSidebarClosureStatus from './FacilityDetailSidebarClosureStatus';
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailSidebarHeader from './FacilityDetailSidebarHeader';
 import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
@@ -19,6 +20,7 @@ import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributo
 import FacilityDetailSidebarAction from './FacilityDetailSidebarAction';
 import ReportFacilityStatus from './ReportFacilityStatus';
 import ShowOnly from './ShowOnly';
+import FeatureFlag from './FeatureFlag';
 
 import {
     fetchSingleFacility,
@@ -28,6 +30,7 @@ import {
 import {
     facilitySidebarActions,
     EXTENDED_FIELD_TYPES,
+    REPORT_A_FACILITY,
 } from '../util/constants';
 
 import {
@@ -126,6 +129,36 @@ const filterByUniqueField = (data, extendedFieldName) =>
         item => item.primary + item.secondary,
     );
 
+const formatActivityReports = data => {
+    const reports = get(data, 'properties.activity_reports', []);
+    if (!reports.length) return [null, []];
+    const formattedReports = reports.reduce((list, r) => {
+        let updatedList = [...list];
+        if (r.status === 'CONFIRMED') {
+            updatedList = [
+                ...updatedList,
+                {
+                    primary: `Verified ${r.closure_state.toLowerCase()}`,
+                    secondary: formatAttribution(r.status_change_date),
+                    key: `${r.id}-verified}`,
+                },
+            ];
+        }
+        return [
+            ...updatedList,
+            {
+                primary: `Reported ${r.closure_state.toLowerCase()}`,
+                secondary: formatAttribution(
+                    r.created_at,
+                    r.reported_by_contributor,
+                ),
+                key: r.id,
+            },
+        ];
+    }, []);
+    return [formattedReports[0], formattedReports.slice(1)];
+};
+
 const FacilityDetailSidebar = ({
     classes,
     data,
@@ -198,6 +231,11 @@ const FacilityDetailSidebar = ({
         }
         return [defaultAddressField[0], otherAddressFields];
     }, [data]);
+
+    const [activityReport, otherActivityReports] = useMemo(
+        () => formatActivityReports(data),
+        [data],
+    );
 
     if (fetching) {
         return (
@@ -313,6 +351,10 @@ const FacilityDetailSidebar = ({
                     oarId={data.properties.oar_id}
                     onClaimFacility={claimFacility}
                 />
+                <FacilityDetailSidebarClosureStatus
+                    data={data}
+                    clearFacility={clearFacility}
+                />
                 <FacilityDetailSidebarItem
                     label="OAR ID"
                     primary={oarId}
@@ -346,6 +388,16 @@ const FacilityDetailSidebar = ({
                     />
                     {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
                 </ShowOnly>
+                <FeatureFlag flag={REPORT_A_FACILITY}>
+                    <ShowOnly when={!!activityReport}>
+                        <FacilityDetailSidebarItem
+                            label="Status"
+                            {...activityReport}
+                            additionalContent={otherActivityReports}
+                            embed={embed}
+                        />
+                    </ShowOnly>
+                </FeatureFlag>
                 <ShowOnly when={embed}>{renderEmbedFields()}</ShowOnly>
                 <div className={classes.actions}>
                     <ShowOnly when={!embed}>
