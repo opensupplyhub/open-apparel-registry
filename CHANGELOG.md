@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [56] 2022-02-10
+
+### Added
+
 - Add facility/processing type taxonomy and look-up function [#1601](https://github.com/open-apparel-registry/open-apparel-registry/pull/1601)
 - Create product type extended field [#1605](https://github.com/open-apparel-registry/open-apparel-registry/pull/1605)
 - Index custom text [#1607](https://github.com/open-apparel-registry/open-apparel-registry/pull/1607)
@@ -1021,7 +1035,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/55...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/56...HEAD
+[56]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/56
 [55]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/55
 [54]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/54
 [53]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/53
