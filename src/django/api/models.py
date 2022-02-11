@@ -1254,30 +1254,30 @@ class FacilityManager(models.Manager):
                 if embed is not None:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
-                                Q(id__icontains=free_text_query) |
+                                Q(id=free_text_query) |
                                 Q(ppe__icontains=free_text_query) |
                                 Q(custom_text__icontains=free_text_query))
                 else:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
-                                Q(id__icontains=free_text_query) |
+                                Q(id=free_text_query) |
                                 Q(ppe__icontains=free_text_query))
             else:
                 if embed is not None:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
-                                Q(id__icontains=free_text_query) |
+                                Q(id=free_text_query) |
                                 Q(custom_text__icontains=free_text_query))
                 else:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
-                                Q(id__icontains=free_text_query))
+                                Q(id=free_text_query))
 
         # `name` is deprecated in favor of `q`. We keep `name` available for
         # backward compatibility.
         if name is not None:
             facilities_qs = facilities_qs.filter(Q(name__icontains=name) |
-                                                 Q(id__icontains=name))
+                                                 Q(id=name))
 
         if countries is not None and len(countries):
             facilities_qs = facilities_qs \
