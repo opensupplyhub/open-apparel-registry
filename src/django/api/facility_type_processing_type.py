@@ -45,12 +45,16 @@ CUT_AND_SEW = 'cut & sew'
 EMBELLISHMENT = 'embellishment'
 EMBROIDERY = 'embroidery'
 FINAL_PRODUCT_ASSEMBLY = 'final product assembly'
+FINISHED_GOODS = 'finished goods'
 FINISHING = 'finishing'
 IRONING = 'ironing'
 LACE = 'lace'
 KNITWEAR_ASSEMBLY = 'knitwear assembly'
+KNIT_COMPOSITE = 'knit composite'
+LINKING = 'linking'
 MANUFACTURING = 'manufacturing'
 MAKING_UP = 'making up'
+MOLDING = 'molding'
 PRODUCT_FINISHING = 'product finishing'
 READY_MADE_GARMENT = 'ready made garment'
 SEAM_TAPING = 'seam taping'
@@ -66,12 +70,16 @@ ASSEMBLY_PROCESSING_TYPES = {
     EMBELLISHMENT: 'Embellishment',
     EMBROIDERY: 'Embroidery',
     FINAL_PRODUCT_ASSEMBLY: 'Final Product Assembly',
+    FINISHED_GOODS: 'Finished Goods',
     FINISHING: 'Finishing',
     IRONING: 'Ironing',
     LACE: 'Lace',
     KNITWEAR_ASSEMBLY: 'Knitwear Assembly',
+    KNIT_COMPOSITE: 'Knit Composite',
+    LINKING: 'Linking',
     MANUFACTURING: 'Manufacturing',
     MAKING_UP: 'Making up',
+    MOLDING: 'Molding',
     PRODUCT_FINISHING: 'Product Finishing',
     READY_MADE_GARMENT: 'Ready Made Garment',
     SEAM_TAPING: 'Seam taping',
@@ -97,17 +105,31 @@ COATING = 'coating'
 CONTINUOUS_DYEING = 'continuous dyeing'
 DIRECT_DIGITAL_INK_PRINTING = 'direct digital ink printing'
 DYEING = 'dyeing'
+FABRIC_ALL_OVER_PRINT = 'fabric all over print'
+FABRIC_CHEMICAL_FINISHING = 'fabric chemical finishing'
+FIBER_DYE = 'fiber dye'
+FLAT_SCREEN_PRINTING = 'flat screen printing'
 GARMENT_DYEING = 'garment dyeing'
+GARMENT_PLACE_PRINT = 'garment place print'
+GARMENT_WASH = 'garment wash'
+GARMENT_FINISHING = 'garment finishing'
+HAND_DYE = 'hand dye'
 LAUNDERING = 'laundering'
 LAUNDRY = 'laundry'
+PRE_TREATMENT = 'pre treatment'
 PRINTING = 'printing'
 PRINTING_PRODUCT_DYEING_AND_LAUNDERING = ('printing product dyeing '
                                           'and laundering')
 PRODDUCT_DYEING = 'product dyeing'
 ROTARY_PRINTING = 'rotary printing'
 SCREEN_PRINTING = 'screen printing'
+SPRAY_DYE = 'spray dye'
+SUBLIMATION = 'sublimation'
 TEXTILE_DYEING = 'textile dyeing'
 TEXTILE_PRINTING = 'textile printing'
+TEXTILE_CHEMICAL_FINISHING = 'textile chemical finishing'
+TEXTILE_MECHANICAL_FINISHING = 'textile mechanical finishing'
+TYE_DYE = 'tye dye'
 WASHING = 'washing'
 WET_PROCESSING = 'wet processing'
 WET_ROLLER_PRINTING = 'wet roller printing'
@@ -119,17 +141,31 @@ PRINTING_PROCESSING_TYPES = {
     CONTINUOUS_DYEING: 'Continuous dyeing',
     DIRECT_DIGITAL_INK_PRINTING: 'Direct Digital Ink Printing',
     DYEING: 'Dyeing',
+    FABRIC_ALL_OVER_PRINT: 'Fabric All Over Print',
+    FABRIC_CHEMICAL_FINISHING: 'Fabric Chemical Finishing',
+    FIBER_DYE: 'Fiber Dye',
+    FLAT_SCREEN_PRINTING: 'Flat Screen Printing',
     GARMENT_DYEING: 'Garment Dyeing',
+    GARMENT_PLACE_PRINT: 'Garment Place Print',
+    GARMENT_WASH: 'Garment Wash',
+    GARMENT_FINISHING: 'Garment Finishing',
+    HAND_DYE: 'Hand Dye',
     LAUNDERING: 'Laundering',
     LAUNDRY: 'Laundry',
+    PRE_TREATMENT: 'Pre-treatment',
     PRINTING: 'Printing',
     PRINTING_PRODUCT_DYEING_AND_LAUNDERING: ('Printing, Product Dyeing '
                                              'and Laundering'),
     PRODDUCT_DYEING: 'Product Dyeing',
     ROTARY_PRINTING: 'Rotary Printing',
     SCREEN_PRINTING: 'Screen Printing',
+    SPRAY_DYE: 'Spray Dye',
+    SUBLIMATION: 'Sublimation',
     TEXTILE_DYEING: 'Textile Dyeing',
     TEXTILE_PRINTING: 'Textile Printing',
+    TEXTILE_CHEMICAL_FINISHING: 'Textile Chemical Finishing',
+    TEXTILE_MECHANICAL_FINISHING: 'Textile Mechanical Finishing',
+    TYE_DYE: 'Tye Dye',
     WASHING: 'Washing',
     WET_PROCESSING: 'Wet Processing',
     WET_ROLLER_PRINTING: 'Wet roller printing',
@@ -148,20 +184,27 @@ PRINTING_PROCESSING_TYPES_ALIAS = {
 BLENDING = 'blending'
 BONDING = 'bonding'
 BUFFING = 'buffing'
+COMPONENTS = 'components'
 DOUBLING = 'doubling'
+EMBELLISHMENT = 'embellishment'
 EMBOSSING = 'embossing'
+EMBROIDERY = 'embroidery'
 FABRIC_MILL = 'fabric mill'
+FLAT_KNIT = 'flat knit'
 GARMENT_ACCESSORIES_MANUFACTURING = 'garment accessories manufacturing'
 KNITTING = 'knitting'
+CIRCULAR_KNITTING = 'circular knitting'
+LACE_KNITTING = 'lace knitting'
+KNITTING_SEAMLEASS = 'knitting seamless'
+KNITTING_V_BED = 'knitting v bed'
+KNITTING_WARP = 'knitting warp'
 LAMINATING = 'laminating'
 MATERIAL_PRODUCTION = 'material production'
 MILL = 'mill'
 MOLDING = 'molding'
 NON_WOVEN_MANUFACTURING = 'non woven manufacturing'
 NON_WOVEN_PROCESSING = 'non woven processing'
-SUBLIMATION = 'sublimation'
-TEXTILE_CHEMICAL_FINISHING = 'textile chemical finishing'
-TEXTILE_MECHANICAL_FINISHING = 'textile mechanical finishing'
+STRAIGHT_BAR_KNITTING = 'straight bar knitting'
 TEXTILE_OR_MATERIAL_PRODUCTION = 'textile or material production'
 TEXTILE_MILL = 'textile mill'
 WEAVING = 'weaving'
@@ -170,20 +213,27 @@ TEXTILE_PROCESSING_TYPES = {
     BLENDING: 'Blending',
     BONDING: 'Bonding',
     BUFFING: 'Buffing',
+    COMPONENTS: 'Components',
     DOUBLING: 'Doubling',
+    EMBELLISHMENT: 'Embellishment',
     EMBOSSING: 'Embossing',
+    EMBROIDERY: 'Embroidery',
     FABRIC_MILL: 'Fabric mill',
+    FLAT_KNIT: 'Flat Knit',
     GARMENT_ACCESSORIES_MANUFACTURING: 'Garment Accessories manufacturing',
     KNITTING: 'Knitting',
+    CIRCULAR_KNITTING: 'Circular Knitting',
+    LACE_KNITTING: 'Lace Knitting',
+    KNITTING_SEAMLEASS: 'Knitting Seamless',
+    KNITTING_V_BED: 'Knitting V Bed',
+    KNITTING_WARP: 'Knitting Warp',
     LAMINATING: 'Laminating',
     MATERIAL_PRODUCTION: 'Material Production',
     MILL: 'Mill',
     MOLDING: 'Molding',
     NON_WOVEN_MANUFACTURING: 'Nonwoven manufacturing',
     NON_WOVEN_PROCESSING: 'Nonwoven Processing',
-    SUBLIMATION: 'Sublimation',
-    TEXTILE_CHEMICAL_FINISHING: 'Textile Chemical Finishing',
-    TEXTILE_MECHANICAL_FINISHING: 'Textile Mechanical Finishing',
+    STRAIGHT_BAR_KNITTING: 'Straight Bar Knitting',
     TEXTILE_OR_MATERIAL_PRODUCTION: 'Textile or Material Production',
     TEXTILE_MILL: 'Textile Mill',
     WEAVING: 'Weaving',
