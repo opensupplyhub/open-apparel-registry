@@ -1663,6 +1663,47 @@ class FacilityIndex(models.Model):
             null=True,
             help_text=('A collection of custom values to search for the '
                        'facility'))
+    number_of_workers = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for number of workers.'),
+        default=list)
+    facility_type = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for facility type.'),
+        default=list)
+    processing_type = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for processing type.'),
+        default=list)
+    product_type = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for product type.'),
+        default=list)
+    parent_company_name = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for parent company.'),
+        default=list)
+    native_language_name = postgres.ArrayField(models.CharField(
+        max_length=2000,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for native language name.'),
+        default=list)
+    parent_company_id = postgres.ArrayField(models.IntegerField(
+        null=False,
+        blank=False,
+        help_text='ExtendedField for parent_company_id.'),
+        default=list)
 
     class Meta:
         indexes = [GinIndex(fields=['contrib_types', 'contributors', 'lists'])]
