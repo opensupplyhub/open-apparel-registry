@@ -7,6 +7,7 @@ The Open Apparel Registry (OAR) is a tool to identify every apparel facility wor
   - [Google Maps Platform](#google-maps-platform)
 - [Development](#development)
   - [Hot Reloading 🔥](#hot-reloading-)
+  - [Debugging Django](#debugging-django)
   - [Ports](#ports)
 - [Scripts 🧰](#scripts-)
 
@@ -75,6 +76,24 @@ vagrant@vagrant:/vagrant$ ./scripts/server
 The frontend uses [Create React App](https://github.com/facebook/create-react-app/). When running `server`, the page will automatically [reload](https://github.com/facebook/create-react-app/#whats-included) if you make changes to the code.
 
 The [Django](https://www.djangoproject.com) app runs inside a [Gunicorn](https://www.gunicorn.org) worker. The worker will [restart](https://docs.gunicorn.org/en/stable/settings.html#reload) if you make changes to the code.
+
+### Debugging Django
+
+Breakpoint debugging of the Python back-end is available via Visual Studio Code. To get started, run the Django development server by passing the `--debug` flag to the `server` script. Note that you have to run the application in Docker for Mac directly and not within Vagrant to be able to debug.
+
+```
+./scripts/server --debug
+```
+
+In Visual Studio Code, select the "Run and Debug" view from the sidebar. At the top of the "Run and Debug" pane, click the green arrow next to the "Debug Django" menu item.
+
+<img width="288" alt="image" src="https://user-images.githubusercontent.com/1042475/153924321-3c60a9de-b528-4dad-92b3-8eb8184987fc.png">
+
+If Visual Studio Code can connect, you should see a play/pause/next menu bar in the top right of the window.
+
+Set a breakpoint by clicking in the column next to the line numbers for a `.py` file. A red dot should appear. Now, if the breakpoint is hit when you visit a page of the app in the browser (note that you must access the site via the React development server port), Visual Studio Code should highlight the line in the file, the "Run and Debug" window should be populated with information about currently set variables, and execution of the code should be paused.
+
+Note that, due to the way static files are managed for the normal development environment, the Django server at 8081 is not available when running the `server` script with the `--debug` flag.
 
 ### Ports
 
