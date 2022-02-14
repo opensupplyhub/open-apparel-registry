@@ -93,7 +93,8 @@ from api.models import (FacilityList,
                         NonstandardField,
                         FacilityIndex,
                         ExtendedField,
-                        index_custom_text)
+                        index_custom_text,
+                        index_extendedfields)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -1879,6 +1880,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         # be made in the `facility_history.py` module's
         # `create_facility_history_dictionary` function
         merge.changeReason = 'Merged with {}'.format(target.id)
+
+        FacilityIndex.objects.get(id=merge.id).delete()
         merge.delete()
 
         target.refresh_from_db()
@@ -2008,6 +2011,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for field in fields:
                 field.facility = new_facility
                 field.save()
+
+            index_extendedfields([new_facility.id, old_facility.id])
 
             return Response({
                 'match_id': match_for_new_facility.id,

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add selecting silver map style to embed config [#1637](https://github.com/open-apparel-registry/open-apparel-registry/pull/1637)
 - Integrate facility/processing type taxonomy into facility claims [#1639](https://github.com/open-apparel-registry/open-apparel-registry/pull/1639)
+- Index extended fields [#1651](https://github.com/open-apparel-registry/open-apparel-registry/pull/1651)
 
 ### Changed
 
