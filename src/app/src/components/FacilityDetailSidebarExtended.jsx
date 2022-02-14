@@ -515,7 +515,6 @@ function mapDispatchToProps(
         match: {
             params: { oarID },
         },
-        history: { push },
     },
 ) {
     return {
@@ -528,7 +527,6 @@ function mapDispatchToProps(
                     pageSize: vectorTilesAreActive
                         ? FACILITIES_REQUEST_PAGE_SIZE
                         : 50,
-                    pushNewRoute: push,
                 }),
             ),
     };
