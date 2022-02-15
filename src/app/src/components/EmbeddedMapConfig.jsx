@@ -90,6 +90,7 @@ function EmbeddedMapConfig({
         textSearchLabel,
         height,
         preferContributorName,
+        mapStyle,
     },
     setEmbedConfig,
     fields,
@@ -190,6 +191,8 @@ function EmbeddedMapConfig({
                         setColor={updateEmbedConfig('color')}
                         font={font}
                         setFont={updateEmbedConfig('font')}
+                        mapStyle={mapStyle}
+                        setMapStyle={updateEmbedConfig('mapStyle')}
                         errors={errors}
                         embedLevel={user.embed_level}
                     />
@@ -235,6 +238,7 @@ EmbeddedMapConfig.propTypes = {
         height: string.isRequired,
         fullWidth: bool.isRequired,
         textSearchLabel: string.isRequired,
+        mapStyle: string.isRequired,
     }).isRequired,
     setEmbedConfig: func.isRequired,
     setFields: func.isRequired,

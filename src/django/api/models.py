@@ -2175,6 +2175,12 @@ class EmbedConfig(models.Model):
         blank=True,
         default='Facility name or OAR ID',
         help_text='The label for the search box.')
+    map_style = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='default',
+        help_text='The map style for the embedded map')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

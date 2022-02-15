@@ -75,6 +75,8 @@ function EmbeddedMapThemeConfig({
     setFont,
     errors,
     embedLevel,
+    mapStyle,
+    setMapStyle,
 }) {
     const value = fontOptions.find(f => font === f.value) || OARFont;
     return (
@@ -170,6 +172,48 @@ function EmbeddedMapThemeConfig({
                         onChange={item => setFont(item.value)}
                         placeholder="Select a font"
                     />
+                </div>
+            ) : null}
+            {embedLevel >= 2 ? (
+                <div style={styles.subsection}>
+                    <Typography style={styles.subsectionHeader}>
+                        Map Style
+                    </Typography>
+                    <Typography>Choose the style for the base map</Typography>
+                    <FormControl style={styles.radios}>
+                        <FormControlLabel
+                            value="default"
+                            label="Default"
+                            style={styles.radioItem}
+                            control={
+                                <Radio
+                                    checked={mapStyle === 'default'}
+                                    onChange={e => setMapStyle(e.target.value)}
+                                    value="default"
+                                    name="theme-color"
+                                    inputProps={{ 'aria-label': 'Default' }}
+                                    style={styles.radio}
+                                />
+                            }
+                        />
+                        <FormControlLabel
+                            value="silver"
+                            label="Silver"
+                            style={styles.radioItem}
+                            control={
+                                <Radio
+                                    checked={mapStyle === 'silver'}
+                                    onChange={e => setMapStyle(e.target.value)}
+                                    value="silver"
+                                    name="theme-color"
+                                    inputProps={{
+                                        'aria-label': 'Silver',
+                                    }}
+                                    style={styles.radio}
+                                />
+                            }
+                        />
+                    </FormControl>
                 </div>
             ) : null}
         </div>
