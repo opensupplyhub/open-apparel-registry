@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Add closure status to extended profile [#1635](https://github.com/open-apparel-registry/open-apparel-registry/pull/1635)
-
 ### Changed
-
-- Ignore partial OAR IDs [#1641](https://github.com/open-apparel-registry/open-apparel-registry/pull/1641)
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [57] 2022-02-15
+
+### Added
+
+- Add closure status to extended profile [#1635](https://github.com/open-apparel-registry/open-apparel-registry/pull/1635)
+
+### Changed
+
+- Ignore partial OAR IDs [#1641](https://github.com/open-apparel-registry/open-apparel-registry/pull/1641)
 
 ## [56] 2022-02-10
 
@@ -1039,7 +1045,9 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/56...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/57...HEAD
+[57]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/57
+[56]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/56
 [56]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/56
 [55]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/55
 [54]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/54
