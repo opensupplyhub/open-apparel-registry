@@ -1,0 +1,16 @@
+version: "2.4"
+services:
+  django:
+    entrypoint:
+      - "python"
+    command:
+      - "manage.py"
+      - "runserver"
+      - "0.0.0.0:8081"
+      - "--noreload"
+      - "--nothreading"
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8081:8081"
+      - "3000:3000"
