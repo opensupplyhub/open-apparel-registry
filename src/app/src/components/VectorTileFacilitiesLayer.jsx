@@ -207,11 +207,11 @@ const findFacilitiesAtSamePointFromVectorTile = (data, tileLayerRef = null) => {
 const VectorTileFacilitiesLayer = ({
     tileURL,
     handleMarkerClick,
+    handleFacilityClick,
     fetching,
     resetButtonClickCount,
     tileCacheKey,
     oarID,
-    pushRoute,
     minZoom,
     maxZoom,
     iconColor,
@@ -239,8 +239,9 @@ const VectorTileFacilitiesLayer = ({
         closeMultipleFacilitiesPopup,
     );
 
-    const selectFacilityOnClick = facilityID =>
-        pushRoute(`/facilities/${facilityID}`);
+    const selectFacilityOnClick = facilityID => {
+        handleFacilityClick(facilityID);
+    };
 
     const vectorTileLayerRef = useUpdateTileLayerWithMarkerForSelectedOARID(
         oarID,
@@ -351,7 +352,6 @@ VectorTileFacilitiesLayer.propTypes = {
     fetching: bool.isRequired,
     resetButtonClickCount: number.isRequired,
     oarID: string,
-    pushRoute: func.isRequired,
 };
 
 function mapStateToProps({
