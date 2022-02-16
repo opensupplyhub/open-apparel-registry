@@ -91,10 +91,6 @@ export default function FacilityDetailsSidebarClaimedInfo({ data }) {
                 value={facility.facility_type}
             />
             <ClaimInfoSection
-                label="Other Facility Type"
-                value={facility.other_facility_type}
-            />
-            <ClaimInfoSection
                 label="Website"
                 value={
                     facility.website ? (

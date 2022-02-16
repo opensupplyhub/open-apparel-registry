@@ -32,8 +32,7 @@ import {
     updateClaimedFacilityOfficeCountry,
     updateClaimedFacilityOfficePhone,
     updateClaimedFacilityParentCompany,
-    updateClaimedFacilityFacilityType,
-    updateClaimedFacilityOtherFacilityType,
+    updateClaimedFacilityFacilityTypes,
     updateClaimedFacilityAffiliations,
     updateClaimedFacilityCertifications,
     updateClaimedFacilityProductTypes,
@@ -278,22 +277,13 @@ export default createReducer(
                     facility_average_lead_time: { $set: avgLeadTime },
                 },
             }),
-        [updateClaimedFacilityFacilityType]: (state, type) =>
+        [updateClaimedFacilityFacilityTypes]: (state, type) =>
             update(state, {
                 updateData: {
                     error: { $set: initialState.updateData.error },
                 },
                 data: {
                     facility_type: { $set: type },
-                },
-            }),
-        [updateClaimedFacilityOtherFacilityType]: (state, otherType) =>
-            update(state, {
-                updateData: {
-                    error: { $set: initialState.updateData.error },
-                },
-                data: {
-                    other_facility_type: { $set: otherType },
                 },
             }),
         [updateClaimedFacilityContactPersonName]: (state, person) =>

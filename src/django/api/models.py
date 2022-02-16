@@ -27,6 +27,7 @@ from api.constants import Affiliations, Certifications, FacilitiesQueryParams
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
+from api.facility_type_processing_type import ALL_FACILITY_TYPE_CHOICES
 
 
 class ArrayLength(models.Func):
@@ -984,10 +985,10 @@ class FacilityClaim(models.Model):
         verbose_name='facility certifications',
     )
     facility_type = models.CharField(
-        max_length=len(CUT_AND_SEW),
+        max_length=300,
         null=True,
         blank=True,
-        choices=FACILITY_TYPE_CHOICES,
+        choices=ALL_FACILITY_TYPE_CHOICES,
         help_text='The editable facility type for this claim.',
         verbose_name='facility type')
     other_facility_type = models.CharField(

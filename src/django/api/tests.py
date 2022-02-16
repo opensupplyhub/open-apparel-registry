@@ -4570,7 +4570,7 @@ class FacilityClaimSerializerTests(TestCase):
 
     def test_product_and_production_values_from_claims_are_included(self):
         self.claim.facility_product_types = ['A', 'B']
-        self.claim.facility_production_types = ['C', 'D']
+        self.claim.facility_production_types = ['Blending', 'Bonding']
         self.claim.save()
         data = ApprovedFacilityClaimSerializer(self.claim).data
 
@@ -4580,9 +4580,8 @@ class FacilityClaimSerializerTests(TestCase):
         self.assertIn(('B', 'B'), product_types)
 
         production_types = data['production_type_choices']
-        self.assertIn(('C', 'C'), production_types)
-        self.assertEqual(('C', 'C'), production_types[0])
-        self.assertIn(('D', 'D'), production_types)
+        self.assertIn(('blending', 'Blending'), production_types)
+        self.assertIn(('bonding', 'Bonding'), production_types)
 
 
 class LogDownloadTests(APITestCase):

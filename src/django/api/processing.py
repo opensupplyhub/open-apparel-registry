@@ -15,7 +15,8 @@ from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
-from api.matching import normalize_extended_facility_id, clean
+from api.matching import normalize_extended_facility_id
+from api.helpers import clean
 from api.extended_fields import (create_extendedfields_for_listitem,
                                  update_extendedfields_for_list_item)
 

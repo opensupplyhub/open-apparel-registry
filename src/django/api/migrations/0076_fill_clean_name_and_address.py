@@ -1,5 +1,5 @@
 from django.db import migrations, models
-from api.matching import clean
+from api.helpers import clean
 
 
 def populate_cleaned_fields(apps, schema_editor):

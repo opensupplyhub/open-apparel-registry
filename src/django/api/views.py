@@ -71,8 +71,8 @@ from api.geocoding import geocode_address
 from api.matching import (match_item,
                           exact_match_item,
                           text_match_item,
-                          GazetteerCacheTimeoutError,
-                          clean)
+                          GazetteerCacheTimeoutError)
+from api.helpers import clean
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
