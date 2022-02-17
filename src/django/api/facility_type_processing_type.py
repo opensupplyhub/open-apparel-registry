@@ -5,7 +5,6 @@ HEADQUARTERS = 'headquarters'
 NO_PROCESSING = 'no processing'
 OFFICE = 'office'
 OFFICE_HQ = 'office hq'
-RETAIL_SALES = 'retail sales'
 SOURCING_AGENT = 'sourcing agent'
 TRADING = 'trading'
 
@@ -14,15 +13,12 @@ OFFICE_PROCESSING_TYPES = {
     NO_PROCESSING: 'No processing',
     OFFICE: 'Office',
     OFFICE_HQ: 'Office / HQ',
-    RETAIL_SALES: 'Retail Sales',
     SOURCING_AGENT: 'Sourcing Agent',
     TRADING: 'Trading',
 }
 
 OFFICE_PROCESSING_TYPES_ALIAS = {
     'hq': OFFICE_HQ,
-    'sales': RETAIL_SALES,
-    'retail': RETAIL_SALES,
     'sourcing': SOURCING_AGENT,
 }
 
@@ -37,6 +33,7 @@ WAREHOUSING_PROCESSING_TYPES = {
 WAREHOUSING_PROCESSING_TYPES_ALIAS = {
     'warehousing': WAREHOUSING_DISTRIBUTION,
     'distribution': WAREHOUSING_DISTRIBUTION,
+    'warehouse': WAREHOUSING_DISTRIBUTION
 }
 
 ASSEMBLY = 'assembly'
@@ -46,17 +43,19 @@ EMBELLISHMENT = 'embellishment'
 EMBROIDERY = 'embroidery'
 FINAL_PRODUCT_ASSEMBLY = 'final product assembly'
 FINISHED_GOODS = 'finished goods'
-FINISHING = 'finishing'
 IRONING = 'ironing'
-LACE = 'lace'
 KNITWEAR_ASSEMBLY = 'knitwear assembly'
 KNIT_COMPOSITE = 'knit composite'
 LINKING = 'linking'
 MANUFACTURING = 'manufacturing'
 MAKING_UP = 'making up'
+MARKER_MAKING = 'marker making'
 MOLDING = 'molding'
+PATTERN_GRADING = 'pattern grading'
+PLEATING = 'pleating'
 PRODUCT_FINISHING = 'product finishing'
 READY_MADE_GARMENT = 'ready made garment'
+SAMPLE_MAKING = 'sample making'
 SEAM_TAPING = 'seam taping'
 SEWING = 'sewing'
 STEAMING = 'steaming'
@@ -71,17 +70,19 @@ ASSEMBLY_PROCESSING_TYPES = {
     EMBROIDERY: 'Embroidery',
     FINAL_PRODUCT_ASSEMBLY: 'Final Product Assembly',
     FINISHED_GOODS: 'Finished Goods',
-    FINISHING: 'Finishing',
     IRONING: 'Ironing',
-    LACE: 'Lace',
     KNITWEAR_ASSEMBLY: 'Knitwear Assembly',
     KNIT_COMPOSITE: 'Knit Composite',
     LINKING: 'Linking',
     MANUFACTURING: 'Manufacturing',
     MAKING_UP: 'Making up',
+    MARKER_MAKING: 'Marker Making',
     MOLDING: 'Molding',
+    PATTERN_GRADING: 'Pattern Grading',
+    PLEATING: 'Pleating',
     PRODUCT_FINISHING: 'Product Finishing',
     READY_MADE_GARMENT: 'Ready Made Garment',
+    SAMPLE_MAKING: 'Sample Making',
     SEAM_TAPING: 'Seam taping',
     SEWING: 'Sewing',
     STEAMING: 'Steaming',
@@ -94,7 +95,6 @@ ASSEMBLY_PROCESSING_TYPES_ALIAS = {
     'final assembly': FINAL_PRODUCT_ASSEMBLY,
     'product assembly': FINAL_PRODUCT_ASSEMBLY,
     'knitwear': KNITWEAR_ASSEMBLY,
-    'finishing': FINISHING,
     'ready made': READY_MADE_GARMENT,
     'ready garment': READY_MADE_GARMENT,
     'taping': SEAM_TAPING,
@@ -107,6 +107,7 @@ DIRECT_DIGITAL_INK_PRINTING = 'direct digital ink printing'
 DYEING = 'dyeing'
 FABRIC_ALL_OVER_PRINT = 'fabric all over print'
 FABRIC_CHEMICAL_FINISHING = 'fabric chemical finishing'
+FINISHING = 'finishing'
 FIBER_DYE = 'fiber dye'
 FLAT_SCREEN_PRINTING = 'flat screen printing'
 GARMENT_DYEING = 'garment dyeing'
@@ -143,6 +144,7 @@ PRINTING_PROCESSING_TYPES = {
     DYEING: 'Dyeing',
     FABRIC_ALL_OVER_PRINT: 'Fabric All Over Print',
     FABRIC_CHEMICAL_FINISHING: 'Fabric Chemical Finishing',
+    FINISHING: 'Finishing',
     FIBER_DYE: 'Fiber Dye',
     FLAT_SCREEN_PRINTING: 'Flat Screen Printing',
     GARMENT_DYEING: 'Garment Dyeing',
@@ -179,6 +181,7 @@ PRINTING_PROCESSING_TYPES_ALIAS = {
     'direct ink printing': DIRECT_DIGITAL_INK_PRINTING,
     'roller printing': WET_ROLLER_PRINTING,
     'wet printing': WET_ROLLER_PRINTING,
+    'dyehouse': DYEING
 }
 
 BLENDING = 'blending'
@@ -191,6 +194,7 @@ EMBOSSING = 'embossing'
 EMBROIDERY = 'embroidery'
 FABRIC_MILL = 'fabric mill'
 FLAT_KNIT = 'flat knit'
+FUSING = 'fusing'
 GARMENT_ACCESSORIES_MANUFACTURING = 'garment accessories manufacturing'
 KNITTING = 'knitting'
 CIRCULAR_KNITTING = 'circular knitting'
@@ -199,9 +203,9 @@ KNITTING_SEAMLEASS = 'knitting seamless'
 KNITTING_V_BED = 'knitting v bed'
 KNITTING_WARP = 'knitting warp'
 LAMINATING = 'laminating'
+MATERIAL_CREATION = 'material creation'
 MATERIAL_PRODUCTION = 'material production'
 MILL = 'mill'
-MOLDING = 'molding'
 NON_WOVEN_MANUFACTURING = 'non woven manufacturing'
 NON_WOVEN_PROCESSING = 'non woven processing'
 STRAIGHT_BAR_KNITTING = 'straight bar knitting'
@@ -220,6 +224,7 @@ TEXTILE_PROCESSING_TYPES = {
     EMBROIDERY: 'Embroidery',
     FABRIC_MILL: 'Fabric mill',
     FLAT_KNIT: 'Flat Knit',
+    FUSING: 'Fusing',
     GARMENT_ACCESSORIES_MANUFACTURING: 'Garment Accessories manufacturing',
     KNITTING: 'Knitting',
     CIRCULAR_KNITTING: 'Circular Knitting',
@@ -228,9 +233,9 @@ TEXTILE_PROCESSING_TYPES = {
     KNITTING_V_BED: 'Knitting V Bed',
     KNITTING_WARP: 'Knitting Warp',
     LAMINATING: 'Laminating',
+    MATERIAL_CREATION: 'Material Creation',
     MATERIAL_PRODUCTION: 'Material Production',
     MILL: 'Mill',
-    MOLDING: 'Molding',
     NON_WOVEN_MANUFACTURING: 'Nonwoven manufacturing',
     NON_WOVEN_PROCESSING: 'Nonwoven Processing',
     STRAIGHT_BAR_KNITTING: 'Straight Bar Knitting',
@@ -261,10 +266,9 @@ GINNING = 'ginning'
 HATCHERY = 'hatchery'
 MECHANICAL_RECYCLING = 'mechanical recycling'
 MELT_SPINNING = 'melt spinning'
-PRETREATMENT = 'pretreatment'
 PREPARATION = 'preparation'
 PREPARATORY = 'preparatory'
-PROCESSING_SITE = 'proccessing site'
+PROCESSING_SITE = 'processing site'
 PULP_MAKING = 'pulp making'
 RAW_MATERIAL_PROCESSING_OR_PRODUCTION = 'raw material processing or production'
 RETTING = 'retting'
@@ -300,10 +304,9 @@ RAW_MATERIAL_PROCESSING_TYPES = {
     HATCHERY: 'Hatchery',
     MECHANICAL_RECYCLING: 'Mechanical Recycling',
     MELT_SPINNING: 'Melt Spinning',
-    PRETREATMENT: 'Pretreatment',
     PREPARATION: 'Preparation',
     PREPARATORY: 'Preparatory',
-    PROCESSING_SITE: 'Proccessing Site',
+    PROCESSING_SITE: 'Processing Site',
     PULP_MAKING: 'Pulp making',
     RAW_MATERIAL_PROCESSING_OR_PRODUCTION: ('Raw Material Processing '
                                             'or Production'),
