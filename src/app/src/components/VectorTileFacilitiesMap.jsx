@@ -136,7 +136,7 @@ function VectorTileFacilitiesMap({
                 googleMapsLoaderConf={{
                     KEY: GOOGLE_CLIENT_SIDE_API_KEY,
                     REGION: countryCode,
-                    VERSION: 3.37,
+                    VERSION: 3.47,
                 }}
                 type="roadmap"
                 styles={mapStyle === 'silver' ? SILVER_MAP_STYLE : null}
