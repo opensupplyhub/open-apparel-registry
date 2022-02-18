@@ -28,7 +28,8 @@ from api.constants import (Affiliations, Certifications, FacilitiesQueryParams)
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values,
-                         clean, convert_to_standard_ranges)
+                         clean, convert_to_standard_ranges,
+                         format_custom_text)
 from api.facility_type_processing_type import ALL_FACILITY_TYPE_CHOICES
 
 
@@ -1253,13 +1254,14 @@ class FacilityManager(models.Manager):
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
+            custom_text = format_custom_text(contributors[0], free_text_query)
             if switch_is_active('ppe'):
                 if embed is not None:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
                                 Q(id=free_text_query) |
                                 Q(ppe__icontains=free_text_query) |
-                                Q(custom_text__icontains=free_text_query))
+                                Q(custom_text__contains=[custom_text]))
                 else:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
@@ -1270,7 +1272,7 @@ class FacilityManager(models.Manager):
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
                                 Q(id=free_text_query) |
-                                Q(custom_text__icontains=free_text_query))
+                                Q(custom_text__contains=[custom_text]))
                 else:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
@@ -1661,10 +1663,12 @@ class FacilityIndex(models.Model):
         null=True,
         editable=False,
         help_text='The related list if the type of the source is LIST.'))
-    custom_text = models.TextField(
-            null=True,
-            help_text=('A collection of custom values to search for the '
-                       'facility'))
+    custom_text = postgres.ArrayField(models.TextField(
+        null=False,
+        blank=False,
+        help_text='A collection of custom values to search for the '
+                  'facility'),
+        default=list)
     number_of_workers = postgres.ArrayField(models.CharField(
         max_length=200,
         null=False,
@@ -2407,7 +2411,7 @@ class ExtendedField(models.Model):
 
 
 @transaction.atomic
-def index_custom_text(facility_ids=list):
+def get_custom_text(facility_ids=list):
     # If passed an empty array, update all facilities (where applicable)
     if len(facility_ids) == 0:
         print('Indexing custom text for all facilities...')
@@ -2434,7 +2438,7 @@ def index_custom_text(facility_ids=list):
         .order_by('facility__id', 'source__contributor__id', '-created_at') \
         .iterator()
 
-    custom_fields = defaultdict(str)
+    custom_fields = defaultdict(list)
     contributor_fields = defaultdict(list)
 
     for item in items:
@@ -2461,15 +2465,24 @@ def index_custom_text(facility_ids=list):
                                     item,
                                     formatted_fields
                                  )
-        item_fields_string = ''.join([f['value'] for f in item_fields])
+
+        item_fields_array = [format_custom_text(contributor_id, f['value'])
+                             for f in item_fields if f['value']]
 
         # Add the values to the dictionary entry for the item's facility
-        custom_fields[item.facility.id] += item_fields_string
+        custom_fields[item.facility.id] += item_fields_array
+
+    return custom_fields
+
+
+@transaction.atomic
+def index_custom_text(facility_ids=list):
+    custom_fields = get_custom_text(facility_ids)
 
     facilities = FacilityIndex.objects.filter(id__in=facility_ids) \
                                       .iterator()
     for facility in facilities:
-        facility.custom_text = custom_fields.get(facility.id, '')
+        facility.custom_text = custom_fields.get(facility.id, list())
         facility.save()
 
 

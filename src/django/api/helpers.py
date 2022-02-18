@@ -104,3 +104,7 @@ def convert_to_standard_ranges(number_of_workers, overlapping_ranges=None):
         if value_is_in_range(number_of_workers, range):
             overlapping_ranges.add(range.get('label', ''))
     return overlapping_ranges
+
+
+def format_custom_text(contributor_id, value):
+    return '{}|{}'.format(contributor_id, value.strip().lower())
