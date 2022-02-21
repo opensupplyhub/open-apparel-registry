@@ -7670,10 +7670,14 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEquals(None, field_two['value'])
 
     def test_custom_text(self):
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertEquals(2, len(indexes))
-        self.assertIn('data one', indexes)
-        self.assertIn('data two', indexes)
+        indexes = FacilityIndex.objects.count()
+        self.assertEquals(2, indexes)
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertIn(index_two_data, index_two.custom_text)
 
     def test_custom_text_excludes_unsearchable(self):
         self.embed_two.searchable = False
@@ -7689,16 +7693,23 @@ class ContributorFieldsApiTest(APITestCase):
         if len(f_ids) > 0:
             index_custom_text(f_ids)
 
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertIn('data one', indexes)
-        self.assertNotIn('data two', indexes)
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertNotIn(index_two_data, index_two.custom_text)
 
     def test_custom_text_excludes_inactive(self):
         self.match_one.is_active = False
         self.match_one.save()
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertNotIn('data one', indexes)
-        self.assertIn('data two', indexes)
+
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertNotIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertIn(index_two_data, index_two.custom_text)
 
     def test_custom_text_uses_most_recent(self):
         new_item = FacilityListItem \
@@ -7721,10 +7732,15 @@ class ContributorFieldsApiTest(APITestCase):
             is_active=True,
             results={}
         )
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertIn('data one', indexes)
-        self.assertNotIn('data two', indexes)
-        self.assertIn('data three', indexes)
+
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertNotIn(index_two_data, index_two.custom_text)
+        index_three_data = '{}|data three'.format(self.contributor.id)
+        self.assertIn(index_three_data, index_two.custom_text)
 
     def test_custom_text_uses_field_contributor(self):
         user_two = User.objects.create(email='test2@example.com')
@@ -7762,10 +7778,14 @@ class ContributorFieldsApiTest(APITestCase):
             results={}
         )
 
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertIn('data one', indexes)
-        self.assertIn('data two', indexes)
-        self.assertNotIn('data three', indexes)
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertIn(index_two_data, index_two.custom_text)
+        index_three_data = '{}|data three'.format(contributor_two.id)
+        self.assertNotIn(index_three_data, index_two.custom_text)
 
 
 class ContributorManagerTest(TestCase):
