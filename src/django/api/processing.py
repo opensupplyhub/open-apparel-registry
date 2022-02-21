@@ -53,7 +53,10 @@ def parse_excel(file, request):
         sheet = get_excel_sheet(file, request)
 
         header = ','.join(sheet.row_values(0))
-        rows = ['"{}"'.format('","'.join(sheet.row_values(idx)))
+        # Use use `str(x)` here since numbers in an Excel column will be
+        # returns as a Python number type
+        rows = ['"{}"'.format(
+            '","'.join([str(x) for x in sheet.row_values(idx)]))
                 for idx in range(1, sheet.nrows)]
 
         return header, rows

@@ -7,9 +7,14 @@ from api.facility_type_processing_type import (
 )
 
 
-def extract_range_value(value):
-    values = [int(x) for x
-              in re.findall(r'([0-9]+)', str(value).replace(',', ''))]
+def extract_int_range_value(value):
+    """
+    Excel workbooks mat contain decimal values for number_of_workers. Matching
+    the decimal in the regex then using int(float(x)) ensures that a plain
+    integer is extracted.
+    """
+    values = [int(float(x)) for x
+              in re.findall(r'([0-9.]+)', str(value).replace(',', ''))]
     return {"min": min(values, default=0), "max": max(values, default=0)}
 
 
@@ -78,7 +83,7 @@ def get_product_type_extendedfield_value(field_value):
 def create_extendedfield(field, field_value, item, contributor):
     if field_value is not None and field_value != "":
         if field == ExtendedField.NUMBER_OF_WORKERS:
-            field_value = extract_range_value(field_value)
+            field_value = extract_int_range_value(field_value)
         elif field == ExtendedField.PARENT_COMPANY:
             field_value = get_parent_company_extendedfield_value(field_value)
         elif field == ExtendedField.PRODUCT_TYPE:
@@ -179,7 +184,7 @@ def create_extendedfields_for_claim(claim):
         field_value = getattr(claim, claim_field)
         if field_value is not None and field_value != "":
             if extended_field == ExtendedField.NUMBER_OF_WORKERS:
-                field_value = extract_range_value(field_value)
+                field_value = extract_int_range_value(field_value)
             elif extended_field == ExtendedField.PARENT_COMPANY:
                 field_value = get_parent_company_extendedfield_value(
                     field_value.name

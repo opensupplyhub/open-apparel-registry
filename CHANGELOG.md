@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix handling of numeric cells in Excel workbooks [#1663](https://github.com/open-apparel-registry/open-apparel-registry/pull/1663)
+
 ### Security
 
 - Bump follow-redirects from 1.14.3 to 1.14.8 in /src/app [#1645](https://github.com/open-apparel-registry/open-apparel-registry/pull/1645)
