@@ -114,6 +114,19 @@ def parse_facility_list_item(item):
         fields = [f.lower()
                   for f in parse_csv_line(item.source.facility_list.header)]
         values = parse_csv_line(item.raw_data)
+
+        # facility_type_processing_type is a special "meta" field that attempts
+        # to simplify the submission process for contributors.
+        if 'facility_type_processing_type' in fields:
+            if 'facility_type' not in fields:
+                fields.append('facility_type')
+                values.append(
+                    values[fields.index('facility_type_processing_type')])
+            if 'processing_type' not in fields:
+                fields.append('processing_type')
+                values.append(
+                    values[fields.index('facility_type_processing_type')])
+
         if CsvHeaderField.COUNTRY in fields:
             item.country_code = get_country_code(
                 values[fields.index(CsvHeaderField.COUNTRY)])
