@@ -2403,6 +2403,10 @@ class ExtendedField(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
 
+    def __str__(self):
+        return "{} - {} - {} ({})".format(
+            self.field_name, self.facility_id, self.contributor.name, self.id)
+
     @staticmethod
     def post_save(sender, **kwargs):
         instance = kwargs.get('instance')
