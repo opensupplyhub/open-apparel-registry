@@ -92,6 +92,7 @@ class FacilityMatchAdmin(SimpleHistoryAdmin):
 
 class ContributorAdmin(SimpleHistoryAdmin):
     history_list_display = ('is_verified', 'verification_notes')
+    search_fields = ('name', 'admin__email')
 
 
 class FacilityClaimAdmin(SimpleHistoryAdmin):
