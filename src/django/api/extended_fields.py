@@ -190,7 +190,13 @@ def create_extendedfields_for_claim(claim):
     f = claim.facility
 
     for claim_field, extended_field in CLAIM_FIELDS:
-        field_value = getattr(claim, claim_field)
+        if extended_field == ExtendedField.FACILITY_TYPE:
+            # We have unified the facility type and processing type in the UI
+            # into a single processing type field but we still want to create a
+            # facility type extended field based on processing types selected
+            field_value = getattr(claim, 'facility_production_types')
+        else:
+            field_value = getattr(claim, claim_field)
         if field_value is not None and field_value != "":
             if extended_field == ExtendedField.NUMBER_OF_WORKERS:
                 field_value = extract_int_range_value(field_value)
