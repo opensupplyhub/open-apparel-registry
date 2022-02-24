@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 import os
 import sys
-import debugpy
 
 if __name__ == "__main__":
-    debugpy.listen(('0.0.0.0', 3000))
-    print('Ready for debugging!')
+    if os.getenv('DEBUGPY') is not None:
+        import debugpy
+        debugpy.listen(('0.0.0.0', 3000))
+        print('Ready for debugging!')
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "oar.settings")
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
