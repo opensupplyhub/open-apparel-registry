@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Integrate facility/processing type taxonomy into facility claims [#1639](https://github.com/open-apparel-registry/open-apparel-registry/pull/1639)
 - Index extended fields [#1651](https://github.com/open-apparel-registry/open-apparel-registry/pull/1651)
 - Allow searching contributors by name and admin email [#1668](https://github.com/open-apparel-registry/open-apparel-registry/pull/1668)
+- Add support for facility_type_processing_type meta extended field [#1671](https://github.com/open-apparel-registry/open-apparel-registry/pull/1671)
 
 ### Changed
 

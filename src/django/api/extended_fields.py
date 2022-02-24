@@ -115,10 +115,19 @@ def create_extendedfields_for_single_item(item, raw_data):
         return False
     contributor = item.source.contributor
 
+    # facility_type_processing_type is a special "meta" field that attempts to
+    # simplify the submission process for contributors.
+    if (raw_data.get('facility_type_processing_type')):
+        if raw_data.get('facility_type') is None:
+            raw_data['facility_type'] = \
+                raw_data['facility_type_processing_type']
+        if raw_data.get('processing_type') is None:
+            raw_data['processing_type'] = \
+                raw_data['facility_type_processing_type']
     # Add a facility_type extended field if the user only
     # submitted a processing_type
-    if (raw_data.get('processing_type') and
-       raw_data.get('facility_type') is None):
+    elif (raw_data.get('processing_type') and
+          raw_data.get('facility_type') is None):
         raw_data['facility_type'] = raw_data['processing_type']
     # Add a processing_type extended field if the user only
     # submitted a facility_type
