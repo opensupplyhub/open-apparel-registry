@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Update final facility_type/processing_type taxonomy [#1644](https://github.com/open-apparel-registry/open-apparel-registry/pull/1644)
 - Modified custom_text handling [#1665](https://github.com/open-apparel-registry/open-apparel-registry/pull/1665)
+- Add two additional types to taxonomy [#1662](https://github.com/open-apparel-registry/open-apparel-registry/pull/1662)
 
 ### Deprecated
 
