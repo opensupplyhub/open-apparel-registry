@@ -1254,7 +1254,10 @@ class FacilityManager(models.Manager):
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
-            custom_text = format_custom_text(contributors[0], free_text_query)
+            custom_text = (
+                format_custom_text(contributors[0], free_text_query)
+                if contributors
+                else free_text_query)
             if switch_is_active('ppe'):
                 if embed is not None:
                     facilities_qs = facilities_qs \

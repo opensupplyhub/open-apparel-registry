@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Fix handling of numeric cells in Excel workbooks [#1663](https://github.com/open-apparel-registry/open-apparel-registry/pull/1663)
+- Fix custom text handling when not in embed mode [#1673](https://github.com/open-apparel-registry/open-apparel-registry/pull/1673)
 
 ### Security
 
