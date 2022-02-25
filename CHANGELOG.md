@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [59] - 2022-02-25
+
+### Added
+
 - Add selecting silver map style to embed config [#1637](https://github.com/open-apparel-registry/open-apparel-registry/pull/1637)
 - Integrate facility/processing type taxonomy into facility claims [#1639](https://github.com/open-apparel-registry/open-apparel-registry/pull/1639)
 - Index extended fields [#1651](https://github.com/open-apparel-registry/open-apparel-registry/pull/1651)
@@ -21,10 +35,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Modified custom_text handling [#1665](https://github.com/open-apparel-registry/open-apparel-registry/pull/1665)
 - Add two additional types to taxonomy [#1662](https://github.com/open-apparel-registry/open-apparel-registry/pull/1662)
 - Use DEBUGPY env var to conditionally enable debugging [#1675](https://github.com/open-apparel-registry/open-apparel-registry/pull/1675)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -1068,7 +1078,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/58...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/59...HEAD
+[59]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/59
 [58]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/58
 [57]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/57
 [56]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/56
