@@ -1,5 +1,6 @@
 from collections import defaultdict
 from itertools import groupby
+from unidecode import unidecode
 
 from django.contrib.auth.models import (AbstractBaseUser,
                                         BaseUserManager,
@@ -23,10 +24,13 @@ from waffle import switch_is_active
 from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
-from api.constants import Affiliations, Certifications, FacilitiesQueryParams
+from api.constants import (Affiliations, Certifications, FacilitiesQueryParams)
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
-                         get_list_contributor_field_values)
+                         get_list_contributor_field_values,
+                         clean, convert_to_standard_ranges,
+                         format_custom_text)
+from api.facility_type_processing_type import ALL_FACILITY_TYPE_CHOICES
 
 
 class ArrayLength(models.Func):
@@ -984,10 +988,10 @@ class FacilityClaim(models.Model):
         verbose_name='facility certifications',
     )
     facility_type = models.CharField(
-        max_length=len(CUT_AND_SEW),
+        max_length=300,
         null=True,
         blank=True,
-        choices=FACILITY_TYPE_CHOICES,
+        choices=ALL_FACILITY_TYPE_CHOICES,
         help_text='The editable facility type for this claim.',
         verbose_name='facility type')
     other_facility_type = models.CharField(
@@ -1250,13 +1254,17 @@ class FacilityManager(models.Manager):
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
+            custom_text = (
+                format_custom_text(contributors[0], free_text_query)
+                if contributors
+                else free_text_query)
             if switch_is_active('ppe'):
                 if embed is not None:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
                                 Q(id=free_text_query) |
                                 Q(ppe__icontains=free_text_query) |
-                                Q(custom_text__icontains=free_text_query))
+                                Q(custom_text__contains=[custom_text]))
                 else:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
@@ -1267,7 +1275,7 @@ class FacilityManager(models.Manager):
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
                                 Q(id=free_text_query) |
-                                Q(custom_text__icontains=free_text_query))
+                                Q(custom_text__contains=[custom_text]))
                 else:
                     facilities_qs = facilities_qs \
                         .filter(Q(name__icontains=free_text_query) |
@@ -1658,10 +1666,53 @@ class FacilityIndex(models.Model):
         null=True,
         editable=False,
         help_text='The related list if the type of the source is LIST.'))
-    custom_text = models.TextField(
-            null=True,
-            help_text=('A collection of custom values to search for the '
-                       'facility'))
+    custom_text = postgres.ArrayField(models.TextField(
+        null=False,
+        blank=False,
+        help_text='A collection of custom values to search for the '
+                  'facility'),
+        default=list)
+    number_of_workers = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for number of workers.'),
+        default=list)
+    facility_type = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for facility type.'),
+        default=list)
+    processing_type = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for processing type.'),
+        default=list)
+    product_type = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for product type.'),
+        default=list)
+    parent_company_name = postgres.ArrayField(models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for parent company.'),
+        default=list)
+    native_language_name = postgres.ArrayField(models.CharField(
+        max_length=2000,
+        null=False,
+        blank=False,
+        help_text='ExtendedField for native language name.'),
+        default=list)
+    parent_company_id = postgres.ArrayField(models.IntegerField(
+        null=False,
+        blank=False,
+        help_text='ExtendedField for parent_company_id.'),
+        default=list)
 
     class Meta:
         indexes = [GinIndex(fields=['contrib_types', 'contributors', 'lists'])]
@@ -2175,6 +2226,12 @@ class EmbedConfig(models.Model):
         blank=True,
         default='Facility name or OAR ID',
         help_text='The label for the search box.')
+    map_style = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default='default',
+        help_text='The map style for the embedded map')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -2349,9 +2406,19 @@ class ExtendedField(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
 
+    def __str__(self):
+        return "{} - {} - {} ({})".format(
+            self.field_name, self.facility_id, self.contributor.name, self.id)
+
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        if instance.facility is not None:
+            index_extendedfields([instance.facility.id])
+
 
 @transaction.atomic
-def index_custom_text(facility_ids=list):
+def get_custom_text(facility_ids=list):
     # If passed an empty array, update all facilities (where applicable)
     if len(facility_ids) == 0:
         print('Indexing custom text for all facilities...')
@@ -2378,7 +2445,7 @@ def index_custom_text(facility_ids=list):
         .order_by('facility__id', 'source__contributor__id', '-created_at') \
         .iterator()
 
-    custom_fields = defaultdict(str)
+    custom_fields = defaultdict(list)
     contributor_fields = defaultdict(list)
 
     for item in items:
@@ -2405,15 +2472,120 @@ def index_custom_text(facility_ids=list):
                                     item,
                                     formatted_fields
                                  )
-        item_fields_string = ''.join([f['value'] for f in item_fields])
+
+        item_fields_array = [format_custom_text(contributor_id, f['value'])
+                             for f in item_fields if f['value']]
 
         # Add the values to the dictionary entry for the item's facility
-        custom_fields[item.facility.id] += item_fields_string
+        custom_fields[item.facility.id] += item_fields_array
+
+    return custom_fields
+
+
+@transaction.atomic
+def index_custom_text(facility_ids=list):
+    custom_fields = get_custom_text(facility_ids)
 
     facilities = FacilityIndex.objects.filter(id__in=facility_ids) \
                                       .iterator()
     for facility in facilities:
-        facility.custom_text = custom_fields.get(facility.id, '')
+        facility.custom_text = custom_fields.get(facility.id, list())
+        facility.save()
+
+
+@transaction.atomic
+def index_extendedfields(facility_ids=list):
+    # If passed an empty array, update all facilities (where applicable)
+    if len(facility_ids) == 0:
+        print('Indexing extended fields for all facilities...')
+        facility_ids = Facility.objects.all().values_list('id', flat=True)
+
+    fields = ExtendedField.objects.filter(facility__id__in=facility_ids,
+                                          value__isnull=False)
+
+    facilities = FacilityIndex.objects.filter(id__in=facility_ids) \
+                                      .iterator()
+    for facility in facilities:
+        facility_fields = fields.filter(facility__id=facility.id)
+
+        # Set parent_company_name and parent_company_id:
+        parent_company_values = facility_fields.filter(
+            field_name='parent_company',
+            value__has_any_keys=['name', 'contributor_name',
+                                 'contributor_id']) \
+            .values('value__contributor_name', 'value__name',
+                    'value__contributor_id')
+        parent_company_name = set()
+        parent_company_id = set()
+        for parent_company in parent_company_values:
+            contributor_name = parent_company.get('value__contributor_name',
+                                                  None)
+            name = parent_company.get('value__name', None)
+            contributor_id = parent_company.get('value__contributor_id',
+                                                None)
+            if contributor_name is not None:
+                parent_company_name.add(contributor_name)
+            elif name is not None:
+                parent_company_name.add(name)
+            if contributor_id is not None:
+                parent_company_id.add(contributor_id)
+        facility.parent_company_name = list(parent_company_name)
+        facility.parent_company_id = list(parent_company_id)
+
+        # Add all of the standardized ranges that
+        # overlap with any of the submitted ranges
+        # to set number_of_workers:
+        number_of_workers_values = facility_fields.filter(
+            field_name='number_of_workers') \
+            .values_list('value', flat=True)
+        number_of_workers_ranges = set()
+        for value in number_of_workers_values:
+                convert_to_standard_ranges(value, number_of_workers_ranges)
+        facility.number_of_workers = list(number_of_workers_ranges)
+
+        # Use clean taxonomy values in the index for facility_type:
+        facility_type_values = facility_fields.filter(
+            field_name='facility_type',
+            value__has_key='matched_values') \
+            .values_list('value__matched_values', flat=True)
+        facility_types = set()
+        for values_list in facility_type_values:
+            for facility_type_value in values_list:
+                facility_types.add(facility_type_value[2])
+        facility.facility_type = list(facility_types)
+
+        # Use clean taxonomy values in the index for processing_type:
+        processing_type_values = facility_fields.filter(
+            field_name='processing_type',
+            value__has_key='matched_values') \
+            .values_list('value__matched_values', flat=True)
+        processing_types = set()
+        for values_list in processing_type_values:
+            for processing_type_value in values_list:
+                if processing_type_value[0] == 'PROCESSING_TYPE':
+                    processing_types.add(processing_type_value[3])
+        facility.processing_type = list(processing_types)
+
+        # Use clean on product_type values:
+        product_type_raw_values = facility_fields.filter(
+            field_name='product_type',
+            value__has_key='raw_values') \
+            .values_list('value__raw_values', flat=True)
+        product_types = set()
+        for values_list in product_type_raw_values:
+            for product_type_raw_value in values_list:
+                product_types.add(clean(product_type_raw_value))
+        facility.product_type = list(product_types)
+
+        # Use unidecode when indexing native_language_name:
+        native_language_name = facility_fields.filter(
+            field_name='native_language_name') \
+            .values_list('value', flat=True)
+        native_language_names = set()
+        for name in native_language_name:
+            native_language_names.add(unidecode(name))
+        facility.native_language_name = list(native_language_names)
+
         facility.save()
 
 
@@ -2460,6 +2632,7 @@ def index_facilities(facility_ids=list):
     FacilityIndex.objects.filter(id__in=facility_ids).delete()
     FacilityIndex.objects.bulk_create([FacilityIndex(**kv) for kv in data])
     index_custom_text(facility_ids)
+    index_extendedfields(facility_ids)
 
 
 post_save.connect(Facility.post_save, sender=Facility)
@@ -2467,3 +2640,4 @@ post_save.connect(Source.post_save, sender=Source)
 post_save.connect(FacilityMatch.post_save, sender=FacilityMatch)
 post_save.connect(Contributor.post_save, sender=Contributor)
 post_save.connect(FacilityListItem.post_save, sender=FacilityListItem)
+post_save.connect(ExtendedField.post_save, sender=ExtendedField)

@@ -19,6 +19,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [59] - 2022-02-25
+
+### Added
+
+- Add selecting silver map style to embed config [#1637](https://github.com/open-apparel-registry/open-apparel-registry/pull/1637)
+- Integrate facility/processing type taxonomy into facility claims [#1639](https://github.com/open-apparel-registry/open-apparel-registry/pull/1639)
+- Index extended fields [#1651](https://github.com/open-apparel-registry/open-apparel-registry/pull/1651)
+- Allow searching contributors by name and admin email [#1668](https://github.com/open-apparel-registry/open-apparel-registry/pull/1668)
+- Add support for facility_type_processing_type meta extended field [#1671](https://github.com/open-apparel-registry/open-apparel-registry/pull/1671)
+
+### Changed
+
+- Update final facility_type/processing_type taxonomy [#1644](https://github.com/open-apparel-registry/open-apparel-registry/pull/1644)
+- Modified custom_text handling [#1665](https://github.com/open-apparel-registry/open-apparel-registry/pull/1665)
+- Add two additional types to taxonomy [#1662](https://github.com/open-apparel-registry/open-apparel-registry/pull/1662)
+- Use DEBUGPY env var to conditionally enable debugging [#1675](https://github.com/open-apparel-registry/open-apparel-registry/pull/1675)
+
+### Fixed
+
+- Fix handling of numeric cells in Excel workbooks [#1663](https://github.com/open-apparel-registry/open-apparel-registry/pull/1663)
+- Fix custom text handling when not in embed mode [#1673](https://github.com/open-apparel-registry/open-apparel-registry/pull/1673)
+
+### Security
+
+- Bump follow-redirects from 1.14.3 to 1.14.8 in /src/app [#1645](https://github.com/open-apparel-registry/open-apparel-registry/pull/1645)
+- Bump url-parse from 1.5.1 to 1.5.7 in /src/app [#1666](https://github.com/open-apparel-registry/open-apparel-registry/pull/1666)
+
 ## [58] 2022-02-17
 
 ### Fixed
@@ -1051,7 +1078,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/58...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/59...HEAD
+[59]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/59
 [58]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/58
 [57]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/57
 [56]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/56

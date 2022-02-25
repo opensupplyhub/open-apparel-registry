@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Django",
+            "type": "python",
+            "request": "attach",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/src/django",
+                    "remoteRoot": "/usr/local/src"
+                }
+            ],
+            "port": 3000,
+            "host": "localhost",
+        }
+    ]
+}

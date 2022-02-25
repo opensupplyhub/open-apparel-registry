@@ -17,6 +17,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
-        docker-compose up
+        if [ "${1:-}" = "--debug" ]; then
+            docker-compose -f docker-compose.yml -f docker-compose.debug.yml up
+        else
+            docker-compose up
+        fi
     fi
 fi

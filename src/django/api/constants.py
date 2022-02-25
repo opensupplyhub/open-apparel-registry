@@ -147,3 +147,22 @@ class DateFormats:
     SECOND = '%Y-%m-%d %H:%M:%S'
     MONTH = '%Y-%m'
     WEEK = '%Y-%W'
+
+
+class NumberOfWorkersRanges:
+    STANDARD_RANGES = [{
+        'min': 0,
+        'max': 1000,
+        'label': 'Less than 1000'
+    }, {
+        'min': 1001,
+        'max': 5000,
+        'label': '1001-5000'
+    }, {
+        'min': 5001,
+        'max': 10000,
+        'label': '5001-10000'
+    }, {
+        'min': 10001,
+        'label': 'More than 10000'
+    }]

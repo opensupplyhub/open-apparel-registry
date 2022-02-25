@@ -3671,6 +3671,18 @@ class FacilityMergeTest(APITestCase):
         self.assertEqual(self.extended_field_2.facility_list_item,
                          self.list_item_2)
 
+    def test_updates_facility_index(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(200, response.status_code)
+
+        facility_index = FacilityIndex.objects.get(id=self.facility_1.id)
+        self.assertIn(self.extended_field_1.value,
+                      facility_index.native_language_name)
+        self.assertIn(self.extended_field_2.value,
+                      facility_index.native_language_name)
+
     def test_merge_with_two_approved_claims(self):
         self.facility_1_claim.status = FacilityClaim.APPROVED
         self.facility_1_claim.save()
@@ -4047,6 +4059,26 @@ class FacilitySplitTest(APITestCase):
         self.assertEqual(self.extended_field_two.facility.id, new_facility_id)
         self.assertEqual(self.extended_field_two.facility_list_item,
                          self.list_item_two)
+
+    def test_post_updates_facility_index(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        post_response = self.client.post(self.split_url,
+                                         {'match_id': self.match_two.id})
+        self.assertEqual(post_response.status_code, 200)
+        data = json.loads(post_response.content)
+        new_facility_id = data['new_oar_id']
+
+        facility_index_one = FacilityIndex.objects.get(id=self.facility_one.id)
+        self.assertIn(self.extended_field_one.value,
+                      facility_index_one.native_language_name)
+        self.assertNotIn(self.extended_field_two.value,
+                         facility_index_one.native_language_name)
+        facility_index_two = FacilityIndex.objects.get(id=new_facility_id)
+        self.assertNotIn(self.extended_field_one.value,
+                         facility_index_two.native_language_name)
+        self.assertIn(self.extended_field_two.value,
+                      facility_index_two.native_language_name)
 
 
 class FacilityMatchPromoteTest(APITestCase):
@@ -4570,7 +4602,7 @@ class FacilityClaimSerializerTests(TestCase):
 
     def test_product_and_production_values_from_claims_are_included(self):
         self.claim.facility_product_types = ['A', 'B']
-        self.claim.facility_production_types = ['C', 'D']
+        self.claim.facility_production_types = ['Blending', 'Bonding']
         self.claim.save()
         data = ApprovedFacilityClaimSerializer(self.claim).data
 
@@ -4580,9 +4612,8 @@ class FacilityClaimSerializerTests(TestCase):
         self.assertIn(('B', 'B'), product_types)
 
         production_types = data['production_type_choices']
-        self.assertIn(('C', 'C'), production_types)
-        self.assertEqual(('C', 'C'), production_types[0])
-        self.assertIn(('D', 'D'), production_types)
+        self.assertIn(('blending', 'Blending'), production_types)
+        self.assertIn(('bonding', 'Bonding'), production_types)
 
 
 class LogDownloadTests(APITestCase):
@@ -7639,10 +7670,14 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEquals(None, field_two['value'])
 
     def test_custom_text(self):
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertEquals(2, len(indexes))
-        self.assertIn('data one', indexes)
-        self.assertIn('data two', indexes)
+        indexes = FacilityIndex.objects.count()
+        self.assertEquals(2, indexes)
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertIn(index_two_data, index_two.custom_text)
 
     def test_custom_text_excludes_unsearchable(self):
         self.embed_two.searchable = False
@@ -7658,16 +7693,23 @@ class ContributorFieldsApiTest(APITestCase):
         if len(f_ids) > 0:
             index_custom_text(f_ids)
 
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertIn('data one', indexes)
-        self.assertNotIn('data two', indexes)
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertNotIn(index_two_data, index_two.custom_text)
 
     def test_custom_text_excludes_inactive(self):
         self.match_one.is_active = False
         self.match_one.save()
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertNotIn('data one', indexes)
-        self.assertIn('data two', indexes)
+
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertNotIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertIn(index_two_data, index_two.custom_text)
 
     def test_custom_text_uses_most_recent(self):
         new_item = FacilityListItem \
@@ -7690,10 +7732,15 @@ class ContributorFieldsApiTest(APITestCase):
             is_active=True,
             results={}
         )
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertIn('data one', indexes)
-        self.assertNotIn('data two', indexes)
-        self.assertIn('data three', indexes)
+
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertNotIn(index_two_data, index_two.custom_text)
+        index_three_data = '{}|data three'.format(self.contributor.id)
+        self.assertIn(index_three_data, index_two.custom_text)
 
     def test_custom_text_uses_field_contributor(self):
         user_two = User.objects.create(email='test2@example.com')
@@ -7731,10 +7778,14 @@ class ContributorFieldsApiTest(APITestCase):
             results={}
         )
 
-        indexes = FacilityIndex.objects.values_list('custom_text', flat=True)
-        self.assertIn('data one', indexes)
-        self.assertIn('data two', indexes)
-        self.assertNotIn('data three', indexes)
+        index_one = FacilityIndex.objects.get(id=self.facility.id)
+        index_one_data = '{}|data one'.format(self.contributor.id)
+        self.assertIn(index_one_data, index_one.custom_text)
+        index_two = FacilityIndex.objects.get(id=self.facility_two.id)
+        index_two_data = '{}|data two'.format(self.contributor.id)
+        self.assertIn(index_two_data, index_two.custom_text)
+        index_three_data = '{}|data three'.format(contributor_two.id)
+        self.assertNotIn(index_three_data, index_two.custom_text)
 
 
 class ContributorManagerTest(TestCase):
@@ -7845,7 +7896,10 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         super(ParentCompanyTestCase, self).setUp()
         self.url = reverse('facility-list')
 
-    def test_submit_parent_company_no_match(self):
+    @patch('api.geocoding.requests.get')
+    def test_submit_parent_company_no_match(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         self.client.post(self.url, {
             'country': "US",
@@ -7860,8 +7914,14 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'raw_value': 'A random value',
             'name': 'A random value'
         }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn('A random value', facility_index.parent_company_name)
+        self.assertEquals(0, len(facility_index.parent_company_id))
 
-    def test_submit_parent_company_fuzzy_match(self):
+    @patch('api.geocoding.requests.get')
+    def test_submit_parent_company_fuzzy_match(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         self.client.post(self.url, {
             'country': "US",
@@ -7877,6 +7937,36 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'contributor_name': self.contributor.name,
             'contributor_id': self.contributor.id
         }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn(self.contributor.name,
+                      facility_index.parent_company_name)
+        self.assertIn(self.contributor.id, facility_index.parent_company_id)
+
+    @patch('api.geocoding.requests.get')
+    def test_submit_parent_company_duplicate(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        self.assertEqual(2, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn(self.contributor.name,
+                      facility_index.parent_company_name)
+        self.assertEqual(1, len(facility_index.parent_company_name))
+        self.assertIn(self.contributor.id, facility_index.parent_company_id)
+        self.assertEqual(1, len(facility_index.parent_company_id))
 
 
 class ProductTypeTestCase(FacilityAPITestCaseBase):
@@ -7884,7 +7974,10 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         super(ProductTypeTestCase, self).setUp()
         self.url = reverse('facility-list')
 
-    def test_array(self):
+    @patch('api.geocoding.requests.get')
+    def test_array(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         self.client.post(self.url, json.dumps({
             'country': "US",
@@ -7898,8 +7991,14 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertEqual({
             'raw_values': ['a', 'b']
         }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn('a', facility_index.product_type)
+        self.assertIn('b', facility_index.product_type)
 
-    def test_string(self):
+    @patch('api.geocoding.requests.get')
+    def test_string(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         self.client.post(self.url, json.dumps({
             'country': "US",
@@ -7913,8 +8012,14 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertEqual({
             'raw_values': ['a', 'b']
         }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn('a', facility_index.product_type)
+        self.assertIn('b', facility_index.product_type)
 
-    def test_list_validation(self):
+    @patch('api.geocoding.requests.get')
+    def test_list_validation(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         response = self.client.post(self.url, json.dumps({
             'country': "US",
@@ -7925,7 +8030,10 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertEqual(0, ExtendedField.objects.all().count())
         self.assertEqual(response.status_code, 400)
 
-    def test_max_count(self):
+    @patch('api.geocoding.requests.get')
+    def test_max_count(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         response = self.client.post(self.url, json.dumps({
             'country': "US",
@@ -7934,6 +8042,10 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
             'product_type': [str(a) for a in range(MAX_PRODUCT_TYPE_COUNT)]
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertEqual(MAX_PRODUCT_TYPE_COUNT,
+                         len(facility_index.product_type))
 
         response = self.client.post(self.url, json.dumps({
             'country': "US",
@@ -7943,6 +8055,9 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
         self.assertEqual(response.status_code, 400)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertEqual(MAX_PRODUCT_TYPE_COUNT,
+                         len(facility_index.product_type))
 
 
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
@@ -7950,7 +8065,10 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         super(FacilityAndProcessingTypeAPITest, self).setUp()
         self.url = reverse('facility-list')
 
-    def test_single_processing_value(self):
+    @patch('api.geocoding.requests.get')
+    def test_single_processing_value(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         self.client.post(self.url, json.dumps({
             'country': "US",
@@ -7981,8 +8099,17 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
                     'Cutting'
                 ]
             ], 'raw_values': ['cutting']}, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertNotIn('Cutting', facility_index.facility_type)
+        self.assertIn('Final Product Assembly', facility_index.facility_type)
+        self.assertIn('Cutting', facility_index.processing_type)
+        self.assertNotIn('Final Product Assembly',
+                         facility_index.processing_type)
 
-    def test_multiple_facility_values(self):
+    @patch('api.geocoding.requests.get')
+    def test_multiple_facility_values(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         self.client.post(self.url, json.dumps({
             'country': "US",
@@ -8009,8 +8136,15 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
                 ]
             ], 'raw_values': ['office hq', 'final product assembly']},
             ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn('Final Product Assembly', facility_index.facility_type)
+        self.assertIn('Office / HQ', facility_index.facility_type)
+        self.assertEqual(0, len(facility_index.processing_type))
 
-    def test_invalid_value(self):
+    @patch('api.geocoding.requests.get')
+    def test_invalid_value(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         response = self.client.post(self.url, json.dumps({
             'country': "US",
@@ -8020,3 +8154,91 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         }), content_type='application/json')
         self.assertEqual(0, ExtendedField.objects.all().count())
         self.assertEqual(response.status_code, 400)
+
+
+class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(NumberOfWorkersAPITest, self).setUp()
+        self.url = reverse('facility-list')
+
+    @patch('api.geocoding.requests.get')
+    def test_single_value(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '2000'
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.NUMBER_OF_WORKERS, ef.field_name)
+        self.assertEqual({'min': 2000, 'max': 2000}, ef.value)
+
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertEquals(1, len(facility_index.number_of_workers))
+        self.assertIn('1001-5000', facility_index.number_of_workers)
+
+    @patch('api.geocoding.requests.get')
+    def test_range_value(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '0-500'
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.NUMBER_OF_WORKERS, ef.field_name)
+        self.assertEqual({'min': 0, 'max': 500}, ef.value)
+
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertEquals(1, len(facility_index.number_of_workers))
+        self.assertIn('Less than 1000', facility_index.number_of_workers)
+
+    @patch('api.geocoding.requests.get')
+    def test_crossrange_value(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '0 to 10000'
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.NUMBER_OF_WORKERS, ef.field_name)
+        self.assertEqual({'min': 0, 'max': 10000}, ef.value)
+
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertEquals(3, len(facility_index.number_of_workers))
+        self.assertIn('Less than 1000', facility_index.number_of_workers)
+        self.assertIn('1001-5000', facility_index.number_of_workers)
+        self.assertIn('5001-10000', facility_index.number_of_workers)
+
+    @patch('api.geocoding.requests.get')
+    def test_maxrange_value(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '20,000-100,000'
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.NUMBER_OF_WORKERS, ef.field_name)
+        self.assertEqual({'min': 20000, 'max': 100000}, ef.value)
+
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertEquals(1, len(facility_index.number_of_workers))
+        self.assertIn('More than 10000', facility_index.number_of_workers)

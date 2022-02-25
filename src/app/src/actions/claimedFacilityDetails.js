@@ -193,11 +193,8 @@ export const updateClaimedFacilityOfficePhone = createAction(
 export const updateClaimedFacilityParentCompany = createAction(
     'UPDATE_CLAIMED_FACILITY_PARENT_COMPANY',
 );
-export const updateClaimedFacilityFacilityType = createAction(
-    'UPDATE_CLAIMED_FACILITY_FACILITY_TYPE',
-);
-export const updateClaimedFacilityOtherFacilityType = createAction(
-    'UPDATE_CLAIMED_FACILITY_OTHER_FACILITY_TYPE',
+export const updateClaimedFacilityFacilityTypes = createAction(
+    'UPDATE_CLAIMED_FACILITY_FACILITY_TYPES',
 );
 export const updateClaimedFacilityAffiliations = createAction(
     'UPDATE_CLAIMED_FACILITY_AFFILIATIONS',

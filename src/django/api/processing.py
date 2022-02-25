@@ -15,7 +15,8 @@ from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityListItem
 from api.countries import COUNTRY_CODES, COUNTRY_NAMES
 from api.geocoding import geocode_address
-from api.matching import normalize_extended_facility_id, clean
+from api.matching import normalize_extended_facility_id
+from api.helpers import clean
 from api.extended_fields import (create_extendedfields_for_listitem,
                                  update_extendedfields_for_list_item)
 
@@ -52,7 +53,10 @@ def parse_excel(file, request):
         sheet = get_excel_sheet(file, request)
 
         header = ','.join(sheet.row_values(0))
-        rows = ['"{}"'.format('","'.join(sheet.row_values(idx)))
+        # Use use `str(x)` here since numbers in an Excel column will be
+        # returns as a Python number type
+        rows = ['"{}"'.format(
+            '","'.join([str(x) for x in sheet.row_values(idx)]))
                 for idx in range(1, sheet.nrows)]
 
         return header, rows
@@ -110,6 +114,19 @@ def parse_facility_list_item(item):
         fields = [f.lower()
                   for f in parse_csv_line(item.source.facility_list.header)]
         values = parse_csv_line(item.raw_data)
+
+        # facility_type_processing_type is a special "meta" field that attempts
+        # to simplify the submission process for contributors.
+        if 'facility_type_processing_type' in fields:
+            if 'facility_type' not in fields:
+                fields.append('facility_type')
+                values.append(
+                    values[fields.index('facility_type_processing_type')])
+            if 'processing_type' not in fields:
+                fields.append('processing_type')
+                values.append(
+                    values[fields.index('facility_type_processing_type')])
+
         if CsvHeaderField.COUNTRY in fields:
             item.country_code = get_country_code(
                 values[fields.index(CsvHeaderField.COUNTRY)])

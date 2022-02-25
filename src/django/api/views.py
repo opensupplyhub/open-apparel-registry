@@ -71,8 +71,8 @@ from api.geocoding import geocode_address
 from api.matching import (match_item,
                           exact_match_item,
                           text_match_item,
-                          GazetteerCacheTimeoutError,
-                          clean)
+                          GazetteerCacheTimeoutError)
+from api.helpers import clean
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -93,7 +93,8 @@ from api.models import (FacilityList,
                         NonstandardField,
                         FacilityIndex,
                         ExtendedField,
-                        index_custom_text)
+                        index_custom_text,
+                        index_extendedfields)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_excel,
@@ -1879,6 +1880,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         # be made in the `facility_history.py` module's
         # `create_facility_history_dictionary` function
         merge.changeReason = 'Merged with {}'.format(target.id)
+
+        FacilityIndex.objects.get(id=merge.id).delete()
         merge.delete()
 
         target.refresh_from_db()
@@ -2008,6 +2011,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for field in fields:
                 field.facility = new_facility
                 field.save()
+
+            index_extendedfields([new_facility.id, old_facility.id])
 
             return Response({
                 'match_id': match_for_new_facility.id,
@@ -3843,20 +3848,28 @@ class EmbedConfigAutoSchema(AutoSchema):
         return None
 
 
-def create_embed_fields(fields_data, embed_config):
+def create_embed_fields(fields_data, embed_config, previously_searchable=None):
+    if previously_searchable is None:
+        previously_searchable = list()
+
     if len(fields_data) != len(set([f['order'] for f in fields_data])):
         raise ValidationError('Fields cannot have the same order.')
 
     for field_data in fields_data:
         EmbedField.objects.create(embed_config=embed_config, **field_data)
 
-    contributor = embed_config.contributor
-    f_ids = FacilityListItem.objects \
-        .filter(source__contributor=contributor, facility__isnull=False) \
-        .values_list('facility__id', flat=True)
+    searchable = [f.get('column_name') for f in fields_data
+                  if f.get('searchable', None)]
 
-    if len(f_ids) > 0:
-        index_custom_text(f_ids)
+    if set(searchable) != set(previously_searchable):
+        contributor = embed_config.contributor
+        f_ids = FacilityListItem.objects \
+            .filter(source__contributor=contributor, facility__isnull=False) \
+            .distinct('facility__id') \
+            .values_list('facility__id', flat=True)
+
+        if len(f_ids) > 0:
+            index_custom_text(f_ids)
 
 
 def get_contributor(request):
@@ -3931,8 +3944,13 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
         fields_data = request.data.pop('embed_fields', [])
 
         # Update field data by deleting and recreating
-        EmbedField.objects.filter(embed_config=embed_config).delete()
-        create_embed_fields(fields_data, embed_config)
+        existing_fields = EmbedField.objects.filter(embed_config=embed_config)
+        previously_searchable = [f.get('column_name') for f
+                                 in existing_fields.values('column_name',
+                                                           'searchable')
+                                 if f.get('searchable', None)]
+        existing_fields.delete()
+        create_embed_fields(fields_data, embed_config, previously_searchable)
 
         return super(EmbedConfigViewSet, self).update(request, pk=pk)
 
