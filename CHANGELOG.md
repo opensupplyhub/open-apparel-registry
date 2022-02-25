@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 - Bump follow-redirects from 1.14.3 to 1.14.8 in /src/app [#1645](https://github.com/open-apparel-registry/open-apparel-registry/pull/1645)
+- Bump url-parse from 1.5.1 to 1.5.7 in /src/app [#1666](https://github.com/open-apparel-registry/open-apparel-registry/pull/1666)
 
 ## [58] 2022-02-17
 
