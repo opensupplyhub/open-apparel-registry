@@ -48,7 +48,6 @@ import {
     updateClaimedFacilityDescription,
     updateClaimedFacilityMinimumOrder,
     updateClaimedFacilityAverageLeadTime,
-    updateClaimedFacilityFacilityTypes,
     updateClaimedFacilityContactPersonName,
     updateClaimedFacilityContactEmail,
     updateClaimedFacilityPointOfContactVisibility,
@@ -295,7 +294,6 @@ function ClaimedFacilitiesDetails({
     errorUpdating,
     updateParentCompany,
     contributorOptions,
-    updateFacilityType,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -424,17 +422,6 @@ function ClaimedFacilitiesDetails({
                     </Typography>
                 </ShowOnly>
                 <InputSection
-                    label="Facility Type"
-                    value={get(data, 'facility_type', [])}
-                    onChange={updateFacilityType}
-                    disabled={updating}
-                    isSelect
-                    isMultiSelect
-                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
-                        data.facility_types,
-                    )}
-                />
-                <InputSection
                     label="Minimum order quantity"
                     value={data.facility_minimum_order_quantity}
                     onChange={updateFacilityMinimumOrder}
@@ -498,6 +485,17 @@ function ClaimedFacilitiesDetails({
                     )}
                 />
                 <InputSection
+                    label="Facility / Processing Types"
+                    value={get(data, 'facility_production_types', [])}
+                    onChange={updateFacilityProductionTypes}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
+                        data.production_type_choices,
+                    )}
+                />
+                <InputSection
                     label="Product Types"
                     value={get(data, 'facility_product_types', [])}
                     onChange={updateFacilityProductTypes}
@@ -507,17 +505,6 @@ function ClaimedFacilitiesDetails({
                     isCreatable
                     selectOptions={mapDjangoChoiceTuplesToSelectOptions(
                         data.product_type_choices,
-                    )}
-                />
-                <InputSection
-                    label="Processing Types"
-                    value={get(data, 'facility_production_types', [])}
-                    onChange={updateFacilityProductionTypes}
-                    disabled={updating}
-                    isSelect
-                    isMultiSelect
-                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
-                        data.production_type_choices,
                     )}
                 />
                 <Typography
@@ -681,7 +668,6 @@ ClaimedFacilitiesDetails.propTypes = {
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
     contributorOptions: contributorOptionsPropType,
-    updateFacilityType: func.isRequired,
 };
 
 function mapStateToProps({
@@ -760,9 +746,6 @@ function mapDispatchToProps(
         ),
         updateFacilityDescription: makeDispatchValueFn(
             updateClaimedFacilityDescription,
-        ),
-        updateFacilityType: makeDispatchMultiSelectFn(
-            updateClaimedFacilityFacilityTypes,
         ),
         updateFacilityMinimumOrder: makeDispatchValueFn(
             updateClaimedFacilityMinimumOrder,
