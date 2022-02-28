@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Change production type to Processing type in Django admin [#1679](https://github.com/open-apparel-registry/open-apparel-registry/pull/1679)
+
 ### Deprecated
 
 ### Removed
