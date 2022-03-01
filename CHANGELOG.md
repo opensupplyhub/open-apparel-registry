@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Include extended fields in CSV/Excel downloads [#1683](https://github.com/open-apparel-registry/open-apparel-registry/pull/1683)
+- Add embed_level to development contributors [#1681](https://github.com/open-apparel-registry/open-apparel-registry/pull/1681)
 
 ### Changed
 

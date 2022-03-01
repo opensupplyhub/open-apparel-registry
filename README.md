@@ -97,6 +97,14 @@ Set a breakpoint by clicking in the column next to the line numbers for a `.py` 
 
 Note that, due to the way static files are managed for the normal development environment, the Django server at 8081 is not available when running the `server` script with the `--debug` flag.
 
+### Embedded Maps
+
+Three users in development have embedded map access by default. User c2@example.com has Embed Deluxe / Custom Embed permissions, the highest level; user c3@example.com has Embed+ permissions; and user c4@example.com has general Embed permissions, the lowest level.
+
+In order to access the embedded map for a user with permissions, you must go to their Settings
+page and set up the basic map configuration, including height and width. A preview will then
+be available on their page, or you can visit http://localhost:6543/?embed=1&contributors=id where 'id' is the contributor's id. 
+
 ### Ports
 
 | Service                    | Port                            |
