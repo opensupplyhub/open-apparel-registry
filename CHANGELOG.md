@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Change production type to Processing type in Django admin [#1679](https://github.com/open-apparel-registry/open-apparel-registry/pull/1679)
 - Combine facility type and production type claim fields [#1678](https://github.com/open-apparel-registry/open-apparel-registry/pull/1678/files)
+- Migrate claim extended fields [#1677](https://github.com/open-apparel-registry/open-apparel-registry/pull/1677)
 
 ### Deprecated
 
