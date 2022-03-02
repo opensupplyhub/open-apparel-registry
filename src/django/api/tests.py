@@ -7818,16 +7818,16 @@ class ContributorManagerTest(TestCase):
 
         matches = Contributor.objects.filter_by_name('TESTING')
         self.assertEqual(2, matches.count())
-        # When the names are the same and neither is verified than the second
+        # When the names are the same and neither is verified then the first
         # contributor happens to sort first
-        self.assertEqual(c2, matches[0])
+        self.assertEqual(c1, matches[0])
 
-        c1.is_verified = True
-        c1.save()
+        c2.is_verified = True
+        c2.save()
         matches = Contributor.objects.filter_by_name('TESTING')
         self.assertEqual(2, matches.count())
-        # Marking c1 as verified forces it to sort first
-        self.assertEqual(c1, matches[0])
+        # Marking c2 as verified forces it to sort first
+        self.assertEqual(c2, matches[0])
 
     def test_filter_by_name_source(self):
         user1 = User.objects.create(email='test1@test.com')
