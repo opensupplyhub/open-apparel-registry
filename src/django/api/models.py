@@ -1251,6 +1251,8 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.PROCESSING_TYPE
         )
 
+        product_types = params.getlist(FacilitiesQueryParams.PRODUCT_TYPE)
+
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
@@ -1333,6 +1335,14 @@ class FacilityManager(models.Manager):
                     standard_processing_types.append(standard_type[3])
             facilities_qs = facilities_qs.filter(
                 processing_type__overlap=standard_processing_types
+            )
+
+        if len(product_types):
+            clean_product_types = []
+            for product_type in product_types:
+                clean_product_types.append(clean(product_type))
+            facilities_qs = facilities_qs.filter(
+                product_type__overlap=clean_product_types
             )
 
         facility_ids = facilities_qs.values_list('id', flat=True)
