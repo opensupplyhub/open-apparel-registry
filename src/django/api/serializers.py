@@ -58,7 +58,7 @@ def _get_parent_company(claim):
         return None
 
     return {
-        'id': claim.parent_company.admin.id,
+        'id': claim.parent_company.id,
         'name': claim.parent_company.name,
     }
 
@@ -554,6 +554,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     contributors = SerializerMethodField()
     name = SerializerMethodField()
     contributor_fields = SerializerMethodField()
+    extended_fields = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -561,7 +562,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                   'oar_id', 'country_name', 'contributors',
                   'ppe_product_types', 'ppe_contact_phone',
                   'ppe_contact_email', 'ppe_website', 'is_closed',
-                  'contributor_fields')
+                  'contributor_fields', 'extended_fields')
         geo_field = 'location'
 
     # Added to ensure including the OAR ID in the geojson properties map
@@ -642,6 +643,61 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                 facilitymatch__is_active=True).order_by('-created_at').first()
 
         return assign_contributor_field_values(list_item, fields)
+
+    def get_extended_fields(self, facility):
+        request = self.context.get('request') \
+            if self.context is not None else None
+        embed = request.query_params.get('embed') \
+            if request is not None else None
+        contributor_id = request.query_params.get('contributor', None) \
+            if request is not None and embed == '1' else None
+        if contributor_id is None and request is not None and embed == '1':
+            contributor_ids = request.query_params.getlist('contributors', [])
+            if len(contributor_ids):
+                contributor_id = contributor_ids[0]
+
+        fields = facility.extended_fields(contributor_id=contributor_id)
+        user_can_see_detail = can_user_see_detail(self)
+        embed_mode_active = is_embed_mode_active(self)
+
+        grouped_data = defaultdict(list)
+
+        def sort_order(k):
+            return (k.get('verified_count', 0), k.get('is_from_claim', False),
+                    k.get('value_count', 1), k.get('updated_at', None))
+
+        for field_name, _ in ExtendedField.FIELD_CHOICES:
+            serializer = ExtendedFieldListSerializer(
+                        fields.filter(field_name=field_name),
+                        many=True,
+                        context={'user_can_see_detail': user_can_see_detail,
+                                 'embed_mode_active': embed_mode_active}
+                    )
+
+            if field_name == ExtendedField.NAME and not embed_mode_active:
+                unsorted_data = serializer.data
+                for item in get_facility_names(facility):
+                    if item.name is not None and len(item.name) != 0:
+                        unsorted_data.append(
+                            create_name_field(item.name,
+                                              item.source.contributor,
+                                              user_can_see_detail))
+                data = sorted(unsorted_data, key=sort_order, reverse=True)
+            elif field_name == ExtendedField.ADDRESS and not embed_mode_active:
+                unsorted_data = serializer.data
+                for item in get_facility_addresses(facility):
+                    if item.address is not None and len(item.address) != 0:
+                        unsorted_data.append(
+                            create_address_field(item.address,
+                                                 item.source.contributor,
+                                                 user_can_see_detail))
+                data = sorted(unsorted_data, key=sort_order, reverse=True)
+            else:
+                data = sorted(serializer.data, key=sort_order, reverse=True)
+
+            grouped_data[field_name] = data
+
+        return grouped_data
 
 
 def assign_contributor_field_values(list_item, fields):
@@ -924,57 +980,6 @@ class FacilityDetailsSerializer(FacilitySerializer):
                 facilitymatch__is_active=True).order_by('-created_at').first()
 
         return assign_contributor_field_values(list_item, fields)
-
-    def get_extended_fields(self, facility):
-        request = self.context.get('request') \
-            if self.context is not None else None
-        embed = request.query_params.get('embed') \
-            if request is not None else None
-        contributor_id = request.query_params.get('contributor', None) \
-            if request is not None and embed == '1' else None
-
-        fields = facility.extended_fields(contributor_id=contributor_id)
-        user_can_see_detail = can_user_see_detail(self)
-        embed_mode_active = is_embed_mode_active(self)
-
-        grouped_data = defaultdict(list)
-
-        def sort_order(k):
-            return (k.get('verified_count', 0), k.get('is_from_claim', False),
-                    k.get('value_count', 1), k.get('updated_at', None))
-
-        for field_name, _ in ExtendedField.FIELD_CHOICES:
-            serializer = ExtendedFieldListSerializer(
-                        fields.filter(field_name=field_name),
-                        many=True,
-                        context={'user_can_see_detail': user_can_see_detail,
-                                 'embed_mode_active': embed_mode_active}
-                    )
-
-            if field_name == ExtendedField.NAME and not embed_mode_active:
-                unsorted_data = serializer.data
-                for item in get_facility_names(facility):
-                    if item.name is not None and len(item.name) != 0:
-                        unsorted_data.append(
-                            create_name_field(item.name,
-                                              item.source.contributor,
-                                              user_can_see_detail))
-                data = sorted(unsorted_data, key=sort_order, reverse=True)
-            elif field_name == ExtendedField.ADDRESS and not embed_mode_active:
-                unsorted_data = serializer.data
-                for item in get_facility_addresses(facility):
-                    if item.address is not None and len(item.address) != 0:
-                        unsorted_data.append(
-                            create_address_field(item.address,
-                                                 item.source.contributor,
-                                                 user_can_see_detail))
-                data = sorted(unsorted_data, key=sort_order, reverse=True)
-            else:
-                data = sorted(serializer.data, key=sort_order, reverse=True)
-
-            grouped_data[field_name] = data
-
-        return grouped_data
 
     def get_created_from(self, facility):
         user_can_see_detail = can_user_see_detail(self)

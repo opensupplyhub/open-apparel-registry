@@ -10,6 +10,8 @@ The Open Apparel Registry (OAR) is a tool to identify every apparel facility wor
   - [Debugging Django](#debugging-django)
   - [Ports](#ports)
 - [Scripts 🧰](#scripts-)
+- [Management](#management)
+  - [Making Superusers](#making-superusers)
 
 ## Requirements
 
@@ -35,11 +37,11 @@ vagrant@vagrant:/vagrant$
 
 ### Google Maps Platform
 
-The OAR requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API. 
+The OAR requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API.
 
 Without an API key, facility detail maps will not load on the client and geocoding will not function on the server. The basemap will also be low-resolution and watermarked with "for development purposes only."
 
-See [Getting Started with Google Maps Platform](https://developers.google.com/maps/gmp-get-started#procedures) and [Get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key#get-the-api-key) for an overview on how to get setup. 
+See [Getting Started with Google Maps Platform](https://developers.google.com/maps/gmp-get-started#procedures) and [Get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key#get-the-api-key) for an overview on how to get setup.
 
 `setup` will stub out an environment variables file (`.env`) in the root of the project. To wire up your API key, simply update `.env`:
 
@@ -95,6 +97,14 @@ Set a breakpoint by clicking in the column next to the line numbers for a `.py` 
 
 Note that, due to the way static files are managed for the normal development environment, the Django server at 8081 is not available when running the `server` script with the `--debug` flag.
 
+### Embedded Maps
+
+Three users in development have embedded map access by default. User c2@example.com has Embed Deluxe / Custom Embed permissions, the highest level; user c3@example.com has Embed+ permissions; and user c4@example.com has general Embed permissions, the lowest level.
+
+In order to access the embedded map for a user with permissions, you must go to their Settings
+page and set up the basic map configuration, including height and width. A preview will then
+be available on their page, or you can visit http://localhost:6543/?embed=1&contributors=id where 'id' is the contributor's id. 
+
 ### Ports
 
 | Service                    | Port                            |
@@ -121,3 +131,24 @@ Note that, due to the way static files are managed for the normal development en
 | `batch_process`        | Given a list id argument run parse, geocode, and match via the batch_process Django management command |
 | `devhealthcheck.sh`    | Simulate application load balancer health checks in development                                        |
 | `postfacilitiescsv.py` | POST the rows of a CSV containing facility information to the facilities API                           |
+
+## Management
+
+### Making Superusers
+
+In staging and production we do not have access to the Django Shell so granting
+superuser permissions to a member of the OAR team or development team that needs
+to manage the system requires the use SQL statements to adjust the permissions.
+
+- Connect to the staging or production database via the bastion instance
+- Run the following command
+
+```sql
+UPDATE api_user
+SET is_staff = true, is_superuser = true
+WHERE email ilike '{the user's email address}';
+```
+
+- You should see `UPDATE 1` printed to the console. If not, check the email
+  address and verify that the user has in fact registered an account in the
+  environment (staging or production).

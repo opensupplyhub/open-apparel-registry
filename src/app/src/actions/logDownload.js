@@ -42,6 +42,12 @@ export function logDownload(format, options) {
                 get(featureFlags, 'flags.report_a_facility', false) &&
                 !isEmbedded;
 
+            const extendedFieldsAreActive = get(
+                featureFlags,
+                'flags.extended_profile',
+                false,
+            );
+
             const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
             if (!isEmbedded) {
@@ -52,6 +58,7 @@ export function logDownload(format, options) {
                 downloadFacilities(facilities, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
+                    includeExtendedFields: extendedFieldsAreActive,
                     isEmbedded,
                 });
             } else {
@@ -94,6 +101,7 @@ export function logDownload(format, options) {
                 downloadFacilities(features, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
+                    includeExtendedFields: extendedFieldsAreActive,
                     isEmbedded,
                 });
             }

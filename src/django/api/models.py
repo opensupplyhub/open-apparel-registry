@@ -1018,13 +1018,13 @@ class FacilityClaim(models.Model):
             null=False,
             blank=False,
             max_length=50,
-            help_text='A production type associated with the facility',
-            verbose_name='production type',
+            help_text='A processing type associated with the facility',
+            verbose_name='processing type',
         ),
         null=True,
         blank=True,
-        help_text='The production types associated with the facility',
-        verbose_name='production types',
+        help_text='The processing types associated with the facility',
+        verbose_name='processing types',
     )
     point_of_contact_person_name = models.CharField(
         max_length=200,

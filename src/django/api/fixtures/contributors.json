@@ -1,7 +1,7 @@
 [
     {
         "model": "api.contributor",
-        "pk": 2,
+        "pk": 1,
         "fields": {
             "admin": 2,
             "name": "Service Provider A",
@@ -10,12 +10,13 @@
             "contrib_type": "Service Provider",
             "other_contrib_type": null,
             "created_at": "2020-03-09T14:25:18+00:00",
-            "updated_at": "2020-03-13T17:47:08.934203+00:00"
+            "updated_at": "2020-03-13T17:47:08.934203+00:00",
+            "embed_level": 3
         }
     },
     {
         "model": "api.contributor",
-        "pk": 3,
+        "pk": 2,
         "fields": {
             "admin": 3,
             "name": "Factory A",
@@ -24,12 +25,13 @@
             "contrib_type": "Factory / Facility",
             "other_contrib_type": null,
             "created_at": "2020-03-08T18:27:40+00:00",
-            "updated_at": "2020-03-13T17:47:08.839090+00:00"
+            "updated_at": "2020-03-13T17:47:08.839090+00:00",
+            "embed_level": 2
         }
     },
     {
         "model": "api.contributor",
-        "pk": 4,
+        "pk": 3,
         "fields": {
             "admin": 4,
             "name": "Brand A",
@@ -38,12 +40,13 @@
             "contrib_type": "Brand/Retailer",
             "other_contrib_type": null,
             "created_at": "2020-03-09T14:34:09+00:00",
-            "updated_at": "2020-03-13T17:47:08.847584+00:00"
+            "updated_at": "2020-03-13T17:47:08.847584+00:00",
+            "embed_level": 1
         }
     },
     {
         "model": "api.contributor",
-        "pk": 5,
+        "pk": 4,
         "fields": {
             "admin": 5,
             "name": "Factory C",
@@ -57,7 +60,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 6,
+        "pk": 5,
         "fields": {
             "admin": 6,
             "name": "Service Provider C",
@@ -71,7 +74,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 7,
+        "pk": 6,
         "fields": {
             "admin": 7,
             "name": "Auditor A",
@@ -85,7 +88,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 8,
+        "pk": 7,
         "fields": {
             "admin": 8,
             "name": "Civil Society Organization A",
@@ -99,7 +102,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 9,
+        "pk": 8,
         "fields": {
             "admin": 9,
             "name": "Manufacturing Group A",
@@ -113,7 +116,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 10,
+        "pk": 9,
         "fields": {
             "admin": 10,
             "name": "Union A",
@@ -127,7 +130,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 11,
+        "pk": 10,
         "fields": {
             "admin": 11,
             "name": "Service Provider E",
@@ -141,7 +144,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 12,
+        "pk": 11,
         "fields": {
             "admin": 12,
             "name": "Manufacturing Group C",
@@ -155,7 +158,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 13,
+        "pk": 12,
         "fields": {
             "admin": 13,
             "name": "Researcher A",
@@ -169,7 +172,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 14,
+        "pk": 13,
         "fields": {
             "admin": 14,
             "name": "Service Provider G",
@@ -183,7 +186,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 15,
+        "pk": 14,
         "fields": {
             "admin": 15,
             "name": "Manufacturing Group E",
@@ -197,7 +200,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 16,
+        "pk": 15,
         "fields": {
             "admin": 16,
             "name": "Brand C",
@@ -211,7 +214,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 17,
+        "pk": 16,
         "fields": {
             "admin": 17,
             "name": "Researcher C",
@@ -225,7 +228,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 18,
+        "pk": 17,
         "fields": {
             "admin": 18,
             "name": "Manufacturing Group G",
@@ -239,7 +242,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 19,
+        "pk": 18,
         "fields": {
             "admin": 19,
             "name": "Brand E",
@@ -253,7 +256,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 20,
+        "pk": 19,
         "fields": {
             "admin": 20,
             "name": "Service Provider I",
@@ -267,7 +270,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 21,
+        "pk": 20,
         "fields": {
             "admin": 21,
             "name": "Researcher E",
@@ -281,7 +284,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 22,
+        "pk": 21,
         "fields": {
             "admin": 22,
             "name": "Service Provider K",
@@ -295,7 +298,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 23,
+        "pk": 22,
         "fields": {
             "admin": 23,
             "name": "Factory E",
@@ -309,7 +312,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 24,
+        "pk": 23,
         "fields": {
             "admin": 24,
             "name": "Manufacturing Group I",
@@ -323,7 +326,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 25,
+        "pk": 24,
         "fields": {
             "admin": 25,
             "name": "Factory G",
@@ -337,7 +340,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 26,
+        "pk": 25,
         "fields": {
             "admin": 26,
             "name": "Service Provider M",
@@ -351,7 +354,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 27,
+        "pk": 26,
         "fields": {
             "admin": 27,
             "name": "Brand G",
@@ -365,7 +368,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 28,
+        "pk": 27,
         "fields": {
             "admin": 28,
             "name": "Researcher G",
@@ -379,7 +382,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 29,
+        "pk": 28,
         "fields": {
             "admin": 29,
             "name": "Factory I",
@@ -393,7 +396,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 30,
+        "pk": 29,
         "fields": {
             "admin": 30,
             "name": "Civil Society Organization C",
@@ -407,7 +410,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 31,
+        "pk": 30,
         "fields": {
             "admin": 31,
             "name": "Service Provider O",
@@ -421,7 +424,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 32,
+        "pk": 31,
         "fields": {
             "admin": 32,
             "name": "Multi Stakeholder Initiative A",
@@ -435,7 +438,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 33,
+        "pk": 32,
         "fields": {
             "admin": 33,
             "name": "Union C",
@@ -449,7 +452,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 34,
+        "pk": 33,
         "fields": {
             "admin": 34,
             "name": "Factory K",
@@ -463,7 +466,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 35,
+        "pk": 34,
         "fields": {
             "admin": 35,
             "name": "Union E",
@@ -477,7 +480,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 36,
+        "pk": 35,
         "fields": {
             "admin": 36,
             "name": "Manufacturing Group K",
@@ -491,7 +494,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 37,
+        "pk": 36,
         "fields": {
             "admin": 37,
             "name": "Civil Society Organization E",
@@ -505,7 +508,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 38,
+        "pk": 37,
         "fields": {
             "admin": 38,
             "name": "Union G",
@@ -519,7 +522,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 39,
+        "pk": 38,
         "fields": {
             "admin": 39,
             "name": "Manufacturing Group M",
@@ -533,7 +536,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 40,
+        "pk": 39,
         "fields": {
             "admin": 40,
             "name": "Factory M",
@@ -547,7 +550,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 41,
+        "pk": 40,
         "fields": {
             "admin": 41,
             "name": "Researcher I",
@@ -561,7 +564,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 42,
+        "pk": 41,
         "fields": {
             "admin": 42,
             "name": "Researcher K",
@@ -575,7 +578,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 43,
+        "pk": 42,
         "fields": {
             "admin": 43,
             "name": "Researcher M",
@@ -589,7 +592,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 44,
+        "pk": 43,
         "fields": {
             "admin": 44,
             "name": "Service Provider Q",
@@ -603,7 +606,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 45,
+        "pk": 44,
         "fields": {
             "admin": 45,
             "name": "Brand I",
@@ -617,7 +620,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 46,
+        "pk": 45,
         "fields": {
             "admin": 46,
             "name": "Service Provider S",
@@ -631,7 +634,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 47,
+        "pk": 46,
         "fields": {
             "admin": 47,
             "name": "Service Provider U",
@@ -645,7 +648,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 48,
+        "pk": 47,
         "fields": {
             "admin": 48,
             "name": "Researcher O",
@@ -659,7 +662,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 49,
+        "pk": 48,
         "fields": {
             "admin": 49,
             "name": "Union I",
@@ -673,7 +676,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 50,
+        "pk": 49,
         "fields": {
             "admin": 50,
             "name": "Union K",
@@ -687,7 +690,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 51,
+        "pk": 50,
         "fields": {
             "admin": 51,
             "name": "Researcher Q",
@@ -701,7 +704,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 52,
+        "pk": 51,
         "fields": {
             "admin": 52,
             "name": "Service Provider W",
@@ -715,7 +718,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 53,
+        "pk": 52,
         "fields": {
             "admin": 53,
             "name": "Manufacturing Group O",
@@ -729,7 +732,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 54,
+        "pk": 53,
         "fields": {
             "admin": 54,
             "name": "Service Provider Y",
@@ -743,7 +746,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 55,
+        "pk": 54,
         "fields": {
             "admin": 55,
             "name": "Factory O",
@@ -757,7 +760,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 56,
+        "pk": 55,
         "fields": {
             "admin": 56,
             "name": "Union M",
@@ -771,7 +774,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 57,
+        "pk": 56,
         "fields": {
             "admin": 57,
             "name": "Multi Stakeholder Initiative C",
@@ -785,7 +788,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 58,
+        "pk": 57,
         "fields": {
             "admin": 58,
             "name": "Factory Q",
@@ -799,7 +802,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 59,
+        "pk": 58,
         "fields": {
             "admin": 59,
             "name": "Civil Society Organization G",
@@ -813,7 +816,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 60,
+        "pk": 59,
         "fields": {
             "admin": 60,
             "name": "Civil Society Organization I",
@@ -827,7 +830,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 61,
+        "pk": 60,
         "fields": {
             "admin": 61,
             "name": "Factory S",
@@ -841,7 +844,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 62,
+        "pk": 61,
         "fields": {
             "admin": 62,
             "name": "Union O",
@@ -855,7 +858,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 63,
+        "pk": 62,
         "fields": {
             "admin": 63,
             "name": "Factory U",
@@ -869,7 +872,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 64,
+        "pk": 63,
         "fields": {
             "admin": 64,
             "name": "Brand K",
@@ -883,7 +886,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 65,
+        "pk": 64,
         "fields": {
             "admin": 65,
             "name": "Manufacturing Group Q",
@@ -897,7 +900,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 66,
+        "pk": 65,
         "fields": {
             "admin": 66,
             "name": "Auditor C",
@@ -911,7 +914,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 67,
+        "pk": 66,
         "fields": {
             "admin": 67,
             "name": "Brand M",
@@ -925,7 +928,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 68,
+        "pk": 67,
         "fields": {
             "admin": 68,
             "name": "Researcher S",
@@ -939,7 +942,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 69,
+        "pk": 68,
         "fields": {
             "admin": 69,
             "name": "Union Q",
@@ -953,7 +956,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 70,
+        "pk": 69,
         "fields": {
             "admin": 70,
             "name": "Researcher U",
@@ -967,7 +970,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 71,
+        "pk": 70,
         "fields": {
             "admin": 71,
             "name": "Union S",
@@ -981,7 +984,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 72,
+        "pk": 71,
         "fields": {
             "admin": 72,
             "name": "Union U",
@@ -995,7 +998,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 73,
+        "pk": 72,
         "fields": {
             "admin": 73,
             "name": "Auditor E",
@@ -1009,7 +1012,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 74,
+        "pk": 73,
         "fields": {
             "admin": 74,
             "name": "Multi Stakeholder Initiative E",
@@ -1023,7 +1026,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 75,
+        "pk": 74,
         "fields": {
             "admin": 75,
             "name": "Researcher W",
@@ -1037,7 +1040,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 76,
+        "pk": 75,
         "fields": {
             "admin": 76,
             "name": "Manufacturing Group S",
@@ -1051,7 +1054,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 77,
+        "pk": 76,
         "fields": {
             "admin": 77,
             "name": "Union W",
@@ -1065,7 +1068,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 78,
+        "pk": 77,
         "fields": {
             "admin": 78,
             "name": "Civil Society Organization K",
@@ -1079,7 +1082,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 79,
+        "pk": 78,
         "fields": {
             "admin": 79,
             "name": "Multi Stakeholder Initiative G",
@@ -1093,7 +1096,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 80,
+        "pk": 79,
         "fields": {
             "admin": 80,
             "name": "Service Provider AA",
@@ -1107,7 +1110,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 81,
+        "pk": 80,
         "fields": {
             "admin": 81,
             "name": "Factory W",
@@ -1121,7 +1124,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 82,
+        "pk": 81,
         "fields": {
             "admin": 82,
             "name": "Auditor G",
@@ -1135,7 +1138,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 83,
+        "pk": 82,
         "fields": {
             "admin": 83,
             "name": "Service Provider AC",
@@ -1149,7 +1152,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 84,
+        "pk": 83,
         "fields": {
             "admin": 84,
             "name": "Manufacturing Group U",
@@ -1163,7 +1166,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 85,
+        "pk": 84,
         "fields": {
             "admin": 85,
             "name": "Manufacturing Group W",
@@ -1177,7 +1180,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 86,
+        "pk": 85,
         "fields": {
             "admin": 86,
             "name": "Auditor I",
@@ -1191,7 +1194,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 87,
+        "pk": 86,
         "fields": {
             "admin": 87,
             "name": "Multi Stakeholder Initiative I",
@@ -1205,7 +1208,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 88,
+        "pk": 87,
         "fields": {
             "admin": 88,
             "name": "Service Provider AE",
@@ -1219,7 +1222,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 89,
+        "pk": 88,
         "fields": {
             "admin": 89,
             "name": "Brand O",
@@ -1233,7 +1236,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 90,
+        "pk": 89,
         "fields": {
             "admin": 90,
             "name": "Brand Q",
@@ -1247,7 +1250,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 91,
+        "pk": 90,
         "fields": {
             "admin": 91,
             "name": "Brand S",
@@ -1261,7 +1264,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 92,
+        "pk": 91,
         "fields": {
             "admin": 92,
             "name": "Union Y",
@@ -1275,7 +1278,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 93,
+        "pk": 92,
         "fields": {
             "admin": 93,
             "name": "Brand U",
@@ -1289,7 +1292,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 94,
+        "pk": 93,
         "fields": {
             "admin": 94,
             "name": "Manufacturing Group Y",
@@ -1303,7 +1306,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 95,
+        "pk": 94,
         "fields": {
             "admin": 95,
             "name": "Factory Y",
@@ -1317,7 +1320,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 96,
+        "pk": 95,
         "fields": {
             "admin": 96,
             "name": "Service Provider AG",
@@ -1331,7 +1334,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 97,
+        "pk": 96,
         "fields": {
             "admin": 97,
             "name": "Service Provider AI",
@@ -1345,7 +1348,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 98,
+        "pk": 97,
         "fields": {
             "admin": 98,
             "name": "Service Provider AK",
@@ -1359,7 +1362,7 @@
     },
     {
         "model": "api.contributor",
-        "pk": 99,
+        "pk": 98,
         "fields": {
             "admin": 99,
             "name": "Manufacturing Group AA",
