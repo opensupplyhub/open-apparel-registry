@@ -29,7 +29,9 @@ from api.helpers import (prefix_a_an,
                          get_list_contributor_field_values,
                          clean, convert_to_standard_ranges,
                          format_custom_text)
-from api.facility_type_processing_type import ALL_FACILITY_TYPE_CHOICES
+from api.facility_type_processing_type import (
+    ALL_FACILITY_TYPE_CHOICES,
+    get_facility_and_processing_type)
 
 
 class ArrayLength(models.Func):
@@ -1243,6 +1245,12 @@ class FacilityManager(models.Manager):
 
         parent_companies = params.getlist(FacilitiesQueryParams.PARENT_COMPANY)
 
+        facility_types = params.getlist(FacilitiesQueryParams.FACILITY_TYPE)
+
+        processing_types = params.getlist(
+            FacilitiesQueryParams.PROCESSING_TYPE
+        )
+
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
@@ -1304,6 +1312,28 @@ class FacilityManager(models.Manager):
                     Q(parent_company_id__overlap=parent_company_id) |
                     Q(parent_company_name__overlap=parent_company_name)
                 )
+
+        if len(facility_types):
+            standard_facility_types = []
+            for facility_type in facility_types:
+                standard_type = get_facility_and_processing_type(facility_type)
+                if standard_type[0] is not None:
+                    standard_facility_types.append(standard_type[2])
+            facilities_qs = facilities_qs.filter(
+                facility_type__overlap=standard_facility_types
+            )
+
+        if len(processing_types):
+            standard_processing_types = []
+            for processing_type in processing_types:
+                standard_type = get_facility_and_processing_type(
+                    processing_type
+                )
+                if standard_type[0] is not None:
+                    standard_processing_types.append(standard_type[3])
+            facilities_qs = facilities_qs.filter(
+                processing_type__overlap=standard_processing_types
+            )
 
         facility_ids = facilities_qs.values_list('id', flat=True)
         facilities_qs = Facility.objects.filter(id__in=facility_ids)
