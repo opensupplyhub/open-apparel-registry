@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [60] - 2022-03-03
+
+### Added
+
 - Include extended fields in CSV/Excel downloads [#1683](https://github.com/open-apparel-registry/open-apparel-registry/pull/1683)
 - Add embed_level to development contributors [#1681](https://github.com/open-apparel-registry/open-apparel-registry/pull/1681)
 
@@ -18,15 +32,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Combine facility type and production type claim fields [#1678](https://github.com/open-apparel-registry/open-apparel-registry/pull/1678/files)
 - Migrate claim extended fields [#1677](https://github.com/open-apparel-registry/open-apparel-registry/pull/1677)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Fix claim showing incorrect parent facility [#1687](https://github.com/open-apparel-registry/open-apparel-registry/pull/1687)
-
-### Security
 
 ## [59] - 2022-02-25
 
@@ -1087,7 +1095,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/59...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/60...HEAD
+[60]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/60
 [59]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/59
 [58]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/58
 [57]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/57
