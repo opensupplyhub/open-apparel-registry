@@ -19,7 +19,6 @@ from django.utils.dateformat import format
 from django.utils import timezone
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
-from waffle import switch_is_active
 
 from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
@@ -1242,14 +1241,7 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.EMBED, None
         )
 
-        # The `ppe` query argument is defined as an optional boolean at the
-        # swagger level which is the built in field type option that most
-        # closely matches our desired behavior. Our intended use of the
-        # argument is conditionally "switch on" a special section of filter
-        # logic. To support that behavior we consider a missing value or any
-        # value than the string "true" to be `False`.
-        ppe = (True if params.get(FacilitiesQueryParams.PPE, '') == 'true'
-               else False)
+        parent_companies = params.getlist(FacilitiesQueryParams.PARENT_COMPANY)
 
         facilities_qs = FacilityIndex.objects.all()
 
@@ -1258,28 +1250,16 @@ class FacilityManager(models.Manager):
                 format_custom_text(contributors[0], free_text_query)
                 if contributors
                 else free_text_query)
-            if switch_is_active('ppe'):
-                if embed is not None:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query) |
-                                Q(ppe__icontains=free_text_query) |
-                                Q(custom_text__contains=[custom_text]))
-                else:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query) |
-                                Q(ppe__icontains=free_text_query))
+
+            if embed is not None:
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id=free_text_query) |
+                            Q(custom_text__contains=[custom_text]))
             else:
-                if embed is not None:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query) |
-                                Q(custom_text__contains=[custom_text]))
-                else:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query))
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id=free_text_query))
 
         # `name` is deprecated in favor of `q`. We keep `name` available for
         # backward compatibility.
@@ -1311,10 +1291,19 @@ class FacilityManager(models.Manager):
                 location__within=GEOSGeometry(boundary)
             )
 
-        if ppe:
-            # Include a facility if any of the PPE fields have a non-empty
-            # value.
-            facilities_qs = facilities_qs.filter(~Q(ppe=''))
+        if len(parent_companies):
+            parent_company_id = []
+            parent_company_name = []
+            for parent_company in parent_companies:
+                if parent_company.isnumeric():
+                    parent_company_id.append(parent_company)
+                else:
+                    parent_company_name.append(parent_company)
+            if len(parent_company_id) or len(parent_company_name):
+                facilities_qs = facilities_qs.filter(
+                    Q(parent_company_id__overlap=parent_company_id) |
+                    Q(parent_company_name__overlap=parent_company_name)
+                )
 
         facility_ids = facilities_qs.values_list('id', flat=True)
         facilities_qs = Facility.objects.filter(id__in=facility_ids)
