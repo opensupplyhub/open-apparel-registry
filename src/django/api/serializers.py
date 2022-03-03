@@ -58,7 +58,7 @@ def _get_parent_company(claim):
         return None
 
     return {
-        'id': claim.parent_company.admin.id,
+        'id': claim.parent_company.id,
         'name': claim.parent_company.name,
     }
 
