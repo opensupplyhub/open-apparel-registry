@@ -8367,3 +8367,43 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertEquals(1, len(facility_index.number_of_workers))
         self.assertIn('More than 10000', facility_index.number_of_workers)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_by_range(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '1500 to 2000'
+        }), content_type='application/json')
+
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?number_of_workers=1001-5000'
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_without_matches(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '1000 to 9000'
+        }), content_type='application/json')
+
+        response = self.client.get(
+            self.url + '?number_of_workers=More%20than%2010000'
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 0)

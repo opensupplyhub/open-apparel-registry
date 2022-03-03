@@ -1253,6 +1253,10 @@ class FacilityManager(models.Manager):
 
         product_types = params.getlist(FacilitiesQueryParams.PRODUCT_TYPE)
 
+        number_of_workers = params.getlist(
+            FacilitiesQueryParams.NUMBER_OF_WORKERS
+        )
+
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
@@ -1343,6 +1347,11 @@ class FacilityManager(models.Manager):
                 clean_product_types.append(clean(product_type))
             facilities_qs = facilities_qs.filter(
                 product_type__overlap=clean_product_types
+            )
+
+        if len(number_of_workers):
+            facilities_qs = facilities_qs.filter(
+                number_of_workers__overlap=number_of_workers
             )
 
         facility_ids = facilities_qs.values_list('id', flat=True)
