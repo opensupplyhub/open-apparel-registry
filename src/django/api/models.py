@@ -1257,6 +1257,10 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.NUMBER_OF_WORKERS
         )
 
+        native_language_name = params.get(
+            FacilitiesQueryParams.NATIVE_LANGUAGE_NAME, None
+        )
+
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
@@ -1352,6 +1356,12 @@ class FacilityManager(models.Manager):
         if len(number_of_workers):
             facilities_qs = facilities_qs.filter(
                 number_of_workers__overlap=number_of_workers
+            )
+
+        if native_language_name is not None:
+            unidecode_name = unidecode(native_language_name)
+            facilities_qs = facilities_qs.filter(
+                native_language_name__icontains=unidecode_name
             )
 
         facility_ids = facilities_qs.values_list('id', flat=True)
