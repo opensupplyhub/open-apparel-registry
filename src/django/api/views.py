@@ -671,22 +671,56 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'Pass a GeoJSON geometry to filter by '
                         'facilities within the boundaries of that geometry.')
                 ),
+                coreapi.Field(
+                    name='parent_company',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'Pass a Contributor ID or Contributor name to filter '
+                        'by facilities with that Parent Company.')
+                ),
+                coreapi.Field(
+                    name='facility_type',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Facility type',
+                ),
+                coreapi.Field(
+                    name='processing_type',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Processing type',
+                ),
+                coreapi.Field(
+                    name='product_type',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Product type',
+                ),
+                coreapi.Field(
+                    name='number_of_workers',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'Submit one of several standardized ranges to filter '
+                        'by facilities with a number_of_workers matching '
+                        'those values. Options are: "Less than 1000", '
+                        '"1001-5000", "5001-10000", or "More than 10000".'
+                    ),
+                ),
+                coreapi.Field(
+                    name='native_language_name',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='The native language name of the facility',
+                ),
             ]
-
-            if switch_is_active('ppe'):
-                fields.append(
-                    coreapi.Field(
-                        name='ppe',
-                        location='query',
-                        type='boolean',
-                        required=False,
-                        description=(
-                            'If "true" only facilities with PPE '
-                            'production details or PPE-specific contact '
-                            'information will be returned. Any other value '
-                            'will return all facilities.'),
-                    )
-                )
 
             return fields
 
