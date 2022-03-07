@@ -66,7 +66,8 @@ from api.constants import (CsvHeaderField,
                            ProcessingAction,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
-                           FeatureGroups)
+                           FeatureGroups,
+                           NumberOfWorkersRanges)
 from api.geocoding import geocode_address
 from api.matching import (match_item,
                           exact_match_item,
@@ -569,6 +570,26 @@ def active_countries_count(request):
                                  .distinct().count()
 
     return Response({"count": count})
+
+
+@api_view(['GET'])
+def number_of_workers_ranges(request):
+    """
+    Returns a list of standardized ranges for the number_of_workers extended
+    field.
+
+    ## Sample Response
+
+        [
+            "Less than 1000",
+            "1001-5000",
+            "5001-10000",
+            "More than 10000",
+        ]
+
+    """
+    return Response([r['label'] for r
+                     in NumberOfWorkersRanges.STANDARD_RANGES])
 
 
 @api_view(['GET'])
