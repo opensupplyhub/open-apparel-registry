@@ -7968,6 +7968,71 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertIn(self.contributor.id, facility_index.parent_company_id)
         self.assertEqual(1, len(facility_index.parent_company_id))
 
+    @patch('api.geocoding.requests.get')
+    def test_search_by_name(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?parent_company={}'.format(self.contributor.id)
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_by_id(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?parent_company={}'.format(self.contributor.name)
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_by_multiple(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, {
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'parent_company': 'TEST CNTRIBUTOR'
+        })
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?parent_company={}?parent_company={}'.format(
+                self.contributor.name, self.contributor.id
+            )
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
 
 class ProductTypeTestCase(FacilityAPITestCaseBase):
     def setUp(self):
@@ -8058,6 +8123,26 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertEqual(MAX_PRODUCT_TYPE_COUNT,
                          len(facility_index.product_type))
+
+    @patch('api.geocoding.requests.get')
+    def test_search_by_product_type(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'product_type': ['a', 'b']
+        }), content_type='application/json')
+
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(self.url + '?product_type=A')
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
 
 
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
@@ -8155,6 +8240,46 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEqual(0, ExtendedField.objects.all().count())
         self.assertEqual(response.status_code, 400)
 
+    @patch('api.geocoding.requests.get')
+    def test_search_by_processing_type(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'processing_type': ['cutting']
+        }), content_type='application/json')
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(self.url + '?processing_type=cutting')
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_by_facility_type(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'facility_type': ['office hq', 'final product assembly']
+        }), content_type='application/json')
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?facility_type=final%20product%20assembly'
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
 
 class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
     def setUp(self):
@@ -8242,3 +8367,72 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertEquals(1, len(facility_index.number_of_workers))
         self.assertIn('More than 10000', facility_index.number_of_workers)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_by_range(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '1500 to 2000'
+        }), content_type='application/json')
+
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?number_of_workers=1001-5000'
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_without_matches(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'number_of_workers': '1000 to 9000'
+        }), content_type='application/json')
+
+        response = self.client.get(
+            self.url + '?number_of_workers=More%20than%2010000'
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 0)
+
+
+class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(NativeLanguageNameAPITest, self).setUp()
+        self.url = reverse('facility-list')
+        self.long_name = '杭州湾开发区兴慈二路与滨海二路叉口恒元工业园区A3'
+
+    @patch('api.geocoding.requests.get')
+    def test_search(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'native_language_name': self.long_name
+        }), content_type='application/json')
+
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?native_language_name={}'.format(self.long_name)
+        )
+        data = json.loads(response.content)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)

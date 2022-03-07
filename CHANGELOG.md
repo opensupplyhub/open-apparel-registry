@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Filter by extended fields [#1696](https://github.com/open-apparel-registry/open-apparel-registry/pull/1696)
+
 ### Changed
 
 ### Deprecated
