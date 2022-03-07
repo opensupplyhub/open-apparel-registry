@@ -146,6 +146,8 @@ from api.facility_history import (create_facility_history_list,
 from api.extended_fields import (create_extendedfields_for_single_item,
                                  update_extendedfields_for_list_item,
                                  create_extendedfields_for_claim)
+from api.facility_type_processing_type import (
+    FACILITY_PROCESSING_TYPES_VALUES)
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -590,6 +592,32 @@ def number_of_workers_ranges(request):
     """
     return Response([r['label'] for r
                      in NumberOfWorkersRanges.STANDARD_RANGES])
+
+
+@api_view(['GET'])
+def facility_processing_types(request):
+    """
+    Returns a list of standardized ranges for the number_of_workers extended
+    field.
+
+    ## Sample Response
+
+        [{
+            "facilityType": "Final Product Assembly",
+            "processingTypes": [
+              "Assembly",
+              "Cut & Sew",
+              "Cutting",
+              "Embellishment",
+              "Embroidery",
+              ...
+            ]
+          },
+          ...
+         ]
+
+    """
+    return Response(FACILITY_PROCESSING_TYPES_VALUES)
 
 
 @api_view(['GET'])
