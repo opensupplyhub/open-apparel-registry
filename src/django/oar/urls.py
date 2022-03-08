@@ -59,6 +59,10 @@ public_apis = [
         views.ContributorFacilityListViewSet.as_view({'get': 'list'}),
         name='contributor_lists'),
     url(r'^api/log-download/', views.log_download, name='log_download'),
+    url(r'^api/workers-ranges/', views.number_of_workers_ranges,
+        name='number_of_workers_ranges'),
+    url(r'^api/facility-processing-types', views.facility_processing_types,
+        name='facility_processing_types')
 ]
 
 info_apis = [

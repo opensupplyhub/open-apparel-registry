@@ -406,6 +406,12 @@ ALL_PROCESSING_TYPES_ALIAS = {
 }
 
 
+FACILITY_PROCESSING_TYPES_VALUES = [{
+    'facilityType': v,
+    'processingTypes': sorted(FACILITY_PROCESSING_TYPES[k].values())
+} for k, v in sorted(ALL_FACILITY_TYPES.items())]
+
+
 def get_facility_and_processing_type(facility_or_processing_type):
     """Attempts to match the input value to a facility or processing
     type via various methods.
