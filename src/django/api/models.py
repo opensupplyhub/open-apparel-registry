@@ -2599,7 +2599,8 @@ def index_extendedfields(facility_ids=list):
         facility_types = set()
         for values_list in facility_type_values:
             for facility_type_value in values_list:
-                facility_types.add(facility_type_value[2])
+                if facility_type_value[2] is not None:
+                    facility_types.add(facility_type_value[2])
         facility.facility_type = list(facility_types)
 
         # Use clean taxonomy values in the index for processing_type:
