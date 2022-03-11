@@ -4600,21 +4600,6 @@ class FacilityClaimSerializerTests(TestCase):
         self.assertIsNotNone(data['production_type_choices'])
         self.assertNotEqual([], data['production_type_choices'])
 
-    def test_product_and_production_values_from_claims_are_included(self):
-        self.claim.facility_product_types = ['A', 'B']
-        self.claim.facility_production_types = ['Blending', 'Bonding']
-        self.claim.save()
-        data = ApprovedFacilityClaimSerializer(self.claim).data
-
-        product_types = data['product_type_choices']
-        self.assertIn(('A', 'A'), product_types)
-        self.assertEqual(('A', 'A'), product_types[0])
-        self.assertIn(('B', 'B'), product_types)
-
-        production_types = data['production_type_choices']
-        self.assertIn(('blending', 'Blending'), production_types)
-        self.assertIn(('bonding', 'Bonding'), production_types)
-
 
 class LogDownloadTests(APITestCase):
     def setUp(self):
