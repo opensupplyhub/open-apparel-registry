@@ -1,4 +1,3 @@
-from itertools import chain
 from collections import defaultdict
 
 from django.conf import settings
@@ -33,7 +32,6 @@ from api.models import (FacilityList,
                         FacilityClaimReviewNote,
                         User,
                         Contributor,
-                        ProductType,
                         Source,
                         ApiBlock,
                         FacilityActivityReport,
@@ -46,6 +44,7 @@ from api.processing import get_country_code
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
+from api.extended_fields import get_product_types
 from api.facility_type_processing_type import (
     ALL_FACILITY_TYPE_CHOICES,
     ALL_PROCESSING_TYPE_CHOICES
@@ -1172,33 +1171,10 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
         return FacilityClaim.CERTIFICATION_CHOICES
 
     def get_product_type_choices(self, claim):
-        seeds = [
-            seed
-            for seed
-            in ProductType.objects.all().values_list('value', flat=True)
-            or []
-        ]
-
-        new_values = FacilityClaim \
-            .objects \
-            .all() \
-            .values_list('facility_product_types', flat=True)
-
-        values = [
-            new_value
-            for new_value
-            in new_values if new_value is not None
-        ]
-
-        # Using `chain` flattens nested lists
-        union_of_seeds_and_values = list(
-            set(chain.from_iterable(values)).union(seeds))
-        union_of_seeds_and_values.sort()
-
         return [
             (choice, choice)
             for choice
-            in union_of_seeds_and_values
+            in get_product_types()
         ]
 
     def get_production_type_choices(self, claim):

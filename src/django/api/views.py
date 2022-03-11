@@ -145,7 +145,8 @@ from api.facility_history import (create_facility_history_list,
                                   create_dissociate_match_change_reason)
 from api.extended_fields import (create_extendedfields_for_single_item,
                                  update_extendedfields_for_list_item,
-                                 create_extendedfields_for_claim)
+                                 create_extendedfields_for_claim,
+                                 get_product_types)
 from api.facility_type_processing_type import (
     FACILITY_PROCESSING_TYPES_VALUES)
 
@@ -618,6 +619,24 @@ def facility_processing_types(request):
 
     """
     return Response(FACILITY_PROCESSING_TYPES_VALUES)
+
+
+@api_view(['GET'])
+def product_types(request):
+    """
+    Returns a list of suggested product types by combining standard types with
+    distinct values submitted by contributors.
+
+    ## Sample Response
+
+        [
+            "Accessories",
+            "Belts",
+            "Caps"
+        ]
+
+    """
+    return Response(get_product_types())
 
 
 @api_view(['GET'])
