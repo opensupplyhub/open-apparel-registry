@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import Popover from '@material-ui/core/Popover';
 import ReactSelect from 'react-select';
+import Creatable from 'react-select/creatable';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 
@@ -23,6 +24,7 @@ import {
     updateListFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    updateParentCompanyFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
     updatePPEFilter,
@@ -80,6 +82,7 @@ const CONTRIBUTORS = 'CONTRIBUTORS';
 const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const LISTS = 'LISTS';
 const COUNTRIES = 'COUNTRIES';
+const PARENT_COMPANY = 'PARENT_COMPANY';
 
 function FilterSidebarSearchTab({
     contributorOptions,
@@ -95,6 +98,8 @@ function FilterSidebarSearchTab({
     updateContributorType,
     countries,
     updateCountry,
+    parentCompany,
+    updateParentCompany,
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
@@ -451,6 +456,28 @@ function FilterSidebarSearchTab({
                         disabled={fetchingOptions || fetchingFacilities}
                     />
                 </div>
+                <div className="extended_fields">
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={PARENT_COMPANY}
+                            className={classes.inputLabelStyle}
+                        >
+                            Parent Company
+                        </InputLabel>
+                        <Creatable
+                            isMulti
+                            id={PARENT_COMPANY}
+                            name={PARENT_COMPANY}
+                            className={`basic-multi-select ${classes.selectStyle}`}
+                            classNamePrefix="select"
+                            options={contributorOptions}
+                            value={parentCompany}
+                            onChange={updateParentCompany}
+                            disabled={fetchingOptions || fetchingFacilities}
+                        />
+                    </div>
+                </div>
                 <div className="form__field">
                     <InputLabel
                         shrink={false}
@@ -532,6 +559,7 @@ FilterSidebarSearchTab.propTypes = {
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
+    parentCompany: contributorOptionsPropType.isRequired,
     combineContributors: string.isRequired,
     ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
@@ -560,6 +588,7 @@ function mapStateToProps({
         lists,
         contributorTypes,
         countries,
+        parentCompany,
         combineContributors,
         boundary,
         ppe,
@@ -587,6 +616,7 @@ function mapStateToProps({
         lists,
         contributorTypes,
         countries,
+        parentCompany,
         combineContributors,
         fetchingFacilities,
         facilities,
@@ -615,6 +645,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateList: v => dispatch(updateListFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
+        updateParentCompany: v => dispatch(updateParentCompanyFilter(v)),
         updatePPE: e =>
             dispatch(updatePPEFilter(e.target.checked ? 'true' : '')),
         updateCombineContributors: e =>

@@ -18,6 +18,9 @@ export const updateContributorTypeFilter = createAction(
 );
 export const updateListFilter = createAction('UPDATE_LIST_FILTER');
 export const updateCountryFilter = createAction('UPDATE_COUNTRY_FILTER');
+export const updateParentCompanyFilter = createAction(
+    'UPDATE_PARENT_COMPANY_FILTER',
+);
 export const updateCombineContributorsFilterOption = createAction(
     'UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION',
 );
@@ -51,6 +54,9 @@ export function setFiltersFromQueryString(qs = '') {
             ? update(filters, {
                   contributors: {
                       $set: updateListWithLabels(filters.contributors, data),
+                  },
+                  parentCompany: {
+                      $set: updateListWithLabels(filters.parentCompany, data),
                   },
               })
             : filters;

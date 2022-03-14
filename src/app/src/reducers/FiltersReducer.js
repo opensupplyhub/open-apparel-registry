@@ -7,6 +7,7 @@ import {
     updateListFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    updateParentCompanyFilter,
     updatePPEFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
@@ -29,6 +30,7 @@ const initialState = Object.freeze({
     contributors: Object.freeze([]),
     contributorTypes: Object.freeze([]),
     countries: Object.freeze([]),
+    parentCompany: Object.freeze([]),
     combineContributors: '',
     boundary: null,
     ppe: '',
@@ -67,6 +69,10 @@ export default createReducer(
         [updateCountryFilter]: (state, payload) =>
             update(state, {
                 countries: { $set: payload },
+            }),
+        [updateParentCompanyFilter]: (state, payload) =>
+            update(state, {
+                parentCompany: { $set: payload },
             }),
         [updateCombineContributorsFilterOption]: (state, payload) =>
             update(state, {
