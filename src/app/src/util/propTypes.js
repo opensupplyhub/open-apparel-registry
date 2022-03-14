@@ -200,6 +200,13 @@ export const facilityProcessingTypeOptionsPropType = arrayOf(
     }),
 );
 
+export const productTypeOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
+);
+
 export const facilityPropType = shape({
     id: string.isRequired,
     type: oneOf([FEATURE]).isRequired,

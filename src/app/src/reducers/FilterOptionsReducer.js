@@ -17,6 +17,9 @@ import {
     startFetchFacilityProcessingTypeOptions,
     failFetchFacilityProcessingTypeOptions,
     completeFetchFacilityProcessingTypeOptions,
+    startFetchProductTypeOptions,
+    failFetchProductTypeOptions,
+    completeFetchProductTypeOptions,
     resetFilterOptions,
 } from '../actions/filterOptions';
 
@@ -42,6 +45,11 @@ const initialState = Object.freeze({
         error: null,
     }),
     facilityProcessingType: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    productType: Object.freeze({
         data: Object.freeze([]),
         fetching: false,
         error: null,
@@ -155,6 +163,28 @@ export default createReducer(
         [completeFetchFacilityProcessingTypeOptions]: (state, payload) =>
             update(state, {
                 facilityProcessingType: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchProductTypeOptions]: state =>
+            update(state, {
+                productType: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchProductTypeOptions]: (state, payload) =>
+            update(state, {
+                productType: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchProductTypeOptions]: (state, payload) =>
+            update(state, {
+                productType: {
                     fetching: { $set: false },
                     error: { $set: null },
                     data: { $set: payload },

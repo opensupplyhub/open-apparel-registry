@@ -10,6 +10,7 @@ import {
     updateParentCompanyFilter,
     updateFacilityTypeFilter,
     updateProcessingTypeFilter,
+    updateProductTypeFilter,
     updatePPEFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
@@ -35,6 +36,7 @@ const initialState = Object.freeze({
     parentCompany: Object.freeze([]),
     facilityType: Object.freeze([]),
     processingType: Object.freeze([]),
+    productType: Object.freeze([]),
     combineContributors: '',
     boundary: null,
     ppe: '',
@@ -85,6 +87,10 @@ export default createReducer(
         [updateProcessingTypeFilter]: (state, payload) =>
             update(state, {
                 processingType: { $set: payload },
+            }),
+        [updateProductTypeFilter]: (state, payload) =>
+            update(state, {
+                productType: { $set: payload },
             }),
         [updateCombineContributorsFilterOption]: (state, payload) =>
             update(state, {

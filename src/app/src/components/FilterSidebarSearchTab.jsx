@@ -28,6 +28,7 @@ import {
     updateParentCompanyFilter,
     updateFacilityTypeFilter,
     updateProcessingTypeFilter,
+    updateProductTypeFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
     updatePPEFilter,
@@ -45,6 +46,7 @@ import {
     facilityTypeOptionsPropType,
     processingTypeOptionsPropType,
     facilityProcessingTypeOptionsPropType,
+    productTypeOptionsPropType,
     facilityCollectionPropType,
 } from '../util/propTypes';
 
@@ -92,6 +94,7 @@ const COUNTRIES = 'COUNTRIES';
 const PARENT_COMPANY = 'PARENT_COMPANY';
 const FACILITY_TYPE = 'FACILITY_TYPE';
 const PROCESSING_TYPE = 'PROCESSING_TYPE';
+const PRODUCT_TYPE = 'PRODUCT_TYPE';
 const mapFacilityTypeOptions = (fPTypes, pTypes) => {
     let fTypes = [];
     if (pTypes.length === 0) {
@@ -134,6 +137,7 @@ function FilterSidebarSearchTab({
     contributorTypeOptions,
     countryOptions,
     facilityProcessingTypeOptions,
+    productTypeOptions,
     resetFilters,
     facilityFreeTextQuery,
     updateFacilityFreeTextQuery,
@@ -149,6 +153,8 @@ function FilterSidebarSearchTab({
     updateFacilityType,
     processingType,
     updateProcessingType,
+    productType,
+    updateProductType,
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
@@ -572,6 +578,26 @@ function FilterSidebarSearchTab({
                             disabled={fetchingOptions || fetchingFacilities}
                         />
                     </div>
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={PRODUCT_TYPE}
+                            className={classes.inputLabelStyle}
+                        >
+                            Product Type
+                        </InputLabel>
+                        <Creatable
+                            isMulti
+                            id={PRODUCT_TYPE}
+                            name={PRODUCT_TYPE}
+                            className={`basic-multi-select ${classes.selectStyle}`}
+                            classNamePrefix="select"
+                            options={productTypeOptions}
+                            value={productType}
+                            onChange={updateProductType}
+                            disabled={fetchingOptions || fetchingFacilities}
+                        />
+                    </div>
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -645,6 +671,7 @@ FilterSidebarSearchTab.propTypes = {
     countryOptions: countryOptionsPropType.isRequired,
     facilityProcessingTypeOptions:
         facilityProcessingTypeOptionsPropType.isRequired,
+    productTypeOptions: productTypeOptionsPropType.isRequired,
     resetFilters: func.isRequired,
     updateFacilityFreeTextQuery: func.isRequired,
     updateContributor: func.isRequired,
@@ -659,6 +686,7 @@ FilterSidebarSearchTab.propTypes = {
     parentCompany: contributorOptionsPropType.isRequired,
     facilityType: facilityTypeOptionsPropType.isRequired,
     processingType: processingTypeOptionsPropType.isRequired,
+    productType: productTypeOptionsPropType.isRequired,
     combineContributors: string.isRequired,
     ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
@@ -684,6 +712,10 @@ function mapStateToProps({
             data: facilityProcessingTypeOptions,
             fetching: fetchingFacilityProcessingType,
         },
+        productType: {
+            data: productTypeOptions,
+            fetching: fetchingProductType,
+        },
     },
     filters: {
         facilityFreeTextQuery,
@@ -694,6 +726,7 @@ function mapStateToProps({
         parentCompany,
         facilityType,
         processingType,
+        productType,
         combineContributors,
         boundary,
         ppe,
@@ -717,6 +750,7 @@ function mapStateToProps({
         contributorTypeOptions,
         countryOptions,
         facilityProcessingTypeOptions,
+        productTypeOptions,
         facilityFreeTextQuery,
         contributors,
         lists,
@@ -725,6 +759,7 @@ function mapStateToProps({
         parentCompany,
         facilityType,
         processingType,
+        productType,
         combineContributors,
         fetchingFacilities,
         facilities,
@@ -735,6 +770,7 @@ function mapStateToProps({
             fetchingContributorTypes ||
             fetchingCountries ||
             fetchingFacilityProcessingType ||
+            fetchingProductType ||
         embed: !!embed,
         fetchingLists,
         textSearchLabel: config.text_search_label,
@@ -757,6 +793,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         updateParentCompany: v => dispatch(updateParentCompanyFilter(v)),
         updateFacilityType: v => dispatch(updateFacilityTypeFilter(v)),
         updateProcessingType: v => dispatch(updateProcessingTypeFilter(v)),
+        updateProductType: v => dispatch(updateProductTypeFilter(v)),
         updatePPE: e =>
             dispatch(updatePPEFilter(e.target.checked ? 'true' : '')),
         updateCombineContributors: e =>

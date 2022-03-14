@@ -10,6 +10,7 @@ import {
     makeGetContributorTypesURL,
     makeGetCountriesURL,
     makeGetFacilitiesTypeProcessingTypeURL,
+    makeGetProductTypeURL,
     mapDjangoChoiceTuplesToSelectOptions,
     mapDjangoChoiceTuplesValueToSelectOptions,
     updateListWithLabels,
@@ -61,6 +62,16 @@ export const failFetchFacilityProcessingTypeOptions = createAction(
 );
 export const completeFetchFacilityProcessingTypeOptions = createAction(
     'COMPLETE_FETCH_FACILITY_PROCESSING_TYPE_OPTIONS',
+);
+
+export const startFetchProductTypeOptions = createAction(
+    'START_FETCH_PRODUCT_TYPE_OPTIONS',
+);
+export const failFetchProductTypeOptions = createAction(
+    'FAIL_FETCH_PRODUCT_TYPE_OPTIONS',
+);
+export const completeFetchProductTypeOptions = createAction(
+    'COMPLETE_FETCH_PRODUCT_TYPE_OPTIONS',
 );
 
 export const resetFilterOptions = createAction('RESET_FILTER_OPTIONS');
@@ -172,6 +183,28 @@ export function fetchFacilityProcessingTypeOptions() {
                         err,
                         'An error prevented fetching facility processing type options',
                         failFetchFacilityProcessingTypeOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchProductTypeOptions() {
+    return dispatch => {
+        dispatch(startFetchProductTypeOptions());
+
+        return apiRequest
+            .get(makeGetProductTypeURL())
+            .then(({ data }) => mapDjangoChoiceTuplesValueToSelectOptions(data))
+            .then(data => {
+                dispatch(completeFetchProductTypeOptions(data));
+            })
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching product type options',
+                        failFetchProductTypeOptions,
                     ),
                 ),
             );

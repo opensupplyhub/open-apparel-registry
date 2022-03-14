@@ -27,6 +27,9 @@ export const updateFacilityTypeFilter = createAction(
 export const updateProcessingTypeFilter = createAction(
     'UPDATE_PROCESSING_TYPE_FILTER',
 );
+export const updateProductTypeFilter = createAction(
+    'UPDATE_PRODUCT_TYPE_FILTER',
+);
 export const updateCombineContributorsFilterOption = createAction(
     'UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION',
 );
