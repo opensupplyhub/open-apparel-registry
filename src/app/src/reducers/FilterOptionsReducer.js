@@ -14,6 +14,9 @@ import {
     startFetchCountryOptions,
     failFetchCountryOptions,
     completeFetchCountryOptions,
+    startFetchFacilityProcessingTypeOptions,
+    failFetchFacilityProcessingTypeOptions,
+    completeFetchFacilityProcessingTypeOptions,
     resetFilterOptions,
 } from '../actions/filterOptions';
 
@@ -34,6 +37,11 @@ const initialState = Object.freeze({
         error: null,
     }),
     countries: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    facilityProcessingType: Object.freeze({
         data: Object.freeze([]),
         fetching: false,
         error: null,
@@ -125,6 +133,28 @@ export default createReducer(
         [completeFetchCountryOptions]: (state, payload) =>
             update(state, {
                 countries: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchFacilityProcessingTypeOptions]: state =>
+            update(state, {
+                facilityProcessingType: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchFacilityProcessingTypeOptions]: (state, payload) =>
+            update(state, {
+                facilityProcessingType: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchFacilityProcessingTypeOptions]: (state, payload) =>
+            update(state, {
+                facilityProcessingType: {
                     fetching: { $set: false },
                     error: { $set: null },
                     data: { $set: payload },

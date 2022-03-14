@@ -123,6 +123,8 @@ export const makeGetContributorsURL = () => '/api/contributors/';
 export const makeGetListsURL = () => '/api/contributor-lists/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
+export const makeGetFacilitiesTypeProcessingTypeURL = () =>
+    '/api/facility-processing-types/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
@@ -204,6 +206,8 @@ export const createQueryStringFromSearchFilters = (
         contributorTypes = [],
         countries = [],
         parentCompany = [],
+        facilityType = [],
+        processingType = [],
         lists = [],
         combineContributors = '',
         boundary = {},
@@ -221,6 +225,10 @@ export const createQueryStringFromSearchFilters = (
         countries: createCompactSortedQuerystringInputObject(countries),
         parent_company: createCompactSortedQuerystringInputObject(
             parentCompany,
+        ),
+        facility_type: createCompactSortedQuerystringInputObject(facilityType),
+        processing_type: createCompactSortedQuerystringInputObject(
+            processingType,
         ),
         combine_contributors: combineContributors,
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
@@ -268,6 +276,8 @@ export const createFiltersFromQueryString = qs => {
         contributor_types: contributorTypes = [],
         countries = [],
         parent_company: parentCompany = [],
+        facility_type: facilityType = [],
+        processing_type: processingType = [],
         combine_contributors: combineContributors = '',
         boundary = '',
         ppe = '',
@@ -280,6 +290,8 @@ export const createFiltersFromQueryString = qs => {
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),
         parentCompany: createSelectOptionsFromParams(parentCompany),
+        facilityType: createSelectOptionsFromParams(facilityType),
+        processingType: createSelectOptionsFromParams(processingType),
         combineContributors,
         boundary: isEmpty(boundary) ? null : JSON.parse(boundary),
         ppe,
@@ -498,6 +510,15 @@ const mapSingleChoiceToSelectOption = ([value, label]) =>
 
 export const mapDjangoChoiceTuplesToSelectOptions = data =>
     Object.freeze(data.map(mapSingleChoiceToSelectOption));
+
+const mapSingleChoiceValueToSelectOption = value =>
+    Object.freeze({
+        value,
+        label: value,
+    });
+
+export const mapDjangoChoiceTuplesValueToSelectOptions = data =>
+    Object.freeze(data.map(mapSingleChoiceValueToSelectOption));
 
 export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 

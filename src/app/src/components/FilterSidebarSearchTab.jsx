@@ -14,6 +14,7 @@ import ReactSelect from 'react-select';
 import Creatable from 'react-select/creatable';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
+import uniq from 'lodash/uniq';
 
 import ShowOnly from './ShowOnly';
 import FeatureFlag from './FeatureFlag';
@@ -25,6 +26,8 @@ import {
     updateContributorTypeFilter,
     updateCountryFilter,
     updateParentCompanyFilter,
+    updateFacilityTypeFilter,
+    updateProcessingTypeFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
     updatePPEFilter,
@@ -39,6 +42,9 @@ import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
     countryOptionsPropType,
+    facilityTypeOptionsPropType,
+    processingTypeOptionsPropType,
+    facilityProcessingTypeOptionsPropType,
     facilityCollectionPropType,
 } from '../util/propTypes';
 
@@ -47,6 +53,7 @@ import { filterSidebarStyles } from '../util/styles';
 import {
     getValueFromEvent,
     makeSubmitFormOnEnterKeyPressFunction,
+    mapDjangoChoiceTuplesValueToSelectOptions,
 } from '../util/util';
 
 import {
@@ -83,12 +90,50 @@ const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const LISTS = 'LISTS';
 const COUNTRIES = 'COUNTRIES';
 const PARENT_COMPANY = 'PARENT_COMPANY';
+const FACILITY_TYPE = 'FACILITY_TYPE';
+const PROCESSING_TYPE = 'PROCESSING_TYPE';
+const mapFacilityTypeOptions = (fPTypes, pTypes) => {
+    let fTypes = [];
+    if (pTypes.length === 0) {
+        fTypes = fPTypes.map(type => type.facilityType);
+    } else {
+        // When there are processing types, only return the
+        // facility types that have those processing types
+        pTypes.forEach(pType => {
+            fPTypes.forEach(fPType => {
+                if (fPType.processingTypes.includes(pType.value)) {
+                    fTypes = fTypes.concat(fPType.facilityType);
+                }
+            });
+        });
+    }
+    return mapDjangoChoiceTuplesValueToSelectOptions(uniq(fTypes.sort()));
+};
+
+const mapProcessingTypeOptions = (fPTypes, fTypes) => {
+    let pTypes = [];
+    if (fTypes.length === 0) {
+        pTypes = fPTypes.map(type => type.processingTypes).flat();
+    } else {
+        // When there are facility types, only return the
+        // processing types that are under those facility types
+        fTypes.forEach(fType => {
+            fPTypes.forEach(fPType => {
+                if (fType.value === fPType.facilityType) {
+                    pTypes = pTypes.concat(fPType.processingTypes);
+                }
+            });
+        });
+    }
+    return mapDjangoChoiceTuplesValueToSelectOptions(uniq(pTypes.sort()));
+};
 
 function FilterSidebarSearchTab({
     contributorOptions,
     listOptions,
     contributorTypeOptions,
     countryOptions,
+    facilityProcessingTypeOptions,
     resetFilters,
     facilityFreeTextQuery,
     updateFacilityFreeTextQuery,
@@ -100,6 +145,10 @@ function FilterSidebarSearchTab({
     updateCountry,
     parentCompany,
     updateParentCompany,
+    facilityType,
+    updateFacilityType,
+    processingType,
+    updateProcessingType,
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
@@ -477,6 +526,52 @@ function FilterSidebarSearchTab({
                             disabled={fetchingOptions || fetchingFacilities}
                         />
                     </div>
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={FACILITY_TYPE}
+                            className={classes.inputLabelStyle}
+                        >
+                            Facility Type
+                        </InputLabel>
+                        <ReactSelect
+                            isMulti
+                            id={FACILITY_TYPE}
+                            name={FACILITY_TYPE}
+                            className={`basic-multi-select ${classes.selectStyle}`}
+                            classNamePrefix="select"
+                            options={mapFacilityTypeOptions(
+                                facilityProcessingTypeOptions,
+                                processingType,
+                            )}
+                            value={facilityType}
+                            onChange={updateFacilityType}
+                            disabled={fetchingOptions || fetchingFacilities}
+                        />
+                    </div>
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={PROCESSING_TYPE}
+                            className={classes.inputLabelStyle}
+                        >
+                            Processing Type
+                        </InputLabel>
+                        <ReactSelect
+                            isMulti
+                            id={PROCESSING_TYPE}
+                            name={PROCESSING_TYPE}
+                            className={`basic-multi-select ${classes.selectStyle}`}
+                            classNamePrefix="select"
+                            options={mapProcessingTypeOptions(
+                                facilityProcessingTypeOptions,
+                                facilityType,
+                            )}
+                            value={processingType}
+                            onChange={updateProcessingType}
+                            disabled={fetchingOptions || fetchingFacilities}
+                        />
+                    </div>
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -548,6 +643,8 @@ FilterSidebarSearchTab.propTypes = {
     contributorOptions: contributorOptionsPropType.isRequired,
     contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
     countryOptions: countryOptionsPropType.isRequired,
+    facilityProcessingTypeOptions:
+        facilityProcessingTypeOptionsPropType.isRequired,
     resetFilters: func.isRequired,
     updateFacilityFreeTextQuery: func.isRequired,
     updateContributor: func.isRequired,
@@ -560,6 +657,8 @@ FilterSidebarSearchTab.propTypes = {
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
     parentCompany: contributorOptionsPropType.isRequired,
+    facilityType: facilityTypeOptionsPropType.isRequired,
+    processingType: processingTypeOptionsPropType.isRequired,
     combineContributors: string.isRequired,
     ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
@@ -581,6 +680,10 @@ function mapStateToProps({
             fetching: fetchingContributorTypes,
         },
         countries: { data: countryOptions, fetching: fetchingCountries },
+        facilityProcessingType: {
+            data: facilityProcessingTypeOptions,
+            fetching: fetchingFacilityProcessingType,
+        },
     },
     filters: {
         facilityFreeTextQuery,
@@ -589,6 +692,8 @@ function mapStateToProps({
         contributorTypes,
         countries,
         parentCompany,
+        facilityType,
+        processingType,
         combineContributors,
         boundary,
         ppe,
@@ -611,12 +716,15 @@ function mapStateToProps({
         listOptions,
         contributorTypeOptions,
         countryOptions,
+        facilityProcessingTypeOptions,
         facilityFreeTextQuery,
         contributors,
         lists,
         contributorTypes,
         countries,
         parentCompany,
+        facilityType,
+        processingType,
         combineContributors,
         fetchingFacilities,
         facilities,
@@ -625,7 +733,8 @@ function mapStateToProps({
         fetchingOptions:
             fetchingContributors ||
             fetchingContributorTypes ||
-            fetchingCountries,
+            fetchingCountries ||
+            fetchingFacilityProcessingType ||
         embed: !!embed,
         fetchingLists,
         textSearchLabel: config.text_search_label,
@@ -646,6 +755,8 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         updateList: v => dispatch(updateListFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
         updateParentCompany: v => dispatch(updateParentCompanyFilter(v)),
+        updateFacilityType: v => dispatch(updateFacilityTypeFilter(v)),
+        updateProcessingType: v => dispatch(updateProcessingTypeFilter(v)),
         updatePPE: e =>
             dispatch(updatePPEFilter(e.target.checked ? 'true' : '')),
         updateCombineContributors: e =>

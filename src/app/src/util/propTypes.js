@@ -179,6 +179,27 @@ export const countryOptionsPropType = arrayOf(
     }),
 );
 
+export const facilityTypeOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
+);
+
+export const processingTypeOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
+);
+
+export const facilityProcessingTypeOptionsPropType = arrayOf(
+    shape({
+        facilityType: string.isRequired,
+        processingTypes: arrayOf(string),
+    }),
+);
+
 export const facilityPropType = shape({
     id: string.isRequired,
     type: oneOf([FEATURE]).isRequired,

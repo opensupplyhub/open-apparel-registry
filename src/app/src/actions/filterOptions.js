@@ -9,7 +9,9 @@ import {
     makeGetListsURL,
     makeGetContributorTypesURL,
     makeGetCountriesURL,
+    makeGetFacilitiesTypeProcessingTypeURL,
     mapDjangoChoiceTuplesToSelectOptions,
+    mapDjangoChoiceTuplesValueToSelectOptions,
     updateListWithLabels,
 } from '../util/util';
 
@@ -49,6 +51,16 @@ export const failFetchCountryOptions = createAction(
 );
 export const completeFetchCountryOptions = createAction(
     'COMPLETE_FETCH_COUNTRY_OPTIONS',
+);
+
+export const startFetchFacilityProcessingTypeOptions = createAction(
+    'START_FETCH_FACILITY_PROCESSING_TYPE_OPTIONS',
+);
+export const failFetchFacilityProcessingTypeOptions = createAction(
+    'FAIL_FETCH_FACILITY_PROCESSING_TYPE_OPTIONS',
+);
+export const completeFetchFacilityProcessingTypeOptions = createAction(
+    'COMPLETE_FETCH_FACILITY_PROCESSING_TYPE_OPTIONS',
 );
 
 export const resetFilterOptions = createAction('RESET_FILTER_OPTIONS');
@@ -139,6 +151,27 @@ export function fetchCountryOptions() {
                         err,
                         'An error prevented fetching country options',
                         failFetchCountryOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchFacilityProcessingTypeOptions() {
+    return dispatch => {
+        dispatch(startFetchFacilityProcessingTypeOptions());
+
+        return apiRequest
+            .get(makeGetFacilitiesTypeProcessingTypeURL())
+            .then(({ data }) => {
+                dispatch(completeFetchFacilityProcessingTypeOptions(data));
+            })
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching facility processing type options',
+                        failFetchFacilityProcessingTypeOptions,
                     ),
                 ),
             );

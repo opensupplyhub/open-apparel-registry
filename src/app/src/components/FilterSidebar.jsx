@@ -32,6 +32,7 @@ import {
     fetchListOptions,
     fetchContributorTypeOptions,
     fetchCountryOptions,
+    fetchFacilityProcessingTypeOptions,
     fetchAllFilterOptions,
 } from '../actions/filterOptions';
 
@@ -39,6 +40,7 @@ import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
     countryOptionsPropType,
+    facilityProcessingTypeOptionsPropType,
 } from '../util/propTypes';
 
 import { allListsAreEmpty } from '../util/util';
@@ -63,11 +65,13 @@ class FilterSidebar extends Component {
             contributorsData,
             contributorTypesData,
             countriesData,
+            facilityProcessingTypeData,
             fetchFilterOptions,
             fetchContributors,
             fetchLists,
             fetchContributorTypes,
             fetchCountries,
+            fetchFacilityProcessingType,
             contributors,
         } = this.props;
 
@@ -76,6 +80,7 @@ class FilterSidebar extends Component {
                 contributorsData,
                 contributorTypesData,
                 countriesData,
+                facilityProcessingTypeData,
             )
         ) {
             return fetchFilterOptions();
@@ -91,6 +96,10 @@ class FilterSidebar extends Component {
 
         if (!countriesData.length) {
             fetchCountries();
+        }
+
+        if (!facilityProcessingTypeData.length) {
+            fetchFacilityProcessingType();
         }
 
         if (contributors && contributors.length) {
@@ -241,9 +250,12 @@ FilterSidebar.propTypes = {
     fetchContributors: func.isRequired,
     fetchContributorTypes: func.isRequired,
     fetchCountries: func.isRequired,
+    fetchFacilityProcessingType: func.isRequired,
     contributorsData: contributorOptionsPropType.isRequired,
     contributorTypesData: contributorTypeOptionsPropType.isRequired,
     countriesData: countryOptionsPropType.isRequired,
+    facilityProcessingTypeData:
+        facilityProcessingTypeOptionsPropType.isRequired,
     vectorTileFeatureIsActive: bool.isRequired,
     fetchingFeatureFlags: bool.isRequired,
 };
@@ -255,6 +267,7 @@ function mapStateToProps({
         lists: { data: listsData },
         contributorTypes: { data: contributorTypesData },
         countries: { data: countriesData },
+        facilityProcessingType: { data: facilityProcessingTypeData },
     },
     featureFlags: { flags, fetching: fetchingFeatureFlags },
     embeddedMap: { embed },
@@ -268,6 +281,7 @@ function mapStateToProps({
         contributorsData,
         contributorTypesData,
         countriesData,
+        facilityProcessingTypeData,
         listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
@@ -288,6 +302,8 @@ function mapDispatchToProps(dispatch) {
         fetchLists: () => dispatch(fetchListOptions()),
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchCountries: () => dispatch(fetchCountryOptions()),
+        fetchFacilityProcessingType: () =>
+            dispatch(fetchFacilityProcessingTypeOptions()),
     };
 }
 

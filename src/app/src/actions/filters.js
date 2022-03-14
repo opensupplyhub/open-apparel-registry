@@ -21,6 +21,12 @@ export const updateCountryFilter = createAction('UPDATE_COUNTRY_FILTER');
 export const updateParentCompanyFilter = createAction(
     'UPDATE_PARENT_COMPANY_FILTER',
 );
+export const updateFacilityTypeFilter = createAction(
+    'UPDATE_FACILITY_TYPE_FILTER',
+);
+export const updateProcessingTypeFilter = createAction(
+    'UPDATE_PROCESSING_TYPE_FILTER',
+);
 export const updateCombineContributorsFilterOption = createAction(
     'UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION',
 );
