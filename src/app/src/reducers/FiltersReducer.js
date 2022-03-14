@@ -12,6 +12,7 @@ import {
     updateProcessingTypeFilter,
     updateProductTypeFilter,
     updateNumberofWorkersFilter,
+    updateNativeLanguageNameFilter,
     updatePPEFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
@@ -39,6 +40,7 @@ const initialState = Object.freeze({
     processingType: Object.freeze([]),
     productType: Object.freeze([]),
     numberOfWorkers: Object.freeze([]),
+    nativeLanguageName: '',
     combineContributors: '',
     boundary: null,
     ppe: '',
@@ -97,6 +99,10 @@ export default createReducer(
         [updateNumberofWorkersFilter]: (state, payload) =>
             update(state, {
                 numberOfWorkers: { $set: payload },
+            }),
+        [updateNativeLanguageNameFilter]: (state, payload) =>
+            update(state, {
+                nativeLanguageName: { $set: payload },
             }),
         [updateCombineContributorsFilterOption]: (state, payload) =>
             update(state, {

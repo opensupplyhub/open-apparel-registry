@@ -30,6 +30,7 @@ import {
     updateProcessingTypeFilter,
     updateProductTypeFilter,
     updateNumberofWorkersFilter,
+    updateNativeLanguageNameFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
     updatePPEFilter,
@@ -98,6 +99,8 @@ const FACILITY_TYPE = 'FACILITY_TYPE';
 const PROCESSING_TYPE = 'PROCESSING_TYPE';
 const PRODUCT_TYPE = 'PRODUCT_TYPE';
 const NUMBER_OF_WORKERS = 'NUMBER_OF_WORKERS';
+const NATIVE_LANGUAGE_NAME = 'NATIVE_LANGUAGE_NAME';
+
 const mapFacilityTypeOptions = (fPTypes, pTypes) => {
     let fTypes = [];
     if (pTypes.length === 0) {
@@ -161,6 +164,8 @@ function FilterSidebarSearchTab({
     updateProductType,
     numberOfWorkers,
     updateNumberOfWorkers,
+    nativeLanguageName,
+    updateNativeLanguageName,
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
@@ -624,6 +629,25 @@ function FilterSidebarSearchTab({
                             disabled={fetchingOptions || fetchingFacilities}
                         />
                     </div>
+                    <div
+                        className="form__field"
+                        style={{ marginBottom: '10px' }}
+                    >
+                        <InputLabel
+                            htmlFor={NATIVE_LANGUAGE_NAME}
+                            className="form__label"
+                        >
+                            Native Language Name
+                        </InputLabel>
+                        <TextField
+                            id={NATIVE_LANGUAGE_NAME}
+                            placeholder="Native Language Facility Name"
+                            className="full-width margin-bottom-16 form__text-input"
+                            value={nativeLanguageName}
+                            onChange={updateNativeLanguageName}
+                            onKeyPress={submitFormOnEnterKeyPress}
+                        />
+                    </div>
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -715,6 +739,7 @@ FilterSidebarSearchTab.propTypes = {
     processingType: processingTypeOptionsPropType.isRequired,
     productType: productTypeOptionsPropType.isRequired,
     numberOfWorkers: numberOfWorkerOptionsPropType.isRequired,
+    nativeLanguageName: string.isRequired,
     combineContributors: string.isRequired,
     ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
@@ -760,6 +785,7 @@ function mapStateToProps({
         processingType,
         productType,
         numberOfWorkers,
+        nativeLanguageName,
         combineContributors,
         boundary,
         ppe,
@@ -795,6 +821,7 @@ function mapStateToProps({
         processingType,
         productType,
         numberOfWorkers,
+        nativeLanguageName,
         combineContributors,
         fetchingFacilities,
         facilities,
@@ -831,6 +858,8 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         updateProcessingType: v => dispatch(updateProcessingTypeFilter(v)),
         updateProductType: v => dispatch(updateProductTypeFilter(v)),
         updateNumberOfWorkers: v => dispatch(updateNumberofWorkersFilter(v)),
+        updateNativeLanguageName: e =>
+            dispatch(updateNativeLanguageNameFilter(getValueFromEvent(e))),
         updatePPE: e =>
             dispatch(updatePPEFilter(e.target.checked ? 'true' : '')),
         updateCombineContributors: e =>

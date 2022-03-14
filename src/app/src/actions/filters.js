@@ -33,6 +33,9 @@ export const updateProductTypeFilter = createAction(
 export const updateNumberofWorkersFilter = createAction(
     'UPDATE_NUMBER_OF_WORKERS_FILTER',
 );
+export const updateNativeLanguageNameFilter = createAction(
+    'UPDATE_NATIVE_LANGUAGE_NAME_FILTER',
+);
 export const updateCombineContributorsFilterOption = createAction(
     'UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION',
 );
