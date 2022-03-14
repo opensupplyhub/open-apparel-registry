@@ -29,6 +29,7 @@ import {
     updateFacilityTypeFilter,
     updateProcessingTypeFilter,
     updateProductTypeFilter,
+    updateNumberofWorkersFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
     updatePPEFilter,
@@ -47,6 +48,7 @@ import {
     processingTypeOptionsPropType,
     facilityProcessingTypeOptionsPropType,
     productTypeOptionsPropType,
+    numberOfWorkerOptionsPropType,
     facilityCollectionPropType,
 } from '../util/propTypes';
 
@@ -95,6 +97,7 @@ const PARENT_COMPANY = 'PARENT_COMPANY';
 const FACILITY_TYPE = 'FACILITY_TYPE';
 const PROCESSING_TYPE = 'PROCESSING_TYPE';
 const PRODUCT_TYPE = 'PRODUCT_TYPE';
+const NUMBER_OF_WORKERS = 'NUMBER_OF_WORKERS';
 const mapFacilityTypeOptions = (fPTypes, pTypes) => {
     let fTypes = [];
     if (pTypes.length === 0) {
@@ -138,6 +141,7 @@ function FilterSidebarSearchTab({
     countryOptions,
     facilityProcessingTypeOptions,
     productTypeOptions,
+    numberOfWorkersOptions,
     resetFilters,
     facilityFreeTextQuery,
     updateFacilityFreeTextQuery,
@@ -155,6 +159,8 @@ function FilterSidebarSearchTab({
     updateProcessingType,
     productType,
     updateProductType,
+    numberOfWorkers,
+    updateNumberOfWorkers,
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
@@ -598,6 +604,26 @@ function FilterSidebarSearchTab({
                             disabled={fetchingOptions || fetchingFacilities}
                         />
                     </div>
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={NUMBER_OF_WORKERS}
+                            className={classes.inputLabelStyle}
+                        >
+                            Number of Workers
+                        </InputLabel>
+                        <ReactSelect
+                            isMulti
+                            id={NUMBER_OF_WORKERS}
+                            name={NUMBER_OF_WORKERS}
+                            className={`basic-multi-select ${classes.selectStyle}`}
+                            classNamePrefix="select"
+                            options={numberOfWorkersOptions}
+                            value={numberOfWorkers}
+                            onChange={updateNumberOfWorkers}
+                            disabled={fetchingOptions || fetchingFacilities}
+                        />
+                    </div>
                 </div>
                 <div className="form__field">
                     <InputLabel
@@ -672,6 +698,7 @@ FilterSidebarSearchTab.propTypes = {
     facilityProcessingTypeOptions:
         facilityProcessingTypeOptionsPropType.isRequired,
     productTypeOptions: productTypeOptionsPropType.isRequired,
+    numberOfWorkersOptions: numberOfWorkerOptionsPropType.isRequired,
     resetFilters: func.isRequired,
     updateFacilityFreeTextQuery: func.isRequired,
     updateContributor: func.isRequired,
@@ -687,6 +714,7 @@ FilterSidebarSearchTab.propTypes = {
     facilityType: facilityTypeOptionsPropType.isRequired,
     processingType: processingTypeOptionsPropType.isRequired,
     productType: productTypeOptionsPropType.isRequired,
+    numberOfWorkers: numberOfWorkerOptionsPropType.isRequired,
     combineContributors: string.isRequired,
     ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
@@ -716,6 +744,10 @@ function mapStateToProps({
             data: productTypeOptions,
             fetching: fetchingProductType,
         },
+        numberOfWorkers: {
+            data: numberOfWorkersOptions,
+            fetching: fetchingNumberofWorkers,
+        },
     },
     filters: {
         facilityFreeTextQuery,
@@ -727,6 +759,7 @@ function mapStateToProps({
         facilityType,
         processingType,
         productType,
+        numberOfWorkers,
         combineContributors,
         boundary,
         ppe,
@@ -751,6 +784,7 @@ function mapStateToProps({
         countryOptions,
         facilityProcessingTypeOptions,
         productTypeOptions,
+        numberOfWorkersOptions,
         facilityFreeTextQuery,
         contributors,
         lists,
@@ -760,6 +794,7 @@ function mapStateToProps({
         facilityType,
         processingType,
         productType,
+        numberOfWorkers,
         combineContributors,
         fetchingFacilities,
         facilities,
@@ -771,6 +806,7 @@ function mapStateToProps({
             fetchingCountries ||
             fetchingFacilityProcessingType ||
             fetchingProductType ||
+            fetchingNumberofWorkers,
         embed: !!embed,
         fetchingLists,
         textSearchLabel: config.text_search_label,
@@ -794,6 +830,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         updateFacilityType: v => dispatch(updateFacilityTypeFilter(v)),
         updateProcessingType: v => dispatch(updateProcessingTypeFilter(v)),
         updateProductType: v => dispatch(updateProductTypeFilter(v)),
+        updateNumberOfWorkers: v => dispatch(updateNumberofWorkersFilter(v)),
         updatePPE: e =>
             dispatch(updatePPEFilter(e.target.checked ? 'true' : '')),
         updateCombineContributors: e =>

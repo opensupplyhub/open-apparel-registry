@@ -20,6 +20,9 @@ import {
     startFetchProductTypeOptions,
     failFetchProductTypeOptions,
     completeFetchProductTypeOptions,
+    startFetchNumberOfWorkersOptions,
+    failFetchNumberOfWorkersOptions,
+    completeFetchNumberOfWorkersTypeOptions,
     resetFilterOptions,
 } from '../actions/filterOptions';
 
@@ -50,6 +53,11 @@ const initialState = Object.freeze({
         error: null,
     }),
     productType: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    numberOfWorkers: Object.freeze({
         data: Object.freeze([]),
         fetching: false,
         error: null,
@@ -185,6 +193,28 @@ export default createReducer(
         [completeFetchProductTypeOptions]: (state, payload) =>
             update(state, {
                 productType: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchNumberOfWorkersOptions]: state =>
+            update(state, {
+                numberOfWorkers: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchNumberOfWorkersOptions]: (state, payload) =>
+            update(state, {
+                numberOfWorkers: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchNumberOfWorkersTypeOptions]: (state, payload) =>
+            update(state, {
+                numberOfWorkers: {
                     fetching: { $set: false },
                     error: { $set: null },
                     data: { $set: payload },

@@ -11,6 +11,7 @@ import {
     makeGetCountriesURL,
     makeGetFacilitiesTypeProcessingTypeURL,
     makeGetProductTypeURL,
+    makeGetNumberOfWorkersURL,
     mapDjangoChoiceTuplesToSelectOptions,
     mapDjangoChoiceTuplesValueToSelectOptions,
     updateListWithLabels,
@@ -72,6 +73,16 @@ export const failFetchProductTypeOptions = createAction(
 );
 export const completeFetchProductTypeOptions = createAction(
     'COMPLETE_FETCH_PRODUCT_TYPE_OPTIONS',
+);
+
+export const startFetchNumberOfWorkersOptions = createAction(
+    'START_FETCH_NUMBER_OF_WORKERS_TYPE_OPTIONS',
+);
+export const failFetchNumberOfWorkersOptions = createAction(
+    'FAIL_FETCH_NUMBER_OF_WORKERS_TYPE_OPTIONS',
+);
+export const completeFetchNumberOfWorkersTypeOptions = createAction(
+    'COMPLETE_FETCH_NUMBER_OF_WORKERS_TYPE_OPTIONS',
 );
 
 export const resetFilterOptions = createAction('RESET_FILTER_OPTIONS');
@@ -205,6 +216,28 @@ export function fetchProductTypeOptions() {
                         err,
                         'An error prevented fetching product type options',
                         failFetchProductTypeOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchNumberOfWorkersOptions() {
+    return dispatch => {
+        dispatch(startFetchNumberOfWorkersOptions());
+
+        return apiRequest
+            .get(makeGetNumberOfWorkersURL())
+            .then(({ data }) => mapDjangoChoiceTuplesValueToSelectOptions(data))
+            .then(data => {
+                dispatch(completeFetchNumberOfWorkersTypeOptions(data));
+            })
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching number of workers options',
+                        failFetchNumberOfWorkersOptions,
                     ),
                 ),
             );

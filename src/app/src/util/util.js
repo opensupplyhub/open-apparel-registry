@@ -126,6 +126,7 @@ export const makeGetCountriesURL = () => '/api/countries/';
 export const makeGetFacilitiesTypeProcessingTypeURL = () =>
     '/api/facility-processing-types/';
 export const makeGetProductTypeURL = () => '/api/product-types/';
+export const makeGetNumberOfWorkersURL = () => '/api/workers-ranges/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
@@ -210,6 +211,7 @@ export const createQueryStringFromSearchFilters = (
         facilityType = [],
         processingType = [],
         productType = [],
+        numberOfWorkers = [],
         lists = [],
         combineContributors = '',
         boundary = {},
@@ -233,6 +235,9 @@ export const createQueryStringFromSearchFilters = (
             processingType,
         ),
         product_type: createCompactSortedQuerystringInputObject(productType),
+        number_of_workers: createCompactSortedQuerystringInputObject(
+            numberOfWorkers,
+        ),
         combine_contributors: combineContributors,
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
         ppe,
@@ -282,6 +287,7 @@ export const createFiltersFromQueryString = qs => {
         facility_type: facilityType = [],
         processing_type: processingType = [],
         product_type: productType = [],
+        number_of_workers: numberOfWorkers = [],
         combine_contributors: combineContributors = '',
         boundary = '',
         ppe = '',
@@ -297,6 +303,7 @@ export const createFiltersFromQueryString = qs => {
         facilityType: createSelectOptionsFromParams(facilityType),
         processingType: createSelectOptionsFromParams(processingType),
         productType: createSelectOptionsFromParams(productType),
+        numberOfWorkers: createSelectOptionsFromParams(numberOfWorkers),
         combineContributors,
         boundary: isEmpty(boundary) ? null : JSON.parse(boundary),
         ppe,

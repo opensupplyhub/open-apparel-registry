@@ -34,6 +34,7 @@ import {
     fetchCountryOptions,
     fetchFacilityProcessingTypeOptions,
     fetchProductTypeOptions,
+    fetchNumberOfWorkersOptions,
     fetchAllFilterOptions,
 } from '../actions/filterOptions';
 
@@ -43,6 +44,7 @@ import {
     countryOptionsPropType,
     facilityProcessingTypeOptionsPropType,
     productTypeOptionsPropType,
+    numberOfWorkerOptionsPropType,
 } from '../util/propTypes';
 
 import { allListsAreEmpty } from '../util/util';
@@ -69,6 +71,7 @@ class FilterSidebar extends Component {
             countriesData,
             facilityProcessingTypeData,
             productTypeData,
+            numberOfWorkersData,
             fetchFilterOptions,
             fetchContributors,
             fetchLists,
@@ -76,6 +79,7 @@ class FilterSidebar extends Component {
             fetchCountries,
             fetchFacilityProcessingType,
             fetchProductType,
+            fetchNumberOfWorkers,
             contributors,
         } = this.props;
 
@@ -86,6 +90,7 @@ class FilterSidebar extends Component {
                 countriesData,
                 facilityProcessingTypeData,
                 productTypeData,
+                numberOfWorkersData,
             )
         ) {
             return fetchFilterOptions();
@@ -109,6 +114,10 @@ class FilterSidebar extends Component {
 
         if (!productTypeData.length) {
             fetchProductType();
+        }
+
+        if (!numberOfWorkersData.length) {
+            fetchNumberOfWorkers();
         }
 
         if (contributors && contributors.length) {
@@ -261,12 +270,14 @@ FilterSidebar.propTypes = {
     fetchCountries: func.isRequired,
     fetchFacilityProcessingType: func.isRequired,
     fetchProductType: func.isRequired,
+    fetchNumberOfWorkers: func.isRequired,
     contributorsData: contributorOptionsPropType.isRequired,
     contributorTypesData: contributorTypeOptionsPropType.isRequired,
     countriesData: countryOptionsPropType.isRequired,
     facilityProcessingTypeData:
         facilityProcessingTypeOptionsPropType.isRequired,
     productTypeData: productTypeOptionsPropType.isRequired,
+    numberOfWorkersData: numberOfWorkerOptionsPropType.isRequired,
     vectorTileFeatureIsActive: bool.isRequired,
     fetchingFeatureFlags: bool.isRequired,
 };
@@ -280,6 +291,7 @@ function mapStateToProps({
         countries: { data: countriesData },
         facilityProcessingType: { data: facilityProcessingTypeData },
         productType: { data: productTypeData },
+        numberOfWorkers: { data: numberOfWorkersData },
     },
     featureFlags: { flags, fetching: fetchingFeatureFlags },
     embeddedMap: { embed },
@@ -295,6 +307,7 @@ function mapStateToProps({
         countriesData,
         facilityProcessingTypeData,
         productTypeData,
+        numberOfWorkersData,
         listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
@@ -318,6 +331,7 @@ function mapDispatchToProps(dispatch) {
         fetchFacilityProcessingType: () =>
             dispatch(fetchFacilityProcessingTypeOptions()),
         fetchProductType: () => dispatch(fetchProductTypeOptions()),
+        fetchNumberOfWorkers: () => dispatch(fetchNumberOfWorkersOptions()),
     };
 }
 

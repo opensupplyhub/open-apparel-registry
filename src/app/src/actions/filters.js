@@ -30,6 +30,9 @@ export const updateProcessingTypeFilter = createAction(
 export const updateProductTypeFilter = createAction(
     'UPDATE_PRODUCT_TYPE_FILTER',
 );
+export const updateNumberofWorkersFilter = createAction(
+    'UPDATE_NUMBER_OF_WORKERS_FILTER',
+);
 export const updateCombineContributorsFilterOption = createAction(
     'UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION',
 );
