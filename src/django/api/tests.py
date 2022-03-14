@@ -8212,7 +8212,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEqual(0, len(facility_index.processing_type))
 
     @patch('api.geocoding.requests.get')
-    def test_invalid_value(self, mock_get):
+    def test_non_taxonomy_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
@@ -8220,10 +8220,18 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'processing_type': 'sadfjhasdf'
+            'facility_type_processing_type': 'sewing|not a taxonomy value'
         }), content_type='application/json')
-        self.assertEqual(0, ExtendedField.objects.all().count())
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(1, ExtendedField.objects.filter(
+            field_name='facility_type').count())
+        self.assertEqual(1, ExtendedField.objects.filter(
+            field_name='processing_type').count())
+        self.assertEqual(response.status_code, 201)
+
+        data = json.loads(response.content)
+        index_row = FacilityIndex.objects.filter(id=data['oar_id']).first()
+        self.assertEqual(['Final Product Assembly'], index_row.facility_type)
+        self.assertEqual(['Sewing'], index_row.processing_type)
 
     @patch('api.geocoding.requests.get')
     def test_search_by_processing_type(self, mock_get):

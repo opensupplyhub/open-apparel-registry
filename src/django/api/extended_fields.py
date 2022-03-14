@@ -3,7 +3,6 @@ from django.core import exceptions as core_exceptions
 from api.models import Contributor, ExtendedField, ProductType
 from api.facility_type_processing_type import (
     get_facility_and_processing_type,
-    ALL_PROCESSING_TYPES
 )
 
 
@@ -33,12 +32,6 @@ def get_facility_and_processing_type_extendfield_value(field, field_value):
 
     for value in deduped_values:
         result = get_facility_and_processing_type(value)
-        if result[0] is None:
-            raise ValueError(
-                f'No match found for {field}. Value must '
-                'be one of the following: '
-                f'{", ".join(list(ALL_PROCESSING_TYPES.keys()))}'
-            )
         results.append(result)
 
     return {

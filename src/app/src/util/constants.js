@@ -726,12 +726,26 @@ export const EXTENDED_FIELD_TYPES = [
     {
         label: 'Processing Type',
         fieldName: 'processing_type',
-        formatValue: v => v.matched_values.map(val => val[3]),
+        formatValue: v => {
+            const rawValues = Array.isArray(v.raw_values)
+                ? v.raw_values
+                : v.raw_values.toString().split('|');
+            return v.matched_values.map((val, i) =>
+                val[3] !== null ? val[3] : rawValues[i],
+            );
+        },
     },
     {
         label: 'Facility Type',
         fieldName: 'facility_type',
-        formatValue: v => v.matched_values.map(val => val[2]),
+        formatValue: v => {
+            const rawValues = Array.isArray(v.raw_values)
+                ? v.raw_values
+                : v.raw_values.toString().split('|');
+            return v.matched_values.map((val, i) =>
+                val[2] !== null ? val[2] : rawValues[i],
+            );
+        },
     },
     {
         label: 'Product Type',
