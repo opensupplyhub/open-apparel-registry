@@ -9,6 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
+import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import ReactSelect from 'react-select';
 import Creatable from 'react-select/creatable';
@@ -79,6 +80,14 @@ const filterSidebarSearchTabStyles = theme =>
             fontWeight: 500,
             color: '#000',
             transform: 'translate(0, -8px) scale(1)',
+            paddingBottom: '0.5rem',
+        }),
+        helpSubheadStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+            ontSize: '12px',
+            fontWeight: 500,
+            color: '#000',
+            paddingTop: '0.5rem',
             paddingBottom: '0.5rem',
         }),
         selectStyle: Object.freeze({
@@ -357,12 +366,69 @@ function FilterSidebarSearchTab({
         </Button>
     );
 
+    const searchButton = (
+        <Button
+            variant="contained"
+            type="submit"
+            color="primary"
+            className={classes.font}
+            style={{
+                boxShadow: 'none',
+            }}
+            onClick={() => searchForFacilities(vectorTileFlagIsActive)}
+            disabled={fetchingOptions}
+            fullWidth
+        >
+            Search
+        </Button>
+    );
+
+    const resetButton = (
+        <Button
+            size="small"
+            variant="outlined"
+            onClick={() => resetFilters(embed)}
+            disableRipple
+            className={classes.reset}
+            color="primary"
+            disabled={fetchingOptions}
+        >
+            <i className={`${classes.icon} fas fa-fw fa-undo`} />
+        </Button>
+    );
+
+    const searchResetButtonGroup = () => {
+        if (fetchingFacilities) {
+            return <CircularProgress size={30} />;
+        }
+        if (checkIfAnyFieldSelected(allFields)) {
+            return (
+                <>
+                    {searchButton}
+                    {resetButton}
+                </>
+            );
+        }
+        return searchButton;
+    };
+
     return (
         <div
             className={`control-panel__content ${classes.controlPanelContentStyles}`}
         >
             <div style={{ marginBottom: '60px' }}>
                 <div className="form__field" style={{ marginBottom: '10px' }}>
+                    <div className={classes.inputLabelStyle}>
+                        Search the Open Apparel Registry
+                        <div className={classes.helpSubheadStyle}>
+                            <a
+                                target="blank"
+                                href="https://info.openapparel.org/stories-resources/how-to-search-the-open-apparel-registry"
+                            >
+                                Need tips for searching the OAR?
+                            </a>
+                        </div>
+                    </div>
                     <InputLabel htmlFor={FACILITIES} className="form__label">
                         <FeatureFlag
                             flag="ppe"
@@ -370,16 +436,12 @@ function FilterSidebarSearchTab({
                                 embed ? textSearchLabel : DEFAULT_SEARCH_TEXT
                             }
                         >
-                            Search a Facility Name, OAR ID, or PPE Product Type
+                            Facility Name, OAR ID, or PPE Product Type
                         </FeatureFlag>
                     </InputLabel>
                     <TextField
                         id={FACILITIES}
-                        placeholder={
-                            embed && textSearchLabel !== DEFAULT_SEARCH_TEXT
-                                ? textSearchLabel
-                                : 'Facility Name or OAR ID'
-                        }
+                        placeholder="e.g., ABC Textiles Limited"
                         className="full-width margin-bottom-16 form__text-input"
                         value={facilityFreeTextQuery}
                         onChange={updateFacilityFreeTextQuery}
@@ -440,7 +502,7 @@ function FilterSidebarSearchTab({
                             htmlFor={CONTRIBUTORS}
                             className={classes.inputLabelStyle}
                         >
-                            Filter by Contributor
+                            Contributor
                         </InputLabel>
                         <ReactSelect
                             isMulti
@@ -520,7 +582,7 @@ function FilterSidebarSearchTab({
                                 htmlFor={LISTS}
                                 className={classes.inputLabelStyle}
                             >
-                                Filter by Contributor List
+                                Contributor List
                             </InputLabel>
                             <ReactSelect
                                 isMulti
@@ -542,7 +604,7 @@ function FilterSidebarSearchTab({
                         htmlFor={COUNTRIES}
                         className={classes.inputLabelStyle}
                     >
-                        Filter by Country Name
+                        Country Name
                     </InputLabel>
                     <ReactSelect
                         isMulti
@@ -564,7 +626,7 @@ function FilterSidebarSearchTab({
                                 htmlFor={CONTRIBUTOR_TYPES}
                                 className={classes.inputLabelStyle}
                             >
-                                Filter by Contributor Type
+                                Contributor Type
                             </InputLabel>
                             <ReactSelect
                                 isMulti
@@ -585,7 +647,7 @@ function FilterSidebarSearchTab({
                             htmlFor={CONTRIBUTORS}
                             className={classes.inputLabelStyle}
                         >
-                            Filter by Area
+                            Area
                         </InputLabel>
                         {boundaryButton}
                     </div>
@@ -725,52 +787,21 @@ function FilterSidebarSearchTab({
                         />
                     </div>
                 </ShowOnly>
-                <div className="form__action">
-                    {fetchingFacilities ? (
-                        <CircularProgress size={30} />
-                    ) : (
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            color="primary"
-                            className={classes.font}
-                            style={{
-                                boxShadow: 'none',
-                            }}
-                            onClick={() =>
-                                searchForFacilities(vectorTileFlagIsActive)
-                            }
-                            disabled={fetchingOptions}
-                            fullWidth
-                        >
-                            Search
-                        </Button>
-                    )}
-                    {checkIfAnyFieldSelected(allFields) ? (
-                        <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={() => resetFilters(embed)}
-                            disableRipple
-                            className={classes.reset}
-                            color="primary"
-                            disabled={fetchingOptions}
-                        >
-                            <i
-                                className={`${classes.icon} fas fa-fw fa-undo`}
-                            />
-                        </Button>
-                    ) : null}
-                </div>
+                <div className="form__action">{searchResetButtonGroup()}</div>
                 <div className="form__field">
                     {expandButton}
                     <ShowOnly when={!expand}>
                         <div className="form__info">
                             Contributor type · Parent company · Facility type ·
                             Processing type · Product type · Number of workers{' '}
-                            <i
-                                className={`${classes.icon} fas fa-fw fa-info-circle`}
-                            />
+                            <Tooltip
+                                title="These fields were added to the OAR in March 2022. As more data is contributed, more results will become available."
+                                classes={{ tooltip: classes.tooltip }}
+                            >
+                                <i
+                                    className={`${classes.icon} fas fa-fw fa-info-circle`}
+                                />
+                            </Tooltip>
                         </div>
                     </ShowOnly>
                 </div>
