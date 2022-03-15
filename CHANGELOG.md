@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Hide inactive contributor associations [#1712](https://github.com/open-apparel-registry/open-apparel-registry/pull/1712)
+
 ### Security
 
 ## [60] - 2022-03-03

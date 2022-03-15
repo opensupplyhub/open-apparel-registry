@@ -1481,19 +1481,30 @@ class ExtendedFieldListSerializer(ModelSerializer):
                   'contributor_name', 'contributor_id', 'value_count',
                   'is_from_claim', 'field_name', 'verified_count')
 
-    def get_contributor_name(self, instance):
+    def should_display_contributor(self, instance):
         embed_mode_active = self.context.get("embed_mode_active")
         if embed_mode_active:
             return None
+
         user_can_see_detail = self.context.get("user_can_see_detail")
-        return get_contributor_name(instance.contributor, user_can_see_detail)
+
+        should_display_association = True
+        list_item_id = instance.facility_list_item_id
+        if list_item_id is not None:
+            matches = FacilityMatch.objects.filter(
+                facility_list_item_id=list_item_id)
+            should_display_association = \
+                any([m.should_display_association for m in matches])
+
+        return should_display_association and user_can_see_detail
+
+    def get_contributor_name(self, instance):
+        return get_contributor_name(instance.contributor,
+                                    self.should_display_contributor(instance))
 
     def get_contributor_id(self, instance):
-        embed_mode_active = self.context.get("embed_mode_active")
-        if embed_mode_active:
-            return None
-        user_can_see_detail = self.context.get("user_can_see_detail")
-        return get_contributor_id(instance.contributor, user_can_see_detail)
+        return get_contributor_id(instance.contributor,
+                                  self.should_display_contributor(instance))
 
     def get_value_count(self, instance):
         return ExtendedField.objects.filter(facility=instance.facility) \
