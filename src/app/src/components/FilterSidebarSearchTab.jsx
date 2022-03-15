@@ -12,6 +12,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import Popover from '@material-ui/core/Popover';
 import ReactSelect from 'react-select';
 import Creatable from 'react-select/creatable';
+import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 import uniq from 'lodash/uniq';
@@ -86,6 +87,11 @@ const filterSidebarSearchTabStyles = theme =>
         font: Object.freeze({
             fontFamily: `${theme.typography.fontFamily} !important`,
         }),
+        reset: Object.freeze({
+            marginLeft: '16px',
+            minWidth: '36px',
+            minHeight: '36px',
+        }),
         ...filterSidebarStyles,
     });
 
@@ -137,6 +143,8 @@ const mapProcessingTypeOptions = (fPTypes, fTypes) => {
     return mapDjangoChoiceTuplesValueToSelectOptions(uniq(pTypes.sort()));
 };
 
+const checkIfAnyFieldSelected = fields => fields.some(f => f.length !== 0);
+
 function FilterSidebarSearchTab({
     contributorOptions,
     listOptions,
@@ -186,11 +194,30 @@ function FilterSidebarSearchTab({
     classes,
     textSearchLabel,
 }) {
+    const extendedFields = [
+        contributorTypes,
+        parentCompany,
+        facilityType,
+        processingType,
+        productType,
+        numberOfWorkers,
+        nativeLanguageName,
+    ];
+
+    const allFields = extendedFields.concat([
+        facilityFreeTextQuery,
+        contributors,
+        countries,
+    ]);
+
     const [
         contributorPopoverAnchorEl,
         setContributorPopoverAnchorEl,
     ] = useState(null);
     const [ppePopoverAnchorEl, setPpePopoverAnchorEl] = useState(null);
+    const [expand, setExpand] = useState(
+        checkIfAnyFieldSelected(extendedFields),
+    );
 
     if (fetchingOptions) {
         return (
@@ -235,6 +262,9 @@ function FilterSidebarSearchTab({
         },
         popoverHeading: {
             fontWeight: 'bold',
+        },
+        icon: {
+            color: 'rgba(0, 0, 0, 0.38)',
         },
     };
 
@@ -300,6 +330,32 @@ function FilterSidebarSearchTab({
                 REMOVE AREA
             </Button>
         );
+
+    const expandButton = expand ? (
+        <Button
+            variant="outlined"
+            onClick={() => {
+                setExpand(false);
+            }}
+            disableRipple
+            color="primary"
+            fullWidth
+        >
+            FEWER FILTERS
+        </Button>
+    ) : (
+        <Button
+            variant="outlined"
+            onClick={() => {
+                setExpand(true);
+            }}
+            disableRipple
+            color="primary"
+            fullWidth
+        >
+            MORE FILTERS
+        </Button>
+    );
 
     return (
         <div
@@ -481,28 +537,6 @@ function FilterSidebarSearchTab({
                     </ShowOnly>
                 </div>
                 <div className="form__field">
-                    <ShowOnly when={!embed}>
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={CONTRIBUTOR_TYPES}
-                            className={classes.inputLabelStyle}
-                        >
-                            Filter by Contributor Type
-                        </InputLabel>
-                        <ReactSelect
-                            isMulti
-                            id={CONTRIBUTOR_TYPES}
-                            name="contributorTypes"
-                            className={`basic-multi-select notranslate ${classes.selectStyle}`}
-                            classNamePrefix="select"
-                            options={contributorTypeOptions}
-                            value={contributorTypes}
-                            onChange={updateContributorType}
-                            disabled={fetchingOptions || fetchingFacilities}
-                        />
-                    </ShowOnly>
-                </div>
-                <div className="form__field">
                     <InputLabel
                         shrink={false}
                         htmlFor={COUNTRIES}
@@ -522,7 +556,49 @@ function FilterSidebarSearchTab({
                         disabled={fetchingOptions || fetchingFacilities}
                     />
                 </div>
-                <div className="extended_fields">
+                <ShowOnly when={expand}>
+                    <div className="form__field">
+                        <ShowOnly when={!embed}>
+                            <InputLabel
+                                shrink={false}
+                                htmlFor={CONTRIBUTOR_TYPES}
+                                className={classes.inputLabelStyle}
+                            >
+                                Filter by Contributor Type
+                            </InputLabel>
+                            <ReactSelect
+                                isMulti
+                                id={CONTRIBUTOR_TYPES}
+                                name="contributorTypes"
+                                className={`basic-multi-select notranslate ${classes.selectStyle}`}
+                                classNamePrefix="select"
+                                options={contributorTypeOptions}
+                                value={contributorTypes}
+                                onChange={updateContributorType}
+                                disabled={fetchingOptions || fetchingFacilities}
+                            />
+                        </ShowOnly>
+                    </div>
+                    <div className="form__field">
+                        <InputLabel
+                            shrink={false}
+                            htmlFor={CONTRIBUTORS}
+                            className={classes.inputLabelStyle}
+                        >
+                            Filter by Area
+                        </InputLabel>
+                        {boundaryButton}
+                    </div>
+                    <div className="form__field">
+                        <Divider />
+                        <div
+                            className="form__info"
+                            style={{ color: 'rgba(0, 0, 0, 0.8)' }}
+                        >
+                            The following filters are new to the OAR and may not
+                            return complete results until we have more data
+                        </div>
+                    </div>
                     <div className="form__field">
                         <InputLabel
                             shrink={false}
@@ -648,62 +724,65 @@ function FilterSidebarSearchTab({
                             onKeyPress={submitFormOnEnterKeyPress}
                         />
                     </div>
-                </div>
-                <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={CONTRIBUTORS}
-                        className={classes.inputLabelStyle}
-                    >
-                        Filter by Area
-                    </InputLabel>
-                    {boundaryButton}
-                </div>
+                </ShowOnly>
                 <div className="form__action">
-                    {!embed ? (
-                        <a
-                            className="control-link inherit-font"
-                            href="mailto:info@openapparel.org?subject=Reporting an issue"
+                    {fetchingFacilities ? (
+                        <CircularProgress size={30} />
+                    ) : (
+                        <Button
+                            variant="contained"
+                            type="submit"
+                            color="primary"
+                            className={classes.font}
+                            style={{
+                                boxShadow: 'none',
+                            }}
+                            onClick={() =>
+                                searchForFacilities(vectorTileFlagIsActive)
+                            }
+                            disabled={fetchingOptions}
+                            fullWidth
                         >
-                            Report an issue
-                        </a>
-                    ) : null}
-                    <div className="offset offset-right" style={{ flex: 1 }}>
+                            Search
+                        </Button>
+                    )}
+                    {checkIfAnyFieldSelected(allFields) ? (
                         <Button
                             size="small"
                             variant="outlined"
                             onClick={() => resetFilters(embed)}
                             disableRipple
-                            className={classes.font}
+                            className={classes.reset}
                             color="primary"
                             disabled={fetchingOptions}
                         >
-                            Reset
-                        </Button>
-                        {fetchingFacilities ? (
-                            <CircularProgress
-                                size={30}
-                                className="margin-left-16"
+                            <i
+                                className={`${classes.icon} fas fa-fw fa-undo`}
                             />
-                        ) : (
-                            <Button
-                                variant="contained"
-                                size="small"
-                                type="submit"
-                                color="primary"
-                                className={`margin-left-16 ${classes.font}`}
-                                style={{
-                                    boxShadow: 'none',
-                                }}
-                                onClick={() =>
-                                    searchForFacilities(vectorTileFlagIsActive)
-                                }
-                                disabled={fetchingOptions}
-                            >
-                                Search
-                            </Button>
-                        )}
-                    </div>
+                        </Button>
+                    ) : null}
+                </div>
+                <div className="form__field">
+                    {expandButton}
+                    <ShowOnly when={!expand}>
+                        <div className="form__info">
+                            Contributor type · Parent company · Facility type ·
+                            Processing type · Product type · Number of workers{' '}
+                            <i
+                                className={`${classes.icon} fas fa-fw fa-info-circle`}
+                            />
+                        </div>
+                    </ShowOnly>
+                </div>
+                <div className="form__report">
+                    {!embed ? (
+                        <a
+                            className="control-link inherit-font"
+                            href="mailto:info@openapparel.org?subject=Reporting an issue"
+                        >
+                            Have a suggestion? Let us know!
+                        </a>
+                    ) : null}
                 </div>
                 {noFacilitiesFoundMessage}
             </div>
