@@ -9,7 +9,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction
-from django.db.models import Q, Max, ExpressionWrapper, BooleanField
+from django.db.models import Q, Max
 
 from api.models import (Facility,
                         FacilityList,
@@ -90,6 +90,18 @@ def get_canonical_items():
     return items
 
 
+def sort_exact_matches(exact_matches, active_item_ids, contributor):
+    def sort_order(f):
+        is_active = f['id'] in active_item_ids
+        has_same_contributor = f['source__contributor_id'] == contributor.id
+        updated_at = f.get('updated_at', None)
+        return (is_active,
+                has_same_contributor,
+                updated_at)
+
+    return sorted(exact_matches, key=sort_order, reverse=True)
+
+
 def exact_match_items(messy, contributor):
     started = str(datetime.utcnow())
 
@@ -103,7 +115,7 @@ def exact_match_items(messy, contributor):
                             FacilityMatch.MERGED],
                 is_active=True,
                 facility_list_item__source__is_active=True) \
-        .values_list('facility_list_item')
+        .values_list('facility_list_item', flat=True)
 
     results = dict()
 
@@ -113,24 +125,21 @@ def exact_match_items(messy, contributor):
         country_code = item.get('country', '').upper()
         empty_text_fields = Q(Q(clean_name__isnull=True) |
                               Q(clean_name__exact='') |
-                              Q(clean_name__isnull=True) |
-                              Q(clean_name__exact=''))
+                              Q(clean_address__isnull=True) |
+                              Q(clean_address__exact=''))
         exact_matches = matched_items.filter(clean_name=clean_name,
                                              clean_address=clean_address,
                                              country_code=country_code) \
             .exclude(empty_text_fields) \
-            .annotate(is_active=ExpressionWrapper(
-                Q(id__in=active_item_ids),
-                output_field=BooleanField())) \
-            .annotate(has_same_contributor=ExpressionWrapper(
-                Q(source__contributor=contributor),
-                output_field=BooleanField())) \
-            .order_by('-is_active',
-                      '-has_same_contributor',
-                      'updated_at') \
-            .values('facility_id')
+            .values('id', 'facility_id', 'source__contributor_id',
+                    'updated_at')
 
         if len(exact_matches) > 0:
+            if len(exact_matches) > 1:
+                exact_matches = sort_exact_matches(exact_matches,
+                                                   active_item_ids,
+                                                   contributor)
+
             results[messy_id] = exact_matches
 
     finished = str(datetime.utcnow())
