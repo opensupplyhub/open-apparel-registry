@@ -216,7 +216,12 @@ class FacilityListItems extends Component {
                             >
                                 processed and matched
                             </a>
-                            .
+                            . Data points submitted beyond facility name and
+                            address are processing, even if they do not appear
+                            on this page. Once your list has processed, you will
+                            be able to view and search these data points on
+                            facility profiles, as well as in downloads from the
+                            platform.
                         </div>
                         {list.item_count ? (
                             <Route
