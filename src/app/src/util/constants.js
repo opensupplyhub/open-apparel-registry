@@ -756,7 +756,7 @@ export const EXTENDED_FIELD_TYPES = [
         label: 'Number of Workers',
         fieldName: 'number_of_workers',
         formatValue: ({ min, max }) =>
-            max === min ? `${max} workers` : `${min}-${max} workers`,
+            max === min ? `${max}` : `${min}-${max}`,
     },
     {
         label: 'Native Language Name',
