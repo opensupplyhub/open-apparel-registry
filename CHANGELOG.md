@@ -1112,7 +1112,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/60...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/61...HEAD
+[61]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/61
 [60]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/60
 [59]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/59
 [58]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/58
