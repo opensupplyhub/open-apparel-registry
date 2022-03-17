@@ -37,7 +37,8 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         ContributorManager, index_custom_text)
 
 from api.oar_id import make_oar_id, validate_oar_id
-from api.matching import match_facility_list_items, GazetteerCache
+from api.matching import (match_facility_list_items, GazetteerCache,
+                          sort_exact_matches)
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             reduce_matches, is_string_match,
@@ -8429,3 +8430,72 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
         data = json.loads(response.content)
         self.assertEquals(data['count'], 1)
         self.assertEquals(data['features'][0]['id'], facility_id)
+
+
+class ExactMatchTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(ExactMatchTest, self).setUp()
+        self.contributor = Contributor.objects.first()
+
+        self.email = 'test2@example.com'
+        self.password = 'password'
+        self.name = 'Test User 2'
+        self.user = User(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+        self.contributor_2 = Contributor.objects.create(
+            name=self.name, admin=self.user)
+
+        self.active_item_ids = [1, 2, 4]
+        self.contributor.save()
+
+    def test_sorting_match_contrib(self):
+        matches = [{
+            'id': 1,
+            'facility_id': 1,
+            'source__contributor_id': self.contributor_2.id,
+            'updated_at': datetime.now(),
+        }, {
+            'id': 2,
+            'facility_id': 2,
+            'source__contributor_id': self.contributor.id,
+            'updated_at': datetime.now(),
+        }]
+        results = sort_exact_matches(matches, self.active_item_ids,
+                                     self.contributor)
+        self.assertEquals(results[0]['facility_id'], 2)
+        self.assertEquals(results[1]['facility_id'], 1)
+
+    def test_sorting_active(self):
+        matches = [{
+            'id': 1,
+            'facility_id': 3,
+            'source__contributor_id': self.contributor.id,
+            'updated_at': datetime.now(),
+        }, {
+            'id': 1,
+            'facility_id': 1,
+            'source__contributor_id': self.contributor.id,
+            'updated_at': datetime.now(),
+        }]
+        results = sort_exact_matches(matches, self.active_item_ids,
+                                     self.contributor)
+        self.assertEquals(results[0]['facility_id'], 1)
+        self.assertEquals(results[1]['facility_id'], 3)
+
+    def test_sorting_newest(self):
+        matches = [{
+            'id': 1,
+            'facility_id': 2,
+            'source__contributor_id': self.contributor.id,
+            'updated_at': datetime.now().replace(year=2020),
+        }, {
+            'id': 1,
+            'facility_id': 1,
+            'source__contributor_id': self.contributor.id,
+            'updated_at': datetime.now(),
+        }]
+        results = sort_exact_matches(matches, self.active_item_ids,
+                                     self.contributor)
+        self.assertEquals(results[0]['facility_id'], 1)
+        self.assertEquals(results[1]['facility_id'], 2)
