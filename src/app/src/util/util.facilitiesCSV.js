@@ -214,7 +214,7 @@ export const makeFacilityReducer = options => (acc, next) =>
 
 const getContributorFieldHeaders = (facilities, options) => {
     let fields = get(facilities, '[0].properties.contributor_fields', []);
-    if (options && options.isEmbedded) {
+    if (options && options.includeExtendedFields) {
         fields = fields.filter(
             field => !extendedFieldHeaders.includes(field.fieldName),
         );
