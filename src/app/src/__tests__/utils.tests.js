@@ -245,6 +245,12 @@ it('creates a set of filters from a querystring', () => {
         contributorTypes: [],
         countries: [],
         lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -270,6 +276,12 @@ it('creates a set of filters from a querystring', () => {
         contributorTypes: [],
         countries: [],
         lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
         combineContributors: 'AND',
         boundary: null,
         ppe: '',
@@ -296,6 +308,12 @@ it('creates a set of filters from a querystring', () => {
                 label: '2',
             },
         ],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -321,6 +339,12 @@ it('creates a set of filters from a querystring', () => {
         ],
         countries: [],
         lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -346,6 +370,12 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -367,6 +397,12 @@ it('creates a set of filters from a querystring', () => {
         ],
         countries: [],
         lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
         combineContributors: '',
         boundary: null,
         ppe: '',
@@ -383,6 +419,12 @@ it('creates a set of filters from a querystring', () => {
         contributorTypes: [],
         countries: [],
         lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
         combineContributors: '',
         boundary: null,
         ppe: 'true',
@@ -391,6 +433,173 @@ it('creates a set of filters from a querystring', () => {
     expect(
         createFiltersFromQueryString(ppeString),
     ).toEqual(expectedPPEMatch);
+
+    const parentCompanyString = '?parent_company=1&parent_company=Test Company'
+    const expectedParentCompanyMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+        lists: [],
+        parentCompany: [{
+            value: 1,
+            label: '1',
+        },
+        {
+            value: 'Test Company',
+            label: 'Test Company',
+        }],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
+        combineContributors: '',
+        boundary: null,
+        ppe: '',
+    };
+
+    expect(
+        createFiltersFromQueryString(parentCompanyString),
+    ).toEqual(expectedParentCompanyMatch);
+
+    const facilityTypeString = '?facility_type=Final Product Assembly&facility_type=Office / HQ'
+    const expectedFacilityTypeMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+        lists: [],
+        parentCompany: [],
+        facilityType: [{
+            value: 'Final Product Assembly',
+            label: 'Final Product Assembly',
+        },
+        {
+            value: 'Office / HQ',
+            label: 'Office / HQ',
+        }],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
+        combineContributors: '',
+        boundary: null,
+        ppe: '',
+    };
+
+    expect(
+        createFiltersFromQueryString(facilityTypeString),
+    ).toEqual(expectedFacilityTypeMatch);
+
+    const processingTypeString = '?processing_type=Batch Dyeing&processing_type=Embellishment'
+    const expectedProcessingTypeMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+        lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [{
+            value: 'Batch Dyeing',
+            label: 'Batch Dyeing',
+        },
+        {
+            value: 'Embellishment',
+            label: 'Embellishment',
+        }],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
+        combineContributors: '',
+        boundary: null,
+        ppe: '',
+    };
+
+    expect(
+        createFiltersFromQueryString(processingTypeString),
+    ).toEqual(expectedProcessingTypeMatch);
+
+    const productTypeString = '?product_type=Beauty&product_type=Jackets/Blazers'
+    const expectedProductTypeMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+        lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [{
+            value: 'Beauty',
+            label: 'Beauty',
+        },
+        {
+            value: 'Jackets/Blazers',
+            label: 'Jackets/Blazers',
+        }],
+        numberOfWorkers: [],
+        nativeLanguageName: '',
+        combineContributors: '',
+        boundary: null,
+        ppe: '',
+    };
+
+    expect(
+        createFiltersFromQueryString(productTypeString),
+    ).toEqual(expectedProductTypeMatch);
+
+    const numberofWorkersString = '?number_of_workers=Less than 1000&number_of_workers=1001-5000'
+    const expectedNumberOfWorkersMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+        lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [{
+            value: 'Less than 1000',
+            label: 'Less than 1000',
+        },
+        {
+            value: '1001-5000',
+            label: '1001-5000',
+        }],
+        nativeLanguageName: '',
+        combineContributors: '',
+        boundary: null,
+        ppe: '',
+    };
+
+    expect(
+        createFiltersFromQueryString(numberofWorkersString),
+    ).toEqual(expectedNumberOfWorkersMatch);
+
+    const nativeLanguageNameString = '?native_language_name=杭州'
+    const expectedNativeLanguageNameMatch = {
+        facilityFreeTextQuery: '',
+        contributors: [],
+        contributorTypes: [],
+        countries: [],
+        lists: [],
+        parentCompany: [],
+        facilityType: [],
+        processingType: [],
+        productType: [],
+        numberOfWorkers: [],
+        nativeLanguageName: '杭州',
+        combineContributors: '',
+        boundary: null,
+        ppe: '',
+    };
+
+    expect(
+        createFiltersFromQueryString(nativeLanguageNameString),
+    ).toEqual(expectedNativeLanguageNameMatch);
 });
 
 it('creates a facility detail link', () => {

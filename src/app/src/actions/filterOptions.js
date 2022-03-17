@@ -9,7 +9,11 @@ import {
     makeGetListsURL,
     makeGetContributorTypesURL,
     makeGetCountriesURL,
+    makeGetFacilitiesTypeProcessingTypeURL,
+    makeGetProductTypeURL,
+    makeGetNumberOfWorkersURL,
     mapDjangoChoiceTuplesToSelectOptions,
+    mapDjangoChoiceTuplesValueToSelectOptions,
     updateListWithLabels,
 } from '../util/util';
 
@@ -49,6 +53,36 @@ export const failFetchCountryOptions = createAction(
 );
 export const completeFetchCountryOptions = createAction(
     'COMPLETE_FETCH_COUNTRY_OPTIONS',
+);
+
+export const startFetchFacilityProcessingTypeOptions = createAction(
+    'START_FETCH_FACILITY_PROCESSING_TYPE_OPTIONS',
+);
+export const failFetchFacilityProcessingTypeOptions = createAction(
+    'FAIL_FETCH_FACILITY_PROCESSING_TYPE_OPTIONS',
+);
+export const completeFetchFacilityProcessingTypeOptions = createAction(
+    'COMPLETE_FETCH_FACILITY_PROCESSING_TYPE_OPTIONS',
+);
+
+export const startFetchProductTypeOptions = createAction(
+    'START_FETCH_PRODUCT_TYPE_OPTIONS',
+);
+export const failFetchProductTypeOptions = createAction(
+    'FAIL_FETCH_PRODUCT_TYPE_OPTIONS',
+);
+export const completeFetchProductTypeOptions = createAction(
+    'COMPLETE_FETCH_PRODUCT_TYPE_OPTIONS',
+);
+
+export const startFetchNumberOfWorkersOptions = createAction(
+    'START_FETCH_NUMBER_OF_WORKERS_TYPE_OPTIONS',
+);
+export const failFetchNumberOfWorkersOptions = createAction(
+    'FAIL_FETCH_NUMBER_OF_WORKERS_TYPE_OPTIONS',
+);
+export const completeFetchNumberOfWorkersTypeOptions = createAction(
+    'COMPLETE_FETCH_NUMBER_OF_WORKERS_TYPE_OPTIONS',
 );
 
 export const resetFilterOptions = createAction('RESET_FILTER_OPTIONS');
@@ -139,6 +173,71 @@ export function fetchCountryOptions() {
                         err,
                         'An error prevented fetching country options',
                         failFetchCountryOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchFacilityProcessingTypeOptions() {
+    return dispatch => {
+        dispatch(startFetchFacilityProcessingTypeOptions());
+
+        return apiRequest
+            .get(makeGetFacilitiesTypeProcessingTypeURL())
+            .then(({ data }) => {
+                dispatch(completeFetchFacilityProcessingTypeOptions(data));
+            })
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching facility processing type options',
+                        failFetchFacilityProcessingTypeOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchProductTypeOptions() {
+    return dispatch => {
+        dispatch(startFetchProductTypeOptions());
+
+        return apiRequest
+            .get(makeGetProductTypeURL())
+            .then(({ data }) => mapDjangoChoiceTuplesValueToSelectOptions(data))
+            .then(data => {
+                dispatch(completeFetchProductTypeOptions(data));
+            })
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching product type options',
+                        failFetchProductTypeOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchNumberOfWorkersOptions() {
+    return dispatch => {
+        dispatch(startFetchNumberOfWorkersOptions());
+
+        return apiRequest
+            .get(makeGetNumberOfWorkersURL())
+            .then(({ data }) => mapDjangoChoiceTuplesValueToSelectOptions(data))
+            .then(data => {
+                dispatch(completeFetchNumberOfWorkersTypeOptions(data));
+            })
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching number of workers options',
+                        failFetchNumberOfWorkersOptions,
                     ),
                 ),
             );

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Filter by extended fields [#1696](https://github.com/open-apparel-registry/open-apparel-registry/pull/1696)
 - Add extended profile search APIs [#1697](https://github.com/open-apparel-registry/open-apparel-registry/pull/1697)
 - Add an API to return suggested product type choices [#1708](https://github.com/open-apparel-registry/open-apparel-registry/pull/1708)
+- Add extended fields to sidebar [#1710](https://github.com/open-apparel-registry/open-apparel-registry/pull/1710)
 
 ### Changed
 
