@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allow submitting non-taxonomy facility type and processing type [#1705](https://github.com/open-apparel-registry/open-apparel-registry/pull/1705)
 - Update email copy for list completion [#1709](https://github.com/open-apparel-registry/open-apparel-registry/pull/1709)
 - Remove the redundant workers suffix when showing value [#1715](https://github.com/open-apparel-registry/open-apparel-registry/pull/1715/files)
+- Update copy on list pages [#1719](https://github.com/open-apparel-registry/open-apparel-registry/pull/1719)
 
 ### Deprecated
 
