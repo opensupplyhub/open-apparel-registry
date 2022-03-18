@@ -114,7 +114,6 @@ const FACILITY_TYPE = 'FACILITY_TYPE';
 const PROCESSING_TYPE = 'PROCESSING_TYPE';
 const PRODUCT_TYPE = 'PRODUCT_TYPE';
 const NUMBER_OF_WORKERS = 'NUMBER_OF_WORKERS';
-const NATIVE_LANGUAGE_NAME = 'NATIVE_LANGUAGE_NAME';
 
 const mapFacilityTypeOptions = (fPTypes, pTypes) => {
     let fTypes = [];
@@ -181,8 +180,6 @@ function FilterSidebarSearchTab({
     updateProductType,
     numberOfWorkers,
     updateNumberOfWorkers,
-    nativeLanguageName,
-    updateNativeLanguageName,
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
@@ -210,7 +207,6 @@ function FilterSidebarSearchTab({
         processingType,
         productType,
         numberOfWorkers,
-        nativeLanguageName,
     ];
 
     const allFields = extendedFields.concat([
@@ -767,25 +763,6 @@ function FilterSidebarSearchTab({
                             disabled={fetchingOptions || fetchingFacilities}
                         />
                     </div>
-                    <div
-                        className="form__field"
-                        style={{ marginBottom: '10px' }}
-                    >
-                        <InputLabel
-                            htmlFor={NATIVE_LANGUAGE_NAME}
-                            className="form__label"
-                        >
-                            Native Language Name
-                        </InputLabel>
-                        <TextField
-                            id={NATIVE_LANGUAGE_NAME}
-                            placeholder="Native Language Facility Name"
-                            className="full-width margin-bottom-16 form__text-input"
-                            value={nativeLanguageName}
-                            onChange={updateNativeLanguageName}
-                            onKeyPress={submitFormOnEnterKeyPress}
-                        />
-                    </div>
                 </ShowOnly>
                 <div className="form__action">{searchResetButtonGroup()}</div>
                 <div className="form__field">
@@ -849,7 +826,6 @@ FilterSidebarSearchTab.propTypes = {
     processingType: processingTypeOptionsPropType.isRequired,
     productType: productTypeOptionsPropType.isRequired,
     numberOfWorkers: numberOfWorkerOptionsPropType.isRequired,
-    nativeLanguageName: string.isRequired,
     combineContributors: string.isRequired,
     ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
