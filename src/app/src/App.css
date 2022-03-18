@@ -105,7 +105,7 @@ li.dropdown-list-item button {
 .form__action {
   margin: 16px 0 48px 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .form__field {
@@ -129,6 +129,17 @@ li.dropdown-list-item button {
   margin: 8px 0;
   font-weight: 400;
   font-size: 15px;
+}
+
+.form__info {
+  font-size: 13px;
+  font-weight: 400;
+  margin: 8px 0;
+}
+
+.form__report {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .form__select-input-container {

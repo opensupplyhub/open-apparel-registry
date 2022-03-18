@@ -90,6 +90,12 @@ class FacilityLists extends Component {
                             View my facilities
                         </Link>
                     </ShowOnly>
+                    <p>
+                        The processing time may be longer for lists that include
+                        additional data points beyond facility name and address.
+                        You will receive an email when your list has finished
+                        processing.
+                    </p>
                     {tableComponent}
                 </AppGrid>
             </AppOverflow>

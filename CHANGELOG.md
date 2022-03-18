@@ -19,6 +19,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [62] - 2022-03-18
+
+### Added
+
+- Filter by extended fields [#1696](https://github.com/open-apparel-registry/open-apparel-registry/pull/1696)
+- Add extended profile search APIs [#1697](https://github.com/open-apparel-registry/open-apparel-registry/pull/1697)
+- Add an API to return suggested product type choices [#1708](https://github.com/open-apparel-registry/open-apparel-registry/pull/1708)
+- Add extended fields to sidebar [#1710](https://github.com/open-apparel-registry/open-apparel-registry/pull/1710)
+
+### Changed
+
+- Allow submitting non-taxonomy facility type and processing type [#1705](https://github.com/open-apparel-registry/open-apparel-registry/pull/1705)
+- Update email copy for list completion [#1709](https://github.com/open-apparel-registry/open-apparel-registry/pull/1709)
+- Remove the redundant workers suffix when showing value [#1715](https://github.com/open-apparel-registry/open-apparel-registry/pull/1715/files)
+- Update copy on list pages [#1719](https://github.com/open-apparel-registry/open-apparel-registry/pull/1719)
+- Remove native language name from filter sidebar [#1722](https://github.com/open-apparel-registry/open-apparel-registry/pull/1722)
+
+### Fixed
+
+- Hide inactive contributor associations [#1712](https://github.com/open-apparel-registry/open-apparel-registry/pull/1712)
+- Fix CSV download when extended profile switch is off [#1720](https://github.com/open-apparel-registry/open-apparel-registry/pull/1720)
+
 ## [61] 2022-03-17
 
 ### Fixed
@@ -1101,7 +1123,9 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/60...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/62...HEAD
+[62]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/62
+[61]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/61
 [60]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/60
 [59]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/59
 [58]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/58

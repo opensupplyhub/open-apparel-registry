@@ -7,6 +7,12 @@ import {
     updateListFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    updateParentCompanyFilter,
+    updateFacilityTypeFilter,
+    updateProcessingTypeFilter,
+    updateProductTypeFilter,
+    updateNumberofWorkersFilter,
+    updateNativeLanguageNameFilter,
     updatePPEFilter,
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
@@ -29,6 +35,12 @@ const initialState = Object.freeze({
     contributors: Object.freeze([]),
     contributorTypes: Object.freeze([]),
     countries: Object.freeze([]),
+    parentCompany: Object.freeze([]),
+    facilityType: Object.freeze([]),
+    processingType: Object.freeze([]),
+    productType: Object.freeze([]),
+    numberOfWorkers: Object.freeze([]),
+    nativeLanguageName: '',
     combineContributors: '',
     boundary: null,
     ppe: '',
@@ -67,6 +79,30 @@ export default createReducer(
         [updateCountryFilter]: (state, payload) =>
             update(state, {
                 countries: { $set: payload },
+            }),
+        [updateParentCompanyFilter]: (state, payload) =>
+            update(state, {
+                parentCompany: { $set: payload },
+            }),
+        [updateFacilityTypeFilter]: (state, payload) =>
+            update(state, {
+                facilityType: { $set: payload },
+            }),
+        [updateProcessingTypeFilter]: (state, payload) =>
+            update(state, {
+                processingType: { $set: payload },
+            }),
+        [updateProductTypeFilter]: (state, payload) =>
+            update(state, {
+                productType: { $set: payload },
+            }),
+        [updateNumberofWorkersFilter]: (state, payload) =>
+            update(state, {
+                numberOfWorkers: { $set: payload },
+            }),
+        [updateNativeLanguageNameFilter]: (state, payload) =>
+            update(state, {
+                nativeLanguageName: { $set: payload },
             }),
         [updateCombineContributorsFilterOption]: (state, payload) =>
             update(state, {

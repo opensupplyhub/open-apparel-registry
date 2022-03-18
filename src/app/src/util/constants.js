@@ -466,7 +466,7 @@ export const PPE = 'ppe';
 export const REPORT_A_FACILITY = 'report_a_facility';
 export const EMBEDDED_MAP_FLAG = 'embedded_map';
 export const EXTENDED_PROFILE_FLAG = 'extended_profile';
-export const DEFAULT_SEARCH_TEXT = 'Search a Facility Name or OAR ID';
+export const DEFAULT_SEARCH_TEXT = 'Facility Name or OAR ID';
 
 export const COUNTRY_CODES = Object.freeze({
     default: 'IE',
@@ -726,12 +726,26 @@ export const EXTENDED_FIELD_TYPES = [
     {
         label: 'Processing Type',
         fieldName: 'processing_type',
-        formatValue: v => v.matched_values.map(val => val[3]),
+        formatValue: v => {
+            const rawValues = Array.isArray(v.raw_values)
+                ? v.raw_values
+                : v.raw_values.toString().split('|');
+            return v.matched_values.map((val, i) =>
+                val[3] !== null ? val[3] : rawValues[i],
+            );
+        },
     },
     {
         label: 'Facility Type',
         fieldName: 'facility_type',
-        formatValue: v => v.matched_values.map(val => val[2]),
+        formatValue: v => {
+            const rawValues = Array.isArray(v.raw_values)
+                ? v.raw_values
+                : v.raw_values.toString().split('|');
+            return v.matched_values.map((val, i) =>
+                val[2] !== null ? val[2] : rawValues[i],
+            );
+        },
     },
     {
         label: 'Product Type',
@@ -742,7 +756,7 @@ export const EXTENDED_FIELD_TYPES = [
         label: 'Number of Workers',
         fieldName: 'number_of_workers',
         formatValue: ({ min, max }) =>
-            max === min ? `${max} workers` : `${min}-${max} workers`,
+            max === min ? `${max}` : `${min}-${max}`,
     },
     {
         label: 'Native Language Name',

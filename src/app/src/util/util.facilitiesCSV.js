@@ -51,15 +51,16 @@ const formatFacilityType = (
         contributor_name,
     },
 ) => {
-    const matches = matched_values.map(values =>
+    let raw =
+        typeof raw_values === 'string' ? raw_values.split('|') : raw_values;
+
+    const matches = matched_values.map((values, i) =>
         formatAttribution({
-            value: values[2],
+            value: values[2] !== null ? values[2] : raw[i],
             contributor_name,
             updated_at,
         }),
     );
-    let raw =
-        typeof raw_values === 'string' ? raw_values.split('|') : raw_values;
     raw = raw.map(value =>
         formatAttribution({
             value,
@@ -78,15 +79,16 @@ const formatProcessingType = (
         contributor_name,
     },
 ) => {
-    const matches = matched_values.map(values =>
+    let raw =
+        typeof raw_values === 'string' ? raw_values.split('|') : raw_values;
+
+    const matches = matched_values.map((values, i) =>
         formatAttribution({
-            value: values[3],
+            value: values[3] !== null ? values[3] : raw[i],
             contributor_name,
             updated_at,
         }),
     );
-    let raw =
-        typeof raw_values === 'string' ? raw_values.split('|') : raw_values;
     raw = raw.map(value =>
         formatAttribution({
             value,
@@ -212,7 +214,7 @@ export const makeFacilityReducer = options => (acc, next) =>
 
 const getContributorFieldHeaders = (facilities, options) => {
     let fields = get(facilities, '[0].properties.contributor_fields', []);
-    if (options && options.isEmbedded) {
+    if (options && options.includeExtendedFields) {
         fields = fields.filter(
             field => !extendedFieldHeaders.includes(field.fieldName),
         );

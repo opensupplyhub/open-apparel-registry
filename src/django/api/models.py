@@ -19,7 +19,6 @@ from django.utils.dateformat import format
 from django.utils import timezone
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
-from waffle import switch_is_active
 
 from api.constants import FeatureGroups
 from api.countries import COUNTRY_CHOICES
@@ -30,7 +29,9 @@ from api.helpers import (prefix_a_an,
                          get_list_contributor_field_values,
                          clean, convert_to_standard_ranges,
                          format_custom_text)
-from api.facility_type_processing_type import ALL_FACILITY_TYPE_CHOICES
+from api.facility_type_processing_type import (
+    ALL_FACILITY_TYPE_CHOICES,
+    get_facility_and_processing_type)
 
 
 class ArrayLength(models.Func):
@@ -1242,14 +1243,23 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.EMBED, None
         )
 
-        # The `ppe` query argument is defined as an optional boolean at the
-        # swagger level which is the built in field type option that most
-        # closely matches our desired behavior. Our intended use of the
-        # argument is conditionally "switch on" a special section of filter
-        # logic. To support that behavior we consider a missing value or any
-        # value than the string "true" to be `False`.
-        ppe = (True if params.get(FacilitiesQueryParams.PPE, '') == 'true'
-               else False)
+        parent_companies = params.getlist(FacilitiesQueryParams.PARENT_COMPANY)
+
+        facility_types = params.getlist(FacilitiesQueryParams.FACILITY_TYPE)
+
+        processing_types = params.getlist(
+            FacilitiesQueryParams.PROCESSING_TYPE
+        )
+
+        product_types = params.getlist(FacilitiesQueryParams.PRODUCT_TYPE)
+
+        number_of_workers = params.getlist(
+            FacilitiesQueryParams.NUMBER_OF_WORKERS
+        )
+
+        native_language_name = params.get(
+            FacilitiesQueryParams.NATIVE_LANGUAGE_NAME, None
+        )
 
         facilities_qs = FacilityIndex.objects.all()
 
@@ -1258,28 +1268,16 @@ class FacilityManager(models.Manager):
                 format_custom_text(contributors[0], free_text_query)
                 if contributors
                 else free_text_query)
-            if switch_is_active('ppe'):
-                if embed is not None:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query) |
-                                Q(ppe__icontains=free_text_query) |
-                                Q(custom_text__contains=[custom_text]))
-                else:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query) |
-                                Q(ppe__icontains=free_text_query))
+
+            if embed is not None:
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id=free_text_query) |
+                            Q(custom_text__contains=[custom_text]))
             else:
-                if embed is not None:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query) |
-                                Q(custom_text__contains=[custom_text]))
-                else:
-                    facilities_qs = facilities_qs \
-                        .filter(Q(name__icontains=free_text_query) |
-                                Q(id=free_text_query))
+                facilities_qs = facilities_qs \
+                    .filter(Q(name__icontains=free_text_query) |
+                            Q(id=free_text_query))
 
         # `name` is deprecated in favor of `q`. We keep `name` available for
         # backward compatibility.
@@ -1311,10 +1309,60 @@ class FacilityManager(models.Manager):
                 location__within=GEOSGeometry(boundary)
             )
 
-        if ppe:
-            # Include a facility if any of the PPE fields have a non-empty
-            # value.
-            facilities_qs = facilities_qs.filter(~Q(ppe=''))
+        if len(parent_companies):
+            parent_company_id = []
+            parent_company_name = []
+            for parent_company in parent_companies:
+                if parent_company.isnumeric():
+                    parent_company_id.append(parent_company)
+                else:
+                    parent_company_name.append(parent_company)
+            if len(parent_company_id) or len(parent_company_name):
+                facilities_qs = facilities_qs.filter(
+                    Q(parent_company_id__overlap=parent_company_id) |
+                    Q(parent_company_name__overlap=parent_company_name)
+                )
+
+        if len(facility_types):
+            standard_facility_types = []
+            for facility_type in facility_types:
+                standard_type = get_facility_and_processing_type(facility_type)
+                if standard_type[0] is not None:
+                    standard_facility_types.append(standard_type[2])
+            facilities_qs = facilities_qs.filter(
+                facility_type__overlap=standard_facility_types
+            )
+
+        if len(processing_types):
+            standard_processing_types = []
+            for processing_type in processing_types:
+                standard_type = get_facility_and_processing_type(
+                    processing_type
+                )
+                if standard_type[0] is not None:
+                    standard_processing_types.append(standard_type[3])
+            facilities_qs = facilities_qs.filter(
+                processing_type__overlap=standard_processing_types
+            )
+
+        if len(product_types):
+            clean_product_types = []
+            for product_type in product_types:
+                clean_product_types.append(clean(product_type))
+            facilities_qs = facilities_qs.filter(
+                product_type__overlap=clean_product_types
+            )
+
+        if len(number_of_workers):
+            facilities_qs = facilities_qs.filter(
+                number_of_workers__overlap=number_of_workers
+            )
+
+        if native_language_name is not None:
+            unidecode_name = unidecode(native_language_name)
+            facilities_qs = facilities_qs.filter(
+                native_language_name__icontains=unidecode_name
+            )
 
         facility_ids = facilities_qs.values_list('id', flat=True)
         facilities_qs = Facility.objects.filter(id__in=facility_ids)
@@ -2551,7 +2599,8 @@ def index_extendedfields(facility_ids=list):
         facility_types = set()
         for values_list in facility_type_values:
             for facility_type_value in values_list:
-                facility_types.add(facility_type_value[2])
+                if facility_type_value[2] is not None:
+                    facility_types.add(facility_type_value[2])
         facility.facility_type = list(facility_types)
 
         # Use clean taxonomy values in the index for processing_type:

@@ -35,6 +35,12 @@ class FacilitiesQueryParams:
     BOUNDARY = 'boundary'
     PPE = 'ppe'
     EMBED = 'embed'
+    PARENT_COMPANY = 'parent_company'
+    FACILITY_TYPE = 'facility_type'
+    PROCESSING_TYPE = 'processing_type'
+    PRODUCT_TYPE = 'product_type'
+    NUMBER_OF_WORKERS = 'number_of_workers'
+    NATIVE_LANGUAGE_NAME = 'native_language_name'
 
 
 class FacilityListQueryParams:

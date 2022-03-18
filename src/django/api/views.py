@@ -66,7 +66,8 @@ from api.constants import (CsvHeaderField,
                            ProcessingAction,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
-                           FeatureGroups)
+                           FeatureGroups,
+                           NumberOfWorkersRanges)
 from api.geocoding import geocode_address
 from api.matching import (match_item,
                           exact_match_item,
@@ -144,7 +145,10 @@ from api.facility_history import (create_facility_history_list,
                                   create_dissociate_match_change_reason)
 from api.extended_fields import (create_extendedfields_for_single_item,
                                  update_extendedfields_for_list_item,
-                                 create_extendedfields_for_claim)
+                                 create_extendedfields_for_claim,
+                                 get_product_types)
+from api.facility_type_processing_type import (
+    FACILITY_PROCESSING_TYPES_VALUES)
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -572,6 +576,70 @@ def active_countries_count(request):
 
 
 @api_view(['GET'])
+def number_of_workers_ranges(request):
+    """
+    Returns a list of standardized ranges for the number_of_workers extended
+    field.
+
+    ## Sample Response
+
+        [
+            "Less than 1000",
+            "1001-5000",
+            "5001-10000",
+            "More than 10000",
+        ]
+
+    """
+    return Response([r['label'] for r
+                     in NumberOfWorkersRanges.STANDARD_RANGES])
+
+
+@api_view(['GET'])
+def facility_processing_types(request):
+    """
+    Returns a list of standardized ranges for the number_of_workers extended
+    field.
+
+    ## Sample Response
+
+        [{
+            "facilityType": "Final Product Assembly",
+            "processingTypes": [
+              "Assembly",
+              "Cut & Sew",
+              "Cutting",
+              "Embellishment",
+              "Embroidery",
+              ...
+            ]
+          },
+          ...
+         ]
+
+    """
+    return Response(FACILITY_PROCESSING_TYPES_VALUES)
+
+
+@api_view(['GET'])
+def product_types(request):
+    """
+    Returns a list of suggested product types by combining standard types with
+    distinct values submitted by contributors.
+
+    ## Sample Response
+
+        [
+            "Accessories",
+            "Belts",
+            "Caps"
+        ]
+
+    """
+    return Response(get_product_types())
+
+
+@api_view(['GET'])
 def current_tile_cache_key(request):
     return Response(Facility.current_tile_cache_key())
 
@@ -671,22 +739,56 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'Pass a GeoJSON geometry to filter by '
                         'facilities within the boundaries of that geometry.')
                 ),
+                coreapi.Field(
+                    name='parent_company',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'Pass a Contributor ID or Contributor name to filter '
+                        'by facilities with that Parent Company.')
+                ),
+                coreapi.Field(
+                    name='facility_type',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Facility type',
+                ),
+                coreapi.Field(
+                    name='processing_type',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Processing type',
+                ),
+                coreapi.Field(
+                    name='product_type',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='Product type',
+                ),
+                coreapi.Field(
+                    name='number_of_workers',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'Submit one of several standardized ranges to filter '
+                        'by facilities with a number_of_workers matching '
+                        'those values. Options are: "Less than 1000", '
+                        '"1001-5000", "5001-10000", or "More than 10000".'
+                    ),
+                ),
+                coreapi.Field(
+                    name='native_language_name',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description='The native language name of the facility',
+                ),
             ]
-
-            if switch_is_active('ppe'):
-                fields.append(
-                    coreapi.Field(
-                        name='ppe',
-                        location='query',
-                        type='boolean',
-                        required=False,
-                        description=(
-                            'If "true" only facilities with PPE '
-                            'production details or PPE-specific contact '
-                            'information will be returned. Any other value '
-                            'will return all facilities.'),
-                    )
-                )
 
             return fields
 

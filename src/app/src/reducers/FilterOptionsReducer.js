@@ -14,6 +14,15 @@ import {
     startFetchCountryOptions,
     failFetchCountryOptions,
     completeFetchCountryOptions,
+    startFetchFacilityProcessingTypeOptions,
+    failFetchFacilityProcessingTypeOptions,
+    completeFetchFacilityProcessingTypeOptions,
+    startFetchProductTypeOptions,
+    failFetchProductTypeOptions,
+    completeFetchProductTypeOptions,
+    startFetchNumberOfWorkersOptions,
+    failFetchNumberOfWorkersOptions,
+    completeFetchNumberOfWorkersTypeOptions,
     resetFilterOptions,
 } from '../actions/filterOptions';
 
@@ -34,6 +43,21 @@ const initialState = Object.freeze({
         error: null,
     }),
     countries: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    facilityProcessingType: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    productType: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    numberOfWorkers: Object.freeze({
         data: Object.freeze([]),
         fetching: false,
         error: null,
@@ -125,6 +149,72 @@ export default createReducer(
         [completeFetchCountryOptions]: (state, payload) =>
             update(state, {
                 countries: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchFacilityProcessingTypeOptions]: state =>
+            update(state, {
+                facilityProcessingType: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchFacilityProcessingTypeOptions]: (state, payload) =>
+            update(state, {
+                facilityProcessingType: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchFacilityProcessingTypeOptions]: (state, payload) =>
+            update(state, {
+                facilityProcessingType: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchProductTypeOptions]: state =>
+            update(state, {
+                productType: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchProductTypeOptions]: (state, payload) =>
+            update(state, {
+                productType: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchProductTypeOptions]: (state, payload) =>
+            update(state, {
+                productType: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchNumberOfWorkersOptions]: state =>
+            update(state, {
+                numberOfWorkers: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchNumberOfWorkersOptions]: (state, payload) =>
+            update(state, {
+                numberOfWorkers: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchNumberOfWorkersTypeOptions]: (state, payload) =>
+            update(state, {
+                numberOfWorkers: {
                     fetching: { $set: false },
                     error: { $set: null },
                     data: { $set: payload },

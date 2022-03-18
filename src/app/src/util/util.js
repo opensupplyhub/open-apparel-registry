@@ -123,6 +123,11 @@ export const makeGetContributorsURL = () => '/api/contributors/';
 export const makeGetListsURL = () => '/api/contributor-lists/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
+export const makeGetFacilitiesTypeProcessingTypeURL = () =>
+    '/api/facility-processing-types/';
+export const makeGetProductTypeURL = () => '/api/product-types/';
+export const makeGetNumberOfWorkersURL = () => '/api/workers-ranges/';
+export const makeGetNativeLanguageName = () => '/api/native_language_name/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
 export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
@@ -203,6 +208,12 @@ export const createQueryStringFromSearchFilters = (
         contributors = [],
         contributorTypes = [],
         countries = [],
+        parentCompany = [],
+        facilityType = [],
+        processingType = [],
+        productType = [],
+        numberOfWorkers = [],
+        nativeLanguageName = '',
         lists = [],
         combineContributors = '',
         boundary = {},
@@ -218,6 +229,18 @@ export const createQueryStringFromSearchFilters = (
             contributorTypes,
         ),
         countries: createCompactSortedQuerystringInputObject(countries),
+        parent_company: createCompactSortedQuerystringInputObject(
+            parentCompany,
+        ),
+        facility_type: createCompactSortedQuerystringInputObject(facilityType),
+        processing_type: createCompactSortedQuerystringInputObject(
+            processingType,
+        ),
+        product_type: createCompactSortedQuerystringInputObject(productType),
+        number_of_workers: createCompactSortedQuerystringInputObject(
+            numberOfWorkers,
+        ),
+        native_language_name: nativeLanguageName,
         combine_contributors: combineContributors,
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
         ppe,
@@ -263,6 +286,12 @@ export const createFiltersFromQueryString = qs => {
         lists = [],
         contributor_types: contributorTypes = [],
         countries = [],
+        parent_company: parentCompany = [],
+        facility_type: facilityType = [],
+        processing_type: processingType = [],
+        product_type: productType = [],
+        number_of_workers: numberOfWorkers = [],
+        native_language_name: nativeLanguageName = '',
         combine_contributors: combineContributors = '',
         boundary = '',
         ppe = '',
@@ -274,6 +303,12 @@ export const createFiltersFromQueryString = qs => {
         lists: createSelectOptionsFromParams(lists),
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),
+        parentCompany: createSelectOptionsFromParams(parentCompany),
+        facilityType: createSelectOptionsFromParams(facilityType),
+        processingType: createSelectOptionsFromParams(processingType),
+        productType: createSelectOptionsFromParams(productType),
+        numberOfWorkers: createSelectOptionsFromParams(numberOfWorkers),
+        nativeLanguageName,
         combineContributors,
         boundary: isEmpty(boundary) ? null : JSON.parse(boundary),
         ppe,
@@ -492,6 +527,15 @@ const mapSingleChoiceToSelectOption = ([value, label]) =>
 
 export const mapDjangoChoiceTuplesToSelectOptions = data =>
     Object.freeze(data.map(mapSingleChoiceToSelectOption));
+
+const mapSingleChoiceValueToSelectOption = value =>
+    Object.freeze({
+        value,
+        label: value,
+    });
+
+export const mapDjangoChoiceTuplesValueToSelectOptions = data =>
+    Object.freeze(data.map(mapSingleChoiceValueToSelectOption));
 
 export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 

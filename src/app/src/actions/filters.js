@@ -18,6 +18,24 @@ export const updateContributorTypeFilter = createAction(
 );
 export const updateListFilter = createAction('UPDATE_LIST_FILTER');
 export const updateCountryFilter = createAction('UPDATE_COUNTRY_FILTER');
+export const updateParentCompanyFilter = createAction(
+    'UPDATE_PARENT_COMPANY_FILTER',
+);
+export const updateFacilityTypeFilter = createAction(
+    'UPDATE_FACILITY_TYPE_FILTER',
+);
+export const updateProcessingTypeFilter = createAction(
+    'UPDATE_PROCESSING_TYPE_FILTER',
+);
+export const updateProductTypeFilter = createAction(
+    'UPDATE_PRODUCT_TYPE_FILTER',
+);
+export const updateNumberofWorkersFilter = createAction(
+    'UPDATE_NUMBER_OF_WORKERS_FILTER',
+);
+export const updateNativeLanguageNameFilter = createAction(
+    'UPDATE_NATIVE_LANGUAGE_NAME_FILTER',
+);
 export const updateCombineContributorsFilterOption = createAction(
     'UPDATE_COMBINE_CONTRIBUTORS_FILTER_OPTION',
 );
@@ -51,6 +69,9 @@ export function setFiltersFromQueryString(qs = '') {
             ? update(filters, {
                   contributors: {
                       $set: updateListWithLabels(filters.contributors, data),
+                  },
+                  parentCompany: {
+                      $set: updateListWithLabels(filters.parentCompany, data),
                   },
               })
             : filters;

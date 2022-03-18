@@ -1,4 +1,3 @@
-from itertools import chain
 from collections import defaultdict
 
 from django.conf import settings
@@ -33,7 +32,6 @@ from api.models import (FacilityList,
                         FacilityClaimReviewNote,
                         User,
                         Contributor,
-                        ProductType,
                         Source,
                         ApiBlock,
                         FacilityActivityReport,
@@ -46,6 +44,7 @@ from api.processing import get_country_code
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
+from api.extended_fields import get_product_types
 from api.facility_type_processing_type import (
     ALL_FACILITY_TYPE_CHOICES,
     ALL_PROCESSING_TYPE_CHOICES
@@ -1172,33 +1171,10 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
         return FacilityClaim.CERTIFICATION_CHOICES
 
     def get_product_type_choices(self, claim):
-        seeds = [
-            seed
-            for seed
-            in ProductType.objects.all().values_list('value', flat=True)
-            or []
-        ]
-
-        new_values = FacilityClaim \
-            .objects \
-            .all() \
-            .values_list('facility_product_types', flat=True)
-
-        values = [
-            new_value
-            for new_value
-            in new_values if new_value is not None
-        ]
-
-        # Using `chain` flattens nested lists
-        union_of_seeds_and_values = list(
-            set(chain.from_iterable(values)).union(seeds))
-        union_of_seeds_and_values.sort()
-
         return [
             (choice, choice)
             for choice
-            in union_of_seeds_and_values
+            in get_product_types()
         ]
 
     def get_production_type_choices(self, claim):
@@ -1505,19 +1481,30 @@ class ExtendedFieldListSerializer(ModelSerializer):
                   'contributor_name', 'contributor_id', 'value_count',
                   'is_from_claim', 'field_name', 'verified_count')
 
-    def get_contributor_name(self, instance):
+    def should_display_contributor(self, instance):
         embed_mode_active = self.context.get("embed_mode_active")
         if embed_mode_active:
             return None
+
         user_can_see_detail = self.context.get("user_can_see_detail")
-        return get_contributor_name(instance.contributor, user_can_see_detail)
+
+        should_display_association = True
+        list_item_id = instance.facility_list_item_id
+        if list_item_id is not None:
+            matches = FacilityMatch.objects.filter(
+                facility_list_item_id=list_item_id)
+            should_display_association = \
+                any([m.should_display_association for m in matches])
+
+        return should_display_association and user_can_see_detail
+
+    def get_contributor_name(self, instance):
+        return get_contributor_name(instance.contributor,
+                                    self.should_display_contributor(instance))
 
     def get_contributor_id(self, instance):
-        embed_mode_active = self.context.get("embed_mode_active")
-        if embed_mode_active:
-            return None
-        user_can_see_detail = self.context.get("user_can_see_detail")
-        return get_contributor_id(instance.contributor, user_can_see_detail)
+        return get_contributor_id(instance.contributor,
+                                  self.should_display_contributor(instance))
 
     def get_value_count(self, instance):
         return ExtendedField.objects.filter(facility=instance.facility) \

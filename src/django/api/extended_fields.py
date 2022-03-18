@@ -1,9 +1,8 @@
 import re
 from django.core import exceptions as core_exceptions
-from api.models import Contributor, ExtendedField
+from api.models import Contributor, ExtendedField, ProductType
 from api.facility_type_processing_type import (
     get_facility_and_processing_type,
-    ALL_PROCESSING_TYPES
 )
 
 
@@ -33,12 +32,6 @@ def get_facility_and_processing_type_extendfield_value(field, field_value):
 
     for value in deduped_values:
         result = get_facility_and_processing_type(value)
-        if result[0] is None:
-            raise ValueError(
-                f'No match found for {field}. Value must '
-                'be one of the following: '
-                f'{", ".join(list(ALL_PROCESSING_TYPES.keys()))}'
-            )
         results.append(result)
 
     return {
@@ -228,3 +221,17 @@ def create_extendedfields_for_claim(claim):
         else:
             ExtendedField.objects.filter(facility_claim=claim,
                                          field_name=extended_field).delete()
+
+
+def get_product_types():
+    product_types = list(ProductType.objects.all()
+                         .values_list('value', flat=True))
+    ef_values = (ExtendedField.objects.filter(field_name='product_type')
+                 .values_list('value__raw_values', flat=True))
+    flat_ef_value_titles = [item.title() for sublist in
+                            ef_values for item in sublist]
+    product_types.extend(flat_ef_value_titles)
+    # Converting to a set and back removes duplicates
+    product_types = list(set(product_types))
+    product_types.sort()
+    return product_types
