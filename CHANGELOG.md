@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [62] - 2022-03-18
+
+### Added
+
 - Filter by extended fields [#1696](https://github.com/open-apparel-registry/open-apparel-registry/pull/1696)
 - Add extended profile search APIs [#1697](https://github.com/open-apparel-registry/open-apparel-registry/pull/1697)
 - Add an API to return suggested product type choices [#1708](https://github.com/open-apparel-registry/open-apparel-registry/pull/1708)
@@ -22,16 +36,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update copy on list pages [#1719](https://github.com/open-apparel-registry/open-apparel-registry/pull/1719)
 - Remove native language name from filter sidebar [#1722](https://github.com/open-apparel-registry/open-apparel-registry/pull/1722)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Hide inactive contributor associations [#1712](https://github.com/open-apparel-registry/open-apparel-registry/pull/1712)
 - Fix CSV download when extended profile switch is off [#1720](https://github.com/open-apparel-registry/open-apparel-registry/pull/1720)
-
-### Security
 
 ## [61] 2022-03-17
 
@@ -1115,7 +1123,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/61...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/62...HEAD
+[62]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/62
 [61]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/61
 [60]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/60
 [59]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/59
