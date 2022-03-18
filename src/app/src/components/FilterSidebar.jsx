@@ -30,21 +30,13 @@ import {
 import {
     fetchContributorOptions,
     fetchListOptions,
-    fetchContributorTypeOptions,
     fetchCountryOptions,
-    fetchFacilityProcessingTypeOptions,
-    fetchProductTypeOptions,
-    fetchNumberOfWorkersOptions,
-    fetchAllFilterOptions,
+    fetchAllPrimaryFilterOptions,
 } from '../actions/filterOptions';
 
 import {
     contributorOptionsPropType,
-    contributorTypeOptionsPropType,
     countryOptionsPropType,
-    facilityProcessingTypeOptionsPropType,
-    productTypeOptionsPropType,
-    numberOfWorkerOptionsPropType,
 } from '../util/propTypes';
 
 import { allListsAreEmpty } from '../util/util';
@@ -67,32 +59,15 @@ class FilterSidebar extends Component {
     componentDidMount() {
         const {
             contributorsData,
-            contributorTypesData,
             countriesData,
-            facilityProcessingTypeData,
-            productTypeData,
-            numberOfWorkersData,
             fetchFilterOptions,
             fetchContributors,
             fetchLists,
-            fetchContributorTypes,
             fetchCountries,
-            fetchFacilityProcessingType,
-            fetchProductType,
-            fetchNumberOfWorkers,
             contributors,
         } = this.props;
 
-        if (
-            allListsAreEmpty(
-                contributorsData,
-                contributorTypesData,
-                countriesData,
-                facilityProcessingTypeData,
-                productTypeData,
-                numberOfWorkersData,
-            )
-        ) {
+        if (allListsAreEmpty(contributorsData, countriesData)) {
             return fetchFilterOptions();
         }
 
@@ -100,24 +75,8 @@ class FilterSidebar extends Component {
             fetchContributors();
         }
 
-        if (!contributorTypesData.length) {
-            fetchContributorTypes();
-        }
-
         if (!countriesData.length) {
             fetchCountries();
-        }
-
-        if (!facilityProcessingTypeData.length) {
-            fetchFacilityProcessingType();
-        }
-
-        if (!productTypeData.length) {
-            fetchProductType();
-        }
-
-        if (!numberOfWorkersData.length) {
-            fetchNumberOfWorkers();
         }
 
         if (contributors && contributors.length) {
@@ -266,18 +225,9 @@ FilterSidebar.propTypes = {
     makeFacilitiesTabActive: func.isRequired,
     fetchFilterOptions: func.isRequired,
     fetchContributors: func.isRequired,
-    fetchContributorTypes: func.isRequired,
     fetchCountries: func.isRequired,
-    fetchFacilityProcessingType: func.isRequired,
-    fetchProductType: func.isRequired,
-    fetchNumberOfWorkers: func.isRequired,
     contributorsData: contributorOptionsPropType.isRequired,
-    contributorTypesData: contributorTypeOptionsPropType.isRequired,
     countriesData: countryOptionsPropType.isRequired,
-    facilityProcessingTypeData:
-        facilityProcessingTypeOptionsPropType.isRequired,
-    productTypeData: productTypeOptionsPropType.isRequired,
-    numberOfWorkersData: numberOfWorkerOptionsPropType.isRequired,
     vectorTileFeatureIsActive: bool.isRequired,
     fetchingFeatureFlags: bool.isRequired,
 };
@@ -287,11 +237,7 @@ function mapStateToProps({
     filterOptions: {
         contributors: { data: contributorsData },
         lists: { data: listsData },
-        contributorTypes: { data: contributorTypesData },
         countries: { data: countriesData },
-        facilityProcessingType: { data: facilityProcessingTypeData },
-        productType: { data: productTypeData },
-        numberOfWorkers: { data: numberOfWorkersData },
     },
     featureFlags: { flags, fetching: fetchingFeatureFlags },
     embeddedMap: { embed },
@@ -303,11 +249,7 @@ function mapStateToProps({
     return {
         activeFilterSidebarTab,
         contributorsData,
-        contributorTypesData,
         countriesData,
-        facilityProcessingTypeData,
-        productTypeData,
-        numberOfWorkersData,
         listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
@@ -323,15 +265,10 @@ function mapDispatchToProps(dispatch) {
         makeSearchTabActive: () => dispatch(makeSidebarSearchTabActive()),
         makeFacilitiesTabActive: () =>
             dispatch(makeSidebarFacilitiesTabActive()),
-        fetchFilterOptions: () => dispatch(fetchAllFilterOptions()),
+        fetchFilterOptions: () => dispatch(fetchAllPrimaryFilterOptions()),
         fetchContributors: () => dispatch(fetchContributorOptions()),
         fetchLists: () => dispatch(fetchListOptions()),
-        fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchCountries: () => dispatch(fetchCountryOptions()),
-        fetchFacilityProcessingType: () =>
-            dispatch(fetchFacilityProcessingTypeOptions()),
-        fetchProductType: () => dispatch(fetchProductTypeOptions()),
-        fetchNumberOfWorkers: () => dispatch(fetchNumberOfWorkersOptions()),
     };
 }
 

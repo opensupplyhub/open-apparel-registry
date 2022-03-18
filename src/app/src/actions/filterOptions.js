@@ -244,10 +244,9 @@ export function fetchNumberOfWorkersOptions() {
     };
 }
 
-export function fetchAllFilterOptions() {
+export function fetchAllPrimaryFilterOptions() {
     return dispatch => {
         dispatch(fetchContributorOptions());
-        dispatch(fetchContributorTypeOptions());
         dispatch(fetchCountryOptions());
         dispatch(fetchListOptions());
     };
