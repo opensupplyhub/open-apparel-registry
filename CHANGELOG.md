@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Delay loading search field dropdown data [#1731](https://github.com/open-apparel-registry/open-apparel-registry/pull/1731)
+
 ### Deprecated
 
 ### Removed
