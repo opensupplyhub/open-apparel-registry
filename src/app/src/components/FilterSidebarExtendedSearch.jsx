@@ -26,7 +26,6 @@ import {
 import {
     fetchContributorTypeOptions,
     fetchFacilityProcessingTypeOptions,
-    fetchProductTypeOptions,
     fetchNumberOfWorkersOptions,
 } from '../actions/filterOptions';
 
@@ -118,7 +117,6 @@ function FilterSidebarExtendedSearch({
     contributorOptions,
     contributorTypeOptions,
     facilityProcessingTypeOptions,
-    productTypeOptions,
     numberOfWorkersOptions,
     contributorTypes,
     updateContributorType,
@@ -141,7 +139,6 @@ function FilterSidebarExtendedSearch({
     classes,
     fetchContributorTypes,
     fetchFacilityProcessingType,
-    fetchProductType,
     fetchNumberOfWorkers,
 }) {
     useEffect(() => {
@@ -155,12 +152,6 @@ function FilterSidebarExtendedSearch({
             fetchFacilityProcessingType();
         }
     }, [facilityProcessingTypeOptions, fetchFacilityProcessingType]);
-
-    useEffect(() => {
-        if (!productTypeOptions.length) {
-            fetchProductType();
-        }
-    }, [productTypeOptions, fetchProductType]);
 
     useEffect(() => {
         if (!numberOfWorkersOptions.length) {
@@ -323,7 +314,6 @@ function FilterSidebarExtendedSearch({
                     name={PRODUCT_TYPE}
                     className={`basic-multi-select ${classes.selectStyle}`}
                     classNamePrefix="select"
-                    options={productTypeOptions}
                     value={productType}
                     onChange={updateProductType}
                     disabled={fetchingExtendedOptions || fetchingFacilities}
@@ -358,7 +348,6 @@ FilterSidebarExtendedSearch.propTypes = {
     contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
     facilityProcessingTypeOptions:
         facilityProcessingTypeOptionsPropType.isRequired,
-    productTypeOptions: productTypeOptionsPropType.isRequired,
     numberOfWorkersOptions: numberOfWorkerOptionsPropType.isRequired,
     updateContributorType: func.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
@@ -385,10 +374,6 @@ function mapStateToProps({
             data: facilityProcessingTypeOptions,
             fetching: fetchingFacilityProcessingType,
         },
-        productType: {
-            data: productTypeOptions,
-            fetching: fetchingProductType,
-        },
         numberOfWorkers: {
             data: numberOfWorkersOptions,
             fetching: fetchingNumberofWorkers,
@@ -413,7 +398,6 @@ function mapStateToProps({
         contributorOptions,
         contributorTypeOptions,
         facilityProcessingTypeOptions,
-        productTypeOptions,
         numberOfWorkersOptions,
         contributorTypes,
         parentCompany,
@@ -429,7 +413,6 @@ function mapStateToProps({
             fetchingContributors ||
             fetchingContributorTypes ||
             fetchingFacilityProcessingType ||
-            fetchingProductType ||
             fetchingNumberofWorkers,
         embed: !!embed,
     };
@@ -454,7 +437,6 @@ function mapDispatchToProps(dispatch) {
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchFacilityProcessingType: () =>
             dispatch(fetchFacilityProcessingTypeOptions()),
-        fetchProductType: () => dispatch(fetchProductTypeOptions()),
         fetchNumberOfWorkers: () => dispatch(fetchNumberOfWorkersOptions()),
     };
 }
