@@ -148,19 +148,25 @@ function FilterSidebarExtendedSearch({
         if (!contributorTypeOptions.length) {
             fetchContributorTypes();
         }
+    }, [contributorTypeOptions, fetchContributorTypes]);
 
+    useEffect(() => {
         if (!facilityProcessingTypeOptions.length) {
             fetchFacilityProcessingType();
         }
+    }, [facilityProcessingTypeOptions, fetchFacilityProcessingType]);
 
+    useEffect(() => {
         if (!productTypeOptions.length) {
             fetchProductType();
         }
+    }, [productTypeOptions, fetchProductType]);
 
+    useEffect(() => {
         if (!numberOfWorkersOptions.length) {
             fetchNumberOfWorkers();
         }
-    }, []);
+    }, [numberOfWorkersOptions, fetchNumberOfWorkers]);
 
     if (fetchingExtendedOptions) {
         return (
