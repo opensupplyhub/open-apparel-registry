@@ -114,7 +114,7 @@ const mapProcessingTypeOptions = (fPTypes, fTypes) => {
     return mapDjangoChoiceTuplesValueToSelectOptions(uniq(pTypes.sort()));
 };
 
-function FilterSidebarSearchTab({
+function FilterSidebarExtendedSearch({
     contributorOptions,
     contributorTypeOptions,
     facilityProcessingTypeOptions,
@@ -347,7 +347,7 @@ function FilterSidebarSearchTab({
     );
 }
 
-FilterSidebarSearchTab.propTypes = {
+FilterSidebarExtendedSearch.propTypes = {
     contributorOptions: contributorOptionsPropType.isRequired,
     contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
     facilityProcessingTypeOptions:
@@ -456,4 +456,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(withStyles(filterSidebarExtendedSearchStyles)(FilterSidebarSearchTab));
+)(withStyles(filterSidebarExtendedSearchStyles)(FilterSidebarExtendedSearch));
