@@ -51,12 +51,8 @@ import {
     mapDjangoChoiceTuplesValueToSelectOptions,
 } from '../util/util';
 
-const filterSidebarSearchTabStyles = theme =>
+const filterSidebarExtendedSearchStyles = theme =>
     Object.freeze({
-        formStyle: Object.freeze({
-            width: '100%',
-            marginBottom: '32px',
-        }),
         inputLabelStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
             fontSize: '16px',
@@ -65,24 +61,11 @@ const filterSidebarSearchTabStyles = theme =>
             transform: 'translate(0, -8px) scale(1)',
             paddingBottom: '0.5rem',
         }),
-        helpSubheadStyle: Object.freeze({
-            fontFamily: theme.typography.fontFamily,
-            ontSize: '12px',
-            fontWeight: 500,
-            color: '#000',
-            paddingTop: '0.5rem',
-            paddingBottom: '0.5rem',
-        }),
         selectStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
         }),
         font: Object.freeze({
             fontFamily: `${theme.typography.fontFamily} !important`,
-        }),
-        reset: Object.freeze({
-            marginLeft: '16px',
-            minWidth: '36px',
-            minHeight: '36px',
         }),
         ...filterSidebarStyles,
     });
@@ -473,4 +456,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(withStyles(filterSidebarSearchTabStyles)(FilterSidebarSearchTab));
+)(withStyles(filterSidebarExtendedSearchStyles)(FilterSidebarSearchTab));
