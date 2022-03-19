@@ -476,6 +476,7 @@ class FacilityQueryParamsSerializer(Serializer):
     pageSize = IntegerField(required=False)
     boundary = CharField(required=False)
     ppe = BooleanField(default=False, required=False)
+    detail = BooleanField(default=False, required=False)
 
 
 class FacilityListQueryParamsSerializer(Serializer):
@@ -562,6 +563,14 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                   'ppe_contact_email', 'ppe_website', 'is_closed',
                   'contributor_fields', 'extended_fields')
         geo_field = 'location'
+
+    def __init__(self, *args, **kwargs):
+        exclude_fields = kwargs.pop('exclude_fields', None)
+        super(FacilitySerializer, self).__init__(*args, **kwargs)
+
+        if exclude_fields:
+            for field_name in exclude_fields:
+                self.fields.pop(field_name, None)
 
     # Added to ensure including the OAR ID in the geojson properties map
     def get_oar_id(self, facility):

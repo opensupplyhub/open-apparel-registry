@@ -775,6 +775,17 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                     required=False,
                     description='The native language name of the facility',
                 ),
+                coreapi.Field(
+                    name='detail',
+                    location='query',
+                    type='boolean',
+                    required=False,
+                    description=(
+                        'Set this to true to return additional detail about '
+                        'contributors and extended fields with each result. '
+                        'setting this to true will make the response '
+                        'significantly slower to return.'),
+                ),
             ]
 
             return fields
@@ -911,13 +922,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "country_code": "US",
                             "country_name": "United States",
                             "oar_id": "OAR_ID_1",
-                            "contributors": [
-                                {
-                                    "id": 1,
-                                    "name": "Brand A (2019 Q1 List)",
-                                    "is_verified": false
-                                }
-                            ]
                         }
                     },
                     {
@@ -933,18 +937,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "country_code": "US",
                             "country_name": "United States",
                             "oar_id": "OAR_ID_2"
-                            "contributors": [
-                                {
-                                    "id": 1,
-                                    "name": "Brand A (2019 Q1 List)",
-                                    "is_verified": false
-                                },
-                                {
-                                    "id": 2,
-                                    "name": "MSI B (2020 List)",
-                                    "is_verified": true
-                                }
-                            ]
                         }
                     }
                 ]
@@ -967,8 +959,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         context = {'request': request}
 
         if page_queryset is not None:
+            should_serialize_details = params.validated_data['detail']
+            exclude_fields = [
+                'contributor_fields',
+                'extended_fields',
+                'contributors'] if not should_serialize_details else None
             serializer = FacilitySerializer(page_queryset, many=True,
-                                            context=context)
+                                            context=context,
+                                            exclude_fields=exclude_fields)
             response = self.get_paginated_response(serializer.data)
             response.data['extent'] = extent
             return response
