@@ -5,7 +5,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSelect from 'react-select';
-import Creatable from 'react-select/creatable';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import uniq from 'lodash/uniq';
@@ -115,7 +114,6 @@ const mapProcessingTypeOptions = (fPTypes, fTypes) => {
 };
 
 function FilterSidebarExtendedSearch({
-    contributorOptions,
     contributorTypeOptions,
     facilityProcessingTypeOptions,
     numberOfWorkersOptions,
@@ -243,16 +241,16 @@ function FilterSidebarExtendedSearch({
                 >
                     Parent Company
                 </InputLabel>
-                <Creatable
+                <CreatableInputOnly
                     isMulti
                     id={PARENT_COMPANY}
                     name={PARENT_COMPANY}
                     className={`basic-multi-select ${classes.selectStyle}`}
                     classNamePrefix="select"
-                    options={contributorOptions}
                     value={parentCompany}
                     onChange={updateParentCompany}
-                    disabled={fetchingExtendedOptions || fetchingFacilities}
+                    disabled={fetchingFacilities}
+                    placeholder="e.g. ABC Textiles Limited"
                 />
             </div>
             <div className="form__field">
@@ -346,7 +344,6 @@ function FilterSidebarExtendedSearch({
 }
 
 FilterSidebarExtendedSearch.propTypes = {
-    contributorOptions: contributorOptionsPropType.isRequired,
     contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
     facilityProcessingTypeOptions:
         facilityProcessingTypeOptionsPropType.isRequired,
@@ -364,10 +361,6 @@ FilterSidebarExtendedSearch.propTypes = {
 
 function mapStateToProps({
     filterOptions: {
-        contributors: {
-            data: contributorOptions,
-            fetching: fetchingContributors,
-        },
         contributorTypes: {
             data: contributorTypeOptions,
             fetching: fetchingContributorTypes,
@@ -397,7 +390,6 @@ function mapStateToProps({
     embeddedMap: { embed },
 }) {
     return {
-        contributorOptions,
         contributorTypeOptions,
         facilityProcessingTypeOptions,
         numberOfWorkersOptions,
@@ -412,7 +404,6 @@ function mapStateToProps({
         facilities,
         boundary,
         fetchingExtendedOptions:
-            fetchingContributors ||
             fetchingContributorTypes ||
             fetchingFacilityProcessingType ||
             fetchingNumberofWorkers,
