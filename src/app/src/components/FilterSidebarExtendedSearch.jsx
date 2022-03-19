@@ -11,6 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import uniq from 'lodash/uniq';
 
 import ShowOnly from './ShowOnly';
+import CreatableInputOnly from './CreatableInputOnly';
 
 import {
     updateContributorTypeFilter,
@@ -308,7 +309,7 @@ function FilterSidebarExtendedSearch({
                 >
                     Product Type
                 </InputLabel>
-                <Creatable
+                <CreatableInputOnly
                     isMulti
                     id={PRODUCT_TYPE}
                     name={PRODUCT_TYPE}
@@ -316,7 +317,8 @@ function FilterSidebarExtendedSearch({
                     classNamePrefix="select"
                     value={productType}
                     onChange={updateProductType}
-                    disabled={fetchingExtendedOptions || fetchingFacilities}
+                    disabled={fetchingFacilities}
+                    placeholder="e.g. Jackets"
                 />
             </div>
             <div className="form__field">
