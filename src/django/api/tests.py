@@ -6925,7 +6925,7 @@ class ContributorTypesTest(FacilityAPITestCaseBase):
         response = self.get_contributor_types()
         data = json.loads(response.content)
         for (id, label) in data:
-            self.assertEqual(f'{id} [0]', label)
+            self.assertEqual(id, label)
 
     def test_all_types_are_returned(self):
         response = self.get_contributor_types()
