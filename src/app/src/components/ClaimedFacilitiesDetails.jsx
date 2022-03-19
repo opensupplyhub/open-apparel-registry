@@ -25,6 +25,7 @@ import { toast } from 'react-toastify';
 
 import ClaimedFacilitiesDetailsSidebar from './ClaimedFacilitiesDetailsSidebar';
 import ShowOnly from './ShowOnly';
+import CreatableInputOnly from './CreatableInputOnly';
 
 import COLOURS from '../util/COLOURS';
 
@@ -162,7 +163,10 @@ const InputSection = ({
     selectOptions = null,
     hasValidationErrorFn = stubFalse,
     aside = null,
+    selectPlaceholder = 'Select...',
 }) => {
+    let SelectComponent = null;
+
     const asideNode = (
         <ShowOnly when={!isNull(aside)}>
             <aside style={claimedFacilitiesDetailsStyles.asideStyles}>
@@ -194,7 +198,11 @@ const InputSection = ({
             };
         })();
 
-        const SelectComponent = isCreatable ? Creatable : Select;
+        if (isCreatable) {
+            SelectComponent = selectOptions ? Creatable : CreatableInputOnly;
+        } else {
+            SelectComponent = Select;
+        }
 
         return (
             <div style={claimedFacilitiesDetailsStyles.inputSectionStyles}>
@@ -213,6 +221,7 @@ const InputSection = ({
                     disabled={disabled}
                     styles={selectStyles}
                     isMulti={isMultiSelect}
+                    placeholder={selectPlaceholder}
                 />
             </div>
         );
@@ -503,9 +512,7 @@ function ClaimedFacilitiesDetails({
                     isSelect
                     isMultiSelect
                     isCreatable
-                    selectOptions={mapDjangoChoiceTuplesToSelectOptions(
-                        data.product_type_choices,
-                    )}
+                    selectPlaceholder="e.g. Jackets - Use <Enter> or <Tab> to add multiple values"
                 />
                 <Typography
                     variant="title"

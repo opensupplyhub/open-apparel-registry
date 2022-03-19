@@ -44,7 +44,6 @@ from api.processing import get_country_code
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
-from api.extended_fields import get_product_types
 from api.facility_type_processing_type import (
     ALL_FACILITY_TYPE_CHOICES,
     ALL_PROCESSING_TYPE_CHOICES
@@ -1119,7 +1118,6 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
     facility_parent_company = SerializerMethodField()
     affiliation_choices = SerializerMethodField()
     certification_choices = SerializerMethodField()
-    product_type_choices = SerializerMethodField()
     production_type_choices = SerializerMethodField()
 
     class Meta:
@@ -1142,7 +1140,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'affiliation_choices', 'certification_choices',
                   'facility_affiliations', 'facility_certifications',
                   'facility_product_types', 'facility_production_types',
-                  'product_type_choices', 'production_type_choices')
+                  'production_type_choices')
 
     def get_facility(self, claim):
         return FacilityDetailsSerializer(
@@ -1169,13 +1167,6 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
 
     def get_certification_choices(self, claim):
         return FacilityClaim.CERTIFICATION_CHOICES
-
-    def get_product_type_choices(self, claim):
-        return [
-            (choice, choice)
-            for choice
-            in get_product_types()
-        ]
 
     def get_production_type_choices(self, claim):
         return ALL_PROCESSING_TYPE_CHOICES

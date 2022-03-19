@@ -4593,10 +4593,6 @@ class FacilityClaimSerializerTests(TestCase):
     def test_product_and_production_options_are_serialized(self):
         data = ApprovedFacilityClaimSerializer(self.claim).data
 
-        self.assertIn('product_type_choices', data)
-        self.assertIsNotNone(data['product_type_choices'])
-        self.assertNotEqual([], data['product_type_choices'])
-
         self.assertIn('production_type_choices', data)
         self.assertIsNotNone(data['production_type_choices'])
         self.assertNotEqual([], data['production_type_choices'])
