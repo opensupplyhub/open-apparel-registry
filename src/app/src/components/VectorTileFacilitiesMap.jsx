@@ -5,8 +5,6 @@ import { Map as ReactLeafletMap, ZoomControl, GeoJSON } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
 import L from 'leaflet';
 import Control from 'react-leaflet-control';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { toast } from 'react-toastify';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
 
@@ -16,13 +14,11 @@ import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
 import ZoomToSearchControl from './ZoomToSearchControl';
 import PolygonalSearchControl from './PolygonalSearchControl';
+import CopySearch from './CopySearch';
 
 import { COUNTRY_CODES, SILVER_MAP_STYLE } from '../util/constants';
 
-import {
-    makeFacilityDetailLink,
-    getLocationWithoutEmbedParam,
-} from '../util/util';
+import { makeFacilityDetailLink } from '../util/util';
 
 import { resetSingleFacility } from '../actions/facilities';
 
@@ -155,16 +151,13 @@ function VectorTileFacilitiesMap({
             </Control>
             {isEmbedded ? null : (
                 <Control position="topright">
-                    <CopyToClipboard
-                        text={getLocationWithoutEmbedParam()}
-                        onCopy={() => toast('Copied search to clipboard')}
-                    >
+                    <CopySearch>
                         <Button
                             text="Share This Search"
                             onClick={noop}
                             style={mapComponentStyles.copySearchButtonStyle}
                         />
-                    </CopyToClipboard>
+                    </CopySearch>
                 </Control>
             )}
             <ZoomControl position="bottomright" />

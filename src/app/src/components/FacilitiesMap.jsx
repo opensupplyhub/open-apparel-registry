@@ -10,8 +10,6 @@ import {
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import Control from 'react-leaflet-control';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { toast } from 'react-toastify';
 import L from 'leaflet';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
@@ -25,6 +23,7 @@ import '../styles/css/leafletMap.css';
 
 import Button from './Button';
 import FacilitiesMapPopup from './FacilitiesMapPopup';
+import CopySearch from './CopySearch';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -41,10 +40,7 @@ import {
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
 
-import {
-    makeFacilityDetailLink,
-    getLocationWithoutEmbedParam,
-} from '../util/util';
+import { makeFacilityDetailLink } from '../util/util';
 
 const selectedMarkerURL = '/images/selectedmarker.png';
 const unselectedMarkerURL = '/images/marker.png';
@@ -269,16 +265,13 @@ function FacilitiesMap({
                 minZoom={1}
             />
             <Control position="topright">
-                <CopyToClipboard
-                    text={getLocationWithoutEmbedParam()}
-                    onCopy={() => toast('Copied search to clipboard')}
-                >
+                <CopySearch>
                     <Button
                         text="Share This Search"
                         onClick={noop}
                         style={mapComponentStyles.copySearchButtonStyle}
                     />
-                </CopyToClipboard>
+                </CopySearch>
             </Control>
             <ZoomControl position="bottomright" />
             <MarkerClusterGroup
