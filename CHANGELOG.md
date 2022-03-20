@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Hide contributor details in embed downloads [#1742](https://github.com/open-apparel-registry/open-apparel-registry/pull/1742)
+
 ### Security
 
 ## [62] - 2022-03-18
