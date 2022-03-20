@@ -70,9 +70,6 @@ export function setFiltersFromQueryString(qs = '') {
                   contributors: {
                       $set: updateListWithLabels(filters.contributors, data),
                   },
-                  parentCompany: {
-                      $set: updateListWithLabels(filters.parentCompany, data),
-                  },
               })
             : filters;
 

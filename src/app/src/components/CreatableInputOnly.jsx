@@ -42,6 +42,16 @@ export default class CreatableInputOnly extends Component {
         }
     };
 
+    handleBlur = () => {
+        const { inputValue } = this.state;
+        const { onChange, value } = this.props;
+        if (!inputValue) return;
+        this.setState({
+            inputValue: '',
+        });
+        onChange([...value, createOption(inputValue)]);
+    };
+
     render() {
         const { inputValue } = this.state;
         const { value } = this.props;
@@ -55,6 +65,7 @@ export default class CreatableInputOnly extends Component {
                 onChange={this.handleChange}
                 onInputChange={this.handleInputChange}
                 onKeyDown={this.handleKeyDown}
+                onBlur={this.handleBlur}
                 placeholder={this.props.placeholder}
                 value={value}
             />
