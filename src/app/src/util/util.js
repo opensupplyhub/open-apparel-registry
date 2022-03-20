@@ -219,6 +219,7 @@ export const createQueryStringFromSearchFilters = (
         ppe = '',
     },
     withEmbed,
+    detail,
 ) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
@@ -244,6 +245,7 @@ export const createQueryStringFromSearchFilters = (
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
         ppe,
         embed: !withEmbed ? '' : '1',
+        detail: detail ? 'true' : undefined,
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));

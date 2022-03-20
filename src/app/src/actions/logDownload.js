@@ -18,8 +18,6 @@ export const completeLogDownload = createAction('COMPLETE_LOG_DOWNLOAD');
 
 export function logDownload(format, options) {
     return async (dispatch, getState) => {
-        dispatch(startLogDownload());
-
         const downloadFacilities =
             format === 'csv' ? downloadFacilitiesCSV : downloadFacilitiesXLSX;
 

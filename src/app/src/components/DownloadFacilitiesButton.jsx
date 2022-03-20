@@ -7,7 +7,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { toast } from 'react-toastify';
 
-import { logDownload } from '../actions/logDownload';
+import {
+    logDownload,
+    startLogDownload,
+    failLogDownload,
+} from '../actions/logDownload';
+import { fetchFacilities } from '../actions/facilities';
+import { FACILITIES_REQUEST_PAGE_SIZE } from '../util/constants';
 
 const downloadFacilitiesStyles = Object.freeze({
     listHeaderButtonStyles: Object.freeze({
@@ -38,8 +44,17 @@ function DownloadFacilitiesButton({
     const handleClick = event => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
 
-    const handleDownload = format =>
-        dispatch(logDownload(format, { isEmbedded }));
+    const handleDownload = format => {
+        dispatch(startLogDownload());
+        dispatch(
+            fetchFacilities({
+                pageSize: FACILITIES_REQUEST_PAGE_SIZE,
+                detail: true,
+                onSuccess: () => dispatch(logDownload(format, { isEmbedded })),
+                onFailure: () => dispatch(failLogDownload()),
+            }),
+        );
+    };
 
     const selectFormatAndDownload = format => {
         if (user || isEmbedded) {
