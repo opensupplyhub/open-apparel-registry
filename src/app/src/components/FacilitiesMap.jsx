@@ -9,9 +9,7 @@ import {
 } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import Control from 'react-leaflet-control';
 import L from 'leaflet';
-import noop from 'lodash/noop';
 import get from 'lodash/get';
 import head from 'lodash/head';
 import last from 'lodash/last';
@@ -21,9 +19,7 @@ import '../../node_modules/leaflet/dist/leaflet.css';
 import '../../node_modules/react-leaflet-markercluster/dist/styles.min.css';
 import '../styles/css/leafletMap.css';
 
-import Button from './Button';
 import FacilitiesMapPopup from './FacilitiesMapPopup';
-import CopySearch from './CopySearch';
 
 import { COUNTRY_CODES } from '../util/constants';
 
@@ -49,9 +45,6 @@ const mapComponentStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
         height: '100%',
         width: '100%',
-    }),
-    copySearchButtonStyle: Object.freeze({
-        fontSize: '12px',
     }),
 });
 
@@ -264,15 +257,6 @@ function FacilitiesMap({
                 continuousWorld
                 minZoom={1}
             />
-            <Control position="topright">
-                <CopySearch>
-                    <Button
-                        text="Share This Search"
-                        onClick={noop}
-                        style={mapComponentStyles.copySearchButtonStyle}
-                    />
-                </CopySearch>
-            </Control>
             <ZoomControl position="bottomright" />
             <MarkerClusterGroup
                 showCoverageOnHover={false}

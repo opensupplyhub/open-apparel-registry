@@ -8,13 +8,11 @@ import Control from 'react-leaflet-control';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
 
-import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
 import SearchControls from './SearchControls';
 import PolygonalSearchControl from './PolygonalSearchControl';
-import CopySearch from './CopySearch';
 
 import { COUNTRY_CODES, SILVER_MAP_STYLE } from '../util/constants';
 
@@ -39,9 +37,6 @@ const mapComponentStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
         height: '100%',
         width: '100%',
-    }),
-    copySearchButtonStyle: Object.freeze({
-        fontSize: '12px',
     }),
 });
 
@@ -149,17 +144,6 @@ function VectorTileFacilitiesMap({
                     gridColorRamp={gridColorRamp}
                 />
             </Control>
-            {isEmbedded ? null : (
-                <Control position="topright">
-                    <CopySearch>
-                        <Button
-                            text="Share This Search"
-                            onClick={noop}
-                            style={mapComponentStyles.copySearchButtonStyle}
-                        />
-                    </CopySearch>
-                </Control>
-            )}
             <ZoomControl position="bottomright" />
             <VectorTileFacilitiesLayer
                 handleMarkerClick={handleMarkerClick}
