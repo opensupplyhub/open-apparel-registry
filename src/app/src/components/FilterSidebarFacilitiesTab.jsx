@@ -239,7 +239,11 @@ function FilterSidebarFacilitiesTab({
                         containerHeight={resultListHeight}
                         infiniteLoadBeginEdgeOffset={100}
                         isInfiniteLoading={fetching || isInfiniteLoading}
-                        onInfiniteLoad={fetchNextPage}
+                        onInfiniteLoad={() => {
+                            if (!downloadingCSV) {
+                                fetchNextPage();
+                            }
+                        }}
                         loadingSpinnerDelegate={loadingElement}
                         list={facilities.map(
                             ({
