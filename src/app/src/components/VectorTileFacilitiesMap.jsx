@@ -12,7 +12,7 @@ import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
-import ZoomToSearchControl from './ZoomToSearchControl';
+import SearchControls from './SearchControls';
 import PolygonalSearchControl from './PolygonalSearchControl';
 import CopySearch from './CopySearch';
 
@@ -141,7 +141,7 @@ function VectorTileFacilitiesMap({
                 zIndex={1}
             />
             <Control position="topleft">
-                <ZoomToSearchControl />
+                <SearchControls />
             </Control>
             <Control position="bottomleft">
                 <VectorTileGridLegend

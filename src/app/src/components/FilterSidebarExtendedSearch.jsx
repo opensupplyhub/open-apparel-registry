@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
 import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSelect from 'react-select';
 import Divider from '@material-ui/core/Divider';
@@ -20,7 +19,6 @@ import {
     updateProductTypeFilter,
     updateNumberofWorkersFilter,
     updateNativeLanguageNameFilter,
-    updateBoundaryFilter,
 } from '../actions/filters';
 
 import {
@@ -28,10 +26,6 @@ import {
     fetchFacilityProcessingTypeOptions,
     fetchNumberOfWorkersOptions,
 } from '../actions/filterOptions';
-
-import { fetchFacilities } from '../actions/facilities';
-
-import { showDrawFilter } from '../actions/ui';
 
 import {
     contributorOptionsPropType,
@@ -71,7 +65,6 @@ const filterSidebarExtendedSearchStyles = theme =>
         ...filterSidebarStyles,
     });
 
-const CONTRIBUTORS = 'CONTRIBUTORS';
 const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const PARENT_COMPANY = 'PARENT_COMPANY';
 const FACILITY_TYPE = 'FACILITY_TYPE';
@@ -133,9 +126,6 @@ function FilterSidebarExtendedSearch({
     updateNumberOfWorkers,
     fetchingFacilities,
     fetchingExtendedOptions,
-    activateDrawFilter,
-    clearDrawFilter,
-    boundary,
     embed,
     classes,
     fetchContributorTypes,
@@ -170,29 +160,6 @@ function FilterSidebarExtendedSearch({
         );
     }
 
-    const boundaryButton =
-        boundary == null ? (
-            <Button
-                variant="outlined"
-                onClick={activateDrawFilter}
-                disableRipple
-                color="primary"
-                fullWidth
-            >
-                DRAW AREA
-            </Button>
-        ) : (
-            <Button
-                variant="outlined"
-                onClick={clearDrawFilter}
-                disableRipple
-                color="primary"
-                fullWidth
-            >
-                REMOVE AREA
-            </Button>
-        );
-
     return (
         <>
             <div className="form__field">
@@ -216,16 +183,6 @@ function FilterSidebarExtendedSearch({
                         disabled={fetchingExtendedOptions || fetchingFacilities}
                     />
                 </ShowOnly>
-            </div>
-            <div className="form__field">
-                <InputLabel
-                    shrink={false}
-                    htmlFor={CONTRIBUTORS}
-                    className={classes.inputLabelStyle}
-                >
-                    Area
-                </InputLabel>
-                {boundaryButton}
             </div>
             <div className="form__field">
                 <Divider />
@@ -385,7 +342,6 @@ function mapStateToProps({
         productType,
         numberOfWorkers,
         nativeLanguageName,
-        boundary,
     },
     facilities: {
         facilities: { data: facilities, fetching: fetchingFacilities },
@@ -405,7 +361,6 @@ function mapStateToProps({
         nativeLanguageName,
         fetchingFacilities,
         facilities,
-        boundary,
         fetchingExtendedOptions:
             fetchingContributorTypes ||
             fetchingFacilityProcessingType ||
@@ -424,12 +379,6 @@ function mapDispatchToProps(dispatch) {
         updateNumberOfWorkers: v => dispatch(updateNumberofWorkersFilter(v)),
         updateNativeLanguageName: e =>
             dispatch(updateNativeLanguageNameFilter(getValueFromEvent(e))),
-        activateDrawFilter: () => dispatch(showDrawFilter(true)),
-        clearDrawFilter: () => {
-            dispatch(showDrawFilter(false));
-            dispatch(updateBoundaryFilter(null));
-            return dispatch(fetchFacilities({}));
-        },
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchFacilityProcessingType: () =>
             dispatch(fetchFacilityProcessingTypeOptions()),
