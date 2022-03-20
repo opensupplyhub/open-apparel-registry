@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Remove contribute type counts from dropdown [#1732](https://github.com/open-apparel-registry/open-apparel-registry/pull/1732)
 - Remove product type dropdown from search and claim [#1734](https://github.com/open-apparel-registry/open-apparel-registry/pull/1734)
+- Remove parent company dropdown from search [#1736](https://github.com/open-apparel-registry/open-apparel-registry/pull/1736)
 
 ### Fixed
 
