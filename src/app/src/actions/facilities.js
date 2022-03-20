@@ -1,6 +1,7 @@
 import { createAction } from 'redux-act';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
+import isFunction from 'lodash/isFunction';
 
 import apiRequest from '../util/apiRequest';
 
@@ -41,6 +42,9 @@ export function fetchFacilities({
     pageSize = FACILITIES_REQUEST_PAGE_SIZE,
     pushNewRoute = noop,
     activateFacilitiesTab = true,
+    detail = false,
+    onSuccess = null,
+    onFailure = null,
 }) {
     return (dispatch, getState) => {
         dispatch(fetchCurrentTileCacheKey());
@@ -51,7 +55,7 @@ export function fetchFacilities({
             embeddedMap: { embed },
         } = getState();
 
-        const qs = createQueryStringFromSearchFilters(filters, embed);
+        const qs = createQueryStringFromSearchFilters(filters, embed, detail);
 
         return apiRequest
             .get(makeGetFacilitiesURLWithQueryString(qs, pageSize))
@@ -75,16 +79,22 @@ export function fetchFacilities({
                 if (activateFacilitiesTab) {
                     dispatch(makeSidebarFacilitiesTabActive());
                 }
+                if (isFunction(onSuccess)) {
+                    onSuccess(data);
+                }
             })
-            .catch(err =>
+            .catch(err => {
                 dispatch(
                     logErrorAndDispatchFailure(
                         err,
                         'An error prevented fetching facilities',
                         failFetchFacilities,
                     ),
-                ),
-            );
+                );
+                if (isFunction(onFailure)) {
+                    onFailure(err);
+                }
+            });
     };
 }
 
