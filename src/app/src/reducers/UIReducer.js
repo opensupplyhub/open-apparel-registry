@@ -3,7 +3,6 @@ import update from 'immutability-helper';
 import isObject from 'lodash/isObject';
 
 import {
-    makeSidebarGuideTabActive,
     makeSidebarSearchTabActive,
     makeSidebarFacilitiesTabActive,
     updateSidebarFacilitiesTabTextFilter,
@@ -44,12 +43,6 @@ export default createReducer(
                             state.facilitiesSidebarTabSearch
                                 .resetButtonClickCount + 1,
                     },
-                },
-            }),
-        [makeSidebarGuideTabActive]: state =>
-            update(state, {
-                activeFilterSidebarTab: {
-                    $set: filterSidebarTabsEnum.guide,
                 },
             }),
         [makeSidebarSearchTabActive]: state =>
