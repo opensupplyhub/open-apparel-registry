@@ -303,16 +303,11 @@ export const contributeFormFields = Object.freeze([
 export const contributeReplacesNoneSelectionID = -1;
 
 export const filterSidebarTabsEnum = Object.freeze({
-    guide: 'guide',
     search: 'search',
     facilities: 'facilities',
 });
 
 export const filterSidebarTabs = Object.freeze([
-    Object.freeze({
-        tab: filterSidebarTabsEnum.guide,
-        label: 'Guide',
-    }),
     Object.freeze({
         tab: filterSidebarTabsEnum.facilities,
         label: 'Facilities',
@@ -925,3 +920,6 @@ export const SILVER_MAP_STYLE = [
         ],
     },
 ];
+
+export const EXTENDED_FIELDS_EXPLANATORY_TEXT =
+    'These fields were added to the OAR in March 2022. As more data is contributed, more results will become available.';

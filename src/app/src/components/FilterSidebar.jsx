@@ -9,7 +9,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Route } from 'react-router-dom';
 import get from 'lodash/get';
 
-import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
@@ -22,7 +21,6 @@ import {
 } from '../util/constants';
 
 import {
-    makeSidebarGuideTabActive,
     makeSidebarSearchTabActive,
     makeSidebarFacilitiesTabActive,
 } from '../actions/ui';
@@ -95,7 +93,6 @@ class FilterSidebar extends Component {
     render() {
         const {
             activeFilterSidebarTab,
-            makeGuideTabActive,
             makeSearchTabActive,
             makeFacilitiesTabActive,
             vectorTileFeatureIsActive,
@@ -125,16 +122,8 @@ class FilterSidebar extends Component {
 
         const handleTabChange = (_, value) => {
             const changeTabFunctionsList = vectorTileFeatureIsActive
-                ? [
-                      makeSearchTabActive,
-                      makeFacilitiesTabActive,
-                      makeGuideTabActive,
-                  ]
-                : [
-                      makeGuideTabActive,
-                      makeFacilitiesTabActive,
-                      makeSearchTabActive,
-                  ];
+                ? [makeSearchTabActive, makeFacilitiesTabActive]
+                : [makeFacilitiesTabActive, makeSearchTabActive];
 
             const changeTab = changeTabFunctionsList[value];
 
@@ -175,15 +164,6 @@ class FilterSidebar extends Component {
 
         const insetComponent = (() => {
             switch (activeFilterSidebarTab) {
-                case filterSidebarTabsEnum.guide:
-                    return (
-                        <FeatureFlag
-                            flag={VECTOR_TILE}
-                            alternative={<FilterSidebarGuideTab />}
-                        >
-                            <FilterSidebarGuideTab vectorTile />
-                        </FeatureFlag>
-                    );
                 case filterSidebarTabsEnum.search:
                     // We wrap this component in a `Route` to give it access to `history.push`
                     // in its `mapDispatchToProps` function.
@@ -220,7 +200,6 @@ class FilterSidebar extends Component {
 FilterSidebar.propTypes = {
     activeFilterSidebarTab: oneOf(Object.values(filterSidebarTabsEnum))
         .isRequired,
-    makeGuideTabActive: func.isRequired,
     makeSearchTabActive: func.isRequired,
     makeFacilitiesTabActive: func.isRequired,
     fetchFilterOptions: func.isRequired,
@@ -261,7 +240,6 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        makeGuideTabActive: () => dispatch(makeSidebarGuideTabActive()),
         makeSearchTabActive: () => dispatch(makeSidebarSearchTabActive()),
         makeFacilitiesTabActive: () =>
             dispatch(makeSidebarFacilitiesTabActive()),

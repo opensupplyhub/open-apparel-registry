@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
 import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactSelect from 'react-select';
 import Divider from '@material-ui/core/Divider';
@@ -20,7 +19,6 @@ import {
     updateProductTypeFilter,
     updateNumberofWorkersFilter,
     updateNativeLanguageNameFilter,
-    updateBoundaryFilter,
 } from '../actions/filters';
 
 import {
@@ -28,10 +26,6 @@ import {
     fetchFacilityProcessingTypeOptions,
     fetchNumberOfWorkersOptions,
 } from '../actions/filterOptions';
-
-import { fetchFacilities } from '../actions/facilities';
-
-import { showDrawFilter } from '../actions/ui';
 
 import {
     contributorOptionsPropType,
@@ -49,6 +43,8 @@ import {
     getValueFromEvent,
     mapDjangoChoiceTuplesValueToSelectOptions,
 } from '../util/util';
+
+import { EXTENDED_FIELDS_EXPLANATORY_TEXT } from '../util/constants';
 
 const filterSidebarExtendedSearchStyles = theme =>
     Object.freeze({
@@ -69,7 +65,6 @@ const filterSidebarExtendedSearchStyles = theme =>
         ...filterSidebarStyles,
     });
 
-const CONTRIBUTORS = 'CONTRIBUTORS';
 const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const PARENT_COMPANY = 'PARENT_COMPANY';
 const FACILITY_TYPE = 'FACILITY_TYPE';
@@ -131,9 +126,6 @@ function FilterSidebarExtendedSearch({
     updateNumberOfWorkers,
     fetchingFacilities,
     fetchingExtendedOptions,
-    activateDrawFilter,
-    clearDrawFilter,
-    boundary,
     embed,
     classes,
     fetchContributorTypes,
@@ -158,6 +150,8 @@ function FilterSidebarExtendedSearch({
         }
     }, [numberOfWorkersOptions, fetchNumberOfWorkers]);
 
+    if (fetchingFacilities && fetchingExtendedOptions) return null;
+
     if (fetchingExtendedOptions) {
         return (
             <div className="control-panel__content">
@@ -165,29 +159,6 @@ function FilterSidebarExtendedSearch({
             </div>
         );
     }
-
-    const boundaryButton =
-        boundary == null ? (
-            <Button
-                variant="outlined"
-                onClick={activateDrawFilter}
-                disableRipple
-                color="primary"
-                fullWidth
-            >
-                DRAW AREA
-            </Button>
-        ) : (
-            <Button
-                variant="outlined"
-                onClick={clearDrawFilter}
-                disableRipple
-                color="primary"
-                fullWidth
-            >
-                REMOVE AREA
-            </Button>
-        );
 
     return (
         <>
@@ -214,23 +185,12 @@ function FilterSidebarExtendedSearch({
                 </ShowOnly>
             </div>
             <div className="form__field">
-                <InputLabel
-                    shrink={false}
-                    htmlFor={CONTRIBUTORS}
-                    className={classes.inputLabelStyle}
-                >
-                    Area
-                </InputLabel>
-                {boundaryButton}
-            </div>
-            <div className="form__field">
                 <Divider />
                 <div
                     className="form__info"
                     style={{ color: 'rgba(0, 0, 0, 0.8)' }}
                 >
-                    The following filters are new to the OAR and may not return
-                    complete results until we have more data
+                    {EXTENDED_FIELDS_EXPLANATORY_TEXT}
                 </div>
             </div>
             <div className="form__field">
@@ -382,7 +342,6 @@ function mapStateToProps({
         productType,
         numberOfWorkers,
         nativeLanguageName,
-        boundary,
     },
     facilities: {
         facilities: { data: facilities, fetching: fetchingFacilities },
@@ -402,7 +361,6 @@ function mapStateToProps({
         nativeLanguageName,
         fetchingFacilities,
         facilities,
-        boundary,
         fetchingExtendedOptions:
             fetchingContributorTypes ||
             fetchingFacilityProcessingType ||
@@ -421,12 +379,6 @@ function mapDispatchToProps(dispatch) {
         updateNumberOfWorkers: v => dispatch(updateNumberofWorkersFilter(v)),
         updateNativeLanguageName: e =>
             dispatch(updateNativeLanguageNameFilter(getValueFromEvent(e))),
-        activateDrawFilter: () => dispatch(showDrawFilter(true)),
-        clearDrawFilter: () => {
-            dispatch(showDrawFilter(false));
-            dispatch(updateBoundaryFilter(null));
-            return dispatch(fetchFacilities({}));
-        },
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchFacilityProcessingType: () =>
             dispatch(fetchFacilityProcessingTypeOptions()),

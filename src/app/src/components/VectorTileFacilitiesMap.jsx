@@ -5,24 +5,18 @@ import { Map as ReactLeafletMap, ZoomControl, GeoJSON } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
 import L from 'leaflet';
 import Control from 'react-leaflet-control';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { toast } from 'react-toastify';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
 
-import Button from './Button';
 import VectorTileFacilitiesLayer from './VectorTileFacilitiesLayer';
 import VectorTileFacilityGridLayer from './VectorTileFacilityGridLayer';
 import VectorTileGridLegend from './VectorTileGridLegend';
-import ZoomToSearchControl from './ZoomToSearchControl';
+import SearchControls from './SearchControls';
 import PolygonalSearchControl from './PolygonalSearchControl';
 
 import { COUNTRY_CODES, SILVER_MAP_STYLE } from '../util/constants';
 
-import {
-    makeFacilityDetailLink,
-    getLocationWithoutEmbedParam,
-} from '../util/util';
+import { makeFacilityDetailLink } from '../util/util';
 
 import { resetSingleFacility } from '../actions/facilities';
 
@@ -43,9 +37,6 @@ const mapComponentStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
         height: '100%',
         width: '100%',
-    }),
-    copySearchButtonStyle: Object.freeze({
-        fontSize: '12px',
     }),
 });
 
@@ -145,7 +136,7 @@ function VectorTileFacilitiesMap({
                 zIndex={1}
             />
             <Control position="topleft">
-                <ZoomToSearchControl />
+                <SearchControls />
             </Control>
             <Control position="bottomleft">
                 <VectorTileGridLegend
@@ -153,20 +144,6 @@ function VectorTileFacilitiesMap({
                     gridColorRamp={gridColorRamp}
                 />
             </Control>
-            {isEmbedded ? null : (
-                <Control position="topright">
-                    <CopyToClipboard
-                        text={getLocationWithoutEmbedParam()}
-                        onCopy={() => toast('Copied search to clipboard')}
-                    >
-                        <Button
-                            text="Share This Search"
-                            onClick={noop}
-                            style={mapComponentStyles.copySearchButtonStyle}
-                        />
-                    </CopyToClipboard>
-                </Control>
-            )}
             <ZoomControl position="bottomright" />
             <VectorTileFacilitiesLayer
                 handleMarkerClick={handleMarkerClick}
