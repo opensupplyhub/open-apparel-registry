@@ -61,10 +61,19 @@ import {
     FACILITIES_REQUEST_PAGE_SIZE,
     DEFAULT_SEARCH_TEXT,
     EXTENDED_PROFILE_FLAG,
+    EXTENDED_FIELDS_EXPLANATORY_TEXT,
 } from '../util/constants';
 
 const filterSidebarSearchTabStyles = theme =>
     Object.freeze({
+        headerStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+            fontSize: '18px',
+            fontWeight: 700,
+            color: '#000',
+            transform: 'translate(0, -8px) scale(1)',
+            paddingBottom: '0.5rem',
+        }),
         formStyle: Object.freeze({
             width: '100%',
             marginBottom: '32px',
@@ -79,11 +88,16 @@ const filterSidebarSearchTabStyles = theme =>
         }),
         helpSubheadStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
-            ontSize: '12px',
+            fontSize: '14px',
             fontWeight: 500,
-            color: '#000',
+            color: theme.palette.primary.main,
             paddingTop: '0.5rem',
             paddingBottom: '0.5rem',
+            textDecoration: 'none',
+            lineHeight: '17px',
+            '&:hover': {
+                textDecoration: 'underline',
+            },
         }),
         selectStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
@@ -317,12 +331,20 @@ function FilterSidebarSearchTab({
         <div
             className={`control-panel__content ${classes.controlPanelContentStyles}`}
         >
-            <div style={{ marginBottom: '60px' }}>
+            <div
+                style={{
+                    marginBottom: '60px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                }}
+            >
                 <div className="form__field" style={{ marginBottom: '10px' }}>
-                    <div className={classes.inputLabelStyle}>
+                    <div className={classes.headerStyle}>
                         Search the Open Apparel Registry
-                        <div className={classes.helpSubheadStyle}>
+                        <div>
                             <a
+                                className={classes.helpSubheadStyle}
                                 target="blank"
                                 href="https://info.openapparel.org/stories-resources/how-to-search-the-open-apparel-registry"
                             >
@@ -470,7 +492,9 @@ function FilterSidebarSearchTab({
                         <FilterSidebarExtendedSearch />
                     </ShowOnly>
                 </FeatureFlag>
-                <div className="form__action">{searchResetButtonGroup()}</div>
+                <div className="form__action" style={{ marginBottom: '40px' }}>
+                    {searchResetButtonGroup()}
+                </div>
                 <div className="form__field">
                     {expandButton}
                     <ShowOnly when={!expand}>
@@ -478,7 +502,7 @@ function FilterSidebarSearchTab({
                             Contributor type · Parent company · Facility type ·
                             Processing type · Product type · Number of workers{' '}
                             <Tooltip
-                                title="These fields were added to the OAR in March 2022. As more data is contributed, more results will become available."
+                                title={EXTENDED_FIELDS_EXPLANATORY_TEXT}
                                 classes={{ tooltip: classes.tooltip }}
                             >
                                 <i
@@ -488,10 +512,13 @@ function FilterSidebarSearchTab({
                         </div>
                     </ShowOnly>
                 </div>
-                <div className="form__report">
+                <div
+                    className="form__report"
+                    style={{ flex: 1, alignItems: 'flex-end', display: 'flex' }}
+                >
                     {!embed ? (
                         <a
-                            className="control-link inherit-font"
+                            className={`${classes.helpSubheadStyle} control-link inherit-font`}
                             href="mailto:info@openapparel.org?subject=Reporting an issue"
                         >
                             Have a suggestion? Let us know!

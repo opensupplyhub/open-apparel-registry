@@ -50,6 +50,8 @@ import {
     mapDjangoChoiceTuplesValueToSelectOptions,
 } from '../util/util';
 
+import { EXTENDED_FIELDS_EXPLANATORY_TEXT } from '../util/constants';
+
 const filterSidebarExtendedSearchStyles = theme =>
     Object.freeze({
         inputLabelStyle: Object.freeze({
@@ -231,8 +233,7 @@ function FilterSidebarExtendedSearch({
                     className="form__info"
                     style={{ color: 'rgba(0, 0, 0, 0.8)' }}
                 >
-                    The following filters are new to the OAR and may not return
-                    complete results until we have more data
+                    {EXTENDED_FIELDS_EXPLANATORY_TEXT}
                 </div>
             </div>
             <div className="form__field">

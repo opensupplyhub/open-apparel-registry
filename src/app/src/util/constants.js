@@ -920,3 +920,6 @@ export const SILVER_MAP_STYLE = [
         ],
     },
 ];
+
+export const EXTENDED_FIELDS_EXPLANATORY_TEXT =
+    'These fields were added to the OAR in March 2022. As more data is contributed, more results will become available.';
