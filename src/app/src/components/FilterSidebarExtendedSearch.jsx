@@ -158,6 +158,8 @@ function FilterSidebarExtendedSearch({
         }
     }, [numberOfWorkersOptions, fetchNumberOfWorkers]);
 
+    if (fetchingFacilities && fetchingExtendedOptions) return null;
+
     if (fetchingExtendedOptions) {
         return (
             <div className="control-panel__content">
