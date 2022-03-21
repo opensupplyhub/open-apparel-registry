@@ -25,8 +25,6 @@ import {
     facilityListItemsRoute,
     authLoginFormRoute,
     dashboardListsRoute,
-    InfoLink,
-    InfoPaths,
 } from '../util/constants';
 
 import { facilityListPropType } from '../util/propTypes';
@@ -211,20 +209,10 @@ class FacilityListItems extends Component {
                             </div>
                         </div>
                         <div style={facilityListItemsStyles.subheadStyles}>
-                            Read about how your facility data is{' '}
-                            <a
-                                href={`${InfoLink}/${InfoPaths.dataQuality}`}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                processed and matched
-                            </a>
-                            . Data points submitted beyond facility name and
-                            address are processing, even if they do not appear
-                            on this page. Once your list has processed, you will
-                            be able to view and search these data points on
-                            facility profiles, as well as in downloads from the
-                            platform.
+                            The processing time may be longer for lists that
+                            include additional data points beyond facility name
+                            and address. You will receive an email when your
+                            list has finished processing.
                         </div>
                         {list.item_count ? (
                             <Route
