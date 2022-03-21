@@ -46,6 +46,9 @@ const facilityListItemsStyles = Object.freeze({
         alignContent: 'center',
         alignItems: 'center',
     }),
+    titleStyles: Object.freeze({
+        overflowWrap: 'anywhere',
+    }),
     subheadStyles: Object.freeze({
         padding: '0.5rem',
         textAlign: 'left',
