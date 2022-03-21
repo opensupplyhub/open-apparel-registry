@@ -47,12 +47,19 @@ def get_csv_values(csv_data):
     return values
 
 
+def try_parse_int_from_float(value):
+    try:
+        return str(int(float(value)))
+    except ValueError:
+        return value
+
+
 def get_single_contributor_field_values(item, fields):
     data = parse_raw_data(item.raw_data)
     for f in fields:
         value = data.get(f['column_name'], None)
         if value is not None:
-            f['value'] = value
+            f['value'] = try_parse_int_from_float(value)
     return fields
 
 
@@ -62,7 +69,8 @@ def get_list_contributor_field_values(item, fields):
     for f in fields:
         if f['column_name'] in list_fields:
             index = list_fields.index(f['column_name'])
-            f['value'] = data_values[index]
+            f['value'] = try_parse_int_from_float(data_values[index])
+
     return fields
 
 
