@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Minor UX changes [#1745](https://github.com/open-apparel-registry/open-apparel-registry/pull/1745)
 - Increase database work_mem to 20MB [#1744](https://github.com/open-apparel-registry/open-apparel-registry/pull/1744)
 - Swap copy between My Lists and Individual List page [#1756](https://github.com/open-apparel-registry/open-apparel-registry/pull/1756)
+- Hide raw facility_type values [#1758](https://github.com/open-apparel-registry/open-apparel-registry/pull/1758)
 
 ### Deprecated
 

@@ -285,11 +285,19 @@ const FacilityDetailSidebar = ({
     const claimFacility = () => push(makeClaimFacilityLink(oarId));
 
     const renderExtendedField = ({ label, fieldName, formatValue }) => {
-        const values = get(data, `properties.extended_fields.${fieldName}`, []);
-        if (!values.length || !values[0]) return null;
+        let values = get(data, `properties.extended_fields.${fieldName}`, []);
 
         const formatField = item =>
             formatExtendedField({ ...item, formatValue });
+
+        if (fieldName === 'facility_type') {
+            // Filter by values where a matched value has a facility_type field
+            values = values.filter(v =>
+                v?.value?.matched_values?.some(mv => mv[2]),
+            );
+        }
+
+        if (!values.length || !values[0]) return null;
 
         const topValue = formatField(values[0]);
 
