@@ -9,11 +9,7 @@ import {
 } from 'react-leaflet';
 import ReactLeafletGoogleLayer from 'react-leaflet-google-layer';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import Control from 'react-leaflet-control';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { toast } from 'react-toastify';
 import L from 'leaflet';
-import noop from 'lodash/noop';
 import get from 'lodash/get';
 import head from 'lodash/head';
 import last from 'lodash/last';
@@ -23,7 +19,6 @@ import '../../node_modules/leaflet/dist/leaflet.css';
 import '../../node_modules/react-leaflet-markercluster/dist/styles.min.css';
 import '../styles/css/leafletMap.css';
 
-import Button from './Button';
 import FacilitiesMapPopup from './FacilitiesMapPopup';
 
 import { COUNTRY_CODES } from '../util/constants';
@@ -41,10 +36,7 @@ import {
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
 
-import {
-    makeFacilityDetailLink,
-    getLocationWithoutEmbedParam,
-} from '../util/util';
+import { makeFacilityDetailLink } from '../util/util';
 
 const selectedMarkerURL = '/images/selectedmarker.png';
 const unselectedMarkerURL = '/images/marker.png';
@@ -53,9 +45,6 @@ const mapComponentStyles = Object.freeze({
     mapContainerStyles: Object.freeze({
         height: '100%',
         width: '100%',
-    }),
-    copySearchButtonStyle: Object.freeze({
-        fontSize: '12px',
     }),
 });
 
@@ -268,18 +257,6 @@ function FacilitiesMap({
                 continuousWorld
                 minZoom={1}
             />
-            <Control position="topright">
-                <CopyToClipboard
-                    text={getLocationWithoutEmbedParam()}
-                    onCopy={() => toast('Copied search to clipboard')}
-                >
-                    <Button
-                        text="Share This Search"
-                        onClick={noop}
-                        style={mapComponentStyles.copySearchButtonStyle}
-                    />
-                </CopyToClipboard>
-            </Control>
             <ZoomControl position="bottomright" />
             <MarkerClusterGroup
                 showCoverageOnHover={false}

@@ -9,7 +9,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Route } from 'react-router-dom';
 import get from 'lodash/get';
 
-import FilterSidebarGuideTab from './FilterSidebarGuideTab';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
@@ -22,7 +21,6 @@ import {
 } from '../util/constants';
 
 import {
-    makeSidebarGuideTabActive,
     makeSidebarSearchTabActive,
     makeSidebarFacilitiesTabActive,
 } from '../actions/ui';
@@ -30,21 +28,13 @@ import {
 import {
     fetchContributorOptions,
     fetchListOptions,
-    fetchContributorTypeOptions,
     fetchCountryOptions,
-    fetchFacilityProcessingTypeOptions,
-    fetchProductTypeOptions,
-    fetchNumberOfWorkersOptions,
-    fetchAllFilterOptions,
+    fetchAllPrimaryFilterOptions,
 } from '../actions/filterOptions';
 
 import {
     contributorOptionsPropType,
-    contributorTypeOptionsPropType,
     countryOptionsPropType,
-    facilityProcessingTypeOptionsPropType,
-    productTypeOptionsPropType,
-    numberOfWorkerOptionsPropType,
 } from '../util/propTypes';
 
 import { allListsAreEmpty } from '../util/util';
@@ -67,32 +57,15 @@ class FilterSidebar extends Component {
     componentDidMount() {
         const {
             contributorsData,
-            contributorTypesData,
             countriesData,
-            facilityProcessingTypeData,
-            productTypeData,
-            numberOfWorkersData,
             fetchFilterOptions,
             fetchContributors,
             fetchLists,
-            fetchContributorTypes,
             fetchCountries,
-            fetchFacilityProcessingType,
-            fetchProductType,
-            fetchNumberOfWorkers,
             contributors,
         } = this.props;
 
-        if (
-            allListsAreEmpty(
-                contributorsData,
-                contributorTypesData,
-                countriesData,
-                facilityProcessingTypeData,
-                productTypeData,
-                numberOfWorkersData,
-            )
-        ) {
+        if (allListsAreEmpty(contributorsData, countriesData)) {
             return fetchFilterOptions();
         }
 
@@ -100,24 +73,8 @@ class FilterSidebar extends Component {
             fetchContributors();
         }
 
-        if (!contributorTypesData.length) {
-            fetchContributorTypes();
-        }
-
         if (!countriesData.length) {
             fetchCountries();
-        }
-
-        if (!facilityProcessingTypeData.length) {
-            fetchFacilityProcessingType();
-        }
-
-        if (!productTypeData.length) {
-            fetchProductType();
-        }
-
-        if (!numberOfWorkersData.length) {
-            fetchNumberOfWorkers();
         }
 
         if (contributors && contributors.length) {
@@ -136,7 +93,6 @@ class FilterSidebar extends Component {
     render() {
         const {
             activeFilterSidebarTab,
-            makeGuideTabActive,
             makeSearchTabActive,
             makeFacilitiesTabActive,
             vectorTileFeatureIsActive,
@@ -166,16 +122,8 @@ class FilterSidebar extends Component {
 
         const handleTabChange = (_, value) => {
             const changeTabFunctionsList = vectorTileFeatureIsActive
-                ? [
-                      makeSearchTabActive,
-                      makeFacilitiesTabActive,
-                      makeGuideTabActive,
-                  ]
-                : [
-                      makeGuideTabActive,
-                      makeFacilitiesTabActive,
-                      makeSearchTabActive,
-                  ];
+                ? [makeSearchTabActive, makeFacilitiesTabActive]
+                : [makeFacilitiesTabActive, makeSearchTabActive];
 
             const changeTab = changeTabFunctionsList[value];
 
@@ -216,15 +164,6 @@ class FilterSidebar extends Component {
 
         const insetComponent = (() => {
             switch (activeFilterSidebarTab) {
-                case filterSidebarTabsEnum.guide:
-                    return (
-                        <FeatureFlag
-                            flag={VECTOR_TILE}
-                            alternative={<FilterSidebarGuideTab />}
-                        >
-                            <FilterSidebarGuideTab vectorTile />
-                        </FeatureFlag>
-                    );
                 case filterSidebarTabsEnum.search:
                     // We wrap this component in a `Route` to give it access to `history.push`
                     // in its `mapDispatchToProps` function.
@@ -261,23 +200,13 @@ class FilterSidebar extends Component {
 FilterSidebar.propTypes = {
     activeFilterSidebarTab: oneOf(Object.values(filterSidebarTabsEnum))
         .isRequired,
-    makeGuideTabActive: func.isRequired,
     makeSearchTabActive: func.isRequired,
     makeFacilitiesTabActive: func.isRequired,
     fetchFilterOptions: func.isRequired,
     fetchContributors: func.isRequired,
-    fetchContributorTypes: func.isRequired,
     fetchCountries: func.isRequired,
-    fetchFacilityProcessingType: func.isRequired,
-    fetchProductType: func.isRequired,
-    fetchNumberOfWorkers: func.isRequired,
     contributorsData: contributorOptionsPropType.isRequired,
-    contributorTypesData: contributorTypeOptionsPropType.isRequired,
     countriesData: countryOptionsPropType.isRequired,
-    facilityProcessingTypeData:
-        facilityProcessingTypeOptionsPropType.isRequired,
-    productTypeData: productTypeOptionsPropType.isRequired,
-    numberOfWorkersData: numberOfWorkerOptionsPropType.isRequired,
     vectorTileFeatureIsActive: bool.isRequired,
     fetchingFeatureFlags: bool.isRequired,
 };
@@ -287,11 +216,7 @@ function mapStateToProps({
     filterOptions: {
         contributors: { data: contributorsData },
         lists: { data: listsData },
-        contributorTypes: { data: contributorTypesData },
         countries: { data: countriesData },
-        facilityProcessingType: { data: facilityProcessingTypeData },
-        productType: { data: productTypeData },
-        numberOfWorkers: { data: numberOfWorkersData },
     },
     featureFlags: { flags, fetching: fetchingFeatureFlags },
     embeddedMap: { embed },
@@ -303,11 +228,7 @@ function mapStateToProps({
     return {
         activeFilterSidebarTab,
         contributorsData,
-        contributorTypesData,
         countriesData,
-        facilityProcessingTypeData,
-        productTypeData,
-        numberOfWorkersData,
         listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
@@ -319,19 +240,13 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        makeGuideTabActive: () => dispatch(makeSidebarGuideTabActive()),
         makeSearchTabActive: () => dispatch(makeSidebarSearchTabActive()),
         makeFacilitiesTabActive: () =>
             dispatch(makeSidebarFacilitiesTabActive()),
-        fetchFilterOptions: () => dispatch(fetchAllFilterOptions()),
+        fetchFilterOptions: () => dispatch(fetchAllPrimaryFilterOptions()),
         fetchContributors: () => dispatch(fetchContributorOptions()),
         fetchLists: () => dispatch(fetchListOptions()),
-        fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
         fetchCountries: () => dispatch(fetchCountryOptions()),
-        fetchFacilityProcessingType: () =>
-            dispatch(fetchFacilityProcessingTypeOptions()),
-        fetchProductType: () => dispatch(fetchProductTypeOptions()),
-        fetchNumberOfWorkers: () => dispatch(fetchNumberOfWorkersOptions()),
     };
 }
 

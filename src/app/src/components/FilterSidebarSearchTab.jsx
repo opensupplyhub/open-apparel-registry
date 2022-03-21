@@ -12,14 +12,12 @@ import InfoIcon from '@material-ui/icons/Info';
 import Tooltip from '@material-ui/core/Tooltip';
 import Popover from '@material-ui/core/Popover';
 import ReactSelect from 'react-select';
-import Creatable from 'react-select/creatable';
-import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
-import uniq from 'lodash/uniq';
 
 import ShowOnly from './ShowOnly';
 import FeatureFlag from './FeatureFlag';
+import FilterSidebarExtendedSearch from './FilterSidebarExtendedSearch';
 
 import {
     updateFacilityFreeTextQueryFilter,
@@ -34,14 +32,12 @@ import {
     updateNumberofWorkersFilter,
     updateNativeLanguageNameFilter,
     updateCombineContributorsFilterOption,
-    updateBoundaryFilter,
-    updatePPEFilter,
     resetAllFilters,
 } from '../actions/filters';
 
 import { fetchFacilities } from '../actions/facilities';
 
-import { recordSearchTabResetButtonClick, showDrawFilter } from '../actions/ui';
+import { recordSearchTabResetButtonClick } from '../actions/ui';
 
 import {
     contributorOptionsPropType,
@@ -49,7 +45,6 @@ import {
     countryOptionsPropType,
     facilityTypeOptionsPropType,
     processingTypeOptionsPropType,
-    facilityProcessingTypeOptionsPropType,
     productTypeOptionsPropType,
     numberOfWorkerOptionsPropType,
     facilityCollectionPropType,
@@ -60,16 +55,25 @@ import { filterSidebarStyles } from '../util/styles';
 import {
     getValueFromEvent,
     makeSubmitFormOnEnterKeyPressFunction,
-    mapDjangoChoiceTuplesValueToSelectOptions,
 } from '../util/util';
 
 import {
     FACILITIES_REQUEST_PAGE_SIZE,
     DEFAULT_SEARCH_TEXT,
+    EXTENDED_PROFILE_FLAG,
+    EXTENDED_FIELDS_EXPLANATORY_TEXT,
 } from '../util/constants';
 
 const filterSidebarSearchTabStyles = theme =>
     Object.freeze({
+        headerStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+            fontSize: '18px',
+            fontWeight: 700,
+            color: '#000',
+            transform: 'translate(0, -8px) scale(1)',
+            paddingBottom: '0.5rem',
+        }),
         formStyle: Object.freeze({
             width: '100%',
             marginBottom: '32px',
@@ -84,11 +88,16 @@ const filterSidebarSearchTabStyles = theme =>
         }),
         helpSubheadStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
-            ontSize: '12px',
+            fontSize: '14px',
             fontWeight: 500,
-            color: '#000',
+            color: theme.palette.primary.main,
             paddingTop: '0.5rem',
             paddingBottom: '0.5rem',
+            textDecoration: 'none',
+            lineHeight: '17px',
+            '&:hover': {
+                textDecoration: 'underline',
+            },
         }),
         selectStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
@@ -106,80 +115,28 @@ const filterSidebarSearchTabStyles = theme =>
 
 const FACILITIES = 'FACILITIES';
 const CONTRIBUTORS = 'CONTRIBUTORS';
-const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const LISTS = 'LISTS';
 const COUNTRIES = 'COUNTRIES';
-const PARENT_COMPANY = 'PARENT_COMPANY';
-const FACILITY_TYPE = 'FACILITY_TYPE';
-const PROCESSING_TYPE = 'PROCESSING_TYPE';
-const PRODUCT_TYPE = 'PRODUCT_TYPE';
-const NUMBER_OF_WORKERS = 'NUMBER_OF_WORKERS';
-
-const mapFacilityTypeOptions = (fPTypes, pTypes) => {
-    let fTypes = [];
-    if (pTypes.length === 0) {
-        fTypes = fPTypes.map(type => type.facilityType);
-    } else {
-        // When there are processing types, only return the
-        // facility types that have those processing types
-        pTypes.forEach(pType => {
-            fPTypes.forEach(fPType => {
-                if (fPType.processingTypes.includes(pType.value)) {
-                    fTypes = fTypes.concat(fPType.facilityType);
-                }
-            });
-        });
-    }
-    return mapDjangoChoiceTuplesValueToSelectOptions(uniq(fTypes.sort()));
-};
-
-const mapProcessingTypeOptions = (fPTypes, fTypes) => {
-    let pTypes = [];
-    if (fTypes.length === 0) {
-        pTypes = fPTypes.map(type => type.processingTypes).flat();
-    } else {
-        // When there are facility types, only return the
-        // processing types that are under those facility types
-        fTypes.forEach(fType => {
-            fPTypes.forEach(fPType => {
-                if (fType.value === fPType.facilityType) {
-                    pTypes = pTypes.concat(fPType.processingTypes);
-                }
-            });
-        });
-    }
-    return mapDjangoChoiceTuplesValueToSelectOptions(uniq(pTypes.sort()));
-};
 
 const checkIfAnyFieldSelected = fields => fields.some(f => f.length !== 0);
 
 function FilterSidebarSearchTab({
     contributorOptions,
     listOptions,
-    contributorTypeOptions,
     countryOptions,
-    facilityProcessingTypeOptions,
-    productTypeOptions,
-    numberOfWorkersOptions,
     resetFilters,
     facilityFreeTextQuery,
     updateFacilityFreeTextQuery,
     contributors,
     updateContributor,
     contributorTypes,
-    updateContributorType,
     countries,
     updateCountry,
     parentCompany,
-    updateParentCompany,
     facilityType,
-    updateFacilityType,
     processingType,
-    updateProcessingType,
     productType,
-    updateProductType,
     numberOfWorkers,
-    updateNumberOfWorkers,
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
@@ -188,11 +145,6 @@ function FilterSidebarSearchTab({
     fetchingOptions,
     submitFormOnEnterKeyPress,
     vectorTileFlagIsActive,
-    activateDrawFilter,
-    clearDrawFilter,
-    boundary,
-    ppe,
-    updatePPE,
     embed,
     fetchingLists,
     updateList,
@@ -219,7 +171,6 @@ function FilterSidebarSearchTab({
         contributorPopoverAnchorEl,
         setContributorPopoverAnchorEl,
     ] = useState(null);
-    const [ppePopoverAnchorEl, setPpePopoverAnchorEl] = useState(null);
     const [expand, setExpand] = useState(
         checkIfAnyFieldSelected(extendedFields),
     );
@@ -304,38 +255,6 @@ function FilterSidebarSearchTab({
         </div>
     );
 
-    const ppeInfoPopoverContent = (
-        <div style={styles.popover}>
-            <p>
-                Personal protective equipment (PPE) includes masks, gloves,
-                gowns, visors and other equipment.
-            </p>
-        </div>
-    );
-
-    const boundaryButton =
-        boundary == null ? (
-            <Button
-                variant="outlined"
-                onClick={activateDrawFilter}
-                disableRipple
-                color="primary"
-                fullWidth
-            >
-                DRAW AREA
-            </Button>
-        ) : (
-            <Button
-                variant="outlined"
-                onClick={clearDrawFilter}
-                disableRipple
-                color="primary"
-                fullWidth
-            >
-                REMOVE AREA
-            </Button>
-        );
-
     const expandButton = expand ? (
         <Button
             variant="outlined"
@@ -412,12 +331,20 @@ function FilterSidebarSearchTab({
         <div
             className={`control-panel__content ${classes.controlPanelContentStyles}`}
         >
-            <div style={{ marginBottom: '60px' }}>
+            <div
+                style={{
+                    marginBottom: '60px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                }}
+            >
                 <div className="form__field" style={{ marginBottom: '10px' }}>
-                    <div className={classes.inputLabelStyle}>
+                    <div className={classes.headerStyle}>
                         Search the Open Apparel Registry
-                        <div className={classes.helpSubheadStyle}>
+                        <div>
                             <a
+                                className={classes.helpSubheadStyle}
                                 target="blank"
                                 href="https://info.openapparel.org/stories-resources/how-to-search-the-open-apparel-registry"
                             >
@@ -426,14 +353,7 @@ function FilterSidebarSearchTab({
                         </div>
                     </div>
                     <InputLabel htmlFor={FACILITIES} className="form__label">
-                        <FeatureFlag
-                            flag="ppe"
-                            alternative={
-                                embed ? textSearchLabel : DEFAULT_SEARCH_TEXT
-                            }
-                        >
-                            Facility Name, OAR ID, or PPE Product Type
-                        </FeatureFlag>
+                        {embed ? textSearchLabel : DEFAULT_SEARCH_TEXT}
                     </InputLabel>
                     <TextField
                         id={FACILITIES}
@@ -444,53 +364,6 @@ function FilterSidebarSearchTab({
                         onKeyPress={submitFormOnEnterKeyPress}
                     />
                 </div>
-                <FeatureFlag flag="ppe">
-                    <div
-                        className="form__field"
-                        style={{ marginBottom: '16px' }}
-                    >
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={!!ppe}
-                                    onChange={updatePPE}
-                                    color="primary"
-                                    value={ppe}
-                                />
-                            }
-                            label="Show only PPE facilities"
-                            style={{ marginRight: '8px' }}
-                        />
-                        <IconButton
-                            onClick={
-                                // eslint-disable-next-line no-confusing-arrow
-                                e =>
-                                    ppePopoverAnchorEl
-                                        ? null
-                                        : setPpePopoverAnchorEl(e.currentTarget)
-                            }
-                            style={{ padding: '4px', color: 'rgba(0,0,0,0.3)' }}
-                        >
-                            <InfoIcon />
-                        </IconButton>
-                        <Popover
-                            id="ppe-info-popover"
-                            anchorOrigin={{
-                                vertical: 'center',
-                                horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                                vertical: 'center',
-                                horizontal: 'left',
-                            }}
-                            open={!!ppePopoverAnchorEl}
-                            anchorEl={ppePopoverAnchorEl}
-                            onClick={() => setPpePopoverAnchorEl(null)}
-                        >
-                            {ppeInfoPopoverContent}
-                        </Popover>
-                    </div>
-                </FeatureFlag>
                 <div className="form__field">
                     <ShowOnly when={!embed}>
                         <InputLabel
@@ -614,157 +487,14 @@ function FilterSidebarSearchTab({
                         disabled={fetchingOptions || fetchingFacilities}
                     />
                 </div>
-                <ShowOnly when={expand}>
-                    <div className="form__field">
-                        <ShowOnly when={!embed}>
-                            <InputLabel
-                                shrink={false}
-                                htmlFor={CONTRIBUTOR_TYPES}
-                                className={classes.inputLabelStyle}
-                            >
-                                Contributor Type
-                            </InputLabel>
-                            <ReactSelect
-                                isMulti
-                                id={CONTRIBUTOR_TYPES}
-                                name="contributorTypes"
-                                className={`basic-multi-select notranslate ${classes.selectStyle}`}
-                                classNamePrefix="select"
-                                options={contributorTypeOptions}
-                                value={contributorTypes}
-                                onChange={updateContributorType}
-                                disabled={fetchingOptions || fetchingFacilities}
-                            />
-                        </ShowOnly>
-                    </div>
-                    <div className="form__field">
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={CONTRIBUTORS}
-                            className={classes.inputLabelStyle}
-                        >
-                            Area
-                        </InputLabel>
-                        {boundaryButton}
-                    </div>
-                    <div className="form__field">
-                        <Divider />
-                        <div
-                            className="form__info"
-                            style={{ color: 'rgba(0, 0, 0, 0.8)' }}
-                        >
-                            The following filters are new to the OAR and may not
-                            return complete results until we have more data
-                        </div>
-                    </div>
-                    <div className="form__field">
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={PARENT_COMPANY}
-                            className={classes.inputLabelStyle}
-                        >
-                            Parent Company
-                        </InputLabel>
-                        <Creatable
-                            isMulti
-                            id={PARENT_COMPANY}
-                            name={PARENT_COMPANY}
-                            className={`basic-multi-select ${classes.selectStyle}`}
-                            classNamePrefix="select"
-                            options={contributorOptions}
-                            value={parentCompany}
-                            onChange={updateParentCompany}
-                            disabled={fetchingOptions || fetchingFacilities}
-                        />
-                    </div>
-                    <div className="form__field">
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={FACILITY_TYPE}
-                            className={classes.inputLabelStyle}
-                        >
-                            Facility Type
-                        </InputLabel>
-                        <ReactSelect
-                            isMulti
-                            id={FACILITY_TYPE}
-                            name={FACILITY_TYPE}
-                            className={`basic-multi-select ${classes.selectStyle}`}
-                            classNamePrefix="select"
-                            options={mapFacilityTypeOptions(
-                                facilityProcessingTypeOptions,
-                                processingType,
-                            )}
-                            value={facilityType}
-                            onChange={updateFacilityType}
-                            disabled={fetchingOptions || fetchingFacilities}
-                        />
-                    </div>
-                    <div className="form__field">
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={PROCESSING_TYPE}
-                            className={classes.inputLabelStyle}
-                        >
-                            Processing Type
-                        </InputLabel>
-                        <ReactSelect
-                            isMulti
-                            id={PROCESSING_TYPE}
-                            name={PROCESSING_TYPE}
-                            className={`basic-multi-select ${classes.selectStyle}`}
-                            classNamePrefix="select"
-                            options={mapProcessingTypeOptions(
-                                facilityProcessingTypeOptions,
-                                facilityType,
-                            )}
-                            value={processingType}
-                            onChange={updateProcessingType}
-                            disabled={fetchingOptions || fetchingFacilities}
-                        />
-                    </div>
-                    <div className="form__field">
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={PRODUCT_TYPE}
-                            className={classes.inputLabelStyle}
-                        >
-                            Product Type
-                        </InputLabel>
-                        <Creatable
-                            isMulti
-                            id={PRODUCT_TYPE}
-                            name={PRODUCT_TYPE}
-                            className={`basic-multi-select ${classes.selectStyle}`}
-                            classNamePrefix="select"
-                            options={productTypeOptions}
-                            value={productType}
-                            onChange={updateProductType}
-                            disabled={fetchingOptions || fetchingFacilities}
-                        />
-                    </div>
-                    <div className="form__field">
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={NUMBER_OF_WORKERS}
-                            className={classes.inputLabelStyle}
-                        >
-                            Number of Workers
-                        </InputLabel>
-                        <ReactSelect
-                            isMulti
-                            id={NUMBER_OF_WORKERS}
-                            name={NUMBER_OF_WORKERS}
-                            className={`basic-multi-select ${classes.selectStyle}`}
-                            classNamePrefix="select"
-                            options={numberOfWorkersOptions}
-                            value={numberOfWorkers}
-                            onChange={updateNumberOfWorkers}
-                            disabled={fetchingOptions || fetchingFacilities}
-                        />
-                    </div>
-                </ShowOnly>
-                <div className="form__action">{searchResetButtonGroup()}</div>
+                <FeatureFlag flag={EXTENDED_PROFILE_FLAG}>
+                    <ShowOnly when={expand}>
+                        <FilterSidebarExtendedSearch />
+                    </ShowOnly>
+                </FeatureFlag>
+                <div className="form__action" style={{ marginBottom: '40px' }}>
+                    {searchResetButtonGroup()}
+                </div>
                 <div className="form__field">
                     {expandButton}
                     <ShowOnly when={!expand}>
@@ -772,7 +502,7 @@ function FilterSidebarSearchTab({
                             Contributor type · Parent company · Facility type ·
                             Processing type · Product type · Number of workers{' '}
                             <Tooltip
-                                title="These fields were added to the OAR in March 2022. As more data is contributed, more results will become available."
+                                title={EXTENDED_FIELDS_EXPLANATORY_TEXT}
                                 classes={{ tooltip: classes.tooltip }}
                             >
                                 <i
@@ -782,10 +512,13 @@ function FilterSidebarSearchTab({
                         </div>
                     </ShowOnly>
                 </div>
-                <div className="form__report">
+                <div
+                    className="form__report"
+                    style={{ flex: 1, alignItems: 'flex-end', display: 'flex' }}
+                >
                     {!embed ? (
                         <a
-                            className="control-link inherit-font"
+                            className={`${classes.helpSubheadStyle} control-link inherit-font`}
                             href="mailto:info@openapparel.org?subject=Reporting an issue"
                         >
                             Have a suggestion? Let us know!
@@ -804,18 +537,11 @@ FilterSidebarSearchTab.defaultProps = {
 
 FilterSidebarSearchTab.propTypes = {
     contributorOptions: contributorOptionsPropType.isRequired,
-    contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
     countryOptions: countryOptionsPropType.isRequired,
-    facilityProcessingTypeOptions:
-        facilityProcessingTypeOptionsPropType.isRequired,
-    productTypeOptions: productTypeOptionsPropType.isRequired,
-    numberOfWorkersOptions: numberOfWorkerOptionsPropType.isRequired,
     resetFilters: func.isRequired,
     updateFacilityFreeTextQuery: func.isRequired,
     updateContributor: func.isRequired,
-    updateContributorType: func.isRequired,
     updateCountry: func.isRequired,
-    updatePPE: func.isRequired,
     updateCombineContributors: func.isRequired,
     facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
@@ -827,7 +553,6 @@ FilterSidebarSearchTab.propTypes = {
     productType: productTypeOptionsPropType.isRequired,
     numberOfWorkers: numberOfWorkerOptionsPropType.isRequired,
     combineContributors: string.isRequired,
-    ppe: string.isRequired,
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
     facilities: facilityCollectionPropType,
@@ -842,23 +567,7 @@ function mapStateToProps({
             fetching: fetchingContributors,
         },
         lists: { data: listOptions, fetching: fetchingLists },
-        contributorTypes: {
-            data: contributorTypeOptions,
-            fetching: fetchingContributorTypes,
-        },
         countries: { data: countryOptions, fetching: fetchingCountries },
-        facilityProcessingType: {
-            data: facilityProcessingTypeOptions,
-            fetching: fetchingFacilityProcessingType,
-        },
-        productType: {
-            data: productTypeOptions,
-            fetching: fetchingProductType,
-        },
-        numberOfWorkers: {
-            data: numberOfWorkersOptions,
-            fetching: fetchingNumberofWorkers,
-        },
     },
     filters: {
         facilityFreeTextQuery,
@@ -874,7 +583,6 @@ function mapStateToProps({
         nativeLanguageName,
         combineContributors,
         boundary,
-        ppe,
     },
     facilities: {
         facilities: { data: facilities, fetching: fetchingFacilities },
@@ -892,11 +600,7 @@ function mapStateToProps({
         vectorTileFlagIsActive,
         contributorOptions,
         listOptions,
-        contributorTypeOptions,
         countryOptions,
-        facilityProcessingTypeOptions,
-        productTypeOptions,
-        numberOfWorkersOptions,
         facilityFreeTextQuery,
         contributors,
         lists,
@@ -912,14 +616,7 @@ function mapStateToProps({
         fetchingFacilities,
         facilities,
         boundary,
-        ppe,
-        fetchingOptions:
-            fetchingContributors ||
-            fetchingContributorTypes ||
-            fetchingCountries ||
-            fetchingFacilityProcessingType ||
-            fetchingProductType ||
-            fetchingNumberofWorkers,
+        fetchingOptions: fetchingContributors || fetchingCountries,
         embed: !!embed,
         fetchingLists,
         textSearchLabel: config.text_search_label,
@@ -946,8 +643,6 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         updateNumberOfWorkers: v => dispatch(updateNumberofWorkersFilter(v)),
         updateNativeLanguageName: e =>
             dispatch(updateNativeLanguageNameFilter(getValueFromEvent(e))),
-        updatePPE: e =>
-            dispatch(updatePPEFilter(e.target.checked ? 'true' : '')),
         updateCombineContributors: e =>
             dispatch(
                 updateCombineContributorsFilterOption(
@@ -970,12 +665,6 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(() =>
             dispatch(fetchFacilities(push)),
         ),
-        activateDrawFilter: () => dispatch(showDrawFilter(true)),
-        clearDrawFilter: () => {
-            dispatch(showDrawFilter(false));
-            dispatch(updateBoundaryFilter(null));
-            return dispatch(fetchFacilities({}));
-        },
     };
 }
 

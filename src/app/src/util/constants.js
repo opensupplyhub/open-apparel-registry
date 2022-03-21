@@ -303,16 +303,11 @@ export const contributeFormFields = Object.freeze([
 export const contributeReplacesNoneSelectionID = -1;
 
 export const filterSidebarTabsEnum = Object.freeze({
-    guide: 'guide',
     search: 'search',
     facilities: 'facilities',
 });
 
 export const filterSidebarTabs = Object.freeze([
-    Object.freeze({
-        tab: filterSidebarTabsEnum.guide,
-        label: 'Guide',
-    }),
     Object.freeze({
         tab: filterSidebarTabsEnum.facilities,
         label: 'Facilities',
@@ -738,14 +733,8 @@ export const EXTENDED_FIELD_TYPES = [
     {
         label: 'Facility Type',
         fieldName: 'facility_type',
-        formatValue: v => {
-            const rawValues = Array.isArray(v.raw_values)
-                ? v.raw_values
-                : v.raw_values.toString().split('|');
-            return v.matched_values.map((val, i) =>
-                val[2] !== null ? val[2] : rawValues[i],
-            );
-        },
+        formatValue: v =>
+            v.matched_values.map(val => val[2]).filter(val => val),
     },
     {
         label: 'Product Type',
@@ -925,3 +914,6 @@ export const SILVER_MAP_STYLE = [
         ],
     },
 ];
+
+export const EXTENDED_FIELDS_EXPLANATORY_TEXT =
+    'These fields were added to the OAR in March 2022. As more data is contributed, more results will become available.';

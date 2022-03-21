@@ -125,7 +125,6 @@ export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
 export const makeGetFacilitiesTypeProcessingTypeURL = () =>
     '/api/facility-processing-types/';
-export const makeGetProductTypeURL = () => '/api/product-types/';
 export const makeGetNumberOfWorkersURL = () => '/api/workers-ranges/';
 export const makeGetNativeLanguageName = () => '/api/native_language_name/';
 
@@ -220,6 +219,7 @@ export const createQueryStringFromSearchFilters = (
         ppe = '',
     },
     withEmbed,
+    detail,
 ) => {
     const inputForQueryString = Object.freeze({
         q: facilityFreeTextQuery,
@@ -245,6 +245,7 @@ export const createQueryStringFromSearchFilters = (
         boundary: isEmpty(boundary) ? '' : JSON.stringify(boundary),
         ppe,
         embed: !withEmbed ? '' : '1',
+        detail: detail ? 'true' : undefined,
     });
 
     return querystring.stringify(omitBy(inputForQueryString, isEmpty));

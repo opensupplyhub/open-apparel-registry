@@ -87,7 +87,6 @@ export function submitClaimedFacilityDetailsUpdate(claimID) {
                 'facility_types',
                 'affiliation_choices',
                 'certification_choices',
-                'product_type_choices',
                 'production_type_choices',
             ]),
             {

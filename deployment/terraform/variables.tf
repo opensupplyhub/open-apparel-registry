@@ -160,6 +160,10 @@ variable "rds_cpu_credit_balance_threshold" {
   default = "30"
 }
 
+variable "rds_work_mem" {
+  default = "20000"
+}
+
 variable "app_ecs_desired_count" {
   default = "1"
 }

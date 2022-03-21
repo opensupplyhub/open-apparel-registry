@@ -44,7 +44,6 @@ from api.processing import get_country_code
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
-from api.extended_fields import get_product_types
 from api.facility_type_processing_type import (
     ALL_FACILITY_TYPE_CHOICES,
     ALL_PROCESSING_TYPE_CHOICES
@@ -477,6 +476,7 @@ class FacilityQueryParamsSerializer(Serializer):
     pageSize = IntegerField(required=False)
     boundary = CharField(required=False)
     ppe = BooleanField(default=False, required=False)
+    detail = BooleanField(default=False, required=False)
 
 
 class FacilityListQueryParamsSerializer(Serializer):
@@ -563,6 +563,14 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                   'ppe_contact_email', 'ppe_website', 'is_closed',
                   'contributor_fields', 'extended_fields')
         geo_field = 'location'
+
+    def __init__(self, *args, **kwargs):
+        exclude_fields = kwargs.pop('exclude_fields', None)
+        super(FacilitySerializer, self).__init__(*args, **kwargs)
+
+        if exclude_fields:
+            for field_name in exclude_fields:
+                self.fields.pop(field_name, None)
 
     # Added to ensure including the OAR ID in the geojson properties map
     def get_oar_id(self, facility):
@@ -1119,7 +1127,6 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
     facility_parent_company = SerializerMethodField()
     affiliation_choices = SerializerMethodField()
     certification_choices = SerializerMethodField()
-    product_type_choices = SerializerMethodField()
     production_type_choices = SerializerMethodField()
 
     class Meta:
@@ -1142,7 +1149,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'affiliation_choices', 'certification_choices',
                   'facility_affiliations', 'facility_certifications',
                   'facility_product_types', 'facility_production_types',
-                  'product_type_choices', 'production_type_choices')
+                  'production_type_choices')
 
     def get_facility(self, claim):
         return FacilityDetailsSerializer(
@@ -1169,13 +1176,6 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
 
     def get_certification_choices(self, claim):
         return FacilityClaim.CERTIFICATION_CHOICES
-
-    def get_product_type_choices(self, claim):
-        return [
-            (choice, choice)
-            for choice
-            in get_product_types()
-        ]
 
     def get_production_type_choices(self, claim):
         return ALL_PROCESSING_TYPE_CHOICES
@@ -1482,10 +1482,6 @@ class ExtendedFieldListSerializer(ModelSerializer):
                   'is_from_claim', 'field_name', 'verified_count')
 
     def should_display_contributor(self, instance):
-        embed_mode_active = self.context.get("embed_mode_active")
-        if embed_mode_active:
-            return None
-
         user_can_see_detail = self.context.get("user_can_see_detail")
 
         should_display_association = True
@@ -1499,10 +1495,16 @@ class ExtendedFieldListSerializer(ModelSerializer):
         return should_display_association and user_can_see_detail
 
     def get_contributor_name(self, instance):
+        embed_mode_active = self.context.get("embed_mode_active")
+        if embed_mode_active:
+            return None
         return get_contributor_name(instance.contributor,
                                     self.should_display_contributor(instance))
 
     def get_contributor_id(self, instance):
+        embed_mode_active = self.context.get("embed_mode_active")
+        if embed_mode_active:
+            return None
         return get_contributor_id(instance.contributor,
                                   self.should_display_contributor(instance))
 

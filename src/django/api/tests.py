@@ -4593,10 +4593,6 @@ class FacilityClaimSerializerTests(TestCase):
     def test_product_and_production_options_are_serialized(self):
         data = ApprovedFacilityClaimSerializer(self.claim).data
 
-        self.assertIn('product_type_choices', data)
-        self.assertIsNotNone(data['product_type_choices'])
-        self.assertNotEqual([], data['product_type_choices'])
-
         self.assertIn('production_type_choices', data)
         self.assertIsNotNone(data['production_type_choices'])
         self.assertNotEqual([], data['production_type_choices'])
@@ -6925,7 +6921,7 @@ class ContributorTypesTest(FacilityAPITestCaseBase):
         response = self.get_contributor_types()
         data = json.loads(response.content)
         for (id, label) in data:
-            self.assertEqual(f'{id} [0]', label)
+            self.assertEqual(id, label)
 
     def test_all_types_are_returned(self):
         response = self.get_contributor_types()

@@ -58,6 +58,11 @@ resource "aws_db_parameter_group" "default" {
     value = "${var.rds_log_autovacuum_min_duration}"
   }
 
+  parameter {
+    name  = "work_mem"
+    value = "${var.rds_work_mem}"
+  }
+
   tags {
     Name        = "dbpgDatabaseServer"
     Project     = "${var.project}"

@@ -16,7 +16,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import get from 'lodash/get';
 import InfiniteAnyHeight from 'react-infinite-any-height';
+import noop from 'lodash/noop';
 
+import CopySearch from './CopySearch';
 import FeatureFlag from './FeatureFlag';
 import DownloadFacilitiesButton from './DownloadFacilitiesButton';
 
@@ -60,6 +62,7 @@ const facilitiesTabStyles = Object.freeze({
         display: 'flex',
         alignItems: 'center',
         padding: '6px 1rem',
+        justifyContent: 'space-around',
     }),
     listHeaderButtonStyles: Object.freeze({
         height: '45px',
@@ -210,6 +213,15 @@ function FilterSidebarFacilitiesTab({
                             }
                         />
                     )}
+                    <CopySearch>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={noop}
+                        >
+                            Copy Link
+                        </Button>
+                    </CopySearch>
                 </div>
             </Typography>
         </div>
@@ -239,7 +251,11 @@ function FilterSidebarFacilitiesTab({
                         containerHeight={resultListHeight}
                         infiniteLoadBeginEdgeOffset={100}
                         isInfiniteLoading={fetching || isInfiniteLoading}
-                        onInfiniteLoad={fetchNextPage}
+                        onInfiniteLoad={() => {
+                            if (!downloadingCSV) {
+                                fetchNextPage();
+                            }
+                        }}
                         loadingSpinnerDelegate={loadingElement}
                         list={facilities.map(
                             ({
