@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Exclude details from facility list API by defaut [#1739](https://github.com/open-apparel-registry/open-apparel-registry/pull/1739)
 - Minor UX changes [#1745](https://github.com/open-apparel-registry/open-apparel-registry/pull/1745)
 - Increase database work_mem to 20MB [#1744](https://github.com/open-apparel-registry/open-apparel-registry/pull/1744)
+- Swap copy between My Lists and Individual List page [#1756](https://github.com/open-apparel-registry/open-apparel-registry/pull/1756)
 
 ### Deprecated
 
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Hide contributor details in embed downloads [#1742](https://github.com/open-apparel-registry/open-apparel-registry/pull/1742)
+- Wrap long filenames in My Lists page [#1756](https://github.com/open-apparel-registry/open-apparel-registry/pull/1756)
 
 ### Security
 

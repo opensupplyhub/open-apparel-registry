@@ -26,6 +26,9 @@ const facilityListsTableStyles = Object.freeze({
     activeCellStyles: Object.freeze({
         borderColor: '#d1e1e9',
     }),
+    wrappedTextStyle: Object.freeze({
+        overflowWrap: 'anywhere',
+    }),
 });
 
 function FacilityListsTable({ facilityLists, history: { push } }) {
@@ -75,8 +78,11 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                     colSpan={2}
                                     style={
                                         list.is_active
-                                            ? facilityListsTableStyles.activeCellStyles
-                                            : null
+                                            ? {
+                                                  ...facilityListsTableStyles.wrappedTextStyle,
+                                                  ...facilityListsTableStyles.activeCellStyles,
+                                              }
+                                            : facilityListsTableStyles.wrappedTextStyle
                                     }
                                 >
                                     {list.name}
@@ -95,8 +101,11 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                     colSpan={2}
                                     style={
                                         list.is_active
-                                            ? facilityListsTableStyles.activeCellStyles
-                                            : null
+                                            ? {
+                                                  ...facilityListsTableStyles.wrappedTextStyle,
+                                                  ...facilityListsTableStyles.activeCellStyles,
+                                              }
+                                            : facilityListsTableStyles.wrappedTextStyle
                                     }
                                 >
                                     {list.file_name}
