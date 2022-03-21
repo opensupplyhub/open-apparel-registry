@@ -11,14 +11,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [63] - 2022-03-21
+
+### Changed
+
 - Delay loading search field dropdown data [#1731](https://github.com/open-apparel-registry/open-apparel-registry/pull/1731)
 - Exclude details from facility list API by defaut [#1739](https://github.com/open-apparel-registry/open-apparel-registry/pull/1739)
 - Minor UX changes [#1745](https://github.com/open-apparel-registry/open-apparel-registry/pull/1745)
 - Increase database work_mem to 20MB [#1744](https://github.com/open-apparel-registry/open-apparel-registry/pull/1744)
 - Swap copy between My Lists and Individual List page [#1756](https://github.com/open-apparel-registry/open-apparel-registry/pull/1756)
 - Hide raw facility_type values [#1758](https://github.com/open-apparel-registry/open-apparel-registry/pull/1758)
-
-### Deprecated
 
 ### Removed
 
@@ -32,8 +42,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Wrap long filenames in My Lists page [#1756](https://github.com/open-apparel-registry/open-apparel-registry/pull/1756)
 - Fix handling of numeric custom fields [#1757](https://github.com/open-apparel-registry/open-apparel-registry/pull/1757)
 - Filter out invalid facility_types [#1759](https://github.com/open-apparel-registry/open-apparel-registry/pull/1759)
-
-### Security
 
 ## [62] - 2022-03-18
 
@@ -1139,7 +1147,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/62...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/63...HEAD
+[63]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/63
 [62]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/62
 [61]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/61
 [60]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/60
