@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Hide contributor details in embed downloads [#1742](https://github.com/open-apparel-registry/open-apparel-registry/pull/1742)
 - Wrap long filenames in My Lists page [#1756](https://github.com/open-apparel-registry/open-apparel-registry/pull/1756)
 - Fix handling of numeric custom fields [#1757](https://github.com/open-apparel-registry/open-apparel-registry/pull/1757)
+- Filter out invalid facility_types [#1759](https://github.com/open-apparel-registry/open-apparel-registry/pull/1759)
 
 ### Security
 
