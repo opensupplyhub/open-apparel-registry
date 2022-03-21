@@ -733,14 +733,8 @@ export const EXTENDED_FIELD_TYPES = [
     {
         label: 'Facility Type',
         fieldName: 'facility_type',
-        formatValue: v => {
-            const rawValues = Array.isArray(v.raw_values)
-                ? v.raw_values
-                : v.raw_values.toString().split('|');
-            return v.matched_values.map((val, i) =>
-                val[2] !== null ? val[2] : rawValues[i],
-            );
-        },
+        formatValue: v =>
+            v.matched_values.map(val => val[2]).filter(val => val),
     },
     {
         label: 'Product Type',
