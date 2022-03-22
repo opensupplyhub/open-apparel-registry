@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Reduce pageSize when downloading to 10 [#1763](https://github.com/open-apparel-registry/open-apparel-registry/pull/1763)
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [64] - 2022-03-22
+
+### Changed
+
+- Reduce pageSize when downloading to 10 [#1763](https://github.com/open-apparel-registry/open-apparel-registry/pull/1763)
 
 ## [63] - 2022-03-21
 
@@ -1149,7 +1153,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/63...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/64...HEAD
+[64]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/64
 [63]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/63
 [62]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/62
 [61]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/61
