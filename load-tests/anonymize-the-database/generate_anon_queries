@@ -72,4 +72,10 @@ email = '$fake_email' \
 WHERE user_id = '$user_id';"
 done
 
+echo "UPDATE api_facilitylistitem SET ppe_contact_email = NULL;"
+
+echo "UPDATE api_facility SET ppe_contact_email = NULL;"
+
+echo "UPDATE api_facilityclaim SET email = 'anonymous@example.com';"
+
 close_fake_context
