@@ -58,7 +58,7 @@ fake_uuid4() {
 
 establish_fake_context
 
-for user_id in $(run_query openapparelregistry 'select id from "api_user"'); do
+for user_id in $(run_query openapparelregistry "select id from \"api_user\" where email not like '%@azavea.com' and email not like '%@openapparel.org'"); do
     fake_email="${RANDOM}$(fake mail)"
     echo "\
 UPDATE \"api_user\" \
