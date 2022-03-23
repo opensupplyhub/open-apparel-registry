@@ -13,7 +13,7 @@ import {
     failLogDownload,
 } from '../actions/logDownload';
 import { fetchFacilities } from '../actions/facilities';
-import { FACILITIES_REQUEST_PAGE_SIZE } from '../util/constants';
+import { FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE } from '../util/constants';
 
 const downloadFacilitiesStyles = Object.freeze({
     listHeaderButtonStyles: Object.freeze({
@@ -48,7 +48,7 @@ function DownloadFacilitiesButton({
         dispatch(startLogDownload());
         dispatch(
             fetchFacilities({
-                pageSize: FACILITIES_REQUEST_PAGE_SIZE,
+                pageSize: FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE,
                 detail: true,
                 onSuccess: () => dispatch(logDownload(format, { isEmbedded })),
                 onFailure: () => dispatch(failLogDownload()),
