@@ -24,9 +24,14 @@ har.log.entries.forEach((entry) => {
     const cacheKey = crypto
         .sha1(entry.request.url.match(pattern)[5], "hex")
         .slice(0, 8);
+    // Including the __VU in the cache key should generate a worse situation
+    // than typical. Each batch of requests is made by a separate VU and when
+    // VU_MULTIPLIER is larger than 1, we repeat the same batch of requests a
+    // number of times equal to VU_MULTIPLIER. Using __VU in the cache key means
+    // subsequent requests for the same batch will not hit the cache.
     const url = entry.request.url.replace(
         pattern,
-        `${cacheKey}${__ENV.CACHE_KEY_SUFFIX}/$2/$3/$4.pbf?$5`
+        `${cacheKey}-vu-${__VU}-${__ENV.CACHE_KEY_SUFFIX}/$2/$3/$4.pbf?$5`
     );
 
     const referer = entry.request.headers.find(
