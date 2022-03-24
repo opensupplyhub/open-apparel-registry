@@ -75,6 +75,6 @@ To invoke an instance of the load test streaming output to the k6 Cloud:
 ```console
 $ export K6_CLOUD_TOKEN=...
 $ docker-compose \
-    -f docker-compose.k6.yml \
-    run --rm k6 run -o cloud scripts/zoom_rio_de_janerio_with_contributor_filter.js
+    -f docker-compose.yml \
+    run --rm k6 run -o cloud /scripts/zoom_rio_de_janerio_with_contributor_filter.js
 ```
