@@ -5,6 +5,7 @@ services:
     environment:
       - K6_CLOUD_TOKEN
       - CACHE_KEY_SUFFIX
+      - CLIENT_KEY
       - VU_MULTIPLIER
       - FILTERS
     volumes:
