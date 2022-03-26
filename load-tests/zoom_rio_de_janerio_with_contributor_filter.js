@@ -12,6 +12,8 @@ const requests = {};
 // <cachekey>/<int:z>/<int:x>/<int:y>.pbf?<filters>
 const pattern = new RegExp(/(.{8})\/(\d+)\/(\d+)\/(\d+)\.pbf\?(.+)/);
 
+const FILTERS = __ENV.FILTERS || '$5';
+
 har.log.entries.forEach((entry) => {
     const startedDateTime = new Date(entry.startedDateTime);
     startedDateTime.setMilliseconds(0);
@@ -31,7 +33,7 @@ har.log.entries.forEach((entry) => {
     // subsequent requests for the same batch will not hit the cache.
     const url = entry.request.url.replace(
         pattern,
-        `${cacheKey}-vu-${__VU}-${__ENV.CACHE_KEY_SUFFIX}/$2/$3/$4.pbf?$5`
+        `${cacheKey}-vu-${__VU}-${__ENV.CACHE_KEY_SUFFIX}/$2/$3/$4.pbf?${FILTERS}`
     );
 
     const referer = entry.request.headers.find(
