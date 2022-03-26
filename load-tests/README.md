@@ -9,10 +9,12 @@ components necessary to execute a load test are encapsulated in this directory.
 - `K6_CLOUD_TOKEN`: An Auth Token for interacting with the k6 Cloud (optional)
 - `CACHE_KEY_SUFFIX`: A suffix to append in the path to ensure tile requests miss the cache (optional)
 - `VU_MULTIPLER`: An integer number of parallel executions of each batch of requests
+- `CLIENT_KEY`: For load tests that fetch data from the API this must be set to a string that is the same as the value in the staging app service environmant
+- `FILTERS`: For the tile and facility download load tests this may be set to a string formatted like the query string filter arguments passed to the facilities api (e.g. contributors=1&&countries=CN)
 
 ## Running
 
-Below is an example of how to invoke an instance of the load test with Docker
+Below is an example of how to invoke an instance of the tile request load test with Docker
 Compose:
 
 ```console
@@ -60,8 +62,8 @@ default ✓ [======================================] 10 VUs  01m38.9s/10m0s  10/
 ERRO[0101] some thresholds have failed
 ```
 
-To invoke an instance of the load test running with 10 times the number of
-parallel requests and a random cache key suffix to avoid CloudFront
+To invoke an instance of the tile request load test running with 10 times the
+number of parallel requests and a random cache key suffix to avoid CloudFront
 
 ```console
 VU_MULTIPLIER=10 \
@@ -70,11 +72,27 @@ docker-compose -f docker-compose.yml run --rm \
   k6 run /scripts/zoom_rio_de_janerio_with_contributor_filter.js
 ```
 
-To invoke an instance of the load test streaming output to the k6 Cloud:
+To invoke an instance of the tile request load test streaming output to the k6 Cloud:
 
 ```console
 $ export K6_CLOUD_TOKEN=...
 $ docker-compose \
     -f docker-compose.yml \
     run --rm k6 run -o cloud /scripts/zoom_rio_de_janerio_with_contributor_filter.js
+```
+
+To invoke the homepage load test with 10 concurrent virtual users each running the test 10 times
+
+```console
+$ CLIENT_KEY=... \
+docker-compose -f docker-compose.yml \
+  run --rm k6 run -u 10 -i 100 /scripts/browse_homepage.js
+```
+
+To invoke the facility download load test with a custom filter
+
+```console
+$ CLIENT_KEY=... FILTERS="contributors=699" \
+docker-compose -f docker-compose.yml \
+  run --rm k6 run  /scripts/download_facilities.js
 ```
