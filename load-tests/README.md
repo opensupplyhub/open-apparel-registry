@@ -11,6 +11,7 @@ components necessary to execute a load test are encapsulated in this directory.
 - `VU_MULTIPLER`: An integer number of parallel executions of each batch of requests
 - `CLIENT_KEY`: For load tests that fetch data from the API this must be set to a string that is the same as the value in the staging app service environmant
 - `FILTERS`: For the tile and facility download load tests this may be set to a string formatted like the query string filter arguments passed to the facilities api (e.g. contributors=1&&countries=CN)
+- `TOKEN`: For load tests that POST data the string API token to be included with the POST.
 
 ## Running
 
@@ -95,4 +96,13 @@ To invoke the facility download load test with a custom filter
 $ CLIENT_KEY=... FILTERS="contributors=699" \
 docker-compose -f docker-compose.yml \
   run --rm k6 run  /scripts/download_facilities.js
+```
+
+To invoke the facility creation load test simulating 5 contributors POSTing 1000
+random facilities each
+
+```console
+$ TOKEN=... \
+docker-compose -f docker-compose.yml \
+  run --rm k6 run -u 5 -i 5000  /scripts/post_facility.js
 ```

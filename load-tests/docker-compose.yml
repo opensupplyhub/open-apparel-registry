@@ -8,6 +8,7 @@ services:
       - CLIENT_KEY
       - VU_MULTIPLIER
       - FILTERS
+      - TOKEN
     volumes:
       - ./:/scripts/
     command: run /scripts/zoom_rio_de_janerio_with_contributor_filter.js
