@@ -162,8 +162,8 @@ function FilterSidebarExtendedSearch({
 
     return (
         <>
-            <div className="form__field">
-                <ShowOnly when={!embed}>
+            <ShowOnly when={!embed}>
+                <div className="form__field">
                     <InputLabel
                         shrink={false}
                         htmlFor={CONTRIBUTOR_TYPES}
@@ -182,8 +182,8 @@ function FilterSidebarExtendedSearch({
                         onChange={updateContributorType}
                         disabled={fetchingExtendedOptions || fetchingFacilities}
                     />
-                </ShowOnly>
-            </div>
+                </div>
+            </ShowOnly>
             <div className="form__field">
                 <Divider />
                 <div
@@ -193,112 +193,162 @@ function FilterSidebarExtendedSearch({
                     {EXTENDED_FIELDS_EXPLANATORY_TEXT}
                 </div>
             </div>
-            <div className="form__field">
-                <InputLabel
-                    shrink={false}
-                    htmlFor={PARENT_COMPANY}
-                    className={classes.inputLabelStyle}
-                >
-                    Parent Company
-                </InputLabel>
-                <CreatableInputOnly
-                    isMulti
-                    id={PARENT_COMPANY}
-                    name={PARENT_COMPANY}
-                    className={`basic-multi-select ${classes.selectStyle}`}
-                    classNamePrefix="select"
-                    value={parentCompany}
-                    onChange={updateParentCompany}
-                    disabled={fetchingFacilities}
-                    placeholder="e.g. ABC Textiles Limited"
-                />
-            </div>
-            <div className="form__field">
-                <InputLabel
-                    shrink={false}
-                    htmlFor={FACILITY_TYPE}
-                    className={classes.inputLabelStyle}
-                >
-                    Facility Type
-                </InputLabel>
-                <ReactSelect
-                    isMulti
-                    id={FACILITY_TYPE}
-                    name={FACILITY_TYPE}
-                    className={`basic-multi-select ${classes.selectStyle}`}
-                    classNamePrefix="select"
-                    options={mapFacilityTypeOptions(
-                        facilityProcessingTypeOptions,
-                        processingType,
-                    )}
-                    value={facilityType}
-                    onChange={updateFacilityType}
-                    disabled={fetchingExtendedOptions || fetchingFacilities}
-                />
-            </div>
-            <div className="form__field">
-                <InputLabel
-                    shrink={false}
-                    htmlFor={PROCESSING_TYPE}
-                    className={classes.inputLabelStyle}
-                >
-                    Processing Type
-                </InputLabel>
-                <ReactSelect
-                    isMulti
-                    id={PROCESSING_TYPE}
-                    name={PROCESSING_TYPE}
-                    className={`basic-multi-select ${classes.selectStyle}`}
-                    classNamePrefix="select"
-                    options={mapProcessingTypeOptions(
-                        facilityProcessingTypeOptions,
-                        facilityType,
-                    )}
-                    value={processingType}
-                    onChange={updateProcessingType}
-                    disabled={fetchingExtendedOptions || fetchingFacilities}
-                />
-            </div>
-            <div className="form__field">
-                <InputLabel
-                    shrink={false}
-                    htmlFor={PRODUCT_TYPE}
-                    className={classes.inputLabelStyle}
-                >
-                    Product Type
-                </InputLabel>
-                <CreatableInputOnly
-                    isMulti
-                    id={PRODUCT_TYPE}
-                    name={PRODUCT_TYPE}
-                    className={`basic-multi-select ${classes.selectStyle}`}
-                    classNamePrefix="select"
-                    value={productType}
-                    onChange={updateProductType}
-                    disabled={fetchingFacilities}
-                    placeholder="e.g. Jackets"
-                />
-            </div>
-            <div className="form__field">
-                <InputLabel
-                    shrink={false}
-                    htmlFor={NUMBER_OF_WORKERS}
-                    className={classes.inputLabelStyle}
-                >
-                    Number of Workers
-                </InputLabel>
-                <ReactSelect
-                    isMulti
-                    id={NUMBER_OF_WORKERS}
-                    name={NUMBER_OF_WORKERS}
-                    className={`basic-multi-select ${classes.selectStyle}`}
-                    classNamePrefix="select"
-                    options={numberOfWorkersOptions}
-                    value={numberOfWorkers}
-                    onChange={updateNumberOfWorkers}
-                    disabled={fetchingExtendedOptions || fetchingFacilities}
-                />
-            </div>
+            <ShowOnly
+                when={
+                    !embed ||
+                    isExtendedFieldForThisContributor(
+                        PARENT_COMPANY,
+                        embedExtendedFields,
+                    )
+                }
+            >
+                <div className="form__field">
+                    <InputLabel
+                        shrink={false}
+                        htmlFor={PARENT_COMPANY}
+                        className={classes.inputLabelStyle}
+                    >
+                        Parent Company
+                    </InputLabel>
+                    <CreatableInputOnly
+                        isMulti
+                        id={PARENT_COMPANY}
+                        name={PARENT_COMPANY}
+                        className={`basic-multi-select ${classes.selectStyle}`}
+                        classNamePrefix="select"
+                        value={parentCompany}
+                        onChange={updateParentCompany}
+                        disabled={fetchingFacilities}
+                        placeholder="e.g. ABC Textiles Limited"
+                    />
+                </div>
+            </ShowOnly>
+            <ShowOnly
+                when={
+                    !embed ||
+                    isExtendedFieldForThisContributor(
+                        FACILITY_TYPE,
+                        embedExtendedFields,
+                    )
+                }
+            >
+                <div className="form__field">
+                    <InputLabel
+                        shrink={false}
+                        htmlFor={FACILITY_TYPE}
+                        className={classes.inputLabelStyle}
+                    >
+                        Facility Type
+                    </InputLabel>
+                    <ReactSelect
+                        isMulti
+                        id={FACILITY_TYPE}
+                        name={FACILITY_TYPE}
+                        className={`basic-multi-select ${classes.selectStyle}`}
+                        classNamePrefix="select"
+                        options={mapFacilityTypeOptions(
+                            facilityProcessingTypeOptions,
+                            processingType,
+                        )}
+                        value={facilityType}
+                        onChange={updateFacilityType}
+                        disabled={fetchingExtendedOptions || fetchingFacilities}
+                    />
+                </div>
+            </ShowOnly>
+            <ShowOnly
+                when={
+                    !embed ||
+                    isExtendedFieldForThisContributor(
+                        PROCESSING_TYPE,
+                        embedExtendedFields,
+                    )
+                }
+            >
+                <div className="form__field">
+                    <InputLabel
+                        shrink={false}
+                        htmlFor={PROCESSING_TYPE}
+                        className={classes.inputLabelStyle}
+                    >
+                        Processing Type
+                    </InputLabel>
+                    <ReactSelect
+                        isMulti
+                        id={PROCESSING_TYPE}
+                        name={PROCESSING_TYPE}
+                        className={`basic-multi-select ${classes.selectStyle}`}
+                        classNamePrefix="select"
+                        options={mapProcessingTypeOptions(
+                            facilityProcessingTypeOptions,
+                            facilityType,
+                        )}
+                        value={processingType}
+                        onChange={updateProcessingType}
+                        disabled={fetchingExtendedOptions || fetchingFacilities}
+                    />
+                </div>
+            </ShowOnly>
+            <ShowOnly
+                when={
+                    !embed ||
+                    isExtendedFieldForThisContributor(
+                        PRODUCT_TYPE,
+                        embedExtendedFields,
+                    )
+                }
+            >
+                <div className="form__field">
+                    <InputLabel
+                        shrink={false}
+                        htmlFor={PRODUCT_TYPE}
+                        className={classes.inputLabelStyle}
+                    >
+                        Product Type
+                    </InputLabel>
+                    <CreatableInputOnly
+                        isMulti
+                        id={PRODUCT_TYPE}
+                        name={PRODUCT_TYPE}
+                        className={`basic-multi-select ${classes.selectStyle}`}
+                        classNamePrefix="select"
+                        value={productType}
+                        onChange={updateProductType}
+                        disabled={fetchingFacilities}
+                        placeholder="e.g. Jackets"
+                    />
+                </div>
+            </ShowOnly>
+            <ShowOnly
+                when={
+                    !embed ||
+                    isExtendedFieldForThisContributor(
+                        NUMBER_OF_WORKERS,
+                        embedExtendedFields,
+                    )
+                }
+            >
+                <div className="form__field">
+                    <InputLabel
+                        shrink={false}
+                        htmlFor={NUMBER_OF_WORKERS}
+                        className={classes.inputLabelStyle}
+                    >
+                        Number of Workers
+                    </InputLabel>
+                    <ReactSelect
+                        isMulti
+                        id={NUMBER_OF_WORKERS}
+                        name={NUMBER_OF_WORKERS}
+                        className={`basic-multi-select ${classes.selectStyle}`}
+                        classNamePrefix="select"
+                        options={numberOfWorkersOptions}
+                        value={numberOfWorkers}
+                        onChange={updateNumberOfWorkers}
+                        disabled={fetchingExtendedOptions || fetchingFacilities}
+                    />
+                </div>
+            </ShowOnly>
         </>
     );
 }

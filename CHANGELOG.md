@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Update DB anonymization script [#1769](https://github.com/open-apparel-registry/open-apparel-registry/pull/1769)
 - Update tileer load test script [#1770](https://github.com/open-apparel-registry/open-apparel-registry/pull/1770)
+- Only show contributed extended fields in embed sidebar search [#1794](https://github.com/open-apparel-registry/open-apparel-registry/pull/1794)
 
 ### Deprecated
 
