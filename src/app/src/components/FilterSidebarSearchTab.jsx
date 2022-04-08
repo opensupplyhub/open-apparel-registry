@@ -151,6 +151,7 @@ function FilterSidebarSearchTab({
     lists,
     classes,
     textSearchLabel,
+    embedExtendedFields,
 }) {
     const extendedFields = [
         contributorTypes,
@@ -495,23 +496,26 @@ function FilterSidebarSearchTab({
                 <div className="form__action" style={{ marginBottom: '40px' }}>
                     {searchResetButtonGroup()}
                 </div>
-                <div className="form__field">
-                    {expandButton}
-                    <ShowOnly when={!expand}>
-                        <div className="form__info">
-                            Contributor type · Parent company · Facility type ·
-                            Processing type · Product type · Number of workers{' '}
-                            <Tooltip
-                                title={EXTENDED_FIELDS_EXPLANATORY_TEXT}
-                                classes={{ tooltip: classes.tooltip }}
-                            >
-                                <i
-                                    className={`${classes.icon} fas fa-fw fa-info-circle`}
-                                />
-                            </Tooltip>
-                        </div>
-                    </ShowOnly>
-                </div>
+                <ShowOnly when={!embed || embedExtendedFields.length}>
+                    <div className="form__field">
+                        {expandButton}
+                        <ShowOnly when={!expand}>
+                            <div className="form__info">
+                                Contributor type · Parent company · Facility
+                                type · Processing type · Product type · Number
+                                of workers{' '}
+                                <Tooltip
+                                    title={EXTENDED_FIELDS_EXPLANATORY_TEXT}
+                                    classes={{ tooltip: classes.tooltip }}
+                                >
+                                    <i
+                                        className={`${classes.icon} fas fa-fw fa-info-circle`}
+                                    />
+                                </Tooltip>
+                            </div>
+                        </ShowOnly>
+                    </div>
+                </ShowOnly>
                 <div
                     className="form__report"
                     style={{ flex: 1, alignItems: 'flex-end', display: 'flex' }}
@@ -620,6 +624,7 @@ function mapStateToProps({
         embed: !!embed,
         fetchingLists,
         textSearchLabel: config.text_search_label,
+        embedExtendedFields: config.extended_fields,
     };
 }
 

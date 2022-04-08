@@ -108,6 +108,9 @@ const mapProcessingTypeOptions = (fPTypes, fTypes) => {
     return mapDjangoChoiceTuplesValueToSelectOptions(uniq(pTypes.sort()));
 };
 
+const isExtendedFieldForThisContributor = (field, extendedFields) =>
+    extendedFields.includes(field.toLowerCase());
+
 function FilterSidebarExtendedSearch({
     contributorTypeOptions,
     facilityProcessingTypeOptions,
@@ -127,6 +130,7 @@ function FilterSidebarExtendedSearch({
     fetchingFacilities,
     fetchingExtendedOptions,
     embed,
+    embedExtendedFields,
     classes,
     fetchContributorTypes,
     fetchFacilityProcessingType,
@@ -396,7 +400,7 @@ function mapStateToProps({
     facilities: {
         facilities: { data: facilities, fetching: fetchingFacilities },
     },
-    embeddedMap: { embed },
+    embeddedMap: { embed, config },
 }) {
     return {
         contributorTypeOptions,
@@ -416,6 +420,7 @@ function mapStateToProps({
             fetchingFacilityProcessingType ||
             fetchingNumberofWorkers,
         embed: !!embed,
+        embedExtendedFields: config.extended_fields,
     };
 }
 

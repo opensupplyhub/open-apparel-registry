@@ -1449,7 +1449,8 @@ class EmbedConfigSerializer(ModelSerializer):
         model = EmbedConfig
         fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
                   'embed_fields', 'prefer_contributor_name',
-                  'contributor_name', 'text_search_label', 'map_style', 'extended_fields')
+                  'contributor_name', 'text_search_label', 'map_style',
+                  'extended_fields')
 
     def get_contributor(self, instance):
         try:
@@ -1467,7 +1468,7 @@ class EmbedConfigSerializer(ModelSerializer):
         embed_fields = EmbedField.objects.filter(
                             embed_config=instance).order_by('order')
         return EmbedFieldsSerializer(embed_fields, many=True).data
-    
+
     def get_extended_fields(self, instance):
         try:
             extended_fields = ExtendedField.objects \
@@ -1476,6 +1477,7 @@ class EmbedConfigSerializer(ModelSerializer):
             return extended_fields
         except Contributor.DoesNotExist:
             return []
+
 
 class ExtendedFieldListSerializer(ModelSerializer):
     contributor_name = SerializerMethodField()
