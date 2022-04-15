@@ -499,7 +499,7 @@ function FilterSidebarSearchTab({
                 <ShowOnly when={!embed || embedExtendedFields.length}>
                     <div className="form__field">
                         {expandButton}
-                        <ShowOnly when={!expand}>
+                        <ShowOnly when={!expand && !embed}>
                             <div className="form__info">
                                 Contributor type · Parent company · Facility
                                 type · Processing type · Product type · Number

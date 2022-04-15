@@ -190,12 +190,14 @@ function FilterSidebarExtendedSearch({
             </ShowOnly>
             <div className="form__field">
                 <Divider />
-                <div
-                    className="form__info"
-                    style={{ color: 'rgba(0, 0, 0, 0.8)' }}
-                >
-                    {EXTENDED_FIELDS_EXPLANATORY_TEXT}
-                </div>
+                <ShowOnly when={!embed}>
+                    <div
+                        className="form__info"
+                        style={{ color: 'rgba(0, 0, 0, 0.8)' }}
+                    >
+                        {EXTENDED_FIELDS_EXPLANATORY_TEXT}
+                    </div>
+                </ShowOnly>
             </div>
             <ShowOnly
                 when={
