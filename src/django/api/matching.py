@@ -250,7 +250,7 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
                                      'training.json')
         with open(training_file) as tf:
             gazetteer.prepare_training(messy, canonical, tf, 15000)
-        gazetteer.train()
+        gazetteer.train(index_predicates=False)
         gazetteer.cleanup_training()
 
     if should_index:
