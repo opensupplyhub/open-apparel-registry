@@ -18,6 +18,7 @@ from api.models import (Facility,
                         HistoricalFacility,
                         HistoricalFacilityMatch)
 from api.helpers import clean
+from api.gazetteer import OgrGazetteer
 
 logger = logging.getLogger(__name__)
 
@@ -245,7 +246,7 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
             {'field': 'address', 'type': 'String'},
         ]
 
-        gazetteer = dedupe.Gazetteer(fields)
+        gazetteer = OgrGazetteer(fields)
         training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
                                      'training.json')
         with open(training_file) as tf:
