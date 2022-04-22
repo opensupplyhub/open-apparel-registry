@@ -1,4 +1,5 @@
 import json
+from unittest import skip
 import numpy as np
 import os
 import xlrd
@@ -34,7 +35,7 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
                         FacilityActivityReport, ExtendedField, FacilityIndex,
-                        ContributorManager, index_custom_text)
+                        index_custom_text)
 
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import (match_facility_list_items, GazetteerCache,
@@ -7776,13 +7777,10 @@ class ContributorManagerTest(TestCase):
     def test_filter_by_name(self):
         matches = Contributor.objects.filter_by_name('factory a')
         self.assertGreater(matches.count(), 0)
-        self.assertEquals(1.0, matches[0].similarity)
 
+        # No result should be returned for exact match
         matches = Contributor.objects.filter_by_name('factory')
-        self.assertGreater(matches.count(), 0)
-        self.assertLess(matches[0].similarity, 1.0)
-        self.assertGreater(matches[0].similarity,
-                           ContributorManager.TRIGRAM_SIMILARITY_THRESHOLD)
+        self.assertEqual(matches.count(), 0)
 
     def test_filter_by_name_verified(self):
         user1 = User.objects.create(email='test1@test.com')
@@ -7800,16 +7798,16 @@ class ContributorManagerTest(TestCase):
 
         matches = Contributor.objects.filter_by_name('TESTING')
         self.assertEqual(2, matches.count())
-        # When the names are the same and neither is verified then the first
+        # When the names are the same and neither is verified then the second
         # contributor happens to sort first
-        self.assertEqual(c1, matches[0])
+        self.assertEqual(c2, matches[0])
 
-        c2.is_verified = True
-        c2.save()
+        c1.is_verified = True
+        c1.save()
         matches = Contributor.objects.filter_by_name('TESTING')
         self.assertEqual(2, matches.count())
-        # Marking c2 as verified forces it to sort first
-        self.assertEqual(c2, matches[0])
+        # Marking c1 as verified forces it to sort first
+        self.assertEqual(c1, matches[0])
 
     def test_filter_by_name_source(self):
         user1 = User.objects.create(email='test1@test.com')
@@ -7900,6 +7898,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertIn('A random value', facility_index.parent_company_name)
         self.assertEquals(0, len(facility_index.parent_company_id))
 
+    @skip('Skip fuzzy matching. Will revisit at #1805')
     @patch('api.geocoding.requests.get')
     def test_submit_parent_company_fuzzy_match(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
@@ -7933,13 +7932,13 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         self.client.post(self.url, {
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         self.assertEqual(2, ExtendedField.objects.all().count())
         ef = ExtendedField.objects.first()
@@ -7959,7 +7958,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['oar_id']
@@ -7980,7 +7979,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['oar_id']
@@ -8001,7 +8000,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['oar_id']
