@@ -18,6 +18,9 @@ The Open Apparel Registry (OAR) is a tool to identify every apparel facility wor
 - [Vagrant](https://www.vagrantup.com/docs/installation/) 2.1+
 - [VirtualBox](https://www.virtualbox.org/wiki/Downloads) 5.0+
 
+## AWS Region
+This project is hosted in eu-west-1 (ireland)
+
 ## Setup
 
 Run `setup` to bring up the development environment:
