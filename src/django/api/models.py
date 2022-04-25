@@ -9,7 +9,6 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.postgres import fields as postgres
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates.general import ArrayAgg
-from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models, transaction
 from django.db.models import (F, Q, ExpressionWrapper)
 from django.db.models.signals import post_save
@@ -94,19 +93,13 @@ class EmailAsUsernameUserManager(BaseUserManager):
 
 
 class ContributorManager(models.Manager):
-    TRIGRAM_SIMILARITY_THRESHOLD = 0.5
 
+    # TODO: Will revisit trigram thresholds.
+    # Temporary change to iexact to fix Ralph Lauren upload issue
     def filter_by_name(self, name):
         """
-        Perform a fuzzy match on contributor name where the match exceeds a
-        confidence trheshold. The results are ordered by similarity, then
-        whether the Contirbutor is verified, then by whether the contributor
-        has active sources.
-
-        False is less than True so we order_by boolean fields in descending
-        order
+        Perform an exact match on contributor names
         """
-        threshold = ContributorManager.TRIGRAM_SIMILARITY_THRESHOLD
         matches = self \
             .annotate(active_source_count=models.Count(
                 Q(source__is_active=True))) \
@@ -114,9 +107,8 @@ class ContributorManager(models.Manager):
                 has_active_sources=ExpressionWrapper(
                     Q(active_source_count__gt=0),
                     models.BooleanField())) \
-            .annotate(similarity=TrigramSimilarity('name', name)) \
-            .filter(similarity__gte=threshold) \
-            .order_by('-similarity', '-is_verified', '-has_active_sources')
+            .filter(name__iexact=name) \
+            .order_by('-is_verified', '-has_active_sources')
         return matches
 
 
