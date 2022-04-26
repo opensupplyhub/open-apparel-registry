@@ -126,6 +126,7 @@ class OgrGazetteerMatching(GazetteerMatching):
         """
 
         with connection.cursor() as cursor:
+            cursor.execute('DROP TABLE IF EXISTS dedupe_blocking_map')
             cursor.execute(
                 """CREATE TEMP TABLE dedupe_blocking_map
                 (block_key text,
