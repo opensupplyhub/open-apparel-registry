@@ -2,7 +2,8 @@ import json
 from unittest import skip
 import numpy as np
 import os
-import xlrd
+
+from openpyxl import load_workbook
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -192,16 +193,16 @@ class FacilityListCreateTest(APITestCase):
                                      'file': self.test_file_xlsx},
                                     format='multipart')
         self.test_file_xlsx.seek(0)
-        sheet = xlrd.open_workbook(file_contents=self.test_file_xlsx.read(),
-                                   on_demand=True).sheet_by_index(0)
+        wb = load_workbook(filename=self.test_file_xlsx)
+        ws = wb[wb.sheetnames[0]]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
-                         previous_item_count + sheet.nrows - 1)
+                         previous_item_count + ws.max_row - 1)
         items = list(FacilityListItem.objects.all().order_by('row_index'))
         self.assertEqual(items[0].raw_data, '"{}"'.format(
-            '","'.join(sheet.row_values(1))))
+            '","'.join([cell.value for cell in ws[2]])))
 
     def test_file_required(self):
         response = self.client.post(reverse('facility-list-list'))
