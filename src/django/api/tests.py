@@ -98,11 +98,6 @@ class FacilityListCreateTest(APITestCase):
             content_type='text/csv')
 
         lists_dir = '/usr/local/src/api/management/commands/facility_lists/'
-        with open(os.path.join(lists_dir, '12.xls'), 'rb') as xls:
-            self.test_file_xls = SimpleUploadedFile(
-                '12.xls',
-                xls.read(),
-                content_type='application/vnd.ms-excel')
 
         with open(os.path.join(lists_dir, '12.xlsx'), 'rb') as xlsx:
             self.test_file_xlsx = SimpleUploadedFile(
@@ -164,26 +159,6 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(items[0].raw_data, self.test_csv_rows[1])
         for item in items:
             self.assertEqual(source, item.source)
-
-    def test_creates_list_and_items_xls(self):
-        previous_list_count = FacilityList.objects.all().count()
-        previous_item_count = FacilityListItem.objects.all().count()
-        response = self.client.post(reverse('facility-list-list'),
-                                    {'name': 'creates_list_and_items_xls',
-                                     'file': self.test_file_xls},
-                                    format='multipart')
-        self.test_file_xls.seek(0)
-        sheet = xlrd.open_workbook(file_contents=self.test_file_xls.read(),
-                                   on_demand=True).sheet_by_index(0)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(FacilityList.objects.all().count(),
-                         previous_list_count + 1)
-        self.assertEqual(FacilityListItem.objects.all().count(),
-                         previous_item_count + sheet.nrows - 1)
-
-        items = list(FacilityListItem.objects.all().order_by('row_index'))
-        self.assertEqual(items[0].raw_data, '"{}"'.format(
-            '","'.join(sheet.row_values(1))))
 
     def test_creates_list_and_items_xlsx(self):
         previous_list_count = FacilityList.objects.all().count()

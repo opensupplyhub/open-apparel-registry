@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update tileer load test script [#1770](https://github.com/open-apparel-registry/open-apparel-registry/pull/1770)
 - Only show contributed extended fields in embed sidebar search [#1794](https://github.com/open-apparel-registry/open-apparel-registry/pull/1794) [#1800](https://github.com/open-apparel-registry/open-apparel-registry/pull/1800)
 - Use exact match in parent company when creating extended field [#1804](https://github.com/open-apparel-registry/open-apparel-registry/pull/1804)
+- Read percentage as string in Excel [#1811](https://github.com/open-apparel-registry/open-apparel-registry/pull/1811)
 
 ### Deprecated
 

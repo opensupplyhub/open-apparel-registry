@@ -184,7 +184,7 @@ class ContributeForm extends Component {
                     <p style={contributeFormStyles.fileNameText}>{filename}</p>
                     <input
                         type="file"
-                        accept=".csv,.xls,.xlsx"
+                        accept=".csv,.xlsx"
                         ref={this.fileInput}
                         style={contributeFormStyles.fileInputHidden}
                         onChange={this.updateSelectedFileName}
