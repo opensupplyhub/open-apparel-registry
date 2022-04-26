@@ -123,11 +123,6 @@ class OgrGazetteerMatching(GazetteerMatching):
              ]]
         """
 
-        #https://thebuild.com/blog/2010/12/14/using-server-side-postgresql-cursors-in-django/
-        # This is required to populate the connection object properly
-        # if connection.connection is None:
-        #     cursor = connection.cursor()
-
         with connection.cursor() as cursor:
             cursor.execute(
                 """CREATE TEMP TABLE dedupe_blocking_map
