@@ -21,21 +21,6 @@ class OgrGazetteerMatching(GazetteerMatching):
 
         self.fingerprinter.index_all(data)
 
-        id_type = dedupe.core.sqlite_id_type(data)
-
-        con = sqlite3.connect(self.db)
-
-        # Set journal mode to WAL.
-        con.execute('pragma journal_mode=wal')
-
-        con.execute('''CREATE TABLE IF NOT EXISTS indexed_records
-                       (block_key text,
-                        record_id {id_type},
-                        UNIQUE(block_key, record_id))
-                    '''.format(id_type=id_type))
-
-
-        ## NEW DB CODE
         # TODO: Should this be a model?
         with connection.cursor() as cursor:
             cursor.execute(
@@ -46,10 +31,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                 """
             )
 
-        con.executemany("REPLACE INTO indexed_records VALUES (?, ?)",
-                        self.fingerprinter(data.items(), target=True))
-
-        ## NEW DB CODE
         # TODO: Do this in chunks rather than one at a time
         # Can you bulk copy with upsert logic?
         # The dedupee PG example has a bulk insert but this may not do an update
@@ -73,13 +54,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                 )
 
 
-        con.execute('''CREATE INDEX IF NOT EXISTS
-                       indexed_records_block_key_idx
-                       ON indexed_records
-                       (block_key, record_id)''')
-        con.execute('''ANALYZE''')
-
-        ## NEW DB CODE
         with connection.cursor() as cursor:
             cursor.execute(
                     """
@@ -88,10 +62,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                     ON dedupe_indexed_records (block_key, record_id)
                     """
                 )
-
-
-        con.commit()
-        con.close()
 
         self.indexed_data.update(data)
 
@@ -111,12 +81,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                                         in data.values()},
                                        field)
 
-        con = sqlite3.connect(self.db)
-        con.executemany('''DELETE FROM indexed_records
-                           WHERE record_id = ?''',
-                        ((k, ) for k in data.keys()))
-
-        ## NEW DB CODE
         # TODO: Delete in batches?
         with connection.cursor() as cursor:
             for k in data.keys():
@@ -126,9 +90,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                     WHERE record_id = %s
                     """, k
                 )
-
-        con.commit()
-        con.close()
 
         for k in data:
             del self.indexed_data[k]
@@ -161,19 +122,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                (7, {'name' : 'Sammy', 'address' : '123 Main'}))
              ]]
         """
-
-        # id_type = dedupe.core.sqlite_id_type(data)
-
-        # con = sqlite3.connect(self.db, check_same_thread=False)
-
-        # con.execute('BEGIN')
-
-        # con.execute('''CREATE TEMPORARY TABLE blocking_map
-        #                (block_key text, record_id {id_type})
-        #             '''.format(id_type=id_type))
-        # con.executemany("INSERT INTO blocking_map VALUES (?, ?)",
-        #                 self.fingerprinter(data.items()))
-
 
         #https://thebuild.com/blog/2010/12/14/using-server-side-postgresql-cursors-in-django/
         # This is required to populate the connection object properly
@@ -217,25 +165,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                        for a_record_id, b_record_id
                        in pair_block]
 
-        # pairs = con.execute('''SELECT DISTINCT a.record_id, b.record_id
-        #                        FROM blocking_map a
-        #                        INNER JOIN indexed_records b
-        #                        USING (block_key)
-        #                        ORDER BY a.record_id''')
-
-        # pair_blocks = itertools.groupby(pairs,
-        #                                 lambda x: x[0])
-
-        # for _, pair_block in pair_blocks:
-
-        #     yield [((a_record_id, data[a_record_id]),
-        #             (b_record_id, self.indexed_data[b_record_id]))
-        #            for a_record_id, b_record_id
-        #            in pair_block]
-
-        # pairs.close()
-        # con.execute("ROLLBACK")
-        # con.close()
 
 
 class OgrGazetteer(Link, OgrGazetteerMatching):
