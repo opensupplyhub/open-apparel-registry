@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Skip rendering embed fields with empty values [#1809](https://github.com/open-apparel-registry/open-apparel-registry/pull/1809)
+- Show the correct submission date for name and address fields [#1810](https://github.com/open-apparel-registry/open-apparel-registry/pull/1810)
+
 ### Security
 
 ## [64] - 2022-03-22
@@ -819,8 +822,6 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 ### Fixed
 
 - Handle cases when Source contributor or facility_list are None [#903](https://github.com/open-apparel-registry/open-apparel-registry/pull/903)
-- Skip rendering embed fields with empty values [#1809](https://github.com/open-apparel-registry/open-apparel-registry/pull/1809)
-- Show the correct submission date for name and address fields [#1810](https://github.com/open-apparel-registry/open-apparel-registry/pull/1810)
 
 ### Security
 
