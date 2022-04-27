@@ -53,6 +53,8 @@ def get_xlsx_sheet(file, request):
 
 
 def format_percent(value):
+    if value is None or isinstance(value, str):
+        return value
     if value <= 1.0:
         str_value = str(value * 100)
     else:
@@ -60,6 +62,12 @@ def format_percent(value):
     if str_value[-2:] == '.0':
         str_value = str_value[0:len(str_value)-2]
     return str_value + '%'
+
+
+def format_cell_value(value):
+    if value is None:
+        return ''
+    return str(value)
 
 
 def parse_xlsx(file, request):
@@ -79,7 +87,7 @@ def parse_xlsx(file, request):
         header = ','.join([cell.value for cell in ws[1]])
 
         rows = ['"{}"'.format(
-            '","'.join([str(cell.value) for cell in ws[idx]]))
+            '","'.join([format_cell_value(cell.value) for cell in ws[idx]]))
                 for idx in range(2, ws.max_row + 1)]
 
         return header, rows
