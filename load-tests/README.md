@@ -8,6 +8,7 @@ components necessary to execute a load test are encapsulated in this directory.
 
 - `K6_CLOUD_TOKEN`: An Auth Token for interacting with the k6 Cloud (optional)
 - `CACHE_KEY_SUFFIX`: A suffix to append in the path to ensure tile requests miss the cache (optional)
+- `VU_MULTIPLER`: An integer number of parallel executions of each batch of requests
 
 ## Running
 
@@ -59,11 +60,21 @@ default ✓ [======================================] 10 VUs  01m38.9s/10m0s  10/
 ERRO[0101] some thresholds have failed
 ```
 
+To invoke an instance of the load test running with 10 times the number of
+parallel requests and a random cache key suffix to avoid CloudFront
+
+```console
+VU_MULTIPLIER=10 \
+CACHE_KEY_SUFFIX=$(echo $(date) | sha1sum | cut -c1-8) \
+docker-compose -f docker-compose.yml run --rm \
+  k6 run /scripts/zoom_rio_de_janerio_with_contributor_filter.js
+```
+
 To invoke an instance of the load test streaming output to the k6 Cloud:
 
 ```console
 $ export K6_CLOUD_TOKEN=...
 $ docker-compose \
-    -f docker-compose.k6.yml \
-    run --rm k6 run -o cloud scripts/zoom_rio_de_janerio_with_contributor_filter.js
+    -f docker-compose.yml \
+    run --rm k6 run -o cloud /scripts/zoom_rio_de_janerio_with_contributor_filter.js
 ```

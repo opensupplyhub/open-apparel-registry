@@ -673,6 +673,10 @@ class FacilitySerializer(GeoFeatureModelSerializer):
             return (k.get('verified_count', 0), k.get('is_from_claim', False),
                     k.get('value_count', 1), k.get('updated_at', None))
 
+        def sort_order_excluding_updated_at(k):
+            return (k.get('verified_count', 0), k.get('is_from_claim', False),
+                    k.get('value_count', 1))
+
         for field_name, _ in ExtendedField.FIELD_CHOICES:
             serializer = ExtendedFieldListSerializer(
                         fields.filter(field_name=field_name),
@@ -688,8 +692,11 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                         unsorted_data.append(
                             create_name_field(item.name,
                                               item.source.contributor,
+                                              item.updated_at,
                                               user_can_see_detail))
-                data = sorted(unsorted_data, key=sort_order, reverse=True)
+                data = sorted(unsorted_data,
+                              key=sort_order_excluding_updated_at,
+                              reverse=True)
             elif field_name == ExtendedField.ADDRESS and not embed_mode_active:
                 unsorted_data = serializer.data
                 for item in get_facility_addresses(facility):
@@ -697,8 +704,11 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                         unsorted_data.append(
                             create_address_field(item.address,
                                                  item.source.contributor,
+                                                 item.updated_at,
                                                  user_can_see_detail))
-                data = sorted(unsorted_data, key=sort_order, reverse=True)
+                data = sorted(unsorted_data,
+                              key=sort_order_excluding_updated_at,
+                              reverse=True)
             else:
                 data = sorted(serializer.data, key=sort_order, reverse=True)
 
@@ -760,13 +770,14 @@ def get_contributor_id(contributor, user_can_see_detail):
     return None
 
 
-def create_name_field(name, contributor, user_can_see_detail):
+def create_name_field(name, contributor, updated_at, user_can_see_detail):
     return {
       'value': name,
       'field_name': ExtendedField.NAME,
       'contributor_id': get_contributor_id(contributor, user_can_see_detail),
       'contributor_name':
       get_contributor_name(contributor, user_can_see_detail),
+      'updated_at': updated_at,
     }
 
 
@@ -789,13 +800,15 @@ def get_facility_names(facility):
     return facility_list_item_matches
 
 
-def create_address_field(address, contributor, user_can_see_detail):
+def create_address_field(address, contributor, updated_at,
+                         user_can_see_detail):
     return {
       'value': address,
       'field_name': ExtendedField.ADDRESS,
       'contributor_id': get_contributor_id(contributor, user_can_see_detail),
       'contributor_name':
       get_contributor_name(contributor, user_can_see_detail),
+      'updated_at': updated_at,
     }
 
 
@@ -1443,12 +1456,14 @@ class EmbedConfigSerializer(ModelSerializer):
     contributor = SerializerMethodField()
     embed_fields = SerializerMethodField()
     contributor_name = SerializerMethodField()
+    extended_fields = SerializerMethodField()
 
     class Meta:
         model = EmbedConfig
         fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
                   'embed_fields', 'prefer_contributor_name',
-                  'contributor_name', 'text_search_label', 'map_style')
+                  'contributor_name', 'text_search_label', 'map_style',
+                  'extended_fields')
 
     def get_contributor(self, instance):
         try:
@@ -1466,6 +1481,15 @@ class EmbedConfigSerializer(ModelSerializer):
         embed_fields = EmbedField.objects.filter(
                             embed_config=instance).order_by('order')
         return EmbedFieldsSerializer(embed_fields, many=True).data
+
+    def get_extended_fields(self, instance):
+        try:
+            extended_fields = ExtendedField.objects \
+                        .filter(contributor_id=instance.contributor.id) \
+                        .values_list('field_name', flat=True).distinct()
+            return extended_fields
+        except Contributor.DoesNotExist:
+            return []
 
 
 class ExtendedFieldListSerializer(ModelSerializer):

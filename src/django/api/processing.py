@@ -3,7 +3,8 @@ import csv
 import traceback
 import sys
 
-import xlrd
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
 
 from datetime import datetime
 
@@ -33,36 +34,66 @@ def _report_error_to_rollbar(file, request):
                 'file_name': file.name})
 
 
-def get_excel_sheet(file, request):
+def get_xlsx_sheet(file, request):
     import defusedxml
     from defusedxml.common import EntitiesForbidden
 
     defusedxml.defuse_stdlib()
 
     try:
-        return xlrd.open_workbook(file_contents=file.read(),
-                                  on_demand=True).sheet_by_index(0)
+        wb = load_workbook(filename=file)
+        ws = wb[wb.sheetnames[0]]
+
+        return ws
+
     except EntitiesForbidden:
         _report_error_to_rollbar(file, request)
         raise ValidationError('This file may be damaged and '
                               'cannot be processed safely')
 
 
-def parse_excel(file, request):
-    try:
-        sheet = get_excel_sheet(file, request)
+def format_percent(value):
+    if value is None or isinstance(value, str):
+        return value
+    if value <= 1.0:
+        str_value = str(value * 100)
+    else:
+        str_value = str(value)
+    if str_value[-2:] == '.0':
+        str_value = str_value[0:len(str_value)-2]
+    return str_value + '%'
 
-        header = ','.join(sheet.row_values(0))
-        # Use use `str(x)` here since numbers in an Excel column will be
-        # returns as a Python number type
+
+def format_cell_value(value):
+    if value is None:
+        return ''
+    return str(value)
+
+
+def parse_xlsx(file, request):
+    try:
+        ws = get_xlsx_sheet(file, request)
+
+        # openpyxl package is 1-indexed
+        percent_col = [get_column_letter(cell.column)
+                       for cell in ws[2] if '%' in cell.number_format]
+
+        if percent_col:
+            for col in percent_col:
+                for cell in ws[col]:
+                    if cell.row != 1:
+                        cell.value = format_percent(cell.value)
+
+        header = ','.join([cell.value for cell in ws[1]])
+
         rows = ['"{}"'.format(
-            '","'.join([str(x) for x in sheet.row_values(idx)]))
-                for idx in range(1, sheet.nrows)]
+            '","'.join([format_cell_value(cell.value) for cell in ws[idx]]))
+                for idx in range(2, ws.max_row + 1)]
 
         return header, rows
     except Exception:
         _report_error_to_rollbar(file, request)
-        raise ValidationError('Error parsing Excel file')
+        raise ValidationError('Error parsing Excel (.xlsx) file')
 
 
 def parse_csv(file, request):

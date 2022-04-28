@@ -7,6 +7,7 @@ import uniqBy from 'lodash/uniqBy';
 import partition from 'lodash/partition';
 import includes from 'lodash/includes';
 import filter from 'lodash/filter';
+import isNil from 'lodash/isNil';
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
@@ -311,14 +312,18 @@ const FacilityDetailSidebar = ({
         );
     };
 
-    const renderContributorField = ({ label, value }) =>
-        value !== null ? (
+    const renderContributorField = ({ label, value }) => {
+        if (isNil(value) || value.toString().trim() === '') {
+            return null;
+        }
+        return (
             <FacilityDetailSidebarItem
                 label={label}
                 primary={value}
                 key={label}
             />
-        ) : null;
+        );
+    };
 
     const contributorFields = filter(
         get(data, 'properties.contributor_fields', null),

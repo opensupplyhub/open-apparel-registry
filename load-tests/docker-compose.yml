@@ -5,6 +5,7 @@ services:
     environment:
       - K6_CLOUD_TOKEN
       - CACHE_KEY_SUFFIX
+      - VU_MULTIPLIER
     volumes:
       - ./:/scripts/
     command: run /scripts/zoom_rio_de_janerio_with_contributor_filter.js

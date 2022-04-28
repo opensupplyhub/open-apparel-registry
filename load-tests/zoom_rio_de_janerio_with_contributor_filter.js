@@ -24,9 +24,14 @@ har.log.entries.forEach((entry) => {
     const cacheKey = crypto
         .sha1(entry.request.url.match(pattern)[5], "hex")
         .slice(0, 8);
+    // Including the __VU in the cache key should generate a worse situation
+    // than typical. Each batch of requests is made by a separate VU and when
+    // VU_MULTIPLIER is larger than 1, we repeat the same batch of requests a
+    // number of times equal to VU_MULTIPLIER. Using __VU in the cache key means
+    // subsequent requests for the same batch will not hit the cache.
     const url = entry.request.url.replace(
         pattern,
-        `${cacheKey}${__ENV.CACHE_KEY_SUFFIX}/$2/$3/$4.pbf?$5`
+        `${cacheKey}-vu-${__VU}-${__ENV.CACHE_KEY_SUFFIX}/$2/$3/$4.pbf?$5`
     );
 
     const referer = entry.request.headers.find(
@@ -63,11 +68,13 @@ batches = batches.sort((a, b) => a - b);
 
 const failRate = new Rate("failed requests");
 
+const VU_MULTIPLIER = __ENV.VU_MULTIPLIER || 1;
+
 export const options = {
     // We want VUs and iterations to match the number of parallel request
     // batches we're going to issue so we can replay traffic 1:1.
-    vus: batches.length,
-    iterations: batches.length,
+    vus: batches.length * VU_MULTIPLIER,
+    iterations: batches.length * VU_MULTIPLIER,
 
     discardResponseBodies: true,
     maxRedirects: 0,
@@ -79,7 +86,8 @@ export const options = {
 export default function () {
     // Sleep each Batch so that everything doesn't happen at once
     const firstBatchTime = batches[0];
-    const thisBatchTime = batches[__VU - 1];
+    const batchIndex = (__VU - 1) % batches.length;
+    const thisBatchTime = batches[batchIndex];
     sleep(Math.floor((thisBatchTime - firstBatchTime) / 1000));
 
     const responses = http.batch(requests[thisBatchTime]);

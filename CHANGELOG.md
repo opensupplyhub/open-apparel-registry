@@ -19,6 +19,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [65] - 2022-04-28
+
+### Changed
+
+- Update DB anonymization script [#1769](https://github.com/open-apparel-registry/open-apparel-registry/pull/1769)
+- Update tileer load test script [#1770](https://github.com/open-apparel-registry/open-apparel-registry/pull/1770)
+- Only show contributed extended fields in embed sidebar search [#1794](https://github.com/open-apparel-registry/open-apparel-registry/pull/1794) [#1800](https://github.com/open-apparel-registry/open-apparel-registry/pull/1800)
+- Use exact match in parent company when creating extended field [#1804](https://github.com/open-apparel-registry/open-apparel-registry/pull/1804)
+- Read percentage as string in Excel [#1811](https://github.com/open-apparel-registry/open-apparel-registry/pull/1811) [#1822](https://github.com/open-apparel-registry/open-apparel-registry/pull/1822)
+
+### Fixed
+
+- Skip rendering embed fields with empty values [#1809](https://github.com/open-apparel-registry/open-apparel-registry/pull/1809)
+- Show the correct submission date for name and address fields [#1810](https://github.com/open-apparel-registry/open-apparel-registry/pull/1810)
+
 ## [64] - 2022-03-22
 
 ### Changed
@@ -1153,7 +1168,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/64...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/65...HEAD
+[65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
 [64]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/64
 [63]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/63
 [62]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/62

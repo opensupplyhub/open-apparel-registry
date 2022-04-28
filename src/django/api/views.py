@@ -98,7 +98,7 @@ from api.models import (FacilityList,
                         index_extendedfields)
 from api.processing import (parse_csv_line,
                             parse_csv,
-                            parse_excel,
+                            parse_xlsx,
                             get_country_code,
                             save_match_details,
                             save_exact_match_details,
@@ -2629,8 +2629,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     def _extract_header_rows(self, file, request):
         ext = file.name[-4:]
 
-        if ext in ['.xls', 'xlsx']:
-            header, rows = parse_excel(file, request)
+        if ext == 'xlsx':
+            header, rows = parse_xlsx(file, request)
         elif ext == '.csv':
             header, rows = parse_csv(file, request)
         else:

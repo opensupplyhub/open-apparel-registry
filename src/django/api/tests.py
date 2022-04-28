@@ -1,7 +1,9 @@
 import json
+from unittest import skip
 import numpy as np
 import os
-import xlrd
+
+from openpyxl import load_workbook
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -34,7 +36,7 @@ from api.models import (Facility, FacilityList, FacilityListItem,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
                         FacilityActivityReport, ExtendedField, FacilityIndex,
-                        ContributorManager, index_custom_text)
+                        index_custom_text)
 
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import (match_facility_list_items, GazetteerCache,
@@ -96,11 +98,6 @@ class FacilityListCreateTest(APITestCase):
             content_type='text/csv')
 
         lists_dir = '/usr/local/src/api/management/commands/facility_lists/'
-        with open(os.path.join(lists_dir, '12.xls'), 'rb') as xls:
-            self.test_file_xls = SimpleUploadedFile(
-                '12.xls',
-                xls.read(),
-                content_type='application/vnd.ms-excel')
 
         with open(os.path.join(lists_dir, '12.xlsx'), 'rb') as xlsx:
             self.test_file_xlsx = SimpleUploadedFile(
@@ -163,26 +160,6 @@ class FacilityListCreateTest(APITestCase):
         for item in items:
             self.assertEqual(source, item.source)
 
-    def test_creates_list_and_items_xls(self):
-        previous_list_count = FacilityList.objects.all().count()
-        previous_item_count = FacilityListItem.objects.all().count()
-        response = self.client.post(reverse('facility-list-list'),
-                                    {'name': 'creates_list_and_items_xls',
-                                     'file': self.test_file_xls},
-                                    format='multipart')
-        self.test_file_xls.seek(0)
-        sheet = xlrd.open_workbook(file_contents=self.test_file_xls.read(),
-                                   on_demand=True).sheet_by_index(0)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(FacilityList.objects.all().count(),
-                         previous_list_count + 1)
-        self.assertEqual(FacilityListItem.objects.all().count(),
-                         previous_item_count + sheet.nrows - 1)
-
-        items = list(FacilityListItem.objects.all().order_by('row_index'))
-        self.assertEqual(items[0].raw_data, '"{}"'.format(
-            '","'.join(sheet.row_values(1))))
-
     def test_creates_list_and_items_xlsx(self):
         previous_list_count = FacilityList.objects.all().count()
         previous_item_count = FacilityListItem.objects.all().count()
@@ -191,16 +168,16 @@ class FacilityListCreateTest(APITestCase):
                                      'file': self.test_file_xlsx},
                                     format='multipart')
         self.test_file_xlsx.seek(0)
-        sheet = xlrd.open_workbook(file_contents=self.test_file_xlsx.read(),
-                                   on_demand=True).sheet_by_index(0)
+        wb = load_workbook(filename=self.test_file_xlsx)
+        ws = wb[wb.sheetnames[0]]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 1)
         self.assertEqual(FacilityListItem.objects.all().count(),
-                         previous_item_count + sheet.nrows - 1)
+                         previous_item_count + ws.max_row - 1)
         items = list(FacilityListItem.objects.all().order_by('row_index'))
         self.assertEqual(items[0].raw_data, '"{}"'.format(
-            '","'.join(sheet.row_values(1))))
+            '","'.join([cell.value for cell in ws[2]])))
 
     def test_file_required(self):
         response = self.client.post(reverse('facility-list-list'))
@@ -7776,13 +7753,10 @@ class ContributorManagerTest(TestCase):
     def test_filter_by_name(self):
         matches = Contributor.objects.filter_by_name('factory a')
         self.assertGreater(matches.count(), 0)
-        self.assertEquals(1.0, matches[0].similarity)
 
+        # No result should be returned for exact match
         matches = Contributor.objects.filter_by_name('factory')
-        self.assertGreater(matches.count(), 0)
-        self.assertLess(matches[0].similarity, 1.0)
-        self.assertGreater(matches[0].similarity,
-                           ContributorManager.TRIGRAM_SIMILARITY_THRESHOLD)
+        self.assertEqual(matches.count(), 0)
 
     def test_filter_by_name_verified(self):
         user1 = User.objects.create(email='test1@test.com')
@@ -7800,16 +7774,16 @@ class ContributorManagerTest(TestCase):
 
         matches = Contributor.objects.filter_by_name('TESTING')
         self.assertEqual(2, matches.count())
-        # When the names are the same and neither is verified then the first
+        # When the names are the same and neither is verified then the second
         # contributor happens to sort first
-        self.assertEqual(c1, matches[0])
+        self.assertEqual(c2, matches[0])
 
-        c2.is_verified = True
-        c2.save()
+        c1.is_verified = True
+        c1.save()
         matches = Contributor.objects.filter_by_name('TESTING')
         self.assertEqual(2, matches.count())
-        # Marking c2 as verified forces it to sort first
-        self.assertEqual(c2, matches[0])
+        # Marking c1 as verified forces it to sort first
+        self.assertEqual(c1, matches[0])
 
     def test_filter_by_name_source(self):
         user1 = User.objects.create(email='test1@test.com')
@@ -7900,6 +7874,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertIn('A random value', facility_index.parent_company_name)
         self.assertEquals(0, len(facility_index.parent_company_id))
 
+    @skip('Skip fuzzy matching. Will revisit at #1805')
     @patch('api.geocoding.requests.get')
     def test_submit_parent_company_fuzzy_match(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
@@ -7933,13 +7908,13 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         self.client.post(self.url, {
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         self.assertEqual(2, ExtendedField.objects.all().count())
         ef = ExtendedField.objects.first()
@@ -7959,7 +7934,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['oar_id']
@@ -7980,7 +7955,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['oar_id']
@@ -8001,7 +7976,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'parent_company': 'TEST CNTRIBUTOR'
+            'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['oar_id']
