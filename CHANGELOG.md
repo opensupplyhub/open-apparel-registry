@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Add new taxonomy processing types [#1827](https://github.com/open-apparel-registry/open-apparel-registry/pull/1827)
+- Add extended field reports [#1826](https://github.com/open-apparel-registry/open-apparel-registry/pull/1826)
 
 ### Changed
 
