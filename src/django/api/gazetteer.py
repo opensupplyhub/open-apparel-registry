@@ -1,4 +1,5 @@
 import itertools
+import json
 from dedupe.api import Link, GazetteerMatching
 from dedupe._typing import Data, Blocks
 from django.db import connection
@@ -20,11 +21,13 @@ class OgrGazetteerMatching(GazetteerMatching):
         self.fingerprinter.index_all(data)
 
         # TODO: Should this be a model?
+        # TODO: is jsonb or string faster?
         with connection.cursor() as cursor:
             cursor.execute(
                 """CREATE TABLE IF NOT EXISTS dedupe_indexed_records
                 (block_key text,
                 record_id varchar(32),
+                record_data text,
                 UNIQUE (block_key, record_id))
                 """
             )
@@ -45,11 +48,11 @@ class OgrGazetteerMatching(GazetteerMatching):
             for item in self.fingerprinter(data.items(), target=True):
                 cursor.execute(
                     """
-                    INSERT INTO dedupe_indexed_records (block_key, record_id)
-                    VALUES (%s, %s)
+                    INSERT INTO dedupe_indexed_records (block_key, record_id, record_data)
+                    VALUES (%s, %s, %s)
                     ON CONFLICT (block_key, record_id) DO NOTHING
                     """,
-                    item,
+                    [item[0],item[1], json.dumps(data[item[1]])],
                 )
 
         with connection.cursor() as cursor:
@@ -142,7 +145,7 @@ class OgrGazetteerMatching(GazetteerMatching):
                 )
 
             cursor.execute(
-                """SELECT DISTINCT a.record_id, b.record_id
+                """SELECT DISTINCT a.record_id, b.record_id, b.record_data
                                FROM dedupe_blocking_map a
                                INNER JOIN dedupe_indexed_records b
                                USING (block_key)
@@ -162,12 +165,16 @@ class OgrGazetteerMatching(GazetteerMatching):
             db_pair_blocks = itertools.groupby(ResultIter(cursor),
                                                lambda x: x[0])
             for _, pair_block in db_pair_blocks:
+                # TODO: this loop is just for debug
+                for ida, idb, item in pair_block:            
+                    print('Indexed data looks like: {}'.format(self.indexed_data[idb]))
+                    print('b_record_data looks like: {}'.format(item))
                 yield [
                     (
                         (a_record_id, data[a_record_id]),
-                        (b_record_id, self.indexed_data[b_record_id]),
+                        (b_record_id, b_record_data),
                     )
-                    for a_record_id, b_record_id in pair_block
+                    for a_record_id, b_record_id, b_record_data in pair_block
                 ]
 
 
