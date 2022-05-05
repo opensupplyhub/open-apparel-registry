@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Mark failing reports with Do Not Open [#1836](https://github.com/open-apparel-registry/open-apparel-registry/pull/1836)
+
 ### Deprecated
 
 ### Removed
