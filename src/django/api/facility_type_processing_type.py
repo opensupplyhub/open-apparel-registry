@@ -51,6 +51,7 @@ MANUFACTURING = 'manufacturing'
 MAKING_UP = 'making up'
 MARKER_MAKING = 'marker making'
 MOLDING = 'molding'
+PACKAGING = 'packaging'
 PATTERN_GRADING = 'pattern grading'
 PLEATING = 'pleating'
 PRODUCT_FINISHING = 'product finishing'
@@ -78,6 +79,7 @@ ASSEMBLY_PROCESSING_TYPES = {
     MAKING_UP: 'Making up',
     MARKER_MAKING: 'Marker Making',
     MOLDING: 'Molding',
+    PACKAGING: 'Packaging',
     PATTERN_GRADING: 'Pattern Grading',
     PLEATING: 'Pleating',
     PRODUCT_FINISHING: 'Product Finishing',
@@ -208,10 +210,15 @@ MATERIAL_PRODUCTION = 'material production'
 MILL = 'mill'
 NON_WOVEN_MANUFACTURING = 'non woven manufacturing'
 NON_WOVEN_PROCESSING = 'non woven processing'
+PAINTING = 'painting'
+PELLETIZING = 'pelletizing'
+PRESSING = 'pressing'
+SPRAYING = 'spraying'
 STRAIGHT_BAR_KNITTING = 'straight bar knitting'
 TEXTILE_OR_MATERIAL_PRODUCTION = 'textile or material production'
 TEXTILE_MILL = 'textile mill'
 WEAVING = 'weaving'
+WELDING = 'welding'
 
 TEXTILE_PROCESSING_TYPES = {
     BLENDING: 'Blending',
@@ -238,10 +245,15 @@ TEXTILE_PROCESSING_TYPES = {
     MILL: 'Mill',
     NON_WOVEN_MANUFACTURING: 'Nonwoven manufacturing',
     NON_WOVEN_PROCESSING: 'Nonwoven Processing',
+    PAINTING: 'Painting',
+    PELLETIZING: 'Pelletizing',
+    PRESSING: 'Pressing',
+    SPRAYING: 'Spraying',
     STRAIGHT_BAR_KNITTING: 'Straight Bar Knitting',
     TEXTILE_OR_MATERIAL_PRODUCTION: 'Textile or Material Production',
     TEXTILE_MILL: 'Textile Mill',
     WEAVING: 'Weaving',
+    WELDING: 'Welding',
 }
 
 TEXTILE_PROCESSING_TYPES_ALIAS = {
