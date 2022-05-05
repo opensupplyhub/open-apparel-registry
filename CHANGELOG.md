@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Handle blank rows and columns in .xlsx [#1837](https://github.com/open-apparel-registry/open-apparel-registry/pull/1837)
+
 ### Security
 
 ## [65] - 2022-04-28
