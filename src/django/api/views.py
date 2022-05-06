@@ -585,8 +585,9 @@ def number_of_workers_ranges(request):
 @api_view(['GET'])
 def facility_processing_types(request):
     """
-    Returns a list of standardized ranges for the number_of_workers extended
-    field.
+    Returns an array of objects with facilityType set to the name of a facility
+    type and processingTypes set to an array of processing types associated
+    with that facility type.
 
     ## Sample Response
 
