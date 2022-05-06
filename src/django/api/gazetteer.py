@@ -65,7 +65,7 @@ class OgrGazetteerMatching(GazetteerMatching):
             )
 
         # TODO: Remove after `blocks` no longer needs it
-        self.indexed_data.update(data)
+        # self.indexed_data.update(data)
 
     def unindex(self, data: Data) -> None:  # pragma: no cover
         """
@@ -94,8 +94,8 @@ class OgrGazetteerMatching(GazetteerMatching):
                 )
 
         # TODO: Remove after `blocks` no longer needs it
-        for k in data:
-            del self.indexed_data[k]
+        # for k in data:
+        #     del self.indexed_data[k]
 
     def blocks(self, data: Data) -> Blocks:
         """
