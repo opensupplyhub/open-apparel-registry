@@ -166,13 +166,15 @@ class OgrGazetteerMatching(GazetteerMatching):
                                                lambda x: x[0])
             for _, pair_block in db_pair_blocks:
                 # TODO: this loop is just for debug
-                for ida, idb, item in pair_block:            
-                    print('Indexed data looks like: {}'.format(self.indexed_data[idb]))
-                    print('b_record_data looks like: {}'.format(item))
+                # for ida, idb, item in pair_block:
+                    # print('Indexed data looks like: {}'.format(self.indexed_data[idb]))
+                    # print('Indexed data type: {}'.format(type(self.indexed_data[idb])))
+                    # print('b_record_data looks like: {}'.format(item))
+                    # print('b_record_data type: {}'.format(type(item)))
                 yield [
                     (
                         (a_record_id, data[a_record_id]),
-                        (b_record_id, b_record_data),
+                        (b_record_id, json.loads(b_record_data)),
                     )
                     for a_record_id, b_record_id, b_record_data in pair_block
                 ]
