@@ -78,6 +78,7 @@ class OgrGazetteerMatching(GazetteerMatching):
                   field_names
         """
 
+        # TODO can remove because we are not using index predicates
         for field in self.fingerprinter.index_fields:
             self.fingerprinter.unindex(
                 {record[field] for record in data.values()}, field
@@ -163,6 +164,8 @@ class OgrGazetteerMatching(GazetteerMatching):
                     for result in results:
                         yield result
 
+            # TODO server-side cursorcould trade performationce for lower
+            # memory footprint (would elimiate the need for ResultIter)
             db_pair_blocks = itertools.groupby(ResultIter(cursor),
                                                lambda x: x[0])
             for _, pair_block in db_pair_blocks:
