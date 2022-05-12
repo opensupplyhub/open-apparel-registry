@@ -12,7 +12,7 @@ with open(sys.argv[1]) as f:
 
 for path, detail in data["paths"].items():
     for verb, action in detail.items():
-        print(f"# {verb.upper()} {path}")
+        print("# {} {}".format(verb.upper(), path))
         print()
         try:
             print(action["description"])
@@ -28,6 +28,8 @@ for path, detail in data["paths"].items():
                 data_type = p["type"] if "type" in p else ""
                 param_type = p["in"] if "in" in p else ""
                 print(
-                    f"| {p['name']} |  {data_type} | {param_type} | {p['description']} |"
+                    "| {} |  {} | {} | {} |".format(
+                        p["name"], data_type, param_type, p["description"]
+                    )
                 )
         print()
