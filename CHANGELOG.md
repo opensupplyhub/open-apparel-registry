@@ -9,12 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Add new taxonomy processing types [#1827](https://github.com/open-apparel-registry/open-apparel-registry/pull/1827)
-- Add extended field reports [#1826](https://github.com/open-apparel-registry/open-apparel-registry/pull/1826)
-
 ### Changed
-
-- Mark failing reports with Do Not Open [#1836](https://github.com/open-apparel-registry/open-apparel-registry/pull/1836)
 
 ### Deprecated
 
@@ -22,9 +17,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Handle blank rows and columns in .xlsx [#1837](https://github.com/open-apparel-registry/open-apparel-registry/pull/1837)
-
 ### Security
+
+## [66] - 2022-05-12
+
+### Added
+
+- Add new taxonomy processing types [#1827](https://github.com/open-apparel-registry/open-apparel-registry/pull/1827)
+- Add extended field reports [#1826](https://github.com/open-apparel-registry/open-apparel-registry/pull/1826)
+
+### Changed
+
+- Mark failing reports with Do Not Open [#1836](https://github.com/open-apparel-registry/open-apparel-registry/pull/1836)
+
+### Fixed
+
+- Handle blank rows and columns in .xlsx [#1837](https://github.com/open-apparel-registry/open-apparel-registry/pull/1837)
 
 ## [65] - 2022-04-28
 
@@ -1176,6 +1184,7 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 - Initial release.
 
 [unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/65...HEAD
+[66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
 [65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
 [64]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/64
 [63]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/63
