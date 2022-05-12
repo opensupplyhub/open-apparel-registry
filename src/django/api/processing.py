@@ -84,11 +84,12 @@ def parse_xlsx(file, request):
                     if cell.row != 1:
                         cell.value = format_percent(cell.value)
 
-        header = ','.join([cell.value for cell in ws[1]])
+        header = ','.join([format_cell_value(cell.value) for cell in ws[1]])
 
         rows = ['"{}"'.format(
             '","'.join([format_cell_value(cell.value) for cell in ws[idx]]))
-                for idx in range(2, ws.max_row + 1)]
+                for idx in range(2, ws.max_row + 1)
+                if any(cell.value is not None for cell in ws[idx])]
 
         return header, rows
     except Exception:

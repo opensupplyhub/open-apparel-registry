@@ -2372,7 +2372,6 @@ class ExtendedField(models.Model):
     Fields will be related to either a claim or list item; they must reference
     one, but not both.
     """
-    COUNTRY = 'country'
     NAME = 'name'
     ADDRESS = 'address'
     NUMBER_OF_WORKERS = 'number_of_workers'
@@ -2385,7 +2384,6 @@ class ExtendedField(models.Model):
     PROCESSING_TYPE = 'processing_type'
 
     FIELD_CHOICES = (
-        (COUNTRY, COUNTRY),
         (NAME, NAME),
         (ADDRESS, ADDRESS),
         (NUMBER_OF_WORKERS, NUMBER_OF_WORKERS),
@@ -2393,9 +2391,7 @@ class ExtendedField(models.Model):
         (FACILITY_TYPE, FACILITY_TYPE),
         (PROCESSING_TYPE, PROCESSING_TYPE),
         (PRODUCT_TYPE, PRODUCT_TYPE),
-        (PARENT_COMPANY, PARENT_COMPANY),
-        (FACILITY_TYPE, FACILITY_TYPE),
-        (PROCESSING_TYPE, PROCESSING_TYPE))
+        (PARENT_COMPANY, PARENT_COMPANY))
 
     contributor = models.ForeignKey(
         'Contributor',
