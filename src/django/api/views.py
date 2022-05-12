@@ -904,7 +904,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     def list(self, request):
         """
         Returns a list of facilities in GeoJSON format for a given query.
-        (Maximum of 50 facilities per page.)
+        (Maximum of 50 facilities per page if the detail parameter is fale or
+        not specified, 10 if the detail parameter is true.)
 
         ### Sample Response
             {
