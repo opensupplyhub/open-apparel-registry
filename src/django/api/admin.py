@@ -94,8 +94,12 @@ class ContributorAdmin(SimpleHistoryAdmin):
     history_list_display = ('is_verified', 'verification_notes')
     search_fields = ('name', 'admin__email')
 
+    def get_ordering(self, request):
+        return ['name']
+
 
 class FacilityClaimAdmin(SimpleHistoryAdmin):
+    autocomplete_fields = ('parent_company', )
     history_list_display = ('id', 'contact_person', 'created_at', 'status')
     readonly_fields = ('contributor', 'facility', 'status_change_reason',
                        'status_change_by', 'status_change_date', 'status')
@@ -112,6 +116,7 @@ class FacilityAliasAdmin(SimpleHistoryAdmin):
 
 
 class SourceAdmin(admin.ModelAdmin):
+    autocomplete_fields = ('contributor', )
     readonly_fields = ('source_type', 'facility_list', 'create')
     list_filter = ('source_type', 'contributor')
 
@@ -137,6 +142,7 @@ class RequestLogAdmin(admin.ModelAdmin):
 
 
 class ApiLimitAdmin(admin.ModelAdmin):
+    autocomplete_fields = ('contributor', )
     history_list_display = ('contributor', 'yearly_limit', 'created_at',
                             'updated_at', 'period_start_date')
 
