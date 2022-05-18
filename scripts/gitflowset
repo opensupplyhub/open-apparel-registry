@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n "Usage: $(basename "$0")
+Set the gitflow configuration to either OAR or OGR
+Options:
+    oar (default) Configure gitflow to use OAR branches
+    ogr           Configure gitflow to use OGR
+"
+}
+
+function ogr() {
+    git flow config set develop ogr/develop
+    git flow config set master ogr/master
+    git flow config set feature ogr/feature/
+    git flow config set bugfix ogr/bugfix/
+    git flow config set release ogr/release/
+    git flow config set hotfix ogr/hotfix/
+    git flow config set support ogr/support/
+}
+
+function oar() {
+    git flow config set develop develop
+    git flow config set master master
+    git flow config set feature feature/
+    git flow config set bugfix bugfix/
+    git flow config set release release/
+    git flow config set hotfix hotfix/
+    git flow config set support support/
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ $# -eq 0 ]; then
+        oar
+    elif [ "${1:-}" = "oar" ]; then
+        oar
+    elif [ "${1:-}" = "ogr" ]; then
+        ogr
+    else
+        usage
+    fi
+fi

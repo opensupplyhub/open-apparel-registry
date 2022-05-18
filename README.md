@@ -117,15 +117,16 @@ be available on their page, or you can visit http://localhost:6543/?embed=1&cont
 
 ## Scripts 🧰
 
-| Name                                                   | Description                                                                                                                                                                                  |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bootstrap`                                            | Update environment variables file                                                                                                                                                                    |
-| `infra`                                                | Plan and apply remote infrastructure changes                                                                                                                                                 |
-| `resetdb`                                              | Clear development database & load fixture data including users, facility lists, matches, and facilities                                                                                      |
-| `server`                                               | Run `docker-compose.yml` services                                                                                                                                                            |
-| `setup`                                                | Provision Vagrant VM and run `update`                                                                                                                                                        |
-| `test`                                                 | Run tests                                                                                                                                                                                    |
-| `update`                                               | Build container images and execute database migrations                                                                                                                                       |
+| Name         | Description                                                                                             |
+|--------------|---------------------------------------------------------------------------------------------------------|
+| `bootstrap`  | Update environment variables file                                                                       |
+| `gitflowset` | Set which branches and prefixes to use for gitflow operations                                           |
+| `infra`      | Plan and apply remote infrastructure changes                                                            |
+| `resetdb`    | Clear development database & load fixture data including users, facility lists, matches, and facilities |
+| `server`     | Run `docker-compose.yml` services                                                                       |
+| `setup`      | Provision Vagrant VM and run `update`                                                                   |
+| `test`       | Run tests                                                                                               |
+| `update`     | Build container images and execute database migrations                                                  |
 
 ## Tools ⚒️
 
