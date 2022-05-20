@@ -9,6 +9,8 @@ The Open Apparel Registry (OAR) is a tool to identify every apparel facility wor
   - [Hot Reloading 🔥](#hot-reloading-)
   - [Debugging Django](#debugging-django)
   - [Ports](#ports)
+  - [Parallel Development of OGR](#parallel-development-of-ogr)
+    - [Parallel PR Workflow](#parallel-pr-workflow)
 - [Scripts 🧰](#scripts-)
 - [Management](#management)
   - [Making Superusers](#making-superusers)
@@ -114,6 +116,44 @@ be available on their page, or you can visit http://localhost:6543/?embed=1&cont
 | -------------------------- | ------------------------------- |
 | React development server   | [`6543`](http://localhost:6543) |
 | Gunicorn for Django app    | [`8081`](http://localhost:8081) |
+
+
+### Parallel Development of OGR
+
+The Open Goods Registry is the successor to OAR, and OGR will replace OAR when
+it is launched. During the beta period, both applications will be deployed and
+developed in parallel. Features development for OAR also need to be included in
+OGR, but there are OGR-specific features and related architectural changes that
+are not appropriate to be included in OAR. Too support this parallel development
+process, there are 4 main branches in the repository:
+
+- develop
+- master
+- ogr/develop
+- ogr/master
+
+When OGR is released we will return to a single pair of `develop` and `master`
+branches by replacing their content with `ogr/develop` and `ogr/master`.
+
+#### Parallel PR Workflow
+
+- Is the new feature of fix specific to OGR?
+  - Yes
+    - Create a branch starting from `ogr/develop`
+    - Create a pull request targeted at `ogr/develop`
+    - Have the PR reviewed and merge it into `ogr/develop`
+  - No
+	- Create a branch starting from `develop`
+	- Create a pull request targeted at `develop`
+	- Have the PR reviewed
+	- If the feature also applies to OGR
+      - Create a new branch off of `ogr/develop`  and `git cherry-pick` the clean, rebased commits from the PR branch
+	  - Verify that code still works in the context of OGR and add any
+        additional commits required
+	  - Create a second PR targeted at `ogr/develop`
+      - Have the PR reviewed, preferably by the same reviewer
+      - Merge the second PR into `ogr/develop`
+    - Merge the original PR into `develop`
 
 ## Scripts 🧰
 
