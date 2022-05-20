@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+- Fix geocode error messages to include the status code [#1853](https://github.com/open-apparel-registry/open-apparel-registry/pull/1853)
 
 ### Security
 
