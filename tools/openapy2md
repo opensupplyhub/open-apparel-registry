@@ -1,0 +1,35 @@
+#! /usr/bin/env python
+import json
+import sys
+
+# Read an OpenAPI 2 API definition in JSON format and write it to standard out
+# in Markdown format
+#
+# Usage: openapi2md api-definition.json
+
+with open(sys.argv[1]) as f:
+    data = json.load(f)
+
+for path, detail in data["paths"].items():
+    for verb, action in detail.items():
+        print("# {} {}".format(verb.upper(), path))
+        print()
+        try:
+            print(action["description"])
+        except KeyError:
+            print()
+        if len(action["parameters"]) > 0:
+            print()
+            print("### Parameters")
+            print()
+            print("| name | data type | param type | description |")
+            print("| ---- | --------- | ---------- | ----------- |")
+            for p in action["parameters"]:
+                data_type = p["type"] if "type" in p else ""
+                param_type = p["in"] if "in" in p else ""
+                print(
+                    "| {} |  {} | {} | {} |".format(
+                        p["name"], data_type, param_type, p["description"]
+                    )
+                )
+        print()
