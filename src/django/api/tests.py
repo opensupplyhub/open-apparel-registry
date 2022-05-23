@@ -754,6 +754,12 @@ class GeocodingTest(TestCase):
         self.assertEqual(expected_point, results["geocoded_point"])
         self.assertEqual(expected_address, results['geocoded_address'])
 
+    @patch('api.geocoding.requests.get')
+    def test_geocode_non_200_response(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=400)
+        with self.assertRaisesRegexp(ValueError, '400'):
+            geocode_address('Noorbagh, Kaliakoir Gazipur Dhaka 1704', 'BD')
+
 
 class FacilityAndProcessingTypeTest(TestCase):
     def test_exact_processing_type_match(self):
