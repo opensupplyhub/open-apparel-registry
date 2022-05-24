@@ -1,20 +1,20 @@
-country,name,address
-China,"Dalian Sportech Apparel Co., Ltd.","No. 153 West of Liaohe Road, Economic & Technical Development Zone, Dalian City, Liaoning Province 116600"
-China,"Dongguan Luyang Shoes Co., Ltd.","Development Zone of Chi-Ling, Hou Jie Town, DongGuan City, Guangdong Province 523940"
-China,Freetrend Industrial Ltd.,"Ao Pei Village, Pao-An Hsiang, Heng Kang Town, Lung- Kang Zone, Shenzhen, Guangdong 518115"
-China,Regina Miracle Intimate Apparel (Shenzhen) Ltd.,"No. 5 Cengyao Industrial Estate, Yulu, Gongming, Bao'An, Shenzhen, Guangdong 518106"
-China,"Zhejiang Walt Knitting Co., Ltd.","No. 18, Shi Jing Road, Haining, Zhejiang"
-China,"Zhongshan Unichina Garment Co., Ltd.","Shunjing Industrial park, Fuzhong Road, Banfu town, Zhongshan city, Guangdong 528459 China"
-El Salvador,Industrias Merlet S. A. de C.V.,"Calle Circunvalación, Pol. A, Nº 3, Urb. Industrial La Laguna, Antiguo Cuscatlán, La Libertad"
-Israel,Hitex,"Industrial Center Teradyon, P.O.B. 1365, Misgav 20179"
-Jordan,Al Hanan,"Alhoson Street Bebrs Building, P.O.Box. 888 Irbid 21110"
-Jordan,Al Masera,"El Hasan industry Estate, Irbid"
-Philippines,Globalwear Manufacturing Inc. (GMM),"PPC 19 Bldg., Crescent Road, Lot 8, Block 4, Lapu-Lapu City, Cebu 6015"
-Philippines,Metro Wear Inc.,"Block C6, Corner 2nd Avenue, 5th St, Mactan Economic Zone 1, Lapu-Lapu City, Cebu 6015"
-Mexico,Robinson Manufacturing Co. de Mexico S.A. de C.V.,"Calle Industrial Alimenticia 2311, Linares 67735"
-Sri Lanka,Kusang Lanka Ltd.,"Aniyakanda Estate, Nagoda, Kandana"
-Taiwan,"Chuan Cheng Hat Co., Ltd., Ta-Ya Factory","No. 56, Chung San Road,Ta-Ya Hsiang, Taichung Hsien 42841"
-Turkey,Pim Tekstil San.Ve. Tic. Sti.,"Yarimburgaz Mh. Atatürk Cd. No.31, 34306 Cekmece, Istanbul 34290"
-USA,Catawba Sox LLC.,"1500 13th ST SW Hickory, NC 28601"
-Vietnam,"Long Rich (VN) Co., Ltd.","Lot No. 1-4, 10-13, 26-37, Road 3 Industrial Zone in Linh Trung Export Processing II, Binh Chieu Commune, Thu Duc District, Ho Chi Minh City"
-Vietnam,"Star Fashion Co., Ltd.","Lot 3, Phu Nghia Industrial Zone, Phu Nghia Commune, Chuong My District, Hanoi"
+country,name,address,sector
+China,"Dalian Sportech Apparel Co., Ltd.","No. 153 West of Liaohe Road, Economic & Technical Development Zone, Dalian City, Liaoning Province 116600",Apparel
+China,"Dongguan Luyang Shoes Co., Ltd.","Development Zone of Chi-Ling, Hou Jie Town, DongGuan City, Guangdong Province 523940",Apparel
+China,Freetrend Industrial Ltd.,"Ao Pei Village, Pao-An Hsiang, Heng Kang Town, Lung- Kang Zone, Shenzhen, Guangdong 518115",Apparel
+China,Regina Miracle Intimate Apparel (Shenzhen) Ltd.,"No. 5 Cengyao Industrial Estate, Yulu, Gongming, Bao'An, Shenzhen, Guangdong 518106",Apparel
+China,"Zhejiang Walt Knitting Co., Ltd.","No. 18, Shi Jing Road, Haining, Zhejiang",Apparel
+China,"Zhongshan Unichina Garment Co., Ltd.","Shunjing Industrial park, Fuzhong Road, Banfu town, Zhongshan city, Guangdong 528459 China",Apparel
+El Salvador,Industrias Merlet S. A. de C.V.,"Calle Circunvalación, Pol. A, Nº 3, Urb. Industrial La Laguna, Antiguo Cuscatlán, La Libertad",Apparel
+Israel,Hitex,"Industrial Center Teradyon, P.O.B. 1365, Misgav 20179",Apparel
+Jordan,Al Hanan,"Alhoson Street Bebrs Building, P.O.Box. 888 Irbid 21110",Apparel
+Jordan,Al Masera,"El Hasan industry Estate, Irbid",Apparel
+Philippines,Globalwear Manufacturing Inc. (GMM),"PPC 19 Bldg., Crescent Road, Lot 8, Block 4, Lapu-Lapu City, Cebu 6015",Apparel
+Philippines,Metro Wear Inc.,"Block C6, Corner 2nd Avenue, 5th St, Mactan Economic Zone 1, Lapu-Lapu City, Cebu 6015",Apparel
+Mexico,Robinson Manufacturing Co. de Mexico S.A. de C.V.,"Calle Industrial Alimenticia 2311, Linares 67735",Apparel
+Sri Lanka,Kusang Lanka Ltd.,"Aniyakanda Estate, Nagoda, Kandana",Apparel
+Taiwan,"Chuan Cheng Hat Co., Ltd., Ta-Ya Factory","No. 56, Chung San Road,Ta-Ya Hsiang, Taichung Hsien 42841",Apparel
+Turkey,Pim Tekstil San.Ve. Tic. Sti.,"Yarimburgaz Mh. Atatürk Cd. No.31, 34306 Cekmece, Istanbul 34290",Apparel
+USA,Catawba Sox LLC.,"1500 13th ST SW Hickory, NC 28601",Apparel
+Vietnam,"Long Rich (VN) Co., Ltd.","Lot No. 1-4, 10-13, 26-37, Road 3 Industrial Zone in Linh Trung Export Processing II, Binh Chieu Commune, Thu Duc District, Ho Chi Minh City",Apparel
+Vietnam,"Star Fashion Co., Ltd.","Lot 3, Phu Nghia Industrial Zone, Phu Nghia Commune, Chuong My District, Hanoi",Apparel

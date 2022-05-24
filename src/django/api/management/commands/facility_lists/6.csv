@@ -1,45 +1,45 @@
-country,name,address
-Germany,Hanes Global Supply Chain Germany GmbH,"Chonlinder Stasse 1-11,86956 SCHONGAU"
-France,Hanes France SAS TMD,Boulevard Giberstein - 71400 AUTUN
-France,Hanes France SAS CDF,4 rue Nicephore Niepce - Autun Cedex
-Romania,Rosko Textil (Arad),"Parc Industrial UTA,Arad"
-Indonesia,PT Pacific Brands,"Kawasan Industri Jababeka XIIB Block W No 39,Bekasi 17530"
-Dominican Republic,Bonao - Dos Rios,"Autopista Duarte KM 80,Bonao,Dominican Republic"
-Slovak Republic,Hanes Global Chain Slovakia S.A.S.,"Andreja Hlinku 3,Cadca"
-Mexico,Rinplay S. DE R.L. DE C.V. (Huichapan),"KM 202.5 Carr. Mx,Cd. Juarez,Huichapan,Hidalgo"
-Honduras,Hanes Ink,"800 Mtrs Rd to LaJutosa,Choloma,Cortes"
-Honduras,Hanes Choloma Cutting,"Carretera SPS Pto Cortes,Choloma,Cortes - Bldg 1"
-United States,Clarksville Hosiery,"1904 W. Clark Rd.,Clarksville,AR"
-El Salvador,Bonaventure,"Km.26.5 Carretera a Sonsonate,Colon,La Libertad"
-Honduras,Confecciones Del Valle Cutting,"Buena Vista -Edif #E-1 & E-2 - Villanueva,Cortes"
-Honduras,Vanixx Molding Bldg #TU 1-2,"Zip Buena Vista -Edif #TU 1-2 - Villanueva,Cortes"
-Romania,Rosko Textil (Curtici),"Zona Libera,Curtici,Arad"
-Vietnam,Hung Yen North,"Yen Lich Village,Dan Tien Commune,Hung Yen"
-Dominican Republic,San Isidro,"Zona Franca San Isidro,Dominican Republic"
-South Africa,DBA Apparel (Pty) Ltd.,"101 Lawley Street,Durban"
-Honduras,Confecciones Del Valle Sewing,"Zip Buena Vista,Edif #CD 1-2,Villanueva,Cortes"
-Honduras,Jasper,"Zoli Honduras,Edificio #11,Choloma,Cortes"
-Honduras,Jogbra,"ZIP Buena Vista,Edificio B3,Villanueva,Cortes"
-Honduras,Hanes Choloma Cutting,"Zip Choloma,Edificio DF,Choloma,Cortes"
-Honduras,Hanes Choloma Sewing 2,"Zip Choloma,Edificio G,Choloma,Cortes"
-El Salvador,Jiboa - El Pedregal,"Km. 46 12 Car a La Herradura,El Rosario,La Pax"
-El Salvador,Confecciones - El Pedregal 4c,"Km. 46 12 Car a La Herradura,El Rosario,La Pax"
-Thailand,Surin Plant,"No. 99 Moo 1,Highway No. 214,Surin"
-Vietnam,Hung Yen South,"Ching Nghia Commune,Kim Dong District,Hung Yen"
-Brazil,Cotia,"Travessa Macapa 120,Km 33 Rod. raposo Tavares,San Paulo,Brazil"
-Puerto Rico,Humacao,"Carr #3,KM 83.6,Humacao"
-El Salvador,ES Textiles,"Km 34 Carretera a San Juan Opico,La Libertad"
-United States,GFSI - Lenexa (Commerce Pkwy),"9700 Commerce Parkway,Lenexa,KS"
-Mexico,GFSI Southwest S DE Rl DE CV,"PRIVADA MARTEL SN MANZANA 4,LOTE 7 & 8,Reynosa"
-Vietnam,Phu Bai,An Qiu Xin Tian Heng Computerized  Embroidery Co. Ltd.
-Philippines,PIPLAY - Binan Laguna Plant,"Laguna Int'l Industrial Park,Mamplasan,Biban,Laguna"
-United States,GTM Sportwear,"520 McCall Rd.,Manhattan,KS"
-United States,Mount Airy Sock,"643 West Pine St.,Mt. Airy,NC"
-Argentina,San Juan - Indumentaria Andina,"Buenos Aires 1364,San Juan City,Argentina"
-El Salvador,ES Sock,"Km 34 Carretera,San Juan Opico,La Libertad"
-Argentina,Buenos Aires - Alsina 1771,"Alsina 1771,San Martin,Buenos Aires,Argentina"
-Dominican Republic,Bali D,"ZONA FRANCA INDUSTRIAL,San Pedro de Marcoris"
-El Salvador,ES Sew,"Sam LI-KM 31.5,Santa Ana,La Libertad,San Juan Opico"
-Dominican Republic,Santo Domingo - Las Americas,"Autopista Las Americas KM 22,Santo Domingo,Dominican Republic"
-United States,Woolwine,"138 Elamsville Rd.,Stuart,VA"
-Romania,Universal Zalau Plant,"77 Blvd. Mihai Viteazu,Zalau"
+country,name,address,sector
+Germany,Hanes Global Supply Chain Germany GmbH,"Chonlinder Stasse 1-11,86956 SCHONGAU",Apparel
+France,Hanes France SAS TMD,Boulevard Giberstein - 71400 AUTUN,Apparel
+France,Hanes France SAS CDF,4 rue Nicephore Niepce - Autun Cedex,Apparel
+Romania,Rosko Textil (Arad),"Parc Industrial UTA,Arad",Apparel
+Indonesia,PT Pacific Brands,"Kawasan Industri Jababeka XIIB Block W No 39,Bekasi 17530",Apparel
+Dominican Republic,Bonao - Dos Rios,"Autopista Duarte KM 80,Bonao,Dominican Republic",Apparel
+Slovak Republic,Hanes Global Chain Slovakia S.A.S.,"Andreja Hlinku 3,Cadca",Apparel
+Mexico,Rinplay S. DE R.L. DE C.V. (Huichapan),"KM 202.5 Carr. Mx,Cd. Juarez,Huichapan,Hidalgo",Apparel
+Honduras,Hanes Ink,"800 Mtrs Rd to LaJutosa,Choloma,Cortes",Apparel
+Honduras,Hanes Choloma Cutting,"Carretera SPS Pto Cortes,Choloma,Cortes - Bldg 1",Apparel
+United States,Clarksville Hosiery,"1904 W. Clark Rd.,Clarksville,AR",Apparel
+El Salvador,Bonaventure,"Km.26.5 Carretera a Sonsonate,Colon,La Libertad",Apparel
+Honduras,Confecciones Del Valle Cutting,"Buena Vista -Edif #E-1 & E-2 - Villanueva,Cortes",Apparel
+Honduras,Vanixx Molding Bldg #TU 1-2,"Zip Buena Vista -Edif #TU 1-2 - Villanueva,Cortes",Apparel
+Romania,Rosko Textil (Curtici),"Zona Libera,Curtici,Arad",Apparel
+Vietnam,Hung Yen North,"Yen Lich Village,Dan Tien Commune,Hung Yen",Apparel
+Dominican Republic,San Isidro,"Zona Franca San Isidro,Dominican Republic",Apparel
+South Africa,DBA Apparel (Pty) Ltd.,"101 Lawley Street,Durban",Apparel
+Honduras,Confecciones Del Valle Sewing,"Zip Buena Vista,Edif #CD 1-2,Villanueva,Cortes",Apparel
+Honduras,Jasper,"Zoli Honduras,Edificio #11,Choloma,Cortes",Apparel
+Honduras,Jogbra,"ZIP Buena Vista,Edificio B3,Villanueva,Cortes",Apparel
+Honduras,Hanes Choloma Cutting,"Zip Choloma,Edificio DF,Choloma,Cortes",Apparel
+Honduras,Hanes Choloma Sewing 2,"Zip Choloma,Edificio G,Choloma,Cortes",Apparel
+El Salvador,Jiboa - El Pedregal,"Km. 46 12 Car a La Herradura,El Rosario,La Pax",Apparel
+El Salvador,Confecciones - El Pedregal 4c,"Km. 46 12 Car a La Herradura,El Rosario,La Pax",Apparel
+Thailand,Surin Plant,"No. 99 Moo 1,Highway No. 214,Surin",Apparel
+Vietnam,Hung Yen South,"Ching Nghia Commune,Kim Dong District,Hung Yen",Apparel
+Brazil,Cotia,"Travessa Macapa 120,Km 33 Rod. raposo Tavares,San Paulo,Brazil",Apparel
+Puerto Rico,Humacao,"Carr #3,KM 83.6,Humacao",Apparel
+El Salvador,ES Textiles,"Km 34 Carretera a San Juan Opico,La Libertad",Apparel
+United States,GFSI - Lenexa (Commerce Pkwy),"9700 Commerce Parkway,Lenexa,KS",Apparel
+Mexico,GFSI Southwest S DE Rl DE CV,"PRIVADA MARTEL SN MANZANA 4,LOTE 7 & 8,Reynosa",Apparel
+Vietnam,Phu Bai,An Qiu Xin Tian Heng Computerized  Embroidery Co. Ltd.,Apparel
+Philippines,PIPLAY - Binan Laguna Plant,"Laguna Int'l Industrial Park,Mamplasan,Biban,Laguna",Apparel
+United States,GTM Sportwear,"520 McCall Rd.,Manhattan,KS",Apparel
+United States,Mount Airy Sock,"643 West Pine St.,Mt. Airy,NC",Apparel
+Argentina,San Juan - Indumentaria Andina,"Buenos Aires 1364,San Juan City,Argentina",Apparel
+El Salvador,ES Sock,"Km 34 Carretera,San Juan Opico,La Libertad",Apparel
+Argentina,Buenos Aires - Alsina 1771,"Alsina 1771,San Martin,Buenos Aires,Argentina",Apparel
+Dominican Republic,Bali D,"ZONA FRANCA INDUSTRIAL,San Pedro de Marcoris",Apparel
+El Salvador,ES Sew,"Sam LI-KM 31.5,Santa Ana,La Libertad,San Juan Opico",Apparel
+Dominican Republic,Santo Domingo - Las Americas,"Autopista Las Americas KM 22,Santo Domingo,Dominican Republic",Apparel
+United States,Woolwine,"138 Elamsville Rd.,Stuart,VA",Apparel
+Romania,Universal Zalau Plant,"77 Blvd. Mihai Viteazu,Zalau",Apparel

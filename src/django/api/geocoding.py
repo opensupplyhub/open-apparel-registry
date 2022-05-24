@@ -75,7 +75,7 @@ def find_valid_country_code(data, country_code):
     raise ValueError(error)
 
 
-def geocode_address(address, country_code):
+def geocode_address(address, country_code, validate_country=True):
     params = create_geocoding_params(address, country_code)
     r = requests.get(GEOCODING_URL, params=params)
 
@@ -88,6 +88,8 @@ def geocode_address(address, country_code):
     if data["status"] == ZERO_RESULTS or len(data["results"]) == 0:
         return format_no_geocode_results(data)
 
-    valid_result = find_valid_country_code(data, country_code)
+    if validate_country:
+        valid_result = find_valid_country_code(data, country_code)
+        return format_geocoded_address_data(data, valid_result)
 
-    return format_geocoded_address_data(data, valid_result)
+    return format_geocoded_address_data(data)
