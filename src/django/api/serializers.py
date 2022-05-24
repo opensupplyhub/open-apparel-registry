@@ -40,7 +40,7 @@ from api.models import (FacilityList,
                         NonstandardField,
                         ExtendedField)
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
-from api.processing import get_country_code
+from api.processing import get_country_code, parse_array_values
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
@@ -99,6 +99,20 @@ def prefer_contributor_name(serializer):
         return False
     except EmbedConfig.DoesNotExist or Contributor.DoesNotExist:
         return False
+
+
+class PipeSeparatedField(ListField):
+    """Accepts either a list or a pipe-delimited string as input"""
+    def to_internal_value(self, data):
+        if isinstance(data, str):
+            data = data.split('|')
+        if ((not isinstance(data, list) or
+             any(not isinstance(item, str) for item in data))):
+            raise ValidationError(
+                'Expected value to be a string or a list of strings '
+                f'but got {data}')
+        data = parse_array_values(data)
+        return super().to_internal_value(data)
 
 
 class UserSerializer(ModelSerializer):
@@ -1018,6 +1032,9 @@ class FacilityDetailsSerializer(FacilitySerializer):
 
 
 class FacilityCreateBodySerializer(Serializer):
+    sector = PipeSeparatedField(
+        required=True, allow_empty=False,
+        child=CharField(required=True, max_length=200))
     country = CharField(required=True)
     name = CharField(required=True, max_length=200)
     address = CharField(required=True, max_length=200)
