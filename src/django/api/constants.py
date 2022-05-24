@@ -1,4 +1,5 @@
 class CsvHeaderField:
+    SECTOR = 'sector'
     COUNTRY = 'country'
     NAME = 'name'
     ADDRESS = 'address'
