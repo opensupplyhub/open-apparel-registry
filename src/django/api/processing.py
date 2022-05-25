@@ -70,6 +70,12 @@ def format_cell_value(value):
     return str(value)
 
 
+def parse_array_values(values):
+    # The nested list comprehension ensures that we filter out whitespace-only
+    # values
+    return [s.title() for s in [s.strip() for s in values] if s]
+
+
 def parse_xlsx(file, request):
     try:
         ws = get_xlsx_sheet(file, request)
@@ -159,6 +165,9 @@ def parse_facility_list_item(item):
                 values.append(
                     values[fields.index('facility_type_processing_type')])
 
+        if CsvHeaderField.SECTOR in fields:
+            item.sector = parse_array_values(
+                values[fields.index(CsvHeaderField.SECTOR)].split("|"))
         if CsvHeaderField.COUNTRY in fields:
             item.country_code = get_country_code(
                 values[fields.index(CsvHeaderField.COUNTRY)])
@@ -179,12 +188,8 @@ def parse_facility_list_item(item):
             is_geocoded = True
 
         if CsvHeaderField.PPE_PRODUCT_TYPES in fields:
-            product_types = values[
-                fields.index(CsvHeaderField.PPE_PRODUCT_TYPES)]
-            # The nested list comprehension ensures that we filter out
-            # whitespace-only values
-            item.ppe_product_types = \
-                [s for s in [s.strip() for s in product_types.split('|')] if s]
+            item.ppe_product_types = parse_array_values(values[
+                fields.index(CsvHeaderField.PPE_PRODUCT_TYPES)].split("|"))
         if CsvHeaderField.PPE_CONTACT_PHONE in fields:
             item.ppe_contact_phone = values[
                 fields.index(CsvHeaderField.PPE_CONTACT_PHONE)]
@@ -221,14 +226,15 @@ def parse_facility_list_item(item):
                                                                   error_str)
                 )
 
-            # If there is a validation error on the `ppe_product_types` array
-            # field, `full_clean` appears to set it to an empty string which
-            # then causes `save` to raise an exception.
-            ppe_product_types_is_valid = (
-                item.ppe_product_types is None
-                or isinstance(item.ppe_product_types, list))
-            if not ppe_product_types_is_valid:
-                item.ppe_product_types = []
+            # If there is a validation error on an array field, `full_clean`
+            # appears to set it to an empty string which then causes `save`
+            # to raise an exception.
+            for field in {'ppe_product_types', 'sector'}:
+                field_is_valid = (
+                    getattr(item, field) is None
+                    or isinstance(getattr(item, field), list))
+                if not field_is_valid:
+                    setattr(item, field, [])
 
             item.status = FacilityListItem.ERROR_PARSING
             item.processing_results.append({

@@ -2599,7 +2599,7 @@ def create_nonstandard_fields(fields, contributor):
     new_fields = filter(lambda f: f not in existing_fields,
                         unique_fields)
 
-    standard_fields = ['country', 'name', 'address', 'lat', 'lng',
+    standard_fields = ['sector', 'country', 'name', 'address', 'lat', 'lng',
                        'ppe_contact_phone', 'ppe_website',
                        'ppe_contact_email', 'ppe_product_types']
     nonstandard_fields = filter(lambda f: f.lower() not in standard_fields,
@@ -2758,6 +2758,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         items = [FacilityListItem(row_index=idx,
                                   raw_data=row,
+                                  sector=[],
                                   source=source)
                  for idx, row in enumerate(rows)]
         FacilityListItem.objects.bulk_create(items)
