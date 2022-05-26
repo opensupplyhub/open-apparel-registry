@@ -548,16 +548,18 @@ class GazetteerCache:
             # as possible
             messy = get_messy_items_for_training()
 
-        #TODO we will want to change this process to separate model training
-        #from workers coming online
+        # TODO we will want to change this process to separate model training
+        # from workers coming online
         if TrainedModel.objects.count() == 0:
-            cls._gazetter = train_gazetteer(messy, canonical, should_index=True)
+            cls._gazetter = train_gazetteer(
+                messy, canonical, should_index=True)
         else:
             # retrieve_model_obj = TrainedModel.objects.get(id=1)
             retrieve_model_obj = TrainedModel.objects.latest('creation_time')
             input_stream = io.BytesIO(retrieve_model_obj.dedupe_model)
-            cls._gazetter = train_gazetteer(messy, canonical,
-                model_settings=input_stream, should_index=True)
+            cls._gazetter = train_gazetteer(
+                messy, canonical, model_settings=input_stream,
+                should_index=True)
 
         cls._facility_version = db_facility_version
         cls._match_version = db_match_version

@@ -4,6 +4,7 @@ from dedupe.api import Link, GazetteerMatching, StaticMatching
 from dedupe._typing import Data, Blocks
 from django.db import connection
 
+
 class OgrGazetteerMatching(GazetteerMatching):
     def index(self, data: Data) -> None:  # pragma: no cover
         """
