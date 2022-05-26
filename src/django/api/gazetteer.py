@@ -1,9 +1,8 @@
 import itertools
 import json
-from dedupe.api import Link, GazetteerMatching
+from dedupe.api import Link, GazetteerMatching, StaticMatching
 from dedupe._typing import Data, Blocks
 from django.db import connection
-
 
 class OgrGazetteerMatching(GazetteerMatching):
     def index(self, data: Data) -> None:  # pragma: no cover
@@ -164,8 +163,8 @@ class OgrGazetteerMatching(GazetteerMatching):
                     for result in results:
                         yield result
 
-            # TODO server-side cursorcould trade performationce for lower
-            # memory footprint (would elimiate the need for ResultIter)
+            # TODO server-side cursor could trade performance for lower
+            # memory footprint (would eliminate the need for ResultIter)
             db_pair_blocks = itertools.groupby(ResultIter(cursor),
                                                lambda x: x[0])
             for _, pair_block in db_pair_blocks:
@@ -176,6 +175,10 @@ class OgrGazetteerMatching(GazetteerMatching):
                     )
                     for a_record_id, b_record_id, b_record_data in pair_block
                 ]
+
+
+class OgrStaticGazetteer(StaticMatching, OgrGazetteerMatching):
+    pass
 
 
 class OgrGazetteer(Link, OgrGazetteerMatching):

@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import traceback
+import io
 
 from collections import defaultdict
 from datetime import datetime
@@ -16,9 +17,10 @@ from api.models import (Facility,
                         FacilityListItem,
                         FacilityMatch,
                         HistoricalFacility,
-                        HistoricalFacilityMatch)
+                        HistoricalFacilityMatch,
+                        TrainedModel)
 from api.helpers import clean
-from api.gazetteer import OgrGazetteer
+from api.gazetteer import OgrGazetteer, OgrStaticGazetteer
 
 logger = logging.getLogger(__name__)
 
@@ -238,7 +240,7 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
     Reads a training.json file containing positive and negative matches.
     """
     if model_settings:
-        gazetteer = dedupe.StaticGazetteer(model_settings)
+        gazetteer = OgrStaticGazetteer(model_settings)
     else:
         fields = [
             {'field': 'country', 'type': 'Exact'},
@@ -252,6 +254,11 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
         with open(training_file) as tf:
             gazetteer.prepare_training(messy, canonical, tf, 15000)
         gazetteer.train(index_predicates=False)
+        output_stream = io.BytesIO()
+        gazetteer.write_settings(output_stream)
+        output_stream.seek(0)
+        model_object = TrainedModel(dedupe_model=output_stream.read())
+        model_object.save()
         gazetteer.cleanup_training()
 
     if should_index:
@@ -541,7 +548,17 @@ class GazetteerCache:
             # as possible
             messy = get_messy_items_for_training()
 
-        cls._gazetter = train_gazetteer(messy, canonical, should_index=True)
+        #TODO we will want to change this process to separate model training
+        #from workers coming online
+        if TrainedModel.objects.count() == 0:
+            cls._gazetter = train_gazetteer(messy, canonical, should_index=True)
+        else:
+            # retrieve_model_obj = TrainedModel.objects.get(id=1)
+            retrieve_model_obj = TrainedModel.objects.latest('creation_time')
+            input_stream = io.BytesIO(retrieve_model_obj.dedupe_model)
+            cls._gazetter = train_gazetteer(messy, canonical,
+                model_settings=input_stream, should_index=True)
+
         cls._facility_version = db_facility_version
         cls._match_version = db_match_version
         return cls._gazetter
