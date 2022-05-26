@@ -80,7 +80,7 @@ def geocode_address(address, country_code):
     r = requests.get(GEOCODING_URL, params=params)
 
     if r.status_code != 200:
-        raise ValueError("Geocoding request failed with status"
+        raise ValueError("Geocoding request failed with status {}"
                          .format(r.status_code))
 
     data = r.json()

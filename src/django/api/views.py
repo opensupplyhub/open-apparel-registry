@@ -585,8 +585,9 @@ def number_of_workers_ranges(request):
 @api_view(['GET'])
 def facility_processing_types(request):
     """
-    Returns a list of standardized ranges for the number_of_workers extended
-    field.
+    Returns an array of objects with facilityType set to the name of a facility
+    type and processingTypes set to an array of processing types associated
+    with that facility type.
 
     ## Sample Response
 
@@ -903,7 +904,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     def list(self, request):
         """
         Returns a list of facilities in GeoJSON format for a given query.
-        (Maximum of 50 facilities per page.)
+        (Maximum of 50 facilities per page if the detail parameter is fale or
+        not specified, 10 if the detail parameter is true.)
 
         ### Sample Response
             {
