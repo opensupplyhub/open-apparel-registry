@@ -8,22 +8,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-- Add new Average Match Count, Confirm Reject Counts, and Error Items reports [#1855](https://github.com/open-apparel-registry/open-apparel-registry/pull/1855/commits)
 
 ### Changed
-- Use autocomplete ordered by name for admin contributors dropdown [#1848](https://github.com/open-apparel-registry/open-apparel-registry/pull/1848)
-- Document parallel OGR workflow in the README [#1851](https://github.com/open-apparel-registry/open-apparel-registry/pull/1851)
-- Update tile load test script and add scripts for hompage load, facility download, and facility POST [#1777](https://github.com/open-apparel-registry/open-apparel-registry/pull/1777)
-- API documentation updates [#1844](https://github.com/open-apparel-registry/open-apparel-registry/pull/1844)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Fix geocode error messages to include the status code [#1853](https://github.com/open-apparel-registry/open-apparel-registry/pull/1853)
 
 ### Security
+
+## [67] 2022-05-26
+
+### Added
+
+- Add new Average Match Count, Confirm Reject Counts, and Error Items reports [#1855](https://github.com/open-apparel-registry/open-apparel-registry/pull/1855/commits)
+
+### Changed
+
+- Use autocomplete ordered by name for admin contributors dropdown [#1848](https://github.com/open-apparel-registry/open-apparel-registry/pull/1848)
+- Document parallel OGR workflow in the README [#1851](https://github.com/open-apparel-registry/open-apparel-registry/pull/1851)
+- Update tile load test script and add scripts for hompage load, facility download, and facility POST [#1777](https://github.com/open-apparel-registry/open-apparel-registry/pull/1777)
+- API documentation updates [#1844](https://github.com/open-apparel-registry/open-apparel-registry/pull/1844)
+
+### Fixed
+
+- Fix geocode error messages to include the status code [#1853](https://github.com/open-apparel-registry/open-apparel-registry/pull/1853)
 
 ## [66] - 2022-05-12
 
@@ -1189,7 +1200,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/65...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/67...HEAD
+[67]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/67
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
 [65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
 [64]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/64
