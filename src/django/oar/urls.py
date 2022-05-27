@@ -63,8 +63,7 @@ public_apis = [
         name='number_of_workers_ranges'),
     url(r'^api/facility-processing-types', views.facility_processing_types,
         name='facility_processing_types'),
-    url(r'^api/product-types', views.product_types,
-        name='prodcut_types'),
+    url(r'^api/product-types', views.product_types, name='product_types'),
 ]
 
 info_apis = [
