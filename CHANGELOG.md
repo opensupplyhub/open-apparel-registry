@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+
 - Add new Average Match Count, Confirm Reject Counts, and Error Items reports [#1855](https://github.com/open-apparel-registry/open-apparel-registry/pull/1855/commits)
 - Get sector from CSV or API and store on `FacilityListItem` [#1868](https://github.com/open-apparel-registry/open-apparel-registry/pull/1868)
 
 ### Changed
+
 - Use autocomplete ordered by name for admin contributors dropdown [#1848](https://github.com/open-apparel-registry/open-apparel-registry/pull/1848)
 - Document parallel OGR workflow in the README [#1851](https://github.com/open-apparel-registry/open-apparel-registry/pull/1851)
 - Update tile load test script and add scripts for hompage load, facility download, and facility POST [#1777](https://github.com/open-apparel-registry/open-apparel-registry/pull/1777)
@@ -22,7 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+
 - Fix geocode error messages to include the status code [#1853](https://github.com/open-apparel-registry/open-apparel-registry/pull/1853)
+- Fix processing_type_facility_type_unmatched [#1875](https://github.com/open-apparel-registry/open-apparel-registry/pull/1875)
 
 ### Security
 
