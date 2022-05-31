@@ -214,14 +214,14 @@ def processing_type_facility_type_unmatched():
             for i, raw_value in enumerate(values):
                 if matched_values[i][3] is None:
                     data[raw_value.strip()] = data[raw_value.strip()] + 1
-            else:
-                _report_error_to_rollbar((
-                        'processing_type_facility_type_unmatched encountered '
-                        'mismatched processing type value count'
-                    ), extra_data={
-                        'deduped_values': json.dumps(values),
-                        'matched_values': json.dumps(matched_values),
-                    })
+        else:
+            _report_error_to_rollbar((
+                    'processing_type_facility_type_unmatched encountered '
+                    'mismatched processing type value count'
+                ), extra_data={
+                    'deduped_values': json.dumps(values),
+                    'matched_values': json.dumps(matched_values),
+                })
 
     rows = sort_by_first_column(data.items())
     return [['processing_type_facility_type', 'times_submitted'], rows]
