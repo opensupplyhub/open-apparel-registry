@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix processing_type_facility_type_unmatched [#1874](https://github.com/open-apparel-registry/open-apparel-registry/pull/1874)
+
 ### Security
 
 ## [67] 2022-05-26
