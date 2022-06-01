@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add new Average Match Count, Confirm Reject Counts, and Error Items reports [#1855](https://github.com/open-apparel-registry/open-apparel-registry/pull/1855/commits)
 - Get sector from CSV or API and store on `FacilityListItem` [#1868](https://github.com/open-apparel-registry/open-apparel-registry/pull/1868)
+- Add sector choices API endpoint [#1871](https://github.com/open-apparel-registry/open-apparel-registry/pull/1871)
 
 ### Changed
 

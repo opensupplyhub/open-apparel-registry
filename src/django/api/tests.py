@@ -8740,3 +8740,86 @@ class ExactMatchTest(FacilityAPITestCaseBase):
                                      self.contributor)
         self.assertEquals(results[0]['facility_id'], 1)
         self.assertEquals(results[1]['facility_id'], 2)
+
+
+class SectorChoiceViewTest(APITestCase):
+    def setUp(self):
+        super().setUp()
+        email = 'test@example.com'
+        password = 'example123'
+        user = User.objects.create(email=email)
+        user.set_password(password)
+        user.save()
+
+        contributor = Contributor(name='Name', admin=user)
+        contributor.save()
+
+        list = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='one',
+                    name='List')
+
+        self.source = Source \
+            .objects \
+            .create(source_type=Source.LIST,
+                    facility_list=list,
+                    contributor=contributor)
+
+        self.client.login(email=email, password=password)
+
+    def test_sector_choices_no_values(self):
+        items = [FacilityListItem(row_index=i, source=self.source, sector=[],
+                                  status=FacilityListItem.UPLOADED)
+                 for i in range(10)]
+        FacilityListItem.objects.bulk_create(items)
+        response = self.client.get(reverse('sectors'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+        self.assertEqual(len(response.json()), 0)
+
+    def test_sector_choices_basic(self):
+        items = [FacilityListItem(row_index=i, source=self.source,
+                                  status=FacilityListItem.PARSED)
+                 for i in range(10)]
+        items[0].sector = ['Apparel']
+        items[1].sector = ['Apparel', 'Agriculture']
+        items[2].sector = ['Mining']
+        items[3].sector = ['Chemicals', 'Construction']
+        items[4].sector = ['Electronics']
+        items[5].sector = ['Mining', 'Petroleum']
+        items[6].sector = ['Metals', 'Automotive']
+        items[7].sector = ['Mining']
+        items[8].sector = ['Apparel']
+        items[9].sector = ['Agriculture']
+        FacilityListItem.objects.bulk_create(items)
+        response = self.client.get(reverse('sectors'))
+        self.assertEqual(response.status_code, 200)
+        # Response should be sorted and deduped
+        self.assertEqual(response.json(), [
+            'Agriculture', 'Apparel', 'Automotive', 'Chemicals',
+            'Construction', 'Electronics', 'Metals', 'Mining', 'Petroleum'
+        ])
+
+    def test_sector_choices_inactive_and_private(self):
+        sources = [
+            Source(source_type=Source.SINGLE,
+                   contributor=self.source.contributor),
+            Source(is_active=False, source_type=Source.SINGLE,
+                   contributor=self.source.contributor),
+            Source(is_public=False, source_type=Source.SINGLE,
+                   contributor=self.source.contributor),
+        ]
+        Source.objects.bulk_create(sources)
+
+        items = [FacilityListItem(row_index=i, source=sources[i],
+                                  status=FacilityListItem.PARSED)
+                 for i in range(3)]
+        items[0].sector = ['Apparel']
+        items[1].sector = ['Agriculture']
+        items[2].sector = ['Mining']
+        FacilityListItem.objects.bulk_create(items)
+
+        response = self.client.get(reverse('sectors'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), ['Apparel'])

@@ -13,7 +13,7 @@ from functools import reduce
 from django.core.files.uploadedfile import (InMemoryUploadedFile,
                                             TemporaryUploadedFile)
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, Func
 from django.core import exceptions as core_exceptions
 from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
@@ -630,6 +630,30 @@ def product_types(request):
 @api_view(['GET'])
 def current_tile_cache_key(request):
     return Response(Facility.current_tile_cache_key())
+
+
+@api_view(['GET'])
+def sectors(request):
+    """
+    Returns a list of suggested sectors submitted by contributors,
+    sorted alphabetically.
+
+
+    ## Sample Response
+
+        [
+            "Agriculture",
+            "Apparel",
+            "Industry",
+        ]
+
+    """
+    sectors = FacilityListItem \
+        .objects \
+        .filter(source__is_active=True, source__is_public=True) \
+        .annotate(all_sectors=Func(F('sector'), function='unnest')) \
+        .values_list('all_sectors', flat=True).distinct()
+    return Response(sorted(sectors))
 
 
 class RootAutoSchema(AutoSchema):
