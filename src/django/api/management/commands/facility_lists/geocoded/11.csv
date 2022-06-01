@@ -1,52 +1,56 @@
-country,name,address,lat,lng
-Bangladesh,KSI (Karnaphuli Shoes Industries- Garment Division),"Korean Export Processing Zone,Anwara,Chittagong",22.2540408,91.8555628
-Cambodia,CPCG International Co. Ltd,"Sruk Choeung Brey,Kampong Cham Province",12.0982918,105.3131185
-Cambodia,Sabrina (Cambodia) Garment Manufacturing Corp.,"National Rd.,No. 4,Phum Trapaing Reussey,Khum Sambo Samrong Torng District,Kampong Speu Province",11.475524,104.5189214
-Cambodia,Reliable Source Industrial (Cambodia) Co. Ltd.,"PPhum Kral Dumrey,Sankat Kakab,Khan Dankor,Phnom Penh",11.5525318,104.8512993
-Canada,Pacifica Manufacturing Inc.,"1396 E 3rd Ave,Vancouver",49.2677522,-123.0760594
-Canada,Mondor Ltd.,"785 Honore Mercier,St-Jean-sur-Richelieu",45.3050756,-73.2369903
-China,Dongguan WeiHua Handbag Company Limited,"16 Zhen Xing Nan Road,Gao Bu,Dongguan",23.0733219,113.5587842
-China,Shanghai Weijie Garment Co. Ltd,"1228 Huiping Road,Nanxiang Jiading",31.30715799999999,121.2795467
-China,Far Eastern Apparel (Suzhou) Co. Ltd,"88,Tian Ling Road.,SuZhou",31.245217,120.6336265
-China,Eagle Nice(YiFeng) Garments Co. Ltd.,"No.76 Gongzhang Road,Yifeng",28.3762793,114.8444713
-China,Zhejiang Huizhong Garment (SC China),"No.123,Cheng Gong Road,Huiming Street,Jiashan",30.87003,120.973589
-China,Zhejiang Cayi Vacuum Container Co Ltd.,"No.3,Jinniu Rd,Wuyi",28.9278299,119.8680382
-China,Shanghai Reliable Source Industrial Co. Ltd.,"No.88 Yulu Rd.,Malu Town,Shanghai",31.2303904,121.4737021
-China,Kwong Wai Knitting Limited,"Taiyangao,Ping Shen Road,Huidong",22.985014,114.719988
-China,Chong Fu Knitters Company Limited,"The 2nd of Three Remit Industrial Area,Cunwei Village,Dongguan",23.033742,113.994609
-China,Dongguan Seeds Garment Manufacturing Limited,"Xiansha Industrial District,Dongguan",23.106652,113.755048
-El Salvador,Textiles Opico S.A de C.V,"KM 31.4 Carretera a Santa Ana,La Libertad",13.6817661,-89.3606298
-El Salvador,Youngone El Salvador SA,"Zona Franca Internacional,Olocuilta",13.5529906,-89.116822
-Haiti,MAS Akansyel S.A,"Route de Caracol,No. 14,Caracol,Building C,Caracol",19.6690182,-72.0139492
-Indonesia,PT Ungaran Sari Garments - Pringapus,"Jalan Raya Pringapus KM 5 - Kelurahan Pringapus,Kecamatan Pringapus,Kabupaten Semarang,Kabupaten Semarang",-7.1865736,110.4664358
-Indonesia,PT Dragon Forever,"JI Belitung Blok D35/36,Jakarta Utara",-6.1401154,106.925675
-Indonesia,PT. Hand Sum Tex,"Jl,Mauk Km 3,Desa Geleong Bugel 8,Jakarta",-6.1797426,106.5996071
-Israel,Delta Socks,"11 Hanapah Street,Karmiel",32.9234241,35.3256922
-Peru,Cititex,"5755 Los Estanos Street,Lima",-11.9668868,-77.06325749999999
-Peru,COFACO Industries SAC,"Ave. San Andres 6299,Lima",-11.9549531,-77.06699290000002
-Peru,Textil Del Valle S.A.,"Panamerica Sur Km. 200,Ica",-14.0349661,-75.7558399
-Philippines,Feeder Apparel Corp.,"Block C5,5th St. Cor. 2nd Ave. MEZ 1,Lapu-Lapu / Cebu",10.3285407,123.9848224
-Philippines,Charter Link Clark Inc. Philippines,"Panday Pira Ave. Ext. 1E1 Phase II Clark,Clarkfield",15.2056768,120.53273
-Sri Lanka,MAS Active (Pvt) Ltd - Linea Intimo,"Lot 89 B.E.P.Z,Malwana",6.9566644,80.0095609
-Sri Lanka,MAS Active (Pvt) Ltd - Shadowline,"Lot No 53,Katunayake",7.164073200000001,79.8851881
-Sri Lanka,Quantum Clothing Lanka (Pvt) Ltd,"Moragahahena,Millewa",6.784184,80.0541909
-Sri Lanka,MAS Active (Pvt) Ltd - Contourline,"Pallekele lndustrial Park,Kandy",7.282199599999999,80.7231339
-Sri Lanka,MAS Active (Pvt) Ltd - Sleekline,"Plot 8,Malwatta EPP,Malwatta,Nittambuwa",7.142363899999999,80.1037721
-Taiwan,See Green Industrial Co. Ltd.,"NO.45,Dasi Rd.,Dacun Township,Chang Hwa 51543,Chang Hwa",23.9910777,120.5394232
-Turkey,Liberty Textiles and Seamless Wear,"Universite Mah. Baglar Yolu Cad. Sarigul Sok.,Avcilar/Istanbul",40.9984226,28.7187833
-USA,Nicewell Industry,"2411-C North Loma Ave,South El Monte",34.055815,-118.069197
-Vietnam,Maxport Limited Vietnam - Nam Dinh Branch - Maxport 6,"361 Nguyen Van Troi,Nang Tinh Ward,Nam Dinh Province",20.4126972,106.1698863
-Vietnam,Eclat Textile Co. Ltd. (Vietnam),"5A Road,Nhon Trach 2 Industrial Zone,Nhon Trach",10.7239137,106.9239773
-Vietnam,Esprinta VN Co. Ltd,"Road 12,Song Than 2 Industrial Park,Di An",10.8947296,106.752693
-Vietnam,Maxport Limited Vietnam - Nam Dinh - Maxport 5,"Lot No. 85,Map No. 44,Nam Dinh City",20.4388225,106.1621053
-Vietnam,E-TOP (Vietnam) Co.,"Lot VII-2 MY XUAN A2 Industrial Zone,Ba Ria",10.6335408,107.0456348
-Vietnam,Manufacturing Sportwear Joint Stock Company - Thai Binh Branch - MXP8,"Lot with area of 51,765.9m2,Xuan Quang Industrial Cluster,Dong Hung District",20.5640924,106.3699271
-Vietnam,Manufacturing Sportwear Joint Stock Company - Thai Binh Branch - MXP1,"Lot with area of 86,112.4m2,Nguyen Duc Canh Industrial Zone,Thai Binh City",20.4463471,106.3365828
-Vietnam,Manufacturing Sportwear Joint Stock Company - Thai Binh Branch - MXP5,"Lots with areas of 91,046 m2 Vu Ninh Industrial Cluster,Kien Xuong District / Thai Binh Province",20.4190116,106.3758145
-Vietnam,Pungkook Bentre Co. Ltd,"Lot E4,E5,E10,E11 - Giao Long IP,Chau Thanh District",10.3014784,106.4199755
-Vietnam,Hung Way Co. Ltd,"Rd,Tan Thuan,Tan Thuan Export Processing Zone,Ho Chi Minh",10.752371,106.729859
-Vietnam,Youngone Nam Dinh Co. Ltd,"Hao Xa Industrial Park Lot O,P,Q,R,N6 Road,Nam Dinh City",20.4388225,106.1621053
-Vietnam,BI (VN) Co. Ltd.,"Fri Jan 01 1075 10:52:58 GMT+0300 (EAT),Zone 1,Thanh Xuan Ward,Ho Chi Minh",10.8834303,106.6703963
-Vietnam,Viet Thuan Joint Stock Company,"No P1,N5A Street,Nam Dinh City",20.4227194,106.1412673
-Vietnam,Pungkook Saigon ll,"Street 06,Song Than I IP,Di An District",10.8964757,106.7527418
-Vietnam,Youngone Hung Yen Company Limited,"Ta Thuong Hamlet,Chinh Nghia Commune,Kim Dong",20.758529,106.0544659
+country,name,address,sector,lat,lng
+Bangladesh,KSI (Karnaphuli Shoes Industries- Garment Division),"Korean Export Processing Zone,Anwara,Chittagong",Apparel,22.2337164,91.8659809
+Bangladesh,RSI Apparels Ltd,"Plot # 35,Sector # 4,Road # 4,Chittagong Export Processing Zone,Chittagong",Apparel,22.2929379,91.77662049999999
+Bangladesh,Youngone (CEPZ) Limited,"Plot #11-16,Sector 2,Chittagong",Apparel,22.2875867,91.7776179
+Cambodia,CPCG International Co. Ltd,"Sruk Choeung Brey,Kampong Cham Province",Apparel,12.0982918,105.3131185
+Cambodia,Sabrina (Cambodia) Garment Manufacturing Corp.,"National Rd.,No. 4,Phum Trapaing Reussey,Khum Sambo Samrong Torng District,Kampong Speu Province",Apparel,11.4079762,104.5422225
+Cambodia,Reliable Source Industrial (Cambodia) Co. Ltd.,"PPhum Kral Dumrey,Sankat Kakab,Khan Dankor,Phnom Penh",Apparel,11.5525318,104.8512993
+Canada,Pacifica Manufacturing Inc.,"1396 E 3rd Ave,Vancouver",Apparel,49.26774169999999,-123.0760679
+Canada,Mondor Ltd.,"785 Honore Mercier,St-Jean-sur-Richelieu",Apparel,45.3049211,-73.2365832
+China,Dongguan WeiHua Handbag Company Limited,"16 Zhen Xing Nan Road,Gao Bu,Dongguan",Apparel,23.07478,113.57152
+China,Shanghai Weijie Garment Co. Ltd,"1228 Huiping Road,Nanxiang Jiading",Apparel,31.30309,121.28187
+China,Far Eastern Apparel (Suzhou) Co. Ltd,"88,Tian Ling Road.,SuZhou",Apparel,31.2451253,120.6430529
+China,Eagle Nice(YiFeng) Garments Co. Ltd.,"No.76 Gongzhang Road,Yifeng",Apparel,28.3799396,114.8446456
+China,Zhejiang Huizhong Garment (SC China),"No.123,Cheng Gong Road,Huiming Street,Jiashan",Apparel,30.86794,120.96659
+China,Zhejiang Cayi Vacuum Container Co Ltd.,"No.3,Jinniu Rd,Wuyi",Apparel,28.92781,119.86806
+China,Shanghai Reliable Source Industrial Co. Ltd.,"No.88 Yulu Rd.,Malu Town,Shanghai",Apparel,30.94852,121.09135
+China,Kwong Wai Knitting Limited,"Taiyangao,Ping Shen Road,Huidong",Apparel,34.012604,118.002371
+China,Chong Fu Knitters Company Limited,"The 2nd of Three Remit Industrial Area,Cunwei Village,Dongguan",Apparel,23.03181,113.99488
+China,Dongguan Seeds Garment Manufacturing Limited,"Xiansha Industrial District,Dongguan",Apparel,23.106652,113.755048
+Colombia,Crystal SAS,"CARRERA 48 # 52 SUR 81,Sabaneta",Apparel,6.1607899,-75.60524699999999
+El Salvador,Textiles Opico S.A de C.V,"KM 31.4 Carretera a Santa Ana,La Libertad",Apparel,13.6817661,-89.3606298
+El Salvador,Youngone El Salvador SA,"Zona Franca Internacional,Olocuilta",Apparel,13.5529906,-89.116822
+Haiti,MAS Akansyel S.A,"Route de Caracol,No. 14,Caracol,Building C,Caracol",Apparel,19.6924758,-72.0179236
+Indonesia,PT Ungaran Sari Garments - Pringapus,"Jalan Raya Pringapus KM 5 - Kelurahan Pringapus,Kecamatan Pringapus,Kabupaten Semarang,Kabupaten Semarang",Apparel,-7.1881953,110.4614698
+Indonesia,PT Dragon Forever,"JI Belitung Blok D35/36,Jakarta Utara",Apparel,-6.1422373,106.9259139
+Indonesia,PT. Hand Sum Tex,"Jl,Mauk Km 3,Desa Geleong Bugel 8,Jakarta",Apparel,-6.171453,106.6061072
+Israel,Delta Socks,"11 Hanapah Street,Karmiel",Apparel,32.9222569,35.3211411
+Peru,Cititex,"5755 Los Estanos Street,Lima",Apparel,-11.9668868,-77.06325749999999
+Peru,COFACO Industries SAC,"Ave. San Andres 6299,Lima",Apparel,-11.9549531,-77.06699290000002
+Peru,Textil Del Valle S.A.,"Panamerica Sur Km. 200,Ica",Apparel,-13.6983686,-76.15250189999999
+Philippines,Feeder Apparel Corp.,"Block C5,5th St. Cor. 2nd Ave. MEZ 1,Lapu-Lapu / Cebu",Apparel,10.328071,123.983185
+Philippines,Charter Link Clark Inc. Philippines,"Panday Pira Ave. Ext. 1E1 Phase II Clark,Clarkfield",Apparel,12.879721,121.774017
+Sri Lanka,MAS Active (Pvt) Ltd - Linea Intimo,"Lot 89 B.E.P.Z,Malwana",Apparel,6.9507844,80.0157449
+Sri Lanka,MAS Active (Pvt) Ltd - Shadowline,"Lot No 53,Katunayake",Apparel,7.164073399999999,79.8852686
+Sri Lanka,Quantum Clothing Lanka (Pvt) Ltd,"Moragahahena,Millewa",Apparel,6.784184,80.0541909
+Sri Lanka,MAS Active (Pvt) Ltd - Contourline,"Pallekele lndustrial Park,Kandy",Apparel,7.2801042,80.7020359
+Sri Lanka,MAS Active (Pvt) Ltd - Sleekline,"Plot 8,Malwatta EPP,Malwatta,Nittambuwa",Apparel,7.142363899999999,80.1037721
+Taiwan,See Green Industrial Co. Ltd.,"NO.45,Dasi Rd.,Dacun Township,Chang Hwa 51543,Chang Hwa",Apparel,23.9910777,120.5394232
+Turkey,Liberty Textiles and Seamless Wear,"Universite Mah. Baglar Yolu Cad. Sarigul Sok.,Avcilar/Istanbul",Apparel,40.9975529,28.7196859
+USA,Nicewell Industry,"2411-C North Loma Ave,South El Monte",Apparel,34.0559004,-118.0695146
+Vietnam,Maxport Limited Vietnam - Nam Dinh Branch - Maxport 6,"361 Nguyen Van Troi,Nang Tinh Ward,Nam Dinh Province",Apparel,20.4126921,106.1699397
+Vietnam,Eclat Textile Co. Ltd. (Vietnam),"5A Road,Nhon Trach 2 Industrial Zone,Nhon Trach",Apparel,10.722889,106.9232179
+Vietnam,Esprinta VN Co. Ltd,"Road 12,Song Than 2 Industrial Park,Di An",Apparel,10.9177067,106.7437961
+Vietnam,Maxport Limited Viertnam - Thai Binh Branch - Maxport 9,"Lot 110.238,8M2,Tu Tan Ward,Thai Binh",Apparel,20.421327,106.2610404
+Vietnam,Maxport Limited Vietnam - Nam Dinh - Maxport 5,"Lot No. 85,Map No. 44,Nam Dinh City",Apparel,20.4388225,106.1621053
+Vietnam,E-TOP (Vietnam) Co.,"Lot VII-2 MY XUAN A2 Industrial Zone,Ba Ria",Apparel,10.6335408,107.0456348
+Vietnam,Manufacturing Sportwear Joint Stock Company - Thai Binh Branch - MXP8,"Lot with area of 51,765.9m2,Xuan Quang Industrial Cluster,Dong Hung District",Apparel,20.5640924,106.3699271
+Vietnam,Manufacturing Sportwear Joint Stock Company - Thai Binh Branch - MXP1,"Lot with area of 86,112.4m2,Nguyen Duc Canh Industrial Zone,Thai Binh City",Apparel,20.4664153,106.3438224
+Vietnam,Manufacturing Sportwear Joint Stock Company - Thai Binh Branch - MXP5,"Lots with areas of 91,046 m2 Vu Ninh Industrial Cluster,Kien Xuong District / Thai Binh Province",Apparel,20.4190116,106.3758145
+Vietnam,Pungkook Bentre Co. Ltd,"Lot E4,E5,E10,E11 - Giao Long IP,Chau Thanh District",Apparel,10.3014784,106.4199755
+Vietnam,Hung Way Co. Ltd,"Rd,Tan Thuan,Tan Thuan Export Processing Zone,Ho Chi Minh",Apparel,10.7513608,106.7405605
+Vietnam,Youngone Nam Dinh Co. Ltd,"Hao Xa Industrial Park Lot O,P,Q,R,N6 Road,Nam Dinh City",Apparel,20.4221566,106.1531219
+Vietnam,BI (VN) Co. Ltd.,"Fri Jan 01 1075 10:52:58 GMT+0300 (EAT),Zone 1,Thanh Xuan Ward,Ho Chi Minh",Apparel,10.8834303,106.6703963
+Vietnam,Viet Thuan Joint Stock Company,"No P1,N5A Street,Nam Dinh City",Apparel,20.4226231,106.1398889
+Vietnam,Pungkook Saigon ll,"Street 06,Song Than I IP,Di An District",Apparel,10.8779164,106.7511083
+Vietnam,Youngone Hung Yen Company Limited,"Ta Thuong Hamlet,Chinh Nghia Commune,Kim Dong",Apparel,20.758529,106.0544659

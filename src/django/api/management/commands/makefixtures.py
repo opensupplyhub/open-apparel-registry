@@ -234,7 +234,7 @@ def make_facility_list(pk):
             'name': name,
             'description': description,
             'file_name': name + '.csv',
-            'header': 'country,name,address,lat,lng',
+            'header': 'country,name,address,sector,lat,lng',
             'created_at': created_at,
             'updated_at': updated_at,
         }

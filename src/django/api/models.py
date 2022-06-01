@@ -636,6 +636,10 @@ class FacilityListItem(PPEMixin):
         help_text=('The ISO 3166-1 alpha-2 country code of the facility taken '
                    'directly from the raw data or looked up based on a full '
                    'country name provided in the raw data.'))
+    sector = postgres.ArrayField(
+        models.CharField(max_length=50, null=False, blank=False),
+        help_text='The sector(s) for goods made at the facility',
+    )
     geocoded_point = gis_models.PointField(
         null=True,
         help_text=('The geocoded location the facility address field taken '

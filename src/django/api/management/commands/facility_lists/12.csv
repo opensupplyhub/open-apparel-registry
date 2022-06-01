@@ -1,16 +1,16 @@
-country,name,address
-Peru,Bergman Riveria - Serflex S.A.C.,Av Universitaria 3855 - San Martin De Porres Lima
-China,"Chen Feng (Jiangsu) Apparel CO., LTD.","NO.99 Jinhu Road, Jintan City, Jiangsu Province"
-Portugal,Crispim Abreu,"Rua de Sao Bartolomeu, Serzedelo, Riba Dave 4765 918"
-China,Dongguan Quality Knitwear Limited,"Shujiu Village, Changping Town, Dongguan City, Guangdong Province, 523569"
-US,Groceries Apparel,5510 S. Soto Street Unit A Vernon CA 90058
-China,Hemp Fortex,"No 808, Shujing Village, Chendong industrial zone Dagushan Town Rushan City, Shandong Province"
-Mexico,Hong Ho Mexico S.A .DE C.V.,"Tablaje Catastral 5539, Parque Industrail Coprovalsa, Valladolid Yucatan Mexico C.P. 97780"
-China,"Jiangsu Asian Sourcing Headwear MFG. Co., Ltd","No. 2 South Guangzhou Road, Huai'an City 223005"
-Portugal,Mundo Textil SA,"Rua da Saudade, Nº 280-400 -4815-413 Caldas de Vizela"
-United States,Nester Hosiery,"1546 Carter Street, Mount Airy NC 27030"
-United States,Off The Wall Print,"657 S. Anderson ST, LA CA 90023"
-Vietnam,Saitex International Dong Nai (VN) LTD.,"Lot 226/8, Street 13 Amata Industrial Park, Long Binh Ward Bien Hoa Dong Nai Vietnam 810000"
-Sri Lanka,Smart Shirts Limited KAT 1,"Smart Shirts (Lanka) Kat 1 No. 10 Off Airport Road Investment Promotion Zone, 11450, Katunayake"
-Sri Lanka,Smart Shirts Limited KAT 3,"Smart Shirts (Lanka) Limited Kat 3 Spur Road 2, 11450 Sri Lanka, Katunayake"
-Peru,World Textile Sourcing - Corcelli S.A.C.,"Corcelli S.A.C., Psje. Julio Vega Solis Lote A-4, Lima 09- Chorrillos Lima"
+country,name,address,sector
+Peru,Bergman Riveria - Serflex S.A.C.,Av Universitaria 3855 - San Martin De Porres Lima,Apparel
+China,"Chen Feng (Jiangsu) Apparel CO., LTD.","NO.99 Jinhu Road, Jintan City, Jiangsu Province",Apparel
+Portugal,Crispim Abreu,"Rua de Sao Bartolomeu, Serzedelo, Riba Dave 4765 918",Apparel
+China,Dongguan Quality Knitwear Limited,"Shujiu Village, Changping Town, Dongguan City, Guangdong Province, 523569",Apparel
+US,Groceries Apparel,5510 S. Soto Street Unit A Vernon CA 90058,Apparel
+China,Hemp Fortex,"No 808, Shujing Village, Chendong industrial zone Dagushan Town Rushan City, Shandong Province",Apparel
+Mexico,Hong Ho Mexico S.A .DE C.V.,"Tablaje Catastral 5539, Parque Industrail Coprovalsa, Valladolid Yucatan Mexico C.P. 97780",Apparel
+China,"Jiangsu Asian Sourcing Headwear MFG. Co., Ltd","No. 2 South Guangzhou Road, Huai'an City 223005",Apparel
+Portugal,Mundo Textil SA,"Rua da Saudade, Nº 280-400 -4815-413 Caldas de Vizela",Apparel
+United States,Nester Hosiery,"1546 Carter Street, Mount Airy NC 27030",Apparel
+United States,Off The Wall Print,"657 S. Anderson ST, LA CA 90023",Apparel
+Vietnam,Saitex International Dong Nai (VN) LTD.,"Lot 226/8, Street 13 Amata Industrial Park, Long Binh Ward Bien Hoa Dong Nai Vietnam 810000",Apparel
+Sri Lanka,Smart Shirts Limited KAT 1,"Smart Shirts (Lanka) Kat 1 No. 10 Off Airport Road Investment Promotion Zone, 11450, Katunayake",Apparel
+Sri Lanka,Smart Shirts Limited KAT 3,"Smart Shirts (Lanka) Limited Kat 3 Spur Road 2, 11450 Sri Lanka, Katunayake",Apparel
+Peru,World Textile Sourcing - Corcelli S.A.C.,"Corcelli S.A.C., Psje. Julio Vega Solis Lote A-4, Lima 09- Chorrillos Lima",Apparel

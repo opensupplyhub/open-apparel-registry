@@ -878,8 +878,8 @@ class FacilitiesAutoSchema(AutoSchema):
                     name='data',
                     location='body',
                     description=(
-                        'The country, name, and address of the facility. See '
-                        'the sample request body above.'),
+                        'The country, name, address and sector(s) of the '
+                        'facility. See the sample request body above.'),
                     required=True,
                 )
             ]
@@ -1038,6 +1038,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         ## Sample Request Body
 
             {
+                "sector": "Apparel",
                 "country": "China",
                 "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
@@ -1046,6 +1047,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         ## Sample Request Body With PPE Fields
 
             {
+                "sector": ["Apparel", "Health"],
                 "country": "China",
                 "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
@@ -1072,6 +1074,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ]
                   },
                   "properties": {
+                    "sector": ["Apparel"],
                     "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
                     "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
                     "country_code": "CN",
@@ -1133,6 +1136,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ]
                   },
                   "properties": {
+                    "sector": ["Apparel"],
                     "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
                     "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
                     "country_code": "CN",
@@ -1183,6 +1187,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ]
                   },
                   "properties": {
+                    "sector": ["Apparel"],
                     "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
                     "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
                     "country_code": "CN",
@@ -1296,6 +1301,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             create=should_create
         )
 
+        sector = body_serializer.validated_data.get('sector')
         country_code = get_country_code(
             body_serializer.validated_data.get('country'))
         name = body_serializer.validated_data.get('name')
@@ -1321,6 +1327,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             address=address,
             clean_address=clean_address,
             country_code=country_code,
+            sector=sector,
             ppe_product_types=ppe_product_types,
             ppe_contact_phone=ppe_contact_phone,
             ppe_contact_email=ppe_contact_email,
@@ -2592,7 +2599,7 @@ def create_nonstandard_fields(fields, contributor):
     new_fields = filter(lambda f: f not in existing_fields,
                         unique_fields)
 
-    standard_fields = ['country', 'name', 'address', 'lat', 'lng',
+    standard_fields = ['sector', 'country', 'name', 'address', 'lat', 'lng',
                        'ppe_contact_phone', 'ppe_website',
                        'ppe_contact_email', 'ppe_product_types']
     nonstandard_fields = filter(lambda f: f.lower() not in standard_fields,
@@ -2620,13 +2627,14 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if header is None or header == '':
             raise ValidationError('Header cannot be blank.')
         parsed_header = [i.lower() for i in parse_csv_line(header)]
-        if CsvHeaderField.COUNTRY not in parsed_header \
+        if CsvHeaderField.SECTOR not in parsed_header \
+           or CsvHeaderField.COUNTRY not in parsed_header \
            or CsvHeaderField.NAME not in parsed_header \
            or CsvHeaderField.ADDRESS not in parsed_header:
             raise ValidationError(
-                'Header must contain {0}, {1}, and {2} fields.'.format(
-                    CsvHeaderField.COUNTRY, CsvHeaderField.NAME,
-                    CsvHeaderField.ADDRESS))
+                'Header must contain {0}, {1}, {2}, and {3} fields.'.format(
+                    CsvHeaderField.SECTOR, CsvHeaderField.COUNTRY,
+                    CsvHeaderField.NAME, CsvHeaderField.ADDRESS))
 
     def _extract_header_rows(self, file, request):
         ext = file.name[-4:]
@@ -2750,6 +2758,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         items = [FacilityListItem(row_index=idx,
                                   raw_data=row,
+                                  sector=[],
                                   source=source)
                  for idx, row in enumerate(rows)]
         FacilityListItem.objects.bulk_create(items)

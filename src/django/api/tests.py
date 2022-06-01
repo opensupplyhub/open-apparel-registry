@@ -83,9 +83,9 @@ class FacilityListCreateTest(APITestCase):
         self.contributor = Contributor(name=self.name, admin=self.user)
         self.contributor.save()
         self.test_csv_rows = [
-            'country,name,address,extra_1',
-            'US,Somewhere,999 Park St',
-            'US,Someplace Else,1234 Main St',
+            "country,name,address,sector,extra_1",
+            "US,Somewhere,999 Park St,Apparel",
+            "US,Someplace Else,1234 Main St,Apparel",
         ]
         self.test_file = SimpleUploadedFile(
             'facilities.csv',
@@ -109,9 +109,10 @@ class FacilityListCreateTest(APITestCase):
     def post_header_only_file(self, **kwargs):
         if kwargs is None:
             kwargs = {}
-        csv_file = SimpleUploadedFile('facilities.csv',
-                                      b'country,name,address\n',
-                                      content_type='text/csv')
+        csv_file = SimpleUploadedFile(
+            'facilities.csv', b'country,name,address,sector\n',
+            content_type='text/csv'
+        )
         return self.client.post(reverse('facility-list-list'),
                                 {'file': csv_file, **kwargs},
                                 format='multipart')
@@ -204,7 +205,8 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content),
-            ['Header must contain country, name, and address fields.'])
+            ["Header must contain sector, country, name, and address fields."],
+        )
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count)
 
@@ -218,7 +220,8 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content),
-            ['Header must contain country, name, and address fields.'])
+            ["Header must contain sector, country, name, and address fields."],
+        )
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count)
 
@@ -401,12 +404,14 @@ class FacilityListItemParseTest(ProcessingTestCase):
 
     def test_parses_using_header(self):
         facility_list = FacilityList.objects.create(
-            header='address,country,name')
+            header="sector,address,country,name"
+        )
         source = Source.objects.create(
-            source_type=Source.LIST,
-            facility_list=facility_list)
-        item = FacilityListItem(raw_data='1234 main st,de,Shirts!',
-                                source=source)
+            source_type=Source.LIST, facility_list=facility_list
+        )
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,de,Shirts!", source=source
+        )
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
         self.assertEqual('DE', item.country_code)
@@ -415,12 +420,14 @@ class FacilityListItemParseTest(ProcessingTestCase):
 
     def test_converts_country_name_to_code(self):
         facility_list = FacilityList.objects.create(
-            header='address,country,name')
+            header="sector,address,country,name"
+        )
         source = Source.objects.create(
-            source_type=Source.LIST,
-            facility_list=facility_list)
-        item = FacilityListItem(raw_data='1234 main st,ChInA,Shirts!',
-                                source=source)
+            source_type=Source.LIST, facility_list=facility_list
+        )
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,ChInA,Shirts!", source=source
+        )
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
         self.assertEqual('CN', item.country_code)
@@ -429,27 +436,35 @@ class FacilityListItemParseTest(ProcessingTestCase):
 
     def test_error_status_if_country_is_unknown(self):
         facility_list = FacilityList.objects.create(
-            header='address,country,name')
+            header="sector,address,country,name"
+        )
         source = Source.objects.create(
-            source_type=Source.LIST,
-            facility_list=facility_list)
-        item = FacilityListItem(raw_data='1234 main st,Unknownistan,Shirts!',
-                                source=source)
+            source_type=Source.LIST, facility_list=facility_list
+        )
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,Unknownistan,Shirts!", source=source
+        )
         parse_facility_list_item(item)
         self.assert_failed_parse_results(
             item, 'Could not find a country code for "Unknownistan".')
 
     def test_ppe_field_parsing(self):
         facility_list = FacilityList.objects.create(
-            header=('address,country,name,ppe_product_types,ppe_contact_phone,'
-                    'ppe_contact_email,ppe_website'))
+            header=(
+                "sector,address,country,name,ppe_product_types,"
+                "ppe_contact_phone,ppe_contact_email,ppe_website"
+            )
+        )
         source = Source.objects.create(
             source_type=Source.LIST,
             facility_list=facility_list)
         item = FacilityListItem(
-            raw_data=('1234 main st,de,Shirts!, Mask | Gloves ,123-456-7890,'
-                      'ppe@example.com,https://example.com/ppe'),
-            source=source)
+            raw_data=(
+                "Apparel,1234 main st,de,Shirts!, Mask | Gloves ,"
+                "123-456-7890,ppe@example.com,https://example.com/ppe"
+            ),
+            source=source,
+        )
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
         self.assertEqual(['Mask', 'Gloves'], item.ppe_product_types)
@@ -459,18 +474,72 @@ class FacilityListItemParseTest(ProcessingTestCase):
 
     def test_ppe_product_type_empty_values(self):
         facility_list = FacilityList.objects.create(
-            header='address,country,name,ppe_product_types')
+            header="sector,address,country,name,ppe_product_types")
         source = Source.objects.create(
             source_type=Source.LIST,
             facility_list=facility_list)
         # The trailing space is important as we are testing a literally
         # non-empty but logically empty value
         item = FacilityListItem(
-            raw_data='1234 main st,de,Shirts!,| ',
-            source=source)
+            raw_data="Apparel,1234 main st,de,Shirts!,| ",
+            source=source
+        )
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
         self.assertEqual([], item.ppe_product_types)
+
+    def test_ppe_product_type_invalid_values(self):
+        facility_list = FacilityList.objects.create(
+            header="sector,address,country,name,ppe_product_types")
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        # Using a long string for ppe_product_types to trigger a error
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,de,Shirts!,01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",  # NOQA
+            source=source
+        )
+        parse_facility_list_item(item)
+        # After validation error results should be cleared
+        self.assert_failed_parse_results(
+            item, 'There is a problem with the ppe_product_types: '
+            'Item 1 in the array did not validate: '
+            'Ensure this value has at most 100 characters (it has 110).')
+        self.assertEqual([], item.ppe_product_types)
+
+    def test_sector_parsing(self):
+        facility_list = FacilityList.objects.create(
+            header="sector,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list
+        )
+        item = FacilityListItem(
+            raw_data="Apparel| Industry,1234 main st,ChInA,Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel', 'Industry'], item.sector)
+
+    def test_sector_invalid_value(self):
+        facility_list = FacilityList.objects.create(
+            header="address,country,name,sector")
+        source = Source.objects.create(
+            source_type=Source.LIST,
+            facility_list=facility_list)
+        # Using a long string for ppe_product_types to trigger a error
+        item = FacilityListItem(
+            raw_data="1234 main st,de,Shirts!,012345678901234567890123456789012345678901234567890123456789",  # NOQA
+            source=source
+        )
+        parse_facility_list_item(item)
+        # After validation error results should be cleared
+        self.assert_failed_parse_results(
+            item, 'There is a problem with the sector: '
+            'Item 1 in the array did not validate: '
+            'Ensure this value has at most 50 characters (it has 60).')
+        self.assertEqual([], item.sector)
 
 
 class UserTokenGenerationTest(TestCase):
@@ -929,12 +998,10 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         )
 
     def test_unparsed_item_raises_error(self):
-        facility_list = FacilityList(header='address,country,name')
-        source = Source(source_type=Source.LIST,
-                        facility_list=facility_list)
+        facility_list = FacilityList(header="sector,address,country,name")
+        source = Source(source_type=Source.LIST, facility_list=facility_list)
         item = FacilityListItem(
-            raw_data='1400 JFK Blvd, Philly,us,Shirts!',
-            source=source
+            raw_data="Apparel,1400 JFK Blvd, Philly,us,Shirts!", source=source
         )
 
         with self.assertRaises(ValueError) as cm:
@@ -950,14 +1017,15 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = listitem_geocode_data
         facility_list = FacilityList.objects.create(
-            header='address,country,name')
+            header="sector,address,country,name"
+        )
         source = Source.objects.create(
             source_type=Source.LIST,
             facility_list=facility_list)
         item = FacilityListItem(
-            raw_data='"Linjiacun Town, Zhucheng City Weifang, Daman, ' +
-                     'Daman, 396210",IN,Shirts!',
-            source=source
+            raw_data='Apparel,"Linjiacun Town, Zhucheng City Weifang, '
+            'Daman, Daman, 396210",IN,Shirts!',
+            source=source,
         )
         parse_facility_list_item(item)
         geocode_facility_list_item(item)
@@ -974,14 +1042,15 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = listitem_geocode_data
         facility_list = FacilityList.objects.create(
-            header='address,country,name')
+            header="sector,address,country,name"
+        )
         source = Source.objects.create(
             source_type=Source.LIST,
             facility_list=facility_list)
         item = FacilityListItem(
-            raw_data='"Linjiacun Town, Zhucheng City Weifang, Daman, ' +
-                     'Daman, 396210",BD,Shirts!',
-            source=source
+            raw_data='Apparel,"Linjiacun Town, Zhucheng City Weifang, '
+            'Daman, Daman, 396210",BD,Shirts!',
+            source=source,
         )
         parse_facility_list_item(item)
         geocode_facility_list_item(item)
@@ -992,12 +1061,13 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
 
     def test_successfully_geocoded_item_has_correct_results(self):
         facility_list = FacilityList.objects.create(
-            header='address,country,name')
+            header="sector,address,country,name"
+        )
         source = Source.objects.create(
             source_type=Source.LIST,
             facility_list=facility_list)
         item = FacilityListItem(
-            raw_data='"City Hall, Philly, PA",us,Shirts!',
+            raw_data='Apparel,"City Hall, Philly, PA",us,Shirts!',
             source=source
         )
 
@@ -1014,11 +1084,13 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
 
     def test_failed_geocoded_item_has_no_resuts_status(self):
         facility_list = FacilityList.objects.create(
-            header='address,country,name')
-        source = Source.objects.create(source_type=Source.LIST,
-                                       facility_list=facility_list)
+            header="sector,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list
+        )
         item = FacilityListItem(
-            raw_data='"hello, world, foo, bar, baz",us,Shirts!',
+            raw_data='Apparel,"hello, world, foo, bar, baz",us,Shirts!',
             source=source
         )
         parse_facility_list_item(item)
@@ -1077,6 +1149,7 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
             .create(name=self.name_one,
                     address=self.address_one,
                     country_code=self.country_code,
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source_one)
@@ -1100,6 +1173,7 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
             .create(name=self.name_two,
                     address=self.address_two,
                     country_code=self.country_code,
+                    sector=['Apparel'],
                     row_index="2",
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source_two)
@@ -1314,6 +1388,7 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
             .create(name=self.prior_name_one,
                     address=self.prior_address_one,
                     country_code=self.country_code,
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.prior_source)
@@ -1338,6 +1413,7 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
             .create(name=self.prior_name_two,
                     address=self.prior_address_two,
                     country_code=self.country_code,
+                    sector=['Apparel'],
                     row_index=2,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.prior_source)
@@ -1392,6 +1468,7 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
             .create(name=self.current_name,
                     address=self.current_address,
                     country_code=self.country_code,
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.POTENTIAL_MATCH,
@@ -1670,8 +1747,11 @@ class DedupeMatchingTests(TestCase):
 
     def create_list(self, items, status=FacilityListItem.GEOCODED):
         facility_list = FacilityList(
-            name='test', description='',
-            file_name='test.csv', header='country,name,address')
+            name="test",
+            description="",
+            file_name="test.csv",
+            header="country,name,address,sector",
+        )
         facility_list.save()
         source = Source(source_type=Source.LIST, facility_list=facility_list,
                         contributor=self.contributor)
@@ -1679,9 +1759,16 @@ class DedupeMatchingTests(TestCase):
         for index, item in enumerate(items):
             country_code, name, address = item
             list_item = FacilityListItem(
-                source=source, row_index=index, raw_data='',
-                status=status, name=name, address=address,
-                country_code=country_code, geocoded_address='')
+                source=source,
+                row_index=index,
+                raw_data="",
+                status=status,
+                name=name,
+                address=address,
+                country_code=country_code,
+                geocoded_address="",
+                sector=["Apparel"],
+            )
             list_item.save()
         return facility_list
 
@@ -1924,6 +2011,7 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_one,
+                    sector=[],
                     status=FacilityListItem.MATCHED)
 
         self.list_one_b = FacilityList \
@@ -1942,6 +2030,7 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_one_b,
+                    sector=[],
                     status=FacilityListItem.MATCHED)
 
         # Contributor two has no lists
@@ -1990,6 +2079,7 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_five,
+                    sector=[],
                     status=FacilityListItem.ERROR_PARSING)
 
         self.list_six = FacilityList \
@@ -2008,12 +2098,14 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_six,
+                    sector=[],
                     status=FacilityListItem.ERROR_PARSING)
 
         self.list_item_six_b = FacilityListItem \
             .objects \
             .create(row_index=1,
                     source=self.source_six,
+                    sector=[],
                     status=FacilityListItem.MATCHED)
 
         # Test to ensure contributors don't appear in the list if all of their
@@ -2028,6 +2120,7 @@ class ContributorsListAPIEndpointTests(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_seven,
+                    sector=[],
                     status=FacilityListItem.MATCHED)
 
     def test_contributors_list_has_only_contributors_with_active_lists(self):
@@ -2103,6 +2196,7 @@ class FacilityListItemTests(APITestCase):
                 .create(name='test name',
                         address='test address',
                         country_code='US',
+                        sector=['Apparel'],
                         source=self.source,
                         row_index=i,
                         status=possible_status)
@@ -2221,6 +2315,7 @@ class FacilityClaimAdminDashboardTests(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source)
@@ -2515,6 +2610,7 @@ class ApprovedFacilityClaimTests(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source)
@@ -2716,6 +2812,7 @@ class FacilityClaimTest(APITestCase):
             .create(name='name',
                     address='address',
                     country_code='US',
+                    sector=['Apparel'],
                     source=self.source_one,
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH)
@@ -2802,6 +2899,7 @@ class DashboardListTests(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     source=self.source,
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH)
@@ -3002,6 +3100,7 @@ class FacilityDeleteTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     source=self.source,
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH)
@@ -3110,6 +3209,7 @@ class FacilityDeleteTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     geocoded_point=Point(1, 1),
                     row_index=1,
                     status=FacilityListItem.MATCHED,
@@ -3143,6 +3243,7 @@ class FacilityDeleteTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     geocoded_point=Point(2, 2),
                     source=source_3,
                     row_index=1,
@@ -3211,6 +3312,7 @@ class FacilityDeleteTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     geocoded_point=None,
                     row_index=1,
                     status=FacilityListItem.MATCHED,
@@ -3266,6 +3368,7 @@ class FacilityDeleteTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     geocoded_point=Point(1, 1),
                     row_index=1,
                     status=FacilityListItem.MATCHED,
@@ -3314,6 +3417,7 @@ class FacilityDeleteTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     geocoded_point=Point(1, 1),
                     row_index=1,
                     status=FacilityListItem.MATCHED,
@@ -3411,6 +3515,7 @@ class FacilityMergeTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source_1)
@@ -3473,6 +3578,7 @@ class FacilityMergeTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     ppe_product_types=['two_a', 'two_b'],
                     ppe_contact_phone='222-222-2222',
                     ppe_contact_email='ppe_two@example.com',
@@ -3536,6 +3642,7 @@ class FacilityMergeTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     facility=self.facility_2,
@@ -3775,6 +3882,7 @@ class FacilitySplitTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -3826,6 +3934,7 @@ class FacilitySplitTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     ppe_product_types=['two_a', 'two_b'],
@@ -4124,6 +4233,7 @@ class FacilityMatchPromoteTest(APITestCase):
             .create(name=self.name_one,
                     address=self.name_one,
                     country_code=self.country_code_one,
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=self.location_one,
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -4173,6 +4283,7 @@ class FacilityMatchPromoteTest(APITestCase):
             .create(name=self.name_two,
                     address=self.address_two,
                     country_code=self.country_code_two,
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=self.location_two,
                     ppe_product_types=self.ppe_product_types_two,
@@ -4195,6 +4306,7 @@ class FacilityMatchPromoteTest(APITestCase):
             .create(name='third facility',
                     address='third address',
                     country_code='US',
+                    sector=['Apparel'],
                     source=self.source_one,
                     row_index=2,
                     geocoded_point=Point(3, 3),
@@ -4331,6 +4443,7 @@ class FacilityMatchPromoteTest(APITestCase):
             .create(name='single',
                     address='single',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=0,
                     geocoded_point=self.location_one,
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -4445,6 +4558,7 @@ class FacilityClaimChangesTest(TestCase):
             .create(name='Name',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source)
@@ -4555,6 +4669,7 @@ class FacilityClaimSerializerTests(TestCase):
             .create(name='Name',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source)
@@ -4698,6 +4813,7 @@ class FacilityAPITestCaseBase(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -4776,6 +4892,7 @@ class SearchByList(APITestCase):
                     name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -4944,6 +5061,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(5, 5),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -5175,6 +5293,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -5216,6 +5335,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             .create(name='List item for confirmed match',
                     address='Address for confirmed match',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=2,
                     geocoded_point=Point(12, 34),
                     status=FacilityListItem.POTENTIAL_MATCH,
@@ -5726,9 +5846,10 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
         )
 
         # Upload replacement
-        csv_file = SimpleUploadedFile('facilities.csv',
-                                      b'country,name,address\n',
-                                      content_type='text/csv')
+        csv_file = SimpleUploadedFile(
+            "facilities.csv", b"country,name,address,sector\n",
+            content_type="text/csv"
+        )
         replace_response = self.client.post(
             reverse('facility-list-list'),
             {'file': csv_file,
@@ -5944,6 +6065,7 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -6266,6 +6388,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
             'country': 'United States',
             'name': 'Pants Hut',
             'address': '123 Main St, Anywhereville, PA',
+            'sector': 'Apparel',
             'extra_1': 'Extra data'
         }
 
@@ -6327,6 +6450,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
             "country": "United States",
             "name": "Pants Hut",
             "address": "123 Main St, Anywhereville, PA",
+            "sector": "Apparel",
             "extra_1": "Extra data"
         })
         data = json.loads(response.content)
@@ -6414,6 +6538,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
 class FacilityCreateBodySerializerTest(TestCase):
     def test_valid_data(self):
         serializer = FacilityCreateBodySerializer(data={
+            'sector': 'Apparel',
             'country': 'United States',
             'name': 'Pants Hut',
             'address': '123 Main St, Anywhereville, PA'
@@ -6422,40 +6547,143 @@ class FacilityCreateBodySerializerTest(TestCase):
 
     def test_missing_fields(self):
         serializer = FacilityCreateBodySerializer(data={
+            'sector': 'Apparel',
             'name': 'Pants Hut',
             'address': '123 Main St, Anywhereville, PA'
         })
         self.assertFalse(serializer.is_valid())
+        self.assertNotIn('sector', serializer.errors)
         self.assertIn('country', serializer.errors)
         self.assertNotIn('name', serializer.errors)
         self.assertNotIn('address', serializer.errors)
 
         serializer = FacilityCreateBodySerializer(data={
+            'sector': 'Apparel',
             'country': 'United States',
             'address': '123 Main St, Anywhereville, PA'
         })
         self.assertFalse(serializer.is_valid())
+        self.assertNotIn('sector', serializer.errors)
         self.assertIn('name', serializer.errors)
         self.assertNotIn('country', serializer.errors)
         self.assertNotIn('address', serializer.errors)
 
         serializer = FacilityCreateBodySerializer(data={
+            'sector': 'Apparel',
             'country': 'United States',
             'name': 'Pants Hut',
         })
         self.assertFalse(serializer.is_valid())
+        self.assertNotIn('sector', serializer.errors)
         self.assertIn('address', serializer.errors)
+        self.assertNotIn('country', serializer.errors)
+        self.assertNotIn('name', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('sector', serializer.errors)
+        self.assertNotIn('address', serializer.errors)
         self.assertNotIn('country', serializer.errors)
         self.assertNotIn('name', serializer.errors)
 
     def test_invalid_country(self):
         serializer = FacilityCreateBodySerializer(data={
+            'sector': 'Apparel',
             'country': 'Notrealia',
             'name': 'Pants Hut',
             'address': '123 Main St, Anywhereville, PA'
         })
         self.assertFalse(serializer.is_valid())
         self.assertIn('country', serializer.errors)
+
+    def test_invalid_sector_type(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': 7,
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('sector', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': ['Apparel', 7],
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('sector', serializer.errors)
+
+    def test_invalid_sector_empty(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': [' '],
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('sector', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': ' ',
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('sector', serializer.errors)
+
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': [],
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('sector', serializer.errors)
+
+    def test_sector_pipe_split(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': 'Apparel|Industry',
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.data['sector'], ['Apparel', 'Industry'])
+
+    def test_sector_trim(self):
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': 'Apparel | Industry',
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.data['sector'], ['Apparel', 'Industry'])
+
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': ' Apparel|Industry ',
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.data['sector'], ['Apparel', 'Industry'])
+
+        serializer = FacilityCreateBodySerializer(data={
+            'sector': [' Apparel ', ' Industry '],
+            'country': 'United States',
+            'name': 'Pants Hut',
+            'address': '123 Main St, Anywhereville, PA'
+        })
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.data['sector'], ['Apparel', 'Industry'])
 
 
 class FacilitySearchContributorTest(FacilityAPITestCaseBase):
@@ -6548,6 +6776,7 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
             .create(name='Item 2',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=0,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -6573,6 +6802,7 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
             .create(name='Item 3',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=0,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -6667,6 +6897,7 @@ class SingleItemFacilityMatchTest(FacilityAPITestCaseBase):
             .create(name='Item 2',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.POTENTIAL_MATCH,
@@ -6765,6 +6996,7 @@ class FacilitySearchTest(FacilityAPITestCaseBase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -6799,6 +7031,7 @@ class FacilitySearchTest(FacilityAPITestCaseBase):
             .create(name='Item 2b',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -6982,6 +7215,7 @@ class PPEFieldTest(TestCase):
             .create(name='name',
                     address='address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source_one)
@@ -6991,6 +7225,7 @@ class PPEFieldTest(TestCase):
             .create(name='name',
                     address='address',
                     country_code='US',
+                    sector=['Apparel'],
                     ppe_product_types=['Masks_Two', 'Gloves_Two'],
                     ppe_contact_phone='222-222-2222',
                     ppe_contact_email='two@example.com',
@@ -7348,6 +7583,7 @@ class CloseListTest(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_one,
+                    sector=[],
                     status=FacilityListItem.MATCHED)
 
         self.facility_one = Facility.objects.create(
@@ -7364,6 +7600,7 @@ class CloseListTest(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_one,
+                    sector=[],
                     status=FacilityListItem.MATCHED)
 
         self.facility_one_b = Facility.objects.create(
@@ -7392,6 +7629,7 @@ class CloseListTest(TestCase):
             .objects \
             .create(row_index=0,
                     source=self.source_two,
+                    sector=[],
                     status=FacilityListItem.MATCHED)
 
         self.facility_two = Facility.objects.create(
@@ -7517,6 +7755,7 @@ class ContributorFieldsApiTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     row_index=1,
                     geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
@@ -7550,6 +7789,7 @@ class ContributorFieldsApiTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     raw_data=("{'country': 'US', 'name': 'Item'," +
                               "'address': 'Address', 'extra_2': 'data two'}"),
                     row_index=1,
@@ -7682,6 +7922,7 @@ class ContributorFieldsApiTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     raw_data=("{'country': 'US', 'name': 'Item'," +
                               "'address': 'Address'," +
                               " 'extra_2': 'data three'}"),
@@ -7727,6 +7968,7 @@ class ContributorFieldsApiTest(APITestCase):
             .create(name='Item',
                     address='Address',
                     country_code='US',
+                    sector=['Apparel'],
                     raw_data=("{'country': 'US', 'name': 'Item'," +
                               "'address': 'Address'," +
                               " 'extra_2': 'data three'}"),
@@ -7867,6 +8109,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'parent_company': 'A random value'
         })
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -7914,12 +8157,14 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': "Apparel",
             'parent_company': 'test contributor 1'
         })
         self.client.post(self.url, {
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': "Apparel",
             'parent_company': 'test contributor 1'
         })
         self.assertEqual(2, ExtendedField.objects.all().count())
@@ -7940,6 +8185,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
@@ -7961,6 +8207,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
@@ -7982,6 +8229,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
@@ -8011,6 +8259,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'product_type': ['a', 'b']
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -8032,6 +8281,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': "Apparel",
             'product_type': 'a|b'
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -8067,6 +8317,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': "Apparel",
             'product_type': [str(a) for a in range(MAX_PRODUCT_TYPE_COUNT)]
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -8096,6 +8347,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'product_type': ['a', 'b']
         }), content_type='application/json')
 
@@ -8122,6 +8374,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'processing_type': ['cutting']
         }), content_type='application/json')
         self.assertEqual(2, ExtendedField.objects.all().count())
@@ -8163,6 +8416,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'facility_type': ['office hq', 'final product assembly']
         }), content_type='application/json')
         self.assertEqual(2, ExtendedField.objects.all().count())
@@ -8198,6 +8452,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            "sector": "Apparel",
             'facility_type_processing_type': 'sewing|not a taxonomy value'
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.filter(
@@ -8220,6 +8475,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'processing_type': ['cutting']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
@@ -8239,6 +8495,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Apparel',
             'facility_type': ['office hq', 'final product assembly']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
@@ -8266,6 +8523,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            "sector": "Apparel",
             'number_of_workers': '2000'
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -8286,6 +8544,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            "sector": "Apparel",
             'number_of_workers': '0-500'
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -8306,6 +8565,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            "sector": "Apparel",
             'number_of_workers': '0 to 10000'
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -8328,6 +8588,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            "sector": "Apparel",
             'number_of_workers': '20,000-100,000'
         }), content_type='application/json')
         self.assertEqual(1, ExtendedField.objects.all().count())
@@ -8348,6 +8609,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            "sector": "Apparel",
             'number_of_workers': '1500 to 2000'
         }), content_type='application/json')
 
@@ -8370,6 +8632,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
+            "sector": "Apparel",
             'number_of_workers': '1000 to 9000'
         }), content_type='application/json')
 
@@ -8392,6 +8655,7 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
         mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
         facility_response = self.client.post(self.url, json.dumps({
+            'sector': "Apparel",
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",

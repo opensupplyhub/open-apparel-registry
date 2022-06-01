@@ -1,31 +1,31 @@
-country,name,address
-Cambodia,Injae Garment Co. Ltd.,"Toul Kor Village,St. 598 Sangkat Toul Sanke Khan Russey Keo,Phnom Penh"
-China,Chung Tai Garment Factory,"(Block 4,5,7,8) Xinxing Industrial Zone C,Shu Tian Pu Village,Gongming Town"
-China,Jung Myung Textile Co. Ltd.,"289 Jiefang West Road,Yuewang Industrial Zone,Shaowu City Fujian"
-China,Longnan County Top Form Underwear,JIN TANG INDUSTRY PARK JIANGXI Jiangxi
-China,Chaohu Galaxy Vegas Textile,"No 8,Jinchao Avenue,Heifei City,Anhui"
-China,Zhejiang Jianlimei Knitting Clothing Co. Ltd.,"No. 78 Qiushi West Road,Yiwu City,Zhejiang"
-China,Regina Miracle Intimate Apparel (Shenzhen Ltd.),"No.5 Cengyao Industrial Estate,Yulu,Gongming,Baoan,Shenzhen"
-El Salvador,Confecciones Del Valle,"KM 24 Carretera A Santa Ana,Colon"
-El Salvador,F&D,ZONA FRANCA BUILDING 8 A & B SAN MARCOS
-Haiti,MD Industries,"Parque Industrial CODEVI,Ouanaminthe"
-India,SCM Garments Pvt. Ltd.,"S.F.40A,NG Palyampudur Pirivu Pudhupalyam Post Avinashi"
-India,RR Garment,"SF No. 379/1,Aathupalayam Pirivu Road,Anupparpalayam,Tirupur-641652"
-Indonesia,PT Sumber Mitra Gasutri,"Jalan Raya KeradenanPomad No.38 Bogor,16913,Kabupaten Bogor,Jawa- Barat"
-Indonesia,PT Glory Industrial Semarang - Demak,"Jalan Raya Semarang- Demak KM 18,desa Dukun kec.Karang Tengah Kabupaten Demak"
-Indonesia,PT Glory Industrial Semarang II,"JL Coaster No.8 Block A11/A12A,B09/B10/B25/B26/B27 Kawasan Pemrosesan Ekspor(Export Processing Zone),Semarang"
-Indonesia,PT Daiwabo Garment Indonesia,"Jl. Raya Comal  Pemalang Km.15- Ujung Gede- Ampel Gading,Kab.Pemalang,Jawa Tengah"
-Indonesia,PT Star Alliance Intimates,"KAWASAN INDUSTRI CANDI X,BLOK V NO.8,Jl. Gatot Subroto,Ngaliyan,Central. 8 Semarang"
-Indonesia,PT Busanaremaja Agracipta,PT. Busana Remaja Agracipta
-Jordan,Classic Fashion Apparel Industry Unit - II,"Al Hassan Industrial Estate,P.O. Box 54,Ramtha,Irbid"
-Nicaragua,Centro Textile,"Km 124 Carretera hacia Leon,Chinandega,Zona Franca Zofric"
-Philippines,Quickstep Aparel Corp.,"Lot 81,RIS Industrial Complex,168 Mercado St.,Tabe,Guiguinto,Bulacan"
-Philippines,World Wide Apparel Manufacturing,"San Miguel Compound Amante St. Brgy. Landayan,San Pedro Laguna 4023"
-Sri Lanka,Unichela (PVT) Ltd. - Koggala,"Export Processing Zone,Koggala,Habaraduwa,Galle"
-Sri Lanka,Unichela PVt Ltd - Pannala Division,"Kuliyapitiya Road,Pannala,North Western Province Pannala"
-Sri Lanka,Mas Active - Mamadala,"Pallerota,Mamadala,Nonagama"
-Thailand,Top Form Brassiere (Maesot) Co. Ltd.,"135,Moo 2,T. Maeku,A Maesot,Tak 63110"
-Vietnam,Leader Garment Co. Ltd.,"Lot II-7 Hoa Phu IZ,Hoa Phu Commune,Long Ho District,Vinh Long"
-Vietnam,Regina Miracle International (Vietnam),"No.9,East West Road,VSIP Hai Phong,Thuy Nguyen District,Dinh Vu-Cat Hai EZ"
-Vietnam,Scavi Hue,"Phong Dien Industrial Zone,Phong Dien District,Thua Thien Hue"
-Vietnam,Makalot Garment Co. Ltd. - MK2,"Thanh Hai Ward,Thanh Ha District,Hai Duong Province"
+country,name,address,sector
+Cambodia,Injae Garment Co. Ltd.,"Toul Kor Village,St. 598 Sangkat Toul Sanke Khan Russey Keo,Phnom Penh",Apparel
+China,Chung Tai Garment Factory,"(Block 4,5,7,8) Xinxing Industrial Zone C,Shu Tian Pu Village,Gongming Town",Apparel
+China,Jung Myung Textile Co. Ltd.,"289 Jiefang West Road,Yuewang Industrial Zone,Shaowu City Fujian",Apparel
+China,Longnan County Top Form Underwear,JIN TANG INDUSTRY PARK JIANGXI Jiangxi,Apparel
+China,Chaohu Galaxy Vegas Textile,"No 8,Jinchao Avenue,Heifei City,Anhui",Apparel
+China,Zhejiang Jianlimei Knitting Clothing Co. Ltd.,"No. 78 Qiushi West Road,Yiwu City,Zhejiang",Apparel
+China,Regina Miracle Intimate Apparel (Shenzhen Ltd.),"No.5 Cengyao Industrial Estate,Yulu,Gongming,Baoan,Shenzhen",Apparel
+El Salvador,Confecciones Del Valle,"KM 24 Carretera A Santa Ana,Colon",Apparel
+El Salvador,F&D,ZONA FRANCA BUILDING 8 A & B SAN MARCOS,Apparel
+Haiti,MD Industries,"Parque Industrial CODEVI,Ouanaminthe",Apparel
+India,SCM Garments Pvt. Ltd.,"S.F.40A,NG Palyampudur Pirivu Pudhupalyam Post Avinashi",Apparel
+India,RR Garment,"SF No. 379/1,Aathupalayam Pirivu Road,Anupparpalayam,Tirupur-641652",Apparel
+Indonesia,PT Sumber Mitra Gasutri,"Jalan Raya KeradenanPomad No.38 Bogor,16913,Kabupaten Bogor,Jawa- Barat",Apparel
+Indonesia,PT Glory Industrial Semarang - Demak,"Jalan Raya Semarang- Demak KM 18,desa Dukun kec.Karang Tengah Kabupaten Demak",Apparel
+Indonesia,PT Glory Industrial Semarang II,"JL Coaster No.8 Block A11/A12A,B09/B10/B25/B26/B27 Kawasan Pemrosesan Ekspor(Export Processing Zone),Semarang",Apparel
+Indonesia,PT Daiwabo Garment Indonesia,"Jl. Raya Comal  Pemalang Km.15- Ujung Gede- Ampel Gading,Kab.Pemalang,Jawa Tengah",Apparel
+Indonesia,PT Star Alliance Intimates,"KAWASAN INDUSTRI CANDI X,BLOK V NO.8,Jl. Gatot Subroto,Ngaliyan,Central. 8 Semarang",Apparel
+Indonesia,PT Busanaremaja Agracipta,PT. Busana Remaja Agracipta,Apparel
+Jordan,Classic Fashion Apparel Industry Unit - II,"Al Hassan Industrial Estate,P.O. Box 54,Ramtha,Irbid",Apparel
+Nicaragua,Centro Textile,"Km 124 Carretera hacia Leon,Chinandega,Zona Franca Zofric",Apparel
+Philippines,Quickstep Aparel Corp.,"Lot 81,RIS Industrial Complex,168 Mercado St.,Tabe,Guiguinto,Bulacan",Apparel
+Philippines,World Wide Apparel Manufacturing,"San Miguel Compound Amante St. Brgy. Landayan,San Pedro Laguna 4023",Apparel
+Sri Lanka,Unichela (PVT) Ltd. - Koggala,"Export Processing Zone,Koggala,Habaraduwa,Galle",Apparel
+Sri Lanka,Unichela PVt Ltd - Pannala Division,"Kuliyapitiya Road,Pannala,North Western Province Pannala",Apparel
+Sri Lanka,Mas Active - Mamadala,"Pallerota,Mamadala,Nonagama",Apparel
+Thailand,Top Form Brassiere (Maesot) Co. Ltd.,"135,Moo 2,T. Maeku,A Maesot,Tak 63110",Apparel
+Vietnam,Leader Garment Co. Ltd.,"Lot II-7 Hoa Phu IZ,Hoa Phu Commune,Long Ho District,Vinh Long",Apparel
+Vietnam,Regina Miracle International (Vietnam),"No.9,East West Road,VSIP Hai Phong,Thuy Nguyen District,Dinh Vu-Cat Hai EZ",Apparel
+Vietnam,Scavi Hue,"Phong Dien Industrial Zone,Phong Dien District,Thua Thien Hue",Apparel
+Vietnam,Makalot Garment Co. Ltd. - MK2,"Thanh Hai Ward,Thanh Ha District,Hai Duong Province",Apparel

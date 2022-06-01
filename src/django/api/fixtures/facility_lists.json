@@ -6,7 +6,7 @@
             "name": "Summer 2019 Compliance List",
             "description": "This is the detailed description of the list named Summer 2019 Compliance List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
             "file_name": "Summer 2019 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-29T20:57:00+00:00",
             "updated_at": "2019-10-02T17:27:43.727479+00:00"
         }
@@ -18,7 +18,7 @@
             "name": "Winter 2017 Affiliate List",
             "description": null,
             "file_name": "Winter 2017 Affiliate List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-24T03:29:15+00:00",
             "updated_at": "2019-10-02T17:27:43.276293+00:00"
         }
@@ -30,7 +30,7 @@
             "name": "Summer 2019 Affiliate List",
             "description": "This is the detailed description of the list named Summer 2019 Affiliate List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
             "file_name": "Summer 2019 Affiliate List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-28T00:49:06+00:00",
             "updated_at": "2019-10-02T17:27:43.226583+00:00"
         }
@@ -42,7 +42,7 @@
             "name": "Winter 2019 Compliance List",
             "description": null,
             "file_name": "Winter 2019 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-30T11:20:54+00:00",
             "updated_at": "2019-10-02T17:27:43.630615+00:00"
         }
@@ -54,7 +54,7 @@
             "name": "Winter 2018 Apparel List",
             "description": "This is the detailed description of the list named Winter 2018 Apparel List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
             "file_name": "Winter 2018 Apparel List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-30T07:27:00+00:00",
             "updated_at": "2019-10-02T17:27:43.137400+00:00"
         }
@@ -66,7 +66,7 @@
             "name": "Fall 2017 Compliance List",
             "description": null,
             "file_name": "Fall 2017 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-24T15:00:58+00:00",
             "updated_at": "2019-10-02T17:27:43.831567+00:00"
         }
@@ -78,7 +78,7 @@
             "name": "Summer 2019 Apparel List",
             "description": "This is the detailed description of the list named Summer 2019 Apparel List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
             "file_name": "Summer 2019 Apparel List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-27T22:40:08+00:00",
             "updated_at": "2019-10-02T17:27:43.021715+00:00"
         }
@@ -90,7 +90,7 @@
             "name": "Fall 2018 Compliance List",
             "description": null,
             "file_name": "Fall 2018 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-30T18:44:17+00:00",
             "updated_at": "2019-10-02T17:27:43.071523+00:00"
         }
@@ -102,7 +102,7 @@
             "name": "Spring 2017 Apparel List",
             "description": "This is the detailed description of the list named Spring 2017 Apparel List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
             "file_name": "Spring 2017 Apparel List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-25T10:50:11+00:00",
             "updated_at": "2019-10-02T17:27:43.062248+00:00"
         }
@@ -114,7 +114,7 @@
             "name": "Summer 2018 Affiliate List",
             "description": null,
             "file_name": "Summer 2018 Affiliate List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-28T05:45:13+00:00",
             "updated_at": "2019-10-02T17:27:43.412908+00:00"
         }
@@ -126,7 +126,7 @@
             "name": "Spring 2019 Compliance List",
             "description": "This is the detailed description of the list named Spring 2019 Compliance List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
             "file_name": "Spring 2019 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-25T01:41:26+00:00",
             "updated_at": "2019-10-02T17:27:43.235561+00:00"
         }
@@ -138,7 +138,7 @@
             "name": "Winter 2017 Compliance List",
             "description": null,
             "file_name": "Winter 2017 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-24T16:02:55+00:00",
             "updated_at": "2019-10-02T17:27:43.041712+00:00"
         }
@@ -150,7 +150,7 @@
             "name": "Summer 2017 Compliance List",
             "description": "This is the detailed description of the list named Summer 2017 Compliance List. Descriptions can be pretty long. This one is not that long, but it is long enough so that when designing an interface to display the description we will be sure to leave enough space.",
             "file_name": "Summer 2017 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-24T13:25:32+00:00",
             "updated_at": "2019-10-02T17:27:43.815348+00:00"
         }
@@ -162,7 +162,7 @@
             "name": "Winter 2019 Compliance List",
             "description": null,
             "file_name": "Winter 2019 Compliance List.csv",
-            "header": "country,name,address,lat,lng",
+            "header": "country,name,address,sector,lat,lng",
             "created_at": "2019-09-26T01:09:05+00:00",
             "updated_at": "2019-10-02T17:27:43.252937+00:00"
         }

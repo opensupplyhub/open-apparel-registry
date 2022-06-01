@@ -14,7 +14,7 @@ class Command(BaseCommand):
         outdir = os.path.join(directory, 'facility_lists', 'geocoded')
         os.makedirs(outdir, exist_ok=True)
 
-        for list_pk in range(2, 15):
+        for list_pk in range(2, 16):
             filename = '{0}.csv'.format(list_pk)
             in_path = os.path.join(directory, 'facility_lists', filename)
             print('Reading {0}'.format(in_path))
@@ -24,7 +24,8 @@ class Command(BaseCommand):
                 for row in reader:
                     try:
                         result = geocode_address(row['address'],
-                                                 row['country'])
+                                                 row['country'],
+                                                 validate_country=False)
                         if result \
                            and 'geocoded_point' in result \
                            and result['geocoded_point'] is not None:
@@ -36,9 +37,8 @@ class Command(BaseCommand):
             out_path = os.path.join(outdir, filename)
             print('Writing {0}'.format(out_path))
             with open(out_path, 'w') as output:
-                writer = csv.DictWriter(output, fieldnames=['country', 'name',
-                                                            'address', 'lat',
-                                                            'lng'])
+                writer = csv.DictWriter(output, fieldnames=[
+                    'country', 'name', 'address', 'sector', 'lat', 'lng'])
                 writer.writeheader()
                 for row in rows:
                     writer.writerow(row)
