@@ -1706,6 +1706,12 @@ class FacilityIndex(models.Model):
             help_text=('A type of personal protective equipment produced at '
                        'the facility'),
             verbose_name='ppe product type')
+    sector = postgres.ArrayField(models.CharField(
+        max_length=50,
+        null=False,
+        blank=False,
+        help_text='The sector(s) for goods made at the facility',
+    ), default=list)
     lists = postgres.ArrayField(models.IntegerField(
         null=True,
         editable=False,
