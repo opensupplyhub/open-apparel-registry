@@ -284,7 +284,7 @@ else:
     EMAIL_BACKEND = 'django_amazon_ses.EmailBackend'
 
 DEFAULT_FROM_EMAIL = os.getenv(
-    'DEFAULT_FROM_EMAIL', 'noreply@staging.openapparel.org')
+    'DEFAULT_FROM_EMAIL', 'noreply@oshstaging.openapparel.org')
 
 NOTIFICATION_EMAIL_TO = os.getenv(
     'NOTIFICATION_EMAIL_TO', 'notification@example.com')

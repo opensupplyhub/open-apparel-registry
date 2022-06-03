@@ -50,8 +50,8 @@ environment = "Staging"
 
 aws_key_name = "oar-stg"
 
-r53_private_hosted_zone = "oar.internal"
-r53_public_hosted_zone = "staging.openapparel.org"
+r53_private_hosted_zone = "osh.internal"
+r53_public_hosted_zone = "oshstaging.openapparel.org"
 
 cloudfront_price_class = "PriceClass_100"
 
