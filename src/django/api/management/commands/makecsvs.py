@@ -57,6 +57,7 @@ class Command(BaseCommand):
                         'country': row['country_code'],
                         'name': row['name'],
                         'address': row['address'],
+                        'sector': row['sector'],
                         'lat': row['lat'],
                         'lng': row['lng'],
                     }
@@ -82,7 +83,8 @@ class Command(BaseCommand):
             out_file = os.path.join(out_dir, '{}.csv'.format(i + 1))
             with open(out_file, 'w') as f:
                 writer = csv.DictWriter(
-                    f, fieldnames=['country', 'name', 'address', 'lat', 'lng']
+                    f, fieldnames=['country', 'name', 'address', 'sector',
+                                   'lat', 'lng']
                 )
                 writer.writeheader()
                 for row in chunk:
