@@ -12,7 +12,7 @@ node {
 		env.AWS_PROFILE = 'open-apparel-registry'
 		env.AWS_DEFAULT_REGION = 'eu-west-1'
 
-		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-testing-config-eu-west-1'
+		env.OAR_SETTINGS_BUCKET = 'opensupplyhub-testing-config-eu-west-1'
 
 		stage('setup') {
 			wrap([$class: 'AnsiColorBuildWrapper']) {
@@ -26,7 +26,7 @@ node {
 			}
 		}
 
-		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-staging-config-eu-west-1'
+		env.OAR_SETTINGS_BUCKET = 'opensupplyhub-staging-config-eu-west-1'
 
 		if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('test/') || env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('hotfix/')) {
 			// Publish container images built and tested during `cibuild`
