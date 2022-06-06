@@ -10,7 +10,8 @@ from django.contrib.postgres import fields as postgres
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.db import models, transaction
-from django.db.models import (F, Q, ExpressionWrapper)
+from django.db.models import F, Q, ExpressionWrapper
+from django.db.models.expressions import RawSQL
 from django.db.models.signals import post_save
 from django.db.models.functions import Concat
 from django.contrib.gis.geos import GEOSGeometry
@@ -1706,6 +1707,12 @@ class FacilityIndex(models.Model):
             help_text=('A type of personal protective equipment produced at '
                        'the facility'),
             verbose_name='ppe product type')
+    sector = postgres.ArrayField(models.CharField(
+        max_length=50,
+        null=False,
+        blank=False,
+        help_text='The sector(s) for goods made at the facility',
+    ), default=list)
     lists = postgres.ArrayField(models.IntegerField(
         null=True,
         editable=False,
@@ -2630,6 +2637,21 @@ def index_extendedfields(facility_ids=list):
         facility.save()
 
 
+class RawSqlJoin:
+    def __init__(self, sql):
+        self.table_name = sql
+        self.table_alias = None
+        self.join_type = None
+        self.parent_alias = None
+        self.filtered_relation = None
+
+    def as_sql(self, *args, **kwargs):
+        return self.table_name, []
+
+    def relabeled_clone(self):
+        return self.__class__(self.table_name)
+
+
 @transaction.atomic
 def index_facilities(facility_ids=list):
     # If passed an empty array, create or update all existing facilities
@@ -2663,12 +2685,17 @@ def index_facilities(facility_ids=list):
                                   lists=ArrayAgg(
                                     list,
                                     filter=filter),
+                                  sector=ArrayAgg(
+                                    RawSQL('sectors', []),
+                                    distinct=True,
+                                    filter=filter),
                                   id=F('facility_id'),
                                   ppe=Concat('facility__ppe_product_types',
                                              'facility__ppe_contact_phone',
                                              'facility__ppe_contact_email',
                                              'facility__ppe_website',
                                              output_field=models.CharField()))
+    data.query.join(RawSqlJoin('CROSS JOIN UNNEST("sector") sectors'))
 
     FacilityIndex.objects.filter(id__in=facility_ids).delete()
     FacilityIndex.objects.bulk_create([FacilityIndex(**kv) for kv in data])

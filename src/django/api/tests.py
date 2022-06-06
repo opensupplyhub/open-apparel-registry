@@ -8823,3 +8823,66 @@ class SectorChoiceViewTest(APITestCase):
         response = self.client.get(reverse('sectors'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), ['Apparel'])
+
+
+class IndexFacilitiesTest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(IndexFacilitiesTest, self).setUp()
+        self.url = reverse('facility-list')
+
+    def test_facility_index_contains_sector(self):
+        facility_index = FacilityIndex.objects.get(id=self.facility.id)
+        self.assertEqual(['Apparel'], facility_index.sector)
+
+    @patch('api.geocoding.requests.get')
+    def test_posting_to_new_facility_should_create_index_with_sector(
+      self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        resp = self.client.post(self.url, {
+            'sector': "Mining",
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+        })
+        mock_get.assert_called()
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(len(resp.data['matches']), 0)
+        facility_id = resp.data['oar_id']
+        facility_index = FacilityIndex.objects.get(id=facility_id)
+        self.assertIn('Mining', facility_index.sector)
+        self.assertNotIn('Apparel', facility_index.sector)
+        self.assertEqual(len(facility_index.sector), 1)
+
+    @patch('api.geocoding.requests.get')
+    def test_posting_to_existing_facility_should_update_sector(
+      self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        resp = self.client.post(self.url, {
+            'sector': ["Mining", "Mechanical Engineering"],
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+        })
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(len(resp.data['matches']), 0)
+        facility_id = resp.data['oar_id']
+
+        resp = self.client.post(self.url, {
+            'sector': ["Mining", "Metals"],
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+        })
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.data['oar_id'], facility_id)
+        facility_index = FacilityIndex.objects.get(id=facility_id)
+        # Should have mining/metals/mech eng. w/ no duplicates
+        self.assertIn('Mining', facility_index.sector)
+        self.assertIn('Metals', facility_index.sector)
+        self.assertIn('Mechanical Engineering', facility_index.sector)
+        self.assertNotIn('Apparel', facility_index.sector)
+        self.assertEqual(len(facility_index.sector), 3)
