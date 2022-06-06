@@ -52,7 +52,8 @@ from api.test_data import parsed_city_hall_data
 from api.permissions import referring_host_is_allowed, referring_host
 from api.serializers import (ApprovedFacilityClaimSerializer,
                              FacilityCreateBodySerializer,
-                             FacilityListSerializer)
+                             FacilityListSerializer,
+                             FacilityDetailsSerializer)
 from api.limits import check_api_limits, get_end_of_year
 from api.close_list import close_list
 from api.facility_type_processing_type import (
@@ -8740,6 +8741,192 @@ class ExactMatchTest(FacilityAPITestCaseBase):
                                      self.contributor)
         self.assertEquals(results[0]['facility_id'], 1)
         self.assertEquals(results[1]['facility_id'], 2)
+
+
+class FacilityDetailSerializerTest(TestCase):
+    def setUp(self):
+        self.name_one = 'name_one'
+        self.name_two = 'name_two'
+        self.address_one = 'address_one'
+        self.address_two = 'address_two'
+        self.email_one = 'one@example.com'
+        self.email_two = 'two@example.com'
+        self.contrib_one_name = 'contributor one'
+        self.contrib_two_name = 'contributor two'
+        self.country_code = 'US'
+        self.list_one_name = 'one'
+        self.list_two_name = 'two'
+        self.user_one = User.objects.create(email=self.email_one)
+        self.user_two = User.objects.create(email=self.email_two)
+
+        self.contrib_one = Contributor \
+            .objects \
+            .create(admin=self.user_one,
+                    name=self.contrib_one_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.contrib_two = Contributor \
+            .objects \
+            .create(admin=self.user_two,
+                    name=self.contrib_two_name,
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.list_one = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name=self.list_one_name)
+
+        self.source_one = Source \
+            .objects \
+            .create(facility_list=self.list_one,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_one)
+
+        self.list_item_one = FacilityListItem \
+            .objects \
+            .create(name=self.name_one,
+                    address=self.address_one,
+                    country_code=self.country_code,
+                    sector=['Apparel'],
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_one)
+
+        self.list_two = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="two",
+                    name=self.list_two_name)
+
+        self.source_two = Source \
+            .objects \
+            .create(facility_list=self.list_two,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_two)
+
+        self.list_item_two = FacilityListItem \
+            .objects \
+            .create(name=self.name_two,
+                    address=self.address_two,
+                    country_code=self.country_code,
+                    sector=['Mining', 'Metals'],
+                    row_index="2",
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_two)
+
+        self.facility = Facility \
+            .objects \
+            .create(name=self.name_one,
+                    address=self.address_one,
+                    country_code=self.country_code,
+                    location=Point(0, 0),
+                    created_from=self.list_item_one)
+
+        self.facility_match_one = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    results="",
+                    facility_list_item=self.list_item_one)
+
+        self.facility_match_two = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    results="",
+                    facility_list_item=self.list_item_two)
+
+        self.list_item_one.facility = self.facility
+        self.list_item_one.save()
+
+        self.list_item_two.facility = self.facility
+        self.list_item_two.save()
+
+    def test_has_sector_data(self):
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertIn('sector', data['properties'])
+        self.assertIsNotNone(data['properties']['sector'])
+        self.assertNotEqual([], data['properties']['sector'])
+        self.assertIn('contributor_id', data['properties']['sector'][0])
+        self.assertIn('contributor_name', data['properties']['sector'][0])
+        self.assertIn('values', data['properties']['sector'][0])
+        self.assertIn('updated_at', data['properties']['sector'][0])
+
+    def test_sector_data_ordered_by_updated_desc(self):
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertNotEqual([], data['properties']['sector'])
+        self.assertGreater(data['properties']['sector'][0]['updated_at'],
+                           data['properties']['sector'][1]['updated_at'])
+        self.assertEqual(self.contrib_two_name,
+                         data['properties']['sector'][0]['contributor_name'])
+        self.assertEqual(self.contrib_one_name,
+                         data['properties']['sector'][1]['contributor_name'])
+        self.assertEqual(self.list_item_two.sector,
+                         data['properties']['sector'][0]['values'])
+        self.assertEqual(self.list_item_one.sector,
+                         data['properties']['sector'][1]['values'])
+
+    def test_only_queries_latest_update_per_contributor(self):
+        list_three = FacilityList \
+            .objects \
+            .create(header="header",
+                    file_name="one",
+                    name='Three')
+
+        source_three = Source \
+            .objects \
+            .create(facility_list=list_three,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contrib_one)
+
+        list_item_three = FacilityListItem \
+            .objects \
+            .create(name='Three',
+                    address='Address',
+                    country_code='US',
+                    sector=['Agriculture'],
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    facility=self.facility,
+                    source=source_three)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=self.facility,
+                    results="",
+                    facility_list_item=list_item_three)
+
+        data = FacilityDetailsSerializer(self.facility).data
+
+        # Should be at top of list since most recently updated
+        self.assertEqual(list_item_three.sector,
+                         data['properties']['sector'][0]['values'])
+        self.assertEqual(self.contrib_one_name,
+                         data['properties']['sector'][0]['contributor_name'])
+        # Only 1 other sector element, for the other contributor
+        self.assertEqual(2, len(data['properties']['sector']))
+        self.assertEqual(self.contrib_two_name,
+                         data['properties']['sector'][1]['contributor_name'])
+
+    def test_excludes_from_inactive_sources(self):
+        self.source_two.is_active = False
+        self.source_two.save()
+
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertEqual(1, len(data['properties']['sector']))
+        self.assertEqual(self.contrib_one_name,
+                         data['properties']['sector'][0]['contributor_name'])
 
 
 class SectorChoiceViewTest(APITestCase):

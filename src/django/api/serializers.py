@@ -6,7 +6,7 @@ from django.db import transaction
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import password_validation
 from django.urls import reverse
-from django.db.models import Count
+from django.db.models import Count, F
 from rest_framework.serializers import (CharField,
                                         DecimalField,
                                         EmailField,
@@ -855,6 +855,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
     contributor_fields = SerializerMethodField()
     extended_fields = SerializerMethodField()
     created_from = SerializerMethodField()
+    sector = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -864,7 +865,8 @@ class FacilityDetailsSerializer(FacilitySerializer):
                   'ppe_product_types', 'ppe_contact_phone',
                   'ppe_contact_email', 'ppe_website',  'is_closed',
                   'activity_reports', 'contributor_fields', 'new_oar_id',
-                  'has_inexact_coordinates', 'extended_fields', 'created_from')
+                  'has_inexact_coordinates', 'extended_fields', 'created_from',
+                  'sector')
         geo_field = 'location'
 
     def get_other_names(self, facility):
@@ -1029,6 +1031,19 @@ class FacilityDetailsSerializer(FacilitySerializer):
             'contributor': get_contributor_name(list_item.source.contributor,
                                                 display_detail)
         }
+
+    def get_sector(self, facility):
+        sectors = FacilityListItem \
+            .objects \
+            .filter(facility=facility, source__is_active=True,
+                    facilitymatch__is_active=True) \
+            .order_by('source__contributor_id', '-updated_at') \
+            .distinct('source__contributor_id') \
+            .values('updated_at',
+                    contributor_id=F('source__contributor_id'),
+                    contributor_name=F('source__contributor__name'),
+                    values=F('sector'))
+        return sorted(sectors, key=lambda i: i['updated_at'], reverse=True)
 
 
 class FacilityCreateBodySerializer(Serializer):
