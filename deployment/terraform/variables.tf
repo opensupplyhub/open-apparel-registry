@@ -1,5 +1,5 @@
 variable "project" {
-  default = "Open Apparel Registry"
+  default = "Open Supply Hub"
 }
 
 variable "environment" {
@@ -85,7 +85,7 @@ variable "rds_auto_minor_version_upgrade" {
 }
 
 variable "rds_final_snapshot_identifier" {
-  default = "oar-rds-snapshot"
+  default = "osh-rds-snapshot"
 }
 
 variable "rds_monitoring_interval" {
