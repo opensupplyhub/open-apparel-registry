@@ -29,12 +29,14 @@ import {
     fetchContributorOptions,
     fetchListOptions,
     fetchCountryOptions,
+    fetchSectorOptions,
     fetchAllPrimaryFilterOptions,
 } from '../actions/filterOptions';
 
 import {
     contributorOptionsPropType,
     countryOptionsPropType,
+    sectorOptionsPropType,
 } from '../util/propTypes';
 
 import { allListsAreEmpty } from '../util/util';
@@ -58,14 +60,16 @@ class FilterSidebar extends Component {
         const {
             contributorsData,
             countriesData,
+            sectorsData,
             fetchFilterOptions,
             fetchContributors,
             fetchLists,
             fetchCountries,
+            fetchSectors,
             contributors,
         } = this.props;
 
-        if (allListsAreEmpty(contributorsData, countriesData)) {
+        if (allListsAreEmpty(contributorsData, countriesData, sectorsData)) {
             return fetchFilterOptions();
         }
 
@@ -75,6 +79,10 @@ class FilterSidebar extends Component {
 
         if (!countriesData.length) {
             fetchCountries();
+        }
+
+        if (!sectorsData.length) {
+            fetchSectors();
         }
 
         if (contributors && contributors.length) {
@@ -205,8 +213,10 @@ FilterSidebar.propTypes = {
     fetchFilterOptions: func.isRequired,
     fetchContributors: func.isRequired,
     fetchCountries: func.isRequired,
+    fetchSectors: func.isRequired,
     contributorsData: contributorOptionsPropType.isRequired,
     countriesData: countryOptionsPropType.isRequired,
+    sectorsData: sectorOptionsPropType.isRequired,
     vectorTileFeatureIsActive: bool.isRequired,
     fetchingFeatureFlags: bool.isRequired,
 };
@@ -217,6 +227,7 @@ function mapStateToProps({
         contributors: { data: contributorsData },
         lists: { data: listsData },
         countries: { data: countriesData },
+        sectors: { data: sectorsData },
     },
     featureFlags: { flags, fetching: fetchingFeatureFlags },
     embeddedMap: { embed },
@@ -229,6 +240,7 @@ function mapStateToProps({
         activeFilterSidebarTab,
         contributorsData,
         countriesData,
+        sectorsData,
         listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
@@ -247,6 +259,7 @@ function mapDispatchToProps(dispatch) {
         fetchContributors: () => dispatch(fetchContributorOptions()),
         fetchLists: () => dispatch(fetchListOptions()),
         fetchCountries: () => dispatch(fetchCountryOptions()),
+        fetchSectors: () => dispatch(fetchSectorOptions()),
     };
 }
 

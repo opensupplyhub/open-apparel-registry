@@ -74,6 +74,7 @@ const {
     anyListItemMatchesAreInactive,
     pluralizeResultsCount,
     removeDuplicatesFromOtherLocationsData,
+    makeGetSectorsURL,
 } = require('../util/util');
 
 const {
@@ -118,14 +119,16 @@ it('creates an API URL for generating an API token', () => {
     expect(makeAPITokenURL(uid)).toEqual(expectedMatch);
 });
 
-it('creates API URLs for getting contributor, contributor type, and country options', () => {
+it('creates API URLs for getting contributor, contributor type, country, and sector options', () => {
     const contributorMatch = '/api/contributors/';
     const contributorTypesMatch = '/api/contributor-types/';
     const countriesMatch = '/api/countries/';
+    const sectorsMatch = '/api/sectors/';
 
     expect(makeGetContributorsURL()).toEqual(contributorMatch);
     expect(makeGetContributorTypesURL()).toEqual(contributorTypesMatch);
     expect(makeGetCountriesURL()).toEqual(countriesMatch);
+    expect(makeGetSectorsURL()).toEqual(sectorsMatch);
 });
 
 it('creates an API URL for getting all facilities', () => {
@@ -157,6 +160,7 @@ it('creates a querystring from a set of filter selection', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
     };
 
     const expectedEmptySelectionQSMatch = '';
@@ -174,10 +178,15 @@ it('creates a querystring from a set of filter selection', () => {
         countries: [
             { value: 'country', label: 'country' },
         ],
+        sectors: [
+            { value: 'Apparel', label: 'Apparel' },
+            { value: 'Mining', label: 'Mining' },
+        ],
     };
 
     const expectedMultipleFilterSelectionsMatch =
-        'contributors=bar&contributors=baz&contributors=foo&countries=country';
+        'contributors=bar&contributors=baz&contributors=foo&countries=country'
+            .concat('&sectors=Apparel&sectors=Mining');
     expect(createQueryStringFromSearchFilters(multipleFilterSelections))
         .toEqual(expectedMultipleFilterSelectionsMatch);
 
@@ -193,11 +202,14 @@ it('creates a querystring from a set of filter selection', () => {
         countries: [
             { value: 'bar', label: 'bar' },
         ],
+        sectors: [
+            { value: 'baz', label: 'baz' },
+        ],
     };
 
     const expectedAllFiltersMatch =
         'q=hello&contributors=hello&contributors=world'
-            .concat('&contributor_types=foo&countries=bar');
+            .concat('&contributor_types=foo&countries=bar&sectors=baz');
     expect(createQueryStringFromSearchFilters(allFilters))
         .toEqual(expectedAllFiltersMatch);
 });
@@ -244,6 +256,7 @@ it('creates a set of filters from a querystring', () => {
         ],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -275,6 +288,7 @@ it('creates a set of filters from a querystring', () => {
         ],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -302,6 +316,7 @@ it('creates a set of filters from a querystring', () => {
         ],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [
             {
                 value: 2,
@@ -338,6 +353,7 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -369,6 +385,7 @@ it('creates a set of filters from a querystring', () => {
                 label: 'CN',
             },
         ],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -396,6 +413,7 @@ it('creates a set of filters from a querystring', () => {
             },
         ],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -418,6 +436,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -440,6 +459,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [{
             value: 1,
@@ -469,6 +489,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [{
@@ -498,6 +519,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -527,6 +549,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -556,6 +579,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],
@@ -585,6 +609,7 @@ it('creates a set of filters from a querystring', () => {
         contributors: [],
         contributorTypes: [],
         countries: [],
+        sectors: [],
         lists: [],
         parentCompany: [],
         facilityType: [],

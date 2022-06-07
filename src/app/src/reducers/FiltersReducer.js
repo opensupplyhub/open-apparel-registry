@@ -7,6 +7,7 @@ import {
     updateListFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    updateSectorFilter,
     updateParentCompanyFilter,
     updateFacilityTypeFilter,
     updateProcessingTypeFilter,
@@ -24,6 +25,7 @@ import {
     completeFetchContributorOptions,
     completeFetchContributorTypeOptions,
     completeFetchCountryOptions,
+    completeFetchSectorOptions,
 } from '../actions/filterOptions';
 
 import { completeSubmitLogOut } from '../actions/auth';
@@ -35,6 +37,7 @@ const initialState = Object.freeze({
     contributors: Object.freeze([]),
     contributorTypes: Object.freeze([]),
     countries: Object.freeze([]),
+    sectors: Object.freeze([]),
     parentCompany: Object.freeze([]),
     facilityType: Object.freeze([]),
     processingType: Object.freeze([]),
@@ -79,6 +82,10 @@ export default createReducer(
         [updateCountryFilter]: (state, payload) =>
             update(state, {
                 countries: { $set: payload },
+            }),
+        [updateSectorFilter]: (state, payload) =>
+            update(state, {
+                sectors: { $set: payload },
             }),
         [updateParentCompanyFilter]: (state, payload) =>
             update(state, {
@@ -136,6 +143,7 @@ export default createReducer(
             'contributorTypes',
         ),
         [completeFetchCountryOptions]: maybeSetFromQueryString('countries'),
+        [completeFetchSectorOptions]: maybeSetFromQueryString('sectors'),
         [completeSubmitLogOut]: () => initialState,
     },
     initialState,
