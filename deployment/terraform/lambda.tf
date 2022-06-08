@@ -4,7 +4,7 @@
 resource "aws_lambda_function" "alert_batch_failures" {
   filename         = "${path.module}/lambda-functions/alert_batch_failures/alert_batch_failures.zip"
   source_code_hash = "${base64sha256(file("${path.module}/lambda-functions/alert_batch_failures/alert_batch_failures.zip"))}"
-  function_name    = "func${var.environment}AlertBatchFailures"
+  function_name    = "func${local.short}AlertBatchFailures"
   description      = "Function to alert on AWS Batch Job Failures."
   role             = "${aws_iam_role.alert_batch_failures.arn}"
   handler          = "alert_batch_failures.handler"
@@ -26,7 +26,7 @@ resource "aws_lambda_function" "alert_batch_failures" {
 }
 
 resource "aws_cloudwatch_event_rule" "alert_batch_failures" {
-  name        = "rule${var.environment}AlertBatchFailures"
+  name        = "rule${local.short}AlertBatchFailures"
   description = "Rule to send alerts when batch jobs fail."
 
   event_pattern = <<PATTERN
@@ -45,12 +45,12 @@ PATTERN
 
 resource "aws_cloudwatch_event_target" "alert_batch_failures" {
   rule      = "${aws_cloudwatch_event_rule.alert_batch_failures.name}"
-  target_id = "target${var.environment}AlertBatchFailures"
+  target_id = "target${local.short}AlertBatchFailures"
   arn       = "${aws_lambda_function.alert_batch_failures.arn}"
 }
 
 resource "aws_lambda_permission" "alert_batch_failures" {
-  statement_id  = "perm${var.environment}AlertBatchFailures"
+  statement_id  = "perm${local.short}AlertBatchFailures"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.alert_batch_failures.function_name}"
   principal     = "events.amazonaws.com"
@@ -63,7 +63,7 @@ resource "aws_lambda_permission" "alert_batch_failures" {
 resource "aws_lambda_function" "alert_sfn_failures" {
   filename         = "${path.module}/lambda-functions/alert_sfn_failures/alert_sfn_failures.zip"
   source_code_hash = "${base64sha256(file("${path.module}/lambda-functions/alert_sfn_failures/alert_sfn_failures.zip"))}"
-  function_name    = "func${var.environment}AlertStepFunctionsFailures"
+  function_name    = "func${local.short}AlertStepFunctionsFailures"
   description      = "Function to alert on AWS Step Functions Failures."
   role             = "${aws_iam_role.alert_sfn_failures.arn}"
   handler          = "alert_sfn_failures.handler"

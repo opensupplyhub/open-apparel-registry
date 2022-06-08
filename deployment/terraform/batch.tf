@@ -1,7 +1,7 @@
 resource "aws_batch_compute_environment" "default" {
   depends_on = ["aws_iam_role_policy_attachment.batch_policy"]
 
-  compute_environment_name = "batch${var.environment}DefaultComputeEnvironment"
+  compute_environment_name = "batch${local.short}DefaultComputeEnvironment"
   type                     = "MANAGED"
   state                    = "ENABLED"
   service_role             = "${aws_iam_role.container_instance_batch.arn}"
@@ -41,7 +41,7 @@ resource "aws_batch_compute_environment" "default" {
 }
 
 resource "aws_batch_job_queue" "default" {
-  name                 = "queue${var.environment}Default"
+  name                 = "queue${local.short}Default"
   priority             = 1
   state                = "ENABLED"
   compute_environments = ["${aws_batch_compute_environment.default.arn}"]
@@ -74,7 +74,7 @@ data "template_file" "default_job_definition" {
 }
 
 resource "aws_batch_job_definition" "default" {
-  name = "job${var.environment}Default"
+  name = "job${local.short}Default"
   type = "container"
 
   container_properties = "${data.template_file.default_job_definition.rendered}"

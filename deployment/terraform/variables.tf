@@ -1,5 +1,13 @@
+locals {
+  short = "${replace(var.project, " ", "")}${var.environment}"
+}
+
 variable "project" {
   default = "Open Supply Hub"
+}
+
+variable "short_project" {
+  default = "osh"
 }
 
 variable "environment" {

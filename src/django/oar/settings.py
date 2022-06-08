@@ -33,6 +33,16 @@ if ENVIRONMENT not in VALID_ENVIRONMENTS:
         'Invalid ENVIRONMENT provided, must be one of {}'
         .format(VALID_ENVIRONMENTS))
 
+BATCH_JOB_QUEUE_NAME = os.getenv('BATCH_JOB_QUEUE_NAME')
+if BATCH_JOB_QUEUE_NAME is None and ENVIRONMENT != 'Development':
+    raise ImproperlyConfigured(
+        'Invalid BATCH_JOB_QUEU_NAME provided, must be set')
+
+BATCH_JOB_DEF_NAME = os.getenv('BATCH_JOB_DEF_NAME')
+if BATCH_JOB_DEF_NAME is None and ENVIRONMENT != 'Development':
+    raise ImproperlyConfigured(
+        'Invalid BATCH_JOB_DEF_NAME provided, must be set')
+
 # A non-empty value of BATCH_MODE signals that we will only be running batch
 # processing management commands
 BATCH_MODE = os.getenv('BATCH_MODE', '')

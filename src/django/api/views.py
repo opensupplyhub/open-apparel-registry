@@ -2788,7 +2788,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         FacilityListItem.objects.bulk_create(items)
 
         if ENVIRONMENT in ('Staging', 'Production'):
-            submit_jobs(ENVIRONMENT, new_list)
+            submit_jobs(new_list)
 
         serializer = self.get_serializer(new_list)
         return Response(serializer.data)

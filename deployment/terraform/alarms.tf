@@ -1,3 +1,3 @@
 resource "aws_sns_topic" "global" {
-  name = "topic${var.environment}GlobalNotifications"
+  name = "topic${local.short}GlobalNotifications"
 }

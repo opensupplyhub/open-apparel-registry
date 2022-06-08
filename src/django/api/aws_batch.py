@@ -2,31 +2,31 @@ import boto3
 import json
 
 from datetime import datetime
+from django.conf import settings
 from django.db import connection
 
 from api.constants import ProcessingAction
 from api.models import FacilityListItem
 
 
-def fetch_batch_queue_arn(client, environment):
-    queue_name = 'queue{0}Default'.format(environment)
-    response = client.describe_job_queues(jobQueues=[queue_name])
+def fetch_batch_queue_arn(client):
+    response = client.describe_job_queues(
+        jobQueues=[settings.BATCH_JOB_QUEUE_NAME])
     if 'jobQueues' in response:
         for queue in response['jobQueues']:
             if 'state' in queue and queue['state'] == 'ENABLED':
                 return queue['jobQueueArn']
         raise RuntimeError(
             'No ENABLED queue named {0}. Response: {1}'.format(
-                queue_name, response))
+                settings.BATCH_JOB_QUEUE_NAME, response))
     else:
         raise RuntimeError(
             'Failed to fetch queue. Response {0}'.format(response))
 
 
-def fetch_latest_active_batch_job_definition_arn(client, environment):
-    job_def_name = 'job{0}Default'.format(environment)
+def fetch_latest_active_batch_job_definition_arn(client):
     response = client.describe_job_definitions(
-        jobDefinitionName=job_def_name,
+        jobDefinitionName=settings.BATCH_JOB_DEF_NAME,
         status='ACTIVE')
     if 'jobDefinitions' in response:
         latest_job_def = None
@@ -37,23 +37,22 @@ def fetch_latest_active_batch_job_definition_arn(client, environment):
         if latest_job_def is None:
             raise RuntimeError(
                 'No ACTIVE job definition named {0}. Response {1}'.format(
-                    job_def_name, response))
+                    settings.BATCH_JOB_DEF_NAME, response))
         return latest_job_def['jobDefinitionArn']
     else:
         raise RuntimeError(
             'No job queues available. Response {0}'.format(response))
 
 
-def submit_jobs(environment, facility_list, skip_parse=False):
+def submit_jobs(facility_list, skip_parse=False):
     """
     Submit AWS Batch jobs to process each FacilityListItem in a FacilityList
     through all processing steps.
     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/batch.html#Batch.Client.submit_job
     """
     client = boto3.client('batch')
-    queue_arn = fetch_batch_queue_arn(client, environment)
-    job_def_arn = fetch_latest_active_batch_job_definition_arn(client,
-                                                               environment)
+    queue_arn = fetch_batch_queue_arn(client)
+    job_def_arn = fetch_latest_active_batch_job_definition_arn(client)
     job_time = (datetime.utcnow().isoformat()
                 .replace(':', '-').replace('.', '-').replace('T', '-'))
 
