@@ -321,38 +321,38 @@ WATCHMAN_CHECKS = (
 
 ECSMANAGE_ENVIRONMENTS = {
     'default': {
-        'TASK_DEFINITION_NAME': 'StagingAppCLI',
+        'TASK_DEFINITION_NAME': 'OpenSupplyHubStagingAppCLI',
         'CONTAINER_NAME': 'django',
-        'CLUSTER_NAME': 'ecsStagingCluster',
+        'CLUSTER_NAME': 'ecsOpenSupplyHubStagingCluster',
         'LAUNCH_TYPE': 'FARGATE',
         'PLATFORM_VERSION': '1.4.0',
         'SECURITY_GROUP_TAGS': {
             'Name': 'sgAppEcsService',
             'Environment': 'Staging',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'SUBNET_TAGS': {
             'Name': 'PrivateSubnet',
             'Environment': 'Staging',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'AWS_REGION': 'eu-west-1',
     },
     'production': {
-        'TASK_DEFINITION_NAME': 'ProductionAppCLI',
+        'TASK_DEFINITION_NAME': 'OpenSupplyHubProductionAppCLI',
         'CONTAINER_NAME': 'django',
-        'CLUSTER_NAME': 'ecsProductionCluster',
+        'CLUSTER_NAME': 'ecsOpenSupplyHubProductionCluster',
         'LAUNCH_TYPE': 'FARGATE',
         'PLATFORM_VERSION': '1.4.0',
         'SECURITY_GROUP_TAGS': {
             'Name': 'sgAppEcsService',
             'Environment': 'Production',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'SUBNET_TAGS': {
             'Name': 'PrivateSubnet',
             'Environment': 'Production',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'AWS_REGION': 'eu-west-1',
     }
