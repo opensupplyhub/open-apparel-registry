@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Fix processing_type_facility_type_unmatched [#1874](https://github.com/open-apparel-registry/open-apparel-registry/pull/1874)
-
 ### Security
+
+## [68] 2022-06-09
+
+### Fixed
+
+- Fix processing_type_facility_type_unmatched [#1874](https://github.com/open-apparel-registry/open-apparel-registry/pull/1874)
 
 ## [67] 2022-05-26
 
@@ -1202,7 +1206,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/67...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/68...HEAD
+[68]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/68
 [67]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/67
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
 [65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
