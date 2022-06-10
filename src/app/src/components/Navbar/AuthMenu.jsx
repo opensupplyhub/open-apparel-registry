@@ -24,13 +24,13 @@ import { convertFeatureFlagsObjectToListOfActiveFlags } from '../../util/util';
 
 const styles = {
     profileButton: {
-        color: 'white',
+        color: '#0D1128',
         marginRight: '1rem',
     },
     contributeButton: {
         fontFamily: 'inherit',
         cursor: 'pointer',
-        border: '1px solid white',
+        border: '1px solid #0D1128',
         fontSize: '0.875rem',
         letterSpacing: '0.125rem',
         textDecoration: 'none',
@@ -49,7 +49,7 @@ const styles = {
         letterSpacing: '0.125rem',
         textDecoration: 'none',
         textTransform: 'uppercase',
-        color: '#0c46e1',
+        color: '#0D1128',
         padding: '8px 16px',
         borderRadius: '20px',
         backgroundColor: 'white',
@@ -63,7 +63,7 @@ const styles = {
         letterSpacing: '0.125rem',
         textDecoration: 'none',
         textTransform: 'uppercase',
-        color: '#0c46e1',
+        color: '#0D1128',
         fontWeight: 'normal',
     },
 };

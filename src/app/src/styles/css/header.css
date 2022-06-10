@@ -29,8 +29,8 @@
 .app-header {
     display: flex;
     justify-content: space-between;
-    background: #0c46e1;
-    color: #fff;
+    background: #62CC74;
+    color: #0D1128;
     width: 100%;
     z-index: 2;
     box-shadow: 0 0.5rem 2rem 0 rgba(40, 39, 39, 0.1);

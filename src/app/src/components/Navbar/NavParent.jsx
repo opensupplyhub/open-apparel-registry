@@ -23,7 +23,7 @@ const NavParent = ({ title, activeSubmenu, setActiveSubmenu }) => {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 8">
                         <path
                             d="M8.12 0L4.97 4.988 1.87 0H0l4.958 8L10 0z"
-                            fill="#FFF"
+                            fill="#0D1128"
                             fillRule="evenodd"
                         />
                     </svg>
