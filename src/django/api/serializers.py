@@ -1043,6 +1043,11 @@ class FacilityDetailsSerializer(FacilitySerializer):
                     contributor_id=F('source__contributor_id'),
                     contributor_name=F('source__contributor__name'),
                     values=F('sector'))
+
+        contributor_id = get_embed_contributor_id(self)
+        if is_embed_mode_active(self) and contributor_id is not None:
+            sectors = sectors.filter(source__contributor_id=contributor_id)
+
         return sorted(sectors, key=lambda i: i['updated_at'], reverse=True)
 
 

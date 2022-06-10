@@ -242,6 +242,18 @@ const FacilityDetailSidebar = ({
         [data],
     );
 
+    const [sectorField, otherSectors] = useMemo(() => {
+        const sectors = get(data, 'properties.sector', []).map(item => ({
+            primary: item.values.join(', '),
+            secondary: formatAttribution(
+                item.created_at,
+                item.contributor_name,
+            ),
+            key: item.contributor_id,
+        }));
+        return [sectors[0], sectors.slice(1)];
+    });
+
     if (fetching) {
         return (
             <div className={classes.root}>
@@ -385,6 +397,12 @@ const FacilityDetailSidebar = ({
                     label="Name"
                     {...nameField}
                     additionalContent={otherNames}
+                    embed={embed}
+                />
+                <FacilityDetailSidebarItem
+                    label="Sector"
+                    {...sectorField}
+                    additionalContent={otherSectors}
                     embed={embed}
                 />
                 <FacilityDetailSidebarItem

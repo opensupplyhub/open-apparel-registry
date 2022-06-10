@@ -3869,7 +3869,7 @@
         "fields": {
             "source": 7,
             "row_index": 6,
-            "raw_data": "China,Regina Miracle Intimate Apparel (Shenzhen Ltd.),\"No.5 Cengyao Industrial Estate,Yulu,Gongming,Baoan,Shenzhen\",Apparel,22.7829489,113.8891105",
+            "raw_data": "China,Regina Miracle Intimate Apparel (Shenzhen Ltd.),\"No.5 Cengyao Industrial Estate,Yulu,Gongming,Baoan,Shenzhen\",Apparel|Health,22.7829489,113.8891105",
             "sector": [],
             "status": "UPLOADED",
             "processing_results": [],
@@ -8307,7 +8307,7 @@
         "fields": {
             "source": 15,
             "row_index": 12,
-            "raw_data": "CN,Regina Miracle Intimate Apparel (Shenzhen) Ltd.,\"No.5 Cengyao Industrial Estate Yulu, Gongming Baoan ,Shenzhen,Guangdong, P.R.China , Gongming Yulu, Bao'an District, Shenzhen, 518132, Guangdong\",Apparel,22.7237606,113.9068159",
+            "raw_data": "CN,Regina Miracle Intimate Apparel (Shenzhen) Ltd.,\"No.5 Cengyao Industrial Estate Yulu, Gongming Baoan ,Shenzhen,Guangdong, P.R.China , Gongming Yulu, Bao'an District, Shenzhen, 518132, Guangdong\",Apparel|Health,22.7237606,113.9068159",
             "sector": [],
             "status": "UPLOADED",
             "processing_results": [],
