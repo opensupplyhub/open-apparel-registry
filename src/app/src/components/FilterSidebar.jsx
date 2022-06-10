@@ -29,7 +29,6 @@ import {
     fetchContributorOptions,
     fetchListOptions,
     fetchCountryOptions,
-    fetchSectorOptions,
     fetchAllPrimaryFilterOptions,
 } from '../actions/filterOptions';
 
@@ -65,7 +64,6 @@ class FilterSidebar extends Component {
             fetchContributors,
             fetchLists,
             fetchCountries,
-            fetchSectors,
             contributors,
         } = this.props;
 
@@ -79,10 +77,6 @@ class FilterSidebar extends Component {
 
         if (!countriesData.length) {
             fetchCountries();
-        }
-
-        if (!sectorsData.length) {
-            fetchSectors();
         }
 
         if (contributors && contributors.length) {
@@ -213,7 +207,6 @@ FilterSidebar.propTypes = {
     fetchFilterOptions: func.isRequired,
     fetchContributors: func.isRequired,
     fetchCountries: func.isRequired,
-    fetchSectors: func.isRequired,
     contributorsData: contributorOptionsPropType.isRequired,
     countriesData: countryOptionsPropType.isRequired,
     sectorsData: sectorOptionsPropType.isRequired,
@@ -259,7 +252,6 @@ function mapDispatchToProps(dispatch) {
         fetchContributors: () => dispatch(fetchContributorOptions()),
         fetchLists: () => dispatch(fetchListOptions()),
         fetchCountries: () => dispatch(fetchCountryOptions()),
-        fetchSectors: () => dispatch(fetchSectorOptions()),
     };
 }
 

@@ -244,7 +244,6 @@ export function fetchAllPrimaryFilterOptions() {
     return dispatch => {
         dispatch(fetchContributorOptions());
         dispatch(fetchCountryOptions());
-        dispatch(fetchSectorOptions());
         dispatch(fetchListOptions());
     };
 }

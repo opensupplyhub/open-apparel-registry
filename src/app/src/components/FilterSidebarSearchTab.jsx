@@ -67,6 +67,7 @@ import {
     EXTENDED_PROFILE_FLAG,
     EXTENDED_FIELDS_EXPLANATORY_TEXT,
 } from '../util/constants';
+import { fetchSectorOptions } from '../actions/filterOptions';
 
 const filterSidebarSearchTabStyles = theme =>
     Object.freeze({
@@ -130,6 +131,7 @@ function FilterSidebarSearchTab({
     listOptions,
     countryOptions,
     sectorOptions,
+    fetchSectors,
     resetFilters,
     facilityFreeTextQuery,
     updateFacilityFreeTextQuery,
@@ -148,6 +150,7 @@ function FilterSidebarSearchTab({
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
+    fetchingSectors,
     searchForFacilities,
     facilities,
     fetchingOptions,
@@ -515,7 +518,15 @@ function FilterSidebarSearchTab({
                         options={sectorOptions}
                         value={sectors}
                         onChange={updateSector}
-                        disabled={fetchingOptions || fetchingFacilities}
+                        onFocus={() =>
+                            sectorOptions.length === 0 &&
+                            !fetchingSectors &&
+                            fetchSectors()
+                        }
+                        noOptionsMessage={() =>
+                            fetchingSectors ? 'Loading..' : 'No options'
+                        }
+                        disabled={fetchingOptions || fetchingSectors}
                     />
                 </div>
                 <FeatureFlag flag={EXTENDED_PROFILE_FLAG}>
@@ -578,6 +589,7 @@ FilterSidebarSearchTab.propTypes = {
     updateContributor: func.isRequired,
     updateCountry: func.isRequired,
     updateCombineContributors: func.isRequired,
+    fetchSectors: func.isRequired,
     facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
@@ -656,8 +668,8 @@ function mapStateToProps({
         fetchingFacilities,
         facilities,
         boundary,
-        fetchingOptions:
-            fetchingContributors || fetchingCountries || fetchingSectors,
+        fetchingOptions: fetchingContributors || fetchingCountries,
+        fetchingSectors,
         embed: !!embed,
         fetchingLists,
         textSearchLabel: config.text_search_label,
@@ -692,6 +704,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
                     e.target.checked ? 'AND' : '',
                 ),
             ),
+        fetchSectors: () => dispatch(fetchSectorOptions()),
         resetFilters: embedded => {
             dispatch(recordSearchTabResetButtonClick());
             return dispatch(resetAllFilters(embedded));
