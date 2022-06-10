@@ -286,10 +286,11 @@ function FilterSidebarSearchTab({
         <Button
             variant="contained"
             type="submit"
-            color="primary"
             className={classes.font}
             style={{
                 boxShadow: 'none',
+                backgroundColor: '#62CC74',
+                color: '#0D1128',
             }}
             onClick={() => searchForFacilities(vectorTileFlagIsActive)}
             disabled={fetchingOptions}
