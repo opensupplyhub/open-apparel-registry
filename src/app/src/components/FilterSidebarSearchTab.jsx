@@ -39,6 +39,8 @@ import { fetchFacilities } from '../actions/facilities';
 
 import { recordSearchTabResetButtonClick } from '../actions/ui';
 
+import COLOURS from '../util/COLOURS';
+
 import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
@@ -289,8 +291,8 @@ function FilterSidebarSearchTab({
             className={classes.font}
             style={{
                 boxShadow: 'none',
-                backgroundColor: '#62CC74',
-                color: '#0D1128',
+                backgroundColor: COLOURS.GREEN,
+                color: COLOURS.NEAR_BLACK,
             }}
             onClick={() => searchForFacilities(vectorTileFlagIsActive)}
             disabled={fetchingOptions}

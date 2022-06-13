@@ -9,8 +9,7 @@ import Button from '@material-ui/core/Button';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 import { submitLogOut } from '../../actions/auth';
-import { userPropType } from '../../util/propTypes';
-
+import COLOURS from '../../util/COLOURS';
 import {
     authLoginFormRoute,
     authRegisterFormRoute,
@@ -19,18 +18,18 @@ import {
     contributeRoute,
     createUserDropdownLinks,
 } from '../../util/constants';
-
+import { userPropType } from '../../util/propTypes';
 import { convertFeatureFlagsObjectToListOfActiveFlags } from '../../util/util';
 
 const styles = {
     profileButton: {
-        color: '#0D1128',
+        color: COLOURS.NEAR_BLACK,
         marginRight: '1rem',
     },
     contributeButton: {
         fontFamily: 'inherit',
         cursor: 'pointer',
-        border: '1px solid #0D1128',
+        border: `1px solid ${COLOURS.NEAR_BLACK}`,
         fontSize: '0.875rem',
         letterSpacing: '0.125rem',
         textDecoration: 'none',
@@ -49,7 +48,7 @@ const styles = {
         letterSpacing: '0.125rem',
         textDecoration: 'none',
         textTransform: 'uppercase',
-        color: '#0D1128',
+        color: COLOURS.NEAR_BLACK,
         padding: '8px 16px',
         borderRadius: '20px',
         backgroundColor: 'white',
@@ -63,7 +62,7 @@ const styles = {
         letterSpacing: '0.125rem',
         textDecoration: 'none',
         textTransform: 'uppercase',
-        color: '#0D1128',
+        color: COLOURS.NEAR_BLACK,
         fontWeight: 'normal',
     },
 };

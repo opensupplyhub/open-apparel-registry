@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import COLOURS from '../../util/COLOURS';
 
 export default () => (
     <Link to="/" href="/" className="header__home">
@@ -7,7 +8,7 @@ export default () => (
         <div className="header__logo">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972.96 364.15">
                 <defs>
-                    <style>{'.cls-1{fill:#0d1128}'}</style>
+                    <style>{`.cls-1{ fill: ${COLOURS.NEAR_BLACK} }`}</style>
                 </defs>
                 <g id="Layer_2" data-name="Layer 2">
                     <g id="Layer_1-2" data-name="Layer 1">

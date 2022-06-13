@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 
+import COLOURS from '../../util/COLOURS';
+
 export default () => (
     <div
         style={{ position: 'relative' }}
@@ -31,7 +33,7 @@ export default () => (
                 className="nav__parent-button app-header-button google-translate-language-display"
                 style={{
                     backgroundColor: 'white',
-                    color: '#0D1128',
+                    color: COLOURS.NEAR_BLACK,
                 }}
             >
                 <span
@@ -44,7 +46,7 @@ export default () => (
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 8">
                         <path
                             d="M8.12 0L4.97 4.988 1.87 0H0l4.958 8L10 0z"
-                            fill="#0D1128"
+                            fill={COLOURS.NEAR_BLACK}
                             fillRule="evenodd"
                         />
                     </svg>
