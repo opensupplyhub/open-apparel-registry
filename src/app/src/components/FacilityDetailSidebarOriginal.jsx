@@ -388,7 +388,7 @@ class FacilityDetailSidebar extends Component {
                                 disabled={fetching}
                                 title="Claimed Facility"
                             >
-                                <BadgeVerified color={COLOURS.GREEN} />
+                                <BadgeVerified color={COLOURS.TEAL} />
                             </IconButton>
                         ) : (
                             <ShowOnly when={!userHasPendingFacilityClaim}>

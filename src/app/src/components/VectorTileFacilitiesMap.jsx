@@ -58,7 +58,7 @@ function VectorTileFacilitiesMap({
     drawFilterActive,
     boundary,
     isEmbedded,
-    mapStyle,
+    mapStyle = 'silver',
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,

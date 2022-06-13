@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update tile load test script and add scripts for hompage load, facility download, and facility POST [#1777](https://github.com/open-apparel-registry/open-apparel-registry/pull/1777)
 - API documentation updates [#1844](https://github.com/open-apparel-registry/open-apparel-registry/pull/1844)
 - Return sector in Facility detail response [#1884](https://github.com/open-apparel-registry/open-apparel-registry/pull/1884)
+- Updated logo and colors on top banner, map and search button [#1900](https://github.com/open-apparel-registry/open-apparel-registry/pull/1900)
 
 ### Deprecated
 
