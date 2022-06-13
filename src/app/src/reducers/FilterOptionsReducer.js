@@ -14,6 +14,9 @@ import {
     startFetchCountryOptions,
     failFetchCountryOptions,
     completeFetchCountryOptions,
+    startFetchSectorOptions,
+    failFetchSectorOptions,
+    completeFetchSectorOptions,
     startFetchFacilityProcessingTypeOptions,
     failFetchFacilityProcessingTypeOptions,
     completeFetchFacilityProcessingTypeOptions,
@@ -40,6 +43,11 @@ const initialState = Object.freeze({
         error: null,
     }),
     countries: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    sectors: Object.freeze({
         data: Object.freeze([]),
         fetching: false,
         error: null,
@@ -146,6 +154,28 @@ export default createReducer(
         [completeFetchCountryOptions]: (state, payload) =>
             update(state, {
                 countries: {
+                    fetching: { $set: false },
+                    error: { $set: null },
+                    data: { $set: payload },
+                },
+            }),
+        [startFetchSectorOptions]: state =>
+            update(state, {
+                sectors: {
+                    fetching: { $set: true },
+                    error: { $set: null },
+                },
+            }),
+        [failFetchSectorOptions]: (state, payload) =>
+            update(state, {
+                sectors: {
+                    fetching: { $set: false },
+                    error: { $set: payload },
+                },
+            }),
+        [completeFetchSectorOptions]: (state, payload) =>
+            update(state, {
+                sectors: {
                     fetching: { $set: false },
                     error: { $set: null },
                     data: { $set: payload },

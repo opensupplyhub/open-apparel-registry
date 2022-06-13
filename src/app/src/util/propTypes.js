@@ -179,6 +179,13 @@ export const countryOptionsPropType = arrayOf(
     }),
 );
 
+export const sectorOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
+);
+
 export const facilityTypeOptionsPropType = arrayOf(
     shape({
         value: string.isRequired,
@@ -268,6 +275,7 @@ export const filtersPropType = shape({
     contributors: arrayOf(reactSelectOptionPropType).isRequired,
     contributorTypes: arrayOf(reactSelectOptionPropType).isRequired,
     countries: arrayOf(reactSelectOptionPropType).isRequired,
+    sectors: arrayOf(reactSelectOptionPropType).isRequired,
     combineContributors: string.isRequired,
 });
 

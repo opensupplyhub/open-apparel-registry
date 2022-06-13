@@ -123,6 +123,7 @@ export const makeGetContributorsURL = () => '/api/contributors/';
 export const makeGetListsURL = () => '/api/contributor-lists/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
+export const makeGetSectorsURL = () => '/api/sectors/';
 export const makeGetFacilitiesTypeProcessingTypeURL = () =>
     '/api/facility-processing-types/';
 export const makeGetNumberOfWorkersURL = () => '/api/workers-ranges/';
@@ -207,6 +208,7 @@ export const createQueryStringFromSearchFilters = (
         contributors = [],
         contributorTypes = [],
         countries = [],
+        sectors = [],
         parentCompany = [],
         facilityType = [],
         processingType = [],
@@ -229,6 +231,7 @@ export const createQueryStringFromSearchFilters = (
             contributorTypes,
         ),
         countries: createCompactSortedQuerystringInputObject(countries),
+        sectors: createCompactSortedQuerystringInputObject(sectors),
         parent_company: createCompactSortedQuerystringInputObject(
             parentCompany,
         ),
@@ -287,6 +290,7 @@ export const createFiltersFromQueryString = qs => {
         lists = [],
         contributor_types: contributorTypes = [],
         countries = [],
+        sectors = [],
         parent_company: parentCompany = [],
         facility_type: facilityType = [],
         processing_type: processingType = [],
@@ -304,6 +308,7 @@ export const createFiltersFromQueryString = qs => {
         lists: createSelectOptionsFromParams(lists),
         contributorTypes: createSelectOptionsFromParams(contributorTypes),
         countries: createSelectOptionsFromParams(countries),
+        sectors: createSelectOptionsFromParams(sectors),
         parentCompany: createSelectOptionsFromParams(parentCompany),
         facilityType: createSelectOptionsFromParams(facilityType),
         processingType: createSelectOptionsFromParams(processingType),

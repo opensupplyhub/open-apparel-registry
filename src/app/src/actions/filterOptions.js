@@ -9,6 +9,7 @@ import {
     makeGetListsURL,
     makeGetContributorTypesURL,
     makeGetCountriesURL,
+    makeGetSectorsURL,
     makeGetFacilitiesTypeProcessingTypeURL,
     makeGetNumberOfWorkersURL,
     mapDjangoChoiceTuplesToSelectOptions,
@@ -52,6 +53,14 @@ export const failFetchCountryOptions = createAction(
 );
 export const completeFetchCountryOptions = createAction(
     'COMPLETE_FETCH_COUNTRY_OPTIONS',
+);
+
+export const startFetchSectorOptions = createAction(
+    'START_FETCH_SECTOR_OPTIONS',
+);
+export const failFetchSectorOptions = createAction('FAIL_FETCH_SECTOR_OPTIONS');
+export const completeFetchSectorOptions = createAction(
+    'COMPLETE_FETCH_SECTOR_OPTIONS',
 );
 
 export const startFetchFacilityProcessingTypeOptions = createAction(
@@ -162,6 +171,26 @@ export function fetchCountryOptions() {
                         err,
                         'An error prevented fetching country options',
                         failFetchCountryOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchSectorOptions() {
+    return dispatch => {
+        dispatch(startFetchSectorOptions());
+
+        return apiRequest
+            .get(makeGetSectorsURL())
+            .then(({ data }) => mapDjangoChoiceTuplesValueToSelectOptions(data))
+            .then(data => dispatch(completeFetchSectorOptions(data)))
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching sector options',
+                        failFetchSectorOptions,
                     ),
                 ),
             );

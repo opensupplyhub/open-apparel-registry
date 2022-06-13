@@ -57,7 +57,6 @@ function ZoomToSearchControl({
                 variant="text"
                 onClick={activateDrawFilter}
                 disableRipple
-                color="black"
                 fullWidth
                 className={classes.areaStyle}
             >
@@ -68,7 +67,7 @@ function ZoomToSearchControl({
                 variant="text"
                 onClick={clearDrawFilter}
                 disableRipple
-                color="black"
+                color="secondary"
                 fullWidth
                 className={classes.areaStyle}
             >

@@ -25,6 +25,7 @@ import {
     updateListFilter,
     updateContributorTypeFilter,
     updateCountryFilter,
+    updateSectorFilter,
     updateParentCompanyFilter,
     updateFacilityTypeFilter,
     updateProcessingTypeFilter,
@@ -45,6 +46,7 @@ import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
     countryOptionsPropType,
+    sectorOptionsPropType,
     facilityTypeOptionsPropType,
     processingTypeOptionsPropType,
     productTypeOptionsPropType,
@@ -65,6 +67,7 @@ import {
     EXTENDED_PROFILE_FLAG,
     EXTENDED_FIELDS_EXPLANATORY_TEXT,
 } from '../util/constants';
+import { fetchSectorOptions } from '../actions/filterOptions';
 
 const filterSidebarSearchTabStyles = theme =>
     Object.freeze({
@@ -119,6 +122,7 @@ const FACILITIES = 'FACILITIES';
 const CONTRIBUTORS = 'CONTRIBUTORS';
 const LISTS = 'LISTS';
 const COUNTRIES = 'COUNTRIES';
+const SECTORS = 'SECTORS';
 
 const checkIfAnyFieldSelected = fields => fields.some(f => f.length !== 0);
 
@@ -126,6 +130,8 @@ function FilterSidebarSearchTab({
     contributorOptions,
     listOptions,
     countryOptions,
+    sectorOptions,
+    fetchSectors,
     resetFilters,
     facilityFreeTextQuery,
     updateFacilityFreeTextQuery,
@@ -133,7 +139,9 @@ function FilterSidebarSearchTab({
     updateContributor,
     contributorTypes,
     countries,
+    sectors,
     updateCountry,
+    updateSector,
     parentCompany,
     facilityType,
     processingType,
@@ -142,6 +150,7 @@ function FilterSidebarSearchTab({
     combineContributors,
     updateCombineContributors,
     fetchingFacilities,
+    fetchingSectors,
     searchForFacilities,
     facilities,
     fetchingOptions,
@@ -168,6 +177,7 @@ function FilterSidebarSearchTab({
         facilityFreeTextQuery,
         contributors,
         countries,
+        sectors,
     ]);
 
     const [
@@ -491,6 +501,34 @@ function FilterSidebarSearchTab({
                         disabled={fetchingOptions || fetchingFacilities}
                     />
                 </div>
+                <div className="form__field">
+                    <InputLabel
+                        shrink={false}
+                        htmlFor={SECTORS}
+                        className={classes.inputLabelStyle}
+                    >
+                        Sector
+                    </InputLabel>
+                    <ReactSelect
+                        isMulti
+                        id={SECTORS}
+                        name={SECTORS}
+                        className={`basic-multi-select notranslate ${classes.selectStyle}`}
+                        classNamePrefix="select"
+                        options={sectorOptions}
+                        value={sectors}
+                        onChange={updateSector}
+                        onFocus={() =>
+                            sectorOptions.length === 0 &&
+                            !fetchingSectors &&
+                            fetchSectors()
+                        }
+                        noOptionsMessage={() =>
+                            fetchingSectors ? 'Loading..' : 'No options'
+                        }
+                        disabled={fetchingOptions || fetchingSectors}
+                    />
+                </div>
                 <FeatureFlag flag={EXTENDED_PROFILE_FLAG}>
                     <ShowOnly when={expand}>
                         <FilterSidebarExtendedSearch />
@@ -545,15 +583,18 @@ FilterSidebarSearchTab.defaultProps = {
 FilterSidebarSearchTab.propTypes = {
     contributorOptions: contributorOptionsPropType.isRequired,
     countryOptions: countryOptionsPropType.isRequired,
+    sectorOptions: sectorOptionsPropType.isRequired,
     resetFilters: func.isRequired,
     updateFacilityFreeTextQuery: func.isRequired,
     updateContributor: func.isRequired,
     updateCountry: func.isRequired,
     updateCombineContributors: func.isRequired,
+    fetchSectors: func.isRequired,
     facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     countries: countryOptionsPropType.isRequired,
+    sectors: sectorOptionsPropType.isRequired,
     parentCompany: contributorOptionsPropType.isRequired,
     facilityType: facilityTypeOptionsPropType.isRequired,
     processingType: processingTypeOptionsPropType.isRequired,
@@ -575,6 +616,7 @@ function mapStateToProps({
         },
         lists: { data: listOptions, fetching: fetchingLists },
         countries: { data: countryOptions, fetching: fetchingCountries },
+        sectors: { data: sectorOptions, fetching: fetchingSectors },
     },
     filters: {
         facilityFreeTextQuery,
@@ -582,6 +624,7 @@ function mapStateToProps({
         lists,
         contributorTypes,
         countries,
+        sectors,
         parentCompany,
         facilityType,
         processingType,
@@ -608,11 +651,13 @@ function mapStateToProps({
         contributorOptions,
         listOptions,
         countryOptions,
+        sectorOptions,
         facilityFreeTextQuery,
         contributors,
         lists,
         contributorTypes,
         countries,
+        sectors,
         parentCompany,
         facilityType,
         processingType,
@@ -624,6 +669,7 @@ function mapStateToProps({
         facilities,
         boundary,
         fetchingOptions: fetchingContributors || fetchingCountries,
+        fetchingSectors,
         embed: !!embed,
         fetchingLists,
         textSearchLabel: config.text_search_label,
@@ -644,6 +690,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
         updateList: v => dispatch(updateListFilter(v)),
         updateCountry: v => dispatch(updateCountryFilter(v)),
+        updateSector: v => dispatch(updateSectorFilter(v)),
         updateParentCompany: v => dispatch(updateParentCompanyFilter(v)),
         updateFacilityType: v => dispatch(updateFacilityTypeFilter(v)),
         updateProcessingType: v => dispatch(updateProcessingTypeFilter(v)),
@@ -657,6 +704,7 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
                     e.target.checked ? 'AND' : '',
                 ),
             ),
+        fetchSectors: () => dispatch(fetchSectorOptions()),
         resetFilters: embedded => {
             dispatch(recordSearchTabResetButtonClick());
             return dispatch(resetAllFilters(embedded));
