@@ -18,6 +18,7 @@ import FacilityDetailSidebarHeader from './FacilityDetailSidebarHeader';
 import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 import FacilityDetailSidebarLocation from './FacilityDetailSidebarLocation';
 import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
+import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
 import FacilityDetailSidebarAction from './FacilityDetailSidebarAction';
 import ReportFacilityStatus from './ReportFacilityStatus';
 import ShowOnly from './ShowOnly';
@@ -34,6 +35,7 @@ import {
     EXTENDED_FIELD_TYPES,
     REPORT_A_FACILITY,
     FACILITIES_REQUEST_PAGE_SIZE,
+    CLAIM_A_FACILITY,
 } from '../util/constants';
 
 import {
@@ -427,6 +429,14 @@ const FacilityDetailSidebar = ({
                     />
                     {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
                 </ShowOnly>
+                <FeatureFlag flag={CLAIM_A_FACILITY}>
+                    <ShowOnly when={!!data.properties.claim_info}>
+                        <FacilityDetailSidebarClaimedInfo
+                            data={data.properties.claim_info}
+                            formatListItem={formatIfListAndRemoveDuplicates}
+                        />
+                    </ShowOnly>
+                </FeatureFlag>
                 <FeatureFlag flag={REPORT_A_FACILITY}>
                     <ShowOnly when={!!activityReport}>
                         <FacilityDetailSidebarItem
