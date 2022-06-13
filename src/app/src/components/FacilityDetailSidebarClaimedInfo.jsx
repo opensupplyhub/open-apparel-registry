@@ -9,25 +9,26 @@ import identity from 'lodash/identity';
 
 import { aboutClaimedFacilitiesRoute } from '../util/constants';
 
+import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
+
 import {
     makeProfileRouteLink,
     addProtocolToWebsiteURLIfMissing,
 } from '../util/util';
 
-const ClaimInfoSection = ({ label, value }) =>
-    trim(value) && (
-        <div className="control-panel__group">
-            <h1 className="control-panel__heading">{label}</h1>
-            <p
-                className="control-panel__body"
-                style={{ whiteSpace: 'pre-line' }}
-            >
-                {value}
-            </p>
-        </div>
-    );
+const claimedInfoStyles = {
+    description: {
+        padding: '22px',
+    },
+};
 
-export default function FacilityDetailsSidebarClaimedInfo({ data }) {
+const ClaimInfoSection = ({ label, value }) =>
+    trim(value) && <FacilityDetailSidebarItem label={label} primary={value} />;
+
+export default function FacilityDetailsSidebarClaimedInfo({
+    data,
+    formatListItem,
+}) {
     if (!data) {
         return null;
     }
@@ -36,25 +37,28 @@ export default function FacilityDetailsSidebarClaimedInfo({ data }) {
 
     const facilitySection = (
         <>
-            <Typography variant="title">Claimed Facility Info</Typography>
-            <div className="control-panel__group">
-                <p>
-                    Please note: The OAR team <strong>has only</strong> verified
-                    that the person claiming a facility profile is connected to
-                    that facility. The OAR team <strong>has not</strong>{' '}
-                    verified any additional details added to a facility profile,
-                    e.g. certifications, production capabilities etc. Users
-                    interested in those details will need to carry out their own
-                    due diligence checks.
-                </p>
-                <Link
-                    to={aboutClaimedFacilitiesRoute}
-                    href={aboutClaimedFacilitiesRoute}
-                    className="link-underline small"
-                    style={{ fontSize: '16px' }}
-                >
-                    Learn more about claimed facilities
-                </Link>
+            <div style={claimedInfoStyles.description}>
+                <Typography variant="title">Claimed Facility Info</Typography>
+                <div>
+                    <p>
+                        Please note: The OAR team <strong>has only</strong>{' '}
+                        verified that the person claiming a facility profile is
+                        connected to that facility. The OAR team{' '}
+                        <strong>has not</strong> verified any additional details
+                        added to a facility profile, e.g. certifications,
+                        production capabilities etc. Users interested in those
+                        details will need to carry out their own due diligence
+                        checks.
+                    </p>
+                    <Link
+                        to={aboutClaimedFacilitiesRoute}
+                        href={aboutClaimedFacilitiesRoute}
+                        className="link-underline small"
+                        style={{ fontSize: '16px' }}
+                    >
+                        Learn more about claimed facilities
+                    </Link>
+                </div>
             </div>
             <ClaimInfoSection
                 label="Name (English language)"
@@ -142,62 +146,32 @@ export default function FacilityDetailsSidebarClaimedInfo({ data }) {
                 label="Affiliations"
                 value={
                     facility.affiliations &&
-                    facility.affiliations.length && (
-                        <ul>
-                            {orderBy(facility.affiliations, identity).map(
-                                affiliation => (
-                                    <li key={affiliation}>{affiliation}</li>
-                                ),
-                            )}
-                        </ul>
-                    )
+                    facility.affiliations.length &&
+                    formatListItem(orderBy(facility.affiliations, identity))
                 }
             />
             <ClaimInfoSection
                 label="Certifications/Standards/Regulations"
                 value={
                     facility.certifications &&
-                    facility.certifications.length && (
-                        <ul>
-                            {orderBy(facility.certifications, identity).map(
-                                certification => (
-                                    <li key={certification}>{certification}</li>
-                                ),
-                            )}
-                        </ul>
-                    )
+                    facility.certifications.length &&
+                    formatListItem(orderBy(facility.certifications, identity))
                 }
             />
             <ClaimInfoSection
                 label="Product Types"
                 value={
                     facility.product_types &&
-                    facility.product_types.length && (
-                        <ul>
-                            {orderBy(facility.product_types, identity).map(
-                                productType => (
-                                    <li key={productType}>{productType}</li>
-                                ),
-                            )}
-                        </ul>
-                    )
+                    facility.product_types.length &&
+                    formatListItem(orderBy(facility.product_types, identity))
                 }
             />
             <ClaimInfoSection
                 label="Production Types"
                 value={
                     facility.production_types &&
-                    facility.production_types.length && (
-                        <ul>
-                            {orderBy(facility.production_types, identity).map(
-                                productionType => (
-                                    <li key={productionType}>
-                                        {productionType}
-                                    </li>
-                                ),
-                            )}
-                        </ul>
-                    )
+                    facility.production_types.length &&
+                    formatListItem(orderBy(facility.production_types, identity))
                 }
             />
         </>
@@ -235,10 +209,10 @@ FacilityDetailsSidebarClaimedInfo.propTypes = {
         id: number.isRequired,
         facility: shape({
             description: string.isRequired,
-            name: string.isRequired,
+            name_english: string.isRequired,
             address: string.isRequired,
-            website: string.isRequired,
-            country: string.isRequired,
+            website: string,
+            country: string,
             phone_number: string,
             minimum_order: string,
             average_lead_time: string.isRequired,
