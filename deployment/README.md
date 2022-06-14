@@ -29,7 +29,7 @@ To do this, we can use the `cibuild` and `cipublish` scripts:
 
 ```bash
 $ vagrant ssh
-vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=123456789012.dkr.ecr.eu-west-1.amazonaws.com
+vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=249322298638.dkr.ecr.eu-west-1.amazonaws.com
 vagrant@vagrant:/vagrant$ ./scripts/cibuild
 ...
 Successfully built 20dcf93f6907
