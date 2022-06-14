@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - API documentation updates [#1844](https://github.com/open-apparel-registry/open-apparel-registry/pull/1844)
 - Return sector in Facility detail response [#1884](https://github.com/open-apparel-registry/open-apparel-registry/pull/1884)
 - Updated logo and colors on top banner, map and search button [#1900](https://github.com/open-apparel-registry/open-apparel-registry/pull/1900)
+- Avoid exception when parsing arrays in raw data [#1910](https://github.com/open-apparel-registry/open-apparel-registry/pull/1910)
 
 ### Deprecated
 
