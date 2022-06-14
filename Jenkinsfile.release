@@ -16,7 +16,7 @@ node {
 
     // Notify Slack that we're starting a production deploy.
     def startedMessage =
-        ":jenkins: deploying revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to *production*"
+        ":jenkins: deploying revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to Open Supply Hub *production*"
     startedMessage += "\n<${env.BUILD_URL}|View Build>"
 
     slackSend channel: '#oar', color: 'warning', message: startedMessage
@@ -79,7 +79,7 @@ node {
         // Some exception was raised in the `try` block above. Assemble
         // an appropriate error message for Slack.
         def failedMessage =
-            ":jenkins-angry: failed to deploy revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to *production*"
+            ":jenkins-angry: failed to deploy revision <https://github.com/open-apparel-registry/open-apparel-registry/tree/${params.GIT_COMMIT}|${params.GIT_COMMIT}> to Open Supply Hub *production*"
         failedMessage += "\n<${env.BUILD_URL}|View Build>"
 
         slackSend channel: '#oar', color: 'danger', message: failedMessage
