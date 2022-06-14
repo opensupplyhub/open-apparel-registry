@@ -151,6 +151,7 @@ data "template_file" "app" {
 
     batch_job_queue_name = "${local.batch_job_queue_name}"
     batch_job_def_name = "${local.batch_job_def_name}"
+    log_group_name = "log${local.short}App"
   }
 }
 
@@ -204,6 +205,7 @@ data "template_file" "app_cli" {
     environment = "${var.environment}"
     batch_job_queue_name = "${local.batch_job_queue_name}"
     batch_job_def_name = "${local.batch_job_def_name}"
+    log_group_name = "log${local.short}AppCLI"
   }
 }
 
