@@ -112,6 +112,7 @@ const formatExtendedField = ({
     value,
     updated_at,
     contributor_name,
+    is_from_claim,
     is_verified,
     id,
     formatValue = v => v,
@@ -123,6 +124,7 @@ const formatExtendedField = ({
         secondary,
         embeddedSecondary: formatAttribution(updated_at),
         isVerified: is_verified,
+        isFromClaim: is_from_claim,
         key: id || primary + secondary,
     };
 };
