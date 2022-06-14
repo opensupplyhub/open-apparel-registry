@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Avoid exception when parsing arrays in raw data [#1904](https://github.com/open-apparel-registry/open-apparel-registry/pull/1904)
+
 ### Security
 
 ## [68] 2022-06-09
