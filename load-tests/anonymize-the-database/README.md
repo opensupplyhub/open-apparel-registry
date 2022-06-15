@@ -26,9 +26,11 @@ ssh -i ~/.ssh/oar-stg.pem -L 5433:database.service.oar.internal:5432 -N ec2-user
 
 Invoke `generate_anon_queries` to generate an SQL file containing queries that
 will anonymize user data.
+Optionally, you may specify a space-separated list of email addresses to exclude from anonymization.
 
 ```bash
 PGPASSWORD="" \
+ALLOWED_EMAILS="person@example.com contributor@example.co.uk" \
     generate_anon_queries > queries.sql
 ```
 
