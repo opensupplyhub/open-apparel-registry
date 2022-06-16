@@ -31,7 +31,7 @@ import { isEmail, isURL } from 'validator';
 import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 import hash from 'object-hash';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 
 import env from './env';
 
