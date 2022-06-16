@@ -50,7 +50,7 @@ def get_csv_values(csv_data):
 def try_parse_int_from_float(value):
     try:
         return str(int(float(value)))
-    except ValueError:
+    except (ValueError, TypeError):
         return value
 
 
