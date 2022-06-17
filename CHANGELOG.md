@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Display claim information [#1901](https://github.com/open-apparel-registry/open-apparel-registry/pull/1901)
 
 ### Changed
+- Added option to exclude specified users from anonymization script [#1906](https://github.com/open-apparel-registry/open-apparel-registry/pull/1906)
 
 ### Deprecated
 
