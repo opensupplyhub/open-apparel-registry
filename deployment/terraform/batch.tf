@@ -70,6 +70,9 @@ data "template_file" "default_job_definition" {
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
 
     aws_region = "${var.aws_region}"
+
+    batch_job_queue_name = "queue${local.short}Default"
+    batch_job_def_name = "job${local.short}Default"
   }
 }
 
