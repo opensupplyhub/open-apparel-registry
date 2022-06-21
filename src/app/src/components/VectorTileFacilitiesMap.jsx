@@ -153,13 +153,16 @@ function VectorTileFacilitiesMap({
                 minZoom={maxVectorTileFacilitiesGridZoom + 1}
                 maxZoom={22}
             />
-            <VectorTileFacilityGridLayer
-                handleCellClick={handleCellClick}
-                minZoom={1}
-                maxZoom={maxVectorTileFacilitiesGridZoom}
-                zoomLevel={currentMapZoomLevel}
-            />
+            {currentMapZoomLevel <= maxVectorTileFacilitiesGridZoom && (
+                <VectorTileFacilityGridLayer
+                    handleCellClick={handleCellClick}
+                    minZoom={1}
+                    maxZoom={maxVectorTileFacilitiesGridZoom}
+                    zoomLevel={currentMapZoomLevel}
+                />
+            )}
             {drawFilterActive && <PolygonalSearchControl />}
+
             {boundary != null && (
                 <GeoJSON
                     data={boundary}
