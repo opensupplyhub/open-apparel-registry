@@ -21,7 +21,7 @@ You will be prompted to enter your AWS credentials, along with a default region.
 
 ## Publish Container Images
 
-Before we can deploy this project's core infrastructure, we will need to build a container image and publish it somewhere accessible to Amazon's services. 
+Before we can deploy this project's core infrastructure, we will need to build a container image and publish it somewhere accessible to Amazon's services.
 
 AWS Elastic Container Registry (ECR) is a good candidate because ECR authentication with AWS Elastic Container Service (ECS) is handled transparently. If we wanted to use private images hosted on Quay, for example, we'd have to make [changes](https://docs.quay.io/issues/ecs-auth-failure.html) to configuration files on the EC2 Container Instances.
 
@@ -29,7 +29,7 @@ To do this, we can use the `cibuild` and `cipublish` scripts:
 
 ```bash
 $ vagrant ssh
-vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=123456789012.dkr.ecr.eu-west-1.amazonaws.com
+vagrant@vagrant:/vagrant$ export OAR_AWS_ECR_ENDPOINT=249322298638.dkr.ecr.eu-west-1.amazonaws.com
 vagrant@vagrant:/vagrant$ ./scripts/cibuild
 ...
 Successfully built 20dcf93f6907
@@ -50,8 +50,8 @@ environment = "Staging"
 
 aws_key_name = "oar-stg"
 
-r53_private_hosted_zone = "oar.internal"
-r53_public_hosted_zone = "staging.openapparel.org"
+r53_private_hosted_zone = "osh.internal"
+r53_public_hosted_zone = "oshstaging.openapparel.org"
 
 cloudfront_price_class = "PriceClass_100"
 
@@ -77,7 +77,7 @@ rds_database_password = "password"
 oar_client_key = ""
 ```
 
-This file lives at `s3://openapparelregistry-staging-config-eu-west-1/terraform/terraform.tfvars`.
+This file lives at `s3://opensupplyhub-staging-config-eu-west-1/terraform/terraform.tfvars`.
 
 To deploy this project's core infrastructure, use the `infra` wrapper script to lookup the remote state of the infrastructure and assemble a plan for work to be done:
 

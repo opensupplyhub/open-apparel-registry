@@ -31,7 +31,7 @@ def make_facility_list_url(list_id):
     else:
         protocol = 'https'
         if settings.ENVIRONMENT == 'Staging':
-            host = 'staging.openapparel.org'
+            host = 'oshstaging.openapparel.org'
         else:
             host = 'openapparel.org'
     return '{}://{}/lists/{}'.format(protocol, host, list_id)

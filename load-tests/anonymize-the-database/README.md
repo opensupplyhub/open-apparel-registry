@@ -21,7 +21,7 @@ pip install -r requirements.txt
 In another window, establish an SSH tunnel with the Bastion.
 
 ```bash
-ssh -i ~/.ssh/oar-stg.pem -L 5433:database.service.oar.internal:5432 -N ec2-user@bastion.staging.openapparel.org
+ssh -i ~/.ssh/oar-stg.pem -L 5433:database.service.osh.internal:5432 -N ec2-user@bastion.oshstaging.openapparel.org
 ```
 
 Invoke `generate_anon_queries` to generate an SQL file containing queries that

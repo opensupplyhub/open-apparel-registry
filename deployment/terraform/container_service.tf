@@ -1,5 +1,7 @@
 locals {
   app_image = "${module.ecr_repository_app.repository_url}:${var.image_tag}"
+  batch_job_queue_name = "queue${local.short}Default"
+  batch_job_def_name = "job${local.short}Default"
 }
 
 #
@@ -39,7 +41,7 @@ resource "aws_security_group" "batch" {
 # ALB Resources
 #
 resource "aws_lb" "app" {
-  name            = "alb${var.environment}App"
+  name            = "alb${local.short}App"
   security_groups = ["${aws_security_group.alb.id}"]
   subnets         = ["${module.vpc.public_subnet_ids}"]
 
@@ -50,7 +52,7 @@ resource "aws_lb" "app" {
   }
 
   tags {
-    Name        = "alb${var.environment}App"
+    Name        = "alb${local.short}App"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -64,7 +66,7 @@ resource "aws_lb" "app" {
 }
 
 resource "aws_lb_target_group" "app" {
-  name = "tg${var.environment}App"
+  name = "tg${local.short}App"
 
   health_check {
     healthy_threshold   = "3"
@@ -83,7 +85,7 @@ resource "aws_lb_target_group" "app" {
   target_type = "ip"
 
   tags {
-    Name        = "tg${var.environment}App"
+    Name        = "tg${local.short}App"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -105,7 +107,7 @@ resource "aws_lb_listener" "app" {
 # ECS Resources
 #
 resource "aws_ecs_cluster" "app" {
-  name = "ecs${var.environment}Cluster"
+  name = "ecs${local.short}Cluster"
 }
 
 data "template_file" "app" {
@@ -146,11 +148,15 @@ data "template_file" "app" {
 
     project     = "${var.project}"
     environment = "${var.environment}"
+
+    batch_job_queue_name = "${local.batch_job_queue_name}"
+    batch_job_def_name = "${local.batch_job_def_name}"
+    log_group_name = "log${local.short}App"
   }
 }
 
 resource "aws_ecs_task_definition" "app" {
-  family                   = "${var.environment}App"
+  family                   = "${local.short}App"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "${var.app_fargate_cpu}"
@@ -197,11 +203,14 @@ data "template_file" "app_cli" {
 
     project     = "${var.project}"
     environment = "${var.environment}"
+    batch_job_queue_name = "${local.batch_job_queue_name}"
+    batch_job_def_name = "${local.batch_job_def_name}"
+    log_group_name = "log${local.short}AppCLI"
   }
 }
 
 resource "aws_ecs_task_definition" "app_cli" {
-  family                   = "${var.environment}AppCLI"
+  family                   = "${local.short}AppCLI"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "${var.cli_fargate_cpu}"
@@ -214,7 +223,7 @@ resource "aws_ecs_task_definition" "app_cli" {
 }
 
 resource "aws_ecs_service" "app" {
-  name            = "${var.environment}App"
+  name            = "${local.short}App"
   cluster         = "${aws_ecs_cluster.app.id}"
   task_definition = "${aws_ecs_task_definition.app.arn}"
 
@@ -245,11 +254,11 @@ resource "aws_ecs_service" "app" {
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_log_group" "app" {
-  name              = "log${var.environment}App"
+  name              = "log${local.short}App"
   retention_in_days = 30
 }
 
 resource "aws_cloudwatch_log_group" "cli" {
-  name              = "log${var.environment}AppCLI"
+  name              = "log${local.short}AppCLI"
   retention_in_days = 30
 }

@@ -16,7 +16,7 @@ data "template_file" "app_cli_state_machine" {
 }
 
 resource "aws_sfn_state_machine" "app_cli" {
-  name     = "stateMachine${var.environment}AppCLI"
+  name     = "stateMachine${local.short}AppCLI"
   role_arn = "${aws_iam_role.step_functions_service_role.arn}"
 
   definition = "${data.template_file.app_cli_state_machine.rendered}"
@@ -26,7 +26,7 @@ resource "aws_sfn_state_machine" "app_cli" {
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_event_target" "check_api_limits" {
-  target_id = "eventTarget${var.environment}CheckAPILimits"
+  target_id = "eventTarget${local.short}CheckAPILimits"
   rule      = "${aws_cloudwatch_event_rule.check_api_limits.name}"
   arn       = "${aws_sfn_state_machine.app_cli.id}"
   role_arn  = "${aws_iam_role.cloudwatch_events_service_role.arn}"
@@ -41,7 +41,7 @@ EOF
 }
 
 resource "aws_cloudwatch_event_rule" "check_api_limits" {
-  name                = "eventRule${var.environment}CheckAPILimits"
+  name                = "eventRule${local.short}CheckAPILimits"
   description         = "Run check_api_limits management command at a scheduled time (${var.check_api_limits_schedule_expression})"
   schedule_expression = "${var.check_api_limits_schedule_expression}"
 }

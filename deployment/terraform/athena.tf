@@ -4,7 +4,7 @@ locals {
 
 # https://docs.aws.amazon.com/athena/latest/ug/application-load-balancer-logs.html
 resource "aws_glue_catalog_table" "alb_logs" {
-  name          = "${local.short_environment}_alb_logs"
+  name          = "${var.short_project}_${local.short_environment}_alb_logs"
   database_name = "default"
 
   table_type = "EXTERNAL_TABLE"
@@ -19,7 +19,7 @@ resource "aws_glue_catalog_table" "alb_logs" {
     output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
 
     ser_de_info {
-      name                  = "${local.short_environment}_alb_logs"
+      name                  = "${var.short_project}_${local.short_environment}_alb_logs"
       serialization_library = "org.apache.hadoop.hive.serde2.RegexSerDe"
 
       parameters = {
@@ -197,7 +197,7 @@ resource "aws_glue_catalog_table" "alb_logs" {
 
 # https://docs.aws.amazon.com/athena/latest/ug/cloudfront-logs.html
 resource "aws_glue_catalog_table" "cdn_logs" {
-  name          = "${local.short_environment}_cdn_logs"
+  name          = "${var.short_project}_${local.short_environment}_cdn_logs"
   database_name = "default"
 
   table_type = "EXTERNAL_TABLE"
@@ -214,7 +214,7 @@ resource "aws_glue_catalog_table" "cdn_logs" {
     number_of_buckets = "-1"
 
     ser_de_info {
-      name                  = "${local.short_environment}_cdn_logs"
+      name                  = "${var.short_project}_${local.short_environment}_cdn_logs"
       serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
 
       parameters = {

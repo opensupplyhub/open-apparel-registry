@@ -2,7 +2,7 @@
 
 node {
 	try {
-        env.COMPOSE_PROJECT_NAME = "open-apparel-registry-${env.BRANCH_NAME}"
+        env.COMPOSE_PROJECT_NAME = "open-supply-hub-${env.BRANCH_NAME}"
 
 	    // Checkout the proper revision into the workspace.
 		stage('checkout') {
@@ -12,7 +12,7 @@ node {
 		env.AWS_PROFILE = 'open-apparel-registry'
 		env.AWS_DEFAULT_REGION = 'eu-west-1'
 
-		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-testing-config-eu-west-1'
+		env.OAR_SETTINGS_BUCKET = 'opensupplyhub-testing-config-eu-west-1'
 
 		stage('setup') {
 			wrap([$class: 'AnsiColorBuildWrapper']) {
@@ -26,9 +26,9 @@ node {
 			}
 		}
 
-		env.OAR_SETTINGS_BUCKET = 'openapparelregistry-staging-config-eu-west-1'
+		env.OAR_SETTINGS_BUCKET = 'opensupplyhub-staging-config-eu-west-1'
 
-		if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('test/') || env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('hotfix/')) {
+		if (env.BRANCH_NAME == 'ogr/develop' || env.BRANCH_NAME.startsWith('ogr/test/') || env.BRANCH_NAME.startsWith('ogr/release/') || env.BRANCH_NAME.startsWith('ogr/hotfix/')) {
 			// Publish container images built and tested during `cibuild`
 			// to the private Amazon Container Registry tagged with the
 			// first seven characters of the revision SHA.
@@ -69,7 +69,7 @@ node {
 
         stage('notify') {
             if (currentBuild.currentResult == 'SUCCESS' && currentBuild.previousBuild?.result != 'SUCCESS') {
-                def slackMessage = ":jenkins: *Open Apparel Registry (${env.BRANCH_NAME}) #${env.BUILD_NUMBER}*"
+                def slackMessage = ":jenkins: *Open Supply Hub (${env.BRANCH_NAME}) #${env.BUILD_NUMBER}*"
                 if (env.CHANGE_TITLE) {
                     slackMessage += "\n${env.CHANGE_TITLE} - ${env.CHANGE_AUTHOR}"
                 }
@@ -80,7 +80,7 @@ node {
 	} catch (err) {
 	    // Some exception was raised in the `try` block above. Assemble
 	    // an appropirate error message for Slack.
-	    def slackMessage = ":jenkins-angry: *Open Apparel Registry (${env.BRANCH_NAME}) #${env.BUILD_NUMBER}*"
+	    def slackMessage = ":jenkins-angry: *Open Supply Hub (${env.BRANCH_NAME}) #${env.BUILD_NUMBER}*"
 	    if (env.CHANGE_TITLE) {
 	        slackMessage += "\n${env.CHANGE_TITLE} - ${env.CHANGE_AUTHOR}"
 	    }

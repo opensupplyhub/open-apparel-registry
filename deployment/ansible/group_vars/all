@@ -4,7 +4,7 @@ aws_profile: "open-apparel-registry"
 pip_get_pip_version: "2.7"
 pip_version: "20.3.*"
 
-oar_settings_bucket: "openapparelregistry-development-config-eu-west-1"
+oar_settings_bucket: "opensupplyhub-development-config-eu-west-1"
 
 docker_version: "18.*"
 docker_compose_version: "1.21.*"

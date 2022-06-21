@@ -33,6 +33,16 @@ if ENVIRONMENT not in VALID_ENVIRONMENTS:
         'Invalid ENVIRONMENT provided, must be one of {}'
         .format(VALID_ENVIRONMENTS))
 
+BATCH_JOB_QUEUE_NAME = os.getenv('BATCH_JOB_QUEUE_NAME')
+if BATCH_JOB_QUEUE_NAME is None and ENVIRONMENT != 'Development':
+    raise ImproperlyConfigured(
+        'Invalid BATCH_JOB_QUEU_NAME provided, must be set')
+
+BATCH_JOB_DEF_NAME = os.getenv('BATCH_JOB_DEF_NAME')
+if BATCH_JOB_DEF_NAME is None and ENVIRONMENT != 'Development':
+    raise ImproperlyConfigured(
+        'Invalid BATCH_JOB_DEF_NAME provided, must be set')
+
 # A non-empty value of BATCH_MODE signals that we will only be running batch
 # processing management commands
 BATCH_MODE = os.getenv('BATCH_MODE', '')
@@ -152,10 +162,10 @@ SWAGGER_SETTINGS = {
     },
     'doc_expansion': 'list',
     'info': {
-        'description': 'Open Apparel Registry API',
+        'description': 'Open Supply Hub API',
         'license': 'MIT',
         'licenseUrl': 'https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/LICENSE',  # noqa
-        'title': 'Open Apparel Registry API',
+        'title': 'Open Supply Hub API',
     },
     'USE_SESSION_AUTH': False,
 }
@@ -284,7 +294,7 @@ else:
     EMAIL_BACKEND = 'django_amazon_ses.EmailBackend'
 
 DEFAULT_FROM_EMAIL = os.getenv(
-    'DEFAULT_FROM_EMAIL', 'noreply@staging.openapparel.org')
+    'DEFAULT_FROM_EMAIL', 'noreply@oshstaging.openapparel.org')
 
 NOTIFICATION_EMAIL_TO = os.getenv(
     'NOTIFICATION_EMAIL_TO', 'notification@example.com')
@@ -311,38 +321,38 @@ WATCHMAN_CHECKS = (
 
 ECSMANAGE_ENVIRONMENTS = {
     'default': {
-        'TASK_DEFINITION_NAME': 'StagingAppCLI',
+        'TASK_DEFINITION_NAME': 'OpenSupplyHubStagingAppCLI',
         'CONTAINER_NAME': 'django',
-        'CLUSTER_NAME': 'ecsStagingCluster',
+        'CLUSTER_NAME': 'ecsOpenSupplyHubStagingCluster',
         'LAUNCH_TYPE': 'FARGATE',
         'PLATFORM_VERSION': '1.4.0',
         'SECURITY_GROUP_TAGS': {
             'Name': 'sgAppEcsService',
             'Environment': 'Staging',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'SUBNET_TAGS': {
             'Name': 'PrivateSubnet',
             'Environment': 'Staging',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'AWS_REGION': 'eu-west-1',
     },
     'production': {
-        'TASK_DEFINITION_NAME': 'ProductionAppCLI',
+        'TASK_DEFINITION_NAME': 'OpenSupplyHubProductionAppCLI',
         'CONTAINER_NAME': 'django',
-        'CLUSTER_NAME': 'ecsProductionCluster',
+        'CLUSTER_NAME': 'ecsOpenSupplyHubProductionCluster',
         'LAUNCH_TYPE': 'FARGATE',
         'PLATFORM_VERSION': '1.4.0',
         'SECURITY_GROUP_TAGS': {
             'Name': 'sgAppEcsService',
             'Environment': 'Production',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'SUBNET_TAGS': {
             'Name': 'PrivateSubnet',
             'Environment': 'Production',
-            'Project': 'OpenApparelRegistry'
+            'Project': 'OpenSupplyHub'
         },
         'AWS_REGION': 'eu-west-1',
     }

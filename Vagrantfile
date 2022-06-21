@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
     fi
 
     export AWS_PROFILE=open-apparel-registry
-    export OAR_SETTINGS_BUCKET=openapparelregistry-development-config-eu-west-1
+    export OAR_SETTINGS_BUCKET=opensupplyhub-development-config-eu-west-1
 
     cd /vagrant
     su vagrant ./scripts/bootstrap

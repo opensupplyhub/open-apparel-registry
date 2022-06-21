@@ -1,4 +1,4 @@
 ARG GIT_COMMIT=latest
-FROM openapparelregistry:${GIT_COMMIT}
+FROM opensupplyhub:${GIT_COMMIT}
 
 ENTRYPOINT []

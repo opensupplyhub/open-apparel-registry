@@ -13,7 +13,7 @@ services:
       retries: 3
 
   django:
-    image: openapparelregistry
+    image: opensupplyhub
     env_file: .env
     environment:
       - POSTGRES_HOST=database
@@ -54,7 +54,8 @@ services:
     working_dir: /usr/local/src
     volumes:
       - ./src/app:/usr/local/src
-      - /var/cache/open-apparel-registry-node-modules:/usr/local/src/node_modules
+      # Use a Docker volume to cache node_modules
+      - node_modules:/usr/local/src/node_modules
       - ./src/django/static:/usr/local/src/build
       - $HOME/.aws:/root/.aws:ro
     environment:
@@ -66,3 +67,6 @@ services:
       - 6543:6543
     working_dir: /usr/local/src
     command: yarn run start
+
+volumes:
+  node_modules:

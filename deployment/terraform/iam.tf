@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "ecs_assume_role" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name               = "ecs${var.environment}TaskExecutionRole"
+  name               = "ecs${local.short}TaskExecutionRole"
   assume_role_policy = "${data.aws_iam_policy_document.ecs_assume_role.json}"
 }
 
@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "ses_send_email" {
 }
 
 resource "aws_iam_role" "app_task_role" {
-  name               = "ecs${var.environment}TaskRole"
+  name               = "ecs${local.short}TaskRole"
   assume_role_policy = "${data.aws_iam_policy_document.ecs_assume_role.json}"
 }
 
@@ -112,7 +112,7 @@ data "aws_iam_policy_document" "container_instance_ec2_assume_role" {
 }
 
 resource "aws_iam_role" "container_instance_ec2" {
-  name               = "ecs${var.environment}ContainerInstanceProfile"
+  name               = "ecs${local.short}ContainerInstanceProfile"
   assume_role_policy = "${data.aws_iam_policy_document.container_instance_ec2_assume_role.json}"
 }
 
@@ -122,7 +122,7 @@ resource "aws_iam_role_policy_attachment" "ec2_service_role" {
 }
 
 resource "aws_iam_role_policy" "ses_send_email_from_batch" {
-  name       = "ses${var.environment}EmailSendingPolicy"
+  name       = "ses${local.short}EmailSendingPolicy"
   role       = "${aws_iam_role.container_instance_ec2.name}"
   policy     = "${data.aws_iam_policy_document.ses_send_email.json}"
 }
@@ -149,7 +149,7 @@ data "aws_iam_policy_document" "container_instance_batch_assume_role" {
 }
 
 resource "aws_iam_role" "container_instance_batch" {
-  name               = "batch${var.environment}ServiceRole"
+  name               = "batch${local.short}ServiceRole"
   assume_role_policy = "${data.aws_iam_policy_document.container_instance_batch_assume_role.json}"
 }
 
@@ -175,7 +175,7 @@ data "aws_iam_policy_document" "container_instance_spot_fleet_assume_role" {
 }
 
 resource "aws_iam_role" "container_instance_spot_fleet" {
-  name               = "fleet${var.environment}ServiceRole"
+  name               = "fleet${local.short}ServiceRole"
   assume_role_policy = "${data.aws_iam_policy_document.container_instance_spot_fleet_assume_role.json}"
 }
 
@@ -201,7 +201,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "alert_batch_failures" {
-  name               = "lambda${var.environment}AlertBatchFailures"
+  name               = "lambda${local.short}AlertBatchFailures"
   assume_role_policy = "${data.aws_iam_policy_document.lambda_assume_role.json}"
 }
 
@@ -211,7 +211,7 @@ resource "aws_iam_role_policy_attachment" "alert_batch_failures_lambda_policy" {
 }
 
 resource "aws_iam_role" "alert_sfn_failures" {
-  name               = "lambda${var.environment}AlertStepFunctionsFailures"
+  name               = "lambda${local.short}AlertStepFunctionsFailures"
   assume_role_policy = "${data.aws_iam_policy_document.lambda_assume_role.json}"
 }
 
@@ -308,12 +308,12 @@ data "aws_iam_policy_document" "step_functions_service_role_policy" {
 }
 
 resource "aws_iam_role" "step_functions_service_role" {
-  name               = "stepFunctions${var.environment}ServiceRole"
+  name               = "stepFunctions${local.short}ServiceRole"
   assume_role_policy = "${data.aws_iam_policy_document.step_functions_assume_role.json}"
 }
 
 resource "aws_iam_role_policy" "step_functions_service_role_policy" {
-  name   = "stepFunctions${var.environment}ServiceRolePolicy"
+  name   = "stepFunctions${local.short}ServiceRolePolicy"
   role   = "${aws_iam_role.step_functions_service_role.name}"
   policy = "${data.aws_iam_policy_document.step_functions_service_role_policy.json}"
 }
@@ -347,12 +347,12 @@ data "aws_iam_policy_document" "cloudwatch_events_service_role_policy" {
 }
 
 resource "aws_iam_role" "cloudwatch_events_service_role" {
-  name               = "cloudWatchEvents${var.environment}ServiceRole"
+  name               = "cloudWatchEvents${local.short}ServiceRole"
   assume_role_policy = "${data.aws_iam_policy_document.cloudwatch_events_assume_role.json}"
 }
 
 resource "aws_iam_role_policy" "cloudwatch_events_service_role_policy" {
-  name   = "cloudWatchEvents${var.environment}ServiceRolePolicy"
+  name   = "cloudWatchEvents${local.short}ServiceRolePolicy"
   role   = "${aws_iam_role.cloudwatch_events_service_role.name}"
   policy = "${data.aws_iam_policy_document.cloudwatch_events_service_role_policy.json}"
 }
