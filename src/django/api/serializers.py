@@ -1199,7 +1199,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'affiliation_choices', 'certification_choices',
                   'facility_affiliations', 'facility_certifications',
                   'facility_product_types', 'facility_production_types',
-                  'production_type_choices')
+                  'production_type_choices', 'sector')
 
     def get_facility(self, claim):
         return FacilityDetailsSerializer(
