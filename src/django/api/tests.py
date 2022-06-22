@@ -8886,6 +8886,33 @@ class FacilityDetailSerializerTest(TestCase):
         self.assertIn('values', data['properties']['sector'][0])
         self.assertIn('updated_at', data['properties']['sector'][0])
 
+    def test_sector_includes_approved_claim(self):
+        FacilityClaim.objects.create(
+            contributor=self.contrib_one,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            sector=['Beauty'],
+            status=FacilityClaim.APPROVED)
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertEqual(['Beauty'], data['properties']['sector'][0]['values'])
+
+    def test_sector_excludes_unapproved_claim(self):
+        FacilityClaim.objects.create(
+            contributor=self.contrib_one,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            sector=['Beauty'],
+            status=FacilityClaim.DENIED)
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertNotEqual(['Beauty'],
+                            data['properties']['sector'][0]['values'])
+
     def test_sector_data_ordered_by_updated_desc(self):
         data = FacilityDetailsSerializer(self.facility).data
 
