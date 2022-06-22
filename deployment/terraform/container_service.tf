@@ -135,6 +135,7 @@ data "template_file" "app" {
     django_secret_key = "${var.django_secret_key}"
 
     oar_client_key = "${var.oar_client_key}"
+    external_domain = "${var.r53_public_hosted_zone}"
 
     default_from_email = "${var.default_from_email}"
     notification_email_to = "${var.notification_email_to}"
@@ -190,6 +191,7 @@ data "template_file" "app_cli" {
     django_secret_key = "${var.django_secret_key}"
 
     oar_client_key = "${var.oar_client_key}"
+    external_domain  = "${var.r53_public_hosted_zone}"
 
     default_from_email = "${var.default_from_email}"
     notification_email_to = "${var.notification_email_to}"

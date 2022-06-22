@@ -63,10 +63,11 @@ data "template_file" "default_job_definition" {
     django_secret_key          = "${var.django_secret_key}"
     google_server_side_api_key = "${var.google_server_side_api_key}"
     oar_client_key             = "${var.oar_client_key}"
+    external_domain            = "${var.r53_public_hosted_zone}"
 
     mailchimp_api_key = "${var.mailchimp_api_key}"
     mailchimp_list_id = "${var.mailchimp_list_id}"
-    
+
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
 
     aws_region = "${var.aws_region}"
