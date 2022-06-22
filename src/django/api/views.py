@@ -811,6 +811,17 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                         'setting this to true will make the response '
                         'significantly slower to return.'),
                 ),
+                coreapi.Field(
+                    name='sectors',
+                    location='query',
+                    type='string',
+                    required=False,
+                    description=(
+                        'The sectors that this facility belongs to. '
+                        'Values must match those returned from the '
+                        '`GET /api/sectors` endpoint'
+                        )
+                )
             ]
 
             return fields
