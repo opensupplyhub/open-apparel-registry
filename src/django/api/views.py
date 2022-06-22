@@ -1098,7 +1098,16 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ]
                   },
                   "properties": {
-                    "sector": ["Apparel"],
+                    "sector": [
+                      {
+                        "updated_at": "2022-01-27T17:36:54.597482Z",
+                        "contributor_id": 4,
+                        "contributor_name": "Researcher A",
+                        "values": [
+                          "Apparel"
+                        ]
+                      }
+                    ],
                     "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
                     "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
                     "country_code": "CN",
@@ -1160,9 +1169,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ]
                   },
                   "properties": {
-                    "sector": ["Apparel"],
                     "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
                     "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
+                    "sector": [
+                      {
+                        "updated_at": "2022-01-27T17:36:54.597482Z",
+                        "contributor_id": 4,
+                        "contributor_name": "Researcher A",
+                        "values": [
+                          "Apparel"
+                        ]
+                      }
+                    ],
                     "country_code": "CN",
                     "oar_id": "CN2019303BQ3FZP",
                     "other_names": [],
@@ -1211,10 +1229,19 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ]
                   },
                   "properties": {
-                    "sector": ["Apparel"],
                     "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
                     "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
                     "country_code": "CN",
+                    "sector": [
+                      {
+                        "updated_at": "2022-01-27T17:36:54.597482Z",
+                        "contributor_id": 4,
+                        "contributor_name": "Researcher A",
+                        "values": [
+                          "Apparel"
+                        ]
+                      }
+                    ],
                     "oar_id": "CN2019303BQ3FZP",
                     "other_names": [],
                     "other_addresses": [],
