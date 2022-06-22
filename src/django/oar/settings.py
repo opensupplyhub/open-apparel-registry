@@ -44,7 +44,7 @@ if BATCH_JOB_DEF_NAME is None and ENVIRONMENT != 'Development':
         'Invalid BATCH_JOB_DEF_NAME provided, must be set')
 
 EXTERNAL_DOMAIN = os.getenv('EXTERNAL_DOMAIN')
-if EXTERNAL_DOMAIN is None:
+if EXTERNAL_DOMAIN is None and ENVIRONMENT != 'Development':
     raise ImproperlyConfigured(
         'Invalid EXTERNAL_DOMAIN provided, must be set')
 
