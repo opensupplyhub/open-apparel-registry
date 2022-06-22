@@ -42,6 +42,7 @@ class FacilitiesQueryParams:
     PRODUCT_TYPE = 'product_type'
     NUMBER_OF_WORKERS = 'number_of_workers'
     NATIVE_LANGUAGE_NAME = 'native_language_name'
+    SECTOR = 'sectors'
 
 
 class FacilityListQueryParams:

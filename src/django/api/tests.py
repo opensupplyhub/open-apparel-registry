@@ -8674,6 +8674,34 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
         self.assertEquals(data['features'][0]['id'], facility_id)
 
 
+class SectorAPITest(FacilityAPITestCaseBase):
+    def setUp(self):
+        super(SectorAPITest, self).setUp()
+        self.url = reverse('facility-list')
+
+    @patch('api.geocoding.requests.get')
+    def test_search(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        facility_response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': ['Apparel', 'Beauty']
+        }), content_type='application/json')
+        facility_data = json.loads(facility_response.content)
+        facility_id = facility_data['oar_id']
+
+        response = self.client.get(
+            self.url + '?sectors=Beauty'
+        )
+        data = json.loads(response.content)
+        print(data)
+        self.assertEquals(data['count'], 1)
+        self.assertEquals(data['features'][0]['id'], facility_id)
+
+
 class ExactMatchTest(FacilityAPITestCaseBase):
     def setUp(self):
         super(ExactMatchTest, self).setUp()
