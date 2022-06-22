@@ -1079,6 +1079,12 @@ class FacilityClaim(models.Model):
         verbose_name='parent company / supplier group',
         help_text='The parent company / supplier group of this '
         'facility claim.')
+    sector = postgres.ArrayField(
+        models.CharField(max_length=50, null=False, blank=False),
+        null=True,
+        blank=True,
+        help_text='The sector(s) for goods made at the facility',
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -1111,6 +1117,7 @@ class FacilityClaim(models.Model):
         'office_country_code',
         'office_phone_number',
         'parent_company',
+        'sector',
     )
 
     # A dictionary where the keys are field names and the values are predicate
@@ -1146,8 +1153,7 @@ class FacilityClaim(models.Model):
         if v is not None else '',
         facility_product_types=lambda v: ', '.join(v)
         if v is not None else '',
-        facility_production_types=lambda v: ', '.join(v)
-        if v is not None else '',
+        sector=lambda v: ', '.join(v) if v is not None else '',
     )
 
     def get_changes(self, include=list(default_change_includes)):
