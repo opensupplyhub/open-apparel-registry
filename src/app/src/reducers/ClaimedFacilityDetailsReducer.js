@@ -14,6 +14,7 @@ import {
     updateClaimedFacilityNameEnglish,
     updateClaimedFacilityNameNativeLanguage,
     updateClaimedFacilityAddress,
+    updateClaimedSector,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
     updateClaimedFacilityWebsite,
@@ -185,6 +186,17 @@ export default createReducer(
                 },
                 data: {
                     facility_address: { $set: address },
+                },
+            }),
+        [updateClaimedSector]: (state, sectors) =>
+            update(state, {
+                updateData: {
+                    error: { $set: initialState.updateData.error },
+                },
+                data: {
+                    sector: {
+                        $set: orderBy(sectors, identity),
+                    },
                 },
             }),
         [updateClaimedFacilityPhone]: (state, phone) =>

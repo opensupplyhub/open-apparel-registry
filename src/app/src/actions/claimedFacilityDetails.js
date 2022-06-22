@@ -138,6 +138,7 @@ export const updateClaimedFacilityNameNativeLanguage = createAction(
 export const updateClaimedFacilityAddress = createAction(
     'UPDATE_CLAIMED_FACILITY_ADDRESS',
 );
+export const updateClaimedSector = createAction('UPDATE_CLAIMED_SECTOR');
 export const updateClaimedFacilityPhone = createAction(
     'UPDATE_CLAIMED_FACILITY_PHONE',
 );

@@ -41,6 +41,7 @@ import {
     updateClaimedFacilityProductTypes,
     updateClaimedFacilityProductionTypes,
     updateClaimedFacilityAddress,
+    updateClaimedSector,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
     updateClaimedFacilityParentCompany,
@@ -59,10 +60,12 @@ import {
     updateClaimedFacilityOfficePhone,
     submitClaimedFacilityDetailsUpdate,
 } from '../actions/claimedFacilityDetails';
+import { fetchSectorOptions } from '../actions/filterOptions';
 
 import {
     approvedFacilityClaimPropType,
     contributorOptionsPropType,
+    sectorOptionsPropType,
 } from '../util/propTypes';
 
 import {
@@ -277,6 +280,7 @@ function ClaimedFacilitiesDetails({
     updateFacilityNameEnglish,
     updateFacilityNameNativeLanguage,
     updateFacilityAddress,
+    updateSector,
     updateFacilityPhone,
     updateFacilityWebsite,
     updateFacilityWebsiteVisibility,
@@ -303,6 +307,8 @@ function ClaimedFacilitiesDetails({
     errorUpdating,
     updateParentCompany,
     contributorOptions,
+    sectorOptions,
+    fetchSectors,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -314,6 +320,11 @@ function ClaimedFacilitiesDetails({
         return clearDetails;
     }, []);
     /* eslint-enable react-hooks/exhaustive-deps */
+    useEffect(() => {
+        if (sectorOptions.length === 0) {
+            fetchSectors();
+        }
+    }, [sectorOptions, fetchSectors]);
 
     const [isSavingForm, setIsSavingForm] = useState(false);
 
@@ -381,6 +392,18 @@ function ClaimedFacilitiesDetails({
                     onChange={updateFacilityAddress}
                     disabled={updating}
                 />
+                <InputSection
+                    label="Sector"
+                    value={get(data, 'sector', [])}
+                    onChange={updateSector}
+                    disabled={updating}
+                    isSelect
+                    isMultiSelect
+                    isCreatable
+                    selectOptions={sectorOptions}
+                    selectPlaceholder="e.g. Apparel - Use <Enter> or <Tab> to add multiple values"
+                />
+                <InputSection label="Product Types" />
                 <InputSection
                     label="Phone Number"
                     value={data.facility_phone_number}
@@ -675,13 +698,18 @@ ClaimedFacilitiesDetails.propTypes = {
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
     contributorOptions: contributorOptionsPropType,
+    sectorOptions: sectorOptionsPropType.isRequired,
+    fetchSectors: func.isRequired,
 };
 
 function mapStateToProps({
     claimedFacilityDetails: {
-        retrieveData: { fetching, error },
+        retrieveData: { fetching: fetchingData, error },
         updateData: { fetching: updating, error: errorUpdating },
         data,
+    },
+    filterOptions: {
+        sectors: { data: sectorOptions, fetching: fetchingSectors },
     },
 }) {
     const contributorOptions =
@@ -690,12 +718,13 @@ function mapStateToProps({
             : null;
 
     return {
-        fetching,
+        fetching: fetchingData || fetchingSectors,
         data,
         error,
         updating,
         errorUpdating,
         contributorOptions,
+        sectorOptions,
     };
 }
 
@@ -728,6 +757,7 @@ function mapDispatchToProps(
         updateFacilityAddress: makeDispatchValueFn(
             updateClaimedFacilityAddress,
         ),
+        updateSector: makeDispatchMultiSelectFn(updateClaimedSector),
         updateFacilityPhone: makeDispatchValueFn(updateClaimedFacilityPhone),
         updateFacilityPhoneVisibility: makeDispatchCheckedFn(
             updateClaimedFacilityPhoneVisibility,
@@ -795,6 +825,7 @@ function mapDispatchToProps(
         ),
         submitUpdate: () =>
             dispatch(submitClaimedFacilityDetailsUpdate(claimID)),
+        fetchSectors: () => dispatch(fetchSectorOptions()),
     };
 }
 
