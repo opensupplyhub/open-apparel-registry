@@ -1258,6 +1258,8 @@ class FacilityManager(models.Manager):
             FacilitiesQueryParams.NATIVE_LANGUAGE_NAME, None
         )
 
+        sectors = params.getlist(FacilitiesQueryParams.SECTOR)
+
         facilities_qs = FacilityIndex.objects.all()
 
         if free_text_query is not None:
@@ -1359,6 +1361,11 @@ class FacilityManager(models.Manager):
             unidecode_name = unidecode(native_language_name)
             facilities_qs = facilities_qs.filter(
                 native_language_name__icontains=unidecode_name
+            )
+
+        if len(sectors):
+            facilities_qs = facilities_qs.filter(
+                sector__overlap=sectors
             )
 
         facility_ids = facilities_qs.values_list('id', flat=True)
