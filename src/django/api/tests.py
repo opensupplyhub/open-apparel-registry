@@ -9128,3 +9128,40 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         self.assertIn('Mechanical Engineering', facility_index.sector)
         self.assertNotIn('Apparel', facility_index.sector)
         self.assertEqual(len(facility_index.sector), 3)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_updating_claim_sector_updates_index(self):
+        claim_data = dict(
+            contact_person='Name',
+            email=self.user_email,
+            phone_number=12345,
+            company_name='Test',
+            website='http://example.com',
+            facility_description='description',
+            preferred_contact_method=FacilityClaim.EMAIL,
+        )
+        facility_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=self.contributor,
+                facility=self.facility,
+                status=FacilityClaim.APPROVED,
+                **claim_data)
+        self.join_group_and_login()
+        response = self.client.put(
+            '/api/facility-claims/{}/claimed/'.format(facility_claim.id),
+            json.dumps({
+                **claim_data,
+                'sector': ['Mining'],
+                'facility_phone_number_publicly_visible': False,
+                'point_of_contact_publicly_visible': False,
+                'office_info_publicly_visible': False,
+                'facility_website_publicly_visible': False,
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        facility_index = FacilityIndex.objects.get(id=self.facility.id)
+        self.assertIn('Mining', facility_index.sector)
