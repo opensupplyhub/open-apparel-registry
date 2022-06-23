@@ -45,6 +45,7 @@ const FacilityDetailSidebarItem = ({
     classes,
     embed,
     isVerified,
+    isFromClaim,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const hasAdditionalContent = !embed && !!additionalContent?.length;
@@ -78,6 +79,7 @@ const FacilityDetailSidebarItem = ({
                 primary={primary}
                 secondary={!embed ? secondary : null}
                 isVerified={isVerified}
+                isFromClaim={isFromClaim}
             />
             {isOpen &&
                 additionalContent.map(item => (

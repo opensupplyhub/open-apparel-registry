@@ -56,9 +56,17 @@ fake_uuid4() {
     echo $(tail -n 1 /tmp/faker_out)
 }
 
+select_users() {
+    echo "select id from \"api_user\" where email not like '%@azavea.com' and email not like '%@openapparel.org'"
+    if [ -n "$ALLOWED_EMAILS" ]; then
+        echo " and not (email = ANY(string_to_array('$ALLOWED_EMAILS', ' ')))"
+    fi
+}
+
 establish_fake_context
 
-for user_id in $(run_query openapparelregistry "select id from \"api_user\" where email not like '%@azavea.com' and email not like '%@openapparel.org'"); do
+SQL=$(select_users)
+for user_id in $(run_query openapparelregistry "$SQL"); do
     fake_email="${RANDOM}$(fake mail)"
     echo "\
 UPDATE \"api_user\" \
@@ -70,6 +78,8 @@ UPDATE \"account_emailaddress\" \
 SET \
 email = '$fake_email' \
 WHERE user_id = '$user_id';"
+
+    echo "DELETE FROM authtoken_token WHERE user_id = '$user_id';"
 done
 
 echo "UPDATE api_facilitylistitem SET ppe_contact_email = NULL;"
@@ -77,7 +87,5 @@ echo "UPDATE api_facilitylistitem SET ppe_contact_email = NULL;"
 echo "UPDATE api_facility SET ppe_contact_email = NULL;"
 
 echo "UPDATE api_facilityclaim SET email = 'anonymous@example.com';"
-
-echo "DELETE FROM authtoken_token;"
 
 close_fake_context
