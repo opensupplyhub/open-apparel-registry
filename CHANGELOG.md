@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Display claim information [#1901](https://github.com/open-apparel-registry/open-apparel-registry/pull/1901)
-
 ### Changed
-
-- Added option to exclude specified users from anonymization script [#1906](https://github.com/open-apparel-registry/open-apparel-registry/pull/1906)
 
 ### Deprecated
 
@@ -21,10 +17,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+### Security
+
+## [69] 2022-06-23
+
+### Added
+
+- Display claim information [#1901](https://github.com/open-apparel-registry/open-apparel-registry/pull/1901)
+
+### Changed
+
+- Added option to exclude specified users from anonymization script [#1906](https://github.com/open-apparel-registry/open-apparel-registry/pull/1906)
+
+### Fixed
+
 - Avoid exception when parsing arrays in raw data [#1904](https://github.com/open-apparel-registry/open-apparel-registry/pull/1904)
 - Fix VectorGrid bug [#1919](https://github.com/open-apparel-registry/open-apparel-registry/pull/1919)
 
 ### Security
+
+- Dependeny updates
 
 ## [68] 2022-06-09
 
@@ -1213,7 +1225,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/68...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/69...HEAD
+[69]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/69
 [68]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/68
 [67]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/67
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
