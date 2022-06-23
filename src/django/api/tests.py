@@ -8993,8 +8993,8 @@ class SectorChoiceViewTest(APITestCase):
         user.set_password(password)
         user.save()
 
-        contributor = Contributor(name='Name', admin=user)
-        contributor.save()
+        self.contributor = Contributor(name='Name', admin=user)
+        self.contributor.save()
 
         list = FacilityList \
             .objects \
@@ -9006,7 +9006,7 @@ class SectorChoiceViewTest(APITestCase):
             .objects \
             .create(source_type=Source.LIST,
                     facility_list=list,
-                    contributor=contributor)
+                    contributor=self.contributor)
 
         self.client.login(email=email, password=password)
 
@@ -9065,6 +9065,32 @@ class SectorChoiceViewTest(APITestCase):
         response = self.client.get(reverse('sectors'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), ['Apparel'])
+
+    def test_sector_choices_claims(self):
+        item = FacilityListItem.objects.create(
+            row_index=0,
+            source=self.source,
+            sector=[],
+            status=FacilityListItem.PARSED)
+        facility = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=item)
+        FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            sector=['Mining'],
+            status=FacilityClaim.APPROVED)
+
+        response = self.client.get(reverse('sectors'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), ['Mining'])
 
 
 class IndexFacilitiesTest(FacilityAPITestCaseBase):
