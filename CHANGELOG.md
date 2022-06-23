@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
-- Dependeny updates
+- Dependency updates
 
 ## [68] 2022-06-09
 
