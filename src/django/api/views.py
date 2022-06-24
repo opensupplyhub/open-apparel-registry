@@ -2536,7 +2536,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
-            raise NotFound('Facility with OAR ID {} not found'.format(pk))
+            raise NotFound('Facility with OS Hub ID {} not found'.format(pk))
         contributor = request.user.contributor
         matches = FacilityMatch.objects.filter(
             facility=facility,
@@ -2577,7 +2577,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
-            raise NotFound('Facility with OAR ID {} not found'.format(pk))
+            raise NotFound('Facility with OS Hub ID {} not found'.format(pk))
 
         try:
             contributor = request.user.contributor
