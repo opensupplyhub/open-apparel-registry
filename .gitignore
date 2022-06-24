@@ -30,7 +30,7 @@ yarn-error.log
 # macOS
 .DS_Store
 
-# OAR
+# OS Hub
 .env
 factories.csv
 *_factories.csv
