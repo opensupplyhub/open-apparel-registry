@@ -190,7 +190,7 @@ class Contributor(models.Model):
         'verified',
         default=False,
         help_text=(
-            'Has this contributor has been verified by OAR staff.'
+            'Has this contributor has been verified by OS Hub staff.'
         ),
     )
     verification_notes = models.TextField(
@@ -685,7 +685,7 @@ class FacilityListItem(PPEMixin):
 class FacilityClaim(models.Model):
     """
     Data submitted from a user attempting to make a verified claim of a
-    Facility to be evaluated by OAR moderators.
+    Facility to be evaluated by OS Hub moderators.
     """
     EMAIL = 'EMAIL'
     PHONE = 'PHONE'
@@ -1377,7 +1377,7 @@ class FacilityManager(models.Manager):
 
 class Facility(PPEMixin):
     """
-    An official OAR facility. Search results are returned from this table.
+    An official OS Hub facility. Search results are returned from this table.
     """
     class Meta:
         verbose_name_plural = "facilities"

@@ -205,7 +205,7 @@ def add_user_to_mailing_list(email, name, contrib_type):
 @permission_classes([AllowAny])
 @renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
 def schema_view(request):
-    generator = schemas.SchemaGenerator(title='Open Apparel Registry API',
+    generator = schemas.SchemaGenerator(title='Open Supply Hub API',
                                         patterns=urls.public_apis)
     return Response(generator.get_schema())
 

@@ -51,7 +51,7 @@ class FacilityLists extends Component {
                 if (!userHasSignedIn) {
                     return (
                         <Link to={authLoginFormRoute} href={authLoginFormRoute}>
-                            Sign in to view your Open Apparel Registry lists
+                            Sign in to view your Open Supply Hub lists
                         </Link>
                     );
                 }

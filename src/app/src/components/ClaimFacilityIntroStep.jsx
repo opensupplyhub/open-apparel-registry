@@ -23,9 +23,9 @@ export default function ClaimFacilityIntroStep() {
     return (
         <div style={claimAFacilityFormStyles.inputGroupStyles}>
             <Typography variant="headline" style={introMessageStyles}>
-                Owners or senior management at facilities listed on the OAR are
-                able to &quot;claim&quot; their facility&#39;s profile on the
-                site and add business information to it.
+                Owners or senior management at facilities listed on the OS Hub
+                are able to &quot;claim&quot; their facility&#39;s profile on
+                the site and add business information to it.
             </Typography>
             <Typography variant="headline" style={introMessageStyles}>
                 If you are a facility owner or senior management, please work

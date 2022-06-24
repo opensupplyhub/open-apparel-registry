@@ -133,7 +133,7 @@ function ReportFacilityStatus({
                         id="status-dialog-description"
                         className={classes.description}
                     >
-                        Please provide information the OAR team can use to
+                        Please provide information the OS Hub team can use to
                         verify this status change. Should you need to share or
                         attach a document or screenshot, please email it to{' '}
                         <a href="mailto:info@openapparel.org">

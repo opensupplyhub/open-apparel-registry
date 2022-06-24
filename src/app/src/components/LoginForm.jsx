@@ -66,7 +66,7 @@ class LoginForm extends Component {
                     <Grid item xs={12} sm={7}>
                         <p>
                             You must be a registered user to contribute to the
-                            Open Apparel Registry.
+                            Open Supply Hub.
                             <br />
                             Don&apos;t have an account?{' '}
                             <Link

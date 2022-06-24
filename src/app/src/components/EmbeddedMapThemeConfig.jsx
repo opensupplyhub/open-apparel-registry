@@ -45,7 +45,7 @@ const styles = {
 };
 
 const fontOptions = [
-    { label: 'OAR Website Font', value: OARFont },
+    { label: 'OS Hub Website Font', value: OARFont },
     { label: 'Arial', value: 'Arial,Helvetica,sans-serif' },
     { label: 'Tahoma', value: 'Tahoma,Verdana,sans-serif' },
     { label: 'Trebuchet MS', value: '"Trebuchet MS",Helvetica,sans-serif' },
@@ -111,7 +111,7 @@ function EmbeddedMapThemeConfig({
                             />
                             <FormControlLabel
                                 value={OARColor}
-                                label="OAR Blue"
+                                label="OS Hub Blue"
                                 style={styles.radioItem}
                                 control={
                                     <Radio
@@ -120,7 +120,7 @@ function EmbeddedMapThemeConfig({
                                         value={OARColor}
                                         name="theme-color"
                                         inputProps={{
-                                            'aria-label': 'OAR Blue',
+                                            'aria-label': 'OS Hub Blue',
                                         }}
                                         style={styles.radio}
                                     />
@@ -157,7 +157,7 @@ function EmbeddedMapThemeConfig({
                         Font
                     </Typography>
                     <Typography>
-                        If no font is selected, the OAR font will be used.
+                        If no font is selected, the OS Hub font will be used.
                     </Typography>
                     {errors?.font && (
                         <Typography style={{ color: 'red' }}>

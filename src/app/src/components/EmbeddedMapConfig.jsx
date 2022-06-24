@@ -120,7 +120,7 @@ function EmbeddedMapConfig({
     return (
         <AppGrid style={styles.container} title="">
             <Typography paragraph>
-                Generate a customized OAR Embedded Map for your website.
+                Generate a customized OS Hub Embedded Map for your website.
             </Typography>
             <Typography paragraph>
                 To begin,{' '}
@@ -130,9 +130,9 @@ function EmbeddedMapConfig({
                 >
                     contribute your supplier data
                 </a>{' '}
-                (via upload or API) to the OAR with all of the data fields you
-                wish to have displayed on your map using the template supplied
-                to you by the OAR Team.{' '}
+                (via upload or API) to the OS Hub with all of the data fields
+                you wish to have displayed on your map using the template
+                supplied to you by the OS Hub Team.{' '}
                 <strong>
                     This list must include any additional data points you would
                     like to display on your customized map, such as facility

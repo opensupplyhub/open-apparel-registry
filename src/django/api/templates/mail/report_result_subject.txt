@@ -1,1 +1,1 @@
-Open Apparel Registry Facility Report {{ status|title }}
+Open Supply Hub Facility Report {{ status|title }}

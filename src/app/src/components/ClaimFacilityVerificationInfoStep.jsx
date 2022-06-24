@@ -114,7 +114,7 @@ function ClaimFacilityVerificationInfoStep({
                         info@openapparel.org
                     </a>{' '}
                     with documentation confirming the address of your facility,
-                    to assist the OAR team in verifying your claim.
+                    to assist the OS Hub team in verifying your claim.
                 </Typography>
             </div>
         </>

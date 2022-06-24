@@ -12,7 +12,7 @@ const EmbeddedFooter = () => (
             <img
                 className="footer-image"
                 src={logo}
-                alt="Powered by Open Apparel Registry"
+                alt="Powered by Open Supply Hub"
                 width="150"
                 style={{ margin: '8px' }}
             />

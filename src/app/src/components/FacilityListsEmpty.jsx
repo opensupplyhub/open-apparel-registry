@@ -23,7 +23,7 @@ const FacilityListsEmpty = memo(() => (
     >
         <label htmlFor={contributeRouteLink}>
             You currently have no lists to view. Please contribute a list of
-            factories to the OAR first.
+            factories to the OS Hub first.
         </label>
         <Link
             id={contributeRouteLink}
