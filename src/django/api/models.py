@@ -1386,7 +1386,7 @@ class Facility(PPEMixin):
         max_length=32,
         primary_key=True,
         editable=False,
-        help_text='The OAR ID of a facility.')
+        help_text='The OS Hub ID of a facility.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -1421,8 +1421,8 @@ class Facility(PPEMixin):
         max_length=32,
         null=True,
         blank=True,
-        help_text=('The new OAR ID where this facility can be found if it has '
-                   'been moved.'))
+        help_text=('The new OS Hub ID where this facility can be found if it '
+                   'has been moved.'))
     has_inexact_coordinates = models.BooleanField(
         null=False,
         default=False,
@@ -1682,7 +1682,7 @@ class FacilityIndex(models.Model):
         primary_key=True,
         editable=False,
         db_index=True,
-        help_text='The OAR ID of a facility.')
+        help_text='The OS Hub ID of a facility.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -1895,8 +1895,8 @@ class FacilityAlias(models.Model):
         max_length=32,
         primary_key=True,
         editable=False,
-        help_text=('The OAR ID of a no longer existent Facility which should '
-                   'be redirected to a different Facility.'))
+        help_text=('The OS Hub ID of a no longer existent Facility which '
+                   'should be redirected to a different Facility.'))
     facility = models.ForeignKey(
         'Facility',
         null=False,
@@ -2282,7 +2282,7 @@ class EmbedConfig(models.Model):
         max_length=200,
         null=True,
         blank=True,
-        default='Facility name or OAR ID',
+        default='Facility name or OS Hub ID',
         help_text='The label for the search box.')
     map_style = models.CharField(
         max_length=200,
