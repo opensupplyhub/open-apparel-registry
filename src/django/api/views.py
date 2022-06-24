@@ -695,7 +695,7 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                     location='query',
                     type='string',
                     required=False,
-                    description='Facility Name or OAR ID',
+                    description='Facility Name or OS Hub ID',
                 ),
                 coreapi.Field(
                     name='name',
@@ -1015,11 +1015,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     def retrieve(self, request, pk=None):
         """
-        Returns the facility specified by a given OAR ID in GeoJSON format.
+        Returns the facility specified by a given OS Hub ID in GeoJSON format.
 
         ### Sample Response
             {
-                "id": "OAR_ID",
+                "id": "OSHUB_ID",
                 "type": "Feature",
                 "geometry": {
                     "type": "Point",
@@ -1030,7 +1030,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     "address" "facility address",
                     "country_code": "US",
                     "country_name": "United States",
-                    "oar_id": "OAR_ID",
+                    "oar_id": "OSHUB_ID",
                     "other_names": [],
                     "other_addresses": [],
                     "contributors": [
