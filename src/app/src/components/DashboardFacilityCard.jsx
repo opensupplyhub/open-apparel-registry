@@ -90,7 +90,7 @@ export default function DashboardFacilityCard({
                 variant="outlined"
                 onChange={updateOARID}
                 value={oarID}
-                placeholder="Enter an OAR ID"
+                placeholder="Enter an OS Hub ID"
                 onKeyPress={handleEnterKeyPress}
             />
             <Button

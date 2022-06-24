@@ -103,7 +103,7 @@ export default function DashboardDeleteFacilityControls({
                                     <Typography
                                         style={deleteControlsStyles.labelStyles}
                                     >
-                                        OAR ID: {get(data, 'id', '')}
+                                        OS Hub ID: {get(data, 'id', '')}
                                     </Typography>
                                 </li>
                                 <li>

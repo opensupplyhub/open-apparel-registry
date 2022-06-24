@@ -115,7 +115,7 @@ export default function DashboardUpdateFacilityLocationControls({
                                 </li>
                                 <li>
                                     <Typography style={styles.labelStyles}>
-                                        OAR ID: {get(facility, 'id', '')}
+                                        OS Hub ID: {get(facility, 'id', '')}
                                     </Typography>
                                 </li>
                                 <li>

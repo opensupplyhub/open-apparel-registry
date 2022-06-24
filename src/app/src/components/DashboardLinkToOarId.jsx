@@ -98,7 +98,7 @@ function DashboardLinkToOarID({
                             variant="outlined"
                             onChange={e => setSourceID(getValueFromEvent(e))}
                             value={sourceID}
-                            placeholder="Enter an OAR ID"
+                            placeholder="Enter an OS Hub ID"
                             onKeyPress={handleSourceKeypress}
                         />
                         <Button
@@ -115,7 +115,7 @@ function DashboardLinkToOarID({
                         <div style={styles.textSectionStyles}>
                             {currentLinkedId && (
                                 <div>
-                                    <strong>Linked OAR ID:</strong>{' '}
+                                    <strong>Linked OS Hub ID:</strong>{' '}
                                     {currentLinkedId}
                                 </div>
                             )}
@@ -132,14 +132,14 @@ function DashboardLinkToOarID({
                         variant="title"
                         style={styles.textSectionStyles}
                     >
-                        New OAR ID
+                        New OS Hub ID
                     </Typography>
                     <CardActions style={styles.cardActionsStyles}>
                         <TextField
                             variant="outlined"
                             onChange={e => setNewID(getValueFromEvent(e))}
                             value={newID}
-                            placeholder="Enter an OAR ID"
+                            placeholder="Enter an OS Hub ID"
                             onKeyPress={handleNewKeypress}
                         />
                         <Button

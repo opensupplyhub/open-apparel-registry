@@ -151,7 +151,7 @@ export function fetchSingleFacility(
             return dispatch(
                 logErrorAndDispatchFailure(
                     null,
-                    'No OAR ID was provided',
+                    'No OS Hub ID was provided',
                     failFetchSingleFacility,
                 ),
             );
