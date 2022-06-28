@@ -30,10 +30,8 @@ def make_facility_list_url(list_id):
         host = 'localhost:6543'
     else:
         protocol = 'https'
-        if settings.ENVIRONMENT == 'Staging':
-            host = 'oshstaging.openapparel.org'
-        else:
-            host = 'openapparel.org'
+        host = settings.EXTERNAL_DOMAIN
+
     return '{}://{}/lists/{}'.format(protocol, host, list_id)
 
 

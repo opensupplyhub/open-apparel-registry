@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated logo and colors on top banner, map and search button [#1900](https://github.com/open-apparel-registry/open-apparel-registry/pull/1900)
 - Avoid exception when parsing arrays in raw data [#1910](https://github.com/open-apparel-registry/open-apparel-registry/pull/1910)
 - Added option to exclude specified users from anonymization script [#1924](https://github.com/open-apparel-registry/open-apparel-registry/pull/1924)
+-  Remove hard coded domain from mail.py [#1931](https://github.com/open-apparel-registry/open-apparel-registry/pull/1931)
 
 ### Deprecated
 
