@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>
-            Open Apparel Registry Facility Report {{ status|title }}
+            Open Supply Hub Facility Report {{ status|title }}
         </title>
     </head>
     <body>
@@ -11,11 +11,11 @@
         </p>
         <p>
             Thanks for reporting {{ facility_name }} facility as {{ closure_state|lower }}.
-            {% if is_closure and is_rejected %}We have rejected this report and the facility's profile in the OAR has not been changed.{% endif %}{% if is_closure and is_confirmed %}The facility profile in the Open Apparel Registry has now been updated and the facility is marked as closed.{% endif %}{% if is_reopening and is_rejected %}We have rejected this report and the facility's profile in the OAR has not been changed.{% endif %}{% if is_reopening and is_confirmed %}The facility profile in the Open Apparel Registry has now been updated and the facility is no longer marked as closed.{% endif %}
+            {% if is_closure and is_rejected %}We have rejected this report and the facility's profile in the OS Hub has not been changed.{% endif %}{% if is_closure and is_confirmed %}The facility profile in the Open Supply Hub has now been updated and the facility is marked as closed.{% endif %}{% if is_reopening and is_rejected %}We have rejected this report and the facility's profile in the OS Hub has not been changed.{% endif %}{% if is_reopening and is_confirmed %}The facility profile in the Open Supply Hub has now been updated and the facility is no longer marked as closed.{% endif %}
         </p>
         {% if status_change_reason|length %}
         <p>
-            OAR Team review notes: {{ status_change_reason }}
+            OS Hub Team review notes: {{ status_change_reason }}
         </p>
         {% endif %}
         {% if is_rejected %}
@@ -25,7 +25,7 @@
         {% endif %}
         {% if is_closure and is_confirmed %}
         <p>
-            Should you receive reports that the facility is re-opened in the future, you can share this update with the OAR Team.
+            Should you receive reports that the facility is re-opened in the future, you can share this update with the OS Hub Team.
         </p>
         {% endif %}
 

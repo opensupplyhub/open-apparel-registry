@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('csvfile',
-                            help='Path to a CSV downloaded from OAR')
+                            help='Path to a CSV downloaded from OS Hub')
 
         parser.add_argument(
             '-f',

@@ -1,7 +1,7 @@
 {% block content %}
 Hi,
 
-You're receiving this email because we approved your request to claim this Open Apparel Registry facility:
+You're receiving this email because we approved your request to claim this Open Supply Hub facility:
 
 - Facility: {{ facility_name }}, {{ facility_address }}, {{ facility_country }}
 - Facility URL: {{ facility_url }}

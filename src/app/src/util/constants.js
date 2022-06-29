@@ -199,7 +199,7 @@ const accountConfirmNewPasswordField = Object.freeze({
 const accountNewsletterField = Object.freeze({
     id: registrationFieldsEnum.newsletter,
     label:
-        "I'd like to receive important email updates about OAR features and data.",
+        "I'd like to receive important email updates about OS Hub features and data.",
     modelFieldName: 'should_receive_newsletter',
     type: inputTypesEnum.checkbox,
 });
@@ -462,7 +462,7 @@ export const PPE = 'ppe';
 export const REPORT_A_FACILITY = 'report_a_facility';
 export const EMBEDDED_MAP_FLAG = 'embedded_map';
 export const EXTENDED_PROFILE_FLAG = 'extended_profile';
-export const DEFAULT_SEARCH_TEXT = 'Facility Name or OAR ID';
+export const DEFAULT_SEARCH_TEXT = 'Facility Name or OS Hub ID';
 
 export const COUNTRY_CODES = Object.freeze({
     default: 'IE',
@@ -494,8 +494,7 @@ export const claimAFacilityFormFields = Object.freeze({
         id: 'parent-company',
         label: 'Parent company / supplier group',
         aside: `If you cannot find the parent company / supplier group
-        in this list consider inviting them to register with the Open Apparel
-        Registry.`,
+        in this list consider inviting them to register with the Open Supply Hub.`,
     }),
     website: Object.freeze({
         id: 'website',
@@ -710,7 +709,7 @@ export const facilitySidebarActions = {
     REPORT_AS_REOPENED: 'Report as reopened',
     DISPUTE_CLAIM: 'Dispute claim',
     CLAIM_FACILITY: 'Claim this facility',
-    VIEW_ON_OAR: 'View on the Open Apparel Registry',
+    VIEW_ON_OAR: 'View on the Open Supply Hub',
 };
 
 export const EXTENDED_FIELD_TYPES = [
@@ -917,4 +916,4 @@ export const SILVER_MAP_STYLE = [
 ];
 
 export const EXTENDED_FIELDS_EXPLANATORY_TEXT =
-    'These fields were added to the OAR in March 2022. As more data is contributed, more results will become available.';
+    'These fields were added to the OS Hub in March 2022. As more data is contributed, more results will become available.';

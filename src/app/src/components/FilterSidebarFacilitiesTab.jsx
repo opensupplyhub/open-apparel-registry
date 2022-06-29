@@ -320,8 +320,8 @@ function FilterSidebarFacilitiesTab({
                         <DialogTitle>Log In To Download</DialogTitle>
                         <DialogContent>
                             <Typography>
-                                You must log in with an Open Apparel Registry
-                                account before downloading your search results.
+                                You must log in with an Open Supply Hub account
+                                before downloading your search results.
                             </Typography>
                         </DialogContent>
                         <DialogActions>

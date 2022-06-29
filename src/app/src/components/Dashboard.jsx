@@ -101,7 +101,7 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
             </Link>
             <Link to={dashboardApiBlocksRoute}>View API Blocks</Link>
             <Link to={dashboardActivityReportsRoute}>View Status Reports</Link>
-            <Link to={dashboardLinkOarIdRoute}>Link to New OAR ID</Link>
+            <Link to={dashboardLinkOarIdRoute}>Link to New OS Hub ID</Link>
             <Link to={dashboardGeocoderRoute}>Geocode</Link>
         </div>
     );
@@ -200,7 +200,7 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                             exact
                             path={dashboardLinkOarIdRoute}
                             render={makeClickableDashboardLinkFn(
-                                'Link to New OAR ID',
+                                'Link to New OS Hub ID',
                             )}
                         />
                         <Route

@@ -64,7 +64,7 @@ function ClaimFacility({
                 <Grid container className="margin-bottom-64">
                     <Grid item xs={12}>
                         <Link to={authLoginFormRoute} href={authLoginFormRoute}>
-                            Log in to claim a facility on Open Apparel Registry
+                            Log in to claim a facility on Open Supply Hub
                         </Link>
                     </Grid>
                 </Grid>

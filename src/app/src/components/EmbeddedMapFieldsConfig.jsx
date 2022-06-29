@@ -287,8 +287,8 @@ function EmbeddedMapFieldsConfig({
                     <Typography>
                         Choose which fields to display on your map (the number
                         of fields you are able to display corresponds to your
-                        Embedded Map package). Facility name, address, and OAR
-                        ID will always be included.
+                        Embedded Map package). Facility name, address, and OS
+                        Hub ID will always be included.
                     </Typography>
                     {errors?.embed_fields && (
                         <Typography style={{ color: 'red' }}>
@@ -346,7 +346,7 @@ function EmbeddedMapFieldsConfig({
                                         }}
                                     />
                                     <Tooltip
-                                        title="Choose which visible fields to include in text search for your map. Facility name, address, and OAR ID will always be included."
+                                        title="Choose which visible fields to include in text search for your map. Facility name, address, and OS Hub ID will always be included."
                                         classes={{ tooltip: classes.tooltip }}
                                     >
                                         <FormLabel

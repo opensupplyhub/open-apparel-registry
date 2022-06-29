@@ -1,4 +1,4 @@
-# Dedupe Examples for OAR
+# Dedupe Examples for OS Hub
 
 These examples are based on the
 [dedupe-example](https://github.com/dedupeio/dedupe-examples/) scripts.

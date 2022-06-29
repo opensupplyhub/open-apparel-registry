@@ -72,7 +72,7 @@ class Command(BaseCommand):
                 contributor = Contributor(
                     name='{} [Public List]'.format(name),
                     description='Public facility lists for {} '
-                                'managed by the OAR team'.format(name),
+                                'managed by the OS Hub team'.format(name),
                     website='',
                     contrib_type=contrib_type,
                     other_contrib_type=(

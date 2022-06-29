@@ -205,7 +205,7 @@ def add_user_to_mailing_list(email, name, contrib_type):
 @permission_classes([AllowAny])
 @renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
 def schema_view(request):
-    generator = schemas.SchemaGenerator(title='Open Apparel Registry API',
+    generator = schemas.SchemaGenerator(title='Open Supply Hub API',
                                         patterns=urls.public_apis)
     return Response(generator.get_schema())
 
@@ -700,7 +700,7 @@ class FacilitiesAPIFilterBackend(BaseFilterBackend):
                     location='query',
                     type='string',
                     required=False,
-                    description='Facility Name or OAR ID',
+                    description='Facility Name or OS Hub ID',
                 ),
                 coreapi.Field(
                     name='name',
@@ -1020,11 +1020,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     def retrieve(self, request, pk=None):
         """
-        Returns the facility specified by a given OAR ID in GeoJSON format.
+        Returns the facility specified by a given OS Hub ID in GeoJSON format.
 
         ### Sample Response
             {
-                "id": "OAR_ID",
+                "id": "OSHUB_ID",
                 "type": "Feature",
                 "geometry": {
                     "type": "Point",
@@ -1035,7 +1035,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     "address" "facility address",
                     "country_code": "US",
                     "country_name": "United States",
-                    "oar_id": "OAR_ID",
+                    "oar_id": "OSHUB_ID",
                     "other_names": [],
                     "other_addresses": [],
                     "contributors": [
@@ -2541,7 +2541,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
-            raise NotFound('Facility with OAR ID {} not found'.format(pk))
+            raise NotFound('Facility with OS Hub ID {} not found'.format(pk))
         contributor = request.user.contributor
         matches = FacilityMatch.objects.filter(
             facility=facility,
@@ -2582,7 +2582,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
-            raise NotFound('Facility with OAR ID {} not found'.format(pk))
+            raise NotFound('Facility with OS Hub ID {} not found'.format(pk))
 
         try:
             contributor = request.user.contributor

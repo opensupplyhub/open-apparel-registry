@@ -99,7 +99,7 @@ function DashboardApiBlock({
             return (
                 <AppGrid title="Unable to retrieve that API block">
                     <Link to={authLoginFormRoute} href={authLoginFormRoute}>
-                        Sign in to view Open Apparel Registry API blocks
+                        Sign in to view Open Supply Hub API blocks
                     </Link>
                 </AppGrid>
             );

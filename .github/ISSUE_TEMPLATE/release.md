@@ -25,7 +25,7 @@ $ git commit -m "X.Y.Z"
 $ git flow release publish X.Y.Z
 ```
 - [ ] Test the release branch on staging
-- [ ] Make sure that the OAR team is not doing a demo or webinar on production
+- [ ] Make sure that the OS Hub team is not doing a demo or webinar on production
 - [ ] Start a new [release pipeline job](http://civicci01.internal.azavea.com/view/oar/job/Open%20Apparel%20Registry%20Release%20Pipeline/build?delay=0sec) with the SHA (see command below) of `release/X.Y.Z` that was tested on staging
 ```bash
 $ git rev-parse --short HEAD

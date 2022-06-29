@@ -244,15 +244,15 @@ function FilterSidebarSearchTab({
                 share? If so, tick this box.
             </p>
             <p>
-                There are now two ways to filter a Contributor search on the
-                OAR:
+                There are now two ways to filter a Contributor search on the OS
+                Hub:
             </p>
             <ol>
                 <li style={styles.popoverLineItem}>
                     You can search for all the facilities of multiple
                     contributors. This means that the results would show all of
-                    the facilities contributed to the OAR by, for example, BRAC
-                    University or Clarks. Some facilities might have been
+                    the facilities contributed to the OS Hub by, for example,
+                    BRAC University or Clarks. Some facilities might have been
                     contributed by BRAC University but not by Clarks, or
                     vice-versa.
                 </li>
@@ -355,14 +355,14 @@ function FilterSidebarSearchTab({
             >
                 <div className="form__field" style={{ marginBottom: '10px' }}>
                     <div className={classes.headerStyle}>
-                        Search the Open Apparel Registry
+                        Search the Open Supply Hub
                         <div>
                             <a
                                 className={classes.helpSubheadStyle}
                                 target="blank"
                                 href="https://info.openapparel.org/stories-resources/how-to-search-the-open-apparel-registry"
                             >
-                                Need tips for searching the OAR?
+                                Need tips for searching the OS Hub?
                             </a>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
-# Open Apparel Registry
+# Open Supply Hub
 
-The Open Apparel Registry (OAR) is a tool to identify every apparel facility worldwide.
+The Open Supply Hub (OS Hub) is a tool to identify every goods production facility worldwide.
 
 - [Requirements](#requirements)
 - [Setup](#setup)
@@ -42,7 +42,7 @@ vagrant@vagrant:/vagrant$
 
 ### Google Maps Platform
 
-The OAR requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API.
+The OS Hub requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API.
 
 Without an API key, facility detail maps will not load on the client and geocoding will not function on the server. The basemap will also be low-resolution and watermarked with "for development purposes only."
 
@@ -112,32 +112,32 @@ be available on their page, or you can visit http://localhost:6543/?embed=1&cont
 
 ### Ports
 
-| Service                    | Port                            |
-| -------------------------- | ------------------------------- |
-| React development server   | [`6543`](http://localhost:6543) |
-| Gunicorn for Django app    | [`8081`](http://localhost:8081) |
+| Service                  | Port                            |
+|--------------------------|---------------------------------|
+| React development server | [`6543`](http://localhost:6543) |
+| Gunicorn for Django app  | [`8081`](http://localhost:8081) |
 
 
-### Parallel Development of OGR
+### Parallel Development of OS Hub & OAR
 
-The Open Goods Registry is the successor to OAR, and OGR will replace OAR when
-it is launched. During the beta period, both applications will be deployed and
-developed in parallel. Features development for OAR also need to be included in
-OGR, but there are OGR-specific features and related architectural changes that
-are not appropriate to be included in OAR. Too support this parallel development
-process, there are 4 main branches in the repository:
+The Open Supply Hub is the successor to the Open Apparel Registry (OAR), and OS Hub
+will replace OAR when it is launched. During the beta period, both applications
+will be deployed and developed in parallel. Features development for OAR also need to
+be included in OS Hub, but there are OS Hub-specific features and related architectural
+changes that are not appropriate to be included in OAR. Too support this parallel
+development process, there are 4 main branches in the repository:
 
 - develop
 - master
 - ogr/develop
 - ogr/master
 
-When OGR is released we will return to a single pair of `develop` and `master`
+When OS Hub is released we will return to a single pair of `develop` and `master`
 branches by replacing their content with `ogr/develop` and `ogr/master`.
 
 #### Parallel PR Workflow
 
-- Is the new feature of fix specific to OGR?
+- Is the new feature of fix specific to OS Hub?
   - Yes
     - Create a branch starting from `ogr/develop`
     - Create a pull request targeted at `ogr/develop`
@@ -157,15 +157,15 @@ branches by replacing their content with `ogr/develop` and `ogr/master`.
 
 ## Scripts 🧰
 
-| Name                                                   | Description                                                                                                                                                                                  |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bootstrap`                                            | Update environment variables file                                                                                                                                                                    |
-| `infra`                                                | Plan and apply remote infrastructure changes                                                                                                                                                 |
-| `resetdb`                                              | Clear development database & load fixture data including users, facility lists, matches, and facilities                                                                                      |
-| `server`                                               | Run `docker-compose.yml` services                                                                                                                                                            |
-| `setup`                                                | Provision Vagrant VM and run `update`                                                                                                                                                        |
-| `test`                                                 | Run tests                                                                                                                                                                                    |
-| `update`                                               | Build container images and execute database migrations                                                                                                                                       |
+| Name        | Description                                                                                             |
+|-------------|---------------------------------------------------------------------------------------------------------|
+| `bootstrap` | Update environment variables file                                                                       |
+| `infra`     | Plan and apply remote infrastructure changes                                                            |
+| `resetdb`   | Clear development database & load fixture data including users, facility lists, matches, and facilities |
+| `server`    | Run `docker-compose.yml` services                                                                       |
+| `setup`     | Provision Vagrant VM and run `update`                                                                   |
+| `test`      | Run tests                                                                                               |
+| `update`    | Build container images and execute database migrations                                                  |
 
 ## Tools ⚒️
 
@@ -180,7 +180,7 @@ branches by replacing their content with `ogr/develop` and `ogr/master`.
 ### Making Superusers
 
 In staging and production we do not have access to the Django Shell so granting
-superuser permissions to a member of the OAR team or development team that needs
+superuser permissions to a member of the OS Hub team or development team that needs
 to manage the system requires the use SQL statements to adjust the permissions.
 
 - Connect to the staging or production database via the bastion instance

@@ -35,7 +35,7 @@ function ClaimedFacilitiesListTable({ data, history: { push } }) {
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
-                        <TableCell>OAR ID</TableCell>
+                        <TableCell>OS Hub ID</TableCell>
                         <TableCell>Address</TableCell>
                         <TableCell>Country</TableCell>
                     </TableRow>

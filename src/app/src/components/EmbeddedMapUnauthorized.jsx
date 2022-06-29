@@ -24,20 +24,20 @@ function EmbeddedMapUnauthorized({ isSettings, error = [] }) {
                 Looking to display your supplier data on your website?
             </Typography>
             <Typography paragraph style={styles.text}>
-                The Open Apparel registry offers an easy-to-use embedded map
-                option for your website.
+                The Open Supply Hub offers an easy-to-use embedded map option
+                for your website.
             </Typography>
             <Typography paragraph>
                 To activate this paid-for feature, check out the{' '}
                 <a href={EmbeddedMapInfoLink} target="_blank" rel="noreferrer">
-                    OAR Embedded Map
+                    OS Hub Embedded Map
                 </a>{' '}
                 page on our website for packages and pricing options.
             </Typography>
             {isSettings && (
                 <Typography paragraph>
                     Once Embedded Map has been activated for your account, your
-                    OAR Embedded Map Settings will appear on this tab.
+                    OS Hub Embedded Map Settings will appear on this tab.
                 </Typography>
             )}
         </AppGrid>

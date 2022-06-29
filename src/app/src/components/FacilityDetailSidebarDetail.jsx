@@ -21,8 +21,8 @@ const detailsSidebarStyles = () =>
     });
 
 const CLAIM_EXPLANATORY_TEXT =
-    'Please note: The OAR team has only verified that the person claiming a ' +
-    'facility profile is connected to that facility. The OAR team has not ' +
+    'Please note: The OS Hub team has only verified that the person claiming a ' +
+    'facility profile is connected to that facility. The OS Hub team has not ' +
     'verified any additional details added to a facility profile, e.g. ' +
     'certifications, production capabilities etc. Users interested in those ' +
     'details will need to carry out their own due diligence checks.';

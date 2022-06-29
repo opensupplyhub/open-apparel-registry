@@ -119,7 +119,7 @@ function MoveMatchDialog({
                         variant="outlined"
                         onChange={e => updateOARID(getValueFromEvent(e))}
                         value={oarID}
-                        placeholder="Enter an OAR ID"
+                        placeholder="Enter an OS Hub ID"
                         onKeyPress={fetchOnEnter}
                     />
                     <Button

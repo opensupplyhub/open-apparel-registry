@@ -77,7 +77,7 @@ info_apis = [
         name='facilities_count'),
 ]
 
-schema_view = get_swagger_view(title='Open Apparel Registry API Documentation',
+schema_view = get_swagger_view(title='Open Supply Hub API Documentation',
                                patterns=public_apis)
 
 internal_apis = [

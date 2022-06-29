@@ -31,7 +31,7 @@ export default function ClaimedFacilitiesDetailsSidebar({ facilityDetails }) {
                 </Typography>
             </div>
             <div style={claimedFacilitiesDetailsSidebarStyles.sectionStyles}>
-                <Typography variant="title">OAR ID</Typography>
+                <Typography variant="title">OS Hub ID</Typography>
                 <Typography
                     variant="body1"
                     style={claimedFacilitiesDetailsSidebarStyles.bodyTextStyles}

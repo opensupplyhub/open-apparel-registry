@@ -16,7 +16,7 @@ from api.reports import get_report_names, run_report
 
 
 class ApiAdminSite(AdminSite):
-    site_header = 'Open Apparel Registry Admin'
+    site_header = 'Open Supply Hub Admin'
 
     def get_urls(self):
         from django.conf.urls import url

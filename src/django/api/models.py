@@ -190,7 +190,7 @@ class Contributor(models.Model):
         'verified',
         default=False,
         help_text=(
-            'Has this contributor has been verified by OAR staff.'
+            'Has this contributor has been verified by OS Hub staff.'
         ),
     )
     verification_notes = models.TextField(
@@ -685,7 +685,7 @@ class FacilityListItem(PPEMixin):
 class FacilityClaim(models.Model):
     """
     Data submitted from a user attempting to make a verified claim of a
-    Facility to be evaluated by OAR moderators.
+    Facility to be evaluated by OS Hub moderators.
     """
     EMAIL = 'EMAIL'
     PHONE = 'PHONE'
@@ -1388,7 +1388,7 @@ class FacilityManager(models.Manager):
 
 class Facility(PPEMixin):
     """
-    An official OAR facility. Search results are returned from this table.
+    An official OS Hub facility. Search results are returned from this table.
     """
     class Meta:
         verbose_name_plural = "facilities"
@@ -1397,7 +1397,7 @@ class Facility(PPEMixin):
         max_length=32,
         primary_key=True,
         editable=False,
-        help_text='The OAR ID of a facility.')
+        help_text='The OS Hub ID of a facility.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -1432,8 +1432,8 @@ class Facility(PPEMixin):
         max_length=32,
         null=True,
         blank=True,
-        help_text=('The new OAR ID where this facility can be found if it has '
-                   'been moved.'))
+        help_text=('The new OS Hub ID where this facility can be found if it '
+                   'has been moved.'))
     has_inexact_coordinates = models.BooleanField(
         null=False,
         default=False,
@@ -1693,7 +1693,7 @@ class FacilityIndex(models.Model):
         primary_key=True,
         editable=False,
         db_index=True,
-        help_text='The OAR ID of a facility.')
+        help_text='The OS Hub ID of a facility.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -1906,8 +1906,8 @@ class FacilityAlias(models.Model):
         max_length=32,
         primary_key=True,
         editable=False,
-        help_text=('The OAR ID of a no longer existent Facility which should '
-                   'be redirected to a different Facility.'))
+        help_text=('The OS Hub ID of a no longer existent Facility which '
+                   'should be redirected to a different Facility.'))
     facility = models.ForeignKey(
         'Facility',
         null=False,
@@ -2293,7 +2293,7 @@ class EmbedConfig(models.Model):
         max_length=200,
         null=True,
         blank=True,
-        default='Facility name or OAR ID',
+        default='Facility name or OS Hub ID',
         help_text='The label for the search box.')
     map_style = models.CharField(
         max_length=200,

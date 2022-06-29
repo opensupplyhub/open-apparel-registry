@@ -1,1 +1,1 @@
-OAR API limit warning - {{contributor_name}}
+OS Hub API limit warning - {{contributor_name}}

@@ -284,7 +284,7 @@ const FacilityDetailSidebar = ({
         return (
             <div className={classes.root}>
                 <p className={classes.primaryText}>
-                    {`No facility found for OAR ID ${oarID}`}
+                    {`No facility found for OS Hub ID ${oarID}`}
                 </p>
             </div>
         );
@@ -393,7 +393,7 @@ const FacilityDetailSidebar = ({
                     clearFacility={clearFacility}
                 />
                 <FacilityDetailSidebarItem
-                    label="OAR ID"
+                    label="OS Hub ID"
                     primary={oarId}
                     embed={embed}
                 />

@@ -22,7 +22,7 @@ const FacilityDetailSidebarLocation = ({ data, embed }) => {
             have access to accurate coordinates for this facility, please report
             them ${
                 embed
-                    ? 'on the Open Apparel Registry.'
+                    ? 'on the Open Supply Hub.'
                     : `using the "${facilitySidebarActions.SUGGEST_AN_EDIT}" link below.`
             }`
         : canonicalLocationData?.contributor_name;
