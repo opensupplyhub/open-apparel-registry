@@ -6,7 +6,7 @@
 # 1st Argument: DB Name
 # 2nd Argument: Query
 run_query() {
-    psql -h localhost -p 5433 -U openapparelregistry -t -A \
+    psql -h "${PGHOST:-localhost}" -p "${PGPORT:-5433}" -U openapparelregistry -t -A \
         "$1" -c "$2"
 }
 
