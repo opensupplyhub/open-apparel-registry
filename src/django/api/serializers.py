@@ -2,11 +2,11 @@ from collections import defaultdict
 
 from django.conf import settings
 from django.core import exceptions
-from django.db import transaction
+from django.db import models, transaction
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import password_validation
 from django.urls import reverse
-from django.db.models import Count, F
+from django.db.models import Count, F, Value
 from rest_framework.serializers import (CharField,
                                         DecimalField,
                                         EmailField,
@@ -967,6 +967,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
                     'certifications': claim.facility_certifications,
                     'product_types': claim.facility_product_types,
                     'production_types': claim.facility_production_types,
+                    'sector': claim.sector
                 },
                 'contact': {
                     'name': claim.point_of_contact_person_name,
@@ -1033,7 +1034,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
         }
 
     def get_sector(self, facility):
-        sectors = FacilityListItem \
+        item_sectors = FacilityListItem \
             .objects \
             .filter(facility=facility, source__is_active=True,
                     facilitymatch__is_active=True) \
@@ -1042,12 +1043,25 @@ class FacilityDetailsSerializer(FacilitySerializer):
             .values('updated_at',
                     contributor_id=F('source__contributor_id'),
                     contributor_name=F('source__contributor__name'),
-                    values=F('sector'))
+                    values=F('sector'),
+                    is_from_claim=Value(False, models.BooleanField()))
+        claim_sectors = FacilityClaim \
+            .objects \
+            .filter(facility=facility, status=FacilityClaim.APPROVED) \
+            .order_by('contributor_id', '-updated_at') \
+            .distinct('contributor_id') \
+            .values('updated_at',
+                    'contributor_id',
+                    contributor_name=F('contributor__name'),
+                    values=F('sector'),
+                    is_from_claim=Value(True, models.BooleanField()))
 
         contributor_id = get_embed_contributor_id(self)
         if is_embed_mode_active(self) and contributor_id is not None:
-            sectors = sectors.filter(source__contributor_id=contributor_id)
+            item_sectors = item_sectors.filter(contributor_id=contributor_id)
+            claim_sectors = claim_sectors.filter(contributor_id=contributor_id)
 
+        sectors = item_sectors.union(claim_sectors)
         return sorted(sectors, key=lambda i: i['updated_at'], reverse=True)
 
 
@@ -1199,7 +1213,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
                   'affiliation_choices', 'certification_choices',
                   'facility_affiliations', 'facility_certifications',
                   'facility_product_types', 'facility_production_types',
-                  'production_type_choices')
+                  'production_type_choices', 'sector')
 
     def get_facility(self, claim):
         return FacilityDetailsSerializer(

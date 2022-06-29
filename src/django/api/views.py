@@ -648,12 +648,17 @@ def sectors(request):
         ]
 
     """
-    sectors = FacilityListItem \
+    item_sectors = FacilityListItem \
         .objects \
         .filter(source__is_active=True, source__is_public=True) \
         .annotate(all_sectors=Func(F('sector'), function='unnest')) \
         .values_list('all_sectors', flat=True).distinct()
-    return Response(sorted(sectors))
+    claim_sectors = FacilityClaim \
+        .objects \
+        .filter(status=FacilityClaim.APPROVED) \
+        .annotate(all_sectors=Func(F('sector'), function='unnest')) \
+        .values_list('all_sectors', flat=True).distinct()
+    return Response(sorted(item_sectors.union(claim_sectors)))
 
 
 class RootAutoSchema(AutoSchema):
@@ -3357,38 +3362,21 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                 other_facility_type = request.data.get('other_facility_type')
             else:
                 other_facility_type = None
-
             claim.other_facility_type = other_facility_type
 
-            facility_affiliations = request.data.get('facility_affiliations')
-
-            if facility_affiliations:
-                claim.facility_affiliations = facility_affiliations
-            else:
-                claim.facility_affiliations = None
-
-            facility_certifications = request.data \
-                                             .get('facility_certifications')
-
-            if facility_certifications:
-                claim.facility_certifications = facility_certifications
-            else:
-                claim.facility_certifications = None
-
-            facility_product_types = request.data.get('facility_product_types')
-
-            if facility_product_types:
-                claim.facility_product_types = facility_product_types
-            else:
-                claim.facility_product_types = None
-
-            facility_production_types = \
-                request.data.get('facility_production_types')
-
-            if facility_production_types:
-                claim.facility_production_types = facility_production_types
-            else:
-                claim.facility_production_types = None
+            array_field_names = (
+                'facility_affiliations',
+                'facility_certifications',
+                'facility_product_types',
+                'facility_production_types',
+                'sector',
+            )
+            for field_name in array_field_names:
+                data = request.data.get(field_name)
+                if data:
+                    setattr(claim, field_name, data)
+                else:
+                    setattr(claim, field_name, None)
 
             field_names = (
                 'facility_description',

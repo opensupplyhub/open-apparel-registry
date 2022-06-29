@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add sector search controls [#1899](https://github.com/open-apparel-registry/open-apparel-registry/pull/1899)
 - Display claim information [#1905](https://github.com/open-apparel-registry/open-apparel-registry/pull/1905)
 - Create OGR staging environment [#1885](https://github.com/open-apparel-registry/open-apparel-registry/pull/1885)
+- Add sector to Facility Claim [#1934](https://github.com/open-apparel-registry/open-apparel-registry/pull/1934)
 
 ### Changed
 

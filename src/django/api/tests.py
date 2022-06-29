@@ -8886,6 +8886,33 @@ class FacilityDetailSerializerTest(TestCase):
         self.assertIn('values', data['properties']['sector'][0])
         self.assertIn('updated_at', data['properties']['sector'][0])
 
+    def test_sector_includes_approved_claim(self):
+        FacilityClaim.objects.create(
+            contributor=self.contrib_one,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            sector=['Beauty'],
+            status=FacilityClaim.APPROVED)
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertEqual(['Beauty'], data['properties']['sector'][0]['values'])
+
+    def test_sector_excludes_unapproved_claim(self):
+        FacilityClaim.objects.create(
+            contributor=self.contrib_one,
+            facility=self.facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            sector=['Beauty'],
+            status=FacilityClaim.DENIED)
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertNotEqual(['Beauty'],
+                            data['properties']['sector'][0]['values'])
+
     def test_sector_data_ordered_by_updated_desc(self):
         data = FacilityDetailsSerializer(self.facility).data
 
@@ -8966,8 +8993,8 @@ class SectorChoiceViewTest(APITestCase):
         user.set_password(password)
         user.save()
 
-        contributor = Contributor(name='Name', admin=user)
-        contributor.save()
+        self.contributor = Contributor(name='Name', admin=user)
+        self.contributor.save()
 
         list = FacilityList \
             .objects \
@@ -8979,7 +9006,7 @@ class SectorChoiceViewTest(APITestCase):
             .objects \
             .create(source_type=Source.LIST,
                     facility_list=list,
-                    contributor=contributor)
+                    contributor=self.contributor)
 
         self.client.login(email=email, password=password)
 
@@ -9038,6 +9065,32 @@ class SectorChoiceViewTest(APITestCase):
         response = self.client.get(reverse('sectors'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), ['Apparel'])
+
+    def test_sector_choices_claims(self):
+        item = FacilityListItem.objects.create(
+            row_index=0,
+            source=self.source,
+            sector=[],
+            status=FacilityListItem.PARSED)
+        facility = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=item)
+        FacilityClaim.objects.create(
+            contributor=self.contributor,
+            facility=facility,
+            contact_person='test',
+            email='test@test.com',
+            phone_number='1234567890',
+            sector=['Mining'],
+            status=FacilityClaim.APPROVED)
+
+        response = self.client.get(reverse('sectors'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), ['Mining'])
 
 
 class IndexFacilitiesTest(FacilityAPITestCaseBase):
@@ -9101,3 +9154,40 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         self.assertIn('Mechanical Engineering', facility_index.sector)
         self.assertNotIn('Apparel', facility_index.sector)
         self.assertEqual(len(facility_index.sector), 3)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_updating_claim_sector_updates_index(self):
+        claim_data = dict(
+            contact_person='Name',
+            email=self.user_email,
+            phone_number=12345,
+            company_name='Test',
+            website='http://example.com',
+            facility_description='description',
+            preferred_contact_method=FacilityClaim.EMAIL,
+        )
+        facility_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=self.contributor,
+                facility=self.facility,
+                status=FacilityClaim.APPROVED,
+                **claim_data)
+        self.join_group_and_login()
+        response = self.client.put(
+            '/api/facility-claims/{}/claimed/'.format(facility_claim.id),
+            json.dumps({
+                **claim_data,
+                'sector': ['Mining'],
+                'facility_phone_number_publicly_visible': False,
+                'point_of_contact_publicly_visible': False,
+                'office_info_publicly_visible': False,
+                'facility_website_publicly_visible': False,
+            }),
+            content_type='application/json'
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        facility_index = FacilityIndex.objects.get(id=self.facility.id)
+        self.assertIn('Mining', facility_index.sector)

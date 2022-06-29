@@ -10,8 +10,8 @@ from django.contrib.postgres import fields as postgres
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.db import models, transaction
-from django.db.models import F, Q, ExpressionWrapper
-from django.db.models.expressions import RawSQL
+from django.db.models.expressions import Subquery, OuterRef
+from django.db.models import F, Q, ExpressionWrapper, Func
 from django.db.models.signals import post_save
 from django.db.models.functions import Concat
 from django.contrib.gis.geos import GEOSGeometry
@@ -1079,6 +1079,12 @@ class FacilityClaim(models.Model):
         verbose_name='parent company / supplier group',
         help_text='The parent company / supplier group of this '
         'facility claim.')
+    sector = postgres.ArrayField(
+        models.CharField(max_length=50, null=False, blank=False),
+        null=True,
+        blank=True,
+        help_text='The sector(s) for goods made at the facility',
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -1111,6 +1117,7 @@ class FacilityClaim(models.Model):
         'office_country_code',
         'office_phone_number',
         'parent_company',
+        'sector',
     )
 
     # A dictionary where the keys are field names and the values are predicate
@@ -1146,8 +1153,7 @@ class FacilityClaim(models.Model):
         if v is not None else '',
         facility_product_types=lambda v: ', '.join(v)
         if v is not None else '',
-        facility_production_types=lambda v: ', '.join(v)
-        if v is not None else '',
+        sector=lambda v: ', '.join(v) if v is not None else '',
     )
 
     def get_changes(self, include=list(default_change_includes)):
@@ -1173,6 +1179,11 @@ class FacilityClaim(models.Model):
                             'current': curr_value,
                         })
         return changes
+
+    @staticmethod
+    def post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        index_facilities([instance.facility_id])
 
 
 class FacilityClaimReviewNote(models.Model):
@@ -2644,19 +2655,8 @@ def index_extendedfields(facility_ids=list):
         facility.save()
 
 
-class RawSqlJoin:
-    def __init__(self, sql):
-        self.table_name = sql
-        self.table_alias = None
-        self.join_type = None
-        self.parent_alias = None
-        self.filtered_relation = None
-
-    def as_sql(self, *args, **kwargs):
-        return self.table_name, []
-
-    def relabeled_clone(self):
-        return self.__class__(self.table_name)
+class ArraySubquery(Subquery):
+    template = 'ARRAY(%(subquery)s)'
 
 
 @transaction.atomic
@@ -2668,7 +2668,7 @@ def index_facilities(facility_ids=list):
 
     contrib_type = 'facility_list_item__source__contributor__contrib_type'
     contributor = 'facility_list_item__source__contributor'
-    list = 'facility_list_item__source__facility_list_id'
+    lists = 'facility_list_item__source__facility_list_id'
     filter = (Q(is_active=True)
               & Q(status__in=[FacilityMatch.AUTOMATIC,
                               FacilityMatch.CONFIRMED,
@@ -2676,40 +2676,59 @@ def index_facilities(facility_ids=list):
               & Q(facility_list_item__source__is_active=True)
               & Q(facility_list_item__source__is_public=True))
 
+    matches = FacilityMatch.objects.filter(facility_id__in=facility_ids)
+
     # Create a list of dictionaries in the structure of FacilityIndexes
-    data = FacilityMatch.objects \
-                        .filter(facility_id__in=facility_ids) \
-                        .annotate(name=F('facility__name'),
-                                  country_code=F('facility__country_code'),
-                                  location=F('facility__location')) \
-                        .values('name', 'country_code', 'location') \
-                        .annotate(contrib_types=ArrayAgg(
-                                    contrib_type,
-                                    filter=filter),
-                                  contributors=ArrayAgg(
-                                    contributor,
-                                    filter=filter),
-                                  lists=ArrayAgg(
-                                    list,
-                                    filter=filter),
-                                  sector=ArrayAgg(
-                                    RawSQL('sectors', []),
-                                    distinct=True,
-                                    filter=filter),
-                                  id=F('facility_id'),
-                                  ppe=Concat('facility__ppe_product_types',
-                                             'facility__ppe_contact_phone',
-                                             'facility__ppe_contact_email',
-                                             'facility__ppe_website',
-                                             output_field=models.CharField()))
-    data.query.join(RawSqlJoin('CROSS JOIN UNNEST("sector") sectors'))
+    data = matches \
+        .annotate(name=F('facility__name'),
+                  country_code=F('facility__country_code'),
+                  location=F('facility__location')) \
+        .values('name', 'country_code', 'location') \
+        .annotate(contrib_types=ArrayAgg(contrib_type, filter=filter),
+                  contributors=ArrayAgg(contributor, filter=filter),
+                  lists=ArrayAgg(lists, filter=filter),
+                  id=F('facility_id'),
+                  ppe=Concat('facility__ppe_product_types',
+                             'facility__ppe_contact_phone',
+                             'facility__ppe_contact_email',
+                             'facility__ppe_website',
+                             output_field=models.CharField()))
+
+    item_sectors = FacilityMatch \
+        .objects \
+        .filter(facility_id=OuterRef('pk')) \
+        .filter(filter) \
+        .annotate(values=Func('facility_list_item__sector',
+                              function='unnest')) \
+        .distinct() \
+        .values_list('values', flat=True)
+
+    array_type = postgres.ArrayField(models.CharField())
+    claim_sectors = FacilityClaim \
+        .objects \
+        .filter(facility_id=OuterRef('pk')) \
+        .filter(status=FacilityClaim.APPROVED) \
+        .annotate(values=Func('sector', function='unnest')) \
+        .distinct() \
+        .values_list('values', flat=True)
+
+    sector_data = Facility \
+        .objects \
+        .filter(id__in=facility_ids) \
+        .values('id',
+                item_sectors=ArraySubquery(item_sectors, array_type),
+                claim_sectors=ArraySubquery(claim_sectors, array_type))
+    sectors = {d['id']: list({*d['item_sectors'], *d['claim_sectors']})
+               for d in sector_data}
 
     FacilityIndex.objects.filter(id__in=facility_ids).delete()
-    FacilityIndex.objects.bulk_create([FacilityIndex(**kv) for kv in data])
+    FacilityIndex.objects.bulk_create([
+        FacilityIndex(**kv, sector=sectors[kv['id']]) for kv in data])
     index_custom_text(facility_ids)
     index_extendedfields(facility_ids)
 
 
+post_save.connect(FacilityClaim.post_save, sender=FacilityClaim)
 post_save.connect(Facility.post_save, sender=Facility)
 post_save.connect(Source.post_save, sender=Source)
 post_save.connect(FacilityMatch.post_save, sender=FacilityMatch)
