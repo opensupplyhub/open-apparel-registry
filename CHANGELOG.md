@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added option to exclude specified users from anonymization script [#1924](https://github.com/open-apparel-registry/open-apparel-registry/pull/1924)
 -  Remove hard coded domain from mail.py [#1931](https://github.com/open-apparel-registry/open-apparel-registry/pull/1931)
 - Rename OAR to OS Hub / Open Apparel Registry to Open Supply Hub [#1935](https://github.com/open-apparel-registry/open-apparel-registry/pull/1935)
+- Update favicon images with OS Hub logo [#1938](https://github.com/open-apparel-registry/open-apparel-registry/pull/1938)
 
 ### Deprecated
 
