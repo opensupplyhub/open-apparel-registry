@@ -2624,30 +2624,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             raise NotFound()
 
 
-class FacilityListViewSetSchema(AutoSchema):
-    def get_serializer_fields(self, path, method):
-        if path[-7:] == '/items/':
-            statuses = ', '.join(
-                [c[0] for c in FacilityListItem.STATUS_CHOICES])
-            return [
-                coreapi.Field(
-                    name='status',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description=('Only return items matching this status.'
-                                 'Must be one of {}').format(statuses),
-                ),
-            ]
-
-        return []
-
-    # This suppresses the FacilityList documentation altogether. See:
-    # https://github.com/open-apparel-registry/open-apparel-registry/issues/349
-    def get_link(self, path, method, base_url):
-        return None
-
-
 def create_nonstandard_fields(fields, contributor):
     unique_fields = list(set(fields))
 
@@ -2677,8 +2653,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     serializer_class = FacilityListSerializer
     permission_classes = [IsRegisteredAndConfirmed]
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
-
-    schema = FacilityListViewSetSchema()
+    swagger_schema = None
 
     def _validate_header(self, header):
         if header is None or header == '':
@@ -3067,12 +3042,6 @@ def api_feature_flags(request):
     return Response(response_data)
 
 
-class FacilityClaimsAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
-
-
-@schema(FacilityClaimsAutoSchema())
 class FacilityClaimViewSet(viewsets.ModelViewSet):
     """
     Viewset for admin operations on FacilityClaims.
@@ -3080,6 +3049,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     queryset = FacilityClaim.objects.all()
     serializer_class = FacilityClaimSerializer
     permission_classes = [IsAdminUser]
+    swagger_schema = None
 
     def create(self, request):
         pass
@@ -3782,12 +3752,6 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
-class ApiBlockAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
-
-
-@schema(ApiBlockAutoSchema())
 class ApiBlockViewSet(mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
@@ -3797,6 +3761,7 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     """
     queryset = ApiBlock.objects.all()
     serializer_class = ApiBlockSerializer
+    swagger_schema = None
 
     def validate_request(self, request):
         if request.user.is_anonymous:
@@ -3981,11 +3946,6 @@ class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(response_data)
 
 
-class EmbedConfigAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
-
-
 def create_embed_fields(fields_data, embed_config, previously_searchable=None):
     if previously_searchable is None:
         previously_searchable = list()
@@ -4020,7 +3980,6 @@ def get_contributor(request):
     return contributor
 
 
-@schema(EmbedConfigAutoSchema())
 class EmbedConfigViewSet(mixins.ListModelMixin,
                          mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
@@ -4031,6 +3990,7 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
     """
     queryset = EmbedConfig.objects.all()
     serializer_class = EmbedConfigSerializer
+    swagger_schema = None
 
     @transaction.atomic
     def create(self, request):
@@ -4093,18 +4053,13 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
         return super(EmbedConfigViewSet, self).update(request, pk=pk)
 
 
-class NonstandardFieldsAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
-
-
-@schema(NonstandardFieldsAutoSchema())
 class NonstandardFieldsViewSet(mixins.ListModelMixin,
                                viewsets.GenericViewSet):
     """
     View nonstandard fields submitted by a contributor.
     """
     queryset = NonstandardField.objects.all()
+    swagger_schema = None
 
     def list(self, request):
         if not request.user.is_authenticated:
