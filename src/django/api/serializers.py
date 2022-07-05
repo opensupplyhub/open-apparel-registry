@@ -1491,8 +1491,9 @@ class FacilityActivityReportSerializer(ModelSerializer):
 
 class ContributorListQueryParamsSerializer(Serializer):
     contributors = ListField(
-        child=IntegerField(required=False),
-        required=False,
+        child=IntegerField(required=True),
+        required=True,
+        allow_empty=False
     )
 
 
