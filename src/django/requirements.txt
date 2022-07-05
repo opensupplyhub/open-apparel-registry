@@ -8,11 +8,11 @@ django-ecsmanage==2.0.1
 django-extensions==2.1.9
 django-jsonview==1.2.0
 django-rest-auth[with_social]==0.9.5
-django-rest-swagger==2.1.2
 django-simple-history==2.7.2
 django-spa==0.2.0
 django-waffle==0.17.0
 django-watchman==0.17.0
+drf-yasg==1.20.0
 djangorestframework-gis==0.14
 djangorestframework==3.11.2
 flake8==3.6.0

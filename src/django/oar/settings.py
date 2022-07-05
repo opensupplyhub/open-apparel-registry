@@ -110,7 +110,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_gis',
-    'rest_framework_swagger',
+    'drf_yasg',
     'rest_auth',
     'allauth',
     'allauth.account',
@@ -165,13 +165,7 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization',
         },
     },
-    'doc_expansion': 'list',
-    'info': {
-        'description': 'Open Supply Hub API',
-        'license': 'MIT',
-        'licenseUrl': 'https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/LICENSE',  # noqa
-        'title': 'Open Supply Hub API',
-    },
+    'DOC_EXPANSION': 'none',
     'USE_SESSION_AUTH': False,
 }
 

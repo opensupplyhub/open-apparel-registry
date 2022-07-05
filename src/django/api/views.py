@@ -55,7 +55,6 @@ from waffle.decorators import waffle_switch
 from waffle.models import Switch
 
 
-from oar import urls
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
@@ -199,15 +198,6 @@ def add_user_to_mailing_list(email, name, contrib_type):
         requests.post(endpoint, data=data, auth=auth)
     except Exception:
         _report_mailchimp_error_to_rollbar(email, name, contrib_type)
-
-
-@api_view()
-@permission_classes([AllowAny])
-@renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
-def schema_view(request):
-    generator = schemas.SchemaGenerator(title='Open Supply Hub API',
-                                        patterns=urls.public_apis)
-    return Response(generator.get_schema())
 
 
 class SubmitNewUserForm(CreateAPIView):
