@@ -50,7 +50,7 @@ from drf_yasg.inspectors import PaginatorInspector
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
-import coreapi
+
 from waffle import switch_is_active, flag_is_active
 from waffle.decorators import waffle_switch
 from waffle.models import Switch
@@ -682,6 +682,173 @@ class DisabledPaginationInspector(PaginatorInspector):
         return response_schema
 
 
+facilities_list_parameters = [
+    openapi.Parameter(
+        'q',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Facility Name or OS Hub ID',
+    ),
+    openapi.Parameter(
+        'name',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Facility Name (DEPRECATED; use `q` instead)'
+    ),
+    openapi.Parameter(
+        'contributors',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        required=False,
+        description='Contributor ID',
+    ),
+    openapi.Parameter(
+        'lists',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        required=False,
+        description='List ID',
+    ),
+    openapi.Parameter(
+        'contributor_types',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Contributor Type',
+    ),
+    openapi.Parameter(
+        'countries',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Country Code',
+    ),
+    openapi.Parameter(
+        'combine_contributors',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Set this to "AND" if the results should contain '
+            'facilities associated with ALL the specified '
+            'contributors.')
+    ),
+    openapi.Parameter(
+        'boundary',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Pass a GeoJSON geometry to filter by '
+            'facilities within the boundaries of that geometry.')
+    ),
+    openapi.Parameter(
+        'parent_company',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Pass a Contributor ID or Contributor name to filter '
+            'by facilities with that Parent Company.')
+    ),
+    openapi.Parameter(
+        'facility_type',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Facility type',
+    ),
+    openapi.Parameter(
+        'processing_type',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Processing type',
+    ),
+    openapi.Parameter(
+        'product_type',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Product type',
+    ),
+    openapi.Parameter(
+        'number_of_workers',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Submit one of several standardized ranges to filter '
+            'by facilities with a number_of_workers matching '
+            'those values. Options are: "Less than 1000", '
+            '"1001-5000", "5001-10000", or "More than 10000".'
+        ),
+    ),
+    openapi.Parameter(
+        'native_language_name',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='The native language name of the facility',
+    ),
+    openapi.Parameter(
+        'detail',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'Set this to true to return additional detail about '
+            'contributors and extended fields with each result. '
+            'setting this to true will make the response '
+            'significantly slower to return.'),
+    ),
+    openapi.Parameter(
+        'sectors',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'The sectors that this facility belongs to. '
+            'Values must match those returned from the '
+            '`GET /api/sectors` endpoint'
+            )
+    )
+]
+facilities_create_parameters = [
+    openapi.Parameter(
+        'create',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'If false, match results will be returned, but a new '
+            'facility or facility match will not be saved'),
+    ),
+    openapi.Parameter(
+        'public',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'If false and a new facility or facility match is '
+            'created, the contributor will not be publicly '
+            'associated with the facility'),
+    ),
+    openapi.Parameter(
+        'textonlyfallback',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'If true and no confident matches were made then '
+            'attempt to make a text-only match of the facility '
+            'name. If more than 5 text matches are made only the '
+            '5 highest confidence results are returned'),
+    ),
+]
+
 class FacilitiesViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         mixins.DestroyModelMixin,
@@ -694,140 +861,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     serializer_class = FacilitySerializer
     pagination_class = FacilitiesGeoJSONPagination
 
-    @swagger_auto_schema(manual_parameters=[
-        openapi.Parameter(
-            'q',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='Facility Name or OS Hub ID',
-        ),
-        openapi.Parameter(
-            'name',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='Facility Name (DEPRECATED; use `q` instead)'
-        ),
-        openapi.Parameter(
-            'contributors',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_INTEGER,
-            required=False,
-            description='Contributor ID',
-        ),
-        openapi.Parameter(
-            'lists',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_INTEGER,
-            required=False,
-            description='List ID',
-        ),
-        openapi.Parameter(
-            'contributor_types',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='Contributor Type',
-        ),
-        openapi.Parameter(
-            'countries',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='Country Code',
-        ),
-        openapi.Parameter(
-            'combine_contributors',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description=(
-                'Set this to "AND" if the results should contain '
-                'facilities associated with ALL the specified '
-                'contributors.')
-        ),
-        openapi.Parameter(
-            'boundary',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description=(
-                'Pass a GeoJSON geometry to filter by '
-                'facilities within the boundaries of that geometry.')
-        ),
-        openapi.Parameter(
-            'parent_company',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description=(
-                'Pass a Contributor ID or Contributor name to filter '
-                'by facilities with that Parent Company.')
-        ),
-        openapi.Parameter(
-            'facility_type',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='Facility type',
-        ),
-        openapi.Parameter(
-            'processing_type',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='Processing type',
-        ),
-        openapi.Parameter(
-            'product_type',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='Product type',
-        ),
-        openapi.Parameter(
-            'number_of_workers',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description=(
-                'Submit one of several standardized ranges to filter '
-                'by facilities with a number_of_workers matching '
-                'those values. Options are: "Less than 1000", '
-                '"1001-5000", "5001-10000", or "More than 10000".'
-            ),
-        ),
-        openapi.Parameter(
-            'native_language_name',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description='The native language name of the facility',
-        ),
-        openapi.Parameter(
-            'detail',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_BOOLEAN,
-            required=False,
-            description=(
-                'Set this to true to return additional detail about '
-                'contributors and extended fields with each result. '
-                'setting this to true will make the response '
-                'significantly slower to return.'),
-        ),
-        openapi.Parameter(
-            'sectors',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            required=False,
-            description=(
-                'The sectors that this facility belongs to. '
-                'Values must match those returned from the '
-                '`GET /api/sectors` endpoint'
-                )
-        )
-    ])
+    @swagger_auto_schema(manual_parameters=facilities_list_parameters)
     def list(self, request):
         """
         Returns a list of facilities in GeoJSON format for a given query.
@@ -956,38 +990,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         type=openapi.TYPE_OBJECT,
         description='The country, name, address and sector(s) of the '
                     'facility. See the sample request body above.',
-    ), manual_parameters=[
-        openapi.Parameter(
-            'create',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_BOOLEAN,
-            required=False,
-            description=(
-                'If false, match results will be returned, but a new '
-                'facility or facility match will not be saved'),
-        ),
-        openapi.Parameter(
-            'public',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_BOOLEAN,
-            required=False,
-            description=(
-                'If false and a new facility or facility match is '
-                'created, the contributor will not be publicly '
-                'associated with the facility'),
-        ),
-        openapi.Parameter(
-            'textonlyfallback',
-            openapi.IN_QUERY,
-            type=openapi.TYPE_BOOLEAN,
-            required=False,
-            description=(
-                'If true and no confident matches were made then '
-                'attempt to make a text-only match of the facility '
-                'name. If more than 5 text matches are made only the '
-                '5 highest confidence results are returned'),
-        ),
-    ], responses={201: ''})
+    ), manual_parameters=facilities_create_parameters, responses={201: ''})
     @transaction.atomic
     def create(self, request):
         """
