@@ -1,4 +1,4 @@
-FROM quay.io/azavea/django:2.2-python3.7-slim
+FROM quay.io/azavea/django:3.2-python3.7-slim
 
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src
@@ -9,7 +9,7 @@ RUN set -ex \
     build-essential \
     " \
     && deps=" \
-    postgresql-client-12 \
+    postgresql-client-13 \
     " \
     && apt-get update && apt-get install -y $buildDeps $deps --no-install-recommends \
     && pip install --no-cache-dir -r requirements.txt \
