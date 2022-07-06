@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+- Added a script to automate restoring an anonymized production snapshot [#1948](https://github.com/open-apparel-registry/open-apparel-registry/pull/1948)
 
 ### Changed
 
