@@ -1599,7 +1599,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             list_item.save()
 
         match = facility.get_created_from_match()
-        match.changeReason = 'Deleted {}'.format(facility.id)
+        match._change_reason = 'Deleted {}'.format(facility.id)
         match.delete()
 
         other_matches = facility.get_other_matches()
@@ -1635,7 +1635,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 )
 
                 best_match.facility = promoted_facility
-                best_match.changeReason = (
+                best_match._change_reason = (
                     'Deleted {} and promoted {}'.format(
                         facility.id,
                         promoted_facility.id
@@ -1656,7 +1656,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 for other_match in other_matches:
                     if other_match.id != best_match.id:
                         other_match.facility = promoted_facility
-                        other_match.changeReason = (
+                        other_match._change_reason = (
                             'Deleted {} and promoted {}'.format(
                                 facility.id,
                                 promoted_facility.id
@@ -1677,7 +1677,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
                 for alias in FacilityAlias.objects.filter(facility=facility):
                     oar_id = alias.oar_id
-                    alias.changeReason = 'Deleted {} and promoted {}'.format(
+                    alias._change_reason = 'Deleted {} and promoted {}'.format(
                         facility.id,
                         promoted_facility.id)
                     alias.delete()
@@ -1687,7 +1687,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         reason=FacilityAlias.DELETE)
             else:
                 for other_match in other_matches:
-                    other_match.changeReason = 'Deleted {}'.format(facility.id)
+                    other_match._change_reason = 'Deleted {}'.format(facility.id)
                     other_match.delete()
 
                     other_item = other_match.facility_list_item
@@ -1703,11 +1703,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     other_item.save()
 
         for claim in FacilityClaim.objects.filter(facility=facility):
-            claim.changeReason = 'Deleted {}'.format(facility.id)
+            claim._change_reason = 'Deleted {}'.format(facility.id)
             claim.delete()
 
         for alias in FacilityAlias.objects.filter(facility=facility):
-            alias.changeReason = 'Deleted {}'.format(facility.id)
+            alias._change_reason = 'Deleted {}'.format(facility.id)
             alias.delete()
 
         facility.delete()
@@ -1898,7 +1898,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         for merge_match in merge.facilitymatch_set.all():
             merge_match.facility = target
             merge_match.status = FacilityMatch.MERGED
-            merge_match.changeReason = 'Merged {} into {}'.format(
+            merge_match._change_reason = 'Merged {} into {}'.format(
                 merge.id, target.id)
             merge_match.save()
 
@@ -1947,10 +1947,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     'Merging {} into {} which already has an approved claim'
                 claim.status_change_reason = \
                     change_reason_template.format(merge.id, target.id)
-                claim.changeReason = \
+                claim._change_reason = \
                     change_reason_template.format(merge.id, target.id)
             else:
-                claim.changeReason = \
+                claim._change_reason = \
                     'Merging {} into {}'.format(merge.id, target.id)
             claim.save()
 
@@ -1960,7 +1960,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         for alias in FacilityAlias.objects.filter(facility=merge):
             oar_id = alias.oar_id
-            alias.changeReason = 'Merging {} into {}'.format(
+            alias._change_reason = 'Merging {} into {}'.format(
                 merge.id,
                 target.id)
             alias.delete()
@@ -1976,7 +1976,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         # any change to this message will also need to
         # be made in the `facility_history.py` module's
         # `create_facility_history_dictionary` function
-        merge.changeReason = 'Merged with {}'.format(target.id)
+        merge._change_reason = 'Merged with {}'.format(target.id)
 
         FacilityIndex.objects.get(id=merge.id).delete()
         merge.delete()
@@ -2249,7 +2249,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             facility.ppe_contact_email = \
                 match.facility_list_item.ppe_contact_email
             facility.ppe_website = match.facility_list_item.ppe_website
-            facility.changeReason = reason
+            facility._change_reason = reason
             facility.save()
 
             now = str(datetime.utcnow())
@@ -2337,7 +2337,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         # any change to this message will also need to
         # be made in the `facility_history.py` module's
         # `create_facility_history_dictionary` function
-        facility.changeReason = \
+        facility._change_reason = \
             'Submitted a new FacilityLocation ({})'.format(
                 facility_location.id)
         facility.save()
@@ -2494,7 +2494,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for match in matches:
                 if match.is_active:
                     match.is_active = False
-                    match.changeReason = create_dissociate_match_change_reason(
+                    match._change_reason = create_dissociate_match_change_reason(
                         match.facility_list_item,
                         facility,
                     )
@@ -2965,7 +2965,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             for item in matches_to_deactivate:
                 item.is_active = False
 
-                item.changeReason = create_dissociate_match_change_reason(
+                item._change_reason = create_dissociate_match_change_reason(
                     facility_list_item,
                     item.facility,
                 )
@@ -3473,7 +3473,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
         facility_list_item = facility_match.facility_list_item
 
         facility_match.status = FacilityMatch.CONFIRMED
-        facility_match.changeReason = create_associate_match_change_reason(
+        facility_match._change_reason = create_associate_match_change_reason(
             facility_match.facility_list_item,
             facility_match.facility,
         )
