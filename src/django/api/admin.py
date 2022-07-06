@@ -1,5 +1,6 @@
 import json
 
+from django.urls import path
 from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.contrib.auth.admin import UserAdmin
@@ -19,15 +20,14 @@ class ApiAdminSite(AdminSite):
     site_header = 'Open Supply Hub Admin'
 
     def get_urls(self):
-        from django.conf.urls import url
         base_urls = super(ApiAdminSite, self).get_urls()
         urls = [
-            url(r'^reports/(?P<name>[\w-]+)/$',
-                self.admin_view(self.report_view)),
-            url(r'^reports/$', self.admin_view(self.reports_list_view),
-                name='reports')
+            path('reports/<str:name>/',
+                 self.admin_view(self.report_view)),
+            path('reports/', self.admin_view(self.reports_list_view),
+                 name='reports')
         ]
-        return base_urls + urls
+        return urls + base_urls
 
     def report_view(self, request, name):
         context = run_report(name)
