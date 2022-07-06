@@ -27,7 +27,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
-from rest_framework import viewsets, status, mixins, schemas
+from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
@@ -39,8 +39,7 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        renderer_classes,
-                                       action,
-                                       schema)
+                                       action)
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from drf_yasg import openapi
@@ -848,6 +847,7 @@ facilities_create_parameters = [
             '5 highest confidence results are returned'),
     ),
 ]
+
 
 class FacilitiesViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
@@ -1720,7 +1720,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @swagger_auto_schema(paginator_inspectors=[DisabledPaginationInspector], responses={200: ''})
+    @swagger_auto_schema(paginator_inspectors=[DisabledPaginationInspector],
+                         responses={200: ''})
     @action(detail=False, methods=['get'])
     def count(self, request):
         """
@@ -2407,7 +2408,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         return Response(facility_history)
 
-    @swagger_auto_schema(request_body=no_body, responses={200: FacilityDetailsSerializer})
+    @swagger_auto_schema(request_body=no_body,
+                         responses={200: FacilityDetailsSerializer})
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,),
             url_path='dissociate')
@@ -3736,6 +3738,7 @@ facility_activity_report_schema = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     description=('The reason for the report status change.'),
 )
+
 
 def update_facility_activity_report_status(facility_activity_report,
                                            request, status):
