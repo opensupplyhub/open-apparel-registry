@@ -1687,7 +1687,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         reason=FacilityAlias.DELETE)
             else:
                 for other_match in other_matches:
-                    other_match._change_reason = 'Deleted {}'.format(facility.id)
+                    other_match._change_reason = 'Deleted {}'.format(
+                        facility.id)
                     other_match.delete()
 
                     other_item = other_match.facility_list_item
@@ -2494,10 +2495,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for match in matches:
                 if match.is_active:
                     match.is_active = False
-                    match._change_reason = create_dissociate_match_change_reason(
-                        match.facility_list_item,
-                        facility,
-                    )
+                    match._change_reason = \
+                        create_dissociate_match_change_reason(
+                            match.facility_list_item,
+                            facility)
                     match.save()
 
         context = {'request': request}
