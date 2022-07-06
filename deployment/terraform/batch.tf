@@ -1,10 +1,14 @@
 resource "aws_batch_compute_environment" "default" {
   depends_on = ["aws_iam_role_policy_attachment.batch_policy"]
 
-  compute_environment_name = "batch${local.short}DefaultComputeEnvironment"
-  type                     = "MANAGED"
-  state                    = "ENABLED"
-  service_role             = "${aws_iam_role.container_instance_batch.arn}"
+  compute_environment_name_prefix = "batch${local.short}DefaultComputeEnvironment"
+  type                            = "MANAGED"
+  state                           = "ENABLED"
+  service_role                    = "${aws_iam_role.container_instance_batch.arn}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   compute_resources {
     type           = "SPOT"
