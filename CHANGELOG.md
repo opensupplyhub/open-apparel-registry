@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rename OAR to OS Hub / Open Apparel Registry to Open Supply Hub [#1935](https://github.com/open-apparel-registry/open-apparel-registry/pull/1935)
 - Update favicon images with OS Hub logo [#1938](https://github.com/open-apparel-registry/open-apparel-registry/pull/1938)
 - Use name prefix and create before destroy for batch compute [#1952](https://github.com/open-apparel-registry/open-apparel-registry/pull/1952)
+- Switched from `django-swagger` to `drf-yasg` [#1951](https://github.com/open-apparel-registry/open-apparel-registry/pull/1951/files)
 
 ### Deprecated
 

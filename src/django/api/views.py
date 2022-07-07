@@ -27,7 +27,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
-from rest_framework import viewsets, status, mixins, schemas
+from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import (ValidationError,
@@ -39,23 +39,22 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        renderer_classes,
-                                       action,
-                                       schema)
+                                       action)
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.filters import BaseFilterBackend
-from rest_framework.schemas.coreapi import AutoSchema
-from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
+from drf_yasg import openapi
+from drf_yasg.utils import no_body, swagger_auto_schema
+from drf_yasg.inspectors import PaginatorInspector
+
 from rest_auth.views import LoginView, LogoutView
 from allauth.account.models import EmailAddress
 from allauth.account.utils import complete_signup
-import coreapi
+
 from waffle import switch_is_active, flag_is_active
 from waffle.decorators import waffle_switch
 from waffle.models import Switch
 
 
-from oar import urls
 from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
@@ -199,15 +198,6 @@ def add_user_to_mailing_list(email, name, contrib_type):
         requests.post(endpoint, data=data, auth=auth)
     except Exception:
         _report_mailchimp_error_to_rollbar(email, name, contrib_type)
-
-
-@api_view()
-@permission_classes([AllowAny])
-@renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
-def schema_view(request):
-    generator = schemas.SchemaGenerator(title='Open Supply Hub API',
-                                        patterns=urls.public_apis)
-    return Response(generator.get_schema())
 
 
 class SubmitNewUserForm(CreateAPIView):
@@ -551,6 +541,7 @@ def all_countries(request):
 def active_countries_count(request):
     """
     Returns a count of disctinct country codes for active facilities.
+
     ## Sample Response
 
         { "count": 52 }
@@ -661,18 +652,9 @@ def sectors(request):
     return Response(sorted(item_sectors.union(claim_sectors)))
 
 
-class RootAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        if 'log-download' in path:
-            return None
-
-        return super(RootAutoSchema, self).get_link(
-            path, method, base_url)
-
-
+@swagger_auto_schema(methods=['POST'], auto_schema=None)
 @api_view(['POST'])
 @permission_classes([IsRegisteredAndConfirmed])
-@schema(RootAutoSchema())
 def log_download(request):
     params = LogDownloadQueryParamsSerializer(data=request.query_params)
     if not params.is_valid():
@@ -691,243 +673,182 @@ def log_download(request):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class FacilitiesAPIFilterBackend(BaseFilterBackend):
-    def get_schema_fields(self, view):
-        if view.action == 'list':
-            fields = [
-                coreapi.Field(
-                    name='q',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='Facility Name or OS Hub ID',
-                ),
-                coreapi.Field(
-                    name='name',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='Facility Name (DEPRECATED; use `q` instead)'
-                ),
-                coreapi.Field(
-                    name='contributors',
-                    location='query',
-                    type='integer',
-                    required=False,
-                    description='Contributor ID',
-                ),
-                coreapi.Field(
-                    name='lists',
-                    location='query',
-                    type='integer',
-                    required=False,
-                    description='List ID',
-                ),
-                coreapi.Field(
-                    name='contributor_types',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='Contributor Type',
-                ),
-                coreapi.Field(
-                    name='countries',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='Country Code',
-                ),
-                coreapi.Field(
-                    name='combine_contributors',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description=(
-                        'Set this to "AND" if the results should contain '
-                        'facilities associated with ALL the specified '
-                        'contributors.')
-                ),
-                coreapi.Field(
-                    name='boundary',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description=(
-                        'Pass a GeoJSON geometry to filter by '
-                        'facilities within the boundaries of that geometry.')
-                ),
-                coreapi.Field(
-                    name='parent_company',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description=(
-                        'Pass a Contributor ID or Contributor name to filter '
-                        'by facilities with that Parent Company.')
-                ),
-                coreapi.Field(
-                    name='facility_type',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='Facility type',
-                ),
-                coreapi.Field(
-                    name='processing_type',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='Processing type',
-                ),
-                coreapi.Field(
-                    name='product_type',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='Product type',
-                ),
-                coreapi.Field(
-                    name='number_of_workers',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description=(
-                        'Submit one of several standardized ranges to filter '
-                        'by facilities with a number_of_workers matching '
-                        'those values. Options are: "Less than 1000", '
-                        '"1001-5000", "5001-10000", or "More than 10000".'
-                    ),
-                ),
-                coreapi.Field(
-                    name='native_language_name',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description='The native language name of the facility',
-                ),
-                coreapi.Field(
-                    name='detail',
-                    location='query',
-                    type='boolean',
-                    required=False,
-                    description=(
-                        'Set this to true to return additional detail about '
-                        'contributors and extended fields with each result. '
-                        'setting this to true will make the response '
-                        'significantly slower to return.'),
-                ),
-                coreapi.Field(
-                    name='sectors',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description=(
-                        'The sectors that this facility belongs to. '
-                        'Values must match those returned from the '
-                        '`GET /api/sectors` endpoint'
-                        )
-                )
-            ]
-
-            return fields
-
-        if view.action == 'create':
-            return [
-                coreapi.Field(
-                    name='create',
-                    location='query',
-                    type='boolean',
-                    required=False,
-                    description=(
-                        'If false, match results will be returned, but a new '
-                        'facility or facility match will not be saved'),
-                ),
-                coreapi.Field(
-                    name='public',
-                    location='query',
-                    type='boolean',
-                    required=False,
-                    description=(
-                        'If false and a new facility or facility match is '
-                        'created, the contributor will not be publicly '
-                        'associated with the facility'),
-                ),
-                coreapi.Field(
-                    name='textonlyfallback',
-                    location='query',
-                    type='boolean',
-                    required=False,
-                    description=(
-                        'If true and no confident matches were made then '
-                        'attempt to make a text-only match of the facility '
-                        'name. If more than 5 text matches are made only the '
-                        '5 highest confidence results are returned'),
-                ),
-            ]
-
+class DisabledPaginationInspector(PaginatorInspector):
+    def get_paginator_parameters(self, paginator):
         return []
 
-
-class FacilitiesAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        if method == 'DELETE':
-            return None
-        if 'merge' in path:
-            return None
-
-        if 'claim' in path:
-            return None
-
-        if 'split' in path:
-            return None
-
-        if 'move' in path:
-            return None
-
-        if 'promote' in path:
-            return None
-
-        if 'update-location' in path:
-            return None
-
-        if 'link' in path:
-            return None
-
-        return super(FacilitiesAutoSchema, self).get_link(
-            path, method, base_url)
-
-    def _allows_filters(self, path, method):
-        return True
-
-    def get_serializer_fields(self, path, method):
-        if method == 'POST' and 'report' in path:
-            return [
-                coreapi.Field(
-                    name='data',
-                    location='body',
-                    description=(
-                        'The closure state of the facility. Must be OPEN or '
-                        'CLOSED. See the sample request body above.'),
-                    required=True,
-                )
-            ]
-
-        if method == 'POST' and 'dissociate' not in path:
-            return [
-                coreapi.Field(
-                    name='data',
-                    location='body',
-                    description=(
-                        'The country, name, address and sector(s) of the '
-                        'facility. See the sample request body above.'),
-                    required=True,
-                )
-            ]
-
-        return []
+    def get_paginated_response(self, paginator, response_schema):
+        return response_schema
 
 
-@schema(FacilitiesAutoSchema())
+facilities_list_parameters = [
+    openapi.Parameter(
+        'q',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Facility Name or OS Hub ID',
+    ),
+    openapi.Parameter(
+        'name',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Facility Name (DEPRECATED; use `q` instead)'
+    ),
+    openapi.Parameter(
+        'contributors',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        required=False,
+        description='Contributor ID',
+    ),
+    openapi.Parameter(
+        'lists',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_INTEGER,
+        required=False,
+        description='List ID',
+    ),
+    openapi.Parameter(
+        'contributor_types',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Contributor Type',
+    ),
+    openapi.Parameter(
+        'countries',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Country Code',
+    ),
+    openapi.Parameter(
+        'combine_contributors',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Set this to "AND" if the results should contain '
+            'facilities associated with ALL the specified '
+            'contributors.')
+    ),
+    openapi.Parameter(
+        'boundary',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Pass a GeoJSON geometry to filter by '
+            'facilities within the boundaries of that geometry.')
+    ),
+    openapi.Parameter(
+        'parent_company',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Pass a Contributor ID or Contributor name to filter '
+            'by facilities with that Parent Company.')
+    ),
+    openapi.Parameter(
+        'facility_type',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Facility type',
+    ),
+    openapi.Parameter(
+        'processing_type',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Processing type',
+    ),
+    openapi.Parameter(
+        'product_type',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='Product type',
+    ),
+    openapi.Parameter(
+        'number_of_workers',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'Submit one of several standardized ranges to filter '
+            'by facilities with a number_of_workers matching '
+            'those values. Options are: "Less than 1000", '
+            '"1001-5000", "5001-10000", or "More than 10000".'
+        ),
+    ),
+    openapi.Parameter(
+        'native_language_name',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description='The native language name of the facility',
+    ),
+    openapi.Parameter(
+        'detail',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'Set this to true to return additional detail about '
+            'contributors and extended fields with each result. '
+            'setting this to true will make the response '
+            'significantly slower to return.'),
+    ),
+    openapi.Parameter(
+        'sectors',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=False,
+        description=(
+            'The sectors that this facility belongs to. '
+            'Values must match those returned from the '
+            '`GET /api/sectors` endpoint'
+            )
+    )
+]
+facilities_create_parameters = [
+    openapi.Parameter(
+        'create',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'If false, match results will be returned, but a new '
+            'facility or facility match will not be saved'),
+    ),
+    openapi.Parameter(
+        'public',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'If false and a new facility or facility match is '
+            'created, the contributor will not be publicly '
+            'associated with the facility'),
+    ),
+    openapi.Parameter(
+        'textonlyfallback',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_BOOLEAN,
+        required=False,
+        description=(
+            'If true and no confident matches were made then '
+            'attempt to make a text-only match of the facility '
+            'name. If more than 5 text matches are made only the '
+            '5 highest confidence results are returned'),
+    ),
+]
+
+
 class FacilitiesViewSet(mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         mixins.DestroyModelMixin,
@@ -939,8 +860,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
     pagination_class = FacilitiesGeoJSONPagination
-    filter_backends = (FacilitiesAPIFilterBackend,)
 
+    @swagger_auto_schema(manual_parameters=facilities_list_parameters)
     def list(self, request):
         """
         Returns a list of facilities in GeoJSON format for a given query.
@@ -1018,6 +939,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         response_data['extent'] = extent
         return Response(response_data)
 
+    @swagger_auto_schema(responses={200: FacilityDetailsSerializer})
     def retrieve(self, request, pk=None):
         """
         Returns the facility specified by a given OS Hub ID in GeoJSON format.
@@ -1063,6 +985,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             oar_id = aliases.first().facility.id
             return redirect('/api/facilities/' + oar_id)
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        'data',
+        type=openapi.TYPE_OBJECT,
+        description='The country, name, address and sector(s) of the '
+                    'facility. See the sample request body above.',
+    ), manual_parameters=facilities_create_parameters, responses={201: ''})
     @transaction.atomic
     def create(self, request):
         """
@@ -1072,8 +1000,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         match.
 
         **NOTE** The form below lists the return status code as 201. When
-        POSTing data with `create=false` the return status will be 200, not
-        201.
+        POSTing data with `create=false` the return status will be 200, not 201.
 
         ## Sample Request Body
 
@@ -1635,6 +1562,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         else:
             return Response(result, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(auto_schema=None)
     @transaction.atomic
     def destroy(self, request, pk=None):
         if request.user.is_anonymous:
@@ -1792,6 +1720,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @swagger_auto_schema(paginator_inspectors=[DisabledPaginationInspector],
+                         responses={200: ''})
     @action(detail=False, methods=['get'])
     def count(self, request):
         """
@@ -1804,6 +1734,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         count = Facility.objects.count()
         return Response({"count": count})
 
+    @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,))
     @transaction.atomic
@@ -1894,6 +1825,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Contributor.DoesNotExist:
             raise NotFound()
 
+    @swagger_auto_schema(auto_schema=None, methods=['GET'])
     @action(detail=False, methods=['GET'],
             permission_classes=(IsRegisteredAndConfirmed,))
     @transaction.atomic
@@ -1929,6 +1861,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'The current User does not have an associated Contributor')
         return Response(FacilityClaimSerializer(claims, many=True).data)
 
+    @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=False, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,))
     @transaction.atomic
@@ -2052,6 +1985,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         response_data = FacilityDetailsSerializer(target, context=context).data
         return Response(response_data)
 
+    @swagger_auto_schema(auto_schema=None, methods=['GET', 'POST'])
     @action(detail=True, methods=['GET', 'POST'],
             permission_classes=(IsRegisteredAndConfirmed,))
     @transaction.atomic
@@ -2188,6 +2122,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
+    @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,))
     @transaction.atomic
@@ -2248,6 +2183,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
+    @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,))
     @transaction.atomic
@@ -2365,6 +2301,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
+    @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,),
             url_path='update-location')
@@ -2409,6 +2346,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             facility, context=context).data
         return Response(facility_data)
 
+    @swagger_auto_schema(responses={200: ''})
     @action(detail=True, methods=['GET'],
             permission_classes=(IsRegisteredAndConfirmed,),
             url_path='history')
@@ -2470,6 +2408,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         return Response(facility_history)
 
+    @swagger_auto_schema(request_body=no_body,
+                         responses={200: FacilityDetailsSerializer})
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,),
             url_path='dissociate')
@@ -2564,6 +2504,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             facility, context=context).data
         return Response(facility_data)
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        'data',
+        type=openapi.TYPE_OBJECT,
+        description='The closure state of the facility. Must be OPEN or '
+                    'CLOSED. See the sample request body above.',
+    ), responses={200: FacilityActivityReportSerializer})
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,),
             url_path='report')
@@ -2606,6 +2552,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         serializer = FacilityActivityReportSerializer(facility_activity_report)
         return Response(serializer.data)
 
+    @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
             permission_classes=(IsRegisteredAndConfirmed,))
     @transaction.atomic
@@ -2632,30 +2579,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         except Facility.DoesNotExist:
             raise NotFound()
-
-
-class FacilityListViewSetSchema(AutoSchema):
-    def get_serializer_fields(self, path, method):
-        if path[-7:] == '/items/':
-            statuses = ', '.join(
-                [c[0] for c in FacilityListItem.STATUS_CHOICES])
-            return [
-                coreapi.Field(
-                    name='status',
-                    location='query',
-                    type='string',
-                    required=False,
-                    description=('Only return items matching this status.'
-                                 'Must be one of {}').format(statuses),
-                ),
-            ]
-
-        return []
-
-    # This suppresses the FacilityList documentation altogether. See:
-    # https://github.com/open-apparel-registry/open-apparel-registry/issues/349
-    def get_link(self, path, method, base_url):
-        return None
 
 
 def create_nonstandard_fields(fields, contributor):
@@ -2687,8 +2610,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     serializer_class = FacilityListSerializer
     permission_classes = [IsRegisteredAndConfirmed]
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
-
-    schema = FacilityListViewSetSchema()
+    swagger_schema = None
 
     def _validate_header(self, header):
         if header is None or header == '':
@@ -3077,12 +2999,6 @@ def api_feature_flags(request):
     return Response(response_data)
 
 
-class FacilityClaimsAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
-
-
-@schema(FacilityClaimsAutoSchema())
 class FacilityClaimViewSet(viewsets.ModelViewSet):
     """
     Viewset for admin operations on FacilityClaims.
@@ -3090,6 +3006,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     queryset = FacilityClaim.objects.all()
     serializer_class = FacilityClaimSerializer
     permission_classes = [IsAdminUser]
+    swagger_schema = None
 
     def create(self, request):
         pass
@@ -3432,18 +3349,6 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         return Response(response_data)
 
 
-class FacilityMatchAutoSchema(AutoSchema):
-    def _allows_filters(self, path, method):
-        return True
-
-    def get_serializer_fields(self, path, method):
-        if method == 'POST':
-            return []
-        return super(FacilityMatchAutoSchema, self).get_serializer_fields(
-            path, method)
-
-
-@schema(FacilityMatchAutoSchema())
 class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                            viewsets.GenericViewSet):
     queryset = FacilityMatch.objects.all()
@@ -3472,10 +3377,12 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
 
         return facility_match
 
+    @swagger_auto_schema(responses={200: ''})
     def retrieve(self, request, pk=None):
         self.validate_request(request, pk)
         return super(FacilityMatchViewSet, self).retrieve(request, pk=pk)
 
+    @swagger_auto_schema(request_body=no_body, responses={200: ''})
     @transaction.atomic
     @action(detail=True, methods=['POST'])
     def confirm(self, request, pk=None):
@@ -3603,6 +3510,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
 
         return Response(response_data)
 
+    @swagger_auto_schema(request_body=no_body, responses={200: ''})
     @transaction.atomic
     @action(detail=True, methods=['POST'])
     def reject(self, request, pk=None):
@@ -3792,12 +3700,6 @@ def get_tile(request, layer, cachekey, z, x, y, ext):
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
-class ApiBlockAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
-
-
-@schema(ApiBlockAutoSchema())
 class ApiBlockViewSet(mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
@@ -3807,6 +3709,7 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     """
     queryset = ApiBlock.objects.all()
     serializer_class = ApiBlockSerializer
+    swagger_schema = None
 
     def validate_request(self, request):
         if request.user.is_anonymous:
@@ -3830,19 +3733,11 @@ class ApiBlockViewSet(mixins.ListModelMixin,
         return super(ApiBlockViewSet, self).update(request, pk=pk)
 
 
-class FacilityActivityReportAutoSchema(AutoSchema):
-    def get_serializer_fields(self, path, method):
-        if method == 'POST':
-            return [
-                coreapi.Field(
-                    name='data',
-                    location='body',
-                    description=('The reason for the report status change.'),
-                    required=True,
-                )
-            ]
-        return super(FacilityActivityReportAutoSchema,
-                     self).get_serializer_fields(path, method)
+facility_activity_report_schema = openapi.Schema(
+    'data',
+    type=openapi.TYPE_OBJECT,
+    description=('The reason for the report status change.'),
+)
 
 
 def update_facility_activity_report_status(facility_activity_report,
@@ -3873,7 +3768,6 @@ class IsListAndAdminOrNotList(IsAdminUser):
         return view.action != 'list' or is_admin
 
 
-@schema(FacilityActivityReportAutoSchema())
 class FacilityActivityReportViewSet(viewsets.GenericViewSet):
     """
     Manage FacilityActivityReports.
@@ -3882,6 +3776,8 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
     serializer_class = FacilityActivityReportSerializer
     permission_classes = (IsListAndAdminOrNotList,)
 
+    @swagger_auto_schema(request_body=facility_activity_report_schema,
+                         responses={200: FacilityActivityReportSerializer})
     @action(detail=True, methods=['POST'],
             permission_classes=(IsAdminUser,),
             url_path='approve')
@@ -3916,6 +3812,8 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
 
         return Response(response_data)
 
+    @swagger_auto_schema(request_body=facility_activity_report_schema,
+                         responses={200: FacilityActivityReportSerializer})
     @action(detail=True, methods=['POST'],
             permission_classes=(IsAdminUser,),
             url_path='reject')
@@ -3950,28 +3848,19 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
         return Response(response_data)
 
 
-class ContributorFacilityListAutoSchema(AutoSchema):
-    def get_serializer_fields(self, path, method):
-        if method == 'GET':
-            return [
-                coreapi.Field(
-                    name='contributors',
-                    location='query',
-                    description=('The contributor ID.'),
-                    required=True,
-                )
-            ]
-        return super(ContributorFacilityListAutoSchema,
-                     self).get_serializer_fields(path, method)
-
-
-@schema(ContributorFacilityListAutoSchema())
 class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
     """
     View active Facility Lists filtered by Contributor.
     """
     queryset = FacilityList.objects.filter(source__is_active=True)
 
+    @swagger_auto_schema(manual_parameters=[openapi.Parameter(
+        'contributors',
+        openapi.IN_QUERY,
+        description='The contributor ID.',
+        type=openapi.TYPE_INTEGER,
+        required=True
+    )], responses={200: ''})
     def list(self, request):
         params = ContributorListQueryParamsSerializer(
             data=request.query_params)
@@ -3989,11 +3878,6 @@ class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
         ]
 
         return Response(response_data)
-
-
-class EmbedConfigAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
 
 
 def create_embed_fields(fields_data, embed_config, previously_searchable=None):
@@ -4030,7 +3914,6 @@ def get_contributor(request):
     return contributor
 
 
-@schema(EmbedConfigAutoSchema())
 class EmbedConfigViewSet(mixins.ListModelMixin,
                          mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
@@ -4041,6 +3924,7 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
     """
     queryset = EmbedConfig.objects.all()
     serializer_class = EmbedConfigSerializer
+    swagger_schema = None
 
     @transaction.atomic
     def create(self, request):
@@ -4103,18 +3987,13 @@ class EmbedConfigViewSet(mixins.ListModelMixin,
         return super(EmbedConfigViewSet, self).update(request, pk=pk)
 
 
-class NonstandardFieldsAutoSchema(AutoSchema):
-    def get_link(self, path, method, base_url):
-        return None
-
-
-@schema(NonstandardFieldsAutoSchema())
 class NonstandardFieldsViewSet(mixins.ListModelMixin,
                                viewsets.GenericViewSet):
     """
     View nonstandard fields submitted by a contributor.
     """
     queryset = NonstandardField.objects.all()
+    swagger_schema = None
 
     def list(self, request):
         if not request.user.is_authenticated:

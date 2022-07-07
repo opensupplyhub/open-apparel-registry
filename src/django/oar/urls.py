@@ -21,8 +21,9 @@ from api import views
 from api.admin import admin_site
 from web.views import environment
 
-from rest_framework import routers
-from rest_framework_swagger.views import get_swagger_view
+from rest_framework import routers, permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from oar import settings
 
@@ -67,6 +68,19 @@ public_apis = [
     url(r'^api/sectors', views.sectors, name='sectors'),
 ]
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title='Open Supply Hub API',
+        default_version='1',
+        description='Open Supply Hub API',
+        terms_of_service="https://info.openapparel.org/terms-of-service",
+        license=openapi.License(name='MIT', url='https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/LICENSE')  # NOQA
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+    patterns=[url("^", include(public_apis))],
+)
+
 info_apis = [
     url(r'^api/info/contributors/', views.active_contributors_count,
         name='active_contributors_count'),
@@ -77,13 +91,11 @@ info_apis = [
         name='facilities_count'),
 ]
 
-schema_view = get_swagger_view(title='Open Supply Hub API Documentation',
-                               patterns=public_apis)
-
 internal_apis = [
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^web/environment\.js', environment, name='environment'),
-    url(r'^api/docs/', views.schema_view),
+    url(r'^api/docs/$', schema_view.with_ui('swagger'),
+        name='schema-swagger-ui'),
     path('admin/', admin_site.urls),
     re_path(r'^health-check/', include('watchman.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
