@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction
 from django.db.models import Q, Max
+from django.utils import timezone
 
 from api.models import (Facility,
                         FacilityList,
@@ -103,7 +104,7 @@ def sort_exact_matches(exact_matches, active_item_ids, contributor):
 
 
 def exact_match_items(messy, contributor):
-    started = str(datetime.utcnow())
+    started = str(timezone.now())
 
     matched_items = FacilityListItem.objects \
         .filter(status__in=[FacilityListItem.MATCHED,
@@ -142,7 +143,7 @@ def exact_match_items(messy, contributor):
 
             results[messy_id] = exact_matches
 
-    finished = str(datetime.utcnow())
+    finished = str(timezone.now())
 
     return {
         'processed_list_item_ids': list(results.keys()),
@@ -329,7 +330,7 @@ def match_items(messy,
     finished -- The date and time at which the training and matching was
                 finished.
     """
-    started = str(datetime.utcnow())
+    started = str(timezone.now())
     if len(messy.keys()) > 0:
         no_geocoded_items = False
         try:
@@ -349,7 +350,7 @@ def match_items(messy,
         no_gazetteer_matches = Facility.objects.count() == 0
         no_geocoded_items = len(messy.keys()) == 0
 
-    finished = str(datetime.utcnow())
+    finished = str(timezone.now())
 
     item_matches = defaultdict(list)
     for matches in results:

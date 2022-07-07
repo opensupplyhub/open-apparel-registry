@@ -7,7 +7,6 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 
-from datetime import datetime
 from functools import reduce
 
 from django.core.files.uploadedfile import (InMemoryUploadedFile,
@@ -1282,7 +1281,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         text_only_fallback = params_serializer.validated_data[
             FacilityCreateQueryParams.TEXT_ONLY_FALLBACK]
 
-        parse_started = str(datetime.utcnow())
+        parse_started = str(timezone.now())
 
         source = Source.objects.create(
             contributor=request.user.contributor,
@@ -1326,7 +1325,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'action': ProcessingAction.PARSE,
                 'started_at': parse_started,
                 'error': False,
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
                 'is_geocoded': False,
             }]
         )
@@ -1356,7 +1355,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': True,
                 'message': error_message,
                 'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
             item.save()
             result['status'] = item.status
@@ -1364,7 +1363,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             return Response(result,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        geocode_started = str(datetime.utcnow())
+        geocode_started = str(timezone.now())
         try:
             geocode_result = geocode_address(address, country_code)
             if geocode_result['result_count'] > 0:
@@ -1392,7 +1391,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': False,
                 'skipped_geocoder': False,
                 'data': geocode_result['full_response'],
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
 
             item.save()
@@ -1404,14 +1403,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': True,
                 'message': str(e),
                 'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
             item.save()
             result['status'] = item.status
             return Response(result,
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        match_started = str(datetime.utcnow())
+        match_started = str(timezone.now())
 
         try:
             exact_match_results = exact_match_item(country_code, name, address,
@@ -1508,7 +1507,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': match_started,
                 'error': True,
                 'message': str(te),
-                'finished_at': str(datetime.utcnow())
+                'finished_at': str(timezone.now())
             })
             item.save()
             result['status'] = item.status
@@ -1525,7 +1524,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': True,
                 'message': str(e),
                 'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow())
+                'finished_at': str(timezone.now())
             })
             item.save()
             result['status'] = item.status
@@ -1581,7 +1580,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'Facilities with approved claims cannot be deleted'
             )
 
-        now = str(datetime.utcnow())
+        now = str(timezone.now())
         list_items = FacilityListItem \
             .objects \
             .filter(facility=facility) \
@@ -1895,7 +1894,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if target.conditionally_set_ppe(merge):
             target.save()
 
-        now = str(datetime.utcnow())
+        now = str(timezone.now())
         for merge_match in merge.facilitymatch_set.all():
             merge_match.facility = target
             merge_match.status = FacilityMatch.MERGED
@@ -1943,7 +1942,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     if claim.status == FacilityClaim.APPROVED
                     else FacilityClaim.DENIED)
                 claim.status_change_by = request.user
-                claim.status_change_date = datetime.utcnow()
+                claim.status_change_date = timezone.now()
                 change_reason_template = \
                     'Merging {} into {} which already has an approved claim'
                 claim.status_change_reason = \
@@ -2089,7 +2088,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             match_for_new_facility.save()
 
-            now = str(datetime.utcnow())
+            now = str(timezone.now())
 
             list_item_for_match.facility = new_facility
             list_item_for_match.processing_results.append({
@@ -2154,7 +2153,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             match.save()
 
-            now = str(datetime.utcnow())
+            now = str(timezone.now())
 
             list_item_for_match.facility = new_facility
             list_item_for_match.processing_results.append({
@@ -2253,7 +2252,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             facility._change_reason = reason
             facility.save()
 
-            now = str(datetime.utcnow())
+            now = str(timezone.now())
 
             match.facility_list_item.processing_results.append({
                 'action': ProcessingAction.PROMOTE_MATCH,
@@ -3077,7 +3076,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.status_change_reason = request.data.get('reason', '')
             claim.status_change_by = request.user
-            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status_change_date = timezone.now()
             claim.status = FacilityClaim.APPROVED
             claim.save()
 
@@ -3126,7 +3125,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.status_change_reason = request.data.get('reason', '')
             claim.status_change_by = request.user
-            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status_change_date = timezone.now()
             claim.status = FacilityClaim.DENIED
             claim.save()
 
@@ -3169,7 +3168,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.status_change_reason = request.data.get('reason', '')
             claim.status_change_by = request.user
-            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status_change_date = timezone.now()
             claim.status = FacilityClaim.REVOKED
             claim.save()
 
@@ -3612,7 +3611,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
 
             if (no_location or no_geocoding_results):
                 facility_list_item.status = FacilityListItem.ERROR_MATCHING
-                timestamp = str(datetime.utcnow())
+                timestamp = str(timezone.now())
                 facility_list_item.processing_results.append({
                     'action': ProcessingAction.CONFIRM,
                     'started_at': timestamp,
@@ -3745,7 +3744,7 @@ facility_activity_report_schema = openapi.Schema(
 def update_facility_activity_report_status(facility_activity_report,
                                            request, status):
     status_change_reason = request.data.get('status_change_reason')
-    now = str(datetime.utcnow())
+    now = str(timezone.now())
 
     facility_activity_report.status_change_reason = status_change_reason
     facility_activity_report.status_change_by = request.user

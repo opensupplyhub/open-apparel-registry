@@ -6,11 +6,10 @@ import sys
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from api.constants import CsvHeaderField, ProcessingAction
 from api.models import Facility, FacilityMatch, FacilityListItem
@@ -142,7 +141,7 @@ def get_country_code(country):
 
 
 def parse_facility_list_item(item):
-    started = str(datetime.utcnow())
+    started = str(timezone.now())
     if type(item) != FacilityListItem:
         raise ValueError('Argument must be a FacilityListItem')
     if item.status != FacilityListItem.UPLOADED:
@@ -212,7 +211,7 @@ def parse_facility_list_item(item):
                 'action': ProcessingAction.PARSE,
                 'started_at': started,
                 'error': False,
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
                 'is_geocoded': is_geocoded,
             })
         except ValidationError as ve:
@@ -243,7 +242,7 @@ def parse_facility_list_item(item):
                 'error': True,
                 'message': '\n'.join(messages),
                 'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
     except Exception as e:
         item.status = FacilityListItem.ERROR_PARSING
@@ -253,12 +252,12 @@ def parse_facility_list_item(item):
             'error': True,
             'message': str(e),
             'trace': traceback.format_exc(),
-            'finished_at': str(datetime.utcnow()),
+            'finished_at': str(timezone.now()),
         })
 
 
 def geocode_facility_list_item(item):
-    started = str(datetime.utcnow())
+    started = str(timezone.now())
     if type(item) != FacilityListItem:
         raise ValueError('Argument must be a FacilityListItem')
     if item.status != FacilityListItem.PARSED:
@@ -281,7 +280,7 @@ def geocode_facility_list_item(item):
                 'error': False,
                 'skipped_geocoder': False,
                 'data': data['full_response'],
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
                })
         else:
             item.status = FacilityListItem.GEOCODED
@@ -291,7 +290,7 @@ def geocode_facility_list_item(item):
                 'started_at': started,
                 'error': False,
                 'skipped_geocoder': True,
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
 
     except Exception as e:
@@ -302,7 +301,7 @@ def geocode_facility_list_item(item):
             'error': True,
             'message': str(e),
             'trace': traceback.format_exc(),
-            'finished_at': str(datetime.utcnow()),
+            'finished_at': str(timezone.now()),
         })
 
 

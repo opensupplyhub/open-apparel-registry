@@ -5,7 +5,6 @@ import os
 
 from openpyxl import load_workbook
 
-from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from unittest.mock import Mock, patch
 
@@ -3782,7 +3781,7 @@ class FacilityMergeTest(APITestCase):
         self.facility_2_claim.status = FacilityClaim.APPROVED
         self.facility_2_claim.save()
 
-        just_before_change = datetime.utcnow()
+        just_before_change = timezone.now()
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
         response = self.client.post(self.merge_url)
@@ -3796,11 +3795,9 @@ class FacilityMergeTest(APITestCase):
         self.assertEqual(FacilityClaim.REVOKED, self.facility_2_claim.status)
         self.assertEqual(self.superuser,
                          self.facility_2_claim.status_change_by)
-        # Modifying tzinfo avoids
-        # TypeError: can't compare offset-naive and offset-aware datetimes
         self.assertGreater(
-            self.facility_2_claim.status_change_date.replace(tzinfo=None),
-            just_before_change.replace(tzinfo=None))
+            self.facility_2_claim.status_change_date,
+            just_before_change)
 
     def test_required_params(self):
         self.client.login(email=self.superuser_email,
@@ -7264,8 +7261,8 @@ class PPEFieldTest(TestCase):
                 'recall_weight': 0.5,
                 'code_version': 'abcd1234',
             },
-            'started': str(datetime.utcnow()),
-            'finished': str(datetime.utcnow()),
+            'started': str(timezone.now()),
+            'finished': str(timezone.now()),
         }
 
     def test_match_populates_ppe(self):
@@ -8725,12 +8722,12 @@ class ExactMatchTest(FacilityAPITestCaseBase):
             'id': 1,
             'facility_id': 1,
             'source__contributor_id': self.contributor_2.id,
-            'updated_at': datetime.now(),
+            'updated_at': timezone.now(),
         }, {
             'id': 2,
             'facility_id': 2,
             'source__contributor_id': self.contributor.id,
-            'updated_at': datetime.now(),
+            'updated_at': timezone.now(),
         }]
         results = sort_exact_matches(matches, self.active_item_ids,
                                      self.contributor)
@@ -8742,12 +8739,12 @@ class ExactMatchTest(FacilityAPITestCaseBase):
             'id': 1,
             'facility_id': 3,
             'source__contributor_id': self.contributor.id,
-            'updated_at': datetime.now(),
+            'updated_at': timezone.now(),
         }, {
             'id': 1,
             'facility_id': 1,
             'source__contributor_id': self.contributor.id,
-            'updated_at': datetime.now(),
+            'updated_at': timezone.now(),
         }]
         results = sort_exact_matches(matches, self.active_item_ids,
                                      self.contributor)
@@ -8759,12 +8756,12 @@ class ExactMatchTest(FacilityAPITestCaseBase):
             'id': 1,
             'facility_id': 2,
             'source__contributor_id': self.contributor.id,
-            'updated_at': datetime.now().replace(year=2020),
+            'updated_at': timezone.now().replace(year=2020),
         }, {
             'id': 1,
             'facility_id': 1,
             'source__contributor_id': self.contributor.id,
-            'updated_at': datetime.now(),
+            'updated_at': timezone.now(),
         }]
         results = sort_exact_matches(matches, self.active_item_ids,
                                      self.contributor)

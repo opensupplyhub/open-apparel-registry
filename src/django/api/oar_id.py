@@ -1,7 +1,8 @@
 import base32_crockford
 import random
 
-from datetime import datetime
+from django.utils import timezone
+
 from api.countries import COUNTRY_NAMES
 
 
@@ -44,7 +45,7 @@ def make_oar_id(country_code, hyphenate=False):
     if country_code not in COUNTRY_NAMES:
         raise ValueError(
             '{0} is not a known country code'.format(country_code))
-    now = datetime.utcnow().timetuple()
+    now = timezone.now().timetuple()
     day = str(now.tm_year) + str(now.tm_yday).zfill(3)
     r = random_base_32_string(5)
     short_id = country_code + day + r

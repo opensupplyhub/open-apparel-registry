@@ -15,7 +15,8 @@ from api.mail import (send_api_notice, send_admin_api_notice, send_api_warning,
 
 
 def get_end_of_year(at_datetime):
-    return datetime.combine(at_datetime.replace(month=12, day=31), time.max)
+    return datetime.combine(at_datetime.replace(month=12, day=31), time.max,
+                            at_datetime.tzinfo)
 
 
 def get_api_block(contributor):
