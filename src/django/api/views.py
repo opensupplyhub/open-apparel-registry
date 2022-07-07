@@ -3859,7 +3859,7 @@ class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
         openapi.IN_QUERY,
         description='The contributor ID.',
         type=openapi.TYPE_INTEGER,
-        required=True
+        required=False
     )], responses={200: ''})
     def list(self, request):
         params = ContributorListQueryParamsSerializer(
