@@ -8983,6 +8983,22 @@ class FacilityDetailSerializerTest(TestCase):
         self.assertEqual(self.contrib_one_name,
                          data['properties']['sector'][0]['contributor_name'])
 
+    def test_excludes_null_sectors_from_approved_claim(self):
+        self.source_two.is_active = False
+        self.source_two.save()
+
+        FacilityClaim.objects.create(
+            contributor=self.contrib_two,
+            facility=self.facility,
+            status=FacilityClaim.APPROVED,
+        )
+
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertEqual(1, len(data['properties']['sector']))
+        self.assertEqual(self.contrib_one_name,
+                         data['properties']['sector'][0]['contributor_name'])
+
 
 class SectorChoiceViewTest(APITestCase):
     def setUp(self):

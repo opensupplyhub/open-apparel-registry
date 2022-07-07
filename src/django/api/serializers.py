@@ -1048,6 +1048,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
         claim_sectors = FacilityClaim \
             .objects \
             .filter(facility=facility, status=FacilityClaim.APPROVED) \
+            .exclude(sector=None) \
             .order_by('contributor_id', '-updated_at') \
             .distinct('contributor_id') \
             .values('updated_at',
