@@ -7,8 +7,8 @@ if [[ -n "${OAR_DEBUG}" ]]; then
 fi
 
 # Constants
-STAGING_ID="openapparelregistry-enc-stg"
-PRODUCTION_ID="openapparelregistry-enc-prd"
+STAGING_ID="opensupplyhub-enc-stg"
+PRODUCTION_ID="opensupplyhub-enc-prd"
 
 # Derived constants
 PROJECT_ROOT="$(dirname $( dirname -- "$BASH_SOURCE"; ))";
@@ -126,13 +126,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         read -n 1 -s -r -p "Press any key to start anonymizing the database"
         echo
         export PGPASSWORD="$PRODUCTION_PGPASSWORD" 
-        echo "$ANONYMIZATION_QUERIES" | psql -h "$NEW_DATABASE_ENDPOINT" -U openapparelregistry -t -A openapparelregistry -f -
+        echo "$ANONYMIZATION_QUERIES" | psql -h "$NEW_DATABASE_ENDPOINT" -U opensupplyhub -t -A opensupplyhub -f -
 
         # Run pg_dump
         read -n 1 -s -r -p "Press any key to start pg_dump"
         echo
         DUMP_FILE="$NEW_DATABASE_ID.dump"
-        pg_dump -Fc -h "$NEW_DATABASE_ENDPOINT" -U openapparelregistry openapparelregistry > "$DUMP_FILE"
+        pg_dump -Fc -h "$NEW_DATABASE_ENDPOINT" -U opensupplyhub opensupplyhub > "$DUMP_FILE"
 
         DELETE="aws rds delete-db-instance \
             --no-paginate \
@@ -145,7 +145,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         # Run pg_restore
         export PGPASSWORD="$STAGING_PGPASSWORD" 
-        PG_RESTORE="pg_restore -h $STAGING_DATABASE_ENDPOINT  -U openapparelregistry -d openapparelregistry --clean --if-exists --no-owner $DUMP_FILE"
+        PG_RESTORE="pg_restore -h $STAGING_DATABASE_ENDPOINT  -U opensupplyhub -d opensupplyhub --clean --if-exists --no-owner $DUMP_FILE"
         echo "Will run '$PG_RESTORE'"
         read -n 1 -s -r -p "Press any key to start pg_restore"
         echo
