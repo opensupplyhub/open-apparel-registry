@@ -146,7 +146,7 @@ class FacilityListCreateTest(APITestCase):
         fields = NonstandardField.objects.filter(
             contributor=self.user.contributor).values_list(
             'column_name', flat=True)
-        self.assertEquals(1, len(fields))
+        self.assertEqual(1, len(fields))
         self.assertIn('extra_1', fields)
 
     def test_creates_source(self):
@@ -4922,16 +4922,16 @@ class SearchByList(APITestCase):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], self.facility.id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], self.facility.id)
 
     def test_fetched_by_list(self):
         url = '/api/facilities/?lists={}'.format(self.list.id)
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], self.facility.id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], self.facility.id)
 
     def test_fetched_by_list_and_contributor(self):
         url = '/api/facilities/?contributors={}&lists={}'.format(
@@ -4939,8 +4939,8 @@ class SearchByList(APITestCase):
         response = self.client.get(url)
         self.assertEqual(200, response.status_code)
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], self.facility.id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], self.facility.id)
 
 
 class UpdateLocationTest(FacilityAPITestCaseBase):
@@ -6504,7 +6504,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         fields = NonstandardField.objects.filter(
             contributor=self.user.contributor).values_list(
             'column_name', flat=True)
-        self.assertEquals(1, len(fields))
+        self.assertEqual(1, len(fields))
         self.assertIn('extra_1', fields)
 
     def test_exact_matches_with_create_false(self):
@@ -7653,7 +7653,7 @@ class CloseListTest(TestCase):
         self.assertFalse(f_two.is_closed)
 
         activity = FacilityActivityReport.objects.all().count()
-        self.assertEquals(2, activity)
+        self.assertEqual(2, activity)
 
 
 class NonstandardFieldsApiTest(APITestCase):
@@ -7683,7 +7683,7 @@ class NonstandardFieldsApiTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
-        self.assertEquals(7, len(content))
+        self.assertEqual(7, len(content))
         self.assertIn('extra_1', content)
         self.assertIn('extra_2', content)
         self.assertIn('parent_company', content)
@@ -7694,7 +7694,7 @@ class NonstandardFieldsApiTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
-        self.assertEquals(5, len(content))
+        self.assertEqual(5, len(content))
         self.assertNotIn('extra_1', content)
         self.assertNotIn('extra_2', content)
         self.assertIn('parent_company', content)
@@ -7816,13 +7816,13 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
         contributor_fields = content['properties']['contributor_fields']
-        self.assertEquals(2, len(contributor_fields))
+        self.assertEqual(2, len(contributor_fields))
         field = contributor_fields[0]
         field_two = contributor_fields[1]
-        self.assertEquals('ExtraOne', field['label'])
-        self.assertEquals('data one', field['value'])
-        self.assertEquals('ExtraTwo', field_two['label'])
-        self.assertEquals(None, field_two['value'])
+        self.assertEqual('ExtraOne', field['label'])
+        self.assertEqual('data one', field['value'])
+        self.assertEqual('ExtraTwo', field_two['label'])
+        self.assertEqual(None, field_two['value'])
 
     def test_single_fields(self):
         response = self.client.get(
@@ -7831,13 +7831,13 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
         contributor_fields = content['properties']['contributor_fields']
-        self.assertEquals(2, len(contributor_fields))
+        self.assertEqual(2, len(contributor_fields))
         field = contributor_fields[0]
         field_two = contributor_fields[1]
-        self.assertEquals('ExtraOne', field['label'])
-        self.assertEquals(None, field['value'])
-        self.assertEquals('ExtraTwo', field_two['label'])
-        self.assertEquals('data two', field_two['value'])
+        self.assertEqual('ExtraOne', field['label'])
+        self.assertEqual(None, field['value'])
+        self.assertEqual('ExtraTwo', field_two['label'])
+        self.assertEqual('data two', field_two['value'])
 
     def test_without_embed(self):
         response = self.client.get(
@@ -7846,7 +7846,7 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
         contributor_fields = content['properties']['contributor_fields']
-        self.assertEquals(0, len(contributor_fields))
+        self.assertEqual(0, len(contributor_fields))
 
     def test_without_contributor(self):
         response = self.client.get(
@@ -7854,7 +7854,7 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
         contributor_fields = content['properties']['contributor_fields']
-        self.assertEquals(0, len(contributor_fields))
+        self.assertEqual(0, len(contributor_fields))
 
     def test_inactive_match(self):
         self.match_one.is_active = False
@@ -7865,17 +7865,17 @@ class ContributorFieldsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = json.loads(response.content)
         contributor_fields = content['properties']['contributor_fields']
-        self.assertEquals(2, len(contributor_fields))
+        self.assertEqual(2, len(contributor_fields))
         field = contributor_fields[0]
         field_two = contributor_fields[1]
-        self.assertEquals('ExtraOne', field['label'])
-        self.assertEquals(None, field['value'])
-        self.assertEquals('ExtraTwo', field_two['label'])
-        self.assertEquals(None, field_two['value'])
+        self.assertEqual('ExtraOne', field['label'])
+        self.assertEqual(None, field['value'])
+        self.assertEqual('ExtraTwo', field_two['label'])
+        self.assertEqual(None, field_two['value'])
 
     def test_custom_text(self):
         indexes = FacilityIndex.objects.count()
-        self.assertEquals(2, indexes)
+        self.assertEqual(2, indexes)
         index_one = FacilityIndex.objects.get(id=self.facility.id)
         index_one_data = '{}|data one'.format(self.contributor.id)
         self.assertIn(index_one_data, index_one.custom_text)
@@ -8120,7 +8120,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         }, ef.value)
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertIn('A random value', facility_index.parent_company_name)
-        self.assertEquals(0, len(facility_index.parent_company_id))
+        self.assertEqual(0, len(facility_index.parent_company_id))
 
     @skip('Skip fuzzy matching. Will revisit at #1805')
     @patch('api.geocoding.requests.get')
@@ -8194,8 +8194,8 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             self.url + '?parent_company={}'.format(self.contributor.id)
         )
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
     def test_search_by_id(self, mock_get):
@@ -8216,8 +8216,8 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             self.url + '?parent_company={}'.format(self.contributor.name)
         )
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
     def test_search_by_multiple(self, mock_get):
@@ -8240,8 +8240,8 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             )
         )
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
 
 class ProductTypeTestCase(FacilityAPITestCaseBase):
@@ -8355,8 +8355,8 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
 
         response = self.client.get(self.url + '?product_type=A')
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
 
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
@@ -8482,8 +8482,8 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
 
         response = self.client.get(self.url + '?processing_type=cutting')
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
     def test_search_by_facility_type(self, mock_get):
@@ -8504,8 +8504,8 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             self.url + '?facility_type=final%20product%20assembly'
         )
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
 
 class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
@@ -8531,7 +8531,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertEqual({'min': 2000, 'max': 2000}, ef.value)
 
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
-        self.assertEquals(1, len(facility_index.number_of_workers))
+        self.assertEqual(1, len(facility_index.number_of_workers))
         self.assertIn('1001-5000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
@@ -8552,7 +8552,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertEqual({'min': 0, 'max': 500}, ef.value)
 
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
-        self.assertEquals(1, len(facility_index.number_of_workers))
+        self.assertEqual(1, len(facility_index.number_of_workers))
         self.assertIn('Less than 1000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
@@ -8573,7 +8573,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertEqual({'min': 0, 'max': 10000}, ef.value)
 
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
-        self.assertEquals(3, len(facility_index.number_of_workers))
+        self.assertEqual(3, len(facility_index.number_of_workers))
         self.assertIn('Less than 1000', facility_index.number_of_workers)
         self.assertIn('1001-5000', facility_index.number_of_workers)
         self.assertIn('5001-10000', facility_index.number_of_workers)
@@ -8596,7 +8596,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertEqual({'min': 20000, 'max': 100000}, ef.value)
 
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
-        self.assertEquals(1, len(facility_index.number_of_workers))
+        self.assertEqual(1, len(facility_index.number_of_workers))
         self.assertIn('More than 10000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
@@ -8619,8 +8619,8 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             self.url + '?number_of_workers=1001-5000'
         )
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
     def test_search_without_matches(self, mock_get):
@@ -8639,7 +8639,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
             self.url + '?number_of_workers=More%20than%2010000'
         )
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 0)
+        self.assertEqual(data['count'], 0)
 
 
 class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
@@ -8668,8 +8668,8 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
             self.url + '?native_language_name={}'.format(self.long_name)
         )
         data = json.loads(response.content)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
 
 class SectorAPITest(FacilityAPITestCaseBase):
@@ -8696,8 +8696,8 @@ class SectorAPITest(FacilityAPITestCaseBase):
         )
         data = json.loads(response.content)
         print(data)
-        self.assertEquals(data['count'], 1)
-        self.assertEquals(data['features'][0]['id'], facility_id)
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['features'][0]['id'], facility_id)
 
 
 class ExactMatchTest(FacilityAPITestCaseBase):
@@ -8731,8 +8731,8 @@ class ExactMatchTest(FacilityAPITestCaseBase):
         }]
         results = sort_exact_matches(matches, self.active_item_ids,
                                      self.contributor)
-        self.assertEquals(results[0]['facility_id'], 2)
-        self.assertEquals(results[1]['facility_id'], 1)
+        self.assertEqual(results[0]['facility_id'], 2)
+        self.assertEqual(results[1]['facility_id'], 1)
 
     def test_sorting_active(self):
         matches = [{
@@ -8748,8 +8748,8 @@ class ExactMatchTest(FacilityAPITestCaseBase):
         }]
         results = sort_exact_matches(matches, self.active_item_ids,
                                      self.contributor)
-        self.assertEquals(results[0]['facility_id'], 1)
-        self.assertEquals(results[1]['facility_id'], 3)
+        self.assertEqual(results[0]['facility_id'], 1)
+        self.assertEqual(results[1]['facility_id'], 3)
 
     def test_sorting_newest(self):
         matches = [{
@@ -8765,8 +8765,8 @@ class ExactMatchTest(FacilityAPITestCaseBase):
         }]
         results = sort_exact_matches(matches, self.active_item_ids,
                                      self.contributor)
-        self.assertEquals(results[0]['facility_id'], 1)
-        self.assertEquals(results[1]['facility_id'], 2)
+        self.assertEqual(results[0]['facility_id'], 1)
+        self.assertEqual(results[1]['facility_id'], 2)
 
 
 class FacilityDetailSerializerTest(TestCase):
