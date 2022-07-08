@@ -2,11 +2,11 @@ from collections import defaultdict
 
 from django.conf import settings
 from django.core import exceptions
-from django.db import models, transaction
+from django.db import transaction
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import password_validation
 from django.urls import reverse
-from django.db.models import Count, F, Value
+from django.db.models import Count
 from rest_framework.serializers import (CharField,
                                         DecimalField,
                                         EmailField,
@@ -1034,36 +1034,62 @@ class FacilityDetailsSerializer(FacilitySerializer):
         }
 
     def get_sector(self, facility):
-        item_sectors = FacilityListItem \
+        user_can_see_detail = can_user_see_detail(self)
+
+        items = FacilityListItem \
             .objects \
-            .filter(facility=facility, source__is_active=True,
-                    facilitymatch__is_active=True) \
-            .order_by('source__contributor_id', '-updated_at') \
-            .distinct('source__contributor_id') \
-            .values('updated_at',
-                    contributor_id=F('source__contributor_id'),
-                    contributor_name=F('source__contributor__name'),
-                    values=F('sector'),
-                    is_from_claim=Value(False, models.BooleanField()))
-        claim_sectors = FacilityClaim \
+            .filter(facility=facility,
+                    status__in=[FacilityListItem.MATCHED,
+                                FacilityListItem.CONFIRMED_MATCH]) \
+            .order_by('source__contributor_id', '-source__is_active',
+                      '-facilitymatch__is_active', '-updated_at') \
+            .distinct('source__contributor_id')
+        claims = FacilityClaim \
             .objects \
             .filter(facility=facility, status=FacilityClaim.APPROVED) \
             .exclude(sector=None) \
             .order_by('contributor_id', '-updated_at') \
-            .distinct('contributor_id') \
-            .values('updated_at',
-                    'contributor_id',
-                    contributor_name=F('contributor__name'),
-                    values=F('sector'),
-                    is_from_claim=Value(True, models.BooleanField()))
+            .distinct('contributor_id')
 
         contributor_id = get_embed_contributor_id(self)
         if is_embed_mode_active(self) and contributor_id is not None:
-            item_sectors = item_sectors.filter(contributor_id=contributor_id)
-            claim_sectors = claim_sectors.filter(contributor_id=contributor_id)
+            items = items.filter(source__contributor_id=contributor_id)
+            claims = claims.filter(contributor_id=contributor_id)
 
-        sectors = item_sectors.union(claim_sectors)
-        return sorted(sectors, key=lambda i: i['updated_at'], reverse=True)
+        item_sectors = [
+            {
+                'updated_at': i.updated_at,
+                'contributor_id': get_contributor_id(
+                    i.source.contributor,
+                    (user_can_see_detail
+                     and i.source.is_active
+                     and i.source.is_public)),
+                'contributor_name': get_contributor_name(
+                    i.source.contributor,
+                    (user_can_see_detail
+                     and i.source.is_active
+                     and i.source.is_public)),
+                'values': i.sector,
+                'is_from_claim': False
+            }
+            for i in items
+        ]
+
+        claim_sectors = [
+            {
+                'updated_at': c.updated_at,
+                'contributor_id': get_contributor_id(
+                    c.contributor, user_can_see_detail),
+                'contributor_name': get_contributor_name(
+                    c.contributor, user_can_see_detail),
+                'values': c.sector,
+                'is_from_claim': True
+            }
+            for c in claims
+        ]
+
+        return sorted(item_sectors + claim_sectors,
+                      key=lambda i: i['updated_at'], reverse=True)
 
 
 class FacilityCreateBodySerializer(Serializer):
