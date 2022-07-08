@@ -9038,7 +9038,7 @@ class SectorChoiceViewTest(APITestCase):
 
     def test_sector_choices_basic(self):
         items = [FacilityListItem(row_index=i, source=self.source,
-                                  status=FacilityListItem.PARSED)
+                                  status=FacilityListItem.MATCHED)
                  for i in range(10)]
         items[0].sector = ['Apparel']
         items[1].sector = ['Apparel', 'Agriculture']
@@ -9071,11 +9071,26 @@ class SectorChoiceViewTest(APITestCase):
         Source.objects.bulk_create(sources)
 
         items = [FacilityListItem(row_index=i, source=sources[i],
-                                  status=FacilityListItem.PARSED)
+                                  status=FacilityListItem.MATCHED)
                  for i in range(3)]
         items[0].sector = ['Apparel']
         items[1].sector = ['Agriculture']
         items[2].sector = ['Mining']
+        FacilityListItem.objects.bulk_create(items)
+
+        response = self.client.get(reverse('sectors'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), ['Apparel'])
+
+    def test_sector_choices_not_confirmed_or_matched(self):
+        items = [FacilityListItem(row_index=i, source=self.source)
+                 for i in range(3)]
+        items[0].sector = ['Apparel']
+        items[0].status = FacilityListItem.CONFIRMED_MATCH
+        items[1].sector = ['Agriculture']
+        items[1].status = FacilityListItem.ERROR
+        items[2].sector = ['Mining']
+        items[2].status = FacilityListItem.REMOVED
         FacilityListItem.objects.bulk_create(items)
 
         response = self.client.get(reverse('sectors'))
@@ -9087,7 +9102,7 @@ class SectorChoiceViewTest(APITestCase):
             row_index=0,
             source=self.source,
             sector=[],
-            status=FacilityListItem.PARSED)
+            status=FacilityListItem.CONFIRMED_MATCH)
         facility = Facility \
             .objects \
             .create(name='Name',

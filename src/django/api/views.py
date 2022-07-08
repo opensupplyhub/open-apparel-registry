@@ -641,7 +641,9 @@ def sectors(request):
     """
     item_sectors = FacilityListItem \
         .objects \
-        .filter(source__is_active=True, source__is_public=True) \
+        .filter(source__is_active=True, source__is_public=True,
+                status__in=[FacilityListItem.MATCHED,
+                            FacilityListItem.CONFIRMED_MATCH]) \
         .annotate(all_sectors=Func(F('sector'), function='unnest')) \
         .values_list('all_sectors', flat=True).distinct()
     claim_sectors = FacilityClaim \
