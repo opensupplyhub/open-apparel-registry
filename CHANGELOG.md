@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix geocode error messages to include the status code [#1853](https://github.com/open-apparel-registry/open-apparel-registry/pull/1853)
 - Fix processing_type_facility_type_unmatched [#1875](https://github.com/open-apparel-registry/open-apparel-registry/pull/1875)
 - Fix VectorGrid bug [#1928](https://github.com/open-apparel-registry/open-apparel-registry/pull/1928)
+- Exclude null claim sector value when serializing facility details [#1963](https://github.com/open-apparel-registry/open-apparel-registry/pull/1963)
 
 ### Security
 
