@@ -2659,6 +2659,43 @@ class ArraySubquery(Subquery):
     template = 'ARRAY(%(subquery)s)'
 
 
+def get_sector_dict(facility_ids):
+    item_sectors = FacilityMatch \
+        .objects \
+        .filter(facility_id=OuterRef('pk')) \
+        .filter(Q(is_active=True)
+                & Q(status__in=[FacilityMatch.AUTOMATIC,
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])) \
+        .order_by('facility_list_item__source__contributor_id',
+                  '-facility_list_item__source__is_active',
+                  '-updated_at') \
+        .annotate(values=Func('facility_list_item__sector',
+                              function='unnest')) \
+        .distinct('facility_list_item__source__contributor_id') \
+        .values_list('values', flat=True)
+
+    array_type = postgres.ArrayField(models.CharField())
+    claim_sectors = FacilityClaim \
+        .objects \
+        .filter(facility_id=OuterRef('pk')) \
+        .filter(status=FacilityClaim.APPROVED) \
+        .annotate(values=Func('sector', function='unnest')) \
+        .distinct() \
+        .values_list('values', flat=True)
+
+    if len(facility_ids) > 0:
+        facility_qs = Facility.objects.filter(id__in=facility_ids)
+    else:
+        facility_qs = Facility.objects.all()
+    sector_data = facility_qs \
+        .values('id',
+                item_sectors=ArraySubquery(item_sectors, array_type),
+                claim_sectors=ArraySubquery(claim_sectors, array_type))
+    return {d['id']: list({*d['item_sectors'], *d['claim_sectors']})
+            for d in sector_data}
+
+
 @transaction.atomic
 def index_facilities(facility_ids=list):
     # If passed an empty array, create or update all existing facilities
@@ -2694,32 +2731,7 @@ def index_facilities(facility_ids=list):
                              'facility__ppe_website',
                              output_field=models.CharField()))
 
-    item_sectors = FacilityMatch \
-        .objects \
-        .filter(facility_id=OuterRef('pk')) \
-        .filter(filter) \
-        .annotate(values=Func('facility_list_item__sector',
-                              function='unnest')) \
-        .distinct() \
-        .values_list('values', flat=True)
-
-    array_type = postgres.ArrayField(models.CharField())
-    claim_sectors = FacilityClaim \
-        .objects \
-        .filter(facility_id=OuterRef('pk')) \
-        .filter(status=FacilityClaim.APPROVED) \
-        .annotate(values=Func('sector', function='unnest')) \
-        .distinct() \
-        .values_list('values', flat=True)
-
-    sector_data = Facility \
-        .objects \
-        .filter(id__in=facility_ids) \
-        .values('id',
-                item_sectors=ArraySubquery(item_sectors, array_type),
-                claim_sectors=ArraySubquery(claim_sectors, array_type))
-    sectors = {d['id']: list({*d['item_sectors'], *d['claim_sectors']})
-               for d in sector_data}
+    sectors = get_sector_dict(facility_ids)
 
     FacilityIndex.objects.filter(id__in=facility_ids).delete()
     FacilityIndex.objects.bulk_create([

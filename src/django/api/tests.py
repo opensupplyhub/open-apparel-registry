@@ -9174,12 +9174,10 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(resp.data['oar_id'], facility_id)
         facility_index = FacilityIndex.objects.get(id=facility_id)
-        # Should have mining/metals/mech eng. w/ no duplicates
         self.assertIn('Mining', facility_index.sector)
         self.assertIn('Metals', facility_index.sector)
-        self.assertIn('Mechanical Engineering', facility_index.sector)
         self.assertNotIn('Apparel', facility_index.sector)
-        self.assertEqual(len(facility_index.sector), 3)
+        self.assertEqual(len(facility_index.sector), 2)
 
     @override_switch('claim_a_facility', active=True)
     def test_updating_claim_sector_updates_index(self):
