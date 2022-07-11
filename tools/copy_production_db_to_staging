@@ -1,0 +1,158 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${OAR_DEBUG}" ]]; then
+    set -x
+fi
+
+# Constants
+STAGING_ID="opensupplyhub-enc-stg"
+PRODUCTION_ID="opensupplyhub-enc-prd"
+
+# Derived constants
+PROJECT_ROOT="$(dirname $( dirname -- "$BASH_SOURCE"; ))";
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Clones, anonymizes & restores the production database on-top of the staging database
+"
+}
+
+function required() {
+    if [ -z "$1" ]; then
+        echo "$2 is required"
+        exit 1
+    fi
+}
+
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        # Read required variables from user input / AWS CLI
+        read -s -p "Staging PGPASSWORD: " STAGING_PGPASSWORD
+        echo
+        required "$STAGING_PGPASSWORD" "Staging PGPASSWORD"
+
+        read -s -p "Production PGPASSWORD: " PRODUCTION_PGPASSWORD
+        echo
+        required "$PRODUCTION_PGPASSWORD" "Production PGPASSWORD"
+
+        read -p "Allowed emails to exclude from anonymization: " ALLOWED_EMAILS
+        echo
+
+        STAGING_DATABASE_ENDPOINT="$(aws rds describe-db-instances \
+            --db-instance-identifier $STAGING_ID \
+            --query DBInstances[0].Endpoint.Address --output text)"
+        read -e -p "Staging database endpoint: " -i "$STAGING_DATABASE_ENDPOINT" STAGING_DATABASE_ENDPOINT
+        required "$STAGING_DATABASE_ENDPOINT" "Staging database endpoint"
+
+        SNAPSHOT_ID="$(aws rds describe-db-snapshots \
+            --db-instance-identifier $PRODUCTION_ID \
+            --query="max_by(DBSnapshots, &SnapshotCreateTime).DBSnapshotIdentifier" \
+            --output text)"
+
+        read -e -p "Snapshot id: " -i "$SNAPSHOT_ID" SNAPSHOT_ID
+        required "$SNAPSHOT_ID" "Snaphsot id"
+
+        STAGING_RDS_INSTANCE_TYPE="$(aws rds describe-db-instances \
+            --db-instance-identifier $STAGING_ID \
+            --query "DBInstances[0].DBInstanceClass" \
+            --output text)"
+
+        read -e -p "Instance class: " -i "$STAGING_RDS_INSTANCE_TYPE" STAGING_RDS_INSTANCE_TYPE
+        required "$STAGING_RDS_INSTANCE_TYPE" "Instance class"
+
+        STAGING_RDS_SUBNET_GROUP="$(aws rds describe-db-instances \
+            --db-instance-identifier $STAGING_ID \
+            --query "DBInstances[0].DBSubnetGroup.DBSubnetGroupName" \
+            --output text)"
+
+        STAGING_RDS_VPC_SECURITY_GROUP="$(aws rds describe-db-instances \
+            --db-instance-identifier $STAGING_ID \
+            --query "DBInstances[0].VpcSecurityGroups[0].VpcSecurityGroupId" \
+            --output text)"
+
+        # Remove rds: from snapshot ID & use as database ID
+        NEW_DATABASE_ID="${SNAPSHOT_ID:4}"
+
+        RESTORE="aws rds restore-db-instance-from-db-snapshot \
+            --no-paginate \
+            --db-instance-identifier $NEW_DATABASE_ID \
+            --db-snapshot-identifier $SNAPSHOT_ID \
+            --db-instance-class $STAGING_RDS_INSTANCE_TYPE \
+            --db-subnet-group-name $STAGING_RDS_SUBNET_GROUP\
+            --vpc-security-group-ids $STAGING_RDS_VPC_SECURITY_GROUP"
+
+        echo "Will run '$RESTORE'"
+        read -n 1 -s -r -p "Press any key to begin"
+        echo
+
+        $RESTORE
+
+        # Restore will complete right away, but we can't begin to query
+        # the database until the status is "available"
+        CHECK_STATUS="aws rds describe-db-instances \
+            --db-instance-identifier $NEW_DATABASE_ID \
+            --query DBInstances[0].DBInstanceStatus --output text"
+
+        echo -n "Polling until new instance is ready"
+        while [ "$($CHECK_STATUS)" != 'available' ]; do
+            echo -n "."
+            sleep 10
+        done
+        echo
+
+        NEW_DATABASE_ENDPOINT="$(aws rds describe-db-instances \
+            --db-instance-identifier $NEW_DATABASE_ID \
+            --query DBInstances[0].Endpoint.Address --output text)"
+
+        pushd "$PROJECT_ROOT/load-tests/anonymize-the-database"
+
+        echo "Installing requirements for anonymization script"
+        python3 -m venv ./venv
+        source ./venv/bin/activate
+        pip install -r requirements.txt
+
+        ANONYMIZATION_QUERIES="$(PGPASSWORD=$PRODUCTION_PGPASSWORD PGHOST=$NEW_DATABASE_ENDPOINT \
+                                 PGPORT=5432 ALLOWED_EMAILS=$ALLOWED_EMAILS \
+                                 ./generate_anon_queries)"
+
+        popd
+
+        read -n 1 -s -r -p "Press any key to start anonymizing the database"
+        echo
+        export PGPASSWORD="$PRODUCTION_PGPASSWORD" 
+        echo "$ANONYMIZATION_QUERIES" | psql -h "$NEW_DATABASE_ENDPOINT" -U opensupplyhub -t -A opensupplyhub -f -
+
+        # Run pg_dump
+        read -n 1 -s -r -p "Press any key to start pg_dump"
+        echo
+        DUMP_FILE="$NEW_DATABASE_ID.dump"
+        pg_dump -Fc -h "$NEW_DATABASE_ENDPOINT" -U opensupplyhub opensupplyhub > "$DUMP_FILE"
+
+        DELETE="aws rds delete-db-instance \
+            --no-paginate \
+            --db-instance-identifier $NEW_DATABASE_ID \
+            --skip-final-snapshot"
+        echo "Will run '$DELETE'"
+        read -n 1 -s -r -p "Press any key to delete $NEW_DATABASE_ID"
+        echo
+        $DELETE
+
+        # Run pg_restore
+        export PGPASSWORD="$STAGING_PGPASSWORD" 
+        PG_RESTORE="pg_restore -h $STAGING_DATABASE_ENDPOINT  -U opensupplyhub -d opensupplyhub --clean --if-exists --no-owner $DUMP_FILE"
+        echo "Will run '$PG_RESTORE'"
+        read -n 1 -s -r -p "Press any key to start pg_restore"
+        echo
+        $PG_RESTORE
+
+        read -n 1 -s -r -p "Press any key to delete $DUMP_FILE"
+        echo
+        rm "$DUMP_FILE"
+    fi
+fi

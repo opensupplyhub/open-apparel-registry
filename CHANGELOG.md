@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Display claim information [#1905](https://github.com/open-apparel-registry/open-apparel-registry/pull/1905)
 - Create OGR staging environment [#1885](https://github.com/open-apparel-registry/open-apparel-registry/pull/1885)
 - Add sector to Facility Claim [#1934](https://github.com/open-apparel-registry/open-apparel-registry/pull/1934)
+- Added a script to automate restoring an anonymized production snapshot [#1948](https://github.com/open-apparel-registry/open-apparel-registry/pull/1948/commits/b7fecdca30c011a5ef3a8a68971e4ce5fbe8c319)
 
 ### Changed
 
