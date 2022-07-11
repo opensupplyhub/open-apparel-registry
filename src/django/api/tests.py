@@ -53,7 +53,8 @@ from api.permissions import referring_host_is_allowed, referring_host
 from api.serializers import (ApprovedFacilityClaimSerializer,
                              FacilityCreateBodySerializer,
                              FacilityListSerializer,
-                             FacilityDetailsSerializer)
+                             FacilityDetailsSerializer,
+                             get_contributor_name)
 from api.limits import check_api_limits, get_end_of_year
 from api.close_list import close_list
 from api.facility_type_processing_type import (
@@ -8791,7 +8792,7 @@ class FacilityDetailSerializerTest(TestCase):
             .objects \
             .create(admin=self.user_one,
                     name=self.contrib_one_name,
-                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+                    contrib_type=Contributor.CONTRIB_TYPE_CHOICES[0][0])
 
         self.contrib_two = Contributor \
             .objects \
@@ -8973,16 +8974,6 @@ class FacilityDetailSerializerTest(TestCase):
         self.assertEqual(self.contrib_two_name,
                          data['properties']['sector'][1]['contributor_name'])
 
-    def test_excludes_from_inactive_sources(self):
-        self.source_two.is_active = False
-        self.source_two.save()
-
-        data = FacilityDetailsSerializer(self.facility).data
-
-        self.assertEqual(1, len(data['properties']['sector']))
-        self.assertEqual(self.contrib_one_name,
-                         data['properties']['sector'][0]['contributor_name'])
-
     def test_excludes_null_sectors_from_approved_claim(self):
         self.source_two.is_active = False
         self.source_two.save()
@@ -8995,9 +8986,28 @@ class FacilityDetailSerializerTest(TestCase):
 
         data = FacilityDetailsSerializer(self.facility).data
 
-        self.assertEqual(1, len(data['properties']['sector']))
-        self.assertEqual(self.contrib_one_name,
+        self.assertEqual(2, len(data['properties']['sector']))
+        self.assertEqual(get_contributor_name(self.contrib_two, False),
                          data['properties']['sector'][0]['contributor_name'])
+        self.assertEqual(self.contrib_one_name,
+                         data['properties']['sector'][1]['contributor_name'])
+
+    def test_inactive_and_private_sources_serializes_anonymized_sectors(self):
+        self.source_one.is_active = False
+        self.source_one.save()
+
+        self.source_two.is_public = False
+        self.source_two.save()
+
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertEqual(2, len(data['properties']['sector']))
+        self.assertEqual(get_contributor_name(self.contrib_two, False),
+                         data['properties']['sector'][0]['contributor_name'])
+        self.assertIsNone(data['properties']['sector'][0]['contributor_id'])
+        self.assertEqual(get_contributor_name(self.contrib_one, False),
+                         data['properties']['sector'][1]['contributor_name'])
+        self.assertIsNone(data['properties']['sector'][1]['contributor_id'])
 
 
 class SectorChoiceViewTest(APITestCase):
@@ -9164,12 +9174,10 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(resp.data['oar_id'], facility_id)
         facility_index = FacilityIndex.objects.get(id=facility_id)
-        # Should have mining/metals/mech eng. w/ no duplicates
         self.assertIn('Mining', facility_index.sector)
         self.assertIn('Metals', facility_index.sector)
-        self.assertIn('Mechanical Engineering', facility_index.sector)
         self.assertNotIn('Apparel', facility_index.sector)
-        self.assertEqual(len(facility_index.sector), 3)
+        self.assertEqual(len(facility_index.sector), 2)
 
     @override_switch('claim_a_facility', active=True)
     def test_updating_claim_sector_updates_index(self):
