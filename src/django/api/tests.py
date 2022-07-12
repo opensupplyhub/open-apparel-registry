@@ -9019,48 +9019,37 @@ class SectorChoiceViewTest(APITestCase):
         user.set_password(password)
         user.save()
 
-        self.contributor = Contributor(name='Name', admin=user)
-        self.contributor.save()
-
-        list = FacilityList \
-            .objects \
-            .create(header='header',
-                    file_name='one',
-                    name='List')
-
-        self.source = Source \
-            .objects \
-            .create(source_type=Source.LIST,
-                    facility_list=list,
-                    contributor=self.contributor)
-
         self.client.login(email=email, password=password)
 
     def test_sector_choices_no_values(self):
-        items = [FacilityListItem(row_index=i, source=self.source, sector=[],
-                                  status=FacilityListItem.UPLOADED)
-                 for i in range(10)]
-        FacilityListItem.objects.bulk_create(items)
+        indexes = [FacilityIndex(name="Name", country_code="US",
+                                 location=Point(0, 0), sector=[],
+                                 contrib_types=[], contributors=[],
+                                 lists=[], id=i)
+                   for i in range(10)]
+        FacilityIndex.objects.bulk_create(indexes)
         response = self.client.get(reverse('sectors'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])
         self.assertEqual(len(response.json()), 0)
 
     def test_sector_choices_basic(self):
-        items = [FacilityListItem(row_index=i, source=self.source,
-                                  status=FacilityListItem.PARSED)
-                 for i in range(10)]
-        items[0].sector = ['Apparel']
-        items[1].sector = ['Apparel', 'Agriculture']
-        items[2].sector = ['Mining']
-        items[3].sector = ['Chemicals', 'Construction']
-        items[4].sector = ['Electronics']
-        items[5].sector = ['Mining', 'Petroleum']
-        items[6].sector = ['Metals', 'Automotive']
-        items[7].sector = ['Mining']
-        items[8].sector = ['Apparel']
-        items[9].sector = ['Agriculture']
-        FacilityListItem.objects.bulk_create(items)
+        indexes = [FacilityIndex(name="Name", country_code="US",
+                                 location=Point(0, 0), sector=[],
+                                 contrib_types=[], contributors=[],
+                                 lists=[], id=i)
+                   for i in range(10)]
+        indexes[0].sector = ['Apparel']
+        indexes[1].sector = ['Apparel', 'Agriculture']
+        indexes[2].sector = ['Mining']
+        indexes[3].sector = ['Chemicals', 'Construction']
+        indexes[4].sector = ['Electronics']
+        indexes[5].sector = ['Mining', 'Petroleum']
+        indexes[6].sector = ['Metals', 'Automotive']
+        indexes[7].sector = ['Mining']
+        indexes[8].sector = ['Apparel']
+        indexes[9].sector = ['Agriculture']
+        FacilityIndex.objects.bulk_create(indexes)
         response = self.client.get(reverse('sectors'))
         self.assertEqual(response.status_code, 200)
         # Response should be sorted and deduped
@@ -9068,55 +9057,6 @@ class SectorChoiceViewTest(APITestCase):
             'Agriculture', 'Apparel', 'Automotive', 'Chemicals',
             'Construction', 'Electronics', 'Metals', 'Mining', 'Petroleum'
         ])
-
-    def test_sector_choices_inactive_and_private(self):
-        sources = [
-            Source(source_type=Source.SINGLE,
-                   contributor=self.source.contributor),
-            Source(is_active=False, source_type=Source.SINGLE,
-                   contributor=self.source.contributor),
-            Source(is_public=False, source_type=Source.SINGLE,
-                   contributor=self.source.contributor),
-        ]
-        Source.objects.bulk_create(sources)
-
-        items = [FacilityListItem(row_index=i, source=sources[i],
-                                  status=FacilityListItem.PARSED)
-                 for i in range(3)]
-        items[0].sector = ['Apparel']
-        items[1].sector = ['Agriculture']
-        items[2].sector = ['Mining']
-        FacilityListItem.objects.bulk_create(items)
-
-        response = self.client.get(reverse('sectors'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), ['Apparel'])
-
-    def test_sector_choices_claims(self):
-        item = FacilityListItem.objects.create(
-            row_index=0,
-            source=self.source,
-            sector=[],
-            status=FacilityListItem.PARSED)
-        facility = Facility \
-            .objects \
-            .create(name='Name',
-                    address='Address',
-                    country_code='US',
-                    location=Point(0, 0),
-                    created_from=item)
-        FacilityClaim.objects.create(
-            contributor=self.contributor,
-            facility=facility,
-            contact_person='test',
-            email='test@test.com',
-            phone_number='1234567890',
-            sector=['Mining'],
-            status=FacilityClaim.APPROVED)
-
-        response = self.client.get(reverse('sectors'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), ['Mining'])
 
 
 class IndexFacilitiesTest(FacilityAPITestCaseBase):
