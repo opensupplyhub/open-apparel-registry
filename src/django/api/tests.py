@@ -9009,6 +9009,20 @@ class FacilityDetailSerializerTest(TestCase):
                          data['properties']['sector'][1]['contributor_name'])
         self.assertIsNone(data['properties']['sector'][1]['contributor_id'])
 
+    def test_inactive_match_serializes_anonymized_sectors(self):
+        self.facility_match_one.is_active = False
+        self.facility_match_one.save()
+
+        data = FacilityDetailsSerializer(self.facility).data
+
+        self.assertEqual(2, len(data['properties']['sector']))
+        self.assertEqual(self.contrib_two_name,
+                         data['properties']['sector'][0]['contributor_name'])
+        self.assertIsNotNone(data['properties']['sector'][0]['contributor_id'])
+        self.assertEqual(get_contributor_name(self.contrib_one, False),
+                         data['properties']['sector'][1]['contributor_name'])
+        self.assertIsNone(data['properties']['sector'][1]['contributor_id'])
+
 
 class SectorChoiceViewTest(APITestCase):
     def setUp(self):
@@ -9065,6 +9079,12 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     def test_facility_index_contains_sector(self):
+        facility_index = FacilityIndex.objects.get(id=self.facility.id)
+        self.assertEqual(['Apparel'], facility_index.sector)
+
+    def test_sector_reamins_in_index_if_match_is_deactivated(self):
+        self.match.is_active = False
+        self.match.save()
         facility_index = FacilityIndex.objects.get(id=self.facility.id)
         self.assertEqual(['Apparel'], facility_index.sector)
 

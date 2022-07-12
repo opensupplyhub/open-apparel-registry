@@ -1063,12 +1063,14 @@ class FacilityDetailsSerializer(FacilitySerializer):
                     i.source.contributor,
                     (user_can_see_detail
                      and i.source.is_active
-                     and i.source.is_public)),
+                     and i.source.is_public
+                     and i.has_active_complete_match)),
                 'contributor_name': get_contributor_name(
                     i.source.contributor,
                     (user_can_see_detail
                      and i.source.is_active
-                     and i.source.is_public)),
+                     and i.source.is_public
+                     and i.has_active_complete_match)),
                 'values': i.sector,
                 'is_from_claim': False
             }

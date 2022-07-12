@@ -672,6 +672,14 @@ class FacilityListItem(PPEMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def has_active_complete_match(self):
+        return self.facilitymatch_set.filter(
+            is_active=True,
+            status__in=[FacilityMatch.AUTOMATIC,
+                        FacilityMatch.CONFIRMED,
+                        FacilityMatch.MERGED]).count() > 0
+
     @staticmethod
     def post_save(sender, **kwargs):
         instance = kwargs.get('instance')
@@ -2663,10 +2671,9 @@ def get_sector_dict(facility_ids):
     item_sectors = FacilityMatch \
         .objects \
         .filter(facility_id=OuterRef('pk')) \
-        .filter(Q(is_active=True)
-                & Q(status__in=[FacilityMatch.AUTOMATIC,
-                                FacilityMatch.CONFIRMED,
-                                FacilityMatch.MERGED])) \
+        .filter(facility_list_item__status__in=[
+            FacilityListItem.MATCHED,
+            FacilityListItem.CONFIRMED_MATCH]) \
         .order_by('facility_list_item__source__contributor_id',
                   '-facility_list_item__source__is_active',
                   '-updated_at') \
