@@ -639,17 +639,12 @@ def sectors(request):
         ]
 
     """
-    item_sectors = FacilityListItem \
+    sectors = FacilityIndex \
         .objects \
-        .filter(source__is_active=True, source__is_public=True) \
         .annotate(all_sectors=Func(F('sector'), function='unnest')) \
-        .values_list('all_sectors', flat=True).distinct()
-    claim_sectors = FacilityClaim \
-        .objects \
-        .filter(status=FacilityClaim.APPROVED) \
-        .annotate(all_sectors=Func(F('sector'), function='unnest')) \
-        .values_list('all_sectors', flat=True).distinct()
-    return Response(sorted(item_sectors.union(claim_sectors)))
+        .values_list('all_sectors', flat=True) \
+        .distinct()
+    return Response(sorted(sectors))
 
 
 @swagger_auto_schema(methods=['POST'], auto_schema=None)
