@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Filter facilities by sectors [#1930](https://github.com/open-apparel-registry/open-apparel-registry/pull/1930)
 - Add new Average Match Count, Confirm Reject Counts, and Error Items reports [#1855](https://github.com/open-apparel-registry/open-apparel-registry/pull/1855/commits)
 - Get sector from CSV or API and store on `FacilityListItem` [#1868](https://github.com/open-apparel-registry/open-apparel-registry/pull/1868)
-- Add sector choices API endpoint [#1871](https://github.com/open-apparel-registry/open-apparel-registry/pull/1871)
+- Add sector choices API endpoint [#1871](https://github.com/open-apparel-registry/open-apparel-registry/pull/1871) & [#1967](https://github.com/open-apparel-registry/open-apparel-registry/pull/1967)
 - Add sector to FacilityIndex [#1883](https://github.com/open-apparel-registry/open-apparel-registry/pull/1883)
 - Show sectors on facility detail sidebar [#1898](https://github.com/open-apparel-registry/open-apparel-registry/pull/1898)
 - Add sector search controls [#1899](https://github.com/open-apparel-registry/open-apparel-registry/pull/1899)
