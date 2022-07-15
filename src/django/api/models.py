@@ -927,6 +927,10 @@ class FacilityClaim(models.Model):
         blank=True,
         verbose_name='address',
         help_text='The editable facility address for this claim.')
+    facility_location = gis_models.PointField(
+        null=True,
+        verbose_name='location',
+        help_text='The lat/lng point location of the facility')
     facility_phone_number = models.CharField(
         max_length=200,
         null=True,
