@@ -827,7 +827,7 @@ class GeocodingTest(TestCase):
     @patch('api.geocoding.requests.get')
     def test_geocode_non_200_response(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=400)
-        with self.assertRaisesRegexp(ValueError, '400'):
+        with self.assertRaisesRegex(ValueError, '400'):
             geocode_address('Noorbagh, Kaliakoir Gazipur Dhaka 1704', 'BD')
 
 
