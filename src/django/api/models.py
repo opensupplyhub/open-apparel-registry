@@ -2744,6 +2744,7 @@ class TrainedModel(models.Model):
     dedupe_model = models.BinaryField()
     creation_time = models.DateTimeField(auto_now_add=True)
 
+
 post_save.connect(FacilityClaim.post_save, sender=FacilityClaim)
 post_save.connect(Facility.post_save, sender=Facility)
 post_save.connect(Source.post_save, sender=Source)
