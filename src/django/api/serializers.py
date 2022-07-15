@@ -889,31 +889,31 @@ class FacilityDetailsSerializer(FacilitySerializer):
 
         facility_locations = [
             {
-                'lat': l.location.y,
-                'lng': l.location.x,
-                'contributor_id': get_contributor_id(l.contributor,
+                'lat': loc.location.y,
+                'lng': loc.location.x,
+                'contributor_id': get_contributor_id(loc.contributor,
                                                      user_can_see_detail),
-                'contributor_name': get_contributor_name(l.contributor,
+                'contributor_name': get_contributor_name(loc.contributor,
                                                          user_can_see_detail),
-                'notes': l.notes,
+                'notes': loc.notes,
             }
-            for l
+            for loc
             in FacilityLocation.objects.filter(facility=facility)
         ]
 
         facility_matches = [
             {
-                'lat': l.facility_list_item.geocoded_point.y,
-                'lng': l.facility_list_item.geocoded_point.x,
+                'lat': match.facility_list_item.geocoded_point.y,
+                'lng': match.facility_list_item.geocoded_point.x,
                 'contributor_id': get_contributor_id(
-                    l.facility_list_item.source.contributor,
+                    match.facility_list_item.source.contributor,
                     user_can_see_detail),
                 'contributor_name': get_contributor_name(
-                    l.facility_list_item.source.contributor,
+                    match.facility_list_item.source.contributor,
                     user_can_see_detail),
                 'notes': None,
             }
-            for l
+            for match
             in FacilityMatch.objects.filter(facility=facility)
             .filter(status__in=[
                 FacilityMatch.CONFIRMED,
@@ -921,10 +921,10 @@ class FacilityDetailsSerializer(FacilitySerializer):
                 FacilityMatch.MERGED,
             ])
             .filter(is_active=True)
-            if l.facility_list_item.geocoded_point != facility.location
-            if l.facility_list_item.geocoded_point is not None
-            if l.facility_list_item.source.is_active
-            if l.facility_list_item.source.is_public
+            if match.facility_list_item.geocoded_point != facility.location
+            if match.facility_list_item.geocoded_point is not None
+            if match.facility_list_item.source.is_active
+            if match.facility_list_item.source.is_public
         ]
 
         return facility_locations + facility_matches

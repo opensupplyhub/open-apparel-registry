@@ -2976,7 +2976,7 @@ class DashboardListTests(APITestCase):
         # Ensure they are ordered newest first
         self.assertEqual(
             ['Third List', 'Second List', 'First List'],
-            [l['name'] for l in lists])
+            [d['name'] for d in lists])
 
     def test_superuser_can_list_own_lists(self):
         self.client.login(email=self.superuser_email,
@@ -3008,7 +3008,7 @@ class DashboardListTests(APITestCase):
         self.assertEqual(3, len(lists))
         self.assertEqual(
             ['Third List', 'Second List', 'First List'],
-            [l['name'] for l in lists])
+            [d['name'] for d in lists])
 
     def test_user_cannot_list_other_contributors_lists(self):
         # Regular users, even if they ask for lists by other
@@ -3028,16 +3028,17 @@ class DashboardListTests(APITestCase):
         self.assertEqual(3, len(lists))
         self.assertEqual(
             ['Third List', 'Second List', 'First List'],
-            [l['name'] for l in lists])
+            [d['name'] for d in lists])
 
     def test_user_can_view_own_lists(self):
         self.client.login(email=self.user_email,
                           password=self.user_password)
 
-        for l in [self.list, self.inactive_list, self.private_list]:
-            response = self.client.get('/api/facility-lists/{}/'.format(l.id))
+        for fac_list in [self.list, self.inactive_list, self.private_list]:
+            response = self.client.get(
+                '/api/facility-lists/{}/'.format(fac_list.id))
             self.assertEqual(200, response.status_code)
-            self.assertEqual(l.name, response.json()['name'])
+            self.assertEqual(fac_list.name, response.json()['name'])
 
     def test_user_cannot_view_others_lists(self):
         self.client.login(email=self.user_email,
@@ -3056,10 +3057,11 @@ class DashboardListTests(APITestCase):
         superuser_lists = [self.superlist]
         user_lists = [self.list, self.inactive_list, self.private_list]
 
-        for l in superuser_lists + user_lists:
-            response = self.client.get('/api/facility-lists/{}/'.format(l.id))
+        for fac_list in superuser_lists + user_lists:
+            response = self.client.get(
+                '/api/facility-lists/{}/'.format(fac_list.id))
             self.assertEqual(200, response.status_code)
-            self.assertEqual(l.name, response.json()['name'])
+            self.assertEqual(fac_list.name, response.json()['name'])
 
 
 class FacilityDeleteTest(APITestCase):

@@ -1680,10 +1680,10 @@ class Facility(PPEMixin):
 
     def activity_reports(self):
         return FacilityActivityReport.objects \
-                    .filter(facility=self.id,
-                            status__in=[FacilityActivityReport.PENDING,
-                                        FacilityActivityReport.CONFIRMED]) \
-                    .order_by('-created_at')
+            .filter(facility=self.id,
+                    status__in=[FacilityActivityReport.PENDING,
+                                FacilityActivityReport.CONFIRMED]) \
+            .order_by('-created_at')
 
     @staticmethod
     def post_save(sender, **kwargs):
@@ -2613,7 +2613,7 @@ def index_extendedfields(facility_ids=list):
             .values_list('value', flat=True)
         number_of_workers_ranges = set()
         for value in number_of_workers_values:
-                convert_to_standard_ranges(value, number_of_workers_ranges)
+            convert_to_standard_ranges(value, number_of_workers_ranges)
         facility.number_of_workers = list(number_of_workers_ranges)
 
         # Use clean taxonomy values in the index for facility_type:

@@ -53,13 +53,13 @@ def match_to_extended_facility_id(match):
 
 
 def normalize_extended_facility_id(facility_id):
-        """
-        Manually confirmed matches are added to the list of canonical
-        facilities with a synthetic ID. This function converts one of these
-        extended IDs back to a plain Facility ID. A plain Facility ID will pass
-        through this function unchanged.
-        """
-        return facility_id.split('_')[0]
+    """
+    Manually confirmed matches are added to the list of canonical
+    facilities with a synthetic ID. This function converts one of these
+    extended IDs back to a plain Facility ID. A plain Facility ID will pass
+    through this function unchanged.
+    """
+    return facility_id.split('_')[0]
 
 
 def get_canonical_items():
