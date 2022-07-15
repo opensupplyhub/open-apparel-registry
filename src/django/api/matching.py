@@ -246,12 +246,13 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
         ]
 
         gazetteer = dedupe.Gazetteer(fields)
+        gazetteer.sample(messy, canonical, 15000)
         training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
                                      'training.json')
         with open(training_file) as tf:
-            gazetteer.prepare_training(messy, canonical, tf, 15000)
+            gazetteer.readTraining(tf)
         gazetteer.train()
-        gazetteer.cleanup_training()
+        gazetteer.cleanupTraining()
 
     if should_index:
         index_start = datetime.now()
@@ -333,8 +334,9 @@ def match_items(messy,
         no_geocoded_items = False
         try:
             gazetteer = GazetteerCache.get_latest()
-            results = gazetteer.search(messy, threshold=gazetteer_threshold,
-                                       n_matches=None, generator=False)
+            gazetteer.threshold(messy, recall_weight=recall_weight)
+            results = gazetteer.match(messy, threshold=gazetteer_threshold,
+                                      n_matches=None, generator=True)
             no_gazetteer_matches = False
         except NoCanonicalRecordsError:
             results = []
@@ -350,8 +352,8 @@ def match_items(messy,
     finished = str(datetime.utcnow())
 
     item_matches = defaultdict(list)
-    for messy_id, matches in results:
-        for canon_id, score in matches:
+    for matches in results:
+        for (messy_id, canon_id), score in matches:
             # The gazetteer matcher obtained from the GazetteerCache may have
             # encountered an exception raised by Dedupe while unindexing
             # records and could therefore return matches for facility IDs that
@@ -362,8 +364,6 @@ def match_items(messy,
                 .exists()
             if facility_exists:
                 item_matches[messy_id].append((canon_id, score))
-    if len(item_matches.keys()) == 0:
-        no_gazetteer_matches = True
 
     return {
         'processed_list_item_ids': list(messy.keys()),
