@@ -2703,6 +2703,11 @@ def get_sector_dict(facility_ids):
             for d in sector_data}
 
 
+def index_sectors(facility_ids=list):
+    for facility_id, sectors in get_sector_dict(facility_ids).items():
+        FacilityIndex.objects.filter(id=facility_id).update(sector=sectors)
+
+
 @transaction.atomic
 def index_facilities(facility_ids=list):
     # If passed an empty array, create or update all existing facilities
