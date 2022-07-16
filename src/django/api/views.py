@@ -18,7 +18,7 @@ from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.db.models import Extent
 from django.conf import settings
 from django.http import Http404
@@ -3360,6 +3360,11 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             if request.method == 'GET':
                 response_data = ApprovedFacilityClaimSerializer(claim).data
                 return Response(response_data)
+
+            location_data = request.data.get('facility_location')
+            if location_data is not None:
+                claim.facility_location = GEOSGeometry(
+                    json.dumps(location_data))
 
             parent_company_data = request.data.get('facility_parent_company')
 

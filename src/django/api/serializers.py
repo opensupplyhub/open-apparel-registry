@@ -1408,7 +1408,8 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
         model = FacilityClaim
         fields = ('id', 'facility_description',
                   'facility_name_english', 'facility_name_native_language',
-                  'facility_address', 'facility_phone_number',
+                  'facility_address', 'facility_location',
+                  'facility_phone_number',
                   'facility_phone_number_publicly_visible',
                   'facility_website', 'facility_minimum_order_quantity',
                   'facility_average_lead_time', 'point_of_contact_person_name',
