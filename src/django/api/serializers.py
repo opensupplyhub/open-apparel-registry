@@ -48,6 +48,10 @@ from api.facility_type_processing_type import (
     ALL_FACILITY_TYPE_CHOICES,
     ALL_PROCESSING_TYPE_CHOICES
 )
+from api.csv_download import (format_download_date,
+                              get_download_contribution,
+                              get_download_claim_contribution,
+                              format_download_extended_fields)
 from waffle import switch_is_active
 
 
@@ -729,6 +733,163 @@ class FacilitySerializer(GeoFeatureModelSerializer):
             grouped_data[field_name] = data
 
         return grouped_data
+
+
+class FacilityDownloadSerializer(Serializer):
+    rows = SerializerMethodField()
+
+    class Meta:
+        model = Facility
+        fields = ('rows')
+
+    EXTENDED_FIELDS_HEADERS = [
+        'number_of_workers',
+        'parent_company',
+        'processing_type_facility_type_raw',
+        'facility_type',
+        'processing_type',
+        'product_type',
+    ]
+
+    def get_headers(self):
+        headers = [
+            'oar_id',
+            'contribution_date',
+            'name',
+            'address',
+            'country_code',
+            'country_name',
+            'lat',
+            'lng',
+        ]
+
+        if not is_embed_mode_active(self):
+            headers.append('contributor (list)')
+        else:
+            headers.extend([f.column_name for f
+                            in self.get_contributor_fields()])
+
+        headers.extend(self.EXTENDED_FIELDS_HEADERS)
+
+        headers.append('is_closed')
+
+        return headers
+
+    def get_rows(self, facility):
+        is_embed_mode = is_embed_mode_active(self)
+        user_can_see_detail = can_user_see_detail(self)
+
+        contributor_fields = []
+        if is_embed_mode:
+            contributor_fields = self.get_contributor_fields()
+
+        def add_non_base_fields(row, list_item, match_is_active):
+            if not is_embed_mode:
+                contribution = get_download_contribution(
+                    list_item.source, match_is_active, user_can_see_detail)
+                row.append(contribution)
+            else:
+                contributor_field_values = assign_contributor_field_values(
+                    list_item, contributor_fields)
+                row.extend([f['value'] if f['value'] is not None else ''
+                            for f in contributor_field_values])
+
+            extended_fields = ExtendedField.objects.filter(
+                facility_list_item=list_item
+            ).values('value', 'field_name')
+            row.extend(format_download_extended_fields(extended_fields))
+
+            return row
+
+        rows = []
+
+        base_row = [
+            facility.id,
+            format_download_date(facility.created_at),
+            FacilitySerializer.get_name(self, facility),
+            facility.address,
+            facility.country_code,
+            FacilitySerializer.get_country_name(self, facility),
+            facility.location.coords[1],
+            facility.location.coords[0]
+        ]
+
+        facility_matches = facility \
+            .facilitymatch_set \
+            .filter(status__in=[FacilityMatch.AUTOMATIC,
+                                FacilityMatch.CONFIRMED,
+                                FacilityMatch.MERGED])
+
+        claim = None
+        try:
+            claim = FacilityClaim.objects.get(facility=facility,
+                                              status=FacilityClaim.APPROVED)
+            if not is_embed_mode:
+                contribution = get_download_claim_contribution(
+                    claim, user_can_see_detail)
+                base_row.append(contribution)
+            else:
+                base_row.extend(['' for f in contributor_fields])
+
+            extended_fields = ExtendedField.objects.filter(
+                facility_claim=claim).values('value', 'field_name')
+            base_row.extend(format_download_extended_fields(extended_fields))
+
+        except FacilityClaim.DoesNotExist:
+            match_is_active = facility_matches.filter(
+                facility_list_item=facility.created_from,
+                is_active=True).exists()
+            base_row = add_non_base_fields(
+                base_row, facility.created_from, match_is_active)
+
+        base_row.append(facility.is_closed if facility.is_closed else 'False')
+
+        rows.append(base_row)
+
+        if is_embed_mode:
+            contributor_id = get_embed_contributor_id(self)
+            facility_matches = facility_matches.filter(
+                facility_list_item__source__contributor_id=contributor_id)
+
+        facility_matches = facility_matches.order_by('-created_at')
+
+        for facility_match in facility_matches:
+            list_item = facility_match.facility_list_item
+            # Skip the current item if it was used as the base row
+            if claim is None and facility.created_from_id == list_item.id:
+                continue
+
+            row = [facility.id,
+                   format_download_date(list_item.source.created_at),
+                   '', '', '', '', '', '']
+            row = add_non_base_fields(row, list_item, facility_match.is_active)
+            # Add a blank slot for closure status
+            row.append('')
+
+            rows.append(row)
+
+        return rows
+
+    def get_contributor_fields(self):
+        request = self.context.get('request') \
+            if self.context is not None else []
+        if request is None or request.query_params is None:
+            return []
+
+        embed = request.query_params.get('embed')
+        contributor_id = get_embed_contributor_id(self)
+        if not embed == '1' or contributor_id is None:
+            return []
+
+        fields = []
+        contributor = Contributor.objects.get(id=contributor_id)
+        if contributor.embed_config is not None:
+            config = contributor.embed_config
+            if EmbedField.objects.filter(embed_config=config).count() > 0:
+                fields = EmbedField.objects.filter(
+                    embed_config=config, visible=True).order_by('order')
+        return [f for f in fields
+                if f.column_name not in self.EXTENDED_FIELDS_HEADERS]
 
 
 def assign_contributor_field_values(list_item, fields):

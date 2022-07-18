@@ -33,6 +33,15 @@ import {
     updateAllFilters,
 } from '../actions/filters';
 
+import {
+    startFetchDownloadFacilities,
+    failFetchDownloadFacilities,
+    completeFetchDownloadFacilities,
+    startFetchNextPageOfDownloadFacilities,
+    failFetchNextPageOfDownloadFacilities,
+    completeFetchNextPageOfDownloadFacilities,
+} from '../actions/downloadFacilities';
+
 import { completeCreateDashboardActivityReport } from '../actions/dashboardActivityReports';
 
 import { makeFeatureCollectionFromSingleFeature } from '../util/util';
@@ -196,6 +205,42 @@ export default createReducer(
                             activity_reports: { $unshift: [payload.data] },
                         },
                     },
+                },
+            }),
+        [startFetchDownloadFacilities]: state =>
+            update(state, {
+                facilities: {
+                    fetching: { $set: true },
+                },
+            }),
+        [failFetchDownloadFacilities]: state =>
+            update(state, {
+                facilities: {
+                    fetching: { $set: false },
+                },
+            }),
+        [completeFetchDownloadFacilities]: state =>
+            update(state, {
+                facilities: {
+                    fetching: { $set: false },
+                },
+            }),
+        [startFetchNextPageOfDownloadFacilities]: state =>
+            update(state, {
+                facilities: {
+                    isInfiniteLoading: { $set: true },
+                },
+            }),
+        [failFetchNextPageOfDownloadFacilities]: state =>
+            update(state, {
+                facilities: {
+                    isInfiniteLoading: { $set: false },
+                },
+            }),
+        [completeFetchNextPageOfDownloadFacilities]: state =>
+            update(state, {
+                facilities: {
+                    isInfiniteLoading: { $set: false },
                 },
             }),
     },
