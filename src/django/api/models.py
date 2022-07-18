@@ -1144,6 +1144,7 @@ class FacilityClaim(models.Model):
         'office_phone_number',
         'parent_company',
         'sector',
+        'facility_location',
     )
 
     # A dictionary where the keys are field names and the values are predicate
@@ -1180,6 +1181,8 @@ class FacilityClaim(models.Model):
         facility_product_types=lambda v: ', '.join(v)
         if v is not None else '',
         sector=lambda v: ', '.join(v) if v is not None else '',
+        facility_location=lambda v: ', '.join([str(v.x), str(v.y)])
+        if v is not None else '',
     )
 
     def get_changes(self, include=list(default_change_includes)):
