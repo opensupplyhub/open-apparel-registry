@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from api.models import FacilityIndex, get_sector_dict
+from api.models import index_sectors
 
 
 class Command(BaseCommand):
@@ -11,5 +11,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         facility_ids = options.get('facility_ids', [])
-        for facility_id, sectors in get_sector_dict(facility_ids).items():
-            FacilityIndex.objects.filter(id=facility_id).update(sector=sectors)
+        index_sectors(facility_ids)

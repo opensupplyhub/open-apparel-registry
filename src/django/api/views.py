@@ -94,7 +94,8 @@ from api.models import (FacilityList,
                         FacilityIndex,
                         ExtendedField,
                         index_custom_text,
-                        index_extendedfields)
+                        index_extendedfields,
+                        index_sectors)
 from api.processing import (parse_csv_line,
                             parse_csv,
                             parse_xlsx,
@@ -1542,6 +1543,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             result['oar_id'] = item.facility.id
             if item.facility.created_from == item:
                 result['status'] = FacilityListItem.NEW_FACILITY
+            # and ensure that the sector index is updated since the indexed
+            # values depend on the status of the item, but there is not a
+            # post-save signal when items are saved
+            index_sectors([item.facility.id])
+
         elif (item.status == FacilityListItem.MATCHED
               and len(item_matches.keys()) == 0):
             # This branch handles the case where they client has specified
