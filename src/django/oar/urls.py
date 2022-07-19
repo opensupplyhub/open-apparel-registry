@@ -65,6 +65,8 @@ public_apis = [
          name='number_of_workers_ranges'),
     path('api/facility-processing-types/', views.facility_processing_types,
          name='facility_processing_types'),
+    path('api/parent-companies/', views.parent_companies,
+         name='parent_companies'),
     path('api/product-types/', views.product_types, name='product_types'),
     path('api/sectors/', views.sectors, name='sectors'),
 ]

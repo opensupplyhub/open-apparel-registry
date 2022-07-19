@@ -93,7 +93,7 @@ class EmailAsUsernameUserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class ContributorManager(models.Manager):
+class ContributorManager(models.QuerySet):
 
     # TODO: Will revisit trigram thresholds.
     # Temporary change to iexact to fix Ralph Lauren upload issue
@@ -101,16 +101,18 @@ class ContributorManager(models.Manager):
         """
         Perform an exact match on contributor names
         """
-        matches = self \
+        return self.order_by_active_and_verified() \
+            .filter(name__iexact=name)
+
+    def order_by_active_and_verified(self):
+        return self \
             .annotate(active_source_count=models.Count(
                 Q(source__is_active=True))) \
             .annotate(
                 has_active_sources=ExpressionWrapper(
                     Q(active_source_count__gt=0),
                     models.BooleanField())) \
-            .filter(name__iexact=name) \
             .order_by('-is_verified', '-has_active_sources')
-        return matches
 
 
 class Contributor(models.Model):
@@ -216,7 +218,7 @@ class Contributor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    objects = ContributorManager()
+    objects = ContributorManager.as_manager()
     history = HistoricalRecords()
 
     @staticmethod

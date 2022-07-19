@@ -649,6 +649,44 @@ def sectors(request):
     return Response(sorted(sectors))
 
 
+@api_view(['GET'])
+def parent_companies(request):
+    """
+    Returns list parent companies submitted by contributors,
+    as a list of tuples of contributor IDs and names, sorted alphabetically.
+
+
+    ## Sample Response
+
+        [
+            [1, "Brand A"],
+            [2, "Brand C"],
+            [3, "Contributor B"]
+        ]
+
+    """
+    names = FacilityIndex \
+        .objects \
+        .annotate(parent_companies=Func(F('parent_company_name'),
+                                        function='unnest')) \
+        .values_list('parent_companies', flat=True) \
+        .distinct()
+    ids = FacilityIndex \
+        .objects \
+        .annotate(parent_companies=Func(F('parent_company_id'),
+                                        function='unnest')) \
+        .values_list('parent_companies', flat=True) \
+        .distinct()
+
+    contributors = Contributor.objects.order_by_active_and_verified() \
+        .order_by('name', '-is_verified', '-has_active_sources') \
+        .filter(Q(name__in=names) | Q(id__in=ids)) \
+        .values('name') \
+        .values_list('id', 'name')
+
+    return Response(contributors)
+
+
 @swagger_auto_schema(methods=['POST'], auto_schema=None)
 @api_view(['POST'])
 @permission_classes([IsRegisteredAndConfirmed])
