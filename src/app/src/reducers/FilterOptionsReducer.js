@@ -17,6 +17,9 @@ import {
     startFetchSectorOptions,
     failFetchSectorOptions,
     completeFetchSectorOptions,
+    startFetchParentCompanyOptions,
+    failFetchParentCompanyOptions,
+    completeFetchParentCompanyOptions,
     startFetchFacilityProcessingTypeOptions,
     failFetchFacilityProcessingTypeOptions,
     completeFetchFacilityProcessingTypeOptions,
@@ -48,6 +51,11 @@ const initialState = Object.freeze({
         error: null,
     }),
     sectors: Object.freeze({
+        data: Object.freeze([]),
+        fetching: false,
+        error: null,
+    }),
+    parentCompanies: Object.freeze({
         data: Object.freeze([]),
         fetching: false,
         error: null,
@@ -179,6 +187,31 @@ export default createReducer(
                     fetching: { $set: false },
                     error: { $set: null },
                     data: { $set: payload },
+                },
+            }),
+        [startFetchParentCompanyOptions]: state =>
+            update(state, {
+                parentCompanies: {
+                    fetching: { $set: true },
+                    error: { $set: initialState.parentCompanies.error },
+                },
+            }),
+        [failFetchParentCompanyOptions]: (state, error) =>
+            update(state, {
+                parentCompanies: {
+                    fetching: {
+                        $set: initialState.parentCompanies.fetching,
+                    },
+                    error: { $set: error },
+                },
+            }),
+        [completeFetchParentCompanyOptions]: (state, data) =>
+            update(state, {
+                parentCompanies: {
+                    data: { $set: data },
+                    fetching: {
+                        $set: initialState.parentCompanies.fetching,
+                    },
                 },
             }),
         [startFetchFacilityProcessingTypeOptions]: state =>

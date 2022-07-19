@@ -25,6 +25,7 @@ import {
     fetchContributorTypeOptions,
     fetchFacilityProcessingTypeOptions,
     fetchNumberOfWorkersOptions,
+    fetchParentCompanyOptions,
 } from '../actions/filterOptions';
 
 import {
@@ -113,6 +114,7 @@ const isExtendedFieldForThisContributor = (field, extendedFields) =>
 
 function FilterSidebarExtendedSearch({
     contributorTypeOptions,
+    parentCompanyOptions,
     facilityProcessingTypeOptions,
     numberOfWorkersOptions,
     contributorTypes,
@@ -133,6 +135,7 @@ function FilterSidebarExtendedSearch({
     embedExtendedFields,
     classes,
     fetchContributorTypes,
+    fetchParentCompanies,
     fetchFacilityProcessingType,
     fetchNumberOfWorkers,
 }) {
@@ -141,6 +144,12 @@ function FilterSidebarExtendedSearch({
             fetchContributorTypes();
         }
     }, [contributorTypeOptions, fetchContributorTypes]);
+
+    useEffect(() => {
+        if (!parentCompanyOptions.length) {
+            fetchParentCompanies();
+        }
+    }, [parentCompanyOptions, fetchParentCompanies]);
 
     useEffect(() => {
         if (!facilityProcessingTypeOptions.length) {
@@ -216,15 +225,16 @@ function FilterSidebarExtendedSearch({
                     >
                         Parent Company
                     </InputLabel>
-                    <CreatableInputOnly
+                    <ReactSelect
                         isMulti
                         id={PARENT_COMPANY}
                         name={PARENT_COMPANY}
                         className={`basic-multi-select ${classes.selectStyle}`}
                         classNamePrefix="select"
+                        options={parentCompanyOptions}
                         value={parentCompany}
                         onChange={updateParentCompany}
-                        disabled={fetchingFacilities}
+                        disabled={fetchingExtendedOptions || fetchingFacilities}
                         placeholder="e.g. ABC Textiles Limited"
                     />
                 </div>
@@ -381,6 +391,10 @@ function mapStateToProps({
             data: contributorTypeOptions,
             fetching: fetchingContributorTypes,
         },
+        parentCompanies: {
+            data: parentCompanyOptions,
+            fetching: fetchingParentCompanies,
+        },
         facilityProcessingType: {
             data: facilityProcessingTypeOptions,
             fetching: fetchingFacilityProcessingType,
@@ -406,6 +420,7 @@ function mapStateToProps({
 }) {
     return {
         contributorTypeOptions,
+        parentCompanyOptions,
         facilityProcessingTypeOptions,
         numberOfWorkersOptions,
         contributorTypes,
@@ -420,7 +435,8 @@ function mapStateToProps({
         fetchingExtendedOptions:
             fetchingContributorTypes ||
             fetchingFacilityProcessingType ||
-            fetchingNumberofWorkers,
+            fetchingNumberofWorkers ||
+            fetchingParentCompanies,
         embed: !!embed,
         embedExtendedFields: config.extended_fields,
     };
@@ -437,6 +453,7 @@ function mapDispatchToProps(dispatch) {
         updateNativeLanguageName: e =>
             dispatch(updateNativeLanguageNameFilter(getValueFromEvent(e))),
         fetchContributorTypes: () => dispatch(fetchContributorTypeOptions()),
+        fetchParentCompanies: () => dispatch(fetchParentCompanyOptions()),
         fetchFacilityProcessingType: () =>
             dispatch(fetchFacilityProcessingTypeOptions()),
         fetchNumberOfWorkers: () => dispatch(fetchNumberOfWorkersOptions()),

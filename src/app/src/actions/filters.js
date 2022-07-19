@@ -53,26 +53,41 @@ export function setFiltersFromQueryString(qs = '') {
 
         dispatch(setEmbeddedMapStatusFromQueryString(qs));
 
-        // If contributor data already exists in the state, use it to match
-        // filters from the query string with labels. Otherwise, use the
-        // query string values directly. It will be updated later when the
-        // contributor data is loaded.
+        // If contributor / parent company data already exists in the state,
+        // use it to match filters from the query string with labels.
+        // Otherwise, use the query string values directly. It will be updated
+        // later when the contributor data is loaded.
 
         const filters = createFiltersFromQueryString(qs);
         const {
             filterOptions: {
-                contributors: { data },
+                contributors: { data: contributors },
+                parentCompanies: { data: parentCompanies },
                 lists,
             },
         } = getState();
 
-        let payload = data.length
+        let payload = contributors.length
             ? update(filters, {
                   contributors: {
-                      $set: updateListWithLabels(filters.contributors, data),
+                      $set: updateListWithLabels(
+                          filters.contributors,
+                          contributors,
+                      ),
                   },
               })
             : filters;
+
+        payload = parentCompanies.length
+            ? update(filters, {
+                  parentCompany: {
+                      $set: updateListWithLabels(
+                          filters.parentCompany,
+                          parentCompanies,
+                      ),
+                  },
+              })
+            : payload;
 
         payload = lists.data.length
             ? update(payload, {
