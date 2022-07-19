@@ -60,11 +60,14 @@ import {
     updateClaimedFacilityOfficePhone,
     submitClaimedFacilityDetailsUpdate,
 } from '../actions/claimedFacilityDetails';
-import { fetchSectorOptions } from '../actions/filterOptions';
+import {
+    fetchParentCompanyOptions,
+    fetchSectorOptions,
+} from '../actions/filterOptions';
 
 import {
     approvedFacilityClaimPropType,
-    contributorOptionsPropType,
+    parentCompanyOptionsPropType,
     sectorOptionsPropType,
 } from '../util/propTypes';
 
@@ -306,9 +309,10 @@ function ClaimedFacilitiesDetails({
     updateOfficeVisibility,
     errorUpdating,
     updateParentCompany,
-    contributorOptions,
     sectorOptions,
+    parentCompanyOptions,
     fetchSectors,
+    fetchParentCompanies,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -320,6 +324,11 @@ function ClaimedFacilitiesDetails({
         return clearDetails;
     }, []);
     /* eslint-enable react-hooks/exhaustive-deps */
+    useEffect(() => {
+        if (parentCompanyOptions.length === 0) {
+            fetchParentCompanies();
+        }
+    }, [parentCompanyOptions, fetchParentCompanies]);
     useEffect(() => {
         if (sectorOptions.length === 0) {
             fetchSectors();
@@ -436,7 +445,7 @@ function ClaimedFacilitiesDetails({
                     onChange={updateFacilityDescription}
                     disabled={updating}
                 />
-                <ShowOnly when={!isEmpty(contributorOptions)}>
+                <ShowOnly when={!isEmpty(parentCompanyOptions)}>
                     <InputSection
                         label="Parent Company / Supplier Group"
                         aside={parentCompanyAside}
@@ -444,10 +453,10 @@ function ClaimedFacilitiesDetails({
                         onChange={updateParentCompany}
                         disabled={updating}
                         isSelect
-                        selectOptions={contributorOptions}
+                        selectOptions={parentCompanyOptions}
                     />
                 </ShowOnly>
-                <ShowOnly when={!contributorOptions}>
+                <ShowOnly when={!parentCompanyOptions}>
                     <Typography>Parent Company / Supplier Group</Typography>
                     <Typography>
                         {get(data, 'facility_parent_company.name', null)}
@@ -665,7 +674,6 @@ ClaimedFacilitiesDetails.defaultProps = {
     error: null,
     data: null,
     errorUpdating: null,
-    contributorOptions: null,
 };
 
 ClaimedFacilitiesDetails.propTypes = {
@@ -697,8 +705,8 @@ ClaimedFacilitiesDetails.propTypes = {
     updateFacilityPhoneVisibility: func.isRequired,
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
-    contributorOptions: contributorOptionsPropType,
     sectorOptions: sectorOptionsPropType.isRequired,
+    parentCompanyOptions: parentCompanyOptionsPropType.isRequired,
     fetchSectors: func.isRequired,
 };
 
@@ -710,21 +718,20 @@ function mapStateToProps({
     },
     filterOptions: {
         sectors: { data: sectorOptions, fetching: fetchingSectors },
+        parentCompanies: {
+            data: parentCompanyOptions,
+            fetching: fetchingParentCompanies,
+        },
     },
 }) {
-    const contributorOptions =
-        data && data.contributors
-            ? mapDjangoChoiceTuplesToSelectOptions(data.contributors)
-            : null;
-
     return {
-        fetching: fetchingData || fetchingSectors,
+        fetching: fetchingData || fetchingSectors || fetchingParentCompanies,
         data,
         error,
         updating,
         errorUpdating,
-        contributorOptions,
         sectorOptions,
+        parentCompanyOptions,
     };
 }
 
@@ -826,6 +833,7 @@ function mapDispatchToProps(
         submitUpdate: () =>
             dispatch(submitClaimedFacilityDetailsUpdate(claimID)),
         fetchSectors: () => dispatch(fetchSectorOptions()),
+        fetchParentCompanies: () => dispatch(fetchParentCompanyOptions()),
     };
 }
 

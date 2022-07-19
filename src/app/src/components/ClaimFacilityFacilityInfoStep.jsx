@@ -23,7 +23,7 @@ import { claimAFacilityFormStyles } from '../util/styles';
 
 import { claimAFacilityFormFields } from '../util/constants';
 
-import { contributorOptionsPropType } from '../util/propTypes';
+import { parentCompanyOptionsPropType } from '../util/propTypes';
 
 const {
     companyName: companyFormField,
@@ -53,7 +53,7 @@ function ClaimFacilityFacilityInfoStep({
     facilityDescription,
     updateDescription,
     fetching,
-    contributorOptions,
+    parentCompanyOptions,
     parentCompany,
     updateParentCompany,
 }) {
@@ -77,7 +77,7 @@ function ClaimFacilityFacilityInfoStep({
                     disabled={fetching}
                 />
             </div>
-            {contributorOptions && (
+            {parentCompanyOptions && (
                 <div style={claimAFacilityFormStyles.inputGroupStyles}>
                     <InputLabel htmlFor={parentCompanyFormField.id}>
                         <Typography variant="title">
@@ -89,7 +89,7 @@ function ClaimFacilityFacilityInfoStep({
                     </aside>
                     <div style={claimAFacilityFormStyles.textFieldStyles}>
                         <Select
-                            options={contributorOptions}
+                            options={parentCompanyOptions}
                             id={parentCompanyFormField.id}
                             value={parentCompany}
                             onChange={updateParentCompany}
@@ -139,7 +139,6 @@ function ClaimFacilityFacilityInfoStep({
 }
 
 ClaimFacilityFacilityInfoStep.defaultProps = {
-    contributorOptions: null,
     parentCompany: null,
 };
 
@@ -151,7 +150,7 @@ ClaimFacilityFacilityInfoStep.propTypes = {
     updateCompany: func.isRequired,
     updateWebsite: func.isRequired,
     updateDescription: func.isRequired,
-    contributorOptions: contributorOptionsPropType,
+    parentCompanyOptions: parentCompanyOptionsPropType.isRequired,
     parentCompany: shape({
         value: number.isRequired,
         label: string.isRequired,
@@ -160,6 +159,12 @@ ClaimFacilityFacilityInfoStep.propTypes = {
 };
 
 function mapStateToProps({
+    filterOptions: {
+        parentCompanies: {
+            data: parentCompanyOptions,
+            fetch: fetchingParentCompanyOptions,
+        },
+    },
     claimFacility: {
         claimData: {
             formData: {
@@ -170,15 +175,14 @@ function mapStateToProps({
             },
             fetching,
         },
-        parentCompanyOptions: { data: contributorOptions },
     },
 }) {
     return {
         companyName,
         website,
         facilityDescription,
-        fetching,
-        contributorOptions,
+        fetching: fetching || fetchingParentCompanyOptions,
+        parentCompanyOptions,
         parentCompany,
     };
 }

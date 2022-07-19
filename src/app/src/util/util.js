@@ -171,8 +171,6 @@ export const makeAddNewFacilityClaimReviewNoteURL = claimID =>
 
 export const makeGetOrUpdateApprovedFacilityClaimURL = claimID =>
     `/api/facility-claims/${claimID}/claimed/`;
-export const makeParentCompanyOptionsAPIURL = () =>
-    '/api/facility-claims/parent-company-options/';
 export const makeGetClaimedFacilitiesURL = () => '/api/facilities/claimed/';
 export const makeClaimedFacilityDetailsLink = claimID => `/claimed/${claimID}/`;
 

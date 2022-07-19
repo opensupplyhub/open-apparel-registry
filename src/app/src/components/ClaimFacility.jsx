@@ -15,8 +15,8 @@ import ClaimFacilityStepper from '../components/ClaimFacilityStepper';
 import {
     fetchClaimFacilityData,
     clearClaimFacilityDataAndForm,
-    fetchParentCompanyOptions,
 } from '../actions/claimFacility';
+import { fetchParentCompanyOptions } from '../actions/filterOptions';
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
@@ -124,7 +124,12 @@ ClaimFacility.propTypes = {
 function mapStateToProps({
     claimFacility: {
         facilityData: { data, fetching, error },
-        parentCompanyOptions: { fetching: fetchingParentCompanyOptions },
+    },
+    filterOptions: {
+        parentCompanies: {
+            data: parentCompanyOptions,
+            fetching: fetchingParentCompanyOptions,
+        },
     },
     auth: {
         user: { user },
@@ -133,6 +138,7 @@ function mapStateToProps({
 }) {
     return {
         data,
+        parentCompanyOptions,
         fetching: fetching || sessionFetching || fetchingParentCompanyOptions,
         userHasSignedIn: !!user,
         error,

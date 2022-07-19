@@ -9,9 +9,7 @@ import {
     logErrorAndDispatchFailure,
     makeGetFacilityByOARIdURL,
     makeClaimFacilityAPIURL,
-    makeParentCompanyOptionsAPIURL,
     claimAFacilityFormIsValid,
-    mapDjangoChoiceTuplesToSelectOptions,
 } from '../util/util';
 
 export const startFetchClaimFacilityData = createAction(
@@ -127,39 +125,6 @@ export function submitClaimAFacilityData(oarID) {
                         err,
                         'An error prevented submitting facility claim data',
                         failSubmitClaimAFacilityData,
-                    ),
-                ),
-            );
-    };
-}
-
-export const startFetchParentCompanyOptions = createAction(
-    'START_FETCH_PARENT_COMPANY_OPTIONS',
-);
-export const failFetchParentCompanyOptions = createAction(
-    'FAIL_FETCH_PARENT_COMPANY_OPTIONS',
-);
-export const completeFetchParentCompanyOptions = createAction(
-    'COMPLETE_FETCH_PARENT_COMPANY_OPTIONS',
-);
-export const resetParentCompanyOptions = createAction(
-    'RESET_PARENT_COMPANY_OPTIONS',
-);
-
-export function fetchParentCompanyOptions() {
-    return dispatch => {
-        dispatch(startFetchParentCompanyOptions());
-
-        return apiRequest
-            .get(makeParentCompanyOptionsAPIURL())
-            .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
-            .then(data => dispatch(completeFetchParentCompanyOptions(data)))
-            .catch(err =>
-                dispatch(
-                    logErrorAndDispatchFailure(
-                        err,
-                        'An error prevented fetching parent company / supplier group options',
-                        failFetchParentCompanyOptions,
                     ),
                 ),
             );
