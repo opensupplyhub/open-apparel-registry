@@ -3425,19 +3425,6 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         except Contributor.DoesNotExist:
             raise NotFound('No contributor found for that user')
 
-    @action(detail=False,
-            methods=['GET'],
-            url_path='parent-company-options',
-            permission_classes=(IsRegisteredAndConfirmed,))
-    def get_parent_company_options(self, request):
-        response_data = [
-            (contributor.id, contributor.name)
-            for contributor
-            in Contributor.objects.all().order_by('name')
-        ]
-
-        return Response(response_data)
-
 
 class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                            viewsets.GenericViewSet):
