@@ -208,3 +208,7 @@ export const updateClaimedFacilityProductTypes = createAction(
 export const updateClaimedFacilityProductionTypes = createAction(
     'UPDATE_CLAIMED_FACILITY_PRODUCTION_TYPES',
 );
+
+export const updateClaimedFacilityLocation = createAction(
+    'UPDATE_CLAIMED_FACILITY_LOCATION',
+);

@@ -41,6 +41,7 @@ import {
     updateClaimedFacilityProductTypes,
     updateClaimedFacilityProductionTypes,
     updateClaimedFacilityAddress,
+    updateClaimedFacilityLocation,
     updateClaimedSector,
     updateClaimedFacilityPhone,
     updateClaimedFacilityPhoneVisibility,
@@ -71,11 +72,14 @@ import {
     sectorOptionsPropType,
 } from '../util/propTypes';
 
+import apiRequest from '../util/apiRequest';
+
 import {
     getValueFromEvent,
     getCheckedFromEvent,
     mapDjangoChoiceTuplesToSelectOptions,
     isValidFacilityURL,
+    makeClaimGeocoderURL,
 } from '../util/util';
 
 import { claimAFacilityFormFields } from '../util/constants';
@@ -279,6 +283,9 @@ const createCountrySelectOptions = memoize(
 );
 
 function ClaimedFacilitiesDetails({
+    match: {
+        params: { claimID },
+    },
     fetching,
     error,
     data,
@@ -287,6 +294,7 @@ function ClaimedFacilitiesDetails({
     updateFacilityNameEnglish,
     updateFacilityNameNativeLanguage,
     updateFacilityAddress,
+    updateFacilityLocation,
     updateSector,
     updateFacilityPhone,
     updateFacilityWebsite,
@@ -355,9 +363,50 @@ function ClaimedFacilitiesDetails({
         }
     }, [isSavingForm, setIsSavingForm, updating, errorUpdating]);
 
+    const geocodeAddress = address =>
+        isEmpty(address)
+            ? Promise.resolve({ emptyAddress: true, data: null })
+            : apiRequest.get(makeClaimGeocoderURL(claimID), {
+                  params: {
+                      address,
+                  },
+              });
+
+    const geocodeDataToGeoJSON = geocodedData => ({
+        type: 'Point',
+        coordinates: [
+            geocodedData.geocoded_point.lng,
+            geocodedData.geocoded_point.lat,
+        ],
+    });
+
     const saveForm = () => {
-        submitUpdate();
-        setIsSavingForm(true);
+        geocodeAddress(data.facility_address)
+            .then(({ emptyAddress, data: geocodedData }) => {
+                if (emptyAddress || geocodedData?.result_count > 0) {
+                    if (emptyAddress) {
+                        updateFacilityLocation(null);
+                    } else {
+                        updateFacilityLocation(
+                            geocodeDataToGeoJSON(geocodedData),
+                        );
+                    }
+                    submitUpdate();
+                    setIsSavingForm(true);
+                } else {
+                    toast.error(
+                        'Could not find a location for the specified address',
+                    );
+                }
+            })
+            .catch(err => {
+                toast.error(
+                    'There was a problem finding a location for the specified address',
+                );
+                if (window.Rollbar) {
+                    window.Rollbar.error(err);
+                }
+            });
     };
 
     if (fetching) {
@@ -771,6 +820,8 @@ function mapDispatchToProps(
         updateFacilityAddress: makeDispatchValueFn(
             updateClaimedFacilityAddress,
         ),
+        updateFacilityLocation: location =>
+            dispatch(updateClaimedFacilityLocation(location)),
         updateSector: makeDispatchMultiSelectFn(updateClaimedSector),
         updateFacilityPhone: makeDispatchValueFn(updateClaimedFacilityPhone),
         updateFacilityPhoneVisibility: makeDispatchCheckedFn(
