@@ -3472,6 +3472,34 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         except Contributor.DoesNotExist:
             raise NotFound('No contributor found for that user')
 
+    @action(detail=True,
+            methods=['get'],
+            url_path='geocode')
+    def geocode_claim_address(self, request, pk=None):
+        """
+        Reduce the potential misuse of the server-side geocoder by requiring
+        that geocode requests are made by an account with an approved claim.
+        """
+        claim = FacilityClaim \
+            .objects \
+            .filter(contributor=request.user.contributor) \
+            .filter(status=FacilityClaim.APPROVED) \
+            .get(pk=pk)
+
+        if request.user.contributor != claim.contributor:
+            raise NotFound()
+
+        country_code = request.query_params.get('country_code', None)
+        if country_code is None:
+            country_code = claim.facility.country_code
+
+        address = request.query_params.get('address', None)
+        if address is None:
+            raise BadRequestException('Missing address')
+
+        geocode_result = geocode_address(address, country_code)
+        return Response(geocode_result)
+
 
 class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                            viewsets.GenericViewSet):
