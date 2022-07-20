@@ -36,6 +36,7 @@ import {
     facilityProcessingTypeOptionsPropType,
     productTypeOptionsPropType,
     numberOfWorkerOptionsPropType,
+    parentCompanyOptionsPropType,
 } from '../util/propTypes';
 
 import { filterSidebarStyles } from '../util/styles';
@@ -140,25 +141,25 @@ function FilterSidebarExtendedSearch({
     fetchNumberOfWorkers,
 }) {
     useEffect(() => {
-        if (!contributorTypeOptions.length) {
+        if (!contributorTypeOptions) {
             fetchContributorTypes();
         }
     }, [contributorTypeOptions, fetchContributorTypes]);
 
     useEffect(() => {
-        if (!parentCompanyOptions.length) {
+        if (!parentCompanyOptions) {
             fetchParentCompanies();
         }
     }, [parentCompanyOptions, fetchParentCompanies]);
 
     useEffect(() => {
-        if (!facilityProcessingTypeOptions.length) {
+        if (!facilityProcessingTypeOptions) {
             fetchFacilityProcessingType();
         }
     }, [facilityProcessingTypeOptions, fetchFacilityProcessingType]);
 
     useEffect(() => {
-        if (!numberOfWorkersOptions.length) {
+        if (!numberOfWorkersOptions) {
             fetchNumberOfWorkers();
         }
     }, [numberOfWorkersOptions, fetchNumberOfWorkers]);
@@ -190,7 +191,7 @@ function FilterSidebarExtendedSearch({
                         name="contributorTypes"
                         className={`basic-multi-select notranslate ${classes.selectStyle}`}
                         classNamePrefix="select"
-                        options={contributorTypeOptions}
+                        options={contributorTypeOptions || []}
                         value={contributorTypes}
                         onChange={updateContributorType}
                         disabled={fetchingExtendedOptions || fetchingFacilities}
@@ -231,7 +232,7 @@ function FilterSidebarExtendedSearch({
                         name={PARENT_COMPANY}
                         className={`basic-multi-select ${classes.selectStyle}`}
                         classNamePrefix="select"
-                        options={parentCompanyOptions}
+                        options={parentCompanyOptions || []}
                         value={parentCompany}
                         onChange={updateParentCompany}
                         disabled={fetchingExtendedOptions || fetchingFacilities}
@@ -263,7 +264,7 @@ function FilterSidebarExtendedSearch({
                         className={`basic-multi-select ${classes.selectStyle}`}
                         classNamePrefix="select"
                         options={mapFacilityTypeOptions(
-                            facilityProcessingTypeOptions,
+                            facilityProcessingTypeOptions || [],
                             processingType,
                         )}
                         value={facilityType}
@@ -296,7 +297,7 @@ function FilterSidebarExtendedSearch({
                         className={`basic-multi-select ${classes.selectStyle}`}
                         classNamePrefix="select"
                         options={mapProcessingTypeOptions(
-                            facilityProcessingTypeOptions,
+                            facilityProcessingTypeOptions || [],
                             facilityType,
                         )}
                         value={processingType}
@@ -358,7 +359,7 @@ function FilterSidebarExtendedSearch({
                         name={NUMBER_OF_WORKERS}
                         className={`basic-multi-select ${classes.selectStyle}`}
                         classNamePrefix="select"
-                        options={numberOfWorkersOptions}
+                        options={numberOfWorkersOptions || []}
                         value={numberOfWorkers}
                         onChange={updateNumberOfWorkers}
                         disabled={fetchingExtendedOptions || fetchingFacilities}
@@ -369,11 +370,18 @@ function FilterSidebarExtendedSearch({
     );
 }
 
+FilterSidebarExtendedSearch.defaultProps = {
+    contributorTypeOptions: null,
+    parentCompanyOptions: null,
+    facilityProcessingTypeOptions: null,
+    numberOfWorkersOptions: null,
+};
+
 FilterSidebarExtendedSearch.propTypes = {
-    contributorTypeOptions: contributorTypeOptionsPropType.isRequired,
-    facilityProcessingTypeOptions:
-        facilityProcessingTypeOptionsPropType.isRequired,
-    numberOfWorkersOptions: numberOfWorkerOptionsPropType.isRequired,
+    contributorTypeOptions: contributorTypeOptionsPropType,
+    parentCompanyOptions: parentCompanyOptionsPropType,
+    facilityProcessingTypeOptions: facilityProcessingTypeOptionsPropType,
+    numberOfWorkersOptions: numberOfWorkerOptionsPropType,
     updateContributorType: func.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
     parentCompany: contributorOptionsPropType.isRequired,

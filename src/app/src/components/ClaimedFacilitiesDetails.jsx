@@ -325,12 +325,12 @@ function ClaimedFacilitiesDetails({
     }, []);
     /* eslint-enable react-hooks/exhaustive-deps */
     useEffect(() => {
-        if (parentCompanyOptions.length === 0) {
+        if (!parentCompanyOptions) {
             fetchParentCompanies();
         }
     }, [parentCompanyOptions, fetchParentCompanies]);
     useEffect(() => {
-        if (sectorOptions.length === 0) {
+        if (!sectorOptions) {
             fetchSectors();
         }
     }, [sectorOptions, fetchSectors]);
@@ -409,7 +409,7 @@ function ClaimedFacilitiesDetails({
                     isSelect
                     isMultiSelect
                     isCreatable
-                    selectOptions={sectorOptions}
+                    selectOptions={sectorOptions || []}
                     selectPlaceholder="e.g. Apparel - Use <Enter> or <Tab> to add multiple values"
                 />
                 <InputSection label="Product Types" />
@@ -622,7 +622,7 @@ function ClaimedFacilitiesDetails({
                     onChange={updateOfficeCountry}
                     disabled={updating}
                     isSelect
-                    selectOptions={countryOptions}
+                    selectOptions={countryOptions || []}
                 />
                 <InputSection
                     label="Phone number"
@@ -674,6 +674,8 @@ ClaimedFacilitiesDetails.defaultProps = {
     error: null,
     data: null,
     errorUpdating: null,
+    sectorOptions: null,
+    parentCompanyOptions: null,
 };
 
 ClaimedFacilitiesDetails.propTypes = {
@@ -705,8 +707,8 @@ ClaimedFacilitiesDetails.propTypes = {
     updateFacilityPhoneVisibility: func.isRequired,
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
-    sectorOptions: sectorOptionsPropType.isRequired,
-    parentCompanyOptions: parentCompanyOptionsPropType.isRequired,
+    sectorOptions: sectorOptionsPropType,
+    parentCompanyOptions: parentCompanyOptionsPropType,
     fetchSectors: func.isRequired,
 };
 

@@ -126,10 +126,7 @@ function mapStateToProps({
         facilityData: { data, fetching, error },
     },
     filterOptions: {
-        parentCompanies: {
-            data: parentCompanyOptions,
-            fetching: fetchingParentCompanyOptions,
-        },
+        parentCompanies: { fetching: fetchingParentCompanyOptions },
     },
     auth: {
         user: { user },
@@ -138,7 +135,6 @@ function mapStateToProps({
 }) {
     return {
         data,
-        parentCompanyOptions,
         fetching: fetching || sessionFetching || fetchingParentCompanyOptions,
         userHasSignedIn: !!user,
         error,

@@ -63,11 +63,11 @@ export function setFiltersFromQueryString(qs = '') {
             filterOptions: {
                 contributors: { data: contributors },
                 parentCompanies: { data: parentCompanies },
-                lists,
+                lists: { data: lists },
             },
         } = getState();
 
-        let payload = contributors.length
+        let payload = contributors
             ? update(filters, {
                   contributors: {
                       $set: updateListWithLabels(
@@ -78,7 +78,7 @@ export function setFiltersFromQueryString(qs = '') {
               })
             : filters;
 
-        payload = parentCompanies.length
+        payload = parentCompanies
             ? update(filters, {
                   parentCompany: {
                       $set: updateListWithLabels(
@@ -89,10 +89,10 @@ export function setFiltersFromQueryString(qs = '') {
               })
             : payload;
 
-        payload = lists.data.length
+        payload = lists
             ? update(payload, {
                   lists: {
-                      $set: updateListWithLabels(filters.lists, lists.data),
+                      $set: updateListWithLabels(filters.lists, lists),
                   },
               })
             : payload;

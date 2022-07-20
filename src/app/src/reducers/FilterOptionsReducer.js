@@ -31,47 +31,47 @@ import {
 
 const initialState = Object.freeze({
     contributors: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     lists: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     contributorTypes: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     countries: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     sectors: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     parentCompanies: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     facilityProcessingType: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     productType: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
     numberOfWorkers: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),

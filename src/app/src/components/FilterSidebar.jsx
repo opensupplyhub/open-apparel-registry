@@ -71,11 +71,11 @@ class FilterSidebar extends Component {
             return fetchFilterOptions();
         }
 
-        if (!contributorsData.length) {
+        if (!contributorsData) {
             fetchContributors();
         }
 
-        if (!countriesData.length) {
+        if (!countriesData) {
             fetchCountries();
         }
 
@@ -198,6 +198,11 @@ class FilterSidebar extends Component {
         );
     }
 }
+FilterSidebar.defaultProps = {
+    contributorsData: null,
+    countriesData: null,
+    sectorsData: null,
+};
 
 FilterSidebar.propTypes = {
     activeFilterSidebarTab: oneOf(Object.values(filterSidebarTabsEnum))
@@ -207,9 +212,9 @@ FilterSidebar.propTypes = {
     fetchFilterOptions: func.isRequired,
     fetchContributors: func.isRequired,
     fetchCountries: func.isRequired,
-    contributorsData: contributorOptionsPropType.isRequired,
-    countriesData: countryOptionsPropType.isRequired,
-    sectorsData: sectorOptionsPropType.isRequired,
+    contributorsData: contributorOptionsPropType,
+    countriesData: countryOptionsPropType,
+    sectorsData: sectorOptionsPropType,
     vectorTileFeatureIsActive: bool.isRequired,
     fetchingFeatureFlags: bool.isRequired,
 };
@@ -218,7 +223,6 @@ function mapStateToProps({
     ui: { activeFilterSidebarTab },
     filterOptions: {
         contributors: { data: contributorsData },
-        lists: { data: listsData },
         countries: { data: countriesData },
         sectors: { data: sectorsData },
     },
@@ -234,7 +238,6 @@ function mapStateToProps({
         contributorsData,
         countriesData,
         sectorsData,
-        listsData,
         vectorTileFeatureIsActive: get(flags, 'vector_tile', false),
         fetchingFeatureFlags,
         embed,

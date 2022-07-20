@@ -77,7 +77,7 @@ function ClaimFacilityFacilityInfoStep({
                     disabled={fetching}
                 />
             </div>
-            {parentCompanyOptions && (
+            {parentCompanyOptions && parentCompanyOptions.length > 0 && (
                 <div style={claimAFacilityFormStyles.inputGroupStyles}>
                     <InputLabel htmlFor={parentCompanyFormField.id}>
                         <Typography variant="title">
@@ -89,7 +89,7 @@ function ClaimFacilityFacilityInfoStep({
                     </aside>
                     <div style={claimAFacilityFormStyles.textFieldStyles}>
                         <Select
-                            options={parentCompanyOptions}
+                            options={parentCompanyOptions || []}
                             id={parentCompanyFormField.id}
                             value={parentCompany}
                             onChange={updateParentCompany}
@@ -139,6 +139,7 @@ function ClaimFacilityFacilityInfoStep({
 }
 
 ClaimFacilityFacilityInfoStep.defaultProps = {
+    parentCompanyOptions: null,
     parentCompany: null,
 };
 
@@ -150,7 +151,7 @@ ClaimFacilityFacilityInfoStep.propTypes = {
     updateCompany: func.isRequired,
     updateWebsite: func.isRequired,
     updateDescription: func.isRequired,
-    parentCompanyOptions: parentCompanyOptionsPropType.isRequired,
+    parentCompanyOptions: parentCompanyOptionsPropType,
     parentCompany: shape({
         value: number.isRequired,
         label: string.isRequired,
