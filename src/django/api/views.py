@@ -3365,6 +3365,8 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             if location_data is not None:
                 claim.facility_location = GEOSGeometry(
                     json.dumps(location_data))
+            if request.data.get('facility_address', '') == '':
+                claim.facility_location = None
 
             parent_company_data = request.data.get('facility_parent_company')
 
