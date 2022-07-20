@@ -530,10 +530,10 @@ export const claimAFacilityPreferredContactOptions = Object.freeze([
 ]);
 
 export const GRID_COLOR_RAMP = Object.freeze([
-    [0, '#009EE6'],
-    [10, '#0086D8'],
-    [40, '#0256BE'],
-    [160, '#0427A4'],
+    [0, '#F2E9FE'],
+    [10, '#CDA9FD'],
+    [40, '#A868FB'],
+    [160, '#8428FA'],
 ]);
 
 export const PPE_FIELD_NAMES = Object.freeze([

@@ -301,7 +301,7 @@ function FilterSidebarSearchTab({
             className={classes.font}
             style={{
                 boxShadow: 'none',
-                backgroundColor: COLOURS.GREEN,
+                backgroundColor: COLOURS.NAVIGATION,
                 color: COLOURS.NEAR_BLACK,
             }}
             onClick={() => searchForFacilities(vectorTileFlagIsActive)}
