@@ -25,7 +25,7 @@ export default class CreatableInputOnly extends Component {
         onChange(value);
     };
 
-    handleInputChange = (inputValue: string) => {
+    handleInputChange = inputValue => {
         this.setState({ inputValue });
     };
 
