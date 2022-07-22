@@ -1086,6 +1086,13 @@ class FacilityClaim(models.Model):
         null=True,
         default=None,
         on_delete=models.PROTECT,
+        verbose_name='contributor parent company / supplier group',
+        help_text='The contributor parent company / supplier group '
+        'of thisfacility claim.')
+    parent_company_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
         verbose_name='parent company / supplier group',
         help_text='The parent company / supplier group of this '
         'facility claim.')

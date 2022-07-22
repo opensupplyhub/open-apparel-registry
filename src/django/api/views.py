@@ -652,25 +652,20 @@ def sectors(request):
 @api_view(['GET'])
 def parent_companies(request):
     """
-    Returns list parent companies submitted by contributors,
-    as a list of tuples of contributor IDs and names, sorted alphabetically.
+    Returns list parent companies submitted by contributors, as a list of
+    tuples of Key and contributor name (suitable for populating a choice list),
+    sorted alphabetically.
 
 
     ## Sample Response
 
         [
             [1, "Brand A"],
-            [2, "Brand C"],
-            [3, "Contributor B"]
+            ["Non-Contributor", "Non-Contributor"],
+            [2, "Contributor B"]
         ]
 
     """
-    names = FacilityIndex \
-        .objects \
-        .annotate(parent_companies=Func(F('parent_company_name'),
-                                        function='unnest')) \
-        .values_list('parent_companies', flat=True) \
-        .distinct()
     ids = FacilityIndex \
         .objects \
         .annotate(parent_companies=Func(F('parent_company_id'),
@@ -680,11 +675,23 @@ def parent_companies(request):
 
     contributors = Contributor.objects.order_by_active_and_verified() \
         .order_by('name', '-is_verified', '-has_active_sources') \
-        .filter(Q(name__in=names) | Q(id__in=ids)) \
+        .filter(id__in=ids) \
         .values('name') \
         .values_list('id', 'name')
 
-    return Response(contributors)
+    contrib_lookup = {name: id for (id, name) in contributors}
+
+    names = FacilityIndex \
+        .objects \
+        .annotate(parent_companies=Func(F('parent_company_name'),
+                                        function='unnest')) \
+        .values_list('parent_companies', flat=True) \
+        .order_by('parent_companies') \
+        .distinct()
+
+    return Response([(contrib_lookup[name]
+                      if name in contrib_lookup else name, name)
+                     for name in names])
 
 
 @swagger_auto_schema(methods=['POST'], auto_schema=None)
@@ -3331,14 +3338,22 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             if not parent_company_data:
                 parent_company = None
+                parent_company_name = None
             elif 'id' not in parent_company_data:
                 parent_company = None
+                parent_company_name = None
             else:
-                parent_company = Contributor \
-                    .objects \
-                    .get(pk=parent_company_data['id'])
+                try:
+                    parent_company = Contributor \
+                        .objects \
+                        .get(pk=parent_company_data['id'])
+                    parent_company_name = parent_company.name
+                except ValueError:
+                    parent_company = None
+                    parent_company_name = parent_company_data['name']
 
             claim.parent_company = parent_company
+            claim.parent_company_name = parent_company_name
 
             try:
                 workers_count = int(request.data.get('facility_workers_count'))
