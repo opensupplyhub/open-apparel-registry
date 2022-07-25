@@ -172,6 +172,7 @@ CLAIM_FIELDS = (
     ('facility_production_types', ExtendedField.PROCESSING_TYPE),
     ('facility_type', ExtendedField.FACILITY_TYPE),
     ('parent_company', ExtendedField.PARENT_COMPANY),
+    ('parent_company_name', ExtendedField.PARENT_COMPANY),
     ('facility_product_types', ExtendedField.PRODUCT_TYPE),
 )
 
@@ -196,6 +197,7 @@ def create_extendedfields_for_claim(claim):
             elif extended_field == ExtendedField.PARENT_COMPANY:
                 field_value = get_parent_company_extendedfield_value(
                     field_value.name
+                    if claim_field == "parent_company" else field_value
                 )
             elif extended_field in [ExtendedField.PROCESSING_TYPE,
                                     ExtendedField.FACILITY_TYPE]:
