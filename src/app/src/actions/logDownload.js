@@ -1,9 +1,8 @@
 import { createAction } from 'redux-act';
-import get from 'lodash/get';
 
 import apiRequest from '../util/apiRequest';
 
-import { fetchNextPageOfFacilities } from './facilities';
+import { fetchNextPageOfDownloadFacilities } from './downloadFacilities';
 
 import {
     makeLogDownloadUrl,
@@ -25,26 +24,13 @@ export function logDownload(format, options) {
 
         try {
             const {
-                facilities: {
+                facilitiesDownload: {
                     facilities: {
-                        data: { features: facilities, count },
+                        data: { results: downloadData, count },
                         nextPageURL,
                     },
                 },
-                featureFlags,
             } = getState();
-
-            const ppeIsActive =
-                get(featureFlags, 'flags.ppe', false) && !isEmbedded;
-            const reportsAreActive =
-                get(featureFlags, 'flags.report_a_facility', false) &&
-                !isEmbedded;
-
-            const extendedFieldsAreActive = get(
-                featureFlags,
-                'flags.extended_profile',
-                false,
-            );
 
             const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
@@ -53,12 +39,7 @@ export function logDownload(format, options) {
             }
 
             if (!nextPageURL) {
-                downloadFacilities(facilities, {
-                    includePPEFields: ppeIsActive,
-                    includeClosureFields: reportsAreActive,
-                    includeExtendedFields: extendedFieldsAreActive,
-                    isEmbedded,
-                });
+                downloadFacilities(downloadData);
             } else {
                 let nextFacilitiesSetURL = nextPageURL;
 
@@ -77,10 +58,10 @@ export function logDownload(format, options) {
                     // https://github.com/open-apparel-registry/open-apparel-registry/pull/496
                     //
                     // eslint-disable-next-line no-await-in-loop
-                    await dispatch(fetchNextPageOfFacilities());
+                    await dispatch(fetchNextPageOfDownloadFacilities());
 
                     const {
-                        facilities: {
+                        facilitiesDownload: {
                             facilities: { nextPageURL: newNextPageURL },
                         },
                     } = getState();
@@ -89,19 +70,12 @@ export function logDownload(format, options) {
                 }
 
                 const {
-                    facilities: {
-                        facilities: {
-                            data: { features },
-                        },
+                    facilitiesDownload: {
+                        facilities: { data },
                     },
                 } = getState();
 
-                downloadFacilities(features, {
-                    includePPEFields: ppeIsActive,
-                    includeClosureFields: reportsAreActive,
-                    includeExtendedFields: extendedFieldsAreActive,
-                    isEmbedded,
-                });
+                downloadFacilities(data.results);
             }
 
             return dispatch(completeLogDownload());

@@ -89,6 +89,7 @@ function FilterSidebarFacilitiesTab({
     error,
     windowHeight,
     downloadingCSV,
+    downloadData,
     returnToSearchTab,
     fetchNextPage,
     isInfiniteLoading,
@@ -184,7 +185,7 @@ function FilterSidebarFacilitiesTab({
     );
 
     const progress = facilitiesCount
-        ? (get(data, 'features', []).length * 100) / facilitiesCount
+        ? (get(downloadData, 'results.rows', []).length * 100) / facilitiesCount
         : 0;
 
     const listHeaderInsetComponent = (
@@ -389,9 +390,13 @@ function mapStateToProps({
         window: { innerHeight: windowHeight },
     },
     logDownload: { fetching: downloadingCSV },
+    facilitiesDownload: {
+        facilities: { data: downloadData },
+    },
 }) {
     return {
         data,
+        downloadData,
         error,
         fetching,
         filterText,
