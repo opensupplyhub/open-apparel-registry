@@ -9107,55 +9107,13 @@ class ParentCompanyChoiceViewTest(APITestCase):
         self.assertEqual(response.json(), [])
         self.assertEqual(len(response.json()), 0)
 
-    def test_company_choices_no_contributors(self):
-        indexes = [FacilityIndex(name="Name", country_code="US",
-                                 location=Point(0, 0), sector=[],
-                                 contrib_types=[], contributors=[],
-                                 lists=[], id=i)
-                   for i in range(4)]
-        indexes[0].parent_company_name = ['Contributor 1']
-        indexes[1].parent_company_name = ['Brand A']
-        indexes[2].parent_company_name = ['Brand B', 'Brand A']
-        indexes[3].parent_company_name = ['Contributor 2', 'Brand B']
-        FacilityIndex.objects.bulk_create(indexes)
-        response = self.client.get(reverse('parent_companies'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), [])
-
-    def test_company_choices_from_names(self):
+    def test_company_choices_basic(self):
         c1 = Contributor.objects.create(
             name='Brand A', admin=User.objects.create(email='a@example.com'))
         c2 = Contributor.objects.create(
             name='Contributor 1',
             admin=User.objects.create(email='b@example.com'))
-        c3 = Contributor.objects.create(
-            name='Contributor 2',
-            admin=User.objects.create(email='c@example.com'))
-        indexes = [FacilityIndex(name="Name", country_code="US",
-                                 location=Point(0, 0), sector=[],
-                                 contrib_types=[], contributors=[],
-                                 lists=[], id=i)
-                   for i in range(4)]
-        indexes[0].parent_company_name = ['Contributor 1']
-        indexes[1].parent_company_name = ['Brand A']
-        indexes[2].parent_company_name = ['Brand B', 'Brand A']
-        indexes[3].parent_company_name = ['Contributor 2', 'Brand B']
-        FacilityIndex.objects.bulk_create(indexes)
-        response = self.client.get(reverse('parent_companies'))
-        self.assertEqual(response.status_code, 200)
-        # Response should be sorted and deduped, with names that do not match
-        # contributors filtered out
-        self.assertEqual(response.json(), [
-            [c1.id, c1.name], [c2.id, c2.name], [c3.id, c3.name]
-        ])
-
-    def test_company_choices_from_ids(self):
-        c1 = Contributor.objects.create(
-            name='Brand A', admin=User.objects.create(email='a@example.com'))
-        c2 = Contributor.objects.create(
-            name='Contributor 1',
-            admin=User.objects.create(email='b@example.com'))
-        c3 = Contributor.objects.create(
+        Contributor.objects.create(
             name='Contributor 2',
             admin=User.objects.create(email='c@example.com'))
         indexes = [FacilityIndex(name="Name", country_code="US",
@@ -9164,16 +9122,19 @@ class ParentCompanyChoiceViewTest(APITestCase):
                                  lists=[], id=i)
                    for i in range(4)]
         indexes[0].parent_company_id = [c1.id]
+        indexes[0].parent_company_name = [c1.name]
         indexes[1].parent_company_name = ['Brand A']
         indexes[2].parent_company_id = [c2.id]
+        indexes[2].parent_company_name = [c2.name]
         indexes[3].parent_company_name = ['Contributor 2', 'Brand B']
         FacilityIndex.objects.bulk_create(indexes)
         response = self.client.get(reverse('parent_companies'))
         self.assertEqual(response.status_code, 200)
         # Response should be sorted and deduped, with names that do not match
-        # contributors filtered out
+        # contributors using the name instead of the id
         self.assertEqual(response.json(), [
-            [c1.id, c1.name], [c2.id, c2.name], [c3.id, c3.name]
+            [c1.id, c1.name], ['Brand B', 'Brand B'], [c2.id, c2.name],
+            ['Contributor 2', 'Contributor 2']
         ])
 
 
