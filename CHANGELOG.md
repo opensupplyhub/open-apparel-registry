@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add sector to Facility Claim [#1934](https://github.com/open-apparel-registry/open-apparel-registry/pull/1934)
 - Added a script to automate restoring an anonymized production snapshot [#1948](https://github.com/open-apparel-registry/open-apparel-registry/pull/1948/commits/b7fecdca30c011a5ef3a8a68971e4ce5fbe8c319)
 - Add Event model [#1995](https://github.com/open-apparel-registry/open-apparel-registry/pull/1995)
+- Add sector to CSV [#1987](https://github.com/open-apparel-registry/open-apparel-registry/pull/1987)
 
 ### Changed
 

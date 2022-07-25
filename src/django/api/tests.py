@@ -9246,7 +9246,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
     def setUp(self):
         super(FacilityDownloadTest, self).setUp()
         self.download_url = '/api/facilities-downloads/'
-        self.contributor_column_index = 8
+        self.contributor_column_index = 9
         self.date = timezone.now().strftime("%Y-%m-%d")
         self.embed_config = EmbedConfig.objects.create()
 
@@ -9374,7 +9374,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
 
         self.default_headers = ['oar_id', 'contribution_date', 'name',
                                 'address', 'country_code', 'country_name',
-                                'lat', 'lng', 'contributor (list)',
+                                'lat', 'lng', 'sector', 'contributor (list)',
                                 'number_of_workers', 'parent_company',
                                 'processing_type_facility_type_raw',
                                 'facility_type', 'processing_type',
@@ -9383,7 +9383,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         self.contrib_facility_base_row = [self.contrib_facility.id,
                                           self.date, 'Towel Factory 42',
                                           '42 Dolphin St', 'US',
-                                          'United States', 0.0, 0.0,
+                                          'United States', 0.0, 0.0, 'Apparel',
                                           'test contributor 1 (First List)',
                                           '', '', '', '', '', '', 'False']
 
@@ -9586,8 +9586,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         params = 'embed=1&contributors={}'.format(self.contributor.id)
         response = self.get_facility_download(params)
         headers = self.get_headers(response)
-        self.assertEquals(headers[8], 'extra_1')
-        self.assertEquals(headers[9], 'extra_2')
+        self.assertEquals(headers[9], 'extra_1')
+        self.assertEquals(headers[10], 'extra_2')
 
     def test_embed_headers_dedupe_extended_fields(self):
         params = 'embed=1&contributors={}'.format(self.contributor.id)
@@ -9607,8 +9607,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         base_row = self.get_rows(response)[0]
         expected_base_row = [self.facility.id, self.date, 'Name',
                              'Address', 'US', 'United States', 0.0, 0.0,
-                             'test contributor 1 (First List)', '', '', '', '',
-                             '', '', 'False']
+                             'Apparel', 'test contributor 1 (First List)', '',
+                             '', '', '', '', '', 'False']
         self.assertEqual(len(base_row), len(expected_base_row))
         self.assertEqual(base_row, expected_base_row)
 
@@ -9619,7 +9619,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         base_row = self.get_rows(response)[0]
         expected_base_row = [self.facility.id, self.date, 'Name',
                              'Address', 'US', 'United States', 0.0, 0.0,
-                             '', '', '', '', '', '', '', '', 'False']
+                             'Apparel', '', '', '', '', '', '', '', '',
+                             'False']
         self.assertEqual(len(base_row), len(expected_base_row))
         self.assertEqual(base_row, expected_base_row)
 
@@ -9630,8 +9631,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         base_row = self.get_rows(response)[0]
         expected_base_row = [self.contrib_facility.id, self.date,
                              'Towel Factory 42', '42 Dolphin St', 'US',
-                             'United States', 0.0, 0.0, 'data one', '', '', '',
-                             '', '', '', '', 'False']
+                             'United States', 0.0, 0.0, 'Apparel', 'data one',
+                             '', '', '', '', '', '', '', 'False']
         self.assertEqual(len(base_row), len(expected_base_row))
         self.assertEqual(base_row, expected_base_row)
 
@@ -9642,7 +9643,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         base_row = self.get_rows(response)[0]
         expected_base_row = [self.contrib_facility_two.id, self.date, 'Item',
                              'Address', 'US', 'United States', 0.0, 0.0,
-                             '', 'data two', '', '', '', '', '', '', 'False']
+                             'Apparel', '', 'data two', '', '', '', '', '', '',
+                             'False']
         self.assertEqual(len(base_row), len(expected_base_row))
         self.assertEqual(base_row, expected_base_row)
 
@@ -9653,8 +9655,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         base_row = self.get_rows(response)[0]
         expected_base_row = [self.facility.id, self.date, 'Name',
                              'Address', 'US', 'United States', 0.0, 0.0,
-                             'test contributor 1 (First List)', '100-5000',
-                             'Contributor', 'biological recycling',
+                             'Apparel', 'test contributor 1 (First List)',
+                             '100-5000', 'Contributor', 'biological recycling',
                              'Raw Material Processing or Production',
                              'Biological Recycling', 'Shirts', 'False']
         self.assertEqual(len(base_row), len(expected_base_row))
@@ -9666,14 +9668,14 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         response = self.get_facility_download(params)
         rows = self.get_rows(response)
         claim_row = [self.facility.id, self.date, 'Claim Name',
-                     'Address', 'US', 'United States', 0.0, 0.0,
-                     'test contributor 1 (Claimed)', '20', 'Contributor',
-                     'biological recycling',
+                     'Address', 'US', 'United States', 0.0, 0.0, 'Apparel',
+                     'test contributor 1 (Claimed)', '20',
+                     'Contributor', 'biological recycling',
                      'Raw Material Processing or Production',
                      'Biological Recycling', 'Shirts', 'False']
         list_item_row = [self.facility.id, self.date, '', '', '', '', '', '',
-                         'test contributor 1 (First List)', '', '', '', '', '',
-                         '', '']
+                         'Apparel', 'test contributor 1 (First List)', '', '',
+                         '', '', '', '', '']
         self.assertEquals(rows[0], claim_row)
         self.assertEquals(rows[1], list_item_row)
 
@@ -9692,7 +9694,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         self.assertEqual(expected_base_row, rows[0])
 
         expected_additional_row = [self.contrib_facility.id, self.date, '',
-                                   '', '', '', '', '',
+                                   '', '', '', '', '', 'Apparel',
                                    'test contributor 1 (API)', '0-100',
                                    'Contributor A', 'biological recycling',
                                    'Raw Material Processing or Production',
@@ -9713,8 +9715,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
 
         expected_base_row = [self.contrib_facility.id, self.date,
                              'Towel Factory 42', '42 Dolphin St',
-                             'US', 'United States', 0.0, 0.0, 'data one', '',
-                             '', '', '', '', '', '', 'False']
+                             'US', 'United States', 0.0, 0.0, 'Apparel',
+                             'data one', '', '', '', '', '', '', '', 'False']
         self.assertEquals(rows[0], expected_base_row)
 
     def test_private_source_is_anonymized(self):
