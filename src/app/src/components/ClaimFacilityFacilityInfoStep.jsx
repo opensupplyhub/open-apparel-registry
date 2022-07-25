@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import isEmpty from 'lodash/isEmpty';
 import { isURL } from 'validator';
-import Select from 'react-select';
+import CreateableSelect from 'react-select/creatable';
 
 import RequiredAsterisk from './RequiredAsterisk';
 
@@ -88,7 +88,9 @@ function ClaimFacilityFacilityInfoStep({
                         {parentCompanyFormField.aside}
                     </aside>
                     <div style={claimAFacilityFormStyles.textFieldStyles}>
-                        <Select
+                        <CreateableSelect
+                            isClearable
+                            isValidNewOption={val => val.trim() !== ''}
                             options={parentCompanyOptions || []}
                             id={parentCompanyFormField.id}
                             value={parentCompany}

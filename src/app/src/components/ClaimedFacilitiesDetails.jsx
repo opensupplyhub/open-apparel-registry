@@ -198,10 +198,14 @@ const InputSection = ({
             }
 
             // isCreatable && !isMultiSelect creates an option object from the value
-            return {
-                value,
-                label: value,
-            };
+            // if it doesn't exist in the options list
+            const option = find(selectOptions, ['value', value]);
+            return (
+                option || {
+                    value,
+                    label: value,
+                }
+            );
         })();
 
         if (isCreatable) {
@@ -447,6 +451,7 @@ function ClaimedFacilitiesDetails({
                 />
                 <ShowOnly when={!isEmpty(parentCompanyOptions)}>
                     <InputSection
+                        isCreatable
                         label="Parent Company / Supplier Group"
                         aside={parentCompanyAside}
                         value={get(data, 'facility_parent_company.id', null)}
