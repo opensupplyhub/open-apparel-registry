@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0094_merge_20220629_1928'),
+        ('api', '0096_auto_20220706_1641'),
     ]
 
     def fill_parent_company_name(apps, schema_editor):
