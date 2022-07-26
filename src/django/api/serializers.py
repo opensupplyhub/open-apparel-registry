@@ -7,17 +7,19 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import password_validation
 from django.urls import reverse
 from django.db.models import Count
-from rest_framework.serializers import (CharField,
+from rest_framework.serializers import (BooleanField,
+                                        CharField,
+                                        CurrentUserDefault,
                                         DecimalField,
                                         EmailField,
+                                        HiddenField,
                                         IntegerField,
                                         ListField,
-                                        BooleanField,
                                         ModelSerializer,
-                                        SerializerMethodField,
-                                        ValidationError,
                                         Serializer,
-                                        URLField)
+                                        SerializerMethodField,
+                                        URLField,
+                                        ValidationError)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_auth.serializers import (PasswordResetSerializer,
                                    PasswordResetConfirmSerializer)
@@ -32,6 +34,7 @@ from api.models import (FacilityList,
                         FacilityClaimReviewNote,
                         User,
                         Contributor,
+                        ContributorWebhook,
                         Source,
                         ApiBlock,
                         FacilityActivityReport,
@@ -123,6 +126,11 @@ class PipeSeparatedField(ListField):
                 f'but got {data}')
         data = parse_array_values(data)
         return super().to_internal_value(data)
+
+
+class CurrentUserContributor(CurrentUserDefault):
+    def __call__(self, serializer_field):
+        return super().__call__(serializer_field).contributor
 
 
 class UserSerializer(ModelSerializer):
@@ -1660,6 +1668,16 @@ class ApiBlockSerializer(ModelSerializer):
         instance.save()
 
         return instance
+
+
+class ContributorWebhookSerializer(ModelSerializer):
+    contributor = HiddenField(default=CurrentUserContributor())
+
+    class Meta:
+        model = ContributorWebhook
+        fields = ('url', 'notification_type', 'filter_query_string',
+                  'contributor', 'created_at', 'updated_at', 'id')
+        read_only_fields = ('created_at', 'updated_at')
 
 
 class FacilityActivityReportSerializer(ModelSerializer):

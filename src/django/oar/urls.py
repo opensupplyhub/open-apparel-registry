@@ -35,6 +35,8 @@ router.register('facility-claims', views.FacilityClaimViewSet,
 router.register('facility-matches', views.FacilityMatchViewSet,
                 'facility-match')
 router.register('api-blocks', views.ApiBlockViewSet, 'api-block')
+router.register('contributor-webhooks', views.ContributorWebhookViewSet,
+                'contributor-webhooks')
 router.register('facility-activity-reports',
                 views.FacilityActivityReportViewSet,
                 'facility-activity-report')

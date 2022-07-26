@@ -39,7 +39,7 @@ from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        renderer_classes,
                                        action)
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from drf_yasg import openapi
 from drf_yasg.utils import no_body, swagger_auto_schema
@@ -72,7 +72,7 @@ from api.matching import (match_item,
                           text_match_item,
                           GazetteerCacheTimeoutError)
 from api.helpers import clean
-from api.models import (FacilityList,
+from api.models import (ContributorWebhook, FacilityList,
                         FacilityListItem,
                         FacilityClaim,
                         FacilityClaimReviewNote,
@@ -102,7 +102,8 @@ from api.processing import (parse_csv_line,
                             save_match_details,
                             save_exact_match_details,
                             reduce_matches)
-from api.serializers import (FacilityListSerializer,
+from api.serializers import (ContributorWebhookSerializer,
+                             FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
                              FacilityQueryParamsSerializer,
@@ -3837,6 +3838,25 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     def update(self, request, pk=None):
         self.validate_request(request)
         return super(ApiBlockViewSet, self).update(request, pk=pk)
+
+
+class ContributorWebhookViewSet(mixins.CreateModelMixin,
+                                mixins.DestroyModelMixin,
+                                mixins.ListModelMixin,
+                                mixins.UpdateModelMixin,
+                                viewsets.GenericViewSet):
+    """
+    Views for managing contributor webhooks
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = ContributorWebhookSerializer
+    swagger_schema = None
+
+    def get_queryset(self):
+        return ContributorWebhook.objects \
+            .filter(contributor=self.request.user.contributor) \
+            .order_by('-created_at')
 
 
 facility_activity_report_schema = openapi.Schema(
