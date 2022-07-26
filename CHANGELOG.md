@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix VectorGrid bug [#1928](https://github.com/open-apparel-registry/open-apparel-registry/pull/1928)
 - Exclude null claim sector value when serializing facility details [#1963](https://github.com/open-apparel-registry/open-apparel-registry/pull/1963)
 - Ensure inactive matches have anonymized sectors [#1968](https://github.com/open-apparel-registry/open-apparel-registry/pull/1968)
+- Fix showing anonymous contributors on sidebar [#1994](https://github.com/open-apparel-registry/open-apparel-registry/pull/1994)
 
 ### Security
 
