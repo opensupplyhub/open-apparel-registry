@@ -9181,7 +9181,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         super(FacilityDownloadTest, self).setUp()
         self.download_url = '/api/facilities-downloads/'
         self.contributor_column_index = 8
-        self.date = datetime.now().strftime("%Y-%m-%d")
+        self.date = timezone.now().strftime("%Y-%m-%d")
         self.embed_config = EmbedConfig.objects.create()
 
         self.contributor.embed_config = self.embed_config
