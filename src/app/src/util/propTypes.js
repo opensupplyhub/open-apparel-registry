@@ -172,6 +172,13 @@ export const contributorTypeOptionsPropType = arrayOf(
     }),
 );
 
+export const contributorListOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
+);
+
 export const countryOptionsPropType = arrayOf(
     shape({
         value: string.isRequired,
@@ -187,6 +194,13 @@ export const sectorOptionsPropType = arrayOf(
 );
 
 export const facilityTypeOptionsPropType = arrayOf(
+    shape({
+        value: string.isRequired,
+        label: string.isRequired,
+    }),
+);
+
+export const parentCompanyOptionsPropType = arrayOf(
     shape({
         value: string.isRequired,
         label: string.isRequired,

@@ -56,13 +56,19 @@ from waffle import switch_is_active
 
 
 def _get_parent_company(claim):
-    if not claim or not claim.parent_company:
+    if not claim:
         return None
-
-    return {
-        'id': claim.parent_company.id,
-        'name': claim.parent_company.name,
-    }
+    if claim.parent_company:
+        return {
+            'id': claim.parent_company.id,
+            'name': claim.parent_company.name,
+        }
+    if claim.parent_company_name:
+        return {
+            'id': claim.parent_company_name,
+            'name': claim.parent_company_name,
+        }
+    return None
 
 
 def is_embed_mode_active(serializer):

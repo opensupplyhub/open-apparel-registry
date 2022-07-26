@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import isEmpty from 'lodash/isEmpty';
 import { isURL } from 'validator';
-import Select from 'react-select';
+import CreateableSelect from 'react-select/creatable';
 
 import RequiredAsterisk from './RequiredAsterisk';
 
@@ -23,7 +23,7 @@ import { claimAFacilityFormStyles } from '../util/styles';
 
 import { claimAFacilityFormFields } from '../util/constants';
 
-import { contributorOptionsPropType } from '../util/propTypes';
+import { parentCompanyOptionsPropType } from '../util/propTypes';
 
 const {
     companyName: companyFormField,
@@ -53,7 +53,7 @@ function ClaimFacilityFacilityInfoStep({
     facilityDescription,
     updateDescription,
     fetching,
-    contributorOptions,
+    parentCompanyOptions,
     parentCompany,
     updateParentCompany,
 }) {
@@ -77,7 +77,7 @@ function ClaimFacilityFacilityInfoStep({
                     disabled={fetching}
                 />
             </div>
-            {contributorOptions && (
+            {parentCompanyOptions && parentCompanyOptions.length > 0 && (
                 <div style={claimAFacilityFormStyles.inputGroupStyles}>
                     <InputLabel htmlFor={parentCompanyFormField.id}>
                         <Typography variant="title">
@@ -88,8 +88,10 @@ function ClaimFacilityFacilityInfoStep({
                         {parentCompanyFormField.aside}
                     </aside>
                     <div style={claimAFacilityFormStyles.textFieldStyles}>
-                        <Select
-                            options={contributorOptions}
+                        <CreateableSelect
+                            isClearable
+                            isValidNewOption={val => val.trim() !== ''}
+                            options={parentCompanyOptions || []}
                             id={parentCompanyFormField.id}
                             value={parentCompany}
                             onChange={updateParentCompany}
@@ -139,7 +141,7 @@ function ClaimFacilityFacilityInfoStep({
 }
 
 ClaimFacilityFacilityInfoStep.defaultProps = {
-    contributorOptions: null,
+    parentCompanyOptions: null,
     parentCompany: null,
 };
 
@@ -151,7 +153,7 @@ ClaimFacilityFacilityInfoStep.propTypes = {
     updateCompany: func.isRequired,
     updateWebsite: func.isRequired,
     updateDescription: func.isRequired,
-    contributorOptions: contributorOptionsPropType,
+    parentCompanyOptions: parentCompanyOptionsPropType,
     parentCompany: shape({
         value: number.isRequired,
         label: string.isRequired,
@@ -160,6 +162,12 @@ ClaimFacilityFacilityInfoStep.propTypes = {
 };
 
 function mapStateToProps({
+    filterOptions: {
+        parentCompanies: {
+            data: parentCompanyOptions,
+            fetch: fetchingParentCompanyOptions,
+        },
+    },
     claimFacility: {
         claimData: {
             formData: {
@@ -170,15 +178,14 @@ function mapStateToProps({
             },
             fetching,
         },
-        parentCompanyOptions: { data: contributorOptions },
     },
 }) {
     return {
         companyName,
         website,
         facilityDescription,
-        fetching,
-        contributorOptions,
+        fetching: fetching || fetchingParentCompanyOptions,
+        parentCompanyOptions,
         parentCompany,
     };
 }

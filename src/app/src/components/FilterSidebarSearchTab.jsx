@@ -52,6 +52,7 @@ import {
     productTypeOptionsPropType,
     numberOfWorkerOptionsPropType,
     facilityCollectionPropType,
+    contributorListOptionsPropType,
 } from '../util/propTypes';
 
 import { filterSidebarStyles } from '../util/styles';
@@ -393,7 +394,7 @@ function FilterSidebarSearchTab({
                             name={CONTRIBUTORS}
                             className={`basic-multi-select notranslate ${classes.selectStyle}`}
                             classNamePrefix="select"
-                            options={contributorOptions}
+                            options={contributorOptions || []}
                             value={contributors}
                             onChange={updateContributor}
                             disabled={fetchingOptions || fetchingFacilities}
@@ -473,7 +474,7 @@ function FilterSidebarSearchTab({
                                 name={LISTS}
                                 className={`basic-multi-select notranslate ${classes.selectStyle}`}
                                 classNamePrefix="select"
-                                options={listOptions}
+                                options={listOptions || []}
                                 value={lists}
                                 onChange={updateList}
                                 disabled={fetchingLists || fetchingFacilities}
@@ -495,7 +496,7 @@ function FilterSidebarSearchTab({
                         name={COUNTRIES}
                         className={`basic-multi-select ${classes.selectStyle}`}
                         classNamePrefix="select"
-                        options={countryOptions}
+                        options={countryOptions || []}
                         value={countries}
                         onChange={updateCountry}
                         disabled={fetchingOptions || fetchingFacilities}
@@ -515,13 +516,11 @@ function FilterSidebarSearchTab({
                         name={SECTORS}
                         className={`basic-multi-select notranslate ${classes.selectStyle}`}
                         classNamePrefix="select"
-                        options={sectorOptions}
+                        options={sectorOptions || []}
                         value={sectors}
                         onChange={updateSector}
                         onFocus={() =>
-                            sectorOptions.length === 0 &&
-                            !fetchingSectors &&
-                            fetchSectors()
+                            !sectorOptions && !fetchingSectors && fetchSectors()
                         }
                         noOptionsMessage={() =>
                             fetchingSectors ? 'Loading..' : 'No options'
@@ -578,12 +577,17 @@ function FilterSidebarSearchTab({
 
 FilterSidebarSearchTab.defaultProps = {
     facilities: null,
+    contributorOptions: null,
+    listOptions: null,
+    countryOptions: null,
+    sectorOptions: null,
 };
 
 FilterSidebarSearchTab.propTypes = {
-    contributorOptions: contributorOptionsPropType.isRequired,
-    countryOptions: countryOptionsPropType.isRequired,
-    sectorOptions: sectorOptionsPropType.isRequired,
+    contributorOptions: contributorOptionsPropType,
+    listOptions: contributorListOptionsPropType,
+    countryOptions: countryOptionsPropType,
+    sectorOptions: sectorOptionsPropType,
     resetFilters: func.isRequired,
     updateFacilityFreeTextQuery: func.isRequired,
     updateContributor: func.isRequired,

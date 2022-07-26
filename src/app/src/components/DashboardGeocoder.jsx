@@ -124,7 +124,7 @@ function DashboardGeocoder({ countryOptions, fetchingOptions, getCountries }) {
                         <ReactSelect
                             id={COUNTRIES}
                             name={COUNTRIES}
-                            options={countryOptions}
+                            options={countryOptions || []}
                             value={country}
                             onChange={setCountry}
                             disabled={fetchingOptions}

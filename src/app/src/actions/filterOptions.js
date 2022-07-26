@@ -10,6 +10,7 @@ import {
     makeGetContributorTypesURL,
     makeGetCountriesURL,
     makeGetSectorsURL,
+    makeGetParentCompaniesURL,
     makeGetFacilitiesTypeProcessingTypeURL,
     makeGetNumberOfWorkersURL,
     mapDjangoChoiceTuplesToSelectOptions,
@@ -61,6 +62,16 @@ export const startFetchSectorOptions = createAction(
 export const failFetchSectorOptions = createAction('FAIL_FETCH_SECTOR_OPTIONS');
 export const completeFetchSectorOptions = createAction(
     'COMPLETE_FETCH_SECTOR_OPTIONS',
+);
+
+export const startFetchParentCompanyOptions = createAction(
+    'START_FETCH_PARENT_COMPANY_OPTIONS',
+);
+export const failFetchParentCompanyOptions = createAction(
+    'FAIL_FETCH_PARENT_COMPANY_OPTIONS',
+);
+export const completeFetchParentCompanyOptions = createAction(
+    'COMPLETE_FETCH_PARENT_COMPANY_OPTIONS',
 );
 
 export const startFetchFacilityProcessingTypeOptions = createAction(
@@ -191,6 +202,26 @@ export function fetchSectorOptions() {
                         err,
                         'An error prevented fetching sector options',
                         failFetchSectorOptions,
+                    ),
+                ),
+            );
+    };
+}
+
+export function fetchParentCompanyOptions() {
+    return dispatch => {
+        dispatch(startFetchParentCompanyOptions());
+
+        return apiRequest
+            .get(makeGetParentCompaniesURL())
+            .then(({ data }) => mapDjangoChoiceTuplesToSelectOptions(data))
+            .then(data => dispatch(completeFetchParentCompanyOptions(data)))
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented fetching parent company options',
+                        failFetchParentCompanyOptions,
                     ),
                 ),
             );

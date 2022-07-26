@@ -18,10 +18,6 @@ import {
     startSubmitClaimAFacilityData,
     failSubmitClaimAFacilityData,
     completeSubmitClaimAFacilityData,
-    startFetchParentCompanyOptions,
-    failFetchParentCompanyOptions,
-    completeFetchParentCompanyOptions,
-    resetParentCompanyOptions,
     updateClaimAFacilityJobTitle,
     updateClaimAFacilityLinkedinProfile,
 } from '../actions/claimFacility';
@@ -79,37 +75,6 @@ export default createReducer(
                     data: { $set: data },
                     fetching: { $set: false },
                     error: { $set: initialState.facilityData.error },
-                },
-            }),
-        [startFetchParentCompanyOptions]: state =>
-            update(state, {
-                parentCompanyOptions: {
-                    fetching: { $set: true },
-                    error: { $set: initialState.parentCompanyOptions.error },
-                },
-            }),
-        [failFetchParentCompanyOptions]: (state, error) =>
-            update(state, {
-                parentCompanyOptions: {
-                    fetching: {
-                        $set: initialState.parentCompanyOptions.fetching,
-                    },
-                    error: { $set: error },
-                },
-            }),
-        [completeFetchParentCompanyOptions]: (state, data) =>
-            update(state, {
-                parentCompanyOptions: {
-                    data: { $set: data },
-                    fetching: {
-                        $set: initialState.parentCompanyOptions.fetching,
-                    },
-                },
-            }),
-        [resetParentCompanyOptions]: state =>
-            update(state, {
-                parentCompanyOptions: {
-                    $set: initialState.parentCompanyOptions,
                 },
             }),
         [updateClaimAFacilityContactPerson]: (state, payload) =>

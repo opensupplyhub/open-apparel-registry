@@ -124,6 +124,7 @@ export const makeGetListsURL = () => '/api/contributor-lists/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
 export const makeGetSectorsURL = () => '/api/sectors/';
+export const makeGetParentCompaniesURL = () => '/api/parent-companies/';
 export const makeGetFacilitiesTypeProcessingTypeURL = () =>
     '/api/facility-processing-types/';
 export const makeGetNumberOfWorkersURL = () => '/api/workers-ranges/';
@@ -170,8 +171,6 @@ export const makeAddNewFacilityClaimReviewNoteURL = claimID =>
 
 export const makeGetOrUpdateApprovedFacilityClaimURL = claimID =>
     `/api/facility-claims/${claimID}/claimed/`;
-export const makeParentCompanyOptionsAPIURL = () =>
-    '/api/facility-claims/parent-company-options/';
 export const makeGetClaimedFacilitiesURL = () => '/api/facilities/claimed/';
 export const makeClaimedFacilityDetailsLink = claimID => `/claimed/${claimID}/`;
 

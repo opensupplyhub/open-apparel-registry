@@ -649,6 +649,51 @@ def sectors(request):
     return Response(sorted(sectors))
 
 
+@api_view(['GET'])
+def parent_companies(request):
+    """
+    Returns list parent companies submitted by contributors, as a list of
+    tuples of Key and contributor name (suitable for populating a choice list),
+    sorted alphabetically.
+
+
+    ## Sample Response
+
+        [
+            [1, "Brand A"],
+            ["Non-Contributor", "Non-Contributor"],
+            [2, "Contributor B"]
+        ]
+
+    """
+    ids = FacilityIndex \
+        .objects \
+        .annotate(parent_companies=Func(F('parent_company_id'),
+                                        function='unnest')) \
+        .values_list('parent_companies', flat=True) \
+        .distinct()
+
+    contributors = Contributor.objects.order_by_active_and_verified() \
+        .order_by('name', '-is_verified', '-has_active_sources') \
+        .filter(id__in=ids) \
+        .values('name') \
+        .values_list('id', 'name')
+
+    contrib_lookup = {name: id for (id, name) in contributors}
+
+    names = FacilityIndex \
+        .objects \
+        .annotate(parent_companies=Func(F('parent_company_name'),
+                                        function='unnest')) \
+        .values_list('parent_companies', flat=True) \
+        .order_by('parent_companies') \
+        .distinct()
+
+    return Response([(contrib_lookup[name]
+                      if name in contrib_lookup else name, name)
+                     for name in names])
+
+
 @swagger_auto_schema(methods=['POST'], auto_schema=None)
 @api_view(['POST'])
 @permission_classes([IsRegisteredAndConfirmed])
@@ -1772,10 +1817,16 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 raise ValidationError('Company name is required')
 
             if parent_company:
-                parent_company_contributor = Contributor \
-                    .objects \
-                    .get(pk=parent_company)
+                try:
+                    parent_company_contributor = Contributor \
+                        .objects \
+                        .get(pk=parent_company)
+                    parent_company_name = parent_company_contributor.name
+                except ValueError:
+                    parent_company_name = parent_company
+                    parent_company_contributor = None
             else:
+                parent_company_name = None
                 parent_company_contributor = None
 
             user_has_pending_claims = FacilityClaim \
@@ -1799,6 +1850,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 phone_number=phone_number,
                 company_name=company_name,
                 parent_company=parent_company_contributor,
+                parent_company_name=parent_company_name,
                 website=website,
                 facility_description=facility_description,
                 verification_method=verification_method,
@@ -3143,6 +3195,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             )
 
             send_claim_facility_approval_email(request, claim)
+            create_extendedfields_for_claim(claim)
 
             try:
                 send_approved_claim_notice_to_list_contributors(request,
@@ -3236,6 +3289,9 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             send_claim_facility_revocation_email(request, claim)
 
+            ExtendedField.objects.filter(facility_claim=claim).delete()
+            index_extendedfields([claim.facility_id])
+
             response_data = FacilityClaimDetailsSerializer(claim).data
             return Response(response_data)
         except FacilityClaim.DoesNotExist:
@@ -3293,14 +3349,22 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             if not parent_company_data:
                 parent_company = None
+                parent_company_name = None
             elif 'id' not in parent_company_data:
                 parent_company = None
+                parent_company_name = None
             else:
-                parent_company = Contributor \
-                    .objects \
-                    .get(pk=parent_company_data['id'])
+                try:
+                    parent_company = Contributor \
+                        .objects \
+                        .get(pk=parent_company_data['id'])
+                    parent_company_name = parent_company.name
+                except ValueError:
+                    parent_company = None
+                    parent_company_name = parent_company_data['name']
 
             claim.parent_company = parent_company
+            claim.parent_company_name = parent_company_name
 
             try:
                 workers_count = int(request.data.get('facility_workers_count'))
@@ -3386,19 +3450,6 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             raise NotFound()
         except Contributor.DoesNotExist:
             raise NotFound('No contributor found for that user')
-
-    @action(detail=False,
-            methods=['GET'],
-            url_path='parent-company-options',
-            permission_classes=(IsRegisteredAndConfirmed,))
-    def get_parent_company_options(self, request):
-        response_data = [
-            (contributor.id, contributor.name)
-            for contributor
-            in Contributor.objects.all().order_by('name')
-        ]
-
-        return Response(response_data)
 
 
 class FacilityMatchViewSet(mixins.RetrieveModelMixin,

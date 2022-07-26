@@ -60,11 +60,14 @@ import {
     updateClaimedFacilityOfficePhone,
     submitClaimedFacilityDetailsUpdate,
 } from '../actions/claimedFacilityDetails';
-import { fetchSectorOptions } from '../actions/filterOptions';
+import {
+    fetchParentCompanyOptions,
+    fetchSectorOptions,
+} from '../actions/filterOptions';
 
 import {
     approvedFacilityClaimPropType,
-    contributorOptionsPropType,
+    parentCompanyOptionsPropType,
     sectorOptionsPropType,
 } from '../util/propTypes';
 
@@ -195,10 +198,14 @@ const InputSection = ({
             }
 
             // isCreatable && !isMultiSelect creates an option object from the value
-            return {
-                value,
-                label: value,
-            };
+            // if it doesn't exist in the options list
+            const option = find(selectOptions, ['value', value]);
+            return (
+                option || {
+                    value,
+                    label: value,
+                }
+            );
         })();
 
         if (isCreatable) {
@@ -306,9 +313,10 @@ function ClaimedFacilitiesDetails({
     updateOfficeVisibility,
     errorUpdating,
     updateParentCompany,
-    contributorOptions,
     sectorOptions,
+    parentCompanyOptions,
     fetchSectors,
+    fetchParentCompanies,
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
     // disabled because we want to use this as just
@@ -321,7 +329,12 @@ function ClaimedFacilitiesDetails({
     }, []);
     /* eslint-enable react-hooks/exhaustive-deps */
     useEffect(() => {
-        if (sectorOptions.length === 0) {
+        if (!parentCompanyOptions) {
+            fetchParentCompanies();
+        }
+    }, [parentCompanyOptions, fetchParentCompanies]);
+    useEffect(() => {
+        if (!sectorOptions) {
             fetchSectors();
         }
     }, [sectorOptions, fetchSectors]);
@@ -400,7 +413,7 @@ function ClaimedFacilitiesDetails({
                     isSelect
                     isMultiSelect
                     isCreatable
-                    selectOptions={sectorOptions}
+                    selectOptions={sectorOptions || []}
                     selectPlaceholder="e.g. Apparel - Use <Enter> or <Tab> to add multiple values"
                 />
                 <InputSection label="Product Types" />
@@ -436,18 +449,19 @@ function ClaimedFacilitiesDetails({
                     onChange={updateFacilityDescription}
                     disabled={updating}
                 />
-                <ShowOnly when={!isEmpty(contributorOptions)}>
+                <ShowOnly when={!isEmpty(parentCompanyOptions)}>
                     <InputSection
+                        isCreatable
                         label="Parent Company / Supplier Group"
                         aside={parentCompanyAside}
                         value={get(data, 'facility_parent_company.id', null)}
                         onChange={updateParentCompany}
                         disabled={updating}
                         isSelect
-                        selectOptions={contributorOptions}
+                        selectOptions={parentCompanyOptions}
                     />
                 </ShowOnly>
-                <ShowOnly when={!contributorOptions}>
+                <ShowOnly when={!parentCompanyOptions}>
                     <Typography>Parent Company / Supplier Group</Typography>
                     <Typography>
                         {get(data, 'facility_parent_company.name', null)}
@@ -613,7 +627,7 @@ function ClaimedFacilitiesDetails({
                     onChange={updateOfficeCountry}
                     disabled={updating}
                     isSelect
-                    selectOptions={countryOptions}
+                    selectOptions={countryOptions || []}
                 />
                 <InputSection
                     label="Phone number"
@@ -665,7 +679,8 @@ ClaimedFacilitiesDetails.defaultProps = {
     error: null,
     data: null,
     errorUpdating: null,
-    contributorOptions: null,
+    sectorOptions: null,
+    parentCompanyOptions: null,
 };
 
 ClaimedFacilitiesDetails.propTypes = {
@@ -697,8 +712,8 @@ ClaimedFacilitiesDetails.propTypes = {
     updateFacilityPhoneVisibility: func.isRequired,
     updateContactVisibility: func.isRequired,
     updateOfficeVisibility: func.isRequired,
-    contributorOptions: contributorOptionsPropType,
-    sectorOptions: sectorOptionsPropType.isRequired,
+    sectorOptions: sectorOptionsPropType,
+    parentCompanyOptions: parentCompanyOptionsPropType,
     fetchSectors: func.isRequired,
 };
 
@@ -710,21 +725,20 @@ function mapStateToProps({
     },
     filterOptions: {
         sectors: { data: sectorOptions, fetching: fetchingSectors },
+        parentCompanies: {
+            data: parentCompanyOptions,
+            fetching: fetchingParentCompanies,
+        },
     },
 }) {
-    const contributorOptions =
-        data && data.contributors
-            ? mapDjangoChoiceTuplesToSelectOptions(data.contributors)
-            : null;
-
     return {
-        fetching: fetchingData || fetchingSectors,
+        fetching: fetchingData || fetchingSectors || fetchingParentCompanies,
         data,
         error,
         updating,
         errorUpdating,
-        contributorOptions,
         sectorOptions,
+        parentCompanyOptions,
     };
 }
 
@@ -826,6 +840,7 @@ function mapDispatchToProps(
         submitUpdate: () =>
             dispatch(submitClaimedFacilityDetailsUpdate(claimID)),
         fetchSectors: () => dispatch(fetchSectorOptions()),
+        fetchParentCompanies: () => dispatch(fetchParentCompanyOptions()),
     };
 }
 

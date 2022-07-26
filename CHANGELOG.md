@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Return anonymized sectors and index them instead of excluding them when items are private or inactive [#1966](https://github.com/open-apparel-registry/open-apparel-registry/pull/1966)
 - Upgrade Django to 3.2, Python to 3.10, as well as other dependencies [#1965](https://github.com/open-apparel-registry/open-apparel-registry/pull/1965/)
 - Update facility download [#1981](https://github.com/open-apparel-registry/open-apparel-registry/pull/1981)
+- Limit parent company dropdown options to other parent companies and allow freeform text entry [#1983](https://github.com/open-apparel-registry/open-apparel-registry/pull/1983)
 
 ### Deprecated
 
