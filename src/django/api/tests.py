@@ -9331,74 +9331,74 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
     @override_flag('can_get_facility_history', active=True)
     @override_switch('claim_a_facility', active=True)
     def create_claim(self):
-            self.client.logout()
-            self.client.login(email=self.user_email,
-                              password=self.user_password)
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
 
-            claim_facility_url = '/api/facilities/{}/claim/'.format(
-                self.facility.id,
-            )
+        claim_facility_url = '/api/facilities/{}/claim/'.format(
+            self.facility.id,
+        )
 
-            claim_facility_data = {
-                'contact_person': 'contact_person',
-                'job_title': 'job_title',
-                'company_name': 'company_name',
-                'email': 'email@example.com',
-                'phone_number': 1234567,
-                'website': 'https://example.com',
-                'facility_description': 'facility_description',
-                'verification_method': 'verification_method',
-                'preferred_contact_method': 'email',
-            }
+        claim_facility_data = {
+            'contact_person': 'contact_person',
+            'job_title': 'job_title',
+            'company_name': 'company_name',
+            'email': 'email@example.com',
+            'phone_number': 1234567,
+            'website': 'https://example.com',
+            'facility_description': 'facility_description',
+            'verification_method': 'verification_method',
+            'preferred_contact_method': 'email',
+        }
 
-            self.client.post(claim_facility_url, claim_facility_data)
+        self.client.post(claim_facility_url, claim_facility_data)
 
-            self.client.logout()
-            self.client.login(email=self.superuser_email,
-                              password=self.superuser_password)
+        self.client.logout()
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
 
-            claim = FacilityClaim.objects.first()
+        claim = FacilityClaim.objects.first()
 
-            approve_claim_url = '/api/facility-claims/{}/approve/'.format(
-                claim.id,
-            )
+        approve_claim_url = '/api/facility-claims/{}/approve/'.format(
+            claim.id,
+        )
 
-            self.client.post(approve_claim_url, {'reason': 'reason'})
+        self.client.post(approve_claim_url, {'reason': 'reason'})
 
-            self.client.logout()
-            self.client.login(email=self.user_email,
-                              password=self.user_password)
+        self.client.logout()
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
 
-            update_claim_url = '/api/facility-claims/{}/claimed/'.format(
-                claim.id,
-            )
+        update_claim_url = '/api/facility-claims/{}/claimed/'.format(
+            claim.id,
+        )
 
-            update_claim_data = {
-                'id': claim.id,
-                'facility_name_english': 'Claim Name',
-                'facility_name_native_language': 'native_language',
-                'facility_address': 'facility_address',
-                'facility_description': 'facility_description',
-                'facility_phone_number': 1234567,
-                'facility_phone_number_publicly_visible': True,
-                'facility_website': 'https://openapparel.org',
-                'facility_website_publicly_visible': True,
-                'facility_minimum_order_quantity': 10,
-                'facility_average_lead_time': '2 months',
-                'point_of_contact_person_name': 'point_of_contact_person_name',
-                'point_of_contact_email': 'point_of_contact_email',
-                'facility_workers_count': 20,
-                'facility_female_workers_percentage': 50,
-                'point_of_contact_publicly_visible': True,
-                'office_official_name': 'office_official_name',
-                'office_address': 'office_address',
-                'office_country_code': 'US',
-                'office_phone_number': 2345678,
-                'office_info_publicly_visible': True,
-                'facility_type': 'Cut and Sew / RMG',
-            }
-            self.client.put(update_claim_url, update_claim_data)
-            self.create_extended_fields({'claim_id': claim.id})
+        update_claim_data = {
+            'id': claim.id,
+            'facility_name_english': 'Claim Name',
+            'facility_name_native_language': 'native_language',
+            'facility_address': 'facility_address',
+            'facility_description': 'facility_description',
+            'facility_phone_number': 1234567,
+            'facility_phone_number_publicly_visible': True,
+            'facility_website': 'https://openapparel.org',
+            'facility_website_publicly_visible': True,
+            'facility_minimum_order_quantity': 10,
+            'facility_average_lead_time': '2 months',
+            'point_of_contact_person_name': 'point_of_contact_person_name',
+            'point_of_contact_email': 'point_of_contact_email',
+            'facility_workers_count': 20,
+            'facility_female_workers_percentage': 50,
+            'point_of_contact_publicly_visible': True,
+            'office_official_name': 'office_official_name',
+            'office_address': 'office_address',
+            'office_country_code': 'US',
+            'office_phone_number': 2345678,
+            'office_info_publicly_visible': True,
+            'facility_type': 'Cut and Sew / RMG',
+        }
+        self.client.put(update_claim_url, update_claim_data)
+        self.create_extended_fields({'claim_id': claim.id})
 
     def create_extended_fields(self, source):
         claim_id = source.get('claim_id', None)
