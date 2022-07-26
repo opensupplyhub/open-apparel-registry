@@ -74,11 +74,11 @@ export const downloadListItemCSV = (list, items) =>
         `${list.id}_${list.name}_${new Date().toLocaleDateString()}.csv`,
     );
 
-export const downloadFacilitiesCSV = (facilities, options) =>
-    DownloadCSV(createFacilitiesCSV(facilities, options), 'facilities.csv');
+export const downloadFacilitiesCSV = facilities =>
+    DownloadCSV(createFacilitiesCSV(facilities), 'facilities.csv');
 
-export const createFacilitiesXLSX = (facilities, options) => {
-    const data = formatDataForCSV(facilities, options);
+export const createFacilitiesXLSX = facilities => {
+    const data = formatDataForCSV(facilities);
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'facilities');
@@ -138,6 +138,8 @@ export const makeGetFacilityByOARIdURLWithContributorId = (
 ) => `/api/facilities/${oarId}/?embed=${embed}&contributor=${contributorId}`;
 export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) =>
     `/api/facilities/?${qs}&pageSize=${pageSize}`;
+export const makeGetFacilitiesDownloadURLWithQueryString = (qs, pageSize) =>
+    `/api/facilities-downloads/?${qs}&pageSize=${pageSize}`;
 export const makeClaimFacilityAPIURL = oarId =>
     `/api/facilities/${oarId}/claim/`;
 export const makeSplitFacilityAPIURL = oarID =>

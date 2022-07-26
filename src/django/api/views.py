@@ -109,6 +109,7 @@ from api.serializers import (FacilityListSerializer,
                              FacilityListQueryParamsSerializer,
                              ContributorListQueryParamsSerializer,
                              FacilitySerializer,
+                             FacilityDownloadSerializer,
                              FacilityDetailsSerializer,
                              FacilityMatchSerializer,
                              FacilityCreateBodySerializer,
@@ -127,7 +128,8 @@ from api.serializers import (FacilityListSerializer,
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs
 from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
-from api.pagination import FacilitiesGeoJSONPagination
+from api.pagination import (FacilitiesGeoJSONPagination,
+                            PageAndSizePagination)
 from api.mail import (send_claim_facility_confirmation_email,
                       send_claim_facility_approval_email,
                       send_claim_facility_denial_email,
@@ -2580,6 +2582,55 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         except Facility.DoesNotExist:
             raise NotFound()
+
+
+class FacilitiesDownloadViewSet(mixins.ListModelMixin,
+                                viewsets.GenericViewSet):
+    """
+    Get facilities in array format, suitable for CSV/XLSX download.
+    """
+    queryset = Facility.objects.all()
+    serializer_class = FacilityDownloadSerializer
+    pagination_class = PageAndSizePagination
+
+    def list(self, request):
+        """
+        Returns a list of facilities in array format for a given query.
+        (Maximum of 10 facilities per page.)
+        """
+        params = FacilityQueryParamsSerializer(data=request.query_params)
+
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+
+        queryset = Facility \
+            .objects \
+            .filter_by_query_params(request.query_params) \
+            .order_by('name')
+
+        page_queryset = self.paginate_queryset(queryset)
+
+        context = {'request': request}
+        headers = FacilityDownloadSerializer(context=context).get_headers()
+
+        if page_queryset is not None:
+            serializer = FacilityDownloadSerializer(page_queryset, many=True,
+                                                    context=context)
+            rows = []
+            for f in serializer.data:
+                rows.extend(f.get('rows', []))
+            data = {
+                'rows': rows,
+                'headers': headers,
+            }
+            response = self.get_paginated_response(data)
+            return response
+
+        response_data = {
+            'rows': [],
+            'headers': headers,
+        }
+        return Response(response_data)
 
 
 def create_nonstandard_fields(fields, contributor):
