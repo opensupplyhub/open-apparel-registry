@@ -45,11 +45,11 @@ def monthly_promoted_name_and_address():
         .order_by('id', 'history_date') \
         .values_list('id', 'history_date', 'created_from_id')
     for i, h in enumerate(historical_facilities):
-            if i != 0:
-                prev = historical_facilities[i - 1]
-                if prev[0] == h[0] and h[2] != prev[2]:
-                    month = h[1].strftime(DateFormats.MONTH)
-                    data[month] = data.get(month, 0) + 1
+        if i != 0:
+            prev = historical_facilities[i - 1]
+            if prev[0] == h[0] and h[2] != prev[2]:
+                month = h[1].strftime(DateFormats.MONTH)
+                data[month] = data.get(month, 0) + 1
     return [['month', 'facilities promoted'],
             sort_by_first_column(data.items())]
 
@@ -163,7 +163,7 @@ def process_raw_values(raw_values):
 
     for value in deduped_values:
         if value_is_valid(value):
-                filtered_values.append(value)
+            filtered_values.append(value)
 
     return filtered_values
 

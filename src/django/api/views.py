@@ -7,7 +7,6 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 
-from datetime import datetime
 from functools import reduce
 
 from django.core.files.uploadedfile import (InMemoryUploadedFile,
@@ -1284,7 +1283,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         text_only_fallback = params_serializer.validated_data[
             FacilityCreateQueryParams.TEXT_ONLY_FALLBACK]
 
-        parse_started = str(datetime.utcnow())
+        parse_started = str(timezone.now())
 
         source = Source.objects.create(
             contributor=request.user.contributor,
@@ -1328,7 +1327,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'action': ProcessingAction.PARSE,
                 'started_at': parse_started,
                 'error': False,
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
                 'is_geocoded': False,
             }]
         )
@@ -1358,7 +1357,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': True,
                 'message': error_message,
                 'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
             item.save()
             result['status'] = item.status
@@ -1366,7 +1365,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             return Response(result,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        geocode_started = str(datetime.utcnow())
+        geocode_started = str(timezone.now())
         try:
             geocode_result = geocode_address(address, country_code)
             if geocode_result['result_count'] > 0:
@@ -1394,7 +1393,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': False,
                 'skipped_geocoder': False,
                 'data': geocode_result['full_response'],
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
 
             item.save()
@@ -1406,14 +1405,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': True,
                 'message': str(e),
                 'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow()),
+                'finished_at': str(timezone.now()),
             })
             item.save()
             result['status'] = item.status
             return Response(result,
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        match_started = str(datetime.utcnow())
+        match_started = str(timezone.now())
 
         try:
             exact_match_results = exact_match_item(country_code, name, address,
@@ -1510,7 +1509,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': match_started,
                 'error': True,
                 'message': str(te),
-                'finished_at': str(datetime.utcnow())
+                'finished_at': str(timezone.now())
             })
             item.save()
             result['status'] = item.status
@@ -1527,7 +1526,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'error': True,
                 'message': str(e),
                 'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow())
+                'finished_at': str(timezone.now())
             })
             item.save()
             result['status'] = item.status
@@ -1583,7 +1582,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'Facilities with approved claims cannot be deleted'
             )
 
-        now = str(datetime.utcnow())
+        now = str(timezone.now())
         list_items = FacilityListItem \
             .objects \
             .filter(facility=facility) \
@@ -1601,7 +1600,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             list_item.save()
 
         match = facility.get_created_from_match()
-        match.changeReason = 'Deleted {}'.format(facility.id)
+        match._change_reason = 'Deleted {}'.format(facility.id)
         match.delete()
 
         other_matches = facility.get_other_matches()
@@ -1637,7 +1636,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 )
 
                 best_match.facility = promoted_facility
-                best_match.changeReason = (
+                best_match._change_reason = (
                     'Deleted {} and promoted {}'.format(
                         facility.id,
                         promoted_facility.id
@@ -1658,7 +1657,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 for other_match in other_matches:
                     if other_match.id != best_match.id:
                         other_match.facility = promoted_facility
-                        other_match.changeReason = (
+                        other_match._change_reason = (
                             'Deleted {} and promoted {}'.format(
                                 facility.id,
                                 promoted_facility.id
@@ -1679,7 +1678,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
                 for alias in FacilityAlias.objects.filter(facility=facility):
                     oar_id = alias.oar_id
-                    alias.changeReason = 'Deleted {} and promoted {}'.format(
+                    alias._change_reason = 'Deleted {} and promoted {}'.format(
                         facility.id,
                         promoted_facility.id)
                     alias.delete()
@@ -1689,7 +1688,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         reason=FacilityAlias.DELETE)
             else:
                 for other_match in other_matches:
-                    other_match.changeReason = 'Deleted {}'.format(facility.id)
+                    other_match._change_reason = 'Deleted {}'.format(
+                        facility.id)
                     other_match.delete()
 
                     other_item = other_match.facility_list_item
@@ -1705,11 +1705,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     other_item.save()
 
         for claim in FacilityClaim.objects.filter(facility=facility):
-            claim.changeReason = 'Deleted {}'.format(facility.id)
+            claim._change_reason = 'Deleted {}'.format(facility.id)
             claim.delete()
 
         for alias in FacilityAlias.objects.filter(facility=facility):
-            alias.changeReason = 'Deleted {}'.format(facility.id)
+            alias._change_reason = 'Deleted {}'.format(facility.id)
             alias.delete()
 
         facility.delete()
@@ -1896,11 +1896,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if target.conditionally_set_ppe(merge):
             target.save()
 
-        now = str(datetime.utcnow())
+        now = str(timezone.now())
         for merge_match in merge.facilitymatch_set.all():
             merge_match.facility = target
             merge_match.status = FacilityMatch.MERGED
-            merge_match.changeReason = 'Merged {} into {}'.format(
+            merge_match._change_reason = 'Merged {} into {}'.format(
                 merge.id, target.id)
             merge_match.save()
 
@@ -1944,15 +1944,15 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     if claim.status == FacilityClaim.APPROVED
                     else FacilityClaim.DENIED)
                 claim.status_change_by = request.user
-                claim.status_change_date = datetime.utcnow()
+                claim.status_change_date = timezone.now()
                 change_reason_template = \
                     'Merging {} into {} which already has an approved claim'
                 claim.status_change_reason = \
                     change_reason_template.format(merge.id, target.id)
-                claim.changeReason = \
+                claim._change_reason = \
                     change_reason_template.format(merge.id, target.id)
             else:
-                claim.changeReason = \
+                claim._change_reason = \
                     'Merging {} into {}'.format(merge.id, target.id)
             claim.save()
 
@@ -1962,7 +1962,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
         for alias in FacilityAlias.objects.filter(facility=merge):
             oar_id = alias.oar_id
-            alias.changeReason = 'Merging {} into {}'.format(
+            alias._change_reason = 'Merging {} into {}'.format(
                 merge.id,
                 target.id)
             alias.delete()
@@ -1978,7 +1978,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         # any change to this message will also need to
         # be made in the `facility_history.py` module's
         # `create_facility_history_dictionary` function
-        merge.changeReason = 'Merged with {}'.format(target.id)
+        merge._change_reason = 'Merged with {}'.format(target.id)
 
         FacilityIndex.objects.get(id=merge.id).delete()
         merge.delete()
@@ -2090,7 +2090,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             match_for_new_facility.save()
 
-            now = str(datetime.utcnow())
+            now = str(timezone.now())
 
             list_item_for_match.facility = new_facility
             list_item_for_match.processing_results.append({
@@ -2155,7 +2155,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             match.save()
 
-            now = str(datetime.utcnow())
+            now = str(timezone.now())
 
             list_item_for_match.facility = new_facility
             list_item_for_match.processing_results.append({
@@ -2251,10 +2251,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             facility.ppe_contact_email = \
                 match.facility_list_item.ppe_contact_email
             facility.ppe_website = match.facility_list_item.ppe_website
-            facility.changeReason = reason
+            facility._change_reason = reason
             facility.save()
 
-            now = str(datetime.utcnow())
+            now = str(timezone.now())
 
             match.facility_list_item.processing_results.append({
                 'action': ProcessingAction.PROMOTE_MATCH,
@@ -2339,7 +2339,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         # any change to this message will also need to
         # be made in the `facility_history.py` module's
         # `create_facility_history_dictionary` function
-        facility.changeReason = \
+        facility._change_reason = \
             'Submitted a new FacilityLocation ({})'.format(
                 facility_location.id)
         facility.save()
@@ -2496,10 +2496,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             for match in matches:
                 if match.is_active:
                     match.is_active = False
-                    match.changeReason = create_dissociate_match_change_reason(
-                        match.facility_list_item,
-                        facility,
-                    )
+                    match._change_reason = \
+                        create_dissociate_match_change_reason(
+                            match.facility_list_item,
+                            facility)
                     match.save()
 
         context = {'request': request}
@@ -3016,7 +3016,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             for item in matches_to_deactivate:
                 item.is_active = False
 
-                item.changeReason = create_dissociate_match_change_reason(
+                item._change_reason = create_dissociate_match_change_reason(
                     facility_list_item,
                     item.facility,
                 )
@@ -3127,7 +3127,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.status_change_reason = request.data.get('reason', '')
             claim.status_change_by = request.user
-            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status_change_date = timezone.now()
             claim.status = FacilityClaim.APPROVED
             claim.save()
 
@@ -3176,7 +3176,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.status_change_reason = request.data.get('reason', '')
             claim.status_change_by = request.user
-            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status_change_date = timezone.now()
             claim.status = FacilityClaim.DENIED
             claim.save()
 
@@ -3219,7 +3219,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             claim.status_change_reason = request.data.get('reason', '')
             claim.status_change_by = request.user
-            claim.status_change_date = datetime.now(tz=timezone.utc)
+            claim.status_change_date = timezone.now()
             claim.status = FacilityClaim.REVOKED
             claim.save()
 
@@ -3524,7 +3524,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
         facility_list_item = facility_match.facility_list_item
 
         facility_match.status = FacilityMatch.CONFIRMED
-        facility_match.changeReason = create_associate_match_change_reason(
+        facility_match._change_reason = create_associate_match_change_reason(
             facility_match.facility_list_item,
             facility_match.facility,
         )
@@ -3662,7 +3662,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
 
             if (no_location or no_geocoding_results):
                 facility_list_item.status = FacilityListItem.ERROR_MATCHING
-                timestamp = str(datetime.utcnow())
+                timestamp = str(timezone.now())
                 facility_list_item.processing_results.append({
                     'action': ProcessingAction.CONFIRM,
                     'started_at': timestamp,
@@ -3795,7 +3795,7 @@ facility_activity_report_schema = openapi.Schema(
 def update_facility_activity_report_status(facility_activity_report,
                                            request, status):
     status_change_reason = request.data.get('status_change_reason')
-    now = str(datetime.utcnow())
+    now = str(timezone.now())
 
     facility_activity_report.status_change_reason = status_change_reason
     facility_activity_report.status_change_by = request.user

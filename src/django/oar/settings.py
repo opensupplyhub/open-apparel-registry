@@ -223,6 +223,9 @@ DATABASES = {
     }
 }
 
+# Use < 3+ default for ID fields
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -303,6 +306,7 @@ NOTIFICATION_EMAIL_TO = os.getenv(
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = ((os.path.join(STATIC_ROOT, "static")),)
 
 STATICFILES_STORAGE = 'spa.storage.SPAStaticFilesStorage'
 

@@ -27,10 +27,10 @@ def create_field(field_name, value, claim, apps):
 
 
 def value_is_valid(value):
-    return (value is not None and value.strip() is not ""
-        and value.lower() is not "other"
-        and value.lower() is not "denim services"
-        and value.lower() is not "boarding")
+    return (value is not None and value.strip() != ""
+        and value.lower() != "other"
+        and value.lower() != "denim services"
+        and value.lower() != "boarding")
 
 
 def process_facility_and_processing_type_claim_values(claim, apps):

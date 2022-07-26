@@ -1,9 +1,9 @@
 import boto3
 import json
 
-from datetime import datetime
 from django.conf import settings
 from django.db import connection
+from django.utils import timezone
 
 from api.constants import ProcessingAction
 from api.models import FacilityListItem
@@ -53,7 +53,7 @@ def submit_jobs(facility_list, skip_parse=False):
     client = boto3.client('batch')
     queue_arn = fetch_batch_queue_arn(client)
     job_def_arn = fetch_latest_active_batch_job_definition_arn(client)
-    job_time = (datetime.utcnow().isoformat()
+    job_time = (timezone.now().isoformat()
                 .replace(':', '-').replace('.', '-').replace('T', '-'))
 
     item_table = FacilityListItem.objects.model._meta.db_table
@@ -106,14 +106,14 @@ def submit_jobs(facility_list, skip_parse=False):
 
     # PARSE
     if not skip_parse:
-        started = str(datetime.utcnow())
+        started = str(timezone.now())
         # The parse task is just quick string manipulation. We submit it as a
         # normal job rather than as an array job to avoid extra overhead that
         # just slows things down.
         parse_job_id = submit_job('parse')
         job_ids.append(parse_job_id)
         depends_on = [{'jobId': parse_job_id}]
-        finished = str(datetime.utcnow())
+        finished = str(timezone.now())
         append_processing_result({
             'action': ProcessingAction.SUBMIT_JOB,
             'type': 'parse',
@@ -125,7 +125,7 @@ def submit_jobs(facility_list, skip_parse=False):
         })
 
     # GEOCODE
-    started = str(datetime.utcnow())
+    started = str(timezone.now())
     row_count = facility_list.source.facilitylistitem_set.count()
     is_array = row_count > 1
     geocode_job_id = submit_job('geocode',
@@ -133,7 +133,7 @@ def submit_jobs(facility_list, skip_parse=False):
                                 is_array=is_array)
     job_ids.append(geocode_job_id)
     depends_on = [{'jobId': geocode_job_id}]
-    finished = str(datetime.utcnow())
+    finished = str(timezone.now())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
         'type': 'geocode',
@@ -145,11 +145,11 @@ def submit_jobs(facility_list, skip_parse=False):
     })
 
     # MATCH
-    started = str(datetime.utcnow())
+    started = str(timezone.now())
     match_job_id = submit_job('match', depends_on=depends_on)
     depends_on = [{'jobId': match_job_id}]
     job_ids.append(match_job_id)
-    finished = str(datetime.utcnow())
+    finished = str(timezone.now())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
         'type': 'match',
@@ -161,10 +161,10 @@ def submit_jobs(facility_list, skip_parse=False):
     })
 
     # NOTIFY
-    started = str(datetime.utcnow())
+    started = str(timezone.now())
     notify_job_id = submit_job('notify_complete', depends_on=depends_on)
     job_ids.append(notify_job_id)
-    finished = str(datetime.utcnow())
+    finished = str(timezone.now())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
         'type': 'notify_complete',

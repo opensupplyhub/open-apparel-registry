@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use name prefix and create before destroy for batch compute [#1952](https://github.com/open-apparel-registry/open-apparel-registry/pull/1952)
 - Switched from `django-swagger` to `drf-yasg` [#1951](https://github.com/open-apparel-registry/open-apparel-registry/pull/1951/files)
 - Return anonymized sectors and index them instead of excluding them when items are private or inactive [#1966](https://github.com/open-apparel-registry/open-apparel-registry/pull/1966)
+- Upgrade Django to 3.2, Python to 3.10, as well as other dependencies [#1965](https://github.com/open-apparel-registry/open-apparel-registry/pull/1965/)
 - Update facility download [#1981](https://github.com/open-apparel-registry/open-apparel-registry/pull/1981)
 
 ### Deprecated

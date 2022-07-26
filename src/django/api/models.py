@@ -615,7 +615,7 @@ class FacilityListItem(PPEMixin):
         null=True,
         help_text=('When background processing of this item finished. '
                    'Items awaiting or in process will have a null value.'))
-    processing_results = postgres.JSONField(
+    processing_results = models.JSONField(
         default=list,
         help_text=('Diagnostic details logged by background processing '
                    'including details returned from the geocoder.'))
@@ -1680,10 +1680,10 @@ class Facility(PPEMixin):
 
     def activity_reports(self):
         return FacilityActivityReport.objects \
-                    .filter(facility=self.id,
-                            status__in=[FacilityActivityReport.PENDING,
-                                        FacilityActivityReport.CONFIRMED]) \
-                    .order_by('-created_at')
+            .filter(facility=self.id,
+                    status__in=[FacilityActivityReport.PENDING,
+                                FacilityActivityReport.CONFIRMED]) \
+            .order_by('-created_at')
 
     @staticmethod
     def post_save(sender, **kwargs):
@@ -1827,7 +1827,7 @@ class FacilityMatch(models.Model):
         on_delete=models.PROTECT,
         help_text=('The existing facility that may match an uploaded list '
                    'item.'))
-    results = postgres.JSONField(
+    results = models.JSONField(
         help_text='Diagnostic details from the matching process.')
     confidence = models.DecimalField(
         null=False,
@@ -2466,7 +2466,7 @@ class ExtendedField(models.Model):
         blank=False,
         choices=FIELD_CHOICES,
         help_text='The name of the field, chosen from a strict list.')
-    value = postgres.JSONField(
+    value = models.JSONField(
         null=False,
         blank=False,
         help_text=('The value of the field. An  object with different '
@@ -2613,7 +2613,7 @@ def index_extendedfields(facility_ids=list):
             .values_list('value', flat=True)
         number_of_workers_ranges = set()
         for value in number_of_workers_values:
-                convert_to_standard_ranges(value, number_of_workers_ranges)
+            convert_to_standard_ranges(value, number_of_workers_ranges)
         facility.number_of_workers = list(number_of_workers_ranges)
 
         # Use clean taxonomy values in the index for facility_type:
