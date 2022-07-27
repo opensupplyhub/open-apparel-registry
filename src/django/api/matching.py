@@ -228,6 +228,15 @@ def get_messy_items_for_training(mod_factor=5):
             for i in records}
 
 
+def load_gazetteer(messy, canonical, model_settings):
+    """
+    Load a preexisting dedupe.Gazetteer model by using the TrainedModel object in
+    the Django ORM.
+    """
+    gazetteer = OgrStaticGazetteer(model_settings)
+
+    return gazetteer
+
 def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
     """
     Train and return a dedupe.Gazetteer using the specified messy and canonical
@@ -239,27 +248,25 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
 
     Reads a training.json file containing positive and negative matches.
     """
-    if model_settings:
-        gazetteer = OgrStaticGazetteer(model_settings)
-    else:
-        fields = [
-            {'field': 'country', 'type': 'Exact'},
-            {'field': 'name', 'type': 'String'},
-            {'field': 'address', 'type': 'String'},
-        ]
+    fields = [
+        {'field': 'country', 'type': 'Exact'},
+        {'field': 'name', 'type': 'String'},
+        {'field': 'address', 'type': 'String'},
+    ]
 
-        gazetteer = OgrGazetteer(fields)
-        training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
-                                     'training.json')
-        with open(training_file) as tf:
-            gazetteer.prepare_training(messy, canonical, tf, 15000)
-        gazetteer.train(index_predicates=False)
-        output_stream = io.BytesIO()
-        gazetteer.write_settings(output_stream)
-        output_stream.seek(0)
-        model_object = TrainedModel(dedupe_model=output_stream.read())
-        model_object.save()
-        gazetteer.cleanup_training()
+    gazetteer = OgrGazetteer(fields)
+    training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
+                                 'training.json')
+    with open(training_file) as tf:
+        gazetteer.prepare_training(messy, canonical, tf, 15000)
+    #messy and canonical aren't doing anything if index_predicates are off?
+    gazetteer.train(index_predicates=False)
+    output_stream = io.BytesIO()
+    gazetteer.write_settings(output_stream)
+    output_stream.seek(0)
+    model_object = TrainedModel(dedupe_model=output_stream.read())
+    model_object.save()
+    gazetteer.cleanup_training()
 
     if should_index:
         index_start = datetime.now()
