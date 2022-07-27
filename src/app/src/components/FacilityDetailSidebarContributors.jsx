@@ -42,7 +42,9 @@ const detailsSidebarStyles = theme =>
     });
 
 const FacilityDetailSidebarContributors = ({ classes, contributors, push }) => {
-    const visibleContributors = contributors.filter(c => !!c.contributor_name);
+    const visibleContributors = contributors.filter(
+        c => !!c.contributor_name || !!c.name,
+    );
 
     if (!visibleContributors.length) return null;
 
@@ -63,7 +65,9 @@ const FacilityDetailSidebarContributors = ({ classes, contributors, push }) => {
                         <BadgeVerified />
                     </ShowOnly>
                     <ListItemText
-                        primary={contributor.contributor_name}
+                        primary={
+                            contributor.contributor_name || contributor.name
+                        }
                         secondary={contributor.list_name}
                         classes={{ primary: classes.primaryText }}
                     />
