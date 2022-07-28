@@ -54,7 +54,10 @@ def submit_jobs(facility_list, skip_parse=False):
     queue_arn = fetch_batch_queue_arn(client)
     job_def_arn = fetch_latest_active_batch_job_definition_arn(client)
     job_time = (timezone.now().isoformat()
-                .replace(':', '-').replace('.', '-').replace('T', '-'))
+                .replace(':', '-')
+                .replace('.', '-')
+                .replace('T', '-')
+                .replace('+', '-'))
 
     item_table = FacilityListItem.objects.model._meta.db_table
     results_column = 'processing_results'
