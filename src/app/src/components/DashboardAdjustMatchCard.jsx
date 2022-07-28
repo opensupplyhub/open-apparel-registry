@@ -12,12 +12,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import find from 'lodash/find';
+import capitalize from 'lodash/capitalize';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import MoveMatchDialog from './MoveMatchDialog';
 
 import { makeFacilityDetailLink } from '../util/util';
+import { facilityMatchStatusChoicesEnum } from '../util/constants';
 
 import { facilityDetailsPropType } from '../util/propTypes';
 
@@ -74,6 +76,13 @@ const adjustMatchCardStyles = Object.freeze({
         margin: '0 5px',
     }),
 });
+
+const completeStatuses = [
+    facilityMatchStatusChoicesEnum.AUTOMATIC,
+    facilityMatchStatusChoicesEnum.CONFIRMED,
+    facilityMatchStatusChoicesEnum.MERGED,
+];
+const isCompleteStatus = status => completeStatuses.includes(status);
 
 const MatchDetailItem = ({ label, value = null, style = {} }) =>
     value && (
@@ -185,6 +194,8 @@ export default function DashboardAdjustMatchCard({
             );
         }
 
+        const matchIsNotComplete = !isCompleteStatus(match.status);
+
         return (
             <div
                 style={{
@@ -196,7 +207,7 @@ export default function DashboardAdjustMatchCard({
                     <Button
                         variant="contained"
                         color="primary"
-                        disabled={adjusting}
+                        disabled={adjusting || matchIsNotComplete}
                         onClick={() =>
                             openDialogForMatchToAdjust(
                                 match,
@@ -211,7 +222,7 @@ export default function DashboardAdjustMatchCard({
                 <Button
                     variant="contained"
                     color="primary"
-                    disabled={adjusting}
+                    disabled={adjusting || matchIsNotComplete}
                     onClick={() => setMatchToMove(match)}
                     style={adjustMatchCardStyles.buttonStyles}
                 >
@@ -220,7 +231,7 @@ export default function DashboardAdjustMatchCard({
                 <Button
                     variant="contained"
                     color="primary"
-                    disabled={adjusting}
+                    disabled={adjusting || matchIsNotComplete}
                     onClick={() =>
                         openDialogForMatchToAdjust(
                             match,
@@ -368,6 +379,18 @@ export default function DashboardAdjustMatchCard({
                             <MatchDetailItem
                                 label="Country Code"
                                 value={match.country_code}
+                            />
+                            <MatchDetailItem
+                                label="Status"
+                                value={capitalize(match.status)}
+                            />
+                            <MatchDetailItem
+                                label="Active"
+                                value={match.is_active ? 'True' : 'False'}
+                            />
+                            <MatchDetailItem
+                                label="Confidence Score"
+                                value={match.confidence}
                             />
                         </div>
                     ))}

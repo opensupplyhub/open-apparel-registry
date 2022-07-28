@@ -2078,6 +2078,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         'match_id': m.id,
                         'is_geocoded':
                         m.facility_list_item.geocoded_point is not None,
+                        'status': m.status,
+                        'is_active': m.is_active,
+                        'confidence': m.confidence,
                         'facility_created_by_item':
                         Facility.objects.filter(
                             created_from=m.facility_list_item.id)[0].id
