@@ -1619,8 +1619,11 @@ class Facility(PPEMixin):
         ).all().order_by('id')
 
     def get_approved_claim(self):
-        return self.facilityclaim_set.filter(
-            status=FacilityClaim.APPROVED).count() > 0
+        claims = (
+            FacilityClaim.objects
+            .filter(facility=self, status=FacilityClaim.APPROVED)
+            .order_by('-status_change_date'))
+        return claims.first()
 
     def conditionally_set_ppe(self, item):
         """

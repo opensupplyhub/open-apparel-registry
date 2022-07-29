@@ -1623,7 +1623,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
-        if facility.get_approved_claim():
+        if facility.get_approved_claim() is not None:
             raise BadRequestException(
                 'Facilities with approved claims cannot be deleted'
             )

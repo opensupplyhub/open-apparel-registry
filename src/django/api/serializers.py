@@ -1,3 +1,5 @@
+import json
+
 from collections import defaultdict
 
 from django.conf import settings
@@ -20,7 +22,8 @@ from rest_framework.serializers import (BooleanField,
                                         SerializerMethodField,
                                         URLField,
                                         ValidationError)
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework_gis.serializers import (GeoFeatureModelSerializer,
+                                            GeometrySerializerMethodField)
 from rest_auth.serializers import (PasswordResetSerializer,
                                    PasswordResetConfirmSerializer)
 from allauth.account.utils import setup_user_email
@@ -586,6 +589,8 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     name = SerializerMethodField()
     contributor_fields = SerializerMethodField()
     extended_fields = SerializerMethodField()
+    location = GeometrySerializerMethodField()
+    address = SerializerMethodField()
 
     class Meta:
         model = Facility
@@ -603,6 +608,20 @@ class FacilitySerializer(GeoFeatureModelSerializer):
         if exclude_fields:
             for field_name in exclude_fields:
                 self.fields.pop(field_name, None)
+
+    def get_location(self, facility):
+        claim = facility.get_approved_claim()
+        if claim is not None:
+            if claim.facility_location is not None:
+                return claim.facility_location
+        return facility.location
+
+    def get_address(self, facility):
+        claim = facility.get_approved_claim()
+        if claim is not None:
+            if claim.facility_address is not None:
+                return claim.facility_address
+        return facility.address
 
     # Added to ensure including the OAR ID in the geojson properties map
     def get_oar_id(self, facility):
@@ -997,7 +1016,7 @@ def get_facility_names(facility):
 
 
 def create_address_field(address, contributor, updated_at,
-                         user_can_see_detail):
+                         user_can_see_detail, is_from_claim=False):
     return {
       'value': address,
       'field_name': ExtendedField.ADDRESS,
@@ -1005,6 +1024,7 @@ def create_address_field(address, contributor, updated_at,
       'contributor_name':
       get_contributor_name(contributor, user_can_see_detail),
       'updated_at': updated_at,
+      'is_from_claim': is_from_claim,
     }
 
 
@@ -1060,8 +1080,13 @@ class FacilityDetailsSerializer(FacilitySerializer):
     def get_other_addresses(self, facility):
         if is_embed_mode_active(self):
             return []
+        other_addresses = facility.other_addresses()
 
-        return facility.other_addresses()
+        claim = facility.get_approved_claim()
+        if claim is not None:
+            return set([facility.address]).union(other_addresses)
+
+        return other_addresses
 
     def get_other_locations(self, facility):
         if is_embed_mode_active(self):
@@ -1109,7 +1134,26 @@ class FacilityDetailsSerializer(FacilitySerializer):
             if match.facility_list_item.source.is_public
         ]
 
-        return facility_locations + facility_matches
+        claim_locations = []
+        claim = facility.get_approved_claim()
+        if claim is not None:
+            if claim.facility_location is not None:
+                claim_locations = [
+                    {
+                        'lat': claim.facility_location.y,
+                        'lng': claim.facility_location.x,
+                        'contributor_id': get_contributor_id(
+                            claim.contributor,
+                            user_can_see_detail),
+                        'contributor_name': get_contributor_name(
+                            claim.contributor,
+                            user_can_see_detail),
+                        'notes': None,
+                        'is_from_claim': True,
+                    },
+                ]
+
+        return claim_locations + facility_locations + facility_matches
 
     def get_country_name(self, facility):
         return COUNTRY_NAMES.get(facility.country_code, '')
@@ -1149,7 +1193,9 @@ class FacilityDetailsSerializer(FacilitySerializer):
                     'certifications': claim.facility_certifications,
                     'product_types': claim.facility_product_types,
                     'production_types': claim.facility_production_types,
-                    'sector': claim.sector
+                    'sector': claim.sector,
+                    'location': json.loads(claim.facility_location.json)
+                    if claim.facility_location is not None else None,
                 },
                 'contact': {
                     'name': claim.point_of_contact_person_name,
