@@ -3361,6 +3361,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                 response_data = ApprovedFacilityClaimSerializer(claim).data
                 return Response(response_data)
 
+            prev_location = claim.facility_location
             location_data = request.data.get('facility_location')
             if location_data is not None:
                 claim.facility_location = GEOSGeometry(
@@ -3461,6 +3462,26 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             claim.save()
 
             create_extendedfields_for_claim(claim)
+
+            # Conditionally update the facility location if it was changed on
+            # the approved claim. If the location was removed from the claim we
+            # revert the location.
+            if claim.facility_location is not None:
+                if prev_location != claim.facility_location:
+                    claim.facility.location = claim.facility_location
+                    claim.facility._change_reason = \
+                        'Location updated on FacilityClaim ({})'.format(
+                            claim.id)
+                    claim.facility.save()
+            else:
+                if prev_location is not None:
+                    claim.facility.location = \
+                        claim.facility.created_from.geocoded_point
+                    claim.facility._change_reason = (
+                        'Reverted location to created_from after clearing '
+                        'claim location'
+                    )
+                    claim.facility.save()
 
             try:
                 send_claim_update_notice_to_list_contributors(request, claim)
