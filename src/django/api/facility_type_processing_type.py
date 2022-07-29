@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning")
+
 from api.helpers import clean
 from thefuzz import process
 
