@@ -1,8 +1,10 @@
 import warnings
-warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning")
+warnings.filterwarnings(
+    "ignore",
+    message="Using slow pure-python SequenceMatcher. Install python-Levenshte")
 
-from api.helpers import clean
-from thefuzz import process
+from api.helpers import clean # NOQA
+from thefuzz import process # NOQA
 
 HEADQUARTERS = 'headquarters'
 NO_PROCESSING = 'no processing'
