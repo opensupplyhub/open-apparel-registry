@@ -13,7 +13,8 @@ const FacilityDetailSidebarLocation = ({ data, embed }) => {
 
     const [canonicalLocationsData, otherLocationsData] = partition(
         data.properties.other_locations || [],
-        ({ lng, lat }) => lng === facilityLng && lat === facilityLat,
+        ({ lng, lat, is_from_claim: isFromClaim }) =>
+            isFromClaim || (lng === facilityLng && lat === facilityLat),
     );
 
     const canonicalLocationData = head(canonicalLocationsData);
@@ -34,10 +35,12 @@ const FacilityDetailSidebarLocation = ({ data, embed }) => {
                 primary={`${facilityLng}, ${facilityLat}`}
                 secondary={attribution}
                 embed={embed}
+                isFromClaim={canonicalLocationData?.is_from_claim}
                 additionalContent={otherLocationsData.map((item, i) => ({
                     primary: `${item.lng}, ${item.lat}`,
                     secondary: item.contributor_name,
                     key: `${item.lng}, ${item.lat} - ${i}`,
+                    isFromClaim: item.is_from_claim,
                 }))}
             />
         </>
