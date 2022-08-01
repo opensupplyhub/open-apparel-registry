@@ -767,6 +767,7 @@ class FacilityDownloadSerializer(Serializer):
             'country_name',
             'lat',
             'lng',
+            'sector',
         ]
 
         if not is_embed_mode_active(self):
@@ -790,6 +791,7 @@ class FacilityDownloadSerializer(Serializer):
             contributor_fields = self.get_contributor_fields()
 
         def add_non_base_fields(row, list_item, match_is_active):
+            row.append('|'.join(list_item.sector))
             if not is_embed_mode:
                 contribution = get_download_contribution(
                     list_item.source, match_is_active, user_can_see_detail)
@@ -830,6 +832,11 @@ class FacilityDownloadSerializer(Serializer):
         try:
             claim = FacilityClaim.objects.get(facility=facility,
                                               status=FacilityClaim.APPROVED)
+
+            sector = claim.sector if claim.sector is not None \
+                else facility.created_from.sector
+            base_row.append('|'.join(sector))
+
             if not is_embed_mode:
                 contribution = get_download_claim_contribution(
                     claim, user_can_see_detail)
