@@ -50,7 +50,7 @@ services:
     cpus: 2
 
   app:
-    image: node:12-slim
+    image: node:14-slim
     working_dir: /usr/local/src
     volumes:
       - ./src/app:/usr/local/src
@@ -65,7 +65,6 @@ services:
       - PORT=6543
     ports:
       - 6543:6543
-    working_dir: /usr/local/src
     command: yarn run start
 
 volumes:
