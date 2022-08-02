@@ -689,6 +689,9 @@ class FacilityListItem(PPEMixin):
         instance = kwargs.get('instance')
         if instance.facility is not None:
             index_custom_text([instance.facility.id])
+            if instance.status in [FacilityListItem.MATCHED,
+                                   FacilityListItem.CONFIRMED_MATCH]:
+                index_facilities([instance.facility.id])
 
     def __str__(self):
         return 'FacilityListItem {id} - {status}'.format(**self.__dict__)
