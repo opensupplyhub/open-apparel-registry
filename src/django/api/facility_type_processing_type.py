@@ -3,8 +3,8 @@ warnings.filterwarnings(
     "ignore",
     message="Using slow pure-python SequenceMatcher. Install python-Levenshte")
 
-from api.helpers import clean # NOQA
-from thefuzz import process # NOQA
+from api.helpers import clean  # NOQA: E402
+from thefuzz import process  # NOQA: E402
 
 HEADQUARTERS = 'headquarters'
 NO_PROCESSING = 'no processing'
