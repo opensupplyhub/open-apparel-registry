@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Event model [#1995](https://github.com/open-apparel-registry/open-apparel-registry/pull/1995)
 - Add sector to CSV [#1987](https://github.com/open-apparel-registry/open-apparel-registry/pull/1987)
 - Add notifications section to settings page [#2013](https://github.com/open-apparel-registry/open-apparel-registry/pull/2013)
+- Add transfer status to the Adjust Facility Matches interface [#1945](https://github.com/open-apparel-registry/open-apparel-registry/pull/2014)
 
 ### Changed
 

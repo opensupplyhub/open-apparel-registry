@@ -13,6 +13,7 @@ import get from 'lodash/get';
 import merge from 'lodash/merge';
 import find from 'lodash/find';
 import capitalize from 'lodash/capitalize';
+import isNil from 'lodash/isNil';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -392,6 +393,12 @@ export default function DashboardAdjustMatchCard({
                                 label="Confidence Score"
                                 value={match.confidence}
                             />
+                            {!isNil(match.transferred_from) && (
+                                <MatchDetailItem
+                                    label="Transferred From"
+                                    value={match.transferred_from}
+                                />
+                            )}
                         </div>
                     ))}
                 </CardContent>
