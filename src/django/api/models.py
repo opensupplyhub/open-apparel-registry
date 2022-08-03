@@ -1608,10 +1608,13 @@ class Facility(PPEMixin):
         ]
         return sources + anonymous_sources
 
-    def get_created_from_match(self):
+    def get_created_from_matches(self):
         return self.facilitymatch_set.filter(
             facility_list_item=self.created_from
-        ).first()
+        )
+
+    def get_created_from_match(self):
+        return self.get_created_from_matches().first()
 
     def get_other_matches(self):
         return self.facilitymatch_set.exclude(
