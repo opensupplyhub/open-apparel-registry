@@ -3365,6 +3365,25 @@ class FacilityDeleteTest(APITestCase):
         self.assertEqual(
             0, FacilityMatch.objects.filter(facility=self.facility).count())
 
+    def test_can_delete_multiple_created_froms(self):
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.PENDING,
+                    facility=self.facility,
+                    facility_list_item=self.facility.created_from,
+                    confidence=0.85,
+                    results='')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
+
 
 class FacilityMergeTest(APITestCase):
     def setUp(self):
