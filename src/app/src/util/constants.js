@@ -53,6 +53,13 @@ export const facilityClaimStatusChoicesEnum = Object.freeze({
     REVOKED: 'REVOKED',
 });
 
+// These choices must be kept in sync with the identical list
+// kept in the Django API's models.py file
+export const contributorWebhookNotificationChoices = [
+    { value: 'ALL_FACILITIES', label: 'All events' },
+    { value: 'ASSOCIATED', label: 'Events for associated facilities' },
+];
+
 export const inputTypesEnum = Object.freeze({
     text: 'text',
     password: 'password',

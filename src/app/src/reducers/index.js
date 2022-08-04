@@ -34,6 +34,7 @@ import VectorTileLayer from './VectorTileLayer';
 import UpdateFacilityLocationReducer from './UpdateFacilityLocationReducer';
 import EmbeddedMapReducer from './EmbeddedMapReducer';
 import FacilityCardsReducer from './FacilityCardsReducer';
+import WebhooksReducer from './WebhooksReducer';
 
 export default combineReducers({
     auth: AuthReducer,
@@ -64,4 +65,5 @@ export default combineReducers({
     updateFacilityLocation: UpdateFacilityLocationReducer,
     embeddedMap: EmbeddedMapReducer,
     facilityCards: FacilityCardsReducer,
+    webhooks: WebhooksReducer,
 });

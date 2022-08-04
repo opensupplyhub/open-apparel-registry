@@ -406,3 +406,10 @@ export const activityReportPropType = shape({
     status_change_reason: string,
     updated_at: string.isRequired,
 });
+
+export const contributorWebhookPropType = shape({
+    id: number,
+    url: string.isRequired,
+    notification_type: string,
+    filter_query_string: string.isRequired,
+});

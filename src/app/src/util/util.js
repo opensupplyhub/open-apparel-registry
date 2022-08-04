@@ -95,6 +95,10 @@ export const makeUserSignupURL = () => '/user-signup/';
 export const makeUserConfirmEmailURL = () =>
     '/rest-auth/registration/verify-email/';
 
+export const makeContributorWebhooksURL = () => '/api/contributor-webhooks/';
+export const makeContributorWebhookURL = id =>
+    `/api/contributor-webhooks/${id}/`;
+
 export const makeFacilityListsURL = () => '/api/facility-lists/';
 export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 export const makeSingleFacilityListItemsURL = id =>
