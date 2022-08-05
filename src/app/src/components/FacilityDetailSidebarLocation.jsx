@@ -7,41 +7,69 @@ import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 
 import { facilitySidebarActions } from '../util/constants';
 
+const getDetailsText = ({
+    embed,
+    canonicalLocationData,
+    hasInexactCoordinates,
+    hasInvalidClaimCoordinates,
+}) => {
+    if (hasInexactCoordinates) {
+        return `Unable to locate exact GPS coordinates for this facility. If you
+            have access to accurate coordinates for this facility, please report
+            them ${
+                embed
+                    ? 'on the Open Supply Hub.'
+                    : `using the "${facilitySidebarActions.SUGGEST_AN_EDIT}" link below.`
+            }`;
+    }
+    if (hasInvalidClaimCoordinates) {
+        return "The address provided by the claimant could not be geolocated. An alternate address' GPS is displayed.";
+    }
+    return canonicalLocationData?.contributor_name;
+};
+
 const FacilityDetailSidebarLocation = ({ data, embed }) => {
     const facilityLat = last(data.geometry.coordinates);
     const facilityLng = head(data.geometry.coordinates);
 
     const [canonicalLocationsData, otherLocationsData] = partition(
         data.properties.other_locations || [],
-        ({ lng, lat, is_from_claim: isFromClaim }) =>
-            isFromClaim || (lng === facilityLng && lat === facilityLat),
+        ({
+            lng,
+            lat,
+            is_from_claim: isFromClaim,
+            has_invalid_location: hasInvalidLocation,
+        }) =>
+            (isFromClaim && !hasInvalidLocation) ||
+            (lng === facilityLng && lat === facilityLat),
     );
 
     const canonicalLocationData = head(canonicalLocationsData);
-    const attribution = data.properties.has_inexact_coordinates
-        ? `Unable to locate exact GPS coordinates for this facility. If you
-            have access to accurate coordinates for this facility, please report
-            them ${
-                embed
-                    ? 'on the Open Supply Hub.'
-                    : `using the "${facilitySidebarActions.SUGGEST_AN_EDIT}" link below.`
-            }`
-        : canonicalLocationData?.contributor_name;
+    const detailsText = getDetailsText({
+        embed,
+        canonicalLocationData,
+        hasInexactCoordinates: data.properties.has_inexact_coordinates,
+        hasInvalidClaimCoordinates: data.properties.other_locations.some(
+            item => item.has_invalid_location,
+        ),
+    });
 
     return (
         <>
             <FacilityDetailSidebarItem
                 label="GPS"
                 primary={`${facilityLng}, ${facilityLat}`}
-                secondary={attribution}
+                secondary={detailsText}
                 embed={embed}
                 isFromClaim={canonicalLocationData?.is_from_claim}
-                additionalContent={otherLocationsData.map((item, i) => ({
-                    primary: `${item.lng}, ${item.lat}`,
-                    secondary: item.contributor_name,
-                    key: `${item.lng}, ${item.lat} - ${i}`,
-                    isFromClaim: item.is_from_claim,
-                }))}
+                additionalContent={otherLocationsData
+                    .filter(item => !item.has_invalid_location)
+                    .map((item, i) => ({
+                        primary: `${item.lng}, ${item.lat}`,
+                        secondary: item.contributor_name,
+                        key: `${item.lng}, ${item.lat} - ${i}`,
+                        isFromClaim: item.is_from_claim,
+                    }))}
             />
         </>
     );

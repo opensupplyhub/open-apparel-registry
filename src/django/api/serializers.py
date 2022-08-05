@@ -1137,11 +1137,13 @@ class FacilityDetailsSerializer(FacilitySerializer):
         claim_locations = []
         claim = facility.get_approved_claim()
         if claim is not None:
-            if claim.facility_location is not None:
+            if claim.facility_address is not None:
                 claim_locations = [
                     {
-                        'lat': claim.facility_location.y,
-                        'lng': claim.facility_location.x,
+                        'lat': claim.facility_location.y
+                        if claim.facility_location is not None else None,
+                        'lng': claim.facility_location.x
+                        if claim.facility_location is not None else None,
                         'contributor_id': get_contributor_id(
                             claim.contributor,
                             user_can_see_detail),
@@ -1150,6 +1152,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
                             user_can_see_detail),
                         'notes': None,
                         'is_from_claim': True,
+                        'has_invalid_location': claim.facility_location is None
                     },
                 ]
 
