@@ -244,6 +244,10 @@ variable "batch_default_ce_spot_fleet_bid_percentage" {
   default = "40"
 }
 
+variable "batch_notifications_ce_spot_fleet_bid_percentage" {
+  default = "40"
+}
+
 variable "batch_ami_id" {
   # Latest ECS-optimized Amazon Linux AMI in eu-west-1
   # See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
@@ -270,6 +274,29 @@ variable "batch_default_ce_instance_types" {
     "m5",
   ]
 }
+
+
+variable "batch_notifications_ce_min_vcpus" {
+  default = "0"
+}
+
+variable "batch_notifications_ce_desired_vcpus" {
+  default = "0"
+}
+
+variable "batch_notifications_ce_max_vcpus" {
+  default = "16"
+}
+
+variable "batch_notifications_ce_instance_types" {
+  type = "list"
+
+  default = [
+    "c5",
+    "m5",
+  ]
+}
+
 
 variable "app_cli_state_machine_timeout_seconds" {
   default = "600"
