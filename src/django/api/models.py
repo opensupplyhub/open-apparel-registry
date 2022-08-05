@@ -1,5 +1,7 @@
 from collections import defaultdict
 from itertools import groupby
+import json
+import logging
 from unidecode import unidecode
 
 from django.contrib.auth.models import (AbstractBaseUser,
@@ -34,6 +36,9 @@ from api.helpers import (prefix_a_an,
 from api.facility_type_processing_type import (
     ALL_FACILITY_TYPE_CHOICES,
     get_facility_and_processing_type)
+
+
+logger = logging.getLogger(__name__)
 
 
 class ArrayLength(models.Func):
@@ -2243,6 +2248,12 @@ class ContributorWebhook(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def log_event(self, event, status):
+        detail = {"event_id": event.pk, "webhook_id": self.pk,
+                  "contributor_id": self.contributor_id, "status": status,
+                  "event_time": event.event_time.isoformat()}
+        logger.info("ContributorWebhook %s: %s", status, json.dumps(detail))
 
 
 class FacilityActivityReport(models.Model):

@@ -24,18 +24,37 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from waffle.testutils import override_switch, override_flag
 
-from api.constants import (ProcessingAction,
+from api.constants import (FacilityHistoryActions, ProcessingAction,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
                            FeatureGroups)
-from api.models import (Facility, FacilityList, FacilityListItem,
-                        FacilityClaim, FacilityClaimReviewNote,
-                        FacilityMatch, FacilityAlias, Contributor, User,
-                        RequestLog, DownloadLog, FacilityLocation, Source,
-                        ApiLimit, ApiBlock, ContributorNotifications,
-                        EmbedConfig, EmbedField, NonstandardField,
-                        FacilityActivityReport, ExtendedField, FacilityIndex,
-                        index_custom_text)
+from api.models import (
+    ApiBlock,
+    ApiLimit,
+    Contributor,
+    ContributorNotifications,
+    ContributorWebhook,
+    DownloadLog,
+    EmbedConfig,
+    EmbedField,
+    Event,
+    ExtendedField,
+    Facility,
+    FacilityActivityReport,
+    FacilityIndex,
+    FacilityList,
+    FacilityListItem,
+    FacilityLocation,
+    FacilityClaim,
+    FacilityClaimReviewNote,
+    FacilityMatch,
+    FacilityAlias,
+    NonstandardField,
+    RequestLog,
+    Source,
+    User,
+    index_custom_text
+)
 
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import (match_facility_list_items, GazetteerCache,
@@ -9927,3 +9946,48 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         contributor = self.get_rows(response)[0][self.contributor_column_index]
         expected_contributor = 'An Other (API)'
         self.assertEqual(contributor, expected_contributor)
+
+
+class WebhookTests(APITestCase):
+    def test_log_event(self):
+        user = User.objects.create(email='test@test.com')
+        c = Contributor \
+            .objects \
+            .create(admin=user,
+                    name='TESTING',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        source = Source \
+            .objects \
+            .create(source_type=Source.SINGLE,
+                    is_active=True,
+                    is_public=True,
+                    contributor=c)
+
+        list_item = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    sector=['Apparel'],
+                    row_index=1,
+                    geocoded_point=Point(0, 0),
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=source)
+
+        facility = Facility.objects.create(
+            name='Towel Factory 42',
+            address='42 Dolphin St',
+            country_code='US',
+            created_from=list_item,
+            location=Point(0, 0),
+        )
+        event = Event(content_object=facility,
+                      event_type=FacilityHistoryActions.UPDATE,
+                      event_time=timezone.now(),
+                      event_details={})
+        webhook = ContributorWebhook(contributor=c)
+        with self.assertLogs() as cm:
+            webhook.log_event(event, "DELIVERED")
+            self.assertEqual(1, len(cm.output))
+            self.assertIn("ContributorWebhook DELIVERED", cm.output[0])
