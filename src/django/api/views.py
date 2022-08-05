@@ -2088,6 +2088,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         if Facility.objects.filter(
                             created_from=m.facility_list_item.id).exists()
                         else None,
+                        'transferred_from':
+                        [r for r
+                            in m.facility_list_item.processing_results
+                            if r.get('action', '')
+                            == ProcessingAction.MOVE_FACILITY]
+                            [0]['previous_facility_oar_id']
+                            if len(
+                                [r for r
+                                    in m.facility_list_item.processing_results
+                                    if r.get('action', '')
+                                    == ProcessingAction.MOVE_FACILITY]) > 0
+                            else None,
                     }
                     for m
                     in facility.get_other_matches()
@@ -2996,7 +3008,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         def make_q_from_status(status):
             if status in special_case_q_statements:
-                return(special_case_q_statements[status])
+                return (special_case_q_statements[status])
             else:
                 return Q(status=status)
 
