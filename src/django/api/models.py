@@ -24,7 +24,11 @@ from django.utils import timezone
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
 
-from api.constants import FeatureGroups, FacilityHistoryActions, MatchResponsibility
+from api.constants import (
+    FeatureGroups,
+    FacilityHistoryActions,
+    MatchResponsibility
+)
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
 from api.constants import (Affiliations, Certifications, FacilitiesQueryParams)

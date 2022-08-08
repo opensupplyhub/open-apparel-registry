@@ -24,7 +24,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from waffle.testutils import override_switch, override_flag
 
-from api.constants import (FacilityHistoryActions, ProcessingAction,
+from api.constants import (FacilityHistoryActions,
+                           ProcessingAction,
+                           MatchResponsibility,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
                            FeatureGroups)
@@ -1475,7 +1477,8 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
             .objects \
             .create(header="header",
                     file_name="one",
-                    name=self.current_list_name)
+                    name=self.current_list_name,
+                    match_responsibility=MatchResponsibility.CONTRIBUTOR)
 
         self.current_source = Source \
             .objects \
@@ -5393,7 +5396,8 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             .objects \
             .create(header='header',
                     file_name='two',
-                    name='Second List')
+                    name='Second List',
+                    match_responsibility=MatchResponsibility.CONTRIBUTOR)
 
         self.source_two = Source \
             .objects \
@@ -5435,7 +5439,8 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
             .objects \
             .create(header='List for confirm or reject',
                     file_name='list for confirm or reject',
-                    name='List for confirm or reject')
+                    name='List for confirm or reject',
+                    match_responsibility=MatchResponsibility.CONTRIBUTOR)
 
         self.source_for_confirm_or_remove = Source \
             .objects \
@@ -7039,10 +7044,10 @@ class SingleItemFacilityMatchTest(FacilityAPITestCaseBase):
         self.assertEqual(200, response.status_code)
 
     def test_only_contributor_can_get_match_detail(self):
-        self.client.login(email=self.superuser_email,
-                          password=self.superuser_password)
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
 
-        response = self.client.get(self.match_url(self.match))
+        response = self.client.get(self.match_url(self.match_two))
         self.assertEqual(404, response.status_code)
 
     def test_confirm(self):
@@ -7054,11 +7059,11 @@ class SingleItemFacilityMatchTest(FacilityAPITestCaseBase):
         self.assertEqual(200, response.status_code)
 
     def test_only_contributor_can_confirm(self):
-        self.client.login(email=self.superuser_email,
-                          password=self.superuser_password)
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
 
         response = self.client.post(
-            self.match_url(self.match, action='confirm'))
+            self.match_url(self.match_two, action='confirm'))
         self.assertEqual(404, response.status_code)
 
     def test_reject(self):
@@ -7069,10 +7074,10 @@ class SingleItemFacilityMatchTest(FacilityAPITestCaseBase):
         self.assertEqual(200, response.status_code)
 
     def test_only_contributor_can_reject(self):
-        self.client.login(email=self.superuser_email,
-                          password=self.superuser_password)
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
         response = self.client.post(
-            self.match_url(self.match, action='reject'))
+            self.match_url(self.match_two, action='reject'))
         self.assertEqual(404, response.status_code)
 
 
@@ -7304,7 +7309,8 @@ class PPEFieldTest(TestCase):
             .objects \
             .create(header='header',
                     file_name='two',
-                    name='list_two')
+                    name='list_two',
+                    match_responsibility=MatchResponsibility.CONTRIBUTOR)
 
         self.source_one = Source \
             .objects \

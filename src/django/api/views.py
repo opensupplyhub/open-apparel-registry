@@ -21,10 +21,9 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.db.models import Extent
 from django.conf import settings
-from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -61,6 +60,7 @@ from api.constants import (CsvHeaderField,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
                            FacilityCreateQueryParams,
+                           MatchResponsibility,
                            ProcessingAction,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
@@ -72,7 +72,8 @@ from api.matching import (match_item,
                           text_match_item,
                           GazetteerCacheTimeoutError)
 from api.helpers import clean
-from api.models import (ContributorWebhook, FacilityList,
+from api.models import (ContributorWebhook,
+                        FacilityList,
                         FacilityListItem,
                         FacilityClaim,
                         FacilityClaimReviewNote,
@@ -3533,16 +3534,32 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
     permission_classes = (IsRegisteredAndConfirmed,)
 
     def validate_request(self, request, pk):
-        # We only allow retrieving matches to items that the logged in user has
-        # submitted
-        filter = self.queryset.filter(
-            pk=pk,
-            facility_list_item__source__contributor=request.user.contributor
+        filter = self.queryset.filter(pk=pk)
+        matches_contributor = Q(
+            facility_list_item__source__contributor__admin_id=request.user.pk)
+        has_no_list = Q(facility_list_item__source__facility_list=None)
+        allows_contributor = Q(
+            facility_list_item__source__facility_list__match_responsibility=(
+                MatchResponsibility.CONTRIBUTOR))
+        allows_superuser = Q(
+            facility_list_item__source__facility_list__match_responsibility=(
+                MatchResponsibility.MODERATOR)
         )
-        if not filter.exists():
-            raise Http404
 
-        facility_match = filter.first()
+        # We only allow retrieving matches to items that the logged in
+        # user has submitted that they are allowed to moderate
+        contributor_filter = matches_contributor & (
+            allows_contributor | has_no_list)
+
+        if not request.user.is_superuser:
+            filter = filter.filter(contributor_filter)
+        else:
+            # For super users we also allow retrieving matches to items that
+            # are not moderated by contributors
+            filter = filter.filter(contributor_filter | allows_superuser |
+                                   has_no_list)
+
+        facility_match = get_object_or_404(filter[:1])
         facility_list_item = facility_match.facility_list_item
 
         if facility_list_item.status != FacilityListItem.POTENTIAL_MATCH:
