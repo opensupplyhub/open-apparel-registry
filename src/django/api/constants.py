@@ -157,6 +157,16 @@ class DateFormats:
     WEEK = '%Y-%W'
 
 
+class MatchResponsibility:
+    MODERATOR = "moderator"
+    CONTRIBUTOR = "contributor"
+
+    CHOICES = [
+        (MODERATOR, 'OS Hub admins'),
+        (CONTRIBUTOR, 'The contributor'),
+    ]
+
+
 class NumberOfWorkersRanges:
     STANDARD_RANGES = [{
         'min': 0,

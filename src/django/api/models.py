@@ -24,7 +24,7 @@ from django.utils import timezone
 from allauth.account.models import EmailAddress
 from simple_history.models import HistoricalRecords
 
-from api.constants import FeatureGroups, FacilityHistoryActions
+from api.constants import FeatureGroups, FacilityHistoryActions, MatchResponsibility
 from api.countries import COUNTRY_CHOICES
 from api.oar_id import make_oar_id
 from api.constants import (Affiliations, Certifications, FacilitiesQueryParams)
@@ -221,6 +221,12 @@ class Contributor(models.Model):
         blank=True,
         choices=EMBED_LEVEL_CHOICES,
         help_text='The embedded map level that is enabled for the contributor')
+    match_responsibility = models.CharField(
+        choices=MatchResponsibility.CHOICES,
+        default=MatchResponsibility.MODERATOR,
+        max_length=12,
+        help_text="Who is responsible for moderating this contributor's data"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -453,6 +459,13 @@ class FacilityList(models.Model):
         on_delete=models.PROTECT,
         help_text=('If not null this list is an updated version of the '
                    'list specified by this field.'))
+    match_responsibility = models.CharField(
+        choices=MatchResponsibility.CHOICES,
+        default=MatchResponsibility.MODERATOR,
+        max_length=12,
+        help_text="Who is responsible for moderating this list's data"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -2843,7 +2843,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             description=description,
             file_name=csv_file.name,
             header=header,
-            replaces=replaces)
+            replaces=replaces,
+            match_responsibility=contributor.match_responsibility)
         new_list.save()
 
         csvreader = csv.reader(header.split('\n'), delimiter=',')
