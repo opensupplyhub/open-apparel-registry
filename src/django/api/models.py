@@ -927,6 +927,10 @@ class FacilityClaim(models.Model):
         blank=True,
         verbose_name='address',
         help_text='The editable facility address for this claim.')
+    facility_location = gis_models.PointField(
+        null=True,
+        verbose_name='location',
+        help_text='The lat/lng point location of the facility')
     facility_phone_number = models.CharField(
         max_length=200,
         null=True,
@@ -1140,6 +1144,7 @@ class FacilityClaim(models.Model):
         'office_phone_number',
         'parent_company',
         'sector',
+        'facility_location',
     )
 
     # A dictionary where the keys are field names and the values are predicate
@@ -1176,6 +1181,8 @@ class FacilityClaim(models.Model):
         facility_product_types=lambda v: ', '.join(v)
         if v is not None else '',
         sector=lambda v: ', '.join(v) if v is not None else '',
+        facility_location=lambda v: ', '.join([str(v.x), str(v.y)])
+        if v is not None else '',
     )
 
     def get_changes(self, include=list(default_change_includes)):
@@ -1612,8 +1619,11 @@ class Facility(PPEMixin):
         ).all().order_by('id')
 
     def get_approved_claim(self):
-        return self.facilityclaim_set.filter(
-            status=FacilityClaim.APPROVED).count() > 0
+        claims = (
+            FacilityClaim.objects
+            .filter(facility=self, status=FacilityClaim.APPROVED)
+            .order_by('-status_change_date'))
+        return claims.first()
 
     def conditionally_set_ppe(self, item):
         """

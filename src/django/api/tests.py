@@ -2613,6 +2613,7 @@ class ApprovedFacilityClaimTests(APITestCase):
                     country_code='US',
                     sector=['Apparel'],
                     row_index=1,
+                    geocoded_point=Point(0, 0),
                     status=FacilityListItem.CONFIRMED_MATCH,
                     source=self.source)
 
@@ -2781,6 +2782,79 @@ class ApprovedFacilityClaimTests(APITestCase):
         ).json()['properties']['claim_info']['facility']
 
         self.assertIsNone(response_data['website'])
+
+    @override_switch('claim_a_facility', active=True)
+    def test_update_location(self):
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.save()
+
+        new_point = {
+            'type': 'Point',
+            'coordinates': [44, 55]
+        }
+        response = self.client.put(
+            '/api/facility-claims/{}/claimed/'.format(self.facility_claim.id),
+            {
+                'facility_description': 'test_facility_description',
+                'facility_phone_number_publicly_visible': False,
+                'point_of_contact_publicly_visible': False,
+                'office_info_publicly_visible': False,
+                'facility_website_publicly_visible': False,
+                'facility_location': new_point,
+                'facility_address': '134 Claim St'
+            },
+            format='json'
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        updated_location = FacilityClaim \
+            .objects \
+            .get(pk=self.facility_claim.id) \
+            .facility_location
+
+        self.assertEqual(json.loads(updated_location.geojson), new_point)
+
+    @override_switch('claim_a_facility', active=True)
+    def test_clears_location(self):
+        point = Point(44, 55)
+
+        self.facility_claim.status = FacilityClaim.APPROVED
+        self.facility_claim.facility_address = '134 Claim St'
+        self.facility_claim.facility_location = point
+        self.facility_claim.save()
+
+        original_facility_location = self.facility.location
+
+        self.facility.location = point
+        self.facility.save()
+
+        self.client.put(
+            '/api/facility-claims/{}/claimed/'.format(self.facility_claim.id),
+            {
+                'facility_description': 'test_facility_description',
+                'facility_phone_number_publicly_visible': False,
+                'point_of_contact_publicly_visible': False,
+                'office_info_publicly_visible': False,
+                'facility_website_publicly_visible': False,
+                'facility_location': json.loads(point.geojson),
+                'facility_address': ''
+            },
+            format='json'
+        )
+
+        updated_location = FacilityClaim \
+            .objects \
+            .get(pk=self.facility_claim.id) \
+            .facility_location
+        self.assertIsNone(updated_location)
+
+        updated_facility_location = Facility \
+            .objects \
+            .get(pk=self.facility_claim.facility_id) \
+            .location
+        self.assertEqual(json.loads(updated_facility_location.geojson),
+                         json.loads(original_facility_location.geojson))
 
 
 class FacilityClaimTest(APITestCase):
@@ -8875,6 +8949,20 @@ class FacilityDetailSerializerTest(TestCase):
         self.list_item_two.facility = self.facility
         self.list_item_two.save()
 
+        self.facility_claim = FacilityClaim \
+            .objects \
+            .create(
+                contributor=self.contrib_one,
+                facility=self.facility,
+                contact_person=self.contrib_one_name,
+                email=self.email_one,
+                phone_number=12345,
+                company_name='Test',
+                website='http://example.com',
+                facility_description='description',
+                preferred_contact_method=FacilityClaim.EMAIL,
+                status=FacilityClaim.APPROVED)
+
     def test_has_sector_data(self):
         data = FacilityDetailsSerializer(self.facility).data
 
@@ -9021,6 +9109,22 @@ class FacilityDetailSerializerTest(TestCase):
         self.assertEqual(get_contributor_name(self.contrib_one, False),
                          data['properties']['sector'][1]['contributor_name'])
         self.assertIsNone(data['properties']['sector'][1]['contributor_id'])
+
+    def test_prioritizes_claim_address(self):
+        self.facility_claim.facility_address = '134 Claim St'
+        self.facility_claim.facility_location = Point(44, 55)
+        self.facility_claim.save()
+
+        self.facility.location = self.facility_claim.facility_location
+        self.facility.save()
+
+        facility = Facility.objects.get(pk=self.facility.id)
+        data = FacilityDetailsSerializer(facility).data
+        self.assertEqual(data['properties']['address'],
+                         self.facility_claim.facility_address)
+        other_addresses = data['properties']['other_addresses']
+        self.assertEqual(len(other_addresses), 2)
+        self.assertIn(self.facility.address, other_addresses)
 
 
 class SectorChoiceViewTest(APITestCase):

@@ -18,7 +18,7 @@ from django.core.validators import validate_email
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import check_password
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.db.models import Extent
 from django.conf import settings
 from django.http import Http404
@@ -1623,7 +1623,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             raise NotFound()
 
-        if facility.get_approved_claim():
+        if facility.get_approved_claim() is not None:
             raise BadRequestException(
                 'Facilities with approved claims cannot be deleted'
             )
@@ -3361,6 +3361,14 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
                 response_data = ApprovedFacilityClaimSerializer(claim).data
                 return Response(response_data)
 
+            prev_location = claim.facility_location
+            location_data = request.data.get('facility_location')
+            if location_data is not None:
+                claim.facility_location = GEOSGeometry(
+                    json.dumps(location_data))
+            if request.data.get('facility_address', '') == '':
+                claim.facility_location = None
+
             parent_company_data = request.data.get('facility_parent_company')
 
             if not parent_company_data:
@@ -3455,6 +3463,26 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
 
             create_extendedfields_for_claim(claim)
 
+            # Conditionally update the facility location if it was changed on
+            # the approved claim. If the location was removed from the claim we
+            # revert the location.
+            if claim.facility_location is not None:
+                if prev_location != claim.facility_location:
+                    claim.facility.location = claim.facility_location
+                    claim.facility._change_reason = \
+                        'Location updated on FacilityClaim ({})'.format(
+                            claim.id)
+                    claim.facility.save()
+            else:
+                if prev_location is not None:
+                    claim.facility.location = \
+                        claim.facility.created_from.geocoded_point
+                    claim.facility._change_reason = (
+                        'Reverted location to created_from after clearing '
+                        'claim location'
+                    )
+                    claim.facility.save()
+
             try:
                 send_claim_update_notice_to_list_contributors(request, claim)
             except Exception:
@@ -3466,6 +3494,34 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
             raise NotFound()
         except Contributor.DoesNotExist:
             raise NotFound('No contributor found for that user')
+
+    @action(detail=True,
+            methods=['get'],
+            url_path='geocode')
+    def geocode_claim_address(self, request, pk=None):
+        """
+        Reduce the potential misuse of the server-side geocoder by requiring
+        that geocode requests are made by an account with an approved claim.
+        """
+        claim = FacilityClaim \
+            .objects \
+            .filter(contributor=request.user.contributor) \
+            .filter(status=FacilityClaim.APPROVED) \
+            .get(pk=pk)
+
+        if request.user.contributor != claim.contributor:
+            raise NotFound()
+
+        country_code = request.query_params.get('country_code', None)
+        if country_code is None:
+            country_code = claim.facility.country_code
+
+        address = request.query_params.get('address', None)
+        if address is None:
+            raise BadRequestException('Missing address')
+
+        geocode_result = geocode_address(address, country_code)
+        return Response(geocode_result)
 
 
 class FacilityMatchViewSet(mixins.RetrieveModelMixin,
