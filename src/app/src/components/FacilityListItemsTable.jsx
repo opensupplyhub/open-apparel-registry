@@ -51,6 +51,7 @@ import {
     facilityListItemStatusChoicesEnum,
     facilityListItemErrorStatuses,
     facilityListStatusFilterChoices,
+    matchResponsibilityEnum,
 } from '../util/constants';
 
 const facilityListItemsTableStyles = Object.freeze({
@@ -738,6 +739,16 @@ function mapStateToProps({
         user: { user },
     },
 }) {
+    const isAdminUser =
+        user &&
+        user.is_superuser &&
+        list &&
+        user.contributor_id !== list.contributor_id;
+    const readOnly =
+        (list.match_responsibility === matchResponsibilityEnum.CONTRIBUTOR &&
+            isAdminUser) ||
+        (list.match_responsibility === matchResponsibilityEnum.MODERATOR &&
+            !isAdminUser);
     return {
         list,
         items,
@@ -746,11 +757,7 @@ function mapStateToProps({
         isRemovingItem,
         errorRemovingItem,
         selectedFacilityListItemsRowIndex,
-        readOnly:
-            user &&
-            user.is_superuser &&
-            list &&
-            user.contributor_id !== list.contributor_id,
+        readOnly,
     };
 }
 

@@ -110,7 +110,9 @@ function FacilityListItemsConfirmationTableRow({
                     variant="head"
                     style={listTableCellStyles.headerCellStyles}
                 >
-                    <b>Actions</b>
+                    <ShowOnly when={!readOnly}>
+                        <b>Actions</b>
+                    </ShowOnly>
                 </TableCell>
             </TableRow>
             {item.matches.map((
