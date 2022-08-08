@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Fix showing anonymous contributors on sidebar [#1993](https://github.com/open-apparel-registry/open-apparel-registry/pull/1993)
+- Fix delete facility [#2019](https://github.com/open-apparel-registry/open-apparel-registry/pull/2019)
 
 ### Security
 
