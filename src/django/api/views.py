@@ -129,7 +129,9 @@ from api.serializers import (ContributorWebhookSerializer,
                              EmbedConfigSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs, submit_parse_job
-from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
+from api.permissions import (IsRegisteredAndConfirmed,
+                             IsAllowedHost,
+                             IsSuperuser)
 from api.pagination import (FacilitiesGeoJSONPagination,
                             PageAndSizePagination)
 from api.mail import (send_claim_facility_confirmation_email,
@@ -1920,12 +1922,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=False, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def merge(self, request):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         params = FacilityMergeQueryParamsSerializer(data=request.query_params)
 
         if not params.is_valid():
@@ -2044,12 +2043,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['GET', 'POST'])
     @action(detail=True, methods=['GET', 'POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def split(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             if request.method == 'GET':
                 facility = Facility.objects.get(pk=pk)
@@ -2196,12 +2192,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def move(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             match_id = request.data.get('match_id')
 
@@ -2257,11 +2250,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def promote(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
         match_id = request.data.get('match_id')
 
         if match_id is None:
@@ -2375,13 +2366,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,),
+            permission_classes=(IsSuperuser,),
             url_path='update-location')
     @transaction.atomic
     def update_location(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
@@ -2626,12 +2614,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def link(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             new_oar_id = request.data.get('new_oar_id')
             if new_oar_id is None:
@@ -3128,7 +3113,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     """
     queryset = FacilityClaim.objects.all()
     serializer_class = FacilityClaimSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsSuperuser]
     swagger_schema = None
 
     def create(self, request):
@@ -3141,9 +3126,6 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         if not switch_is_active('claim_a_facility'):
             raise NotFound()
 
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         response_data = FacilityClaimSerializer(
             FacilityClaim.objects.all().order_by('-id'),
             many=True
@@ -3154,9 +3136,6 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         if not switch_is_active('claim_a_facility'):
             raise NotFound()
-
-        if not request.user.is_superuser:
-            raise PermissionDenied()
 
         try:
             claim = FacilityClaim.objects.get(pk=pk)
@@ -3903,28 +3882,8 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     """
     queryset = ApiBlock.objects.all()
     serializer_class = ApiBlockSerializer
+    permission_classes = [IsSuperuser]
     swagger_schema = None
-
-    def validate_request(self, request):
-        if request.user.is_anonymous:
-            raise NotAuthenticated()
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-        return
-
-    def list(self, request):
-        self.validate_request(request)
-        response_data = ApiBlockSerializer(
-            ApiBlock.objects.all(), many=True).data
-        return Response(response_data)
-
-    def retrieve(self, request, pk=None):
-        self.validate_request(request)
-        return super(ApiBlockViewSet, self).retrieve(request, pk=pk)
-
-    def update(self, request, pk=None):
-        self.validate_request(request)
-        return super(ApiBlockViewSet, self).update(request, pk=pk)
 
 
 class ContributorWebhookViewSet(mixins.CreateModelMixin,
