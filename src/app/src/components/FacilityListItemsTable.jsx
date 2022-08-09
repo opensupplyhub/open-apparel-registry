@@ -701,7 +701,6 @@ class FacilityListItemsTable extends Component {
 
 FacilityListItemsTable.defaultProps = {
     items: null,
-    readOnly: false,
     errorRemovingItem: null,
 };
 
@@ -721,7 +720,7 @@ FacilityListItemsTable.propTypes = {
     makeRemoveFacilityListItemFunction: func.isRequired,
     isRemovingItem: bool.isRequired,
     errorRemovingItem: arrayOf(string),
-    readOnly: bool,
+    readOnly: bool.isRequired,
 };
 
 function mapStateToProps({
@@ -740,14 +739,16 @@ function mapStateToProps({
     },
 }) {
     const isAdminUser =
-        user &&
+        !!user &&
         user.is_superuser &&
-        list &&
+        !!list &&
         user.contributor_id !== list.contributor_id;
     const readOnly =
-        (list.match_responsibility === matchResponsibilityEnum.CONTRIBUTOR &&
+        (!!list &&
+            list.match_responsibility === matchResponsibilityEnum.CONTRIBUTOR &&
             isAdminUser) ||
-        (list.match_responsibility === matchResponsibilityEnum.MODERATOR &&
+        (!!list &&
+            list.match_responsibility === matchResponsibilityEnum.MODERATOR &&
             !isAdminUser);
     return {
         list,
