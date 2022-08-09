@@ -509,8 +509,6 @@ class FacilityQueryParamsSerializer(Serializer):
         child=CharField(required=False),
         required=False,
     )
-    page = IntegerField(required=False)
-    pageSize = IntegerField(required=False)
     boundary = CharField(required=False)
     ppe = BooleanField(default=False, required=False)
     detail = BooleanField(default=False, required=False)
