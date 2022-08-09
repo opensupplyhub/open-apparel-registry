@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { arrayOf, bool, func, shape, string } from 'prop-types';
 import ReactSelect from 'react-select';
 import { connect } from 'react-redux';
@@ -22,7 +22,11 @@ import {
     setDashboardListContributor,
 } from '../actions/dashboardLists';
 
-import { facilitiesListTableTooltipTitles } from '../util/constants';
+import {
+    facilitiesListTableTooltipTitles,
+    matchResponsibilityChoices,
+    matchResponsibilityEnum,
+} from '../util/constants';
 
 import {
     contributorOptionPropType,
@@ -37,6 +41,7 @@ import {
 } from '../util/util';
 
 const CONTRIBUTORS = 'CONTRIBUTORS';
+const RESPONSIBILITY = 'RESPONSIBILITY';
 const ALL_CONTRIBUTORS = { label: 'All', value: '' };
 
 const styles = {
@@ -47,8 +52,10 @@ const styles = {
     filterRow: {
         padding: '20px',
         display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
     },
-    filterContributors: {
+    filter: {
         flex: 1,
     },
     inactiveList: {
@@ -74,6 +81,9 @@ function DashboardLists({
     setContributor,
     fetchLists,
 }) {
+    const [matchResponsibility, setMatchResponsibility] = useState(
+        matchResponsibilityEnum.MODERATOR,
+    );
     useEffect(() => {
         // If contributors have not been initialized, fetch them
         if (!contributors.data.length && !contributors.fetching) {
@@ -112,16 +122,25 @@ function DashboardLists({
         setContributor,
     ]);
 
-    // Fetch lists on initial page load
+    // Fetch lists when on page load or when form data changes
     useEffect(() => {
-        const contributorID = getContributorFromQueryString(search);
-        fetchLists({ contributorID });
-    }, [search, fetchLists]);
+        if (!contributors.fetching) {
+            fetchLists({
+                contributorID: contributor?.value || undefined,
+                matchResponsibility,
+            });
+        }
+    }, [
+        search,
+        contributor,
+        contributors.fetching,
+        fetchLists,
+        matchResponsibility,
+    ]);
 
     const onContributorUpdate = c => {
         replace(makeDashboardContributorListLink(c.value));
         setContributor(c);
-        fetchLists({ contributorID: c.value });
     };
 
     const when = {
@@ -135,7 +154,8 @@ function DashboardLists({
     return (
         <Paper style={styles.container}>
             <div style={styles.filterRow}>
-                <div style={styles.filterContributors}>
+                <div style={styles.filter}>
+                    <label htmlFor={CONTRIBUTORS}>Contributor</label>
                     <ReactSelect
                         id={CONTRIBUTORS}
                         name={CONTRIBUTORS}
@@ -143,6 +163,35 @@ function DashboardLists({
                         options={[ALL_CONTRIBUTORS, ...contributors.data]}
                         value={contributor || ALL_CONTRIBUTORS}
                         onChange={onContributorUpdate}
+                        disabled={
+                            contributors.fetching || facilityLists.fetching
+                        }
+                        styles={{
+                            control: provided => ({
+                                ...provided,
+                                height: '56px',
+                            }),
+                        }}
+                        theme={theme => ({
+                            ...theme,
+                            colors: {
+                                ...theme.colors,
+                                primary: '#00319D',
+                            },
+                        })}
+                    />
+                </div>
+                <div style={styles.filter}>
+                    <label htmlFor={RESPONSIBILITY}>Match responsibility</label>
+                    <ReactSelect
+                        id={RESPONSIBILITY}
+                        name={RESPONSIBILITY}
+                        classNamePrefix="select"
+                        options={matchResponsibilityChoices}
+                        value={matchResponsibilityChoices.find(
+                            m => m.value === matchResponsibility,
+                        )}
+                        onChange={m => setMatchResponsibility(m.value)}
                         disabled={
                             contributors.fetching || facilityLists.fetching
                         }

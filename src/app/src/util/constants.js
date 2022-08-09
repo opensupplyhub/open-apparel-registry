@@ -59,6 +59,10 @@ export const matchResponsibilityEnum = Object.freeze({
     MODERATOR: 'moderator',
     CONTRIBUTOR: 'contributor',
 });
+export const matchResponsibilityChoices = [
+    { value: 'moderator', label: 'OS Hub Admins' },
+    { value: 'contributor', label: 'The contributor' },
+];
 
 // These choices must be kept in sync with the identical list
 // kept in the Django API's models.py file
