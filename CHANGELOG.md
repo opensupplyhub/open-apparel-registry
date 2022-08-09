@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add transfer status to the Adjust Facility Matches interface [#1945](https://github.com/open-apparel-registry/open-apparel-registry/pull/2014)
 - Add facility_location to FacilityClaim [#2012](https://github.com/open-apparel-registry/open-apparel-registry/pull/2012https://github.com/open-apparel-registry/open-apparel-registry/pull/2012)
 - Add webhook event logging utility [#2024](https://github.com/open-apparel-registry/open-apparel-registry/pull/2024)
+- Add AWS Batch resources for delivering notifications [#2026](https://github.com/open-apparel-registry/open-apparel-registry/pull/2026)
 
 ### Changed
 
