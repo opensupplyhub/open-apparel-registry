@@ -33,7 +33,9 @@ from rest_framework.exceptions import (ValidationError,
                                        AuthenticationFailed,
                                        PermissionDenied,
                                        NotAuthenticated)
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import (CreateAPIView,
+                                     ListAPIView,
+                                     RetrieveUpdateAPIView)
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        renderer_classes,
@@ -57,7 +59,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
-                           FacilityListItemsQueryParams,
+                           FacilityListItemsQueryParams, FacilityListStatus,
                            FacilityMergeQueryParams,
                            FacilityCreateQueryParams,
                            MatchResponsibility,
@@ -2708,6 +2710,53 @@ def create_nonstandard_fields(fields, contributor):
         )
 
 
+class AdminFacilityListView(ListAPIView):
+    """
+    Upload and update facility lists for an authenticated Contributor.
+    """
+    queryset = FacilityList.objects.all()
+    serializer_class = FacilityListSerializer
+    permission_classes = [IsSuperuser]
+    pagination_class = PageAndSizePagination
+    swagger_schema = None
+
+    def get(self, request):
+        """
+        Returns Facility Lists for an authenticated superusers.
+        """
+        params = FacilityListQueryParamsSerializer(
+            data=request.query_params)
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+
+        facility_lists = FacilityList.objects.order_by('created_at')
+
+        contributor = params.data.get(FacilityListQueryParams.CONTRIBUTOR)
+        if contributor:
+            facility_lists = facility_lists.filter(
+                source__contributor=contributor)
+
+        responsibility = params.data.get(
+            FacilityListQueryParams.MATCH_RESPONSIBILITY)
+        if responsibility:
+            facility_lists = facility_lists.filter(
+                match_responsibility=responsibility)
+
+        status = params.data.get(
+            FacilityListQueryParams.STATUS)
+        if status == FacilityListStatus.MATCHED:
+            sources = Source.objects \
+                .filter(facilitylistitem__status__in=[
+                            FacilityListItem.MATCHED,
+                            FacilityListItem.POTENTIAL_MATCH,
+                            FacilityListItem.ERROR_MATCHING
+                        ])
+            facility_lists = facility_lists.filter(source__in=sources)
+
+        response_data = self.serializer_class(facility_lists, many=True).data
+        return Response(response_data)
+
+
 class FacilityListViewSet(viewsets.ModelViewSet):
     """
     Upload and update facility lists for an authenticated Contributor.
@@ -2715,6 +2764,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     queryset = FacilityList.objects.all()
     serializer_class = FacilityListSerializer
     permission_classes = [IsRegisteredAndConfirmed]
+    pagination_class = PageAndSizePagination
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
     swagger_schema = None
 
@@ -2891,32 +2941,14 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             ]
         """
         try:
-            if request.user.is_superuser:
-                params = FacilityListQueryParamsSerializer(
-                    data=request.query_params)
-                if not params.is_valid():
-                    raise ValidationError(params.errors)
-
-                contributor = params.data.get(
-                    FacilityListQueryParams.CONTRIBUTOR)
-
-                if contributor is not None:
-                    facility_lists = FacilityList.objects.filter(
-                        source__contributor=contributor)
-                else:
-                    facility_lists = FacilityList.objects.filter(
-                        source__contributor=request.user.contributor)
-            else:
-                facility_lists = FacilityList.objects.filter(
-                    source__contributor=request.user.contributor)
-
-            facility_lists = facility_lists.order_by('-created_at')
-
-            response_data = self.serializer_class(facility_lists,
-                                                  many=True).data
-            return Response(response_data)
-        except Contributor.DoesNotExist:
+            facility_lists = FacilityList.objects \
+                .filter(source__contributor=request.user.contributor) \
+                .order_by('-created_at')
+        except User.contributor.RelatedObjectDoesNotExist:
             raise ValidationError('User contributor cannot be None')
+
+        response_data = self.serializer_class(facility_lists, many=True).data
+        return Response(response_data)
 
     def retrieve(self, request, pk):
         """

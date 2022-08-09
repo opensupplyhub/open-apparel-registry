@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.db.models import Count
 from rest_framework.serializers import (BooleanField,
                                         CharField,
+                                        ChoiceField,
                                         CurrentUserDefault,
                                         DecimalField,
                                         EmailField,
@@ -45,6 +46,7 @@ from api.models import (FacilityList,
                         EmbedField,
                         NonstandardField,
                         ExtendedField)
+from api.constants import FacilityListStatus, MatchResponsibility
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code, parse_array_values
 from api.helpers import (prefix_a_an,
@@ -516,6 +518,10 @@ class FacilityQueryParamsSerializer(Serializer):
 
 class FacilityListQueryParamsSerializer(Serializer):
     contributor = IntegerField(required=False)
+    match_responsibility = ChoiceField(choices=MatchResponsibility.CHOICES,
+                                       required=False)
+    status = ChoiceField(choices=[FacilityListStatus.MATCHED],
+                         required=False)
 
 
 class FacilityListItemsQueryParamsSerializer(Serializer):

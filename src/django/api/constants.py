@@ -47,6 +47,8 @@ class FacilitiesQueryParams:
 
 class FacilityListQueryParams:
     CONTRIBUTOR = 'contributor'
+    STATUS = 'status'
+    MATCH_RESPONSIBILITY = 'match_responsibility'
 
 
 class FacilityListItemsQueryParams:
@@ -70,6 +72,10 @@ class FeatureGroups:
     CAN_SUBMIT_FACILITY = 'can_submit_facility'
     CAN_SUBMIT_PRIVATE_FACILITY = 'can_submit_private_facility'
     CAN_VIEW_FULL_CONTRIB_DETAIL = 'can_view_full_contrib_detail'
+
+
+class FacilityListStatus:
+    MATCHED = "MATCHED"
 
 
 class FacilityHistoryActions:

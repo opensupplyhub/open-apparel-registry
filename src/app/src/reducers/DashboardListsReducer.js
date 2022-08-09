@@ -22,7 +22,7 @@ const initialState = Object.freeze({
         error: null,
     }),
     facilityLists: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),

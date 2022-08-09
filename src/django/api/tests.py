@@ -2965,7 +2965,7 @@ class FacilityClaimTest(APITestCase):
         self.assertEqual(1, len(data))
 
 
-class DashboardListTests(APITestCase):
+class BaseFacilityListTests(APITestCase):
     def setUp(self):
         self.user_email = 'test@example.com'
         self.user_password = 'example123'
@@ -3058,22 +3058,51 @@ class DashboardListTests(APITestCase):
             facility_list=self.superlist,
             contributor=self.supercontributor)
 
-    def test_user_can_list_own_lists(self):
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
-        response = self.client.get('/api/facility-lists/')
+
+class DashboardListTests(BaseFacilityListTests):
+    def test_superuser_can_list_all_lists(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.get('/api/admin-facility-lists/')
 
         self.assertEqual(200, response.status_code)
 
         lists = response.json()
 
-        # Ensure we get all three lists
-        self.assertEqual(3, len(lists))
-        # Ensure they are ordered newest first
-        self.assertEqual(
-            ['Third List', 'Second List', 'First List'],
-            [d['name'] for d in lists])
+        # Ensure we get the all lists
+        self.assertEqual(4, len(lists['results']))
 
+    def test_superuser_can_list_other_contributors_lists(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.get(
+            '/api/admin-facility-lists/?contributor={}'.format(
+                self.contributor.id))
+
+        self.assertEqual(200, response.status_code)
+
+        lists = response.json()
+
+        # Ensure we get all three lists, private and public,
+        # active and inactive
+        self.assertEqual(3, len(lists['results']))
+        self.assertEqual(
+            ['First List', 'Second List', 'Third List'],
+            [d['name'] for d in lists['results']])
+
+    def test_user_cannot_list_other_contributors_lists(self):
+        # Regular users cannot access this endpoint
+
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+        response = self.client.get(
+            '/api/admin-facility-lists/?contributor={}'.format(
+                self.supercontributor.id))
+
+        self.assertEqual(403, response.status_code)
+
+
+class FacilityListViewTests(BaseFacilityListTests):
     def test_superuser_can_list_own_lists(self):
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
@@ -3087,44 +3116,6 @@ class DashboardListTests(APITestCase):
         self.assertEqual(1, len(lists))
         # Ensure it is the right one
         self.assertEqual('Super List', lists[0]['name'])
-
-    def test_superuser_can_list_other_contributors_lists(self):
-        self.client.login(email=self.superuser_email,
-                          password=self.superuser_password)
-        response = self.client.get(
-            '/api/facility-lists/?contributor={}'.format(
-                self.contributor.id))
-
-        self.assertEqual(200, response.status_code)
-
-        lists = response.json()
-
-        # Ensure we get all three lists, private and public,
-        # active and inactive
-        self.assertEqual(3, len(lists))
-        self.assertEqual(
-            ['Third List', 'Second List', 'First List'],
-            [d['name'] for d in lists])
-
-    def test_user_cannot_list_other_contributors_lists(self):
-        # Regular users, even if they ask for lists by other
-        # contributors, will just be given their own lists
-
-        self.client.login(email=self.user_email,
-                          password=self.user_password)
-        response = self.client.get(
-            '/api/facility-lists/?contributor={}'.format(
-                self.supercontributor.id))
-
-        self.assertEqual(200, response.status_code)
-
-        lists = response.json()
-
-        # Ensure we get the user's, not the superuser's, lists
-        self.assertEqual(3, len(lists))
-        self.assertEqual(
-            ['Third List', 'Second List', 'First List'],
-            [d['name'] for d in lists])
 
     def test_user_can_view_own_lists(self):
         self.client.login(email=self.user_email,

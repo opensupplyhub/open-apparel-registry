@@ -37,6 +37,7 @@ import {
 } from '../util/util';
 
 const CONTRIBUTORS = 'CONTRIBUTORS';
+const ALL_CONTRIBUTORS = { label: 'All', value: '' };
 
 const styles = {
     container: {
@@ -99,9 +100,6 @@ function DashboardLists({
                 setContributor(
                     contributors.data.find(c => c.value === contributorID),
                 );
-                if (!facilityLists.fetching) {
-                    fetchLists(contributorID);
-                }
             }
         }
     }, [
@@ -109,25 +107,29 @@ function DashboardLists({
         contributors.data,
         contributors.fetching,
         search,
-        facilityLists.fetching,
         replace,
         fetchContributors,
         setContributor,
-        fetchLists,
     ]);
+
+    // Fetch lists on initial page load
+    useEffect(() => {
+        const contributorID = getContributorFromQueryString(search);
+        fetchLists({ contributorID });
+    }, [search, fetchLists]);
 
     const onContributorUpdate = c => {
         replace(makeDashboardContributorListLink(c.value));
         setContributor(c);
-        fetchLists(c.value);
+        fetchLists({ contributorID: c.value });
     };
 
     const when = {
-        noContributorSelected: contributor === null,
+        initialLoad: facilityLists.data === null,
         contributorHasNoLists:
             contributor !== null &&
             !facilityLists.fetching &&
-            facilityLists.data.length === 0,
+            facilityLists.data?.length === 0,
     };
 
     return (
@@ -138,9 +140,8 @@ function DashboardLists({
                         id={CONTRIBUTORS}
                         name={CONTRIBUTORS}
                         classNamePrefix="select"
-                        options={contributors.data}
-                        placeholder="Select a contributor..."
-                        value={contributor}
+                        options={[ALL_CONTRIBUTORS, ...contributors.data]}
+                        value={contributor || ALL_CONTRIBUTORS}
                         onChange={onContributorUpdate}
                         disabled={
                             contributors.fetching || facilityLists.fetching
@@ -176,7 +177,7 @@ function DashboardLists({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {facilityLists.data.map(list => (
+                    {facilityLists.data?.map(list => (
                         <TableRow
                             key={list.id}
                             hover
@@ -234,16 +235,6 @@ function DashboardLists({
                             </TableCell>
                         </TableRow>
                     ))}
-                    <ShowOnly when={when.noContributorSelected}>
-                        <TableRow>
-                            <TableCell
-                                colSpan={12}
-                                style={{ textAlign: 'center' }}
-                            >
-                                Select a contributor to see their lists.
-                            </TableCell>
-                        </TableRow>
-                    </ShowOnly>
                     <ShowOnly when={when.contributorHasNoLists}>
                         <TableRow>
                             <TableCell
@@ -269,7 +260,7 @@ DashboardLists.propTypes = {
             error: string,
         }).isRequired,
         facilityLists: shape({
-            data: arrayOf(facilityListPropType).isRequired,
+            data: arrayOf(facilityListPropType),
             fetching: bool.isRequired,
             error: string,
         }).isRequired,
@@ -290,7 +281,7 @@ function mapDispatchToProps(dispatch) {
     return {
         fetchContributors: () => dispatch(fetchDashboardListContributors()),
         setContributor: c => dispatch(setDashboardListContributor(c)),
-        fetchLists: c => dispatch(fetchDashboardFacilityLists(c)),
+        fetchLists: (opts = {}) => dispatch(fetchDashboardFacilityLists(opts)),
     };
 }
 

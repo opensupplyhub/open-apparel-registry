@@ -104,8 +104,7 @@ export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 export const makeSingleFacilityListItemsURL = id =>
     `/api/facility-lists/${id}/items/`;
 
-export const makeDashboardFacilityListsURL = contributorID =>
-    `/api/facility-lists/?contributor=${contributorID}`;
+export const makeDashboardFacilityListsURL = () => '/api/admin-facility-lists/';
 
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
 export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
@@ -388,7 +387,7 @@ export const getContributorFromQueryString = qs => {
 
     const { contributor = null } = querystring.parse(qsToParse);
 
-    return parseInt(contributor, 10);
+    return contributor ? parseInt(contributor, 10) : null;
 };
 
 export const createTileURLWithQueryString = (qs, key, grid = true) =>
@@ -562,7 +561,7 @@ export const makeFacilityClaimDetailsLink = claimID =>
     `/dashboard/claims/${claimID}`;
 
 export const makeDashboardContributorListLink = contributorID =>
-    `/dashboard/lists/?contributor=${contributorID}`;
+    `/dashboard/lists/${contributorID ? `?contributor=${contributorID}` : ''}`;
 
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
 
