@@ -106,6 +106,7 @@ resource "aws_batch_compute_environment" "notifications" {
 
   compute_resources {
     type           = "SPOT"
+    allocation_strategy = "SPOT_CAPACITY_OPTIMIZED"
     bid_percentage = "${var.batch_notifications_ce_spot_fleet_bid_percentage}"
     ec2_key_pair   = "${var.aws_key_name}"
     image_id       = "${var.batch_ami_id}"
