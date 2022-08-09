@@ -127,7 +127,7 @@ from api.serializers import (ContributorWebhookSerializer,
                              FacilityActivityReportSerializer,
                              EmbedConfigSerializer)
 from api.countries import COUNTRY_CHOICES
-from api.aws_batch import submit_jobs
+from api.aws_batch import submit_jobs, submit_parse_job
 from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
 from api.pagination import (FacilitiesGeoJSONPagination,
                             PageAndSizePagination)
@@ -2873,7 +2873,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         FacilityListItem.objects.bulk_create(items)
 
         if ENVIRONMENT in ('Staging', 'Production'):
-            submit_jobs(new_list)
+            job_ids = submit_parse_job(new_list)
+            submit_jobs(new_list, job_ids)
 
         serializer = self.get_serializer(new_list)
         return Response(serializer.data)

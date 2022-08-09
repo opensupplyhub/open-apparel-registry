@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update facility download [#1981](https://github.com/open-apparel-registry/open-apparel-registry/pull/1981)
 - Limit parent company dropdown options to other parent companies and allow freeform text entry [#1983](https://github.com/open-apparel-registry/open-apparel-registry/pull/1983)
 - Update "adjust facility matches" dashboard [#2005](https://github.com/open-apparel-registry/open-apparel-registry/pull/2005)
+- Split batch steps [#2028](https://github.com/open-apparel-registry/open-apparel-registry/pull/2028)
 
 ### Deprecated
 
