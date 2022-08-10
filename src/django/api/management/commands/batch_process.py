@@ -111,6 +111,7 @@ class Command(BaseCommand):
 
         # Process all items, save affected items, facilities, matches,
         # and tally successes and failures
+        parsed_items = set()
         for item in items:
             try:
                 with transaction.atomic():
@@ -127,6 +128,16 @@ class Command(BaseCommand):
                             elif match.confidence == 1.0:
                                 item.facility = match.facility
                                 item.save()
+                    elif action == ProcessingAction.PARSE:
+                        process(item)
+                        core_fields = '{}-{}-{}'.format(item.country_code,
+                                                        item.clean_name,
+                                                        item.clean_address)
+                        if core_fields in parsed_items:
+                            item.status = FacilityListItem.DUPLICATE
+                        else:
+                            parsed_items.add(core_fields)
+                        item.save()
                     else:
                         process(item)
                         item.save()
