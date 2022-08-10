@@ -61,6 +61,8 @@ export const resetDashboardFacilityLists = createAction(
 export function fetchDashboardFacilityLists({
     contributorID,
     matchResponsibility,
+    page,
+    pageSize,
 }) {
     return dispatch => {
         dispatch(startFetchDashboardFacilityLists());
@@ -68,6 +70,8 @@ export function fetchDashboardFacilityLists({
         return apiRequest
             .get(makeDashboardFacilityListsURL(), {
                 params: {
+                    page,
+                    pageSize,
                     contributor: contributorID,
                     match_responsibility: matchResponsibility,
                     status: 'MATCHED',

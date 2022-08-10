@@ -2720,12 +2720,12 @@ class AdminFacilityListView(ListAPIView):
     pagination_class = PageAndSizePagination
     swagger_schema = None
 
-    def get(self, request):
+    def get_queryset(self):
         """
         Returns Facility Lists for an authenticated superusers.
         """
         params = FacilityListQueryParamsSerializer(
-            data=request.query_params)
+            data=self.request.query_params)
         if not params.is_valid():
             raise ValidationError(params.errors)
 
@@ -2753,8 +2753,7 @@ class AdminFacilityListView(ListAPIView):
                         ])
             facility_lists = facility_lists.filter(source__in=sources)
 
-        response_data = self.serializer_class(facility_lists, many=True).data
-        return Response(response_data)
+        return facility_lists
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):
@@ -2764,7 +2763,6 @@ class FacilityListViewSet(viewsets.ModelViewSet):
     queryset = FacilityList.objects.all()
     serializer_class = FacilityListSerializer
     permission_classes = [IsRegisteredAndConfirmed]
-    pagination_class = PageAndSizePagination
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
     swagger_schema = None
 

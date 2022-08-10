@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { arrayOf, bool, func, shape, string } from 'prop-types';
+import React, { useEffect } from 'react';
+import { arrayOf, bool, func, number, shape, string } from 'prop-types';
 import ReactSelect from 'react-select';
 import { connect } from 'react-redux';
 
@@ -11,6 +11,8 @@ import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 import FacilityListsTooltipTableCell from './FacilityListsTooltipTableCell';
@@ -23,9 +25,10 @@ import {
 } from '../actions/dashboardLists';
 
 import {
+    DEFAULT_PAGE,
     facilitiesListTableTooltipTitles,
     matchResponsibilityChoices,
-    matchResponsibilityEnum,
+    rowsPerPageOptions,
 } from '../util/constants';
 
 import {
@@ -35,9 +38,10 @@ import {
 } from '../util/propTypes';
 
 import {
-    getContributorFromQueryString,
     makeDashboardContributorListLink,
     makeFacilityListItemsDetailLink,
+    createPaginationOptionsFromQueryString,
+    getDashboardListParamsFromQueryString,
 } from '../util/util';
 
 const CONTRIBUTORS = 'CONTRIBUTORS';
@@ -71,7 +75,12 @@ const styles = {
 };
 
 function DashboardLists({
-    dashboardLists: { contributor, contributors, facilityLists },
+    dashboardLists: {
+        contributor,
+        contributors,
+        facilityLists,
+        facilityListsCount,
+    },
     history: {
         location: { search },
         push,
@@ -81,9 +90,15 @@ function DashboardLists({
     setContributor,
     fetchLists,
 }) {
-    const [matchResponsibility, setMatchResponsibility] = useState(
-        matchResponsibilityEnum.MODERATOR,
+    const {
+        contributor: contributorID,
+        matchResponsibility,
+    } = getDashboardListParamsFromQueryString(search);
+
+    const { page, rowsPerPage } = createPaginationOptionsFromQueryString(
+        search,
     );
+
     useEffect(() => {
         // If contributors have not been initialized, fetch them
         if (!contributors.data.length && !contributors.fetching) {
@@ -93,31 +108,37 @@ function DashboardLists({
         if (contributor) {
             // If contributor is already set, e.g. when coming back from a
             // list detail view, ensure it is reflected in URL
-
-            replace(makeDashboardContributorListLink(contributor.value));
-        } else {
+            replace(
+                makeDashboardContributorListLink({
+                    contributorID: contributor.value,
+                    matchResponsibility,
+                    page,
+                    rowsPerPage,
+                }),
+            );
+        } else if (
+            contributorID &&
+            !contributor &&
+            contributors.data.length &&
+            !contributors.fetching
+        ) {
             // If contributor is not set, but an ID is present in the URL,
             // e.g. when following a link or refreshing the page after
             // selecting a contributor, set the contributor and fetch its lists
-
-            const contributorID = getContributorFromQueryString(search);
-
-            if (
-                contributorID &&
-                contributors.data.length &&
-                !contributors.fetching
-            ) {
-                setContributor(
-                    contributors.data.find(c => c.value === contributorID),
-                );
-            }
+            setContributor(
+                contributors.data.find(c => c.value === contributorID),
+            );
         }
     }, [
         contributor,
+        contributorID,
         contributors.data,
         contributors.fetching,
         search,
         replace,
+        page,
+        rowsPerPage,
+        matchResponsibility,
         fetchContributors,
         setContributor,
     ]);
@@ -128,19 +149,62 @@ function DashboardLists({
             fetchLists({
                 contributorID: contributor?.value || undefined,
                 matchResponsibility,
+                page,
+                pageSize: rowsPerPage,
             });
         }
     }, [
-        search,
         contributor,
         contributors.fetching,
-        fetchLists,
         matchResponsibility,
+        page,
+        rowsPerPage,
+        fetchLists,
     ]);
 
     const onContributorUpdate = c => {
-        replace(makeDashboardContributorListLink(c.value));
+        replace(
+            makeDashboardContributorListLink({
+                contributorID: c.value,
+                matchResponsibility,
+                page: DEFAULT_PAGE,
+                rowsPerPage,
+            }),
+        );
         setContributor(c);
+    };
+
+    const onMatchResponsibilityUpdate = opt => {
+        replace(
+            makeDashboardContributorListLink({
+                contributorID,
+                matchResponsibility: opt.value,
+                page: DEFAULT_PAGE,
+                rowsPerPage,
+            }),
+        );
+    };
+
+    const onPageChange = (_, newPage) => {
+        replace(
+            makeDashboardContributorListLink({
+                contributorID,
+                matchResponsibility,
+                page: newPage + 1,
+                rowsPerPage,
+            }),
+        );
+    };
+
+    const onPageSizeChange = e => {
+        replace(
+            makeDashboardContributorListLink({
+                contributorID,
+                matchResponsibility,
+                page: DEFAULT_PAGE,
+                rowsPerPage: e.target.value,
+            }),
+        );
     };
 
     const when = {
@@ -191,7 +255,7 @@ function DashboardLists({
                         value={matchResponsibilityChoices.find(
                             m => m.value === matchResponsibility,
                         )}
-                        onChange={m => setMatchResponsibility(m.value)}
+                        onChange={onMatchResponsibilityUpdate}
                         disabled={
                             contributors.fetching || facilityLists.fetching
                         }
@@ -295,6 +359,20 @@ function DashboardLists({
                         </TableRow>
                     </ShowOnly>
                 </TableBody>
+                <ShowOnly when={facilityListsCount}>
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                count={facilityListsCount}
+                                rowsPerPage={rowsPerPage}
+                                rowsPerPageOptions={rowsPerPageOptions}
+                                onChangeRowsPerPage={onPageSizeChange}
+                                page={page - 1}
+                                onChangePage={onPageChange}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </ShowOnly>
             </Table>
         </Paper>
     );
@@ -308,6 +386,7 @@ DashboardLists.propTypes = {
             fetching: bool.isRequired,
             error: string,
         }).isRequired,
+        facilityListsCount: number,
         facilityLists: shape({
             data: arrayOf(facilityListPropType),
             fetching: bool.isRequired,

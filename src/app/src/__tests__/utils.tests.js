@@ -55,7 +55,6 @@ const {
     makeMyFacilitiesRoute,
     makeResetPasswordEmailURL,
     getTokenFromQueryString,
-    getContributorFromQueryString,
     makeResetPasswordConfirmURL,
     makeUserProfileURL,
     makeProfileRouteLink,
@@ -1110,15 +1109,6 @@ it('gets a `token` from a querystring', () => {
     const expectedMissingQueryStringMatch = '';
 
     expect(getTokenFromQueryString(missingQueryString)).toBe(expectedMissingQueryStringMatch);
-});
-
-it('gets a `contributor` from querystring', () => {
-    expect(getContributorFromQueryString('?contributor=5')).toBe(5);
-    expect(getContributorFromQueryString('?contributor=5&contributor=10')).toBe(5);
-    expect(getContributorFromQueryString('?contributor=five')).toBe(NaN);
-    expect(getContributorFromQueryString('?contributor=')).toBe(NaN);
-    expect(getContributorFromQueryString('?something=else')).toBe(NaN);
-    expect(getContributorFromQueryString('')).toBe(NaN);
 });
 
 it('joins a 2-d array into a correctly escaped CSV string', () => {
