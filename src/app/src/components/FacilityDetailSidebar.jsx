@@ -250,9 +250,10 @@ const FacilityDetailSidebar = ({
         const sectors = get(data, 'properties.sector', []).map(item => ({
             primary: item.values.join(', '),
             secondary: formatAttribution(
-                item.created_at,
+                item.updated_at,
                 item.contributor_name,
             ),
+            isFromClaim: item.is_from_claim,
             key: item.contributor_id,
         }));
         return [sectors[0], sectors.slice(1)];
