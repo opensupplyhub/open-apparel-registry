@@ -174,11 +174,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={profileRoute}
-                                    component={({
-                                        match: {
-                                            params: { id },
-                                        },
-                                    }) => <UserProfile id={id} />}
+                                    component={UserProfile}
                                 />
                                 <Route
                                     exact

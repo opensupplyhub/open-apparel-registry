@@ -55,23 +55,21 @@ const FacilityDetailSidebarLocation = ({ data, embed }) => {
     });
 
     return (
-        <>
-            <FacilityDetailSidebarItem
-                label="GPS"
-                primary={`${facilityLng}, ${facilityLat}`}
-                secondary={detailsText}
-                embed={embed}
-                isFromClaim={canonicalLocationData?.is_from_claim}
-                additionalContent={otherLocationsData
-                    .filter(item => !item.has_invalid_location)
-                    .map((item, i) => ({
-                        primary: `${item.lng}, ${item.lat}`,
-                        secondary: item.contributor_name,
-                        key: `${item.lng}, ${item.lat} - ${i}`,
-                        isFromClaim: item.is_from_claim,
-                    }))}
-            />
-        </>
+        <FacilityDetailSidebarItem
+            label="GPS"
+            primary={`${facilityLng}, ${facilityLat}`}
+            secondary={detailsText}
+            embed={embed}
+            isFromClaim={canonicalLocationData?.is_from_claim}
+            additionalContent={otherLocationsData
+                .filter(item => !item.has_invalid_location)
+                .map((item, i) => ({
+                    primary: `${item.lng}, ${item.lat}`,
+                    secondary: item.contributor_name,
+                    key: `${item.lng}, ${item.lat} - ${i}`,
+                    isFromClaim: item.is_from_claim,
+                }))}
+        />
     );
 };
 

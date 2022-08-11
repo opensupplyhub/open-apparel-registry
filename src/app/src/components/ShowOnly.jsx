@@ -7,6 +7,7 @@ export default class ShowOnly extends PureComponent {
 
         if (when) {
             return (
+                // eslint-disable-next-line react/jsx-no-useless-fragment
                 <React.Fragment>
                     {Object.keys(style).length ? (
                         <span style={style}> {children} </span>

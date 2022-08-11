@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 
@@ -36,86 +36,72 @@ class MapAndSidebar extends Component {
         const { hasError } = this.state;
 
         return (
-            <Fragment>
-                <Grid container className="map-sidebar-container">
-                    <Grid item sm={12} md={4} id="panel-container">
-                        <Route component={SidebarWithErrorBoundary} />
-                    </Grid>
-                    <Grid
-                        item
-                        sm={12}
-                        md={8}
-                        style={{ position: 'relative' }}
-                        className="map-container"
-                    >
-                        {!hasError && (
-                            <Switch>
-                                <Route
-                                    exact
-                                    path={facilityDetailsRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={VECTOR_TILE}
-                                            alternative={
-                                                <Route
-                                                    component={FacilitiesMap}
-                                                />
-                                            }
-                                        >
-                                            <Route
-                                                component={
-                                                    VectorTileFacilitiesMap
-                                                }
-                                            />
-                                        </FeatureFlag>
-                                    )}
-                                />
-                                <Route
-                                    exact
-                                    path={facilitiesRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={VECTOR_TILE}
-                                            alternative={
-                                                <Route
-                                                    component={FacilitiesMap}
-                                                />
-                                            }
-                                        >
-                                            <Route
-                                                component={
-                                                    VectorTileFacilitiesMap
-                                                }
-                                            />
-                                        </FeatureFlag>
-                                    )}
-                                />
-                                <Route
-                                    exact
-                                    path={mainRoute}
-                                    render={() => (
-                                        <FeatureFlag
-                                            flag={VECTOR_TILE}
-                                            alternative={
-                                                <Route
-                                                    component={FacilitiesMap}
-                                                />
-                                            }
-                                        >
-                                            <Route
-                                                component={
-                                                    VectorTileFacilitiesMap
-                                                }
-                                            />
-                                        </FeatureFlag>
-                                    )}
-                                />
-                            </Switch>
-                        )}
-                        {hasError && <FacilitiesMapErrorMessage />}
-                    </Grid>
+            <Grid container className="map-sidebar-container">
+                <Grid item sm={12} md={4} id="panel-container">
+                    <Route component={SidebarWithErrorBoundary} />
                 </Grid>
-            </Fragment>
+                <Grid
+                    item
+                    sm={12}
+                    md={8}
+                    style={{ position: 'relative' }}
+                    className="map-container"
+                >
+                    {!hasError && (
+                        <Switch>
+                            <Route
+                                exact
+                                path={facilityDetailsRoute}
+                                render={() => (
+                                    <FeatureFlag
+                                        flag={VECTOR_TILE}
+                                        alternative={
+                                            <Route component={FacilitiesMap} />
+                                        }
+                                    >
+                                        <Route
+                                            component={VectorTileFacilitiesMap}
+                                        />
+                                    </FeatureFlag>
+                                )}
+                            />
+                            <Route
+                                exact
+                                path={facilitiesRoute}
+                                render={() => (
+                                    <FeatureFlag
+                                        flag={VECTOR_TILE}
+                                        alternative={
+                                            <Route component={FacilitiesMap} />
+                                        }
+                                    >
+                                        <Route
+                                            component={VectorTileFacilitiesMap}
+                                        />
+                                    </FeatureFlag>
+                                )}
+                            />
+                            <Route
+                                exact
+                                path={mainRoute}
+                                render={() => (
+                                    <FeatureFlag
+                                        flag={VECTOR_TILE}
+                                        alternative={
+                                            <Route component={FacilitiesMap} />
+                                        }
+                                    >
+                                        <Route
+                                            component={VectorTileFacilitiesMap}
+                                        />
+                                    </FeatureFlag>
+                                )}
+                            />
+                        </Switch>
+                    )}
+                    {hasError && <FacilitiesMapErrorMessage />}
+                </Grid>
+            </Grid>
         );
     }
 }

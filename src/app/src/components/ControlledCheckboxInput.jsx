@@ -40,23 +40,21 @@ function ControlledCheckboxInput({
     );
 
     return (
-        <Fragment>
-            <FormControlLabel
-                control={
-                    <MaterialCheckbox
-                        id={id}
-                        color="primary"
-                        onChange={onChange}
-                        className={classes.checkbox}
-                        checked={checked}
-                    />
-                }
-                label={labelElement}
-                classes={{
-                    label: classes.p,
-                }}
-            />
-        </Fragment>
+        <FormControlLabel
+            control={
+                <MaterialCheckbox
+                    id={id}
+                    color="primary"
+                    onChange={onChange}
+                    className={classes.checkbox}
+                    checked={checked}
+                />
+            }
+            label={labelElement}
+            classes={{
+                label: classes.p,
+            }}
+        />
     );
 }
 

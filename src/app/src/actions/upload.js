@@ -23,7 +23,7 @@ export const completeUploadFile = createAction('COMPLETE_UPLOAD_FILE');
 
 export const resetUploadState = createAction('RESET_UPLOAD_STATE');
 
-export function uploadFile(file = null, redirectToListDetail) {
+export function uploadFile(file, redirectToListDetail) {
     return (dispatch, getState) => {
         dispatch(startUploadFile());
 

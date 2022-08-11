@@ -83,6 +83,9 @@ const facilitiesTabStyles = Object.freeze({
     }),
 });
 
+const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
+const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
+
 function FilterSidebarFacilitiesTab({
     fetching,
     data,
@@ -178,11 +181,6 @@ function FilterSidebarFacilitiesTab({
     }
 
     const facilitiesCount = get(data, 'count', null);
-
-    const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
-    const RegisterLink = props => (
-        <Link to={authRegisterFormRoute} {...props} />
-    );
 
     const progress = facilitiesCount
         ? (get(downloadData, 'results.rows', []).length * 100) / facilitiesCount

@@ -90,6 +90,9 @@ const facilitiesTabStyles = Object.freeze({
     }),
 });
 
+const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
+const RegisterLink = props => <Link to={authRegisterFormRoute} {...props} />;
+
 function NonVectorTileFilterSidebarFacilitiesTab({
     fetching,
     data,
@@ -201,11 +204,6 @@ function NonVectorTileFilterSidebarFacilitiesTab({
         facilitiesCount && facilitiesCount !== filteredFacilities.length
             ? `Displaying ${filteredFacilities.length} facilities of ${facilitiesCount} results`
             : `Displaying ${filteredFacilities.length} facilities`;
-
-    const LoginLink = props => <Link to={authLoginFormRoute} {...props} />;
-    const RegisterLink = props => (
-        <Link to={authRegisterFormRoute} {...props} />
-    );
 
     const listHeaderInsetComponent = (
         <div

@@ -19,6 +19,10 @@ const styles = {
     },
 };
 
+// To decode this later, just run "atob(hashedStringHere)"
+const encodeErrorMessage = error =>
+    btoa(`${error.message} ::::::: ${error.stack}`);
+
 class ErrorBoundary extends Component {
     state = {};
 
@@ -31,10 +35,6 @@ class ErrorBoundary extends Component {
         }
     }
 
-    // To decode this later, just run "atob(hashedStringHere)"
-    encodeErrorMessage = error =>
-        btoa(`${error.message} ::::::: ${error.stack}`);
-
     render() {
         if (this.state.error) {
             return (
@@ -46,7 +46,7 @@ class ErrorBoundary extends Component {
                         this text:
                     </p>
                     <div style={styles.hash} className="notranslate">
-                        {this.encodeErrorMessage(this.state.error)}
+                        {encodeErrorMessage(this.state.error)}
                     </div>
                 </div>
             );

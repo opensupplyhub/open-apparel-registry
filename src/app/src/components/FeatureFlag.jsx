@@ -25,6 +25,7 @@ function FeatureFlag({
         return alternative;
     }
 
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <React.Fragment>{children}</React.Fragment>;
 }
 
