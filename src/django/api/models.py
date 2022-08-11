@@ -477,6 +477,8 @@ class FacilityList(models.Model):
     PENDING = 'PENDING'
     REJECTED = 'REJECTED'
 
+    MATCHED = 'MATCHED'
+
     STATUS_CHOICES = (
         (PENDING, PENDING),
         (APPROVED, APPROVED),

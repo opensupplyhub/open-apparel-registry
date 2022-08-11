@@ -46,7 +46,7 @@ from api.models import (FacilityList,
                         EmbedField,
                         NonstandardField,
                         ExtendedField)
-from api.constants import FacilityListStatus, MatchResponsibility
+from api.constants import MatchResponsibility
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code, parse_array_values
 from api.helpers import (prefix_a_an,
@@ -520,7 +520,8 @@ class FacilityListQueryParamsSerializer(Serializer):
     contributor = IntegerField(required=False)
     match_responsibility = ChoiceField(choices=MatchResponsibility.CHOICES,
                                        required=False)
-    status = ChoiceField(choices=[FacilityListStatus.MATCHED],
+    status = ChoiceField(choices=[FacilityList.MATCHED, FacilityList.APPROVED,
+                                  FacilityList.REJECTED, FacilityList.PENDING],
                          required=False)
 
 

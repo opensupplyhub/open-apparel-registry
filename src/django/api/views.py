@@ -2752,6 +2752,8 @@ class AdminFacilityListView(ListAPIView):
                             FacilityListItem.ERROR_MATCHING
                         ])
             facility_lists = facility_lists.filter(source__in=sources)
+        elif status is not None:
+            facility_lists = facility_lists.filter(status=status)
 
         return facility_lists
 
