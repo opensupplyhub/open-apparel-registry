@@ -465,6 +465,11 @@ class FacilityListSerializer(ModelSerializer):
             0
         )
 
+        duplicate = status_counts_dictionary.get(
+            FacilityListItem.DUPLICATE,
+            0
+        )
+
         deleted = status_counts_dictionary.get(
             FacilityListItem.DELETED,
             0
@@ -482,6 +487,7 @@ class FacilityListSerializer(ModelSerializer):
             FacilityListItem.ERROR_PARSING: error_parsing,
             FacilityListItem.ERROR_GEOCODING: error_geocoding,
             FacilityListItem.ERROR_MATCHING: error_matching,
+            FacilityListItem.DUPLICATE: duplicate,
             FacilityListItem.DELETED: deleted,
         }
 

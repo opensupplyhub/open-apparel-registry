@@ -369,6 +369,7 @@ export const facilityListItemStatusChoicesEnum = Object.freeze({
     ERROR_MATCHING: 'ERROR_MATCHING',
     DELETED: 'DELETED',
     REMOVED: 'REMOVED', // This is not a status that appears in the database
+    DUPLICATE: 'DUPLICATE',
 });
 
 export const facilityListItemErrorStatuses = Object.freeze([
