@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add facility_location to FacilityClaim [#2012](https://github.com/open-apparel-registry/open-apparel-registry/pull/2012https://github.com/open-apparel-registry/open-apparel-registry/pull/2012)
 - Add webhook event logging utility [#2024](https://github.com/open-apparel-registry/open-apparel-registry/pull/2024)
 - Add AWS Batch resources for delivering notifications [#2026](https://github.com/open-apparel-registry/open-apparel-registry/pull/2026)
+- Ignore duplicate rows [#2032](https://github.com/open-apparel-registry/open-apparel-registry/pull/2032)
 
 ### Changed
 
@@ -38,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated logo and colors on top banner, map and search button [#1900](https://github.com/open-apparel-registry/open-apparel-registry/pull/1900) [#1974](https://github.com/open-apparel-registry/open-apparel-registry/pull/1974)
 - Avoid exception when parsing arrays in raw data [#1910](https://github.com/open-apparel-registry/open-apparel-registry/pull/1910)
 - Added option to exclude specified users from anonymization script [#1924](https://github.com/open-apparel-registry/open-apparel-registry/pull/1924)
--  Remove hard coded domain from mail.py [#1931](https://github.com/open-apparel-registry/open-apparel-registry/pull/1931)
+- Remove hard coded domain from mail.py [#1931](https://github.com/open-apparel-registry/open-apparel-registry/pull/1931)
 - Rename OAR to OS Hub / Open Apparel Registry to Open Supply Hub [#1935](https://github.com/open-apparel-registry/open-apparel-registry/pull/1935)
 - Update favicon images with OS Hub logo [#1938](https://github.com/open-apparel-registry/open-apparel-registry/pull/1938)
 - Use name prefix and create before destroy for batch compute [#1952](https://github.com/open-apparel-registry/open-apparel-registry/pull/1952)
@@ -55,6 +56,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+
 - Suppress "pure-python SequenceMatcher" warning [#2011](https://github.com/open-apparel-registry/open-apparel-registry/pull/2011)
 - Fix geocode error messages to include the status code [#1853](https://github.com/open-apparel-registry/open-apparel-registry/pull/1853)
 - Fix processing_type_facility_type_unmatched [#1875](https://github.com/open-apparel-registry/open-apparel-registry/pull/1875)
