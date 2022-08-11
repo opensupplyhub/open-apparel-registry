@@ -61,6 +61,7 @@ export const resetDashboardFacilityLists = createAction(
 export function fetchDashboardFacilityLists({
     contributorID,
     matchResponsibility,
+    status,
     page,
     pageSize,
 }) {
@@ -74,7 +75,7 @@ export function fetchDashboardFacilityLists({
                     pageSize,
                     contributor: contributorID,
                     match_responsibility: matchResponsibility,
-                    status: 'MATCHED',
+                    status,
                 },
             })
             .then(({ data }) =>

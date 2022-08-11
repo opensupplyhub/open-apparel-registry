@@ -51,6 +51,7 @@ import {
     facilityListSummaryStatusMessages,
     minimum100PercentWidthEmbedHeight,
     matchResponsibilityEnum,
+    facilityListStatusChoicesEnum,
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
@@ -389,6 +390,7 @@ export const getDashboardListParamsFromQueryString = qs => {
     const {
         contributor,
         matchResponsibility = matchResponsibilityEnum.MODERATOR,
+        status = facilityListStatusChoicesEnum.MATCHED,
     } = querystring.parse(qsToParse);
 
     return Object.freeze({
@@ -397,6 +399,7 @@ export const getDashboardListParamsFromQueryString = qs => {
             null,
         ),
         matchResponsibility,
+        status,
     });
 };
 
@@ -573,6 +576,7 @@ export const makeFacilityClaimDetailsLink = claimID =>
 export const makeDashboardContributorListLink = ({
     contributorID,
     matchResponsibility,
+    status,
     page,
     rowsPerPage,
 }) => {
@@ -582,6 +586,7 @@ export const makeDashboardContributorListLink = ({
         matchResponsibility !== matchResponsibilityEnum.MODERATOR
             ? `matchResponsibility=${matchResponsibility}`
             : '',
+        status ? `status=${status}` : '',
         page && page !== DEFAULT_PAGE ? `page=${page}` : '',
         rowsPerPage && rowsPerPage !== DEFAULT_ROWS_PER_PAGE
             ? `rowsPerPage=${rowsPerPage}`

@@ -29,6 +29,7 @@ import {
     facilitiesListTableTooltipTitles,
     matchResponsibilityChoices,
     rowsPerPageOptions,
+    facilityListStatusChoices,
 } from '../util/constants';
 
 import {
@@ -47,6 +48,7 @@ import {
 const CONTRIBUTORS = 'CONTRIBUTORS';
 const RESPONSIBILITY = 'RESPONSIBILITY';
 const ALL_CONTRIBUTORS = { label: 'All', value: '' };
+const STATUS = 'STATUS';
 
 const styles = {
     container: {
@@ -74,6 +76,21 @@ const styles = {
     },
 };
 
+const getSelectTheme = theme => ({
+    ...theme,
+    colors: {
+        ...theme.colors,
+        primary: '#00319D',
+    },
+});
+
+const selectStyles = {
+    control: provided => ({
+        ...provided,
+        height: '56px',
+    }),
+};
+
 function DashboardLists({
     dashboardLists: {
         contributor,
@@ -93,6 +110,7 @@ function DashboardLists({
     const {
         contributor: contributorID,
         matchResponsibility,
+        status,
     } = getDashboardListParamsFromQueryString(search);
 
     const { page, rowsPerPage } = createPaginationOptionsFromQueryString(
@@ -133,6 +151,7 @@ function DashboardLists({
             fetchLists({
                 contributorID: contributor?.value || undefined,
                 matchResponsibility,
+                status,
                 page,
                 pageSize: rowsPerPage,
             });
@@ -141,6 +160,7 @@ function DashboardLists({
         contributor,
         contributors.fetching,
         matchResponsibility,
+        status,
         page,
         rowsPerPage,
         fetchLists,
@@ -151,6 +171,7 @@ function DashboardLists({
             makeDashboardContributorListLink({
                 contributorID: c.value,
                 matchResponsibility,
+                status,
                 page: DEFAULT_PAGE,
                 rowsPerPage,
             }),
@@ -163,6 +184,19 @@ function DashboardLists({
             makeDashboardContributorListLink({
                 contributorID,
                 matchResponsibility: opt.value,
+                status,
+                page: DEFAULT_PAGE,
+                rowsPerPage,
+            }),
+        );
+    };
+
+    const onStatusUpdate = s => {
+        replace(
+            makeDashboardContributorListLink({
+                contributorID,
+                matchResponsibility,
+                status: s.value,
                 page: DEFAULT_PAGE,
                 rowsPerPage,
             }),
@@ -174,6 +208,7 @@ function DashboardLists({
             makeDashboardContributorListLink({
                 contributorID,
                 matchResponsibility,
+                status,
                 page: newPage + 1,
                 rowsPerPage,
             }),
@@ -185,6 +220,7 @@ function DashboardLists({
             makeDashboardContributorListLink({
                 contributorID,
                 matchResponsibility,
+                status,
                 page: DEFAULT_PAGE,
                 rowsPerPage: e.target.value,
             }),
@@ -199,6 +235,8 @@ function DashboardLists({
             facilityLists.data?.length === 0,
     };
 
+    const fetchingData = contributors.fetching || facilityLists.fetching;
+
     return (
         <Paper style={styles.container}>
             <div style={styles.filterRow}>
@@ -212,22 +250,9 @@ function DashboardLists({
                         value={contributorID ? contributor : ALL_CONTRIBUTORS}
                         placeholder=""
                         onChange={onContributorUpdate}
-                        disabled={
-                            contributors.fetching || facilityLists.fetching
-                        }
-                        styles={{
-                            control: provided => ({
-                                ...provided,
-                                height: '56px',
-                            }),
-                        }}
-                        theme={theme => ({
-                            ...theme,
-                            colors: {
-                                ...theme.colors,
-                                primary: '#00319D',
-                            },
-                        })}
+                        disabled={fetchingData}
+                        styles={selectStyles}
+                        theme={getSelectTheme}
                     />
                 </div>
                 <div style={styles.filter}>
@@ -241,22 +266,25 @@ function DashboardLists({
                             m => m.value === matchResponsibility,
                         )}
                         onChange={onMatchResponsibilityUpdate}
-                        disabled={
-                            contributors.fetching || facilityLists.fetching
-                        }
-                        styles={{
-                            control: provided => ({
-                                ...provided,
-                                height: '56px',
-                            }),
-                        }}
-                        theme={theme => ({
-                            ...theme,
-                            colors: {
-                                ...theme.colors,
-                                primary: '#00319D',
-                            },
-                        })}
+                        disabled={fetchingData}
+                        styles={selectStyles}
+                        theme={getSelectTheme}
+                    />
+                </div>
+                <div style={styles.filter}>
+                    <label htmlFor={STATUS}>List Status</label>
+                    <ReactSelect
+                        id={STATUS}
+                        name={STATUS}
+                        classNamePrefix="select"
+                        options={facilityListStatusChoices}
+                        value={facilityListStatusChoices.find(
+                            s => s.value === status,
+                        )}
+                        onChange={onStatusUpdate}
+                        disabled={fetchingData}
+                        styles={selectStyles}
+                        theme={getSelectTheme}
                     />
                 </div>
             </div>

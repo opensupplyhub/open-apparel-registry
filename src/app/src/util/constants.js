@@ -53,6 +53,19 @@ export const facilityClaimStatusChoicesEnum = Object.freeze({
     REVOKED: 'REVOKED',
 });
 
+export const facilityListStatusChoicesEnum = Object.freeze({
+    PENDING: 'PENDING',
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+    MATCHED: 'MATCHED',
+});
+export const facilityListStatusChoices = [
+    { value: facilityListStatusChoicesEnum.MATCHED, label: 'Matched' },
+    { value: facilityListStatusChoicesEnum.PENDING, label: 'Pending' },
+    { value: facilityListStatusChoicesEnum.APPROVED, label: 'Approved' },
+    { value: facilityListStatusChoicesEnum.REJECTED, label: 'Rejected' },
+];
+
 // These choices must be kept in sync with the identical list
 // kept in the Django API's constants.py file
 export const matchResponsibilityEnum = Object.freeze({
