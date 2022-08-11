@@ -102,6 +102,7 @@ class FacilityListItems extends Component {
             userHasSignedIn,
             isAdminUser,
             readOnly,
+            adminSearch,
         } = this.props;
 
         if (fetchingList) {
@@ -172,7 +173,9 @@ class FacilityListItems extends Component {
             </Button>
         );
 
-        const backRoute = isAdminUser ? dashboardListsRoute : listsRoute;
+        const backRoute = isAdminUser
+            ? `${dashboardListsRoute}${adminSearch || ''}`
+            : listsRoute;
 
         return (
             <AppOverflow>
@@ -244,6 +247,7 @@ FacilityListItems.defaultProps = {
     list: null,
     error: null,
     csvDownloadingError: null,
+    adminSearch: null,
 };
 
 FacilityListItems.propTypes = {
@@ -259,6 +263,7 @@ FacilityListItems.propTypes = {
     userHasSignedIn: bool.isRequired,
     isAdminUser: bool.isRequired,
     readOnly: bool.isRequired,
+    adminSearch: string,
 };
 
 function mapStateToProps({
@@ -309,7 +314,7 @@ function mapDispatchToProps(
             params: { listID },
         },
         history: {
-            location: { search },
+            location: { search, state: { search: adminSearch } = {} },
         },
     },
 ) {
@@ -325,6 +330,7 @@ function mapDispatchToProps(
             dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
         clearListItems: () => dispatch(resetFacilityListItems()),
         downloadCSV: () => dispatch(assembleAndDownloadFacilityListCSV()),
+        adminSearch,
     };
 }
 

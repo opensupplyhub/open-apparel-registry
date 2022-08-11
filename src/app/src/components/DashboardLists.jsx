@@ -105,18 +105,7 @@ function DashboardLists({
             fetchContributors();
         }
 
-        if (contributor) {
-            // If contributor is already set, e.g. when coming back from a
-            // list detail view, ensure it is reflected in URL
-            replace(
-                makeDashboardContributorListLink({
-                    contributorID: contributor.value,
-                    matchResponsibility,
-                    page,
-                    rowsPerPage,
-                }),
-            );
-        } else if (
+        if (
             contributorID &&
             !contributor &&
             contributors.data.length &&
@@ -134,11 +123,6 @@ function DashboardLists({
         contributorID,
         contributors.data,
         contributors.fetching,
-        search,
-        replace,
-        page,
-        rowsPerPage,
-        matchResponsibility,
         fetchContributors,
         setContributor,
     ]);
@@ -225,7 +209,8 @@ function DashboardLists({
                         name={CONTRIBUTORS}
                         classNamePrefix="select"
                         options={[ALL_CONTRIBUTORS, ...contributors.data]}
-                        value={contributor || ALL_CONTRIBUTORS}
+                        value={contributorID ? contributor : ALL_CONTRIBUTORS}
+                        placeholder=""
                         onChange={onContributorUpdate}
                         disabled={
                             contributors.fetching || facilityLists.fetching
@@ -295,7 +280,9 @@ function DashboardLists({
                             key={list.id}
                             hover
                             onClick={() =>
-                                push(makeFacilityListItemsDetailLink(list.id))
+                                push(makeFacilityListItemsDetailLink(list.id), {
+                                    search,
+                                })
                             }
                             style={
                                 list.is_active
