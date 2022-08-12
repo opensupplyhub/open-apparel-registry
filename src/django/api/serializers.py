@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.db.models import Count
 from rest_framework.serializers import (BooleanField,
                                         CharField,
+                                        ChoiceField,
                                         CurrentUserDefault,
                                         DecimalField,
                                         EmailField,
@@ -45,6 +46,7 @@ from api.models import (FacilityList,
                         EmbedField,
                         NonstandardField,
                         ExtendedField)
+from api.constants import FacilityListStatus, MatchResponsibility
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code, parse_array_values
 from api.helpers import (prefix_a_an,
@@ -358,7 +360,9 @@ class FacilityListSerializer(ModelSerializer):
         model = FacilityList
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
                   'is_public', 'item_count', 'items_url', 'statuses',
-                  'status_counts', 'contributor_id', 'created_at')
+                  'status_counts', 'contributor_id', 'created_at',
+                  'match_responsibility')
+        read_only_fields = ('created_at', 'match_responsibility')
 
     def get_is_active(self, facility_list):
         try:
@@ -507,8 +511,6 @@ class FacilityQueryParamsSerializer(Serializer):
         child=CharField(required=False),
         required=False,
     )
-    page = IntegerField(required=False)
-    pageSize = IntegerField(required=False)
     boundary = CharField(required=False)
     ppe = BooleanField(default=False, required=False)
     detail = BooleanField(default=False, required=False)
@@ -516,6 +518,10 @@ class FacilityQueryParamsSerializer(Serializer):
 
 class FacilityListQueryParamsSerializer(Serializer):
     contributor = IntegerField(required=False)
+    match_responsibility = ChoiceField(choices=MatchResponsibility.CHOICES,
+                                       required=False)
+    status = ChoiceField(choices=[FacilityListStatus.MATCHED],
+                         required=False)
 
 
 class FacilityListItemsQueryParamsSerializer(Serializer):

@@ -122,6 +122,8 @@ internal_apis = [
          views.get_tile, name='tile'),
     path('api/current_tile_cache_key/', views.current_tile_cache_key),
     path('api-blocks/', views.ApiBlockViewSet, 'api-block'),
+    path('api/admin-facility-lists/', views.AdminFacilityListView.as_view(),
+         name='admin-facility-lists'),
     path('api/geocoder/', views.get_geocoding, name='get_geocoding'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

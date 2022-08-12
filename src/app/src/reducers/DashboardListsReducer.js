@@ -21,8 +21,9 @@ const initialState = Object.freeze({
         fetching: false,
         error: null,
     }),
+    facilityListsCount: null,
     facilityLists: Object.freeze({
-        data: Object.freeze([]),
+        data: null,
         fetching: false,
         error: null,
     }),
@@ -72,10 +73,11 @@ export default createReducer(
             }),
         [completeFetchDashboardFacilityLists]: (state, payload) =>
             update(state, {
+                facilityListsCount: { $set: payload.count },
                 facilityLists: {
                     fetching: { $set: false },
                     error: { $set: null },
-                    data: { $set: payload },
+                    data: { $set: payload.results },
                 },
             }),
         [resetDashboardFacilityLists]: () => initialState,

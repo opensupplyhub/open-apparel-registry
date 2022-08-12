@@ -23,8 +23,10 @@ import {
     OARFont,
     listsRoute,
     facilityListItemsRoute,
+    facilityListItemStatusChoicesEnum,
     authLoginFormRoute,
     dashboardListsRoute,
+    matchResponsibilityEnum,
 } from '../util/constants';
 
 import { facilityListPropType } from '../util/propTypes';
@@ -98,7 +100,9 @@ class FacilityListItems extends Component {
             downloadingCSV,
             csvDownloadingError,
             userHasSignedIn,
+            isAdminUser,
             readOnly,
+            adminSearch,
         } = this.props;
 
         if (fetchingList) {
@@ -146,6 +150,13 @@ class FacilityListItems extends Component {
                 </p>
             ) : null;
 
+        const awaitingModerationMessage = readOnly ? (
+            <p style={{ color: 'red' }}>
+                This list has matches awaiting moderation from the{' '}
+                {isAdminUser ? 'contributor' : 'OS Hub admins'}.
+            </p>
+        ) : null;
+
         const csvDownloadButton = downloadingCSV ? (
             <div>
                 <CircularProgress size={25} />
@@ -162,7 +173,9 @@ class FacilityListItems extends Component {
             </Button>
         );
 
-        const backRoute = readOnly ? dashboardListsRoute : listsRoute;
+        const backRoute = isAdminUser
+            ? `${dashboardListsRoute}${adminSearch || ''}`
+            : listsRoute;
 
         return (
             <AppOverflow>
@@ -213,6 +226,7 @@ class FacilityListItems extends Component {
                             include additional data points beyond facility name
                             and address. You will receive an email when your
                             list has finished processing.
+                            {awaitingModerationMessage}
                         </div>
                         {list.item_count ? (
                             <Route
@@ -233,7 +247,7 @@ FacilityListItems.defaultProps = {
     list: null,
     error: null,
     csvDownloadingError: null,
-    readOnly: false,
+    adminSearch: null,
 };
 
 FacilityListItems.propTypes = {
@@ -247,19 +261,40 @@ FacilityListItems.propTypes = {
     downloadingCSV: bool.isRequired,
     csvDownloadingError: arrayOf(string),
     userHasSignedIn: bool.isRequired,
-    readOnly: bool,
+    isAdminUser: bool.isRequired,
+    readOnly: bool.isRequired,
+    adminSearch: string,
 };
 
 function mapStateToProps({
     facilityListDetails: {
         list: { data: list, fetching: fetchingList, error: listError },
-        items: { error: itemsError },
+        items: { data: items, error: itemsError },
         downloadCSV: { fetching: downloadingCSV, error: csvDownloadingError },
     },
     auth: {
         user: { user },
     },
 }) {
+    const isAdminUser =
+        !!user &&
+        user.is_superuser &&
+        list &&
+        user.contributor_id !== list.contributor_id;
+    const hasPendingItems =
+        !!items &&
+        items.some(
+            item =>
+                item.status ===
+                facilityListItemStatusChoicesEnum.POTENTIAL_MATCH,
+        );
+    const readOnly =
+        !!list &&
+        hasPendingItems &&
+        ((list.match_responsibility === matchResponsibilityEnum.CONTRIBUTOR &&
+            isAdminUser) ||
+            (list.match_responsibility === matchResponsibilityEnum.MODERATOR &&
+                !isAdminUser));
     return {
         list,
         fetchingList,
@@ -267,11 +302,8 @@ function mapStateToProps({
         downloadingCSV,
         csvDownloadingError,
         userHasSignedIn: !!user,
-        readOnly:
-            user &&
-            user.is_superuser &&
-            list &&
-            user.contributor_id !== list.contributor_id,
+        isAdminUser,
+        readOnly,
     };
 }
 
@@ -282,7 +314,7 @@ function mapDispatchToProps(
             params: { listID },
         },
         history: {
-            location: { search },
+            location: { search, state: { search: adminSearch } = {} },
         },
     },
 ) {
@@ -298,6 +330,7 @@ function mapDispatchToProps(
             dispatch(fetchFacilityListItems(listID, page, rowsPerPage, params)),
         clearListItems: () => dispatch(resetFacilityListItems()),
         downloadCSV: () => dispatch(assembleAndDownloadFacilityListCSV()),
+        adminSearch,
     };
 }
 

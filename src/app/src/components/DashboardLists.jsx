@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { arrayOf, bool, func, shape, string } from 'prop-types';
+import { arrayOf, bool, func, number, shape, string } from 'prop-types';
 import ReactSelect from 'react-select';
 import { connect } from 'react-redux';
 
@@ -11,6 +11,8 @@ import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 import FacilityListsTooltipTableCell from './FacilityListsTooltipTableCell';
@@ -22,7 +24,12 @@ import {
     setDashboardListContributor,
 } from '../actions/dashboardLists';
 
-import { facilitiesListTableTooltipTitles } from '../util/constants';
+import {
+    DEFAULT_PAGE,
+    facilitiesListTableTooltipTitles,
+    matchResponsibilityChoices,
+    rowsPerPageOptions,
+} from '../util/constants';
 
 import {
     contributorOptionPropType,
@@ -31,12 +38,15 @@ import {
 } from '../util/propTypes';
 
 import {
-    getContributorFromQueryString,
     makeDashboardContributorListLink,
     makeFacilityListItemsDetailLink,
+    createPaginationOptionsFromQueryString,
+    getDashboardListParamsFromQueryString,
 } from '../util/util';
 
 const CONTRIBUTORS = 'CONTRIBUTORS';
+const RESPONSIBILITY = 'RESPONSIBILITY';
+const ALL_CONTRIBUTORS = { label: 'All', value: '' };
 
 const styles = {
     container: {
@@ -46,8 +56,10 @@ const styles = {
     filterRow: {
         padding: '20px',
         display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
     },
-    filterContributors: {
+    filter: {
         flex: 1,
     },
     inactiveList: {
@@ -63,7 +75,12 @@ const styles = {
 };
 
 function DashboardLists({
-    dashboardLists: { contributor, contributors, facilityLists },
+    dashboardLists: {
+        contributor,
+        contributors,
+        facilityLists,
+        facilityListsCount,
+    },
     history: {
         location: { search },
         push,
@@ -73,75 +90,157 @@ function DashboardLists({
     setContributor,
     fetchLists,
 }) {
+    const {
+        contributor: contributorID,
+        matchResponsibility,
+    } = getDashboardListParamsFromQueryString(search);
+
+    const { page, rowsPerPage } = createPaginationOptionsFromQueryString(
+        search,
+    );
+
     useEffect(() => {
         // If contributors have not been initialized, fetch them
         if (!contributors.data.length && !contributors.fetching) {
             fetchContributors();
         }
 
-        if (contributor) {
-            // If contributor is already set, e.g. when coming back from a
-            // list detail view, ensure it is reflected in URL
-
-            replace(makeDashboardContributorListLink(contributor.value));
-        } else {
+        if (
+            contributorID &&
+            !contributor &&
+            contributors.data.length &&
+            !contributors.fetching
+        ) {
             // If contributor is not set, but an ID is present in the URL,
             // e.g. when following a link or refreshing the page after
             // selecting a contributor, set the contributor and fetch its lists
-
-            const contributorID = getContributorFromQueryString(search);
-
-            if (
-                contributorID &&
-                contributors.data.length &&
-                !contributors.fetching
-            ) {
-                setContributor(
-                    contributors.data.find(c => c.value === contributorID),
-                );
-                if (!facilityLists.fetching) {
-                    fetchLists(contributorID);
-                }
-            }
+            setContributor(
+                contributors.data.find(c => c.value === contributorID),
+            );
         }
     }, [
         contributor,
+        contributorID,
         contributors.data,
         contributors.fetching,
-        search,
-        facilityLists.fetching,
-        replace,
         fetchContributors,
         setContributor,
+    ]);
+
+    // Fetch lists when on page load or when form data changes
+    useEffect(() => {
+        if (!contributors.fetching) {
+            fetchLists({
+                contributorID: contributor?.value || undefined,
+                matchResponsibility,
+                page,
+                pageSize: rowsPerPage,
+            });
+        }
+    }, [
+        contributor,
+        contributors.fetching,
+        matchResponsibility,
+        page,
+        rowsPerPage,
         fetchLists,
     ]);
 
     const onContributorUpdate = c => {
-        replace(makeDashboardContributorListLink(c.value));
+        replace(
+            makeDashboardContributorListLink({
+                contributorID: c.value,
+                matchResponsibility,
+                page: DEFAULT_PAGE,
+                rowsPerPage,
+            }),
+        );
         setContributor(c);
-        fetchLists(c.value);
+    };
+
+    const onMatchResponsibilityUpdate = opt => {
+        replace(
+            makeDashboardContributorListLink({
+                contributorID,
+                matchResponsibility: opt.value,
+                page: DEFAULT_PAGE,
+                rowsPerPage,
+            }),
+        );
+    };
+
+    const onPageChange = (_, newPage) => {
+        replace(
+            makeDashboardContributorListLink({
+                contributorID,
+                matchResponsibility,
+                page: newPage + 1,
+                rowsPerPage,
+            }),
+        );
+    };
+
+    const onPageSizeChange = e => {
+        replace(
+            makeDashboardContributorListLink({
+                contributorID,
+                matchResponsibility,
+                page: DEFAULT_PAGE,
+                rowsPerPage: e.target.value,
+            }),
+        );
     };
 
     const when = {
-        noContributorSelected: contributor === null,
+        initialLoad: facilityLists.data === null,
         contributorHasNoLists:
             contributor !== null &&
             !facilityLists.fetching &&
-            facilityLists.data.length === 0,
+            facilityLists.data?.length === 0,
     };
 
     return (
         <Paper style={styles.container}>
             <div style={styles.filterRow}>
-                <div style={styles.filterContributors}>
+                <div style={styles.filter}>
+                    <label htmlFor={CONTRIBUTORS}>Contributor</label>
                     <ReactSelect
                         id={CONTRIBUTORS}
                         name={CONTRIBUTORS}
                         classNamePrefix="select"
-                        options={contributors.data}
-                        placeholder="Select a contributor..."
-                        value={contributor}
+                        options={[ALL_CONTRIBUTORS, ...contributors.data]}
+                        value={contributorID ? contributor : ALL_CONTRIBUTORS}
+                        placeholder=""
                         onChange={onContributorUpdate}
+                        disabled={
+                            contributors.fetching || facilityLists.fetching
+                        }
+                        styles={{
+                            control: provided => ({
+                                ...provided,
+                                height: '56px',
+                            }),
+                        }}
+                        theme={theme => ({
+                            ...theme,
+                            colors: {
+                                ...theme.colors,
+                                primary: '#00319D',
+                            },
+                        })}
+                    />
+                </div>
+                <div style={styles.filter}>
+                    <label htmlFor={RESPONSIBILITY}>Match responsibility</label>
+                    <ReactSelect
+                        id={RESPONSIBILITY}
+                        name={RESPONSIBILITY}
+                        classNamePrefix="select"
+                        options={matchResponsibilityChoices}
+                        value={matchResponsibilityChoices.find(
+                            m => m.value === matchResponsibility,
+                        )}
+                        onChange={onMatchResponsibilityUpdate}
                         disabled={
                             contributors.fetching || facilityLists.fetching
                         }
@@ -176,12 +275,14 @@ function DashboardLists({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {facilityLists.data.map(list => (
+                    {facilityLists.data?.map(list => (
                         <TableRow
                             key={list.id}
                             hover
                             onClick={() =>
-                                push(makeFacilityListItemsDetailLink(list.id))
+                                push(makeFacilityListItemsDetailLink(list.id), {
+                                    search,
+                                })
                             }
                             style={
                                 list.is_active
@@ -234,16 +335,6 @@ function DashboardLists({
                             </TableCell>
                         </TableRow>
                     ))}
-                    <ShowOnly when={when.noContributorSelected}>
-                        <TableRow>
-                            <TableCell
-                                colSpan={12}
-                                style={{ textAlign: 'center' }}
-                            >
-                                Select a contributor to see their lists.
-                            </TableCell>
-                        </TableRow>
-                    </ShowOnly>
                     <ShowOnly when={when.contributorHasNoLists}>
                         <TableRow>
                             <TableCell
@@ -255,6 +346,20 @@ function DashboardLists({
                         </TableRow>
                     </ShowOnly>
                 </TableBody>
+                <ShowOnly when={facilityListsCount}>
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                count={facilityListsCount}
+                                rowsPerPage={rowsPerPage}
+                                rowsPerPageOptions={rowsPerPageOptions}
+                                onChangeRowsPerPage={onPageSizeChange}
+                                page={page - 1}
+                                onChangePage={onPageChange}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </ShowOnly>
             </Table>
         </Paper>
     );
@@ -268,8 +373,9 @@ DashboardLists.propTypes = {
             fetching: bool.isRequired,
             error: string,
         }).isRequired,
+        facilityListsCount: number,
         facilityLists: shape({
-            data: arrayOf(facilityListPropType).isRequired,
+            data: arrayOf(facilityListPropType),
             fetching: bool.isRequired,
             error: string,
         }).isRequired,
@@ -290,7 +396,7 @@ function mapDispatchToProps(dispatch) {
     return {
         fetchContributors: () => dispatch(fetchDashboardListContributors()),
         setContributor: c => dispatch(setDashboardListContributor(c)),
-        fetchLists: c => dispatch(fetchDashboardFacilityLists(c)),
+        fetchLists: (opts = {}) => dispatch(fetchDashboardFacilityLists(opts)),
     };
 }
 

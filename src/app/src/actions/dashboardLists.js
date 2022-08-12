@@ -58,12 +58,25 @@ export const resetDashboardFacilityLists = createAction(
     'RESET_DASHBOARD_FACILITY_LISTS',
 );
 
-export function fetchDashboardFacilityLists(contributor) {
+export function fetchDashboardFacilityLists({
+    contributorID,
+    matchResponsibility,
+    page,
+    pageSize,
+}) {
     return dispatch => {
         dispatch(startFetchDashboardFacilityLists());
 
         return apiRequest
-            .get(makeDashboardFacilityListsURL(contributor))
+            .get(makeDashboardFacilityListsURL(), {
+                params: {
+                    page,
+                    pageSize,
+                    contributor: contributorID,
+                    match_responsibility: matchResponsibility,
+                    status: 'MATCHED',
+                },
+            })
             .then(({ data }) =>
                 dispatch(completeFetchDashboardFacilityLists(data)),
             )

@@ -21,10 +21,9 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.db.models import Extent
 from django.conf import settings
-from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.cache import cache_control
 from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -34,7 +33,9 @@ from rest_framework.exceptions import (ValidationError,
                                        AuthenticationFailed,
                                        PermissionDenied,
                                        NotAuthenticated)
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import (CreateAPIView,
+                                     ListAPIView,
+                                     RetrieveUpdateAPIView)
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        renderer_classes,
@@ -58,9 +59,10 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
-                           FacilityListItemsQueryParams,
+                           FacilityListItemsQueryParams, FacilityListStatus,
                            FacilityMergeQueryParams,
                            FacilityCreateQueryParams,
+                           MatchResponsibility,
                            ProcessingAction,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
@@ -72,7 +74,8 @@ from api.matching import (match_item,
                           text_match_item,
                           GazetteerCacheTimeoutError)
 from api.helpers import clean
-from api.models import (ContributorWebhook, FacilityList,
+from api.models import (ContributorWebhook,
+                        FacilityList,
                         FacilityListItem,
                         FacilityClaim,
                         FacilityClaimReviewNote,
@@ -128,7 +131,9 @@ from api.serializers import (ContributorWebhookSerializer,
                              EmbedConfigSerializer)
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs, submit_parse_job
-from api.permissions import IsRegisteredAndConfirmed, IsAllowedHost
+from api.permissions import (IsRegisteredAndConfirmed,
+                             IsAllowedHost,
+                             IsSuperuser)
 from api.pagination import (FacilitiesGeoJSONPagination,
                             PageAndSizePagination)
 from api.mail import (send_claim_facility_confirmation_email,
@@ -1919,12 +1924,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=False, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def merge(self, request):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         params = FacilityMergeQueryParamsSerializer(data=request.query_params)
 
         if not params.is_valid():
@@ -2043,12 +2045,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['GET', 'POST'])
     @action(detail=True, methods=['GET', 'POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def split(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             if request.method == 'GET':
                 facility = Facility.objects.get(pk=pk)
@@ -2195,12 +2194,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def move(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             match_id = request.data.get('match_id')
 
@@ -2256,11 +2252,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def promote(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
         match_id = request.data.get('match_id')
 
         if match_id is None:
@@ -2374,13 +2368,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,),
+            permission_classes=(IsSuperuser,),
             url_path='update-location')
     @transaction.atomic
     def update_location(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
@@ -2625,12 +2616,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
     @swagger_auto_schema(auto_schema=None, methods=['POST'])
     @action(detail=True, methods=['POST'],
-            permission_classes=(IsRegisteredAndConfirmed,))
+            permission_classes=(IsSuperuser,))
     @transaction.atomic
     def link(self, request, pk=None):
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         try:
             new_oar_id = request.data.get('new_oar_id')
             if new_oar_id is None:
@@ -2720,6 +2708,52 @@ def create_nonstandard_fields(fields, contributor):
             contributor=contributor,
             column_name=f
         )
+
+
+class AdminFacilityListView(ListAPIView):
+    """
+    Upload and update facility lists for an authenticated Contributor.
+    """
+    queryset = FacilityList.objects.all()
+    serializer_class = FacilityListSerializer
+    permission_classes = [IsSuperuser]
+    pagination_class = PageAndSizePagination
+    swagger_schema = None
+
+    def get_queryset(self):
+        """
+        Returns Facility Lists for an authenticated superusers.
+        """
+        params = FacilityListQueryParamsSerializer(
+            data=self.request.query_params)
+        if not params.is_valid():
+            raise ValidationError(params.errors)
+
+        facility_lists = FacilityList.objects.order_by('created_at')
+
+        contributor = params.data.get(FacilityListQueryParams.CONTRIBUTOR)
+        if contributor:
+            facility_lists = facility_lists.filter(
+                source__contributor=contributor)
+
+        responsibility = params.data.get(
+            FacilityListQueryParams.MATCH_RESPONSIBILITY)
+        if responsibility:
+            facility_lists = facility_lists.filter(
+                match_responsibility=responsibility)
+
+        status = params.data.get(
+            FacilityListQueryParams.STATUS)
+        if status == FacilityListStatus.MATCHED:
+            sources = Source.objects \
+                .filter(facilitylistitem__status__in=[
+                            FacilityListItem.MATCHED,
+                            FacilityListItem.POTENTIAL_MATCH,
+                            FacilityListItem.ERROR_MATCHING
+                        ])
+            facility_lists = facility_lists.filter(source__in=sources)
+
+        return facility_lists
 
 
 class FacilityListViewSet(viewsets.ModelViewSet):
@@ -2843,7 +2877,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             description=description,
             file_name=csv_file.name,
             header=header,
-            replaces=replaces)
+            replaces=replaces,
+            match_responsibility=contributor.match_responsibility)
         new_list.save()
 
         csvreader = csv.reader(header.split('\n'), delimiter=',')
@@ -2904,32 +2939,14 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             ]
         """
         try:
-            if request.user.is_superuser:
-                params = FacilityListQueryParamsSerializer(
-                    data=request.query_params)
-                if not params.is_valid():
-                    raise ValidationError(params.errors)
-
-                contributor = params.data.get(
-                    FacilityListQueryParams.CONTRIBUTOR)
-
-                if contributor is not None:
-                    facility_lists = FacilityList.objects.filter(
-                        source__contributor=contributor)
-                else:
-                    facility_lists = FacilityList.objects.filter(
-                        source__contributor=request.user.contributor)
-            else:
-                facility_lists = FacilityList.objects.filter(
-                    source__contributor=request.user.contributor)
-
-            facility_lists = facility_lists.order_by('-created_at')
-
-            response_data = self.serializer_class(facility_lists,
-                                                  many=True).data
-            return Response(response_data)
-        except Contributor.DoesNotExist:
+            facility_lists = FacilityList.objects \
+                .filter(source__contributor=request.user.contributor) \
+                .order_by('-created_at')
+        except User.contributor.RelatedObjectDoesNotExist:
             raise ValidationError('User contributor cannot be None')
+
+        response_data = self.serializer_class(facility_lists, many=True).data
+        return Response(response_data)
 
     def retrieve(self, request, pk):
         """
@@ -3126,7 +3143,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     """
     queryset = FacilityClaim.objects.all()
     serializer_class = FacilityClaimSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsSuperuser]
     swagger_schema = None
 
     def create(self, request):
@@ -3139,9 +3156,6 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
         if not switch_is_active('claim_a_facility'):
             raise NotFound()
 
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-
         response_data = FacilityClaimSerializer(
             FacilityClaim.objects.all().order_by('-id'),
             many=True
@@ -3152,9 +3166,6 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         if not switch_is_active('claim_a_facility'):
             raise NotFound()
-
-        if not request.user.is_superuser:
-            raise PermissionDenied()
 
         try:
             claim = FacilityClaim.objects.get(pk=pk)
@@ -3532,16 +3543,32 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
     permission_classes = (IsRegisteredAndConfirmed,)
 
     def validate_request(self, request, pk):
-        # We only allow retrieving matches to items that the logged in user has
-        # submitted
-        filter = self.queryset.filter(
-            pk=pk,
-            facility_list_item__source__contributor=request.user.contributor
+        filter = self.queryset.filter(pk=pk)
+        matches_contributor = Q(
+            facility_list_item__source__contributor__admin_id=request.user.pk)
+        has_no_list = Q(facility_list_item__source__facility_list=None)
+        allows_contributor = Q(
+            facility_list_item__source__facility_list__match_responsibility=(
+                MatchResponsibility.CONTRIBUTOR))
+        allows_superuser = Q(
+            facility_list_item__source__facility_list__match_responsibility=(
+                MatchResponsibility.MODERATOR)
         )
-        if not filter.exists():
-            raise Http404
 
-        facility_match = filter.first()
+        # We only allow retrieving matches to items that the logged in
+        # user has submitted that they are allowed to moderate
+        contributor_filter = matches_contributor & (
+            allows_contributor | has_no_list)
+
+        if not request.user.is_superuser:
+            filter = filter.filter(contributor_filter)
+        else:
+            # For super users we also allow retrieving matches to items that
+            # are not moderated by contributors
+            filter = filter.filter(contributor_filter | allows_superuser |
+                                   has_no_list)
+
+        facility_match = get_object_or_404(filter[:1])
         facility_list_item = facility_match.facility_list_item
 
         if facility_list_item.status != FacilityListItem.POTENTIAL_MATCH:
@@ -3885,28 +3912,8 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     """
     queryset = ApiBlock.objects.all()
     serializer_class = ApiBlockSerializer
+    permission_classes = [IsSuperuser]
     swagger_schema = None
-
-    def validate_request(self, request):
-        if request.user.is_anonymous:
-            raise NotAuthenticated()
-        if not request.user.is_superuser:
-            raise PermissionDenied()
-        return
-
-    def list(self, request):
-        self.validate_request(request)
-        response_data = ApiBlockSerializer(
-            ApiBlock.objects.all(), many=True).data
-        return Response(response_data)
-
-    def retrieve(self, request, pk=None):
-        self.validate_request(request)
-        return super(ApiBlockViewSet, self).retrieve(request, pk=pk)
-
-    def update(self, request, pk=None):
-        self.validate_request(request)
-        return super(ApiBlockViewSet, self).update(request, pk=pk)
 
 
 class ContributorWebhookViewSet(mixins.CreateModelMixin,

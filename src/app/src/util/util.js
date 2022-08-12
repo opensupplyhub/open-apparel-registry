@@ -50,6 +50,7 @@ import {
     facilityListItemErrorStatuses,
     facilityListSummaryStatusMessages,
     minimum100PercentWidthEmbedHeight,
+    matchResponsibilityEnum,
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
@@ -104,8 +105,7 @@ export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 export const makeSingleFacilityListItemsURL = id =>
     `/api/facility-lists/${id}/items/`;
 
-export const makeDashboardFacilityListsURL = contributorID =>
-    `/api/facility-lists/?contributor=${contributorID}`;
+export const makeDashboardFacilityListsURL = () => '/api/admin-facility-lists/';
 
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
 export const makeDashboardApiBlockURL = id => `/api/api-blocks/${id}/`;
@@ -383,12 +383,21 @@ export const getTokenFromQueryString = qs => {
     return isArray(token) ? head(token) : token;
 };
 
-export const getContributorFromQueryString = qs => {
+export const getDashboardListParamsFromQueryString = qs => {
     const qsToParse = startsWith(qs, '?') ? qs.slice(1) : qs;
 
-    const { contributor = null } = querystring.parse(qsToParse);
+    const {
+        contributor,
+        matchResponsibility = matchResponsibilityEnum.MODERATOR,
+    } = querystring.parse(qsToParse);
 
-    return parseInt(contributor, 10);
+    return Object.freeze({
+        contributor: getNumberFromParsedQueryStringParamOrUseDefault(
+            contributor,
+            null,
+        ),
+        matchResponsibility,
+    });
 };
 
 export const createTileURLWithQueryString = (qs, key, grid = true) =>
@@ -561,8 +570,27 @@ export const makeApprovedClaimDetailsLink = claimID => `/claimed/${claimID}`;
 export const makeFacilityClaimDetailsLink = claimID =>
     `/dashboard/claims/${claimID}`;
 
-export const makeDashboardContributorListLink = contributorID =>
-    `/dashboard/lists/?contributor=${contributorID}`;
+export const makeDashboardContributorListLink = ({
+    contributorID,
+    matchResponsibility,
+    page,
+    rowsPerPage,
+}) => {
+    const params = [
+        contributorID ? `contributor=${contributorID}` : '',
+        matchResponsibility &&
+        matchResponsibility !== matchResponsibilityEnum.MODERATOR
+            ? `matchResponsibility=${matchResponsibility}`
+            : '',
+        page && page !== DEFAULT_PAGE ? `page=${page}` : '',
+        rowsPerPage && rowsPerPage !== DEFAULT_ROWS_PER_PAGE
+            ? `rowsPerPage=${rowsPerPage}`
+            : '',
+    ].filter(p => !!p);
+    return `/dashboard/lists/${
+        params.length > 0 ? `?${params.join('&')}` : ''
+    }`;
+};
 
 export const makeProfileRouteLink = userID => `/profile/${userID}`;
 
