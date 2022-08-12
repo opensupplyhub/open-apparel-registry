@@ -305,6 +305,10 @@ DEFAULT_FROM_EMAIL = os.getenv(
 NOTIFICATION_EMAIL_TO = os.getenv(
     'NOTIFICATION_EMAIL_TO', 'notification@example.com')
 
+# Notifications
+
+NOTIFICATION_WEBHOOK_TIMEOUT = 10
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 

@@ -1313,6 +1313,8 @@ class FacilityManager(models.Manager):
         A queryset on the Facility model
         """
 
+        id = params.get(FacilitiesQueryParams.ID, None)
+
         free_text_query = params.get(FacilitiesQueryParams.Q, None)
 
         name = params.get(FacilitiesQueryParams.NAME, None)
@@ -1358,6 +1360,9 @@ class FacilityManager(models.Manager):
         sectors = params.getlist(FacilitiesQueryParams.SECTOR)
 
         facilities_qs = FacilityIndex.objects.all()
+
+        if id is not None:
+            facilities_qs = facilities_qs.filter(id=id)
 
         if free_text_query is not None:
             custom_text = (
@@ -2270,6 +2275,11 @@ class ContributorWebhook(models.Model):
         (ALL_FACILITIES, ALL_FACILITIES),
         (ASSOCIATED, ASSOCIATED),
     ]
+
+    # Statuses for logging notification delivery
+    SKIPPED = "SKIPPED"
+    DELIVERED = "DELIVERED"
+    FAILED = "FAILED"
 
     contributor = models.ForeignKey(
         'Contributor',
