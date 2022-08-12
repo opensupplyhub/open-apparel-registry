@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add webhook event logging utility [#2024](https://github.com/open-apparel-registry/open-apparel-registry/pull/2024)
 - Add AWS Batch resources for delivering notifications [#2026](https://github.com/open-apparel-registry/open-apparel-registry/pull/2026)
 - Ignore duplicate rows [#2032](https://github.com/open-apparel-registry/open-apparel-registry/pull/2032)
+- Add status fields to Facility List [#2015](https://github.com/open-apparel-registry/open-apparel-registry/pull/2025)
 
 ### Changed
 

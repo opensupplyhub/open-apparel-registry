@@ -456,6 +456,36 @@ class FacilityList(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    APPROVED = 'APPROVED'
+    PENDING = 'PENDING'
+    REJECTED = 'REJECTED'
+
+    STATUS_CHOICES = (
+        (PENDING, PENDING),
+        (APPROVED, APPROVED),
+        (REJECTED, REJECTED),
+    )
+    status = models.CharField(
+        max_length=200,
+        null=False,
+        blank=False,
+        choices=STATUS_CHOICES,
+        default=PENDING,
+        help_text='The current workflow progress of the list.')
+    status_change_reason = models.TextField(
+        null=False,
+        blank=True,
+        default='',
+        verbose_name='status change reason',
+        help_text='The reason entered when changing the status of this list.')
+    status_change_by = models.ForeignKey(
+        'User',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='status changed by',
+        help_text='The user who changed the status of this facility list',
+        related_name='approver_of_list')
+
     def __str__(self):
         try:
             if self.source.contributor is None:
