@@ -12,6 +12,8 @@ import {
     createRemoveFacilityListItemURL,
     makeFacilityListDataURLs,
     downloadListItemCSV,
+    makeApproveFacilityListURL,
+    makeRejectFacilityListURL,
 } from '../util/util';
 
 export const setSelectedFacilityListItemsRowIndex = createAction(
@@ -62,6 +64,24 @@ export const failAssembleAndDownloadFacilityListCSV = createAction(
 );
 export const completeAssembleAndDownloadFacilityListCSV = createAction(
     'COMPLETE_ASSEMBLE_AND_DOWNLOAD_FACILITY_LIST_CSV',
+);
+
+export const startApproveFacilityList = createAction(
+    'START_APPROVE_FACILITY_LIST',
+);
+export const failApproveFacilityList = createAction(
+    'FAIL_APPROVE_FACILITY_LIST',
+);
+export const completeApproveFacilityList = createAction(
+    'COMPLETE_APPROVE_FACILITY_LIST',
+);
+
+export const startRejectFacilityList = createAction(
+    'START_REJECT_FACILITY_LIST',
+);
+export const failRejectFacilityList = createAction('FAIL_REJECT_FACILITY_LIST');
+export const completeRejectFacilityList = createAction(
+    'COMPLETE_REJECT_FACILITY_LIST',
 );
 
 export function fetchFacilityList(listID = null) {
@@ -271,6 +291,64 @@ export function removeFacilityListItem(listID, listItemID) {
                         err,
                         'An error prevented removing that facility list item',
                         failRemoveFacilityListItem,
+                    ),
+                ),
+            );
+    };
+}
+
+export function approveFacilityList(facilityListID) {
+    return dispatch => {
+        dispatch(startApproveFacilityList());
+
+        if (!facilityListID) {
+            return dispatch(
+                logErrorAndDispatchFailure(
+                    null,
+                    'facilityListID is a required parameter',
+                    failApproveFacilityList,
+                ),
+            );
+        }
+
+        return apiRequest
+            .post(makeApproveFacilityListURL(facilityListID))
+            .then(({ data }) => dispatch(completeApproveFacilityList(data)))
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented approving that list',
+                        failApproveFacilityList,
+                    ),
+                ),
+            );
+    };
+}
+
+export function rejectFacilityList(facilityListID, reason) {
+    return dispatch => {
+        dispatch(startRejectFacilityList());
+
+        if (!facilityListID) {
+            return dispatch(
+                logErrorAndDispatchFailure(
+                    null,
+                    'facilityListID is a required parameter',
+                    failRejectFacilityList,
+                ),
+            );
+        }
+
+        return apiRequest
+            .post(makeRejectFacilityListURL(facilityListID), { reason })
+            .then(({ data }) => dispatch(completeRejectFacilityList(data)))
+            .catch(err =>
+                dispatch(
+                    logErrorAndDispatchFailure(
+                        err,
+                        'An error prevented rejecting that list',
+                        failRejectFacilityList,
                     ),
                 ),
             );

@@ -443,6 +443,7 @@ export const facilityListSummaryStatusMessages = Object.freeze({
     AWAITING: 'Some potential matches require your feedback.',
     PROCESSING: 'The list is still being processed.',
     COMPLETED: 'This list has been processed successfully.',
+    REJECTED: 'This list was rejected and with not be processed.',
 });
 
 export const DEFAULT_PAGE = 1;
