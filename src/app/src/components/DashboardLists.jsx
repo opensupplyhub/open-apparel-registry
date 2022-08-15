@@ -166,14 +166,18 @@ function DashboardLists({
         fetchLists,
     ]);
 
+    const newParams = {
+        contributorID,
+        matchResponsibility,
+        status,
+        page: DEFAULT_PAGE,
+        rowsPerPage,
+    };
     const onContributorUpdate = c => {
         replace(
             makeDashboardContributorListLink({
+                ...newParams,
                 contributorID: c.value,
-                matchResponsibility,
-                status,
-                page: DEFAULT_PAGE,
-                rowsPerPage,
             }),
         );
         setContributor(c);
@@ -182,11 +186,8 @@ function DashboardLists({
     const onMatchResponsibilityUpdate = opt => {
         replace(
             makeDashboardContributorListLink({
-                contributorID,
+                ...newParams,
                 matchResponsibility: opt.value,
-                status,
-                page: DEFAULT_PAGE,
-                rowsPerPage,
             }),
         );
     };
@@ -194,11 +195,8 @@ function DashboardLists({
     const onStatusUpdate = s => {
         replace(
             makeDashboardContributorListLink({
-                contributorID,
-                matchResponsibility,
+                ...newParams,
                 status: s.value,
-                page: DEFAULT_PAGE,
-                rowsPerPage,
             }),
         );
     };
@@ -206,11 +204,8 @@ function DashboardLists({
     const onPageChange = (_, newPage) => {
         replace(
             makeDashboardContributorListLink({
-                contributorID,
-                matchResponsibility,
-                status,
+                ...newParams,
                 page: newPage + 1,
-                rowsPerPage,
             }),
         );
     };
@@ -218,10 +213,7 @@ function DashboardLists({
     const onPageSizeChange = e => {
         replace(
             makeDashboardContributorListLink({
-                contributorID,
-                matchResponsibility,
-                status,
-                page: DEFAULT_PAGE,
+                ...newParams,
                 rowsPerPage: e.target.value,
             }),
         );

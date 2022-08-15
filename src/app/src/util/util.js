@@ -51,7 +51,6 @@ import {
     facilityListSummaryStatusMessages,
     minimum100PercentWidthEmbedHeight,
     matchResponsibilityEnum,
-    facilityListStatusChoicesEnum,
 } from './constants';
 
 import { createListItemCSV } from './util.listItemCSV';
@@ -384,13 +383,19 @@ export const getTokenFromQueryString = qs => {
     return isArray(token) ? head(token) : token;
 };
 
+export const dashboardListParamsDefaults = Object.freeze({
+    contributor: null,
+    matchResponsibility: matchResponsibilityEnum.MODERATOR,
+    status: facilityListItemStatusChoicesEnum.MATCHED,
+});
+
 export const getDashboardListParamsFromQueryString = qs => {
     const qsToParse = startsWith(qs, '?') ? qs.slice(1) : qs;
 
     const {
         contributor,
-        matchResponsibility = matchResponsibilityEnum.MODERATOR,
-        status = facilityListStatusChoicesEnum.MATCHED,
+        matchResponsibility = dashboardListParamsDefaults.matchResponsibility,
+        status = dashboardListParamsDefaults.status,
     } = querystring.parse(qsToParse);
 
     return Object.freeze({
@@ -580,17 +585,17 @@ export const makeDashboardContributorListLink = ({
     page,
     rowsPerPage,
 }) => {
+    const getQuery = (
+        value,
+        field,
+        initial = dashboardListParamsDefaults[field],
+    ) => (value && value !== initial ? `${field}=${value}` : '');
     const params = [
-        contributorID ? `contributor=${contributorID}` : '',
-        matchResponsibility &&
-        matchResponsibility !== matchResponsibilityEnum.MODERATOR
-            ? `matchResponsibility=${matchResponsibility}`
-            : '',
-        status ? `status=${status}` : '',
-        page && page !== DEFAULT_PAGE ? `page=${page}` : '',
-        rowsPerPage && rowsPerPage !== DEFAULT_ROWS_PER_PAGE
-            ? `rowsPerPage=${rowsPerPage}`
-            : '',
+        getQuery(contributorID, 'contributor'),
+        getQuery(matchResponsibility, 'matchResponsibility'),
+        getQuery(status, 'status'),
+        getQuery(page, 'page', DEFAULT_PAGE),
+        getQuery(rowsPerPage, 'rowsPerPage', DEFAULT_ROWS_PER_PAGE),
     ].filter(p => !!p);
     return `/dashboard/lists/${
         params.length > 0 ? `?${params.join('&')}` : ''
