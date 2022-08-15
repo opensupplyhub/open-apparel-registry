@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add AWS Batch resources for delivering notifications [#2026](https://github.com/open-apparel-registry/open-apparel-registry/pull/2026)
 - Ignore duplicate rows [#2032](https://github.com/open-apparel-registry/open-apparel-registry/pull/2032)
 - Add status fields to Facility List [#2015](https://github.com/open-apparel-registry/open-apparel-registry/pull/2025)
+- Add list status to /lists pages [#2044](https://github.com/open-apparel-registry/open-apparel-registry/pull/2044)
 
 ### Changed
 

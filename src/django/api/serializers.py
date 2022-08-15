@@ -46,7 +46,7 @@ from api.models import (FacilityList,
                         EmbedField,
                         NonstandardField,
                         ExtendedField)
-from api.constants import FacilityListStatus, MatchResponsibility
+from api.constants import MatchResponsibility
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
 from api.processing import get_country_code, parse_array_values
 from api.helpers import (prefix_a_an,
@@ -361,7 +361,7 @@ class FacilityListSerializer(ModelSerializer):
         fields = ('id', 'name', 'description', 'file_name', 'is_active',
                   'is_public', 'item_count', 'items_url', 'statuses',
                   'status_counts', 'contributor_id', 'created_at',
-                  'match_responsibility')
+                  'match_responsibility', 'status', 'status_change_reason')
         read_only_fields = ('created_at', 'match_responsibility')
 
     def get_is_active(self, facility_list):
@@ -465,6 +465,11 @@ class FacilityListSerializer(ModelSerializer):
             0
         )
 
+        duplicate = status_counts_dictionary.get(
+            FacilityListItem.DUPLICATE,
+            0
+        )
+
         deleted = status_counts_dictionary.get(
             FacilityListItem.DELETED,
             0
@@ -482,6 +487,7 @@ class FacilityListSerializer(ModelSerializer):
             FacilityListItem.ERROR_PARSING: error_parsing,
             FacilityListItem.ERROR_GEOCODING: error_geocoding,
             FacilityListItem.ERROR_MATCHING: error_matching,
+            FacilityListItem.DUPLICATE: duplicate,
             FacilityListItem.DELETED: deleted,
         }
 
@@ -520,7 +526,8 @@ class FacilityListQueryParamsSerializer(Serializer):
     contributor = IntegerField(required=False)
     match_responsibility = ChoiceField(choices=MatchResponsibility.CHOICES,
                                        required=False)
-    status = ChoiceField(choices=[FacilityListStatus.MATCHED],
+    status = ChoiceField(choices=[FacilityList.MATCHED, FacilityList.APPROVED,
+                                  FacilityList.REJECTED, FacilityList.PENDING],
                          required=False)
 
 

@@ -11,6 +11,7 @@ import AppGrid from './AppGrid';
 import AppOverflow from './AppOverflow';
 import FacilityListItemsEmpty from './FacilityListItemsEmpty';
 import FacilityListItemsTable from './FacilityListItemsTable';
+import FacilityListControls from './FacilityListControls';
 
 import {
     fetchFacilityList,
@@ -221,6 +222,10 @@ class FacilityListItems extends Component {
                                 </div>
                             </div>
                         </div>
+                        <FacilityListControls
+                            isAdminUser={isAdminUser}
+                            id={list.id}
+                        />
                         <div style={facilityListItemsStyles.subheadStyles}>
                             The processing time may be longer for lists that
                             include additional data points beyond facility name
@@ -248,6 +253,7 @@ FacilityListItems.defaultProps = {
     error: null,
     csvDownloadingError: null,
     adminSearch: null,
+    isAdminUser: false,
 };
 
 FacilityListItems.propTypes = {
@@ -261,7 +267,7 @@ FacilityListItems.propTypes = {
     downloadingCSV: bool.isRequired,
     csvDownloadingError: arrayOf(string),
     userHasSignedIn: bool.isRequired,
-    isAdminUser: bool.isRequired,
+    isAdminUser: bool,
     readOnly: bool.isRequired,
     adminSearch: string,
 };

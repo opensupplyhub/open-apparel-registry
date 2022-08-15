@@ -29,6 +29,7 @@ import {
     facilitiesListTableTooltipTitles,
     matchResponsibilityChoices,
     rowsPerPageOptions,
+    facilityListStatusChoices,
 } from '../util/constants';
 
 import {
@@ -47,6 +48,7 @@ import {
 const CONTRIBUTORS = 'CONTRIBUTORS';
 const RESPONSIBILITY = 'RESPONSIBILITY';
 const ALL_CONTRIBUTORS = { label: 'All', value: '' };
+const STATUS = 'STATUS';
 
 const styles = {
     container: {
@@ -74,6 +76,21 @@ const styles = {
     },
 };
 
+const getSelectTheme = theme => ({
+    ...theme,
+    colors: {
+        ...theme.colors,
+        primary: '#00319D',
+    },
+});
+
+const selectStyles = {
+    control: provided => ({
+        ...provided,
+        height: '56px',
+    }),
+};
+
 function DashboardLists({
     dashboardLists: {
         contributor,
@@ -93,6 +110,7 @@ function DashboardLists({
     const {
         contributor: contributorID,
         matchResponsibility,
+        status,
     } = getDashboardListParamsFromQueryString(search);
 
     const { page, rowsPerPage } = createPaginationOptionsFromQueryString(
@@ -133,6 +151,7 @@ function DashboardLists({
             fetchLists({
                 contributorID: contributor?.value || undefined,
                 matchResponsibility,
+                status,
                 page,
                 pageSize: rowsPerPage,
             });
@@ -141,18 +160,24 @@ function DashboardLists({
         contributor,
         contributors.fetching,
         matchResponsibility,
+        status,
         page,
         rowsPerPage,
         fetchLists,
     ]);
 
+    const newParams = {
+        contributorID,
+        matchResponsibility,
+        status,
+        page: DEFAULT_PAGE,
+        rowsPerPage,
+    };
     const onContributorUpdate = c => {
         replace(
             makeDashboardContributorListLink({
+                ...newParams,
                 contributorID: c.value,
-                matchResponsibility,
-                page: DEFAULT_PAGE,
-                rowsPerPage,
             }),
         );
         setContributor(c);
@@ -161,10 +186,17 @@ function DashboardLists({
     const onMatchResponsibilityUpdate = opt => {
         replace(
             makeDashboardContributorListLink({
-                contributorID,
+                ...newParams,
                 matchResponsibility: opt.value,
-                page: DEFAULT_PAGE,
-                rowsPerPage,
+            }),
+        );
+    };
+
+    const onStatusUpdate = s => {
+        replace(
+            makeDashboardContributorListLink({
+                ...newParams,
+                status: s.value,
             }),
         );
     };
@@ -172,10 +204,8 @@ function DashboardLists({
     const onPageChange = (_, newPage) => {
         replace(
             makeDashboardContributorListLink({
-                contributorID,
-                matchResponsibility,
+                ...newParams,
                 page: newPage + 1,
-                rowsPerPage,
             }),
         );
     };
@@ -183,9 +213,7 @@ function DashboardLists({
     const onPageSizeChange = e => {
         replace(
             makeDashboardContributorListLink({
-                contributorID,
-                matchResponsibility,
-                page: DEFAULT_PAGE,
+                ...newParams,
                 rowsPerPage: e.target.value,
             }),
         );
@@ -198,6 +226,8 @@ function DashboardLists({
             !facilityLists.fetching &&
             facilityLists.data?.length === 0,
     };
+
+    const fetchingData = contributors.fetching || facilityLists.fetching;
 
     return (
         <Paper style={styles.container}>
@@ -212,22 +242,9 @@ function DashboardLists({
                         value={contributorID ? contributor : ALL_CONTRIBUTORS}
                         placeholder=""
                         onChange={onContributorUpdate}
-                        disabled={
-                            contributors.fetching || facilityLists.fetching
-                        }
-                        styles={{
-                            control: provided => ({
-                                ...provided,
-                                height: '56px',
-                            }),
-                        }}
-                        theme={theme => ({
-                            ...theme,
-                            colors: {
-                                ...theme.colors,
-                                primary: '#00319D',
-                            },
-                        })}
+                        disabled={fetchingData}
+                        styles={selectStyles}
+                        theme={getSelectTheme}
                     />
                 </div>
                 <div style={styles.filter}>
@@ -241,22 +258,25 @@ function DashboardLists({
                             m => m.value === matchResponsibility,
                         )}
                         onChange={onMatchResponsibilityUpdate}
-                        disabled={
-                            contributors.fetching || facilityLists.fetching
-                        }
-                        styles={{
-                            control: provided => ({
-                                ...provided,
-                                height: '56px',
-                            }),
-                        }}
-                        theme={theme => ({
-                            ...theme,
-                            colors: {
-                                ...theme.colors,
-                                primary: '#00319D',
-                            },
-                        })}
+                        disabled={fetchingData}
+                        styles={selectStyles}
+                        theme={getSelectTheme}
+                    />
+                </div>
+                <div style={styles.filter}>
+                    <label htmlFor={STATUS}>List Status</label>
+                    <ReactSelect
+                        id={STATUS}
+                        name={STATUS}
+                        classNamePrefix="select"
+                        options={facilityListStatusChoices}
+                        value={facilityListStatusChoices.find(
+                            s => s.value === status,
+                        )}
+                        onChange={onStatusUpdate}
+                        disabled={fetchingData}
+                        styles={selectStyles}
+                        theme={getSelectTheme}
                     />
                 </div>
             </div>
