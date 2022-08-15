@@ -69,6 +69,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace + character in ISO date string when in batch job name [#2008](https://github.com/open-apparel-registry/open-apparel-registry/pull/2008)
 - Update sectors in FacilityIndex after upload [#2004](https://github.com/open-apparel-registry/open-apparel-registry/pull/2004)
 - Fix delete facility [#2020](https://github.com/open-apparel-registry/open-apparel-registry/pull/2020)
+- Fix facility details sector display [#2029](https://github.com/open-apparel-registry/open-apparel-registry/pull/2029)
 
 ### Security
 

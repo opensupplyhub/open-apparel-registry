@@ -1327,8 +1327,8 @@ class FacilityDetailsSerializer(FacilitySerializer):
             for c in claims
         ]
 
-        return sorted(item_sectors + claim_sectors,
-                      key=lambda i: i['updated_at'], reverse=True)
+        return claim_sectors + sorted(
+            item_sectors, key=lambda i: i['updated_at'], reverse=True)
 
 
 class FacilityCreateBodySerializer(Serializer):
