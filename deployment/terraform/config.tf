@@ -1,13 +1,13 @@
 provider "aws" {
-  region  = "${var.aws_region}"
+  region  = var.aws_region
   version = "~> 2.70.0"
 }
 
 /**
-* To use an ACM Certificate with Amazon CloudFront, you must 
-* request or import the certificate in the US East (N. Virginia) region. 
-* ACM Certificates in this region that are associated with a CloudFront 
-* distribution are distributed to all the geographic locations configured 
+* To use an ACM Certificate with Amazon CloudFront, you must
+* request or import the certificate in the US East (N. Virginia) region.
+* ACM Certificates in this region that are associated with a CloudFront
+* distribution are distributed to all the geographic locations configured
 * for that distribution.
 *
 * https://docs.aws.amazon.com/acm/latest/userguide/acm-regions.html
@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 provider "template" {
-  version = "~> 1.0.0"
+  version = "~> 2.2.0"
 }
 
 terraform {
@@ -28,3 +28,4 @@ terraform {
     encrypt = "true"
   }
 }
+

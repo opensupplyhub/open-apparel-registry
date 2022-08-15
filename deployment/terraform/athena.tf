@@ -1,5 +1,5 @@
 locals {
-  short_environment = "${var.environment == "Staging" ? "stg" : "${var.environment}" == "Production" ? "prd" : "${lower(var.environment)}"}"
+  short_environment = var.environment == "Staging" ? "stg" : var.environment == "Production" ? "prd" : lower(var.environment)
 }
 
 # https://docs.aws.amazon.com/athena/latest/ug/application-load-balancer-logs.html
@@ -218,8 +218,8 @@ resource "aws_glue_catalog_table" "cdn_logs" {
       serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
 
       parameters = {
-        "field.delim"          = "\t"
-        "serialization.format" = "\t"
+        "field.delim"          = "	"
+        "serialization.format" = "	"
       }
     }
 
@@ -354,3 +354,4 @@ resource "aws_glue_catalog_table" "cdn_logs" {
     }
   }
 }
+

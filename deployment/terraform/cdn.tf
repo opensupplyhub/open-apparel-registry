@@ -16,8 +16,8 @@ resource "aws_cloudfront_distribution" "cdn" {
   http_version    = "http2"
   comment         = "${var.project} (${var.environment})"
 
-  price_class = "${var.cloudfront_price_class}"
-  aliases     = ["${var.r53_public_hosted_zone}"]
+  price_class = var.cloudfront_price_class
+  aliases     = [var.r53_public_hosted_zone]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -80,12 +80,12 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600
-    max_ttl                = 31536000            # 1 year. Same as TILE_CACHE_MAX_AGE_IN_SECONDS in src/django/oar/settings.py
+    max_ttl                = 31536000 # 1 year. Same as TILE_CACHE_MAX_AGE_IN_SECONDS in src/django/oar/settings.py
   }
 
   logging_config {
     include_cookies = false
-    bucket          = "${aws_s3_bucket.logs.bucket_domain_name}"
+    bucket          = aws_s3_bucket.logs.bucket_domain_name
     prefix          = "CDN"
   }
 
@@ -96,13 +96,14 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = "${module.cert_cdn.arn}"
+    acm_certificate_arn      = module.cert_cdn.arn
     minimum_protocol_version = "TLSv1.2_2018"
     ssl_support_method       = "sni-only"
   }
 
-  tags {
-    Project     = "${var.project}"
-    Environment = "${var.environment}"
+  tags = {
+    Project     = var.project
+    Environment = var.environment
   }
 }
+

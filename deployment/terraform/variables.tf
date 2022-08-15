@@ -22,19 +22,24 @@ variable "aws_availability_zones" {
   default = ["eu-west-1a", "eu-west-1b"]
 }
 
-variable "aws_key_name" {}
+variable "aws_key_name" {
+}
 
-variable "r53_private_hosted_zone" {}
+variable "r53_private_hosted_zone" {
+}
 
-variable "r53_public_hosted_zone" {}
+variable "r53_public_hosted_zone" {
+}
 
-variable "cloudfront_price_class" {}
+variable "cloudfront_price_class" {
+}
 
 variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
 }
 
-variable "external_access_cidr_block" {}
+variable "external_access_cidr_block" {
+}
 
 variable "vpc_private_subnet_cidr_blocks" {
   default = ["10.0.1.0/24", "10.0.3.0/24"]
@@ -44,9 +49,11 @@ variable "vpc_public_subnet_cidr_blocks" {
   default = ["10.0.0.0/24", "10.0.2.0/24"]
 }
 
-variable "bastion_ami" {}
+variable "bastion_ami" {
+}
 
-variable "bastion_instance_type" {}
+variable "bastion_instance_type" {
+}
 
 variable "rds_allocated_storage" {
   default = "64"
@@ -68,13 +75,17 @@ variable "rds_storage_type" {
   default = "gp2"
 }
 
-variable "rds_database_identifier" {}
+variable "rds_database_identifier" {
+}
 
-variable "rds_database_name" {}
+variable "rds_database_name" {
+}
 
-variable "rds_database_username" {}
+variable "rds_database_username" {
+}
 
-variable "rds_database_password" {}
+variable "rds_database_password" {
+}
 
 variable "rds_backup_retention_period" {
   default = "30"
@@ -204,7 +215,8 @@ variable "cli_fargate_memory" {
   default = "1024"
 }
 
-variable "image_tag" {}
+variable "image_tag" {
+}
 
 variable "app_port" {
   default = "8080"
@@ -214,30 +226,37 @@ variable "gunicorn_worker_timeout" {
   default = "180"
 }
 
-variable "google_server_side_api_key" {}
+variable "google_server_side_api_key" {
+}
 
-variable "google_client_side_api_key" {}
+variable "google_client_side_api_key" {
+}
 
 variable "google_analytics_key" {
   default = ""
 }
 
-variable "rollbar_server_side_access_token" {}
+variable "rollbar_server_side_access_token" {
+}
 
-variable "rollbar_client_side_access_token" {}
+variable "rollbar_client_side_access_token" {
+}
 
-variable "django_secret_key" {}
+variable "django_secret_key" {
+}
 
-variable "default_from_email" {}
+variable "default_from_email" {
+}
 
-variable "notification_email_to" {}
+variable "notification_email_to" {
+}
 
 variable "mailchimp_api_key" {
-    default = ""
+  default = ""
 }
 
 variable "mailchimp_list_id" {
-    default = ""
+  default = ""
 }
 
 variable "batch_default_ce_spot_fleet_bid_percentage" {
@@ -267,14 +286,13 @@ variable "batch_default_ce_max_vcpus" {
 }
 
 variable "batch_default_ce_instance_types" {
-  type = "list"
+  type = list(string)
 
   default = [
     "c5",
     "m5",
   ]
 }
-
 
 variable "batch_notifications_ce_min_vcpus" {
   default = "0"
@@ -289,14 +307,13 @@ variable "batch_notifications_ce_max_vcpus" {
 }
 
 variable "batch_notifications_ce_instance_types" {
-  type = "list"
+  type = list(string)
 
   default = [
     "c5",
     "m5",
   ]
 }
-
 
 variable "app_cli_state_machine_timeout_seconds" {
   default = "600"
@@ -322,8 +339,10 @@ variable "aws_lambda_service_role_policy_arn" {
   default = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-variable "oar_client_key" {}
+variable "oar_client_key" {
+}
 
 variable "aws_cloudfront_canonical_user_id" {
   default = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
 }
+
