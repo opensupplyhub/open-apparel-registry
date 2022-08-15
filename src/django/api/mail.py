@@ -24,15 +24,8 @@ def make_facility_url(request, facility):
     )
 
 
-def make_facility_list_url(list_id):
-    if settings.ENVIRONMENT == 'Development':
-        protocol = 'http'
-        host = 'localhost:6543'
-    else:
-        protocol = 'https'
-        host = settings.EXTERNAL_DOMAIN
-
-    return '{}://{}/lists/{}'.format(protocol, host, list_id)
+def make_facility_list_url(request, list_id):
+    return '{}/lists/{}'.format(make_oar_url(request), list_id)
 
 
 def make_claimed_url(request):
@@ -375,4 +368,26 @@ def notify_facility_list_complete(list_id):
         settings.DEFAULT_FROM_EMAIL,
         [notification_to],
         html_message=html_template.render(notification_dictionary)
+    )
+
+
+def send_facility_list_rejection_email(request, facility_list):
+    subj_template = get_template('mail/facility_list_rejection_subject.txt')
+    text_template = get_template('mail/facility_list_rejection_body.txt')
+    html_template = get_template('mail/facility_list_rejection_body.html')
+
+    denial_dictionary = {
+        'rejection_reason': facility_list.status_change_reason,
+        'facility_list_name': facility_list.name,
+        'facility_list_description': facility_list.description,
+        'facility_list_created_at': facility_list.created_at,
+        'facility_list_url': make_facility_list_url(request, facility_list.id),
+    }
+
+    send_mail(
+        subj_template.render().rstrip(),
+        text_template.render(denial_dictionary),
+        settings.DEFAULT_FROM_EMAIL,
+        [facility_list.source.contributor.admin.email],
+        html_message=html_template.render(denial_dictionary)
     )
