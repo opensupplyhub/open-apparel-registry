@@ -43,7 +43,7 @@ resource "aws_security_group" "batch" {
 resource "aws_lb" "app" {
   name            = "alb${local.short}App"
   security_groups = [aws_security_group.alb.id]
-  subnets = module.vpc.public_subnet_ids
+  subnets         = module.vpc.public_subnet_ids
 
   access_logs {
     bucket  = aws_s3_bucket.logs.id
@@ -214,7 +214,7 @@ resource "aws_ecs_service" "app" {
 
   network_configuration {
     security_groups = [aws_security_group.app.id]
-    subnets = module.vpc.private_subnet_ids
+    subnets         = module.vpc.private_subnet_ids
   }
 
   load_balancer {

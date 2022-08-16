@@ -1,5 +1,5 @@
 provider "aws" {
-  region  = var.aws_region
+  region = var.aws_region
 }
 
 /**
@@ -12,8 +12,8 @@ provider "aws" {
 * https://docs.aws.amazon.com/acm/latest/userguide/acm-regions.html
 */
 provider "aws" {
-  alias   = "certificates"
-  region  = "us-east-1"
+  alias  = "certificates"
+  region = "us-east-1"
 }
 
 provider "template" {
