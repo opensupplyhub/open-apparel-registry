@@ -3916,6 +3916,7 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     serializer_class = ApiBlockSerializer
     permission_classes = [IsSuperuser]
     swagger_schema = None
+    pagination_class = None
 
 
 class ContributorWebhookViewSet(mixins.CreateModelMixin,
