@@ -39,6 +39,7 @@ variable "vpc_cidr_block" {
 }
 
 variable "external_access_cidr_block" {
+  sensitive = true
 }
 
 variable "vpc_private_subnet_cidr_blocks" {
@@ -85,6 +86,7 @@ variable "rds_database_username" {
 }
 
 variable "rds_database_password" {
+  sensitive = true
 }
 
 variable "rds_backup_retention_period" {
@@ -124,7 +126,8 @@ variable "rds_multi_az" {
 }
 
 variable "rds_storage_encrypted" {
-  default = false
+  sensitive = true
+  default   = false
 }
 
 variable "rds_seq_page_cost" {
@@ -227,22 +230,28 @@ variable "gunicorn_worker_timeout" {
 }
 
 variable "google_server_side_api_key" {
+  sensitive = true
 }
 
 variable "google_client_side_api_key" {
+  sensitive = true
 }
 
 variable "google_analytics_key" {
-  default = ""
+  default   = ""
+  sensitive = true
 }
 
 variable "rollbar_server_side_access_token" {
+  sensitive = true
 }
 
 variable "rollbar_client_side_access_token" {
+  sensitive = true
 }
 
 variable "django_secret_key" {
+  sensitive = true
 }
 
 variable "default_from_email" {
@@ -252,7 +261,8 @@ variable "notification_email_to" {
 }
 
 variable "mailchimp_api_key" {
-  default = ""
+  default   = ""
+  sensitive = true
 }
 
 variable "mailchimp_list_id" {
@@ -340,6 +350,7 @@ variable "aws_lambda_service_role_policy_arn" {
 }
 
 variable "oar_client_key" {
+  sensitive = true
 }
 
 variable "aws_cloudfront_canonical_user_id" {
