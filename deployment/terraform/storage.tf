@@ -30,7 +30,7 @@ resource "aws_s3_bucket" "logs" {
 # ECR resources
 #
 module "ecr_repository_app" {
-  source = "github.com/azavea/terraform-aws-ecr-repository?ref=0.1.0"
+  source = "github.com/azavea/terraform-aws-ecr-repository?ref=1.0.0"
 
   repository_name = lower(replace(var.project, " ", ""))
 
@@ -38,7 +38,7 @@ module "ecr_repository_app" {
 }
 
 module "ecr_repository_batch" {
-  source = "github.com/azavea/terraform-aws-ecr-repository?ref=0.1.0"
+  source = "github.com/azavea/terraform-aws-ecr-repository?ref=1.0.0"
 
   repository_name = "${lower(replace(var.project, " ", ""))}-batch"
 

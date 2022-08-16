@@ -1,6 +1,5 @@
 provider "aws" {
   region  = var.aws_region
-  version = "~> 2.70.0"
 }
 
 /**
@@ -15,11 +14,9 @@ provider "aws" {
 provider "aws" {
   alias   = "certificates"
   region  = "us-east-1"
-  version = "~> 2.70.0"
 }
 
 provider "template" {
-  version = "~> 2.2.0"
 }
 
 terraform {

@@ -2,7 +2,7 @@
 # ACM resources
 #
 module "cert_cdn" {
-  source = "github.com/azavea/terraform-aws-acm-certificate?ref=2.0.1"
+  source = "github.com/azavea/terraform-aws-acm-certificate?ref=4.0.0"
 
   providers = {
     aws.acm_account     = aws.certificates
@@ -16,7 +16,7 @@ module "cert_cdn" {
 }
 
 module "cert_lb" {
-  source = "github.com/azavea/terraform-aws-acm-certificate?ref=2.0.1"
+  source = "github.com/azavea/terraform-aws-acm-certificate?ref=4.0.0"
 
   providers = {
     aws.acm_account     = aws
