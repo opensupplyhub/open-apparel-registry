@@ -68,6 +68,7 @@ data "template_file" "default_job_definition" {
     aws_region                       = var.aws_region
     batch_job_queue_name             = "queue${local.short}Default"
     batch_job_def_name               = "job${local.short}Default"
+    log_group_name                   = "log${local.short}Batch"
   }
 }
 
@@ -153,6 +154,7 @@ data "template_file" "notifications_job_definition" {
     aws_region                       = var.aws_region
     batch_job_queue_name             = "queue${local.short}Notifications"
     batch_job_def_name               = "job${local.short}Notifications"
+    log_group_name                   = "log${local.short}Batch"
   }
 }
 
@@ -167,3 +169,10 @@ resource "aws_batch_job_definition" "notifications" {
   }
 }
 
+#
+# CloudWatch Resources
+#
+resource "aws_cloudwatch_log_group" "batch" {
+  name              = "log${local.short}Batch"
+  retention_in_days = 0
+}
