@@ -2,7 +2,6 @@
   {
     "name": "django",
     "image": "${image}",
-    "cpu": 0,
     "entryPoint": ["./manage.py"],
     "environment": [
         { "name": "PYTHONUNBUFFERED", "value": "1" },

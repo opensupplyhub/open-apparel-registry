@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add list status to /lists pages [#2044](https://github.com/open-apparel-registry/open-apparel-registry/pull/2044)
 
 ### Changed
-
+- Upgrade terraform to 1.1.9 [#2054](https://github.com/open-apparel-registry/open-apparel-registry/pull/2054)
 - Use autocomplete ordered by name for admin contributors dropdown [#1848](https://github.com/open-apparel-registry/open-apparel-registry/pull/1848)
 - Document parallel OGR workflow in the README [#1851](https://github.com/open-apparel-registry/open-apparel-registry/pull/1851)
 - Update tile load test script and add scripts for hompage load, facility download, and facility POST [#1777](https://github.com/open-apparel-registry/open-apparel-registry/pull/1777)
