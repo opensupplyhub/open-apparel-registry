@@ -142,6 +142,7 @@ from api.mail import (send_claim_facility_confirmation_email,
                       send_claim_facility_revocation_email,
                       send_approved_claim_notice_to_list_contributors,
                       send_claim_update_notice_to_list_contributors,
+                      send_facility_list_rejection_email,
                       send_report_result)
 from api.exceptions import BadRequestException
 from api.tiler import (get_facilities_vector_tile,
@@ -2910,8 +2911,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         FacilityListItem.objects.bulk_create(items)
 
         if ENVIRONMENT in ('Staging', 'Production'):
-            job_ids = submit_parse_job(new_list)
-            submit_jobs(new_list, job_ids)
+            submit_parse_job(new_list)
 
         serializer = self.get_serializer(new_list)
         return Response(serializer.data)
@@ -2979,6 +2979,61 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             return Response(response_data)
         except FacilityList.DoesNotExist:
             raise NotFound()
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsSuperuser,),
+            url_path='approve')
+    def approve(self, request, pk=None):
+        """
+        Approve a facility list and trigger batch processing.
+
+        ## Sample Request Body
+
+            {
+                "status_change_reason": "The facility data was confirmed."
+            }
+        """
+        try:
+            facility_list = self.queryset.get(id=pk)
+        except FacilityList.DoesNotExist:
+            raise NotFound()
+
+        facility_list.status_change_reason = request.data.get('reason', '')
+        facility_list.status_change_by = request.user
+        facility_list.status = FacilityList.APPROVED
+        facility_list.save()
+
+        if ENVIRONMENT in ('Staging', 'Production'):
+            submit_jobs(facility_list)
+
+        return Response(self.serializer_class(facility_list).data)
+
+    @action(detail=True, methods=['POST'],
+            permission_classes=(IsSuperuser,),
+            url_path='reject')
+    def reject(self, request, pk=None):
+        """
+        Reject a facility list and send a rejection email.
+
+        ## Sample Request Body
+
+            {
+                "status_change_reason": "The CSV is formatted incorrectly."
+            }
+        """
+        try:
+            facility_list = self.queryset.get(id=pk)
+        except FacilityList.DoesNotExist:
+            raise NotFound()
+
+        facility_list.status_change_reason = request.data.get('reason', '')
+        facility_list.status_change_by = request.user
+        facility_list.status = FacilityList.REJECTED
+        facility_list.save()
+
+        send_facility_list_rejection_email(request, facility_list)
+
+        return Response(self.serializer_class(facility_list).data)
 
     @action(detail=True, methods=['get'])
     def items(self, request, pk):

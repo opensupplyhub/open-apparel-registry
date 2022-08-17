@@ -222,10 +222,12 @@ class FacilityListItems extends Component {
                                 </div>
                             </div>
                         </div>
-                        <FacilityListControls
-                            isAdminUser={isAdminUser}
-                            id={list.id}
-                        />
+                        {list.status_counts.UPLOADED === 0 ? (
+                            <FacilityListControls
+                                isAdminUser={isAdminUser}
+                                id={list.id}
+                            />
+                        ) : null}
                         <div style={facilityListItemsStyles.subheadStyles}>
                             The processing time may be longer for lists that
                             include additional data points beyond facility name

@@ -50,7 +50,9 @@ import {
     rowsPerPageOptions,
     facilityListItemStatusChoicesEnum,
     facilityListItemErrorStatuses,
+    facilityListStatusChoicesEnum,
     facilityListStatusFilterChoices,
+    facilityListSummaryStatusMessages,
     matchResponsibilityEnum,
 } from '../util/constants';
 
@@ -346,7 +348,9 @@ class FacilityListItemsTable extends Component {
                     md={6}
                     style={facilityListItemsTableStyles.summaryStatusStyles}
                 >
-                    {makeFacilityListSummaryStatus(list.statuses)}
+                    {list.status !== facilityListStatusChoicesEnum.REJECTED
+                        ? makeFacilityListSummaryStatus(list.statuses)
+                        : facilityListSummaryStatusMessages.REJECTED}
                 </Grid>
                 <Grid item sm={12} md={6}>
                     <TablePagination

@@ -116,16 +116,11 @@ def parse(job_data, facility_list):
     return [parse_job_id]
 
 
-def geocode(job_data, facility_list, job_ids):
+def geocode(job_data, facility_list):
     started = str(timezone.now())
     row_count = facility_list.source.facilitylistitem_set.count()
     is_array = row_count > 1
-    depends_on = [{'jobId': job_ids[-1]}] if len(job_ids) > 0 else None
-    geocode_job_id = submit_job('geocode',
-                                job_data,
-                                depends_on=depends_on,
-                                is_array=is_array)
-    job_ids.append(geocode_job_id)
+    geocode_job_id = submit_job('geocode', job_data, is_array=is_array)
     finished = str(timezone.now())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
@@ -137,14 +132,13 @@ def geocode(job_data, facility_list, job_ids):
         'finished_at': finished,
     }, facility_list)
 
-    return job_ids
+    return [geocode_job_id]
 
 
 def match(job_data, facility_list, job_ids):
     started = str(timezone.now())
     depends_on = [{'jobId': job_ids[-1]}] if len(job_ids) > 0 else None
     match_job_id = submit_job('match', job_data, depends_on=depends_on)
-    job_ids.append(match_job_id)
     finished = str(timezone.now())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
@@ -156,7 +150,7 @@ def match(job_data, facility_list, job_ids):
         'finished_at': finished,
     }, facility_list)
 
-    return job_ids
+    return [*job_ids, match_job_id]
 
 
 def notify(job_data, facility_list, job_ids):
@@ -165,7 +159,6 @@ def notify(job_data, facility_list, job_ids):
     notify_job_id = submit_job('notify_complete',
                                job_data,
                                depends_on=depends_on)
-    job_ids.append(notify_job_id)
     finished = str(timezone.now())
     append_processing_result({
         'action': ProcessingAction.SUBMIT_JOB,
@@ -177,7 +170,7 @@ def notify(job_data, facility_list, job_ids):
         'finished_at': finished,
     }, facility_list)
 
-    return job_ids
+    return [*job_ids, notify_job_id]
 
 
 def submit_parse_job(facility_list):
@@ -201,7 +194,7 @@ def submit_parse_job(facility_list):
     return parse(job_data, facility_list)
 
 
-def submit_jobs(facility_list, job_ids=None):
+def submit_jobs(facility_list):
     """
     Submit AWS Batch jobs to process each FacilityListItem in a FacilityList
     through the geocode, match, and notify list processing steps.
@@ -220,13 +213,8 @@ def submit_jobs(facility_list, job_ids=None):
         'facility_list': facility_list,
     }
 
-    if job_ids is None:
-        job_ids = []
-
-    # The following three methods mutate the job_ids parameter
-    # by adding additional ids
-    geocode(job_data, facility_list, job_ids)
-    match(job_data, facility_list, job_ids)
+    job_ids = geocode(job_data, facility_list)
+    job_ids = match(job_data, facility_list, job_ids)
     notify(job_data, facility_list, job_ids)
 
     return job_ids

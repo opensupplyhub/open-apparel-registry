@@ -22,6 +22,12 @@ import {
     startRemoveFacilityListItem,
     failRemoveFacilityListItem,
     completeRemoveFacilityListItem,
+    startApproveFacilityList,
+    failApproveFacilityList,
+    completeApproveFacilityList,
+    startRejectFacilityList,
+    failRejectFacilityList,
+    completeRejectFacilityList,
 } from '../actions/facilityListDetails';
 
 import { completeSubmitLogOut } from '../actions/auth';
@@ -65,6 +71,37 @@ const failConfirmOrRejectMatchOrRemoveItem = (state, payload) =>
         confirmOrRejectMatchOrRemoveItem: {
             fetching: { $set: false },
             error: { $set: payload },
+        },
+    });
+
+const startApproveOrRejectList = state =>
+    update(state, {
+        list: {
+            $merge: {
+                fetching: true,
+                error: null,
+            },
+        },
+    });
+
+const failFetchOrUpdateList = (state, payload) =>
+    update(state, {
+        list: {
+            $merge: {
+                data: null,
+                fetching: false,
+                error: payload,
+            },
+        },
+    });
+const completeFetchOrUpdateList = (state, payload) =>
+    update(state, {
+        list: {
+            $merge: {
+                data: payload,
+                fetching: false,
+                error: null,
+            },
         },
     });
 
@@ -132,26 +169,8 @@ export default createReducer(
                     },
                 },
             }),
-        [failFetchFacilityList]: (state, payload) =>
-            update(state, {
-                list: {
-                    $merge: {
-                        data: null,
-                        fetching: false,
-                        error: payload,
-                    },
-                },
-            }),
-        [completeFetchFacilityList]: (state, payload) =>
-            update(state, {
-                list: {
-                    $merge: {
-                        data: payload,
-                        fetching: false,
-                        error: null,
-                    },
-                },
-            }),
+        [failFetchFacilityList]: failFetchOrUpdateList,
+        [completeFetchFacilityList]: completeFetchOrUpdateList,
         [startFetchFacilityListItems]: state =>
             update(state, {
                 items: {
@@ -206,6 +225,12 @@ export default createReducer(
                     error: { $set: null },
                 },
             }),
+        [startApproveFacilityList]: startApproveOrRejectList,
+        [failApproveFacilityList]: failFetchOrUpdateList,
+        [completeApproveFacilityList]: completeFetchOrUpdateList,
+        [startRejectFacilityList]: startApproveOrRejectList,
+        [failRejectFacilityList]: failFetchOrUpdateList,
+        [completeRejectFacilityList]: completeFetchOrUpdateList,
         [resetFacilityListItems]: () => initialState,
         [startConfirmFacilityListItemPotentialMatch]: startConfirmOrRejectMatchOrRemoveItem,
         [startRejectFacilityListItemPotentialMatch]: startConfirmOrRejectMatchOrRemoveItem,

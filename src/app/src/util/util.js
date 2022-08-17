@@ -105,6 +105,15 @@ export const makeSingleFacilityListURL = id => `/api/facility-lists/${id}/`;
 export const makeSingleFacilityListItemsURL = id =>
     `/api/facility-lists/${id}/items/`;
 
+export const createRemoveFacilityListItemURL = listID =>
+    `/api/facility-lists/${listID}/remove/`;
+
+export const makeApproveFacilityListURL = listID =>
+    `/api/facility-lists/${listID}/approve/`;
+
+export const makeRejectFacilityListURL = listID =>
+    `/api/facility-lists/${listID}/reject/`;
+
 export const makeDashboardFacilityListsURL = () => '/api/admin-facility-lists/';
 
 export const makeDashboardApiBlocksURL = () => '/api/api-blocks/';
@@ -642,9 +651,6 @@ export const createConfirmFacilityListItemMatchURL = matchID =>
 
 export const createRejectFacilityListItemMatchURL = matchID =>
     `/api/facility-matches/${matchID}/reject/`;
-
-export const createRemoveFacilityListItemURL = listID =>
-    `/api/facility-lists/${listID}/remove/`;
 
 export const makeMyFacilitiesRoute = contributorID =>
     `/facilities/?contributors=${contributorID}`;

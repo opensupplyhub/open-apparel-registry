@@ -15,6 +15,10 @@ import TextField from '@material-ui/core/TextField';
 import { facilityListStatusChoicesEnum } from '../util/constants';
 
 import { getValueFromEvent } from '../util/util';
+import {
+    approveFacilityList,
+    rejectFacilityList,
+} from '../actions/facilityListDetails';
 
 const dialogTypesEnum = Object.freeze({ REJECT: 'REJECT', INFORM: 'INFORM' });
 
@@ -295,14 +299,10 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(_, { id }) {
+function mapDispatchToProps(dispatch, { id }) {
     return {
-        approveList: () =>
-            console.warn(`This is a stubbed method for approving list ${id}.`),
-        rejectList: reason =>
-            console.warn(
-                `This is a stubbed method for rejecting list ${id} for reason ${reason}.`,
-            ),
+        approveList: () => dispatch(approveFacilityList(id)),
+        rejectList: reason => dispatch(rejectFacilityList(id, reason)),
     };
 }
 

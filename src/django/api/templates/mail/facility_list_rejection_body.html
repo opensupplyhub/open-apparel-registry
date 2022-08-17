@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Your contribution to the Open Supply Hub was rejected
+        </title>
+    </head>
+    <body>
+        <p>
+            Hi,
+        </p>
+        <p>
+            You're receiving this email because we rejected your request to upload data to the
+            Open Supply Hub:
+        </p>
+        <ul>
+            <li>
+                Facility list: {{ facility_list_name }} created on {{ facility_list_created_at }}
+            </li>
+            <li>
+                Facility list description: {{ facility_list_description }}
+            </li>
+            <li>
+                Facility list URL: <a href="{{ facility_list_url }}">{{ facility_list_url }}</a>
+            </li>
+        </ul>
+        {% if rejection_reason|length %}
+        <p>
+            Here's the reason for the rejection:
+        </p>
+        <p>
+            {{ rejection_reason }}
+        </p>
+        {% endif %}
+        <p>
+            Best wishes,
+        </p>
+        {% include "mail/signature_block.html" %}
+    </body>
+</html>

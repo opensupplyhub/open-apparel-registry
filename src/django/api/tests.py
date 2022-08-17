@@ -1514,12 +1514,6 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
         self.client.login(email=self.current_user_email,
                           password=self.current_user_password)
 
-        self.confirm_url = '/api/facility-lists/{}/confirm/' \
-            .format(self.current_list.id)
-
-        self.reject_url = '/api/facility-lists/{}/reject/' \
-            .format(self.current_list.id)
-
         self.remove_url = '/api/facility-lists/{}/remove/' \
             .format(self.current_list.id)
 
@@ -3149,6 +3143,79 @@ class FacilityListViewTests(BaseFacilityListTests):
                 '/api/facility-lists/{}/'.format(fac_list.id))
             self.assertEqual(200, response.status_code)
             self.assertEqual(fac_list.name, response.json()['name'])
+
+    def test_other_users_cannot_approve(self):
+        response = self.client.post(
+            '/api/facility-lists/{}/approve/'.format(self.superlist.id))
+
+        self.assertEqual(401, response.status_code)
+
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        response = self.client.post(
+            '/api/facility-lists/{}/approve/'.format(self.superlist.id))
+
+        self.assertEqual(403, response.status_code)
+
+    def test_superuser_can_approve(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            '/api/facility-lists/{}/approve/'.format(self.superlist.id))
+
+        self.assertEqual(200, response.status_code)
+
+        facility_list = FacilityList.objects.get(pk=self.superlist.pk)
+        self.assertEqual(FacilityList.APPROVED, facility_list.status)
+
+    def test_other_users_cannot_reject(self):
+        response = self.client.post(
+            '/api/facility-lists/{}/reject/'.format(self.superlist.id))
+
+        self.assertEqual(401, response.status_code)
+
+        self.client.login(email=self.user_email,
+                          password=self.user_password)
+
+        response = self.client.post(
+            '/api/facility-lists/{}/reject/'.format(self.superlist.id))
+
+        self.assertEqual(403, response.status_code)
+
+    @override_settings(ENVIRONMENT="production")
+    @patch('api.aws_batch.submit_jobs')
+    def test_approve_submits_batch_job(self, mock_submit_jobs):
+        mock_submit_jobs.return_value = [1]
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        self.client.post(
+            '/api/facility-lists/{}/approve/'.format(self.superlist.id))
+
+    def test_superuser_can_reject(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            '/api/facility-lists/{}/reject/'.format(self.superlist.id))
+
+        self.assertEqual(200, response.status_code)
+
+        facility_list = FacilityList.objects.get(pk=self.superlist.pk)
+        self.assertEqual(FacilityList.REJECTED, facility_list.status)
+
+    def test_rejection_sends_email(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        self.client.post(
+            '/api/facility-lists/{}/reject/'.format(self.superlist.id))
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [self.superuser_email])
 
 
 class FacilityDeleteTest(APITestCase):

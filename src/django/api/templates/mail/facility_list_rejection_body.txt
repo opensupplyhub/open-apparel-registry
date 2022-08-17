@@ -1,0 +1,19 @@
+{% block content %}
+Hi,
+
+You're receiving this email because we rejected your request to upload data to the Open Supply Hub:
+
+- Facility list: {{ facility_list_name }} created on {{ facility_list_created_at }}
+- Facility list description: {{ facility_list_description }}
+- Facility list URL: {{ facility_list_url }}
+
+{% if rejection_reason|length %}
+Here's the reason for the rejection:
+
+{{ rejection_reason }}
+{% endif %}
+
+Best wishes,
+
+{% include "mail/signature_block.txt" %}
+{% endblock content %}
