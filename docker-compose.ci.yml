@@ -8,6 +8,7 @@ services:
     volumes:
       - ./:/usr/local/src
       - $HOME/.aws:/root/.aws:ro
+      - ${PWD}/.gitconfig:/root/.gitconfig
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
       - GIT_COMMIT=${GIT_COMMIT:-latest}
