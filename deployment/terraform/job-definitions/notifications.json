@@ -21,5 +21,13 @@
       { "name": "BATCH_MODE", "value": "True" },
       { "name": "OAR_CLIENT_KEY", "value": "${oar_client_key}" },
       { "name": "EXTERNAL_DOMAIN", "value": "${external_domain}" }
-  ]
+  ],
+  "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+          "awslogs-group": "${log_group_name}",
+          "awslogs-region": "${aws_region}",
+          "awslogs-stream-prefix": "notifications"
+      }
+  }
 }
