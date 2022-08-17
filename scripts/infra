@@ -32,6 +32,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
     if [[ -n "${OAR_SETTINGS_BUCKET}" ]]; then
         pushd "${TERRAFORM_DIR}"
+        git config --global --add safe.directory /usr/local/src
 
         aws s3 cp "s3://${OAR_SETTINGS_BUCKET}/terraform/terraform.tfvars" "${OAR_SETTINGS_BUCKET}.tfvars"
 
