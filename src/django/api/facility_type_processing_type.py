@@ -1,5 +1,5 @@
 from api.helpers import clean
-from thefuzz import process
+from rapidfuzz import process
 
 HEADQUARTERS = 'headquarters'
 NO_PROCESSING = 'no processing'

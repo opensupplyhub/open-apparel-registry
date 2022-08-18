@@ -23,7 +23,7 @@ pyflakes==2.0.0
 pytz==2018.7
 requests==2.21.0
 rollbar==0.14.6
-thefuzz==0.19.0
+rapidfuzz==2.5.0
 Unidecode==1.0.23
 django-cors-headers==3.10.0
 debugpy==1.5.1
