@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Ignore duplicate rows [#2032](https://github.com/open-apparel-registry/open-apparel-registry/pull/2032)
 - Add status fields to Facility List [#2015](https://github.com/open-apparel-registry/open-apparel-registry/pull/2025)
 - Add list status to /lists pages [#2044](https://github.com/open-apparel-registry/open-apparel-registry/pull/2044)
+- Add duplicate status to list filter and item counts [#2061](https://github.com/open-apparel-registry/open-apparel-registry/pull/2061)
 
 ### Changed
 - Upgrade terraform to 1.1.9 [#2054](https://github.com/open-apparel-registry/open-apparel-registry/pull/2054)
