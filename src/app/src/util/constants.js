@@ -413,6 +413,10 @@ export const facilityListStatusFilterChoices = Object.freeze([
         value: facilityListItemStatusChoicesEnum.NEW_FACILITY,
     },
     {
+        label: facilityListItemStatusChoicesEnum.DUPLICATE,
+        value: facilityListItemStatusChoicesEnum.DUPLICATE,
+    },
+    {
         label: facilityListItemStatusChoicesEnum.ERROR,
         value: facilityListItemStatusChoicesEnum.ERROR,
     },
@@ -483,6 +487,8 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
     geocoded: 'Number of items that have been geocoded but not yet matched.',
     matched:
         'Number of items that have been matched with an existing facility or created a new facility.',
+    duplicate:
+        'Number of items identified as a duplicate of another item in the same list.',
     error: 'Number of items that have encountered errors during processing',
     potentialMatch:
         'Number of items with potential matches to confirm or reject.',

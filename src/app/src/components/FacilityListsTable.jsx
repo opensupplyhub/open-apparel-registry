@@ -46,6 +46,7 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                             <TableCell padding="dense">Parsed</TableCell>
                             <TableCell padding="dense">Geocoded</TableCell>
                             <TableCell padding="dense">Matched</TableCell>
+                            <TableCell padding="dense">Duplicate</TableCell>
                             <TableCell padding="dense">Error</TableCell>
                             <TableCell padding="dense">
                                 Potential Match
@@ -144,6 +145,14 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                     tableCellText={sum([
                                         list.status_counts.MATCHED,
                                         list.status_counts.CONFIRMED_MATCH,
+                                    ])}
+                                />
+                                <FacilityListsTooltipTableCell
+                                    tooltipTitle={
+                                        facilitiesListTableTooltipTitles.duplicate
+                                    }
+                                    tableCellText={sum([
+                                        list.status_counts.DUPLICATE,
                                     ])}
                                 />
                                 <FacilityListsTooltipTableCell
