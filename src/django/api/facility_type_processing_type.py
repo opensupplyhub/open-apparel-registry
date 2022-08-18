@@ -445,14 +445,15 @@ def get_facility_and_processing_type(facility_or_processing_type):
 
         # Try for fuzzy match
         if not matched_value or matched_value is None:
+            # Match must score 85 or higher to be considered usable.
             matched_value = process.extractOne(
                 cleaned_input,
-                ALL_PROCESSING_TYPES.keys()
+                ALL_PROCESSING_TYPES.keys(),
+                score_cutoff=85
             )
             match_type = FUZZY_MATCH
 
-            # Match must score 85 or higher to be considered usable.
-            if not matched_value or matched_value[1] < 85:
+            if not matched_value:
                 return (None, None, None, None)
 
             matched_value = matched_value[0]
