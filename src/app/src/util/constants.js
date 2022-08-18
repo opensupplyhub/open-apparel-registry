@@ -487,7 +487,7 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
     matched:
         'Number of items that have been matched with an existing facility or created a new facility.',
     duplicate:
-        'Number of items that match to a facility also matched by a previous item in the same list.',
+        'Number of items identified as a duplicate of another item in the same list.',
     error: 'Number of items that have encountered errors during processing',
     potentialMatch:
         'Number of items with potential matches to confirm or reject.',
