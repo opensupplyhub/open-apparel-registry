@@ -130,13 +130,14 @@ class Command(BaseCommand):
                                 item.save()
                     elif action == ProcessingAction.PARSE:
                         process(item)
-                        core_fields = '{}-{}-{}'.format(item.country_code,
-                                                        item.clean_name,
-                                                        item.clean_address)
-                        if core_fields in parsed_items:
-                            item.status = FacilityListItem.DUPLICATE
-                        else:
-                            parsed_items.add(core_fields)
+                        if item.status != FacilityListItem.ERROR_PARSING:
+                            core_fields = '{}-{}-{}'.format(item.country_code,
+                                                            item.clean_name,
+                                                            item.clean_address)
+                            if core_fields in parsed_items:
+                                item.status = FacilityListItem.DUPLICATE
+                            else:
+                                parsed_items.add(core_fields)
                         item.save()
                     else:
                         process(item)

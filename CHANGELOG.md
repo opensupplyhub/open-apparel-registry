@@ -75,6 +75,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix delete facility [#2020](https://github.com/open-apparel-registry/open-apparel-registry/pull/2020)
 - Fix facility details sector display [#2029](https://github.com/open-apparel-registry/open-apparel-registry/pull/2029)
 - Set pagination_class on ApiBlockViewSet to None [#2057](https://github.com/open-apparel-registry/open-apparel-registry/pull/2057)
+- Dont duplicate check items with parsing errors [#2073](https://github.com/open-apparel-registry/open-apparel-registry/pull/2073)
 
 ### Security
 
