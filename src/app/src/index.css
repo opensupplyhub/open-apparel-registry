@@ -1,11 +1,11 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Darker Grotesque', sans-serif;
   top: 0px !important;
   color: #282827;
 }
 
 p, a, label, input, select, button {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Darker Grotesque', sans-serif;
 }
