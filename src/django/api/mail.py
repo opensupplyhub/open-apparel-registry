@@ -12,7 +12,10 @@ def make_oar_url(request):
         host = 'localhost:6543'
     else:
         protocol = 'https'
-        host = request.get_host()
+        if request:
+            host = request.get_host()
+        else:
+            host = settings.EXTERNAL_DOMAIN
 
     return '{}://{}'.format(protocol, host)
 
@@ -358,7 +361,7 @@ def notify_facility_list_complete(list_id):
     notification_to = facility_list.source.contributor.admin.email
 
     notification_dictionary = {
-        'list_url': make_facility_list_url(list_id),
+        'list_url': make_facility_list_url(None, list_id),
         'list_name': facility_list.name
     }
 
