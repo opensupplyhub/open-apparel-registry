@@ -137,7 +137,8 @@
 }
 
 .search-tab span, .inherit-font {
-    font-family: inherit !important;
+  color: #0D1128;
+  font-family: inherit !important;
 }
 
 .tabs {

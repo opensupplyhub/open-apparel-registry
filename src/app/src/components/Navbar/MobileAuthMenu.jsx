@@ -19,6 +19,7 @@ import {
 } from '../../util/constants';
 
 import { convertFeatureFlagsObjectToListOfActiveFlags } from '../../util/util';
+import COLOURS from '../../util/COLOURS';
 
 const styles = {
     mobileNavActive: {
@@ -29,7 +30,7 @@ const styles = {
     },
     mobileNavInactive: { left: '100%', opacity: 0 },
     profileButton: {
-        color: 'white',
+        color: COLOURS.NEAR_BLACK,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

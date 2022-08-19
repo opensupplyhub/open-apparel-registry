@@ -569,10 +569,10 @@ export const claimAFacilityPreferredContactOptions = Object.freeze([
 ]);
 
 export const GRID_COLOR_RAMP = Object.freeze([
-    [0, '#F2E9FE'],
-    [10, '#CDA9FD'],
-    [40, '#A868FB'],
-    [160, '#8428FA'],
+    [0, '#C0EBC7'],
+    [10, '#81D690'],
+    [40, '#4A9957'],
+    [160, '#19331D'],
 ]);
 
 export const PPE_FIELD_NAMES = Object.freeze([
@@ -583,7 +583,7 @@ export const PPE_FIELD_NAMES = Object.freeze([
 ]);
 
 export const OARFont = "'Darker Grotesque',sans-serif";
-export const OARColor = '#0427a4';
+export const OARColor = '#8428FA';
 
 // A CSS size value that is used to set a lower bound on the iframe height
 // when the width is set to 100%
