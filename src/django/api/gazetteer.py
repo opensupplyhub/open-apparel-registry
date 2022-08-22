@@ -3,9 +3,18 @@ import json
 from dedupe.api import Link, GazetteerMatching, StaticMatching
 from dedupe._typing import Data, Blocks
 from django.db import connection
+from api.models import TrainedModel
+
+
+class ModelOutOfDate(Exception):
+    pass
 
 
 class OgrGazetteerMatching(GazetteerMatching):
+    def check_model_version(self):
+        if TrainedModel.objects.get_active_version_id() != self.trained_model.id:
+            raise ModelOutOfDate()
+
     def index(self, data: Data) -> None:  # pragma: no cover
         """
         Add records to the index of records to match against. If a record in
@@ -17,6 +26,8 @@ class OgrGazetteerMatching(GazetteerMatching):
                   dictionaries with the keys being
                   field_names
         """
+
+        self.check_model_version()
 
         self.fingerprinter.index_all(data)
 
@@ -50,7 +61,8 @@ class OgrGazetteerMatching(GazetteerMatching):
                     INSERT INTO dedupe_indexed_records (block_key, record_id,
                     record_data)
                     VALUES (%s, %s, %s)
-                    ON CONFLICT (block_key, record_id) DO NOTHING
+                    ON CONFLICT (block_key, record_id)
+                    DO UPDATE SET record_data = EXCLUDED.record_data
                     """,
                     [item[0], item[1], json.dumps(data[item[1]])],
                 )
@@ -74,6 +86,8 @@ class OgrGazetteerMatching(GazetteerMatching):
                   dictionaries with the keys being
                   field_names
         """
+
+        self.check_model_version()
 
         # TODO can remove because we are not using index predicates
         for field in self.fingerprinter.index_fields:
@@ -121,6 +135,8 @@ class OgrGazetteerMatching(GazetteerMatching):
                (7, {'name' : 'Sammy', 'address' : '123 Main'}))
              ]]
         """
+
+        self.check_model_version()
 
         with connection.cursor() as cursor:
             cursor.execute("DROP TABLE IF EXISTS dedupe_blocking_map")
@@ -173,7 +189,11 @@ class OgrGazetteerMatching(GazetteerMatching):
 
 
 class OgrStaticGazetteer(StaticMatching, OgrGazetteerMatching):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.trained_model = TrainedModel.objects.get_active()
+
+        super().__init__(self.trained_model.dedupe_model, **kwargs)
+
 
 
 class OgrGazetteer(Link, OgrGazetteerMatching):
