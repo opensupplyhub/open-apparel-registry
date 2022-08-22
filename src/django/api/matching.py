@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import traceback
+import io
 
 from collections import defaultdict
 from datetime import datetime
@@ -17,8 +18,10 @@ from api.models import (Facility,
                         FacilityListItem,
                         FacilityMatch,
                         HistoricalFacility,
-                        HistoricalFacilityMatch)
+                        HistoricalFacilityMatch,
+                    TrainedModel)
 from api.helpers import clean
+from api.gazetteer import OgrGazetteer, OgrStaticGazetteer
 
 logger = logging.getLogger(__name__)
 
@@ -226,7 +229,7 @@ def get_messy_items_for_training(mod_factor=5):
             for i in records}
 
 
-def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
+def train_gazetteer(messy, canonical, should_index=False):
     """
     Train and return a dedupe.Gazetteer using the specified messy and canonical
     dictionaries. The messy and canonical objects should have the same
@@ -237,22 +240,25 @@ def train_gazetteer(messy, canonical, model_settings=None, should_index=False):
 
     Reads a training.json file containing positive and negative matches.
     """
-    if model_settings:
-        gazetteer = dedupe.StaticGazetteer(model_settings)
-    else:
-        fields = [
-            {'field': 'country', 'type': 'Exact'},
-            {'field': 'name', 'type': 'String'},
-            {'field': 'address', 'type': 'String'},
-        ]
+    fields = [
+        {'field': 'country', 'type': 'Exact'},
+        {'field': 'name', 'type': 'String'},
+        {'field': 'address', 'type': 'String'},
+    ]
 
-        gazetteer = dedupe.Gazetteer(fields)
-        training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
-                                     'training.json')
-        with open(training_file) as tf:
-            gazetteer.prepare_training(messy, canonical, tf, 15000)
-        gazetteer.train()
-        gazetteer.cleanup_training()
+    gazetteer = OgrGazetteer(fields)
+    training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
+                                 'training.json')
+    with open(training_file) as tf:
+        gazetteer.prepare_training(messy, canonical, tf, 15000)
+    #messy and canonical aren't doing anything if index_predicates are off?
+    gazetteer.train(index_predicates=False)
+    output_stream = io.BytesIO()
+    gazetteer.write_settings(output_stream)
+    output_stream.seek(0)
+    model_object = TrainedModel(dedupe_model=output_stream.read())
+    model_object.save()
+    gazetteer.cleanup_training()
 
     if should_index:
         index_start = datetime.now()
@@ -746,3 +752,19 @@ class GazetteerCache:
             raise
 
         return cls._gazetter
+
+
+def get_model_data():
+    with transaction.atomic():
+        # We expect `get_canonical_items` to return a list rather than a
+        # QuerySet so that we can close the transaction as quickly as
+        # possible
+        canonical = get_canonical_items()
+        if len(canonical.keys()) == 0:
+            raise NoCanonicalRecordsError()
+        # We expect `get_messy_items_for_training` to return a list rather
+        # than a QuerySet so that we can close the transaction as quickly
+        # as possible
+        messy = get_messy_items_for_training()
+
+    return messy, canonical
