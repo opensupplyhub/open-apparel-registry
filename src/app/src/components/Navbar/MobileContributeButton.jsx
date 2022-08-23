@@ -64,7 +64,7 @@ function MobileContributeButton({
                         style={styles.contributeButton}
                         onClick={handleClose}
                     >
-                        Register/Contribute
+                        Contribute
                     </Link>
                 </div>
                 <div className="mobile-nav__item mobile-nav__item--button">
