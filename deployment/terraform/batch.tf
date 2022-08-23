@@ -1,10 +1,14 @@
 resource "aws_batch_compute_environment" "default" {
   depends_on = ["aws_iam_role_policy_attachment.batch_policy"]
 
-  compute_environment_name = "batch${var.environment}DefaultComputeEnvironment"
-  type                     = "MANAGED"
-  state                    = "ENABLED"
-  service_role             = "${aws_iam_role.container_instance_batch.arn}"
+  compute_environment_name_prefix = "batch${var.environment}DefaultComputeEnvironment"
+  type                            = "MANAGED"
+  state                           = "ENABLED"
+  service_role                    = "${aws_iam_role.container_instance_batch.arn}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   compute_resources {
     type           = "SPOT"
@@ -66,7 +70,7 @@ data "template_file" "default_job_definition" {
 
     mailchimp_api_key = "${var.mailchimp_api_key}"
     mailchimp_list_id = "${var.mailchimp_list_id}"
-    
+
     rollbar_server_side_access_token = "${var.rollbar_server_side_access_token}"
 
     aws_region = "${var.aws_region}"

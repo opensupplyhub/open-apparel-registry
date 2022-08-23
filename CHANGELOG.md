@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [69] 2022-08-23
+
+### Added
+- Added a script to automate restoring an anonymized production snapshot [#1948](https://github.com/open-apparel-registry/open-apparel-registry/pull/1948)
+
+### Changed
+- Use name prefix and create before destroy for batch compute [#1950](https://github.com/open-apparel-registry/open-apparel-registry/pull/1950)
+
+### Fixed
+- Fix showing anonymous contributors on sidebar [#1993](https://github.com/open-apparel-registry/open-apparel-registry/pull/1993)
+- Fix delete facility [#2019](https://github.com/open-apparel-registry/open-apparel-registry/pull/2019)
+
 ## [69] 2022-06-23
 
 ### Added
@@ -36,7 +48,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
-- Dependeny updates
+- Dependency updates
 
 ## [68] 2022-06-09
 
@@ -1225,7 +1237,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/69...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/70...HEAD
+[70]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/70
 [69]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/69
 [68]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/68
 [67]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/67

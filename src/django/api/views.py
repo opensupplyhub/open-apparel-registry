@@ -1595,9 +1595,9 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             list_item.facility = None
             list_item.save()
 
-        match = facility.get_created_from_match()
-        match.changeReason = 'Deleted {}'.format(facility.id)
-        match.delete()
+        for match in facility.get_created_from_matches():
+            match.changeReason = 'Deleted {}'.format(facility.id)
+            match.delete()
 
         other_matches = facility.get_other_matches()
         if other_matches.count() > 0:
