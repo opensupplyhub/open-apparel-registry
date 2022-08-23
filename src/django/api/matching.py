@@ -258,6 +258,7 @@ def train_gazetteer(messy, canonical, should_index=False):
     output_stream.seek(0)
     model_object = TrainedModel(dedupe_model=output_stream.read())
     model_object.save()
+    gazetteer.trained_model = model_object
     gazetteer.cleanup_training()
 
     if should_index:
