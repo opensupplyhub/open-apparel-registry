@@ -189,11 +189,7 @@ class OgrGazetteerMatching(GazetteerMatching):
 
 
 class OgrStaticGazetteer(StaticMatching, OgrGazetteerMatching):
-    def __init__(self, *args, **kwargs):
-        self.trained_model = TrainedModel.objects.get_active()
-
-        super().__init__(self.trained_model.dedupe_model, **kwargs)
-
+    pass
 
 
 class OgrGazetteer(Link, OgrGazetteerMatching):
