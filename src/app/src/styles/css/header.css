@@ -286,13 +286,12 @@ button.app-header-button {
     width: 100%;
     text-transform: uppercase;
     position: absolute;
-    top: 100%;
-    left: -200%;
     z-index: 1;
     background: #F9F7F7;
     color: #191919;
     opacity: 0;
-    height: 100%
+    height: 100%;
+    left: 0;
 }
 .mobile-nav__item {
     border-top: 0.0625rem solid #0D1128;
