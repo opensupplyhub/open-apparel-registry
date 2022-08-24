@@ -101,7 +101,7 @@
         var defaultLanguage = 'en';
         function getLangFromTranslateElement(translateElement) {
             const innerText = translateElement?.M?.innerText?.slice(0, -2);
-            const shortNameDict = translateElement?.B;
+            const shortNameDict = translateElement?.C;
             if (!innerText || !shortNameDict) return defaultLanguage;
             for (const [key, value] of Object.entries(shortNameDict)) {
                 if (value.toLowerCase().trim() == innerText.toLowerCase().trim()) {
