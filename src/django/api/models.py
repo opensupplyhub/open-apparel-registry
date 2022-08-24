@@ -3027,6 +3027,7 @@ def index_facilities(facility_ids=list):
     index_custom_text(facility_ids)
     index_extendedfields(facility_ids)
 
+
 class TrainedModelManager(models.Manager):
     def get_active(self):
         return self.get(is_active=True)
@@ -3034,15 +3035,19 @@ class TrainedModelManager(models.Manager):
     def get_active_version_id(self):
         return self.get_active().id
 
+
 class TrainedModel(models.Model):
     class Meta():
-        constraints = [UniqueConstraint(name='unique_is_active',fields=['is_active'], condition=Q(is_active=True))]
+        constraints = [UniqueConstraint(name='unique_is_active',
+                       fields=['is_active'],
+                       condition=Q(is_active=True))]
     dedupe_model = models.BinaryField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(
         null=False,
         default=False,
-        help_text=('True if this is the currently active version of the dedupe model')
+        help_text=('True if this is the currently active version of the dedupe '
+                   'model')
     )
     objects = TrainedModelManager()
 
