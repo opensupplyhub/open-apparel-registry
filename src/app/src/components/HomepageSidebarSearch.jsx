@@ -19,7 +19,7 @@ import ContributorFilter from './Filters/ContributorFilter';
 import CountryNameFilter from './Filters/CountryNameFilter';
 import SectorFilter from './Filters/SectorFilter';
 
-import { resetAllFilters } from '../actions/filters';
+import { resetAllFilters, resetDrawerFilters } from '../actions/filters';
 
 import { recordSearchTabResetButtonClick } from '../actions/ui';
 
@@ -121,6 +121,7 @@ function FilterSidebarSearchTab({
     lists,
     classes,
     embedExtendedFields,
+    resetHiddenFilters,
 }) {
     const hiddenFields = [
         contributorTypes,
@@ -210,7 +211,7 @@ function FilterSidebarSearchTab({
         <Button
             size="small"
             variant="outlined"
-            onClick={() => resetFilters(embed)}
+            onClick={resetHiddenFilters}
             className={classes.reset}
             disabled={fetchingOptions}
         >
@@ -226,7 +227,7 @@ function FilterSidebarSearchTab({
             return (
                 <>
                     {searchButton}
-                    {resetHiddenFiltersButton}
+                    {resetButton}
                 </>
             );
         }
@@ -241,7 +242,7 @@ function FilterSidebarSearchTab({
             return (
                 <>
                     {applyFiltersButton}
-                    {resetButton}
+                    {resetHiddenFiltersButton}
                 </>
             );
         }
@@ -388,6 +389,7 @@ function mapDispatchToProps(dispatch, { history: { replace, location } }) {
         },
         searchForFacilities: () =>
             replace(`${facilitiesRoute}${location.search}`),
+        resetHiddenFilters: () => dispatch(resetDrawerFilters()),
     };
 }
 

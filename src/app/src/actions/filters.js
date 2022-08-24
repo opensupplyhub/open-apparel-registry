@@ -44,6 +44,7 @@ export const updateBoundaryFilter = createAction('UPDATE_BOUNDARY_FILTER');
 export const updatePPEFilter = createAction('UPDATE_PPE_FILTER');
 export const resetAllFilters = createAction('RESET_ALL_FILTERS');
 export const updateAllFilters = createAction('UPDATE_ALL_FILTERS');
+export const resetDrawerFilters = createAction('RESET_DRAWER_FILTERS');
 
 export function setFiltersFromQueryString(qs = '') {
     return (dispatch, getState) => {

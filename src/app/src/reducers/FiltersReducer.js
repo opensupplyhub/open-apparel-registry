@@ -18,6 +18,7 @@ import {
     updateCombineContributorsFilterOption,
     updateBoundaryFilter,
     resetAllFilters,
+    resetDrawerFilters,
     updateAllFilters,
 } from '../actions/filters';
 
@@ -135,6 +136,16 @@ export default createReducer(
                         ? state.contributors
                         : initialState.contributors,
                 },
+            }),
+        [resetDrawerFilters]: state =>
+            update(initialState, {
+                facilityFreeTextQuery: { $set: state.facilityFreeTextQuery },
+                contributors: {
+                    $set: state.contributors,
+                },
+                countries: { $set: state.countries },
+                combineContributors: { $set: state.combineContributors },
+                lists: { $set: state.lists },
             }),
         [updateAllFilters]: (_state, payload) => payload,
         [completeFetchContributorOptions]: maybeSetFromQueryString(
