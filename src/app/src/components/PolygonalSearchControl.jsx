@@ -69,9 +69,16 @@ class PolygonalSearchControl extends React.Component {
     }
 }
 
-const mapDispatchToProps = dispatch => ({
-    updateBoundary: boundary => dispatch(updateBoundaryFilter(boundary)),
-    search: () => dispatch(fetchFacilities({})),
+const mapDispatchToProps = (dispatch, { navigateToFacilities }) => ({
+    updateBoundary: boundary => {
+        dispatch(updateBoundaryFilter(boundary));
+    },
+    search: () => {
+        dispatch(fetchFacilities({}));
+        if (navigateToFacilities) {
+            navigateToFacilities();
+        }
+    },
     hideDrawFilter: () => dispatch(showDrawFilter(false)),
 });
 
