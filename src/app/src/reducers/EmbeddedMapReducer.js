@@ -1,7 +1,7 @@
 import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
 
-import { OARFont, OARColor } from '../util/constants';
+import { OARFont, OARColor, SelectedMarkerColor } from '../util/constants';
 
 import {
     setEmbeddedMapStatus,
@@ -14,6 +14,7 @@ import { completeSubmitLogOut } from '../actions/auth';
 
 const initialConfig = Object.freeze({
     color: OARColor,
+    selectedMarkerColor: SelectedMarkerColor,
     contributor: null,
     font: OARFont,
 });

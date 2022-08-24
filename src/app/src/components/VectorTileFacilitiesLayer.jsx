@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import intersection from 'lodash/intersection';
 import sortBy from 'lodash/sortBy';
 
-import { OARColor } from '../util/constants';
+import { SelectedMarkerColor } from '../util/constants';
 import FacilitiesMapPopup from './FacilitiesMapPopup';
 
 import {
@@ -26,9 +26,9 @@ const VectorGrid = withLeaflet(VectorGridDefault);
 const createMarkerIcon = (color = '#838BA5') => {
     const fill = color.replace('#', '%23');
     return L.icon({
-        iconUrl: `data:image/svg+xml;utf8,<svg fill="${fill}" height="506" viewBox="0 0 384 506" width="384" xmlns="http://www.w3.org/2000/svg"><path d="m0 192c0-106.039 85.961-192 192-192s192 85.961 192 192c0 70.692667-64 175.359373-192 314.00012-128-138.640747-192-243.307453-192-314.00012zm192 80c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/></svg>`,
-        iconSize: [30, 40],
-        iconAnchor: [15, 40],
+        iconUrl: `data:image/svg+xml;utf8,<svg width="32" height="42" viewBox="0 0 32 42" fill="${fill}" xmlns="http://www.w3.org/2000/svg"><path d="M19.5393 13.3319L19.5381 13.3307C18.5694 12.3481 17.3722 11.8399 16 11.8399C14.6277 11.8399 13.4309 12.3482 12.4633 13.3313C11.4952 14.3149 11 15.5239 11 16.9039C11 18.2838 11.495 19.4922 12.4633 20.4746C13.4307 21.4588 14.6275 21.9679 16 21.9679C17.3728 21.9679 18.5701 21.4587 19.5387 20.4746C20.5058 19.492 21 18.2835 21 16.9039C21 15.5244 20.5059 14.3156 19.5393 13.3319ZM4.80844 27.8042L4.80822 27.8039C2.22372 23.9245 1 20.434 1 17.3103C1 12.4608 2.52552 8.69462 5.50969 5.89893L5.50984 5.89878C8.54893 3.05045 12.032 1.64795 16 1.64795C19.968 1.64795 23.4511 3.05045 26.4902 5.89878L26.4903 5.89893C29.4745 8.69462 31 12.4608 31 17.3103C31 20.4341 29.7768 23.9247 27.1937 27.8041C24.7177 31.5218 20.9973 35.5748 16 39.9617C11.0028 35.5748 7.28309 31.5218 4.80844 27.8042Z" fill="${fill}" stroke="%230D1128" stroke-width="2"/></svg>`,
+        iconSize: [32, 42],
+        iconAnchor: [16, 42],
     });
 };
 
@@ -378,7 +378,8 @@ function mapStateToProps({
         tileCacheKey,
         fetching,
         resetButtonClickCount,
-        iconColor: config.color || OARColor,
+        iconColor:
+            config.selectedMarkerColor || config.color || SelectedMarkerColor,
     };
 }
 
