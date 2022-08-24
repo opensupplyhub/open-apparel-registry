@@ -19,9 +19,9 @@ from api.models import (Facility,
                         FacilityMatch,
                         HistoricalFacility,
                         HistoricalFacilityMatch,
-                    TrainedModel)
+                        TrainedModel)
 from api.helpers import clean
-from api.gazetteer import OgrGazetteer, OgrStaticGazetteer
+from api.gazetteer import OgrGazetteer
 
 logger = logging.getLogger(__name__)
 
@@ -251,7 +251,7 @@ def train_gazetteer(messy, canonical, should_index=False):
                                  'training.json')
     with open(training_file) as tf:
         gazetteer.prepare_training(messy, canonical, tf, 15000)
-    #messy and canonical aren't doing anything if index_predicates are off?
+    # Messy and canonical aren't doing anything if index_predicates are off?
     gazetteer.train(index_predicates=False)
     output_stream = io.BytesIO()
     gazetteer.write_settings(output_stream)
