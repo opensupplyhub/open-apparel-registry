@@ -12,7 +12,8 @@ class ModelOutOfDate(Exception):
 
 class OgrGazetteerMatching(GazetteerMatching):
     def check_model_version(self):
-        if TrainedModel.objects.get_active_version_id() != self.trained_model.id:
+        if TrainedModel.objects.get_active_version_id() \
+           != self.trained_model.id:
             raise ModelOutOfDate()
 
     def index(self, data: Data) -> None:  # pragma: no cover
@@ -76,7 +77,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                     """
             )
 
-
     def unindex(self, data: Data) -> None:  # pragma: no cover
         """
         Remove records from the index of records to match against.
@@ -105,7 +105,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                     """,
                     k,
                 )
-
 
     def blocks(self, data: Data) -> Blocks:
         """
