@@ -22,7 +22,7 @@ const styles = {
         border: '1px solid white',
         cursor: 'pointer',
         textTransform: 'uppercase',
-        color: 'white',
+        color: '#FFCF3F',
         fontWeight: 'normal',
         padding: '0.5rem 1rem',
         fontSize: '1.5rem',
@@ -64,7 +64,7 @@ function MobileContributeButton({
                         style={styles.contributeButton}
                         onClick={handleClose}
                     >
-                        Register/Contribute
+                        Contribute
                     </Link>
                 </div>
                 <div className="mobile-nav__item mobile-nav__item--button">

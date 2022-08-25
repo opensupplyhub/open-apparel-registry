@@ -34,7 +34,8 @@ const styles = {
         letterSpacing: '0.125rem',
         textDecoration: 'none',
         textTransform: 'uppercase',
-        color: 'inherit',
+        backgroundColor: '#FFCF3F',
+        color: '#191919',
         padding: '8px 16px',
         borderRadius: '20px',
         marginRight: '1rem',
@@ -133,7 +134,7 @@ function AuthMenu({
                     href={authRegisterFormRoute}
                     disabled={sessionFetching}
                 >
-                    Register/Contribute
+                    Contribute
                 </Link>
                 <Link
                     className="app-header-button"
