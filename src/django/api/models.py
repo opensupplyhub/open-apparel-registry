@@ -3035,6 +3035,7 @@ class TrainedModel(models.Model):
                        condition=Q(is_active=True))]
     dedupe_model = models.BinaryField()
     created_at = models.DateTimeField(auto_now_add=True)
+    activated_at = models.DateTimeField(null=True)
     is_active = models.BooleanField(
         null=False,
         default=False,
