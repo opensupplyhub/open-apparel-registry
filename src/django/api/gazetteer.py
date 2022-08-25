@@ -16,6 +16,16 @@ class OgrGazetteerMatching(GazetteerMatching):
            != self.trained_model.id:
             raise ModelOutOfDate()
 
+    def _create_index_table(self, cursor):
+        cursor.execute(
+            """CREATE TABLE IF NOT EXISTS dedupe_indexed_records
+            (block_key text,
+            record_id varchar(32),
+            record_data text,
+            UNIQUE (block_key, record_id))
+            """
+        )
+
     def index(self, data: Data) -> None:  # pragma: no cover
         """
         Add records to the index of records to match against. If a record in
@@ -34,15 +44,7 @@ class OgrGazetteerMatching(GazetteerMatching):
 
         # TODO: Should this be a model?
         with connection.cursor() as cursor:
-            cursor.execute(
-                """CREATE TABLE IF NOT EXISTS dedupe_indexed_records
-                (block_key text,
-                record_id varchar(32),
-                record_data text,
-                UNIQUE (block_key, record_id))
-                """
-            )
-
+            self._create_index_table(cursor)
         # TODO: Do this in chunks rather than one at a time. Can you bulk copy
         # with upsert logic? The dedupe PG example has a bulk insert but this
         # may not do an update
@@ -192,4 +194,25 @@ class OgrStaticGazetteer(StaticMatching, OgrGazetteerMatching):
 
 
 class OgrGazetteer(Link, OgrGazetteerMatching):
-    pass
+    def build_index_table(self, canonical):
+        table_name = 'dedupe_indexed_records_{}'.format(self.trained_model.id)
+
+        with connection.cursor() as cursor:
+            self._create_index_table(cursor)
+            cursor.execute(
+                "CREATE TABLE {} (LIKE dedupe_indexed_records INCLUDING ALL)"
+                .format(table_name)
+            )
+            # TODO: Bulk insert for speed?
+            # The `target` kwarg is related to index predicates, which we are
+            # not using.
+            for item in self.fingerprinter(canonical.items(), target=True):
+                cursor.execute(
+                    """
+                    INSERT INTO {} (block_key, record_id, record_data)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (block_key, record_id)
+                    DO UPDATE SET record_data = EXCLUDED.record_data
+                    """.format(table_name),
+                    [item[0], item[1], json.dumps(canonical[item[1]])],
+                )
