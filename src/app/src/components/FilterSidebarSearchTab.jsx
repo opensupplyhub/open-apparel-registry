@@ -1,31 +1,22 @@
 import React, { useState } from 'react';
 import { bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
-import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import Tooltip from '@material-ui/core/Tooltip';
-import Popover from '@material-ui/core/Popover';
-import ReactSelect from 'react-select';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 
 import ShowOnly from './ShowOnly';
 import FeatureFlag from './FeatureFlag';
+import TextSearchFilter from './Filters/TextSearchFilter';
+import ContributorFilter from './Filters/ContributorFilter';
+import CountryNameFilter from './Filters/CountryNameFilter';
+import SectorFilter from './Filters/SectorFilter';
 import FilterSidebarExtendedSearch from './FilterSidebarExtendedSearch';
 
 import {
-    updateFacilityFreeTextQueryFilter,
-    updateContributorFilter,
-    updateListFilter,
     updateContributorTypeFilter,
-    updateCountryFilter,
-    updateSectorFilter,
     updateParentCompanyFilter,
     updateFacilityTypeFilter,
     updateProcessingTypeFilter,
@@ -45,30 +36,22 @@ import COLOURS from '../util/COLOURS';
 import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
-    countryOptionsPropType,
-    sectorOptionsPropType,
     facilityTypeOptionsPropType,
     processingTypeOptionsPropType,
     productTypeOptionsPropType,
     numberOfWorkerOptionsPropType,
     facilityCollectionPropType,
-    contributorListOptionsPropType,
 } from '../util/propTypes';
 
 import { filterSidebarStyles } from '../util/styles';
 
-import {
-    getValueFromEvent,
-    makeSubmitFormOnEnterKeyPressFunction,
-} from '../util/util';
+import { getValueFromEvent } from '../util/util';
 
 import {
     FACILITIES_REQUEST_PAGE_SIZE,
-    DEFAULT_SEARCH_TEXT,
     EXTENDED_PROFILE_FLAG,
     EXTENDED_FIELDS_EXPLANATORY_TEXT,
 } from '../util/constants';
-import { fetchSectorOptions } from '../actions/filterOptions';
 
 const filterSidebarSearchTabStyles = theme =>
     Object.freeze({
@@ -76,18 +59,6 @@ const filterSidebarSearchTabStyles = theme =>
             fontFamily: theme.typography.fontFamily,
             fontSize: '18px',
             fontWeight: 700,
-            color: '#000',
-            transform: 'translate(0, -8px) scale(1)',
-            paddingBottom: '0.5rem',
-        }),
-        formStyle: Object.freeze({
-            width: '100%',
-            marginBottom: '32px',
-        }),
-        inputLabelStyle: Object.freeze({
-            fontFamily: theme.typography.fontFamily,
-            fontSize: '16px',
-            fontWeight: 500,
             color: '#000',
             transform: 'translate(0, -8px) scale(1)',
             paddingBottom: '0.5rem',
@@ -105,9 +76,6 @@ const filterSidebarSearchTabStyles = theme =>
                 textDecoration: 'underline',
             },
         }),
-        selectStyle: Object.freeze({
-            fontFamily: theme.typography.fontFamily,
-        }),
         font: Object.freeze({
             fontFamily: `${theme.typography.fontFamily} !important`,
         }),
@@ -119,50 +87,27 @@ const filterSidebarSearchTabStyles = theme =>
         ...filterSidebarStyles,
     });
 
-const FACILITIES = 'FACILITIES';
-const CONTRIBUTORS = 'CONTRIBUTORS';
-const LISTS = 'LISTS';
-const COUNTRIES = 'COUNTRIES';
-const SECTORS = 'SECTORS';
-
 const checkIfAnyFieldSelected = fields => fields.some(f => f.length !== 0);
 
 function FilterSidebarSearchTab({
-    contributorOptions,
-    listOptions,
-    countryOptions,
-    sectorOptions,
-    fetchSectors,
     resetFilters,
     facilityFreeTextQuery,
-    updateFacilityFreeTextQuery,
     contributors,
-    updateContributor,
     contributorTypes,
     countries,
     sectors,
-    updateCountry,
-    updateSector,
     parentCompany,
     facilityType,
     processingType,
     productType,
     numberOfWorkers,
-    combineContributors,
-    updateCombineContributors,
     fetchingFacilities,
-    fetchingSectors,
     searchForFacilities,
     facilities,
     fetchingOptions,
-    submitFormOnEnterKeyPress,
     vectorTileFlagIsActive,
     embed,
-    fetchingLists,
-    updateList,
-    lists,
     classes,
-    textSearchLabel,
     embedExtendedFields,
 }) {
     const extendedFields = [
@@ -181,10 +126,6 @@ function FilterSidebarSearchTab({
         sectors,
     ]);
 
-    const [
-        contributorPopoverAnchorEl,
-        setContributorPopoverAnchorEl,
-    ] = useState(null);
     const [expand, setExpand] = useState(
         checkIfAnyFieldSelected(extendedFields),
     );
@@ -218,56 +159,6 @@ function FilterSidebarSearchTab({
             </div>
         );
     })();
-
-    const styles = {
-        popover: {
-            fontSize: '15px',
-            padding: '10px',
-            lineHeight: '22px',
-            maxWidth: '320px',
-            margin: '0 14px',
-        },
-        popoverLineItem: {
-            marginBottom: '6px',
-        },
-        popoverHeading: {
-            fontWeight: 'bold',
-        },
-        icon: {
-            color: 'rgba(0, 0, 0, 0.38)',
-        },
-    };
-
-    const contributorInfoPopoverContent = (
-        <div style={styles.popover}>
-            <p style={styles.popoverHeading}>
-                Do you want to see only facilities which these contributors
-                share? If so, tick this box.
-            </p>
-            <p>
-                There are now two ways to filter a Contributor search on the OS
-                Hub:
-            </p>
-            <ol>
-                <li style={styles.popoverLineItem}>
-                    You can search for all the facilities of multiple
-                    contributors. This means that the results would show all of
-                    the facilities contributed to the OS Hub by, for example,
-                    BRAC University or Clarks. Some facilities might have been
-                    contributed by BRAC University but not by Clarks, or
-                    vice-versa.
-                </li>
-                <li style={styles.popoverLineItem}>
-                    By checking the “Show only shared facilities” box, this
-                    adjusts the search logic to “AND”. This means that your
-                    results will show only facilities contributed by BOTH BRAC
-                    University AND Clarks (as well as potentially other
-                    contributors). In this way, you can more quickly filter to
-                    show the specific Contributor overlap you are interested in.
-                </li>
-            </ol>
-        </div>
-    );
 
     const expandButton = expand ? (
         <Button
@@ -367,167 +258,13 @@ function FilterSidebarSearchTab({
                             </a>
                         </div>
                     </div>
-                    <InputLabel htmlFor={FACILITIES} className="form__label">
-                        {embed ? textSearchLabel : DEFAULT_SEARCH_TEXT}
-                    </InputLabel>
-                    <TextField
-                        id={FACILITIES}
-                        placeholder="e.g., ABC Textiles Limited"
-                        className="full-width margin-bottom-16 form__text-input"
-                        value={facilityFreeTextQuery}
-                        onChange={updateFacilityFreeTextQuery}
-                        onKeyPress={submitFormOnEnterKeyPress}
+                    <TextSearchFilter
+                        searchForFacilities={searchForFacilities}
                     />
                 </div>
-                <div className="form__field">
-                    <ShowOnly when={!embed}>
-                        <InputLabel
-                            shrink={false}
-                            htmlFor={CONTRIBUTORS}
-                            className={classes.inputLabelStyle}
-                        >
-                            Contributor
-                        </InputLabel>
-                        <ReactSelect
-                            isMulti
-                            id={CONTRIBUTORS}
-                            name={CONTRIBUTORS}
-                            className={`basic-multi-select notranslate ${classes.selectStyle}`}
-                            classNamePrefix="select"
-                            options={contributorOptions || []}
-                            value={contributors}
-                            onChange={updateContributor}
-                            disabled={fetchingOptions || fetchingFacilities}
-                        />
-                        <ShowOnly
-                            when={contributors && contributors.length > 1}
-                        >
-                            <div style={{ marginLeft: '16px' }}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={!!combineContributors}
-                                            onChange={updateCombineContributors}
-                                            color="primary"
-                                            value={combineContributors}
-                                        />
-                                    }
-                                    label="Show only shared facilities"
-                                />
-                                <IconButton
-                                    onClick={
-                                        // eslint-disable-next-line no-confusing-arrow
-                                        e =>
-                                            contributorPopoverAnchorEl
-                                                ? null
-                                                : setContributorPopoverAnchorEl(
-                                                      e.currentTarget,
-                                                  )
-                                    }
-                                >
-                                    <InfoIcon />
-                                </IconButton>
-                                <Popover
-                                    id="contributor-info-popover"
-                                    anchorOrigin={{
-                                        vertical: 'center',
-                                        horizontal: 'right',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'center',
-                                        horizontal: 'left',
-                                    }}
-                                    open={!!contributorPopoverAnchorEl}
-                                    anchorEl={contributorPopoverAnchorEl}
-                                    onClick={() =>
-                                        setContributorPopoverAnchorEl(null)
-                                    }
-                                >
-                                    {contributorInfoPopoverContent}
-                                </Popover>
-                            </div>
-                        </ShowOnly>
-                    </ShowOnly>
-                    <ShowOnly
-                        when={
-                            contributors &&
-                            !!contributors.length &&
-                            !fetchingLists
-                        }
-                    >
-                        <div
-                            style={{
-                                marginLeft: embed ? 0 : '16px',
-                                marginTop: '12px',
-                            }}
-                        >
-                            <InputLabel
-                                shrink={false}
-                                htmlFor={LISTS}
-                                className={classes.inputLabelStyle}
-                            >
-                                Contributor List
-                            </InputLabel>
-                            <ReactSelect
-                                isMulti
-                                id={LISTS}
-                                name={LISTS}
-                                className={`basic-multi-select notranslate ${classes.selectStyle}`}
-                                classNamePrefix="select"
-                                options={listOptions || []}
-                                value={lists}
-                                onChange={updateList}
-                                disabled={fetchingLists || fetchingFacilities}
-                            />
-                        </div>
-                    </ShowOnly>
-                </div>
-                <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={COUNTRIES}
-                        className={classes.inputLabelStyle}
-                    >
-                        Country Name
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={COUNTRIES}
-                        name={COUNTRIES}
-                        className={`basic-multi-select ${classes.selectStyle}`}
-                        classNamePrefix="select"
-                        options={countryOptions || []}
-                        value={countries}
-                        onChange={updateCountry}
-                        disabled={fetchingOptions || fetchingFacilities}
-                    />
-                </div>
-                <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={SECTORS}
-                        className={classes.inputLabelStyle}
-                    >
-                        Sector
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={SECTORS}
-                        name={SECTORS}
-                        className={`basic-multi-select notranslate ${classes.selectStyle}`}
-                        classNamePrefix="select"
-                        options={sectorOptions || []}
-                        value={sectors}
-                        onChange={updateSector}
-                        onFocus={() =>
-                            !sectorOptions && !fetchingSectors && fetchSectors()
-                        }
-                        noOptionsMessage={() =>
-                            fetchingSectors ? 'Loading..' : 'No options'
-                        }
-                        disabled={fetchingOptions || fetchingSectors}
-                    />
-                </div>
+                <ContributorFilter />
+                <CountryNameFilter />
+                <SectorFilter />
                 <FeatureFlag flag={EXTENDED_PROFILE_FLAG}>
                     <ShowOnly when={expand}>
                         <FilterSidebarExtendedSearch />
@@ -577,34 +314,18 @@ function FilterSidebarSearchTab({
 
 FilterSidebarSearchTab.defaultProps = {
     facilities: null,
-    contributorOptions: null,
-    listOptions: null,
-    countryOptions: null,
-    sectorOptions: null,
 };
 
 FilterSidebarSearchTab.propTypes = {
-    contributorOptions: contributorOptionsPropType,
-    listOptions: contributorListOptionsPropType,
-    countryOptions: countryOptionsPropType,
-    sectorOptions: sectorOptionsPropType,
     resetFilters: func.isRequired,
-    updateFacilityFreeTextQuery: func.isRequired,
-    updateContributor: func.isRequired,
-    updateCountry: func.isRequired,
-    updateCombineContributors: func.isRequired,
-    fetchSectors: func.isRequired,
     facilityFreeTextQuery: string.isRequired,
     contributors: contributorOptionsPropType.isRequired,
     contributorTypes: contributorTypeOptionsPropType.isRequired,
-    countries: countryOptionsPropType.isRequired,
-    sectors: sectorOptionsPropType.isRequired,
     parentCompany: contributorOptionsPropType.isRequired,
     facilityType: facilityTypeOptionsPropType.isRequired,
     processingType: processingTypeOptionsPropType.isRequired,
     productType: productTypeOptionsPropType.isRequired,
     numberOfWorkers: numberOfWorkerOptionsPropType.isRequired,
-    combineContributors: string.isRequired,
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
     facilities: facilityCollectionPropType,
@@ -614,18 +335,12 @@ FilterSidebarSearchTab.propTypes = {
 
 function mapStateToProps({
     filterOptions: {
-        contributors: {
-            data: contributorOptions,
-            fetching: fetchingContributors,
-        },
-        lists: { data: listOptions, fetching: fetchingLists },
-        countries: { data: countryOptions, fetching: fetchingCountries },
-        sectors: { data: sectorOptions, fetching: fetchingSectors },
+        contributors: { fetching: fetchingContributors },
+        countries: { fetching: fetchingCountries },
     },
     filters: {
         facilityFreeTextQuery,
         contributors,
-        lists,
         contributorTypes,
         countries,
         sectors,
@@ -635,7 +350,6 @@ function mapStateToProps({
         productType,
         numberOfWorkers,
         nativeLanguageName,
-        combineContributors,
         boundary,
     },
     facilities: {
@@ -652,13 +366,8 @@ function mapStateToProps({
 
     return {
         vectorTileFlagIsActive,
-        contributorOptions,
-        listOptions,
-        countryOptions,
-        sectorOptions,
         facilityFreeTextQuery,
         contributors,
-        lists,
         contributorTypes,
         countries,
         sectors,
@@ -668,33 +377,18 @@ function mapStateToProps({
         productType,
         numberOfWorkers,
         nativeLanguageName,
-        combineContributors,
         fetchingFacilities,
         facilities,
         boundary,
         fetchingOptions: fetchingContributors || fetchingCountries,
-        fetchingSectors,
         embed: !!embed,
-        fetchingLists,
-        textSearchLabel: config.text_search_label,
         embedExtendedFields: config.extended_fields,
     };
 }
 
 function mapDispatchToProps(dispatch, { history: { push } }) {
     return {
-        updateFacilityFreeTextQuery: e =>
-            dispatch(updateFacilityFreeTextQueryFilter(getValueFromEvent(e))),
-        updateContributor: v => {
-            if (!v || v.length < 2) {
-                dispatch(updateCombineContributorsFilterOption(''));
-            }
-            dispatch(updateContributorFilter(v));
-        },
         updateContributorType: v => dispatch(updateContributorTypeFilter(v)),
-        updateList: v => dispatch(updateListFilter(v)),
-        updateCountry: v => dispatch(updateCountryFilter(v)),
-        updateSector: v => dispatch(updateSectorFilter(v)),
         updateParentCompany: v => dispatch(updateParentCompanyFilter(v)),
         updateFacilityType: v => dispatch(updateFacilityTypeFilter(v)),
         updateProcessingType: v => dispatch(updateProcessingTypeFilter(v)),
@@ -708,7 +402,6 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
                     e.target.checked ? 'AND' : '',
                 ),
             ),
-        fetchSectors: () => dispatch(fetchSectorOptions()),
         resetFilters: embedded => {
             dispatch(recordSearchTabResetButtonClick());
             return dispatch(resetAllFilters(embedded));
@@ -722,9 +415,6 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
                     pushNewRoute: push,
                 }),
             ),
-        submitFormOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(() =>
-            dispatch(fetchFacilities(push)),
-        ),
     };
 }
 

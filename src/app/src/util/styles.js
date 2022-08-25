@@ -92,6 +92,21 @@ export const filterSidebarStyles = Object.freeze({
     }),
 });
 
+export const makeFilterStyles = theme =>
+    Object.freeze({
+        inputLabelStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+            fontSize: '16px',
+            fontWeight: 500,
+            color: '#000',
+            transform: 'translate(0, -8px) scale(1)',
+            paddingBottom: '0.5rem',
+        }),
+        selectStyle: Object.freeze({
+            fontFamily: theme.typography.fontFamily,
+        }),
+    });
+
 export const claimAFacilityFormStyles = Object.freeze({
     textFieldStyles: Object.freeze({
         width: '95%',

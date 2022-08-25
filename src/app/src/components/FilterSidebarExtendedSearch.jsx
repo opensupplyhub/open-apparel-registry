@@ -1,15 +1,11 @@
 import React, { useEffect } from 'react';
 import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
-import InputLabel from '@material-ui/core/InputLabel';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import ReactSelect from 'react-select';
-import Divider from '@material-ui/core/Divider';
-import { withStyles } from '@material-ui/core/styles';
 import uniq from 'lodash/uniq';
 
 import ShowOnly from './ShowOnly';
-import CreatableInputOnly from './CreatableInputOnly';
+import StyledSelect from './Filters/StyledSelect';
 
 import {
     updateContributorTypeFilter,
@@ -39,33 +35,10 @@ import {
     parentCompanyOptionsPropType,
 } from '../util/propTypes';
 
-import { filterSidebarStyles } from '../util/styles';
-
 import {
     getValueFromEvent,
     mapDjangoChoiceTuplesValueToSelectOptions,
 } from '../util/util';
-
-import { EXTENDED_FIELDS_EXPLANATORY_TEXT } from '../util/constants';
-
-const filterSidebarExtendedSearchStyles = theme =>
-    Object.freeze({
-        inputLabelStyle: Object.freeze({
-            fontFamily: theme.typography.fontFamily,
-            fontSize: '16px',
-            fontWeight: 500,
-            color: '#000',
-            transform: 'translate(0, -8px) scale(1)',
-            paddingBottom: '0.5rem',
-        }),
-        selectStyle: Object.freeze({
-            fontFamily: theme.typography.fontFamily,
-        }),
-        font: Object.freeze({
-            fontFamily: `${theme.typography.fontFamily} !important`,
-        }),
-        ...filterSidebarStyles,
-    });
 
 const CONTRIBUTOR_TYPES = 'CONTRIBUTOR_TYPES';
 const PARENT_COMPANY = 'PARENT_COMPANY';
@@ -134,7 +107,6 @@ function FilterSidebarExtendedSearch({
     fetchingExtendedOptions,
     embed,
     embedExtendedFields,
-    classes,
     fetchContributorTypes,
     fetchParentCompanies,
     fetchFacilityProcessingType,
@@ -178,19 +150,10 @@ function FilterSidebarExtendedSearch({
         <>
             <ShowOnly when={!embed}>
                 <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={CONTRIBUTOR_TYPES}
-                        className={classes.inputLabelStyle}
-                    >
-                        Contributor Type
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={CONTRIBUTOR_TYPES}
-                        name="contributorTypes"
-                        className={`basic-multi-select notranslate ${classes.selectStyle}`}
-                        classNamePrefix="select"
+                    <StyledSelect
+                        label="Contributor Type"
+                        id="contributorType"
+                        name={CONTRIBUTOR_TYPES}
                         options={contributorTypeOptions || []}
                         value={contributorTypes}
                         onChange={updateContributorType}
@@ -198,17 +161,6 @@ function FilterSidebarExtendedSearch({
                     />
                 </div>
             </ShowOnly>
-            <div className="form__field">
-                <Divider />
-                <ShowOnly when={!embed}>
-                    <div
-                        className="form__info"
-                        style={{ color: 'rgba(0, 0, 0, 0.8)' }}
-                    >
-                        {EXTENDED_FIELDS_EXPLANATORY_TEXT}
-                    </div>
-                </ShowOnly>
-            </div>
             <ShowOnly
                 when={
                     !embed ||
@@ -219,19 +171,10 @@ function FilterSidebarExtendedSearch({
                 }
             >
                 <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={PARENT_COMPANY}
-                        className={classes.inputLabelStyle}
-                    >
-                        Parent Company
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={PARENT_COMPANY}
+                    <StyledSelect
+                        creatable
+                        label="Parent Company"
                         name={PARENT_COMPANY}
-                        className={`basic-multi-select ${classes.selectStyle}`}
-                        classNamePrefix="select"
                         options={parentCompanyOptions || []}
                         value={parentCompany}
                         onChange={updateParentCompany}
@@ -250,19 +193,9 @@ function FilterSidebarExtendedSearch({
                 }
             >
                 <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={FACILITY_TYPE}
-                        className={classes.inputLabelStyle}
-                    >
-                        Facility Type
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={FACILITY_TYPE}
+                    <StyledSelect
+                        label="Facility Type"
                         name={FACILITY_TYPE}
-                        className={`basic-multi-select ${classes.selectStyle}`}
-                        classNamePrefix="select"
                         options={mapFacilityTypeOptions(
                             facilityProcessingTypeOptions || [],
                             processingType,
@@ -283,19 +216,9 @@ function FilterSidebarExtendedSearch({
                 }
             >
                 <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={PROCESSING_TYPE}
-                        className={classes.inputLabelStyle}
-                    >
-                        Processing Type
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={PROCESSING_TYPE}
+                    <StyledSelect
+                        label="Processing Type"
                         name={PROCESSING_TYPE}
-                        className={`basic-multi-select ${classes.selectStyle}`}
-                        classNamePrefix="select"
                         options={mapProcessingTypeOptions(
                             facilityProcessingTypeOptions || [],
                             facilityType,
@@ -316,19 +239,10 @@ function FilterSidebarExtendedSearch({
                 }
             >
                 <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={PRODUCT_TYPE}
-                        className={classes.inputLabelStyle}
-                    >
-                        Product Type
-                    </InputLabel>
-                    <CreatableInputOnly
-                        isMulti
-                        id={PRODUCT_TYPE}
+                    <StyledSelect
+                        creatable
+                        label="Product Type"
                         name={PRODUCT_TYPE}
-                        className={`basic-multi-select ${classes.selectStyle}`}
-                        classNamePrefix="select"
                         value={productType}
                         onChange={updateProductType}
                         disabled={fetchingFacilities}
@@ -346,19 +260,9 @@ function FilterSidebarExtendedSearch({
                 }
             >
                 <div className="form__field">
-                    <InputLabel
-                        shrink={false}
-                        htmlFor={NUMBER_OF_WORKERS}
-                        className={classes.inputLabelStyle}
-                    >
-                        Number of Workers
-                    </InputLabel>
-                    <ReactSelect
-                        isMulti
-                        id={NUMBER_OF_WORKERS}
+                    <StyledSelect
+                        label="Number of Workers"
                         name={NUMBER_OF_WORKERS}
-                        className={`basic-multi-select ${classes.selectStyle}`}
-                        classNamePrefix="select"
                         options={numberOfWorkersOptions || []}
                         value={numberOfWorkers}
                         onChange={updateNumberOfWorkers}
@@ -471,4 +375,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(withStyles(filterSidebarExtendedSearchStyles)(FilterSidebarExtendedSearch));
+)(FilterSidebarExtendedSearch);

@@ -54,7 +54,7 @@ export default class CreatableInputOnly extends Component {
 
     render() {
         const { inputValue } = this.state;
-        const { value } = this.props;
+        const { value, ...rest } = this.props;
         return (
             <CreatableSelect
                 components={components}
@@ -68,6 +68,7 @@ export default class CreatableInputOnly extends Component {
                 onBlur={this.handleBlur}
                 placeholder={this.props.placeholder}
                 value={value}
+                {...rest}
             />
         );
     }
