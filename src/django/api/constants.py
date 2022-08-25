@@ -27,6 +27,7 @@ class ProcessingAction:
 
 class FacilitiesQueryParams:
     Q = 'q'
+    ID = 'id'
     NAME = 'name'
     CONTRIBUTORS = 'contributors'
     LISTS = 'lists'
