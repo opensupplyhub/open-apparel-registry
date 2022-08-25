@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Create a log group for AWS Batch jobs [#2060](https://github.com/open-apparel-registry/open-apparel-registry/pull/2060)
 - Allow admins to set superuser status [#2095](https://github.com/open-apparel-registry/open-apparel-registry/pull/2095)
 - Replace font and global colors [#2077](https://github.com/open-apparel-registry/open-apparel-registry/pull/2077)
+- Change map marker #[2089](https://github.com/open-apparel-registry/open-apparel-registry/pull/2089)
 
 ### Deprecated
 
