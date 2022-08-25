@@ -3046,8 +3046,8 @@ class TrainedModel(models.Model):
     is_active = models.BooleanField(
         null=False,
         default=False,
-        help_text=('True if this is the currently active version of the dedupe '
-                   'model')
+        help_text=('True if this is the currently active version of the '
+                   'dedupe model')
     )
     objects = TrainedModelManager()
 
