@@ -9,6 +9,7 @@ import {
 
 import FacilityDetailsSidebar from './FacilityDetailSidebar';
 import FilterSidebar from './FilterSidebar';
+import HomepageSidebar from './HomepageSidebar';
 
 export default class SidebarWithErrorBoundary extends Component {
     state = { hasError: false };
@@ -42,7 +43,7 @@ export default class SidebarWithErrorBoundary extends Component {
                     key={JSON.stringify(this.state.hasError)}
                     exact
                     path={mainRoute}
-                    component={FilterSidebar}
+                    component={HomepageSidebar}
                 />
             </Switch>
         );

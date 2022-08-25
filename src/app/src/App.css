@@ -601,8 +601,8 @@ hr {
 
   .map-container {
     width: 100%;
-    height: 40vh;
-    order: -1;
+    height: 50vh;
+    order: 1;
   }
 
   .panel-header {

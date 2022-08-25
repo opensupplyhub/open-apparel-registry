@@ -16,6 +16,7 @@ import ResetPasswordForm from './components/ResetPasswordForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
 import Contribute from './components/Contribute';
+import Homepage from './components/Homepage';
 import MapAndSidebar from './components/MapAndSidebar';
 import FacilityLists from './components/FacilityLists';
 import FacilityListItems from './components/FacilityListItems';
@@ -225,9 +226,7 @@ class Routes extends Component {
                                             return <CircularProgress />;
                                         }
 
-                                        return (
-                                            <Route component={MapAndSidebar} />
-                                        );
+                                        return <Route component={Homepage} />;
                                     }}
                                 />
                                 <Route render={() => <RouteNotFound />} />
