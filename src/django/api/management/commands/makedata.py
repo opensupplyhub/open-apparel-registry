@@ -68,12 +68,16 @@ class Command(BaseCommand):
         rows = []
         with open(csv_file) as f:
             for row in csv.DictReader(f):
+                try:
+                    sector = row['sector']
+                except KeyError:
+                    sector = 'Apparel'
                 rows.append(
                     {
                         'country': row['country_code'],
                         'name': row['name'],
                         'address': row['address'],
-                        'sector': row['sector'],
+                        'sector': sector,
                         'lat': row['lat'],
                         'lng': row['lng'],
                     }
