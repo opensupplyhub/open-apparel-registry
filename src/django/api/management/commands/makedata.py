@@ -66,6 +66,10 @@ class Command(BaseCommand):
         random.seed(8675309)
 
         rows = []
+
+        def clean(text):
+            return text.replace('\n', '')
+
         with open(csv_file) as f:
             for row in csv.DictReader(f):
                 try:
@@ -74,9 +78,9 @@ class Command(BaseCommand):
                     sector = 'Apparel'
                 rows.append(
                     {
-                        'country': row['country_code'],
-                        'name': row['name'],
-                        'address': row['address'],
+                        'country': clean(row['country_code']),
+                        'name': clean(row['name']),
+                        'address': clean(row['address']),
                         'sector': sector,
                         'lat': row['lat'],
                         'lng': row['lng'],
