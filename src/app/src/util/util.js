@@ -879,7 +879,7 @@ export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
           })
         : querystring.stringify({ contributors: contributor, embed: 1 });
 
-    return window.location.href.replace('settings', `?${qs}`);
+    return window.location.href.replace('settings', `facilities?${qs}`);
 };
 
 // This must be kept in sync with renderEmbeddedMap in EmbeddedMapConfig.jsx
