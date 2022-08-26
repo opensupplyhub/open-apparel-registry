@@ -12,17 +12,21 @@ def chunks(lst, n):
 
 
 class Command(BaseCommand):
-    help = 'Take a downloaded facility CSV and make uploadable CSVs'
+    help = (
+        'Take a downloaded facility CSV from OAR and make uploadable CSVs or '
+        'SQL scripts. NOTE this has not been updated to use the new OS Hub CSV '
+        'format.'
+    )
 
     def add_arguments(self, parser):
         parser.add_argument('csvfile',
-                            help='Path to a CSV downloaded from OS Hub')
+                            help='Path to a CSV downloaded from OAR')
 
         parser.add_argument(
             '-f',
             '--filecount',
             type=int,
-            help='The total number of files to create',
+            help='For CSV output, the total number of files to create',
             default=1,
         )
 
@@ -30,7 +34,7 @@ class Command(BaseCommand):
             '-r',
             '--rowcount',
             type=int,
-            help='The total number of rows to create',
+            help='The total number of facilities to create',
             default=1,
         )
 
@@ -41,11 +45,23 @@ class Command(BaseCommand):
             default='./',
         )
 
+        parser.add_argument(
+            '-s',
+            '--sql',
+            help='Generate SQL scripts',
+            action='store_true',
+            default=False
+        )
+
     def handle(self, *args, **options):
         csv_file = options['csvfile']
         file_count = options['filecount']
         row_count = options['rowcount']
         out_dir = options['outdir']
+        output_sql = options['sql']
+
+        if output_sql:
+            raise Exception('NOT YET IMPLEMENTED')
 
         random.seed(8675309)
 
