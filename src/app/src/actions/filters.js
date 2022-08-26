@@ -80,7 +80,7 @@ export function setFiltersFromQueryString(qs = '') {
             : filters;
 
         payload = parentCompanies
-            ? update(filters, {
+            ? update(payload, {
                   parentCompany: {
                       $set: updateListWithLabels(
                           filters.parentCompany,
