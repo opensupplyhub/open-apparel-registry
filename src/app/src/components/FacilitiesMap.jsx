@@ -74,6 +74,7 @@ function FacilitiesMap({
         params: { oarID },
     },
     isEmbedded,
+    isMobile,
 }) {
     const mapRef = useRef(null);
 
@@ -237,7 +238,7 @@ function FacilitiesMap({
             center={initialCenter}
             zoom={initialZoom}
             minZoom={minimumZoom}
-            scrollWheelZoom={!isEmbedded}
+            scrollWheelZoom={!isEmbedded && !isMobile}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
             zoomControl={false}
@@ -371,6 +372,7 @@ function mapStateToProps({
     },
     ui: {
         facilitiesSidebarTabSearch: { resetButtonClickCount },
+        window: { innerWidth: windowInnerWidth },
     },
     clientInfo: { fetched, countryCode },
     embeddedMap: { embed: isEmbedded },
@@ -383,6 +385,7 @@ function mapStateToProps({
         clientInfoFetched: fetched,
         countryCode: countryCode || COUNTRY_CODES.default,
         isEmbedded,
+        isMobile: windowInnerWidth < 600,
     };
 }
 

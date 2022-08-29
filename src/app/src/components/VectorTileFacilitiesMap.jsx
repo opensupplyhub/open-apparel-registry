@@ -65,6 +65,7 @@ function VectorTileFacilitiesMap({
     isEmbedded,
     mapStyle = 'silver',
     navigateToFacilities,
+    isMobile,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -117,7 +118,7 @@ function VectorTileFacilitiesMap({
             ref={mapRef}
             center={initialCenter}
             zoom={initialZoom}
-            scrollWheelZoom={!isEmbedded}
+            scrollWheelZoom={!isEmbedded && !isMobile}
             minZoom={minimumZoom}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
@@ -217,6 +218,7 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { resetButtonClickCount },
         zoomToSearch,
         drawFilterActive,
+        window: { innerWidth: windowInnerWidth },
     },
     clientInfo: { fetched, countryCode },
     facilities: {
@@ -239,6 +241,7 @@ function mapStateToProps({
         boundary,
         isEmbedded,
         mapStyle: config.map_style,
+        isMobile: windowInnerWidth < 600,
     };
 }
 
