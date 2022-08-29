@@ -1,6 +1,7 @@
 import csv
 import os
 import random
+import re
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -68,8 +69,21 @@ class Command(BaseCommand):
 
         rows = []
 
-        def remove_newline(text):
-            return text.replace('\n', '')
+        def fix_characters(text):
+            text = re.sub('\n', ' ', text)
+            text = re.sub('\t', ' ', text)
+            # Remove backslash characters so that they do not escape important
+            # punctiation in the output files
+            text = re.sub('\\\\', '', text)
+            return text
+
+        oar_ids = set()
+        def new_oar_id(country_code):
+            new_id = make_oar_id(country_code)
+            while new_id in oar_ids:
+                new_id = make_oar_id(country_code)
+            oar_ids.add(new_id)
+            return new_id
 
         with open(csv_file) as f:
             for row in csv.DictReader(f):
@@ -79,10 +93,10 @@ class Command(BaseCommand):
                     sector = '{Apparel}'
                 rows.append(
                     {
-                        'oar_id': make_oar_id(row['country_code']),
-                        'country': remove_newline(row['country_code']),
-                        'name': remove_newline(row['name']),
-                        'address': remove_newline(row['address']),
+                        'oar_id': new_oar_id(row['country_code']),
+                        'country': fix_characters(row['country_code']),
+                        'name': fix_characters(row['name']),
+                        'address': fix_characters(row['address']),
                         'sector': sector,
                         'lat': row['lat'],
                         'lng': row['lng'],
@@ -98,7 +112,7 @@ class Command(BaseCommand):
             max_file_row = len(rows) - 1
             for _ in range(len(rows), row_count):
                 new_row = rows[random.randint(0, max_file_row)].copy()
-                new_row['oar_id'] = make_oar_id(new_row['country_code'])
+                new_row['oar_id'] = new_oar_id(new_row['country'])
                 new_row['name'] = shuffle_words(new_row['name'])
                 new_row['address'] = shuffle_words(new_row['address'])
                 rows.append(new_row)
