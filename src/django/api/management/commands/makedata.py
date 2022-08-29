@@ -164,6 +164,21 @@ class Command(BaseCommand):
             facility_copy = (
                 '{oar_id}\t{name}\t{address}\t{country}\t{hexewkb}\t{created_at}\t{updated_at}\t{created_from_id}\t{has_inexact_coordinates}\n')
 
+
+            match_insert = (
+                "INSERT INTO api_facilitymatch "
+                "(id, results, confidence, status, created_at, updated_at, facility_id, facility_list_item_id, is_active) "
+                "VALUES ({match_id}, {{}}, 98.76, 'AUTOMATIC', '{created_at}', '{updated_at}', '{oar_id}', {list_item_id}, 't');\n"
+            )
+            match_copy_header = (
+                'COPY api_facilitymatch '
+                '(id, results, confidence, status, created_at, updated_at, facility_id, facility_list_item_id, is_active) '
+                'FROM stdin;\n'
+            )
+            match_copy = (
+                '{match_id}\t{{}}\t98.76\tAUTOMATIC\t{created_at}\t{updated_at}\t{oar_id}\t{list_item_id}\tt\n'
+            )
+
             def prepare(rows):
                 idval = 100000000
                 for row in rows:
@@ -178,36 +193,42 @@ class Command(BaseCommand):
                     new_row['created_from_id'] = idval
                     new_row['list_item_id'] = idval
                     new_row['source_id'] = idval
+                    new_row['match_id'] = idval
                     new_row['clean_address'] = clean(new_row['address'])
                     new_row['clean_name'] = clean(new_row['name'])
                     yield new_row
                     idval += 1
 
             # TODO Create a post load update that sets facility_id on api_facilitylistitem
-            # TODO Create api_facilitymatch rows
             s_c_file = os.path.join(out_dir, 'sources_copy.sql')
             i_c_file = os.path.join(out_dir, 'facilitylistitems_copy.sql')
             f_c_file = os.path.join(out_dir, 'facilities_copy.sql')
-            with open(f_c_file, 'w') as f_c, open(s_c_file, 'w') as s_c, open(i_c_file, 'w') as i_c:
+            m_c_file = os.path.join(out_dir, 'facilitymatches_copy.sql')
+            with open(f_c_file, 'w') as f_c, open(s_c_file, 'w') as s_c, open(i_c_file, 'w') as i_c, open(m_c_file, 'w') as m_c:
                 s_c.write(source_copy_header)
                 i_c.write(list_item_copy_header)
                 f_c.write(facility_copy_header)
+                m_c.write(match_copy_header)
                 for row in prepare(rows):
                     s_c.write(source_copy.format(**row))
                     i_c.write(list_item_copy.format(**row))
                     f_c.write(facility_copy.format(**row))
+                    m_c.write(match_copy.format(**row))
                 s_c.write('\\.\n')
                 i_c.write('\\.\n')
                 f_c.write('\\.\n')
+                m_c.write('\\.\n')
 
             s_file = os.path.join(out_dir, 'sources.sql')
             i_file = os.path.join(out_dir, 'facilitylistitems.sql')
             f_file = os.path.join(out_dir, 'facilities.sql')
-            with open(f_file, 'w') as f, open(s_file, 'w') as s, open(i_file, 'w') as i:
+            m_file = os.path.join(out_dir, 'facilitymatches.sql')
+            with open(f_file, 'w') as f, open(s_file, 'w') as s, open(i_file, 'w') as i, open(m_file, 'w') as m:
                 for row in prepare(rows):
                     s.write(source_insert.format(**row))
                     i.write(list_item_insert.format(**row))
                     f.write(facility_insert.format(**row))
+                    m.write(match_insert.format(**row))
             return
 
         chunk_size = len(rows) // file_count
