@@ -17,7 +17,7 @@ const styles = {
         top: MOBILE_HEADER_HEIGHT,
         opacity: 1,
     },
-    mobileNavInactive: { left: '100%', opacity: 0 },
+    mobileNavInactive: { left: 0, opacity: 0, display: 'none' },
 };
 
 function MainMobileNav({

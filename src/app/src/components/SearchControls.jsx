@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 
 import { toggleZoomToSearch, showDrawFilter } from '../actions/ui';
@@ -11,6 +10,8 @@ import { toggleZoomToSearch, showDrawFilter } from '../actions/ui';
 import { updateBoundaryFilter } from '../actions/filters';
 
 import { fetchFacilities } from '../actions/facilities';
+
+import { facilitiesRoute } from '../util/constants';
 
 const zoomStyles = theme =>
     Object.freeze({
@@ -20,21 +21,17 @@ const zoomStyles = theme =>
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '3px',
-            borderRadius: '2px',
-            boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.2)',
+            borderRadius: '0',
+            boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.2)',
         }),
         zoomStyle: Object.freeze({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
         }),
-        zoomLabelStyle: Object.freeze({
-            textTransform: 'uppercase',
-            paddingLeft: '5px',
-        }),
         areaStyle: Object.freeze({
             fontWeight: 400,
+            borderRadius: 0,
         }),
         dividerStyle: {
             width: '0px',
@@ -43,7 +40,7 @@ const zoomStyles = theme =>
         },
     });
 
-function ZoomToSearchControl({
+function SearchControls({
     zoomToSearch,
     boundary,
     toggleZoom,
@@ -51,6 +48,8 @@ function ZoomToSearchControl({
     clearDrawFilter,
     classes,
 }) {
+    const location = useLocation();
+
     const boundaryButton =
         boundary == null ? (
             <Button
@@ -74,23 +73,38 @@ function ZoomToSearchControl({
                 REMOVE CUSTOM AREA
             </Button>
         );
+
+    const zoomControl = (
+        <div id="zoom-search" className={classes.zoomStyle}>
+            <Button
+                variant="text"
+                checked={zoomToSearch}
+                onClick={() => toggleZoom(!zoomToSearch)}
+                disableRipple
+                fullWidth
+                className={classes.areaStyle}
+                style={
+                    zoomToSearch
+                        ? { backgroundColor: '#F0FAF2', fontWeight: 900 }
+                        : {}
+                }
+            >
+                Zoom to Search
+            </Button>
+        </div>
+    );
+
+    if (location?.pathname?.includes(facilitiesRoute)) {
+        return (
+            <div className={classes.controlsStyle}>
+                {zoomControl}
+                <div className={classes.dividerStyle} />
+                <div>{boundaryButton}</div>
+            </div>
+        );
+    }
     return (
         <div className={classes.controlsStyle}>
-            <div id="zoom-search" className={classes.zoomStyle}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={zoomToSearch}
-                            onChange={e => toggleZoom(e.target.checked)}
-                            value="zoom-checkbox"
-                            color="primary"
-                        />
-                    }
-                    className={classes.zoomLabelStyle}
-                    label="Zoom to Search"
-                />
-            </div>
-            <div className={classes.dividerStyle} />
             <div>{boundaryButton}</div>
         </div>
     );
@@ -112,11 +126,11 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-ZoomToSearchControl.defaultProps = {
+SearchControls.defaultProps = {
     zoomToSearch: true,
 };
 
-ZoomToSearchControl.propTypes = {
+SearchControls.propTypes = {
     toggleZoom: PropTypes.func.isRequired,
     zoomToSearch: PropTypes.bool,
 };
@@ -124,4 +138,4 @@ ZoomToSearchControl.propTypes = {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(withStyles(zoomStyles)(ZoomToSearchControl));
+)(withStyles(zoomStyles)(SearchControls));

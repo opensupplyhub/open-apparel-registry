@@ -11,6 +11,15 @@ import { filtersPropType } from '../util/propTypes';
 
 import { createQueryStringFromSearchFilters } from '../util/util';
 
+import { facilitiesRoute } from '../util/constants';
+
+const getCleanPathname = pathname => {
+    if (pathname && pathname[pathname.length - 1] === '/') {
+        return pathname.slice(0, pathname.length - 1);
+    }
+    return pathname;
+};
+
 export default function withQueryStringSync(WrappedComponent) {
     const componentWithWrapper = class extends Component {
         componentDidMount() {
@@ -34,7 +43,12 @@ export default function withQueryStringSync(WrappedComponent) {
             // In that case, `path` will be `/facilities` and `pathname` will be
             // `/facilities/hello-world`. In other cases -- `/` and `/facilities` -- these paths
             // will match.
-            const fetchFacilitiesOnMount = pathname === path;
+            //
+            // Furthermore, limits fetching facilities to the facilities route.
+            const cleanPathname = getCleanPathname(pathname);
+            const isFacilitiesRoute = path.includes(facilitiesRoute);
+            const fetchFacilitiesOnMount =
+                cleanPathname === path && isFacilitiesRoute;
 
             if (vectorTileFeatureIsActive) {
                 return hydrateFiltersFromQueryString(

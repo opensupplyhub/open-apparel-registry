@@ -14,7 +14,12 @@ import VectorTileGridLegend from './VectorTileGridLegend';
 import SearchControls from './SearchControls';
 import PolygonalSearchControl from './PolygonalSearchControl';
 
-import { COUNTRY_CODES, SILVER_MAP_STYLE } from '../util/constants';
+import {
+    COUNTRY_CODES,
+    SILVER_MAP_STYLE,
+    facilitiesRoute,
+    mainRoute,
+} from '../util/constants';
 
 import { makeFacilityDetailLink } from '../util/util';
 
@@ -59,6 +64,8 @@ function VectorTileFacilitiesMap({
     boundary,
     isEmbedded,
     mapStyle = 'silver',
+    navigateToFacilities,
+    isMobile,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -111,7 +118,7 @@ function VectorTileFacilitiesMap({
             ref={mapRef}
             center={initialCenter}
             zoom={initialZoom}
-            scrollWheelZoom={!isEmbedded}
+            scrollWheelZoom={!isEmbedded && !isMobile}
             minZoom={minimumZoom}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
@@ -161,7 +168,11 @@ function VectorTileFacilitiesMap({
                     zoomLevel={currentMapZoomLevel}
                 />
             )}
-            {drawFilterActive && <PolygonalSearchControl />}
+            {drawFilterActive && (
+                <PolygonalSearchControl
+                    navigateToFacilities={navigateToFacilities}
+                />
+            )}
 
             {boundary != null && (
                 <GeoJSON
@@ -207,6 +218,7 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { resetButtonClickCount },
         zoomToSearch,
         drawFilterActive,
+        window: { innerWidth: windowInnerWidth },
     },
     clientInfo: { fetched, countryCode },
     facilities: {
@@ -229,13 +241,20 @@ function mapStateToProps({
         boundary,
         isEmbedded,
         mapStyle: config.map_style,
+        isMobile: windowInnerWidth < 600,
     };
 }
 
 function mapDispatchToProps(
     dispatch,
-    { history: { push }, match: { params } },
+    { history: { push, replace, location }, match: { params } },
 ) {
+    const navigateToFacilities = () => {
+        if (location?.pathname === mainRoute) {
+            replace(`${facilitiesRoute}/${location?.search}`);
+        }
+        return noop();
+    };
     const visitFacility = oarID => {
         if (oarID && oarID !== params?.oarID) {
             dispatch(resetSingleFacility());
@@ -250,6 +269,7 @@ function mapDispatchToProps(
             visitFacility(oarID);
         },
         handleFacilityClick: visitFacility,
+        navigateToFacilities,
     };
 }
 
