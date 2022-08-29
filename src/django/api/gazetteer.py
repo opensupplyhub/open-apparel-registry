@@ -16,16 +16,6 @@ class OgrGazetteerMatching(GazetteerMatching):
            != self.trained_model.id:
             raise ModelOutOfDate()
 
-    def _create_index_table(self, cursor):
-        cursor.execute(
-            """CREATE TABLE IF NOT EXISTS dedupe_indexed_records
-            (block_key text,
-            record_id varchar(32),
-            record_data text,
-            UNIQUE (block_key, record_id))
-            """
-        )
-
     def index(self, data: Data) -> None:  # pragma: no cover
         """
         Add records to the index of records to match against. If a record in
@@ -42,9 +32,6 @@ class OgrGazetteerMatching(GazetteerMatching):
 
         self.fingerprinter.index_all(data)
 
-        # TODO: Should this be a model?
-        with connection.cursor() as cursor:
-            self._create_index_table(cursor)
         # TODO: Do this in chunks rather than one at a time. Can you bulk copy
         # with upsert logic? The dedupe PG example has a bulk insert but this
         # may not do an update
@@ -57,11 +44,12 @@ class OgrGazetteerMatching(GazetteerMatching):
         #
         # The SO answer shows using a JSON array
         # https://stackoverflow.com/a/41022458
+
         with connection.cursor() as cursor:
             for item in self.fingerprinter(data.items(), target=True):
                 cursor.execute(
                     """
-                    INSERT INTO dedupe_indexed_records (block_key, record_id,
+                    INSERT INTO api_dedupe_indexed_records (block_key, record_id,
                     record_data)
                     VALUES (%s, %s, %s)
                     ON CONFLICT (block_key, record_id)
@@ -69,15 +57,6 @@ class OgrGazetteerMatching(GazetteerMatching):
                     """,
                     [item[0], item[1], json.dumps(data[item[1]])],
                 )
-
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                    CREATE INDEX IF NOT EXISTS
-                    dedupe_indexed_records_idx
-                    ON dedupe_indexed_records (block_key, record_id)
-                    """
-            )
 
     def unindex(self, data: Data) -> None:  # pragma: no cover
         """
@@ -160,7 +139,7 @@ class OgrGazetteerMatching(GazetteerMatching):
             cursor.execute(
                 """SELECT DISTINCT a.record_id, b.record_id, b.record_data
                                FROM dedupe_blocking_map a
-                               INNER JOIN dedupe_indexed_records b
+                               INNER JOIN api_dedupe_indexed_records b
                                USING (block_key)
                                ORDER BY a.record_id"""
             )
@@ -198,9 +177,8 @@ class OgrGazetteer(Link, OgrGazetteerMatching):
         table_name = 'dedupe_indexed_records_{}'.format(self.trained_model.id)
 
         with connection.cursor() as cursor:
-            self._create_index_table(cursor)
             cursor.execute(
-                "CREATE TABLE {} (LIKE dedupe_indexed_records INCLUDING ALL)"
+                "CREATE TABLE {} (LIKE api_dedupe_indexed_records INCLUDING ALL)"
                 .format(table_name)
             )
             # TODO: Bulk insert for speed?
