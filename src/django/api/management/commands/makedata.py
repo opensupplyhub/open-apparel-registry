@@ -125,8 +125,8 @@ class Command(BaseCommand):
             # TODO Consider useing different contributor IDs
             source_insert = (
                 "INSERT INTO api_source "
-                "(id, source_type, is_active, is_public, create, created_at, updated_at, contributor_id) "
-                "VALUES ({source_id}, 'SINGLE', 't', 't', 't', '{created_at}', '{updated_at}', 1) "
+                "(id, source_type, is_active, is_public, \"create\", created_at, updated_at, contributor_id) "
+                "VALUES ({source_id}, 'SINGLE', 't', 't', 't', '{created_at}', '{updated_at}', 1);\n"
             )
             source_copy_header = (
                 'COPY api_source '
@@ -142,7 +142,7 @@ class Command(BaseCommand):
             list_item_insert = (
                 "INSERT INTO api_facilitylistitem "
                 "(id, row_index, raw_data, status, processing_results, name, address, country_code, geocoded_point, geocoded_address, created_at, updated_at, source_id, clean_address, clean_name, sector) "
-                "VALUES ({source_id}, 0, '', 'MATCHED', '{{}}', '{name}', '{address}', '{country}', {location}, '{address}', '{created_at}', '{updated_at}', '{source_id}, '{clean_address}, '{clean_name}, '{sector}')\n"
+                "VALUES ({source_id}, 0, '', 'MATCHED', '{{}}', '{name}', '{address}', '{country}', {location}, '{address}', '{created_at}', '{updated_at}', {source_id}, '{clean_address}', '{clean_name}', '{sector}');\n"
             )
             list_item_copy_header = (
                 "COPY api_facilitylistitem "
@@ -156,7 +156,7 @@ class Command(BaseCommand):
             facility_insert = (
                 "INSERT INTO api_facility "
                 "(id, name, address, country_code, location, created_at, updated_at, created_from_id, has_inexact_coordinates) "
-                "VALUES ('{oar_id}', '{name}', '{address}', '{country}', {location}, '{created_at}', '{updated_at}', {created_from_id}, '{has_inexact_coordinates}')\n")
+                "VALUES ('{oar_id}', '{name}', '{address}', '{country}', {location}, '{created_at}', '{updated_at}', {created_from_id}, '{has_inexact_coordinates}');\n")
             facility_copy_header = (
                 "COPY api_facility "
                 "(id, name, address, country_code, location, created_at, updated_at, created_from_id, has_inexact_coordinates) "
