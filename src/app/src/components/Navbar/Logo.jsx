@@ -1,9 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+
 import COLOURS from '../../util/COLOURS';
 
-export default () => (
-    <Link to="/" href="/" className="header__home">
+import { resetAllFilters } from '../../actions/filters';
+
+import { recordSearchTabResetButtonClick } from '../../actions/ui';
+
+const Logo = ({ resetFilters }) => (
+    <Link to="/" href="/" onClick={resetFilters} className="header__home">
         <span className="visually-hidden">OS Hub</span>
         <div className="header__logo">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972.96 364.15">
@@ -74,3 +80,16 @@ export default () => (
         </div>
     </Link>
 );
+
+function mapDispatchToProps(dispatch) {
+    // We don't load the logo in embed mode.
+    const embedded = false;
+    return {
+        resetFilters: () => {
+            dispatch(recordSearchTabResetButtonClick());
+            return dispatch(resetAllFilters(embedded));
+        },
+    };
+}
+
+export default connect(null, mapDispatchToProps)(Logo);
