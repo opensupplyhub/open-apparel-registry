@@ -4,6 +4,7 @@ import random
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from api.helpers import clean
 from api.oar_id import make_oar_id
 
 
@@ -67,7 +68,7 @@ class Command(BaseCommand):
 
         rows = []
 
-        def clean(text):
+        def remove_newline(text):
             return text.replace('\n', '')
 
         with open(csv_file) as f:
@@ -75,13 +76,13 @@ class Command(BaseCommand):
                 try:
                     sector = row['sector']
                 except KeyError:
-                    sector = 'Apparel'
+                    sector = '{Apparel}'
                 rows.append(
                     {
                         'oar_id': make_oar_id(row['country_code']),
-                        'country': clean(row['country_code']),
-                        'name': clean(row['name']),
-                        'address': clean(row['address']),
+                        'country': remove_newline(row['country_code']),
+                        'name': remove_newline(row['name']),
+                        'address': remove_newline(row['address']),
                         'sector': sector,
                         'lat': row['lat'],
                         'lng': row['lng'],
@@ -105,8 +106,39 @@ class Command(BaseCommand):
         random.shuffle(rows)
 
         if make_sql:
-            # TODO: Use COPY rather than INSERT
             now = timezone.now().isoformat()
+
+            # TODO Consider useing different contributor IDs
+            source_insert = (
+                "INSERT INTO api_source "
+                "(id, source_type, is_active, is_public, create, created_at, updated_at, contributor_id) "
+                "VALUES ({source_id}, 'SINGLE', 't', 't', 't', '{created_at}', '{updated_at}', 1) "
+            )
+            source_copy_header = (
+                'COPY api_source '
+                '(id, source_type, is_active, is_public, "create", created_at, updated_at, contributor_id) '
+                'FROM stdin;\n'
+            )
+            source_copy = (
+                '{source_id}\tSINGLE\tt\tt\tt\t{created_at}\t{updated_at}\t1\n'
+            )
+
+            # TODO Consider generating multiple line items that match to each
+            # facility to more closely simulate real data
+            list_item_insert = (
+                "INSERT INTO api_facilitylistitem "
+                "(id, row_index, raw_data, status, processing_results, name, address, country_code, geocoded_point, geocoded_address, created_at, updated_at, source_id, clean_address, clean_name, sector) "
+                "VALUES ({source_id}, 0, '', 'MATCHED', '{{}}', '{name}', '{address}', '{country}', {location}, '{address}', '{created_at}', '{updated_at}', '{source_id}, '{clean_address}, '{clean_name}, '{sector}')\n"
+            )
+            list_item_copy_header = (
+                "COPY api_facilitylistitem "
+                "(id, row_index, raw_data, status, processing_results, name, address, country_code, geocoded_point, geocoded_address, created_at, updated_at, source_id, clean_address, clean_name, sector) "
+                "FROM stdin;\n"
+            )
+            list_item_copy = (
+                '{source_id}\t0\t\tMATCHED\t{{}}\t{name}\t{address}\t{country}\t{hexewkb}\t{address}\t{created_at}\t{updated_at}\t{source_id}\t{clean_address}\t{clean_name}\t{sector}\n'
+            )
+
             facility_insert = (
                 "INSERT INTO api_facility "
                 "(id, name, address, country_code, location, created_at, updated_at, created_from_id, has_inexact_coordinates) "
@@ -117,7 +149,9 @@ class Command(BaseCommand):
                 "FROM stdin;\n")
             facility_copy = (
                 '{oar_id}\t{name}\t{address}\t{country}\t{hexewkb}\t{created_at}\t{updated_at}\t{created_from_id}\t{has_inexact_coordinates}\n')
+
             def prepare(rows):
+                idval = 100000000
                 for row in rows:
                     new_row = row.copy()
                     for col in ('name', 'address'):
@@ -127,21 +161,39 @@ class Command(BaseCommand):
                     new_row['created_at'] = now
                     new_row['updated_at'] = now
                     new_row['has_inexact_coordinates'] = 'f'
-                    # TODO FIX LIST ITEM ID GENERATION
-                    new_row['created_from_id'] = '1'
+                    new_row['created_from_id'] = idval
+                    new_row['list_item_id'] = idval
+                    new_row['source_id'] = idval
+                    new_row['clean_address'] = clean(new_row['address'])
+                    new_row['clean_name'] = clean(new_row['name'])
                     yield new_row
+                    idval += 1
 
-            copies = [facility_copy.format(**row) for row in prepare(rows)]
-            out_file = os.path.join(out_dir, 'facilities_copy.sql')
-            with open(out_file, 'w') as f:
-                f.write(facility_copy_header)
-                f.writelines(copies)
-                f.write('\\.\n')
+            # TODO Create a post load update that sets facility_id on api_facilitylistitem
+            # TODO Create api_facilitymatch rows
+            s_c_file = os.path.join(out_dir, 'sources_copy.sql')
+            i_c_file = os.path.join(out_dir, 'facilitylistitems_copy.sql')
+            f_c_file = os.path.join(out_dir, 'facilities_copy.sql')
+            with open(f_c_file, 'w') as f_c, open(s_c_file, 'w') as s_c, open(i_c_file, 'w') as i_c:
+                s_c.write(source_copy_header)
+                i_c.write(list_item_copy_header)
+                f_c.write(facility_copy_header)
+                for row in prepare(rows):
+                    s_c.write(source_copy.format(**row))
+                    i_c.write(list_item_copy.format(**row))
+                    f_c.write(facility_copy.format(**row))
+                s_c.write('\\.\n')
+                i_c.write('\\.\n')
+                f_c.write('\\.\n')
 
-            inserts = [facility_insert.format(**row) for row in prepare(rows)]
-            out_file = os.path.join(out_dir, 'facilities_insert.sql')
-            with open(out_file, 'w') as f:
-                f.writelines(inserts)
+            s_file = os.path.join(out_dir, 'sources.sql')
+            i_file = os.path.join(out_dir, 'facilitylistitems.sql')
+            f_file = os.path.join(out_dir, 'facilities.sql')
+            with open(f_file, 'w') as f, open(s_file, 'w') as s, open(i_file, 'w') as i:
+                for row in prepare(rows):
+                    s.write(source_insert.format(**row))
+                    i.write(list_item_insert.format(**row))
+                    f.write(facility_insert.format(**row))
             return
 
         chunk_size = len(rows) // file_count
