@@ -1,6 +1,7 @@
 import csv
 import os
 import random
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from api.oar_id import make_oar_id
@@ -110,20 +111,35 @@ class Command(BaseCommand):
                 "INSERT INTO api_facility "
                 "(id, name, address, country_code, location, created_at, updated_at, created_from_id, has_inexact_coordinates) "
                 "VALUES ('{oar_id}', '{name}', '{address}', '{country}', {location}, '{created_at}', '{updated_at}', {created_from_id}, '{has_inexact_coordinates}')\n")
+            facility_copy_header = (
+                "COPY api_facility "
+                "(id, name, address, country_code, location, created_at, updated_at, created_from_id, has_inexact_coordinates) "
+                "FROM stdin;\n")
+            facility_copy = (
+                '{oar_id}\t{name}\t{address}\t{country}\t{hexewkb}\t{created_at}\t{updated_at}\t{created_from_id}\t{has_inexact_coordinates}\n')
             def prepare(rows):
                 for row in rows:
                     new_row = row.copy()
                     for col in ('name', 'address'):
                         new_row[col] = new_row[col].replace("'", "''")
                     new_row['location'] = 'ST_SetSRID(ST_POINT({lng}, {lat}),4326)'.format(**new_row)
+                    new_row['hexewkb'] = GEOSGeometry('POINT ({lng} {lat})'.format(**new_row), srid=4326).hexewkb.decode('ascii')
                     new_row['created_at'] = now
                     new_row['updated_at'] = now
                     new_row['has_inexact_coordinates'] = 'f'
                     # TODO FIX LIST ITEM ID GENERATION
                     new_row['created_from_id'] = '1'
                     yield new_row
+
+            copies = [facility_copy.format(**row) for row in prepare(rows)]
+            out_file = os.path.join(out_dir, 'facilities_copy.sql')
+            with open(out_file, 'w') as f:
+                f.write(facility_copy_header)
+                f.writelines(copies)
+                f.write('\\.\n')
+
             inserts = [facility_insert.format(**row) for row in prepare(rows)]
-            out_file = os.path.join(out_dir, 'facilities.sql')
+            out_file = os.path.join(out_dir, 'facilities_insert.sql')
             with open(out_file, 'w') as f:
                 f.writelines(inserts)
             return
