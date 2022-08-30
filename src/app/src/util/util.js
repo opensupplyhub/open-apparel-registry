@@ -46,6 +46,7 @@ import {
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
     ENTER_KEY,
+    facilityListStatusChoicesEnum,
     facilityListItemStatusChoicesEnum,
     facilityListItemErrorStatuses,
     facilityListSummaryStatusMessages,
@@ -395,7 +396,7 @@ export const getTokenFromQueryString = qs => {
 export const dashboardListParamsDefaults = Object.freeze({
     contributor: null,
     matchResponsibility: matchResponsibilityEnum.MODERATOR,
-    status: facilityListItemStatusChoicesEnum.MATCHED,
+    status: facilityListStatusChoicesEnum.PENDING,
 });
 
 export const getDashboardListParamsFromQueryString = qs => {
