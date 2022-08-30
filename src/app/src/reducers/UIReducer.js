@@ -3,23 +3,22 @@ import update from 'immutability-helper';
 import isObject from 'lodash/isObject';
 
 import {
-    makeSidebarSearchTabActive,
-    makeSidebarFacilitiesTabActive,
     updateSidebarFacilitiesTabTextFilter,
     resetSidebarFacilitiesTabTextFilter,
     recordSearchTabResetButtonClick,
     reportWindowResize,
     toggleZoomToSearch,
+    setSidebarTabActive,
     showDrawFilter,
     setGDPROpen,
+    toggleFilterModal,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
 
-import { filterSidebarTabsEnum } from '../util/constants';
-
 const initialState = Object.freeze({
-    activeFilterSidebarTab: filterSidebarTabsEnum.search,
+    activeFilterSidebarTab: 0,
+    filterModalOpen: false,
     facilitiesSidebarTabSearch: Object.freeze({
         filterText: '',
         resetButtonClickCount: 0,
@@ -45,22 +44,16 @@ export default createReducer(
                     },
                 },
             }),
-        [makeSidebarSearchTabActive]: state =>
+        [setSidebarTabActive]: (state, payload = 0) =>
             update(state, {
                 activeFilterSidebarTab: {
-                    $set: filterSidebarTabsEnum.search,
-                },
-                facilitiesSidebarTabSearch: {
-                    searchTerm: {
-                        $set:
-                            initialState.facilitiesSidebarTabSearch.searchTerm,
-                    },
+                    $set: payload,
                 },
             }),
-        [makeSidebarFacilitiesTabActive]: state =>
+        [toggleFilterModal]: (state, payload) =>
             update(state, {
-                activeFilterSidebarTab: {
-                    $set: filterSidebarTabsEnum.facilities,
+                filterModalOpen: {
+                    $set: payload ?? !state.filterModalOpen,
                 },
             }),
         [completeFetchFacilities]: state =>

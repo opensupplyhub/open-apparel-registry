@@ -1,29 +1,31 @@
 import React, { Component } from 'react';
-import { bool, func, oneOf } from 'prop-types';
+import { bool, func } from 'prop-types';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import {
+    Grid,
+    Hidden,
+    IconButton,
+    Modal,
+    Tab,
+    Tabs,
+    withStyles,
+} from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Route } from 'react-router-dom';
+import CloseIcon from '@material-ui/icons/Close';
 import get from 'lodash/get';
 
+import Button from './Button';
+import FacilityIcon from './FacilityIcon';
+import FilterIcon from './FilterIcon';
+import FeatureFlag from './FeatureFlag';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
+import Map from './Map';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
-import FeatureFlag from './FeatureFlag';
 
-import {
-    filterSidebarTabsEnum,
-    filterSidebarTabs,
-    VECTOR_TILE,
-} from '../util/constants';
+import { VECTOR_TILE } from '../util/constants';
 
-import {
-    makeSidebarSearchTabActive,
-    makeSidebarFacilitiesTabActive,
-} from '../actions/ui';
+import { setSidebarTabActive, toggleFilterModal } from '../actions/ui';
 
 import {
     fetchContributorOptions,
@@ -39,11 +41,8 @@ import {
 } from '../util/propTypes';
 
 import { allListsAreEmpty } from '../util/util';
-
-const controlPanelStyles = Object.freeze({
-    height: 'inherit',
-    width: 'inherit',
-});
+import MapIcon from './MapIcon';
+import FacilitiesIcon from './FacilitiesIcon';
 
 const filterSidebarStyles = theme =>
     Object.freeze({
@@ -93,85 +92,168 @@ class FilterSidebar extends Component {
     }
 
     render() {
-        const {
-            activeFilterSidebarTab,
-            makeSearchTabActive,
-            makeFacilitiesTabActive,
-            vectorTileFeatureIsActive,
-            fetchingFeatureFlags,
-            embed,
-            facilitiesCount,
-            classes,
-        } = this.props;
+        const { fetchingFeatureFlags } = this.props;
 
         if (fetchingFeatureFlags) {
             return <CircularProgress />;
         }
 
-        let orderedTabsForSidebar = vectorTileFeatureIsActive
-            ? filterSidebarTabs.slice().reverse()
-            : filterSidebarTabs;
-
-        if (embed) {
-            orderedTabsForSidebar = orderedTabsForSidebar.filter(
-                ({ tab }) => tab !== 'guide',
-            );
-        }
-
-        const activeTabIndex = orderedTabsForSidebar.findIndex(
-            ({ tab }) => tab === activeFilterSidebarTab,
-        );
-
-        const handleTabChange = (_, value) => {
-            const changeTabFunctionsList = vectorTileFeatureIsActive
-                ? [makeSearchTabActive, makeFacilitiesTabActive]
-                : [makeFacilitiesTabActive, makeSearchTabActive];
-
-            const changeTab = changeTabFunctionsList[value];
-
-            return changeTab();
-        };
-
-        const tabBar = (
-            <AppBar
-                position="static"
-                className="results-height-subtract filter-sidebar-tabgroup"
-                color="default"
-            >
-                <Tabs
-                    value={activeTabIndex}
-                    onChange={handleTabChange}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    fullWidth
-                >
-                    {orderedTabsForSidebar.map(({ tab }) => {
-                        const label =
-                            tab === filterSidebarTabsEnum.facilities &&
-                            facilitiesCount &&
-                            facilitiesCount > -1
-                                ? `${tab} (${facilitiesCount})`
-                                : tab;
-                        return (
+        return (
+            <>
+                <Hidden lgUp>
+                    <Grid
+                        item
+                        style={{
+                            alignItems: 'center',
+                            display: 'flex',
+                            width: '100%',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        <Tabs
+                            value={this.props.activeFilterSidebarTab}
+                            onChange={(_, v) => {
+                                this.props.setTabActive(v);
+                            }}
+                            classes={{
+                                root: 'tabs results-height-subtract',
+                                indicator: 'tabs-indicator-color',
+                            }}
+                        >
                             <Tab
-                                key={tab}
-                                label={label}
-                                className={`search-tab ${classes.searchTab}`}
+                                label={
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <FacilitiesIcon />
+                                        LIST
+                                    </div>
+                                }
+                                style={{
+                                    backgroundColor:
+                                        this.props.activeFilterSidebarTab === 0
+                                            ? '#FFA6D0'
+                                            : '#fff',
+                                    borderColor: '#000',
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    // omit shared border
+                                    borderRightWidth: 0,
+                                    fontWeight: 800,
+                                }}
                             />
-                        );
-                    })}
-                </Tabs>
-            </AppBar>
-        );
-
-        const insetComponent = (() => {
-            switch (activeFilterSidebarTab) {
-                case filterSidebarTabsEnum.search:
-                    // We wrap this component in a `Route` to give it access to `history.push`
-                    // in its `mapDispatchToProps` function.
-                    return <Route component={FilterSidebarSearchTab} />;
-                case filterSidebarTabsEnum.facilities:
-                    return (
+                            <Tab
+                                label={
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <MapIcon />
+                                        MAP
+                                    </div>
+                                }
+                                style={{
+                                    backgroundColor:
+                                        this.props.activeFilterSidebarTab === 1
+                                            ? '#FFA6D0'
+                                            : '#fff',
+                                    borderColor: '#000',
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    fontWeight: 800,
+                                }}
+                            />
+                            <div style={{ padding: '10px' }} />
+                            <Button
+                                Icon={FilterIcon}
+                                onClick={() =>
+                                    this.props.toggleFilterModal(true)
+                                }
+                                style={{
+                                    backgroundColor: '#FFCF3F',
+                                    color: '#000',
+                                    fontWeight: 900,
+                                }}
+                                text="FILTERS"
+                            />
+                        </Tabs>
+                        {this.props.activeFilterSidebarTab === 0 && (
+                            <Grid item sm={12} md={3}>
+                                {this.props.facilitiesCount && (
+                                    <div
+                                        className="results-height-subtract"
+                                        style={{
+                                            padding: '24px',
+                                        }}
+                                    >
+                                        <h1
+                                            style={{
+                                                fontWeight: 900,
+                                                fontSize: '44px',
+                                                margin: 0,
+                                                lineHeight: '48px',
+                                            }}
+                                        >
+                                            <FacilityIcon /> Facilities
+                                        </h1>
+                                        {`${this.props.facilitiesCount} results`}
+                                    </div>
+                                )}
+                                <FeatureFlag
+                                    flag={VECTOR_TILE}
+                                    alternative={
+                                        <NonVectorTileFilterSidebarFacilitiesTab />
+                                    }
+                                >
+                                    <FilterSidebarFacilitiesTab />
+                                </FeatureFlag>
+                            </Grid>
+                        )}
+                        {this.props.activeFilterSidebarTab === 1 && (
+                            <div
+                                style={{
+                                    height: '100%',
+                                    marginTop: '1em',
+                                    width: '100%',
+                                }}
+                            >
+                                <Map />
+                            </div>
+                        )}
+                    </Grid>
+                </Hidden>
+                <Hidden mdDown>
+                    <Grid item md={3} style={{ height: '100%' }}>
+                        <FilterSidebarSearchTab />
+                    </Grid>
+                </Hidden>
+                <Hidden mdDown>
+                    <Grid item sm={12} md={4}>
+                        {this.props.facilitiesCount && (
+                            <div
+                                className="results-height-subtract"
+                                style={{
+                                    padding: '24px',
+                                }}
+                            >
+                                <h1
+                                    style={{
+                                        fontWeight: 900,
+                                        fontSize: '44px',
+                                        margin: 0,
+                                        lineHeight: '48px',
+                                    }}
+                                >
+                                    <FacilityIcon /> Facilities
+                                </h1>
+                                {`${this.props.facilitiesCount} results`}
+                            </div>
+                        )}
                         <FeatureFlag
                             flag={VECTOR_TILE}
                             alternative={
@@ -180,21 +262,40 @@ class FilterSidebar extends Component {
                         >
                             <FilterSidebarFacilitiesTab />
                         </FeatureFlag>
-                    );
-                default:
-                    window.console.warn(
-                        'invalid tab selection',
-                        activeFilterSidebarTab,
-                    );
-                    return null;
-            }
-        })();
-
-        return (
-            <div className="control-panel" style={controlPanelStyles}>
-                {tabBar}
-                {insetComponent}
-            </div>
+                    </Grid>
+                </Hidden>
+                <Modal
+                    open={this.props.filterModalOpen}
+                    onClose={() => this.props.toggleFilterModal(false)}
+                >
+                    <div
+                        style={{
+                            backgroundColor: '#fff',
+                            height: '100%',
+                        }}
+                    >
+                        <div
+                            style={{
+                                alignItems: 'center',
+                                paddingLeft: '1em',
+                                paddingRight: '1em',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <h1>Filters</h1>
+                            <IconButton
+                                onClick={() =>
+                                    this.props.toggleFilterModal(false)
+                                }
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        </div>
+                        <FilterSidebarSearchTab />
+                    </div>
+                </Modal>
+            </>
         );
     }
 }
@@ -205,22 +306,17 @@ FilterSidebar.defaultProps = {
 };
 
 FilterSidebar.propTypes = {
-    activeFilterSidebarTab: oneOf(Object.values(filterSidebarTabsEnum))
-        .isRequired,
-    makeSearchTabActive: func.isRequired,
-    makeFacilitiesTabActive: func.isRequired,
     fetchFilterOptions: func.isRequired,
     fetchContributors: func.isRequired,
     fetchCountries: func.isRequired,
     contributorsData: contributorOptionsPropType,
     countriesData: countryOptionsPropType,
     sectorsData: sectorOptionsPropType,
-    vectorTileFeatureIsActive: bool.isRequired,
     fetchingFeatureFlags: bool.isRequired,
 };
 
 function mapStateToProps({
-    ui: { activeFilterSidebarTab },
+    ui: { activeFilterSidebarTab, filterModalOpen },
     filterOptions: {
         contributors: { data: contributorsData },
         countries: { data: countriesData },
@@ -235,6 +331,7 @@ function mapStateToProps({
 }) {
     return {
         activeFilterSidebarTab,
+        filterModalOpen,
         contributorsData,
         countriesData,
         sectorsData,
@@ -248,9 +345,8 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        makeSearchTabActive: () => dispatch(makeSidebarSearchTabActive()),
-        makeFacilitiesTabActive: () =>
-            dispatch(makeSidebarFacilitiesTabActive()),
+        toggleFilterModal: () => dispatch(toggleFilterModal()),
+        setTabActive: value => dispatch(setSidebarTabActive(value)),
         fetchFilterOptions: () => dispatch(fetchAllPrimaryFilterOptions()),
         fetchContributors: () => dispatch(fetchContributorOptions()),
         fetchLists: () => dispatch(fetchListOptions()),

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -8,7 +9,6 @@ import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 
 import ShowOnly from './ShowOnly';
-import FeatureFlag from './FeatureFlag';
 import TextSearchFilter from './Filters/TextSearchFilter';
 import ContributorFilter from './Filters/ContributorFilter';
 import CountryNameFilter from './Filters/CountryNameFilter';
@@ -49,7 +49,6 @@ import { getValueFromEvent } from '../util/util';
 
 import {
     FACILITIES_REQUEST_PAGE_SIZE,
-    EXTENDED_PROFILE_FLAG,
     EXTENDED_FIELDS_EXPLANATORY_TEXT,
 } from '../util/constants';
 
@@ -126,10 +125,6 @@ function FilterSidebarSearchTab({
         sectors,
     ]);
 
-    const [expand, setExpand] = useState(
-        checkIfAnyFieldSelected(extendedFields),
-    );
-
     if (fetchingOptions) {
         return (
             <div className="control-panel__content">
@@ -159,32 +154,6 @@ function FilterSidebarSearchTab({
             </div>
         );
     })();
-
-    const expandButton = expand ? (
-        <Button
-            variant="outlined"
-            onClick={() => {
-                setExpand(false);
-            }}
-            disableRipple
-            color="primary"
-            fullWidth
-        >
-            FEWER FILTERS
-        </Button>
-    ) : (
-        <Button
-            variant="outlined"
-            onClick={() => {
-                setExpand(true);
-            }}
-            disableRipple
-            color="primary"
-            fullWidth
-        >
-            MORE FILTERS
-        </Button>
-    );
 
     const searchButton = (
         <Button
@@ -234,15 +203,12 @@ function FilterSidebarSearchTab({
     };
 
     return (
-        <div
-            className={`control-panel__content ${classes.controlPanelContentStyles}`}
-        >
+        <div className="control-panel__content">
             <div
                 style={{
                     marginBottom: '60px',
                     display: 'flex',
                     flexDirection: 'column',
-                    height: '100%',
                 }}
             >
                 <div className="form__field" style={{ marginBottom: '10px' }}>
@@ -265,18 +231,13 @@ function FilterSidebarSearchTab({
                 <ContributorFilter />
                 <CountryNameFilter />
                 <SectorFilter />
-                <FeatureFlag flag={EXTENDED_PROFILE_FLAG}>
-                    <ShowOnly when={expand}>
-                        <FilterSidebarExtendedSearch />
-                    </ShowOnly>
-                </FeatureFlag>
+                <FilterSidebarExtendedSearch />
                 <div className="form__action" style={{ marginBottom: '40px' }}>
                     {searchResetButtonGroup()}
                 </div>
                 <ShowOnly when={!embed || embedExtendedFields.length}>
                     <div className="form__field">
-                        {expandButton}
-                        <ShowOnly when={!expand && !embed}>
+                        <ShowOnly when={!embed}>
                             <div className="form__info">
                                 Contributor type · Parent company · Facility
                                 type · Processing type · Product type · Number
@@ -418,7 +379,9 @@ function mapDispatchToProps(dispatch, { history: { push } }) {
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(withStyles(filterSidebarSearchTabStyles)(FilterSidebarSearchTab));
+export default withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(withStyles(filterSidebarSearchTabStyles)(FilterSidebarSearchTab)),
+);

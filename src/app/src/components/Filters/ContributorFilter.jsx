@@ -97,7 +97,28 @@ function ContributorFilter({
         <div className="form__field">
             <ShowOnly when={!embed}>
                 <StyledSelect
-                    label="Contributor"
+                    label={
+                        <div style={{ display: 'flex' }}>
+                            <p>Contributor</p>
+                            <ShowOnly
+                                when={contributors && contributors.length > 1}
+                            >
+                                <IconButton
+                                    onClick={
+                                        // eslint-disable-next-line no-confusing-arrow
+                                        e =>
+                                            contributorPopoverAnchorEl
+                                                ? null
+                                                : setContributorPopoverAnchorEl(
+                                                      e.currentTarget,
+                                                  )
+                                    }
+                                >
+                                    <InfoIcon />
+                                </IconButton>
+                            </ShowOnly>
+                        </div>
+                    }
                     name={CONTRIBUTORS}
                     options={contributorOptions || []}
                     value={contributors}
@@ -117,19 +138,7 @@ function ContributorFilter({
                             }
                             label="Show only shared facilities"
                         />
-                        <IconButton
-                            onClick={
-                                // eslint-disable-next-line no-confusing-arrow
-                                e =>
-                                    contributorPopoverAnchorEl
-                                        ? null
-                                        : setContributorPopoverAnchorEl(
-                                              e.currentTarget,
-                                          )
-                            }
-                        >
-                            <InfoIcon />
-                        </IconButton>
+
                         <Popover
                             id="contributor-info-popover"
                             anchorOrigin={{

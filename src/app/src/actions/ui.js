@@ -1,11 +1,8 @@
 import { createAction } from 'redux-act';
 
-export const makeSidebarSearchTabActive = createAction(
-    'MAKE_SIDEBAR_SEARCH_TAB_ACTIVE',
-);
-export const makeSidebarFacilitiesTabActive = createAction(
-    'MAKE_SIDEBAR_FACILITIES_TAB_ACTIVE',
-);
+export const setSidebarTabActive = createAction('SET_SIDEBAR_TAB_ACTIVE');
+
+export const toggleFilterModal = createAction('TOGGLE_FILTER_MODAL');
 
 export const recordSearchTabResetButtonClick = createAction(
     'RECORD_SEARCH_TAB_RESET_BUTTON_CLICK',

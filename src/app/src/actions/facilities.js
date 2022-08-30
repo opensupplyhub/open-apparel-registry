@@ -18,7 +18,7 @@ import {
     makeGetFacilityByOARIdURLWithContributorId,
 } from '../util/util';
 
-import { makeSidebarFacilitiesTabActive } from './ui';
+import { toggleFilterModal } from './ui';
 
 export const startFetchFacilities = createAction('START_FETCH_FACILITIES');
 export const failFetchFacilities = createAction('FAIL_FETCH_FACILITIES');
@@ -77,7 +77,7 @@ export function fetchFacilities({
             .then(data => {
                 dispatch(completeFetchFacilities(data));
                 if (activateFacilitiesTab) {
-                    dispatch(makeSidebarFacilitiesTabActive());
+                    dispatch(toggleFilterModal(false));
                 }
                 if (isFunction(onSuccess)) {
                     onSuccess(data);

@@ -2,7 +2,6 @@ import noop from 'lodash/noop';
 import { createAction } from 'redux-act';
 
 import { logDownload, startLogDownload, failLogDownload } from './logDownload';
-import { makeSidebarFacilitiesTabActive } from './ui';
 
 import apiRequest from '../util/apiRequest';
 import {
@@ -84,7 +83,6 @@ export default function downloadFacilities(format, { isEmbedded }) {
             .get(makeGetFacilitiesDownloadURLWithQueryString(qs, pageSize))
             .then(({ data }) => {
                 dispatch(completeFetchDownloadFacilities(data));
-                dispatch(makeSidebarFacilitiesTabActive());
                 dispatch(logDownload(format, { isEmbedded }));
             })
             .catch(err => {

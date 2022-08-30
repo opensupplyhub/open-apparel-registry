@@ -23,7 +23,7 @@ import CopySearch from './CopySearch';
 import FeatureFlag from './FeatureFlag';
 import DownloadFacilitiesButton from './DownloadFacilitiesButton';
 
-import { makeSidebarSearchTabActive } from '../actions/ui';
+import { toggleFilterModal } from '../actions/ui';
 
 import { fetchNextPageOfFacilities } from '../actions/facilities';
 
@@ -40,12 +40,17 @@ import { makeFacilityDetailLink } from '../util/util';
 import COLOURS from '../util/COLOURS';
 
 import { filterSidebarStyles } from '../util/styles';
+import withQueryStringSync from '../util/withQueryStringSync';
+import BadgeClaimed from './BadgeClaimed';
+import CopyLinkIcon from './CopyLinkIcon';
 
 const facilitiesTabStyles = Object.freeze({
     noResultsTextStyles: Object.freeze({
         margin: '30px',
     }),
     linkStyles: Object.freeze({
+        color: '#191919',
+        flexDirection: 'column',
         display: 'flex',
         textDecoration: 'none',
     }),
@@ -53,6 +58,8 @@ const facilitiesTabStyles = Object.freeze({
         wordWrap: 'anywhere',
         flexDirection: 'column',
         alignItems: 'start',
+        maxWidth: '750px',
+        minWidth: '310px',
     }),
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
@@ -221,10 +228,22 @@ function FilterSidebarFacilitiesTab({
                     <CopySearch>
                         <Button
                             variant="outlined"
-                            color="primary"
                             onClick={noop}
+                            style={{
+                                fontSize: '16px',
+                                fontWeight: '900',
+                                lineWeight: '20px',
+                            }}
                         >
-                            Copy Link
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <CopyLinkIcon />
+                                Copy Link
+                            </div>
                         </Button>
                     </CopySearch>
                 </div>
@@ -267,12 +286,15 @@ function FilterSidebarFacilitiesTab({
                                 properties: {
                                     address,
                                     name,
-                                    country_name: countryName,
+                                    has_approved_claim: hasApprovedClaim,
                                     oar_id: oarID,
                                     is_closed: isClosed,
                                 },
                             }) => (
-                                <Fragment key={oarID}>
+                                <Fragment
+                                    key={oarID}
+                                    style={facilitiesTabStyles.listItemStyles}
+                                >
                                     <Divider />
                                     <ListItem
                                         key={oarID}
@@ -298,10 +320,56 @@ function FilterSidebarFacilitiesTab({
                                                 facilitiesTabStyles.linkStyles
                                             }
                                         >
-                                            <ListItemText
-                                                primary={`${name} - ${countryName}`}
-                                                secondary={address}
-                                            />
+                                            <span
+                                                style={{
+                                                    fontWeight: 800,
+                                                    fontSize: '28px',
+                                                    letterSpacing: '-0.004em',
+                                                }}
+                                            >
+                                                {name}
+                                            </span>
+                                            <span
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    fontWeight: '800',
+                                                    fontSize: '16px',
+                                                }}
+                                            >
+                                                {`OS ID: ${oarID}`}
+                                                {hasApprovedClaim && (
+                                                    <span
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                        }}
+                                                    >
+                                                        <span
+                                                            style={{
+                                                                paddingLeft:
+                                                                    '0.3em',
+                                                                paddingRight:
+                                                                    '0.3em',
+                                                            }}
+                                                        >
+                                                            ⦁
+                                                        </span>
+                                                        <BadgeClaimed color="#4A9957" />
+                                                        <span
+                                                            style={{
+                                                                color:
+                                                                    '#4A9957',
+                                                                fontWeight: 800,
+                                                            }}
+                                                        >
+                                                            Claimed
+                                                        </span>
+                                                    </span>
+                                                )}
+                                            </span>
+                                            {address}
                                         </Link>
                                         {isClosed ? (
                                             <FeatureFlag
@@ -416,11 +484,16 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        returnToSearchTab: () => dispatch(makeSidebarSearchTabActive()),
+        returnToSearchTab: () => dispatch(toggleFilterModal()),
         fetchNextPage: () => dispatch(fetchNextPageOfFacilities()),
     };
 }
 
-export default withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(FilterSidebarFacilitiesTab),
+export default withQueryStringSync(
+    withRouter(
+        connect(
+            mapStateToProps,
+            mapDispatchToProps,
+        )(FilterSidebarFacilitiesTab),
+    ),
 );

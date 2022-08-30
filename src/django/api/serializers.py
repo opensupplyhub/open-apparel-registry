@@ -604,14 +604,16 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     extended_fields = SerializerMethodField()
     location = GeometrySerializerMethodField()
     address = SerializerMethodField()
+    has_approved_claim = SerializerMethodField()
 
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
                   'oar_id', 'country_name', 'contributors',
-                  'ppe_product_types', 'ppe_contact_phone',
-                  'ppe_contact_email', 'ppe_website', 'is_closed',
-                  'contributor_fields', 'extended_fields')
+                  'has_approved_claim', 'ppe_product_types',
+                  'ppe_contact_phone', 'ppe_contact_email',
+                  'ppe_website', 'is_closed', 'contributor_fields',
+                  'extended_fields')
         geo_field = 'location'
 
     def __init__(self, *args, **kwargs):
@@ -645,6 +647,9 @@ class FacilitySerializer(GeoFeatureModelSerializer):
 
     def get_name(self, facility):
         return get_facility_name(self, facility)
+
+    def get_has_approved_claim(self, facility):
+        return facility.get_approved_claim() is not None
 
     def get_contributors(self, facility):
         if is_embed_mode_active(self):
