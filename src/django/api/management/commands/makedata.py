@@ -189,7 +189,7 @@ class Command(BaseCommand):
                 "INSERT INTO api_facilitymatch "
                 "(id, results, confidence, status, created_at, updated_at, "
                 "facility_id, facility_list_item_id, is_active) "
-                "VALUES ({match_id}, {{}}, 98.76, 'AUTOMATIC', "
+                "VALUES ({match_id}, '{{}}', 98.76, 'AUTOMATIC', "
                 "'{created_at}', '{updated_at}', '{oar_id}', "
                 "{list_item_id}, 't');\n"
             )
