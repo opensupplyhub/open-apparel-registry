@@ -9,4 +9,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         messy, canonical = get_model_data()
 
-        train_gazetteer(messy, canonical)
+        gazetter = train_gazetteer(messy, canonical)
+        gazetter.build_index_table(canonical)
