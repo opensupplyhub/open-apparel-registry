@@ -3052,6 +3052,7 @@ class TrainedModel(models.Model):
     )
     objects = TrainedModelManager()
 
+
 class dedupe_indexed_records(models.Model):
     class Meta:
         constraints = [UniqueConstraint(fields=['block_key',
@@ -3064,6 +3065,7 @@ class dedupe_indexed_records(models.Model):
     block_key = models.TextField()
     record_id = models.CharField(max_length=32)
     record_data = models.TextField()
+
 
 post_save.connect(FacilityClaim.post_save, sender=FacilityClaim)
 post_save.connect(Facility.post_save, sender=Facility)
