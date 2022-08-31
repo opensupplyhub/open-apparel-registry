@@ -3053,7 +3053,7 @@ class TrainedModel(models.Model):
     objects = TrainedModelManager()
 
 
-class dedupe_indexed_records(models.Model):
+class DedupeIndexedRecords(models.Model):
     class Meta:
         constraints = [UniqueConstraint(fields=['block_key',
                                                 'record_id'],
