@@ -49,8 +49,9 @@ class OgrGazetteerMatching(GazetteerMatching):
             for item in self.fingerprinter(data.items(), target=True):
                 cursor.execute(
                     """
-                    INSERT INTO api_dedupe_indexed_records (block_key, record_id,
-                    record_data)
+                    INSERT INTO api_dedupe_indexed_records (block_key,
+                                                            record_id,
+                                                            record_data)
                     VALUES (%s, %s, %s)
                     ON CONFLICT (block_key, record_id)
                     DO UPDATE SET record_data = EXCLUDED.record_data
@@ -178,7 +179,8 @@ class OgrGazetteer(Link, OgrGazetteerMatching):
 
         with connection.cursor() as cursor:
             cursor.execute(
-                "CREATE TABLE {} (LIKE api_dedupe_indexed_records INCLUDING ALL)"
+                "CREATE TABLE {} (LIKE api_dedupe_indexed_records INCLUDING "
+                                  "ALL)"
                 .format(table_name)
             )
             # TODO: Bulk insert for speed?
