@@ -3055,6 +3055,7 @@ class TrainedModel(models.Model):
 
 class DedupeIndexedRecords(models.Model):
     class Meta:
+        db_table = 'dedupe_indexed_records'
         constraints = [UniqueConstraint(fields=['block_key',
                                                 'record_id'],
                                         name='unique_blockkey_recordid')]
