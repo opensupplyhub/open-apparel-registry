@@ -19,8 +19,8 @@ def chunks(lst, n):
 class Command(BaseCommand):
     help = (
         'Take a downloaded facility CSV from OAR and make uploadable CSVs or '
-        'SQL scripts. NOTE this has not been updated to use the new OS Hub CSV '
-        'format.'
+        'SQL scripts. NOTE this has not been updated to use the new OS Hub '
+        'CSV format.'
     )
 
     def add_arguments(self, parser):
@@ -78,6 +78,7 @@ class Command(BaseCommand):
             return text
 
         oar_ids = set()
+
         def new_oar_id(country_code):
             new_id = make_oar_id(country_code)
             while new_id in oar_ids:
@@ -125,12 +126,15 @@ class Command(BaseCommand):
             # TODO Consider useing different contributor IDs
             source_insert = (
                 "INSERT INTO api_source "
-                "(id, source_type, is_active, is_public, \"create\", created_at, updated_at, contributor_id) "
-                "VALUES ({source_id}, 'SINGLE', 't', 't', 't', '{created_at}', '{updated_at}', 1);\n"
+                "(id, source_type, is_active, is_public, \"create\", "
+                "created_at, updated_at, contributor_id) "
+                "VALUES ({source_id}, 'SINGLE', 't', 't', 't', "
+                "'{created_at}', '{updated_at}', 1);\n"
             )
             source_copy_header = (
                 'COPY api_source '
-                '(id, source_type, is_active, is_public, "create", created_at, updated_at, contributor_id) '
+                '(id, source_type, is_active, is_public, "create", '
+                'created_at, updated_at, contributor_id) '
                 'FROM stdin;\n'
             )
             source_copy = (
@@ -141,42 +145,63 @@ class Command(BaseCommand):
             # facility to more closely simulate real data
             list_item_insert = (
                 "INSERT INTO api_facilitylistitem "
-                "(id, row_index, raw_data, status, processing_results, name, address, country_code, geocoded_point, geocoded_address, created_at, updated_at, source_id, clean_address, clean_name, sector) "
-                "VALUES ({source_id}, 0, '', 'MATCHED', '{{}}', '{name}', '{address}', '{country}', {location}, '{address}', '{created_at}', '{updated_at}', {source_id}, '{clean_address}', '{clean_name}', '{sector}');\n"
+                "(id, row_index, raw_data, status, processing_results, name, "
+                "address, country_code, geocoded_point, geocoded_address, "
+                "created_at, updated_at, source_id, clean_address, "
+                "clean_name, sector) "
+                "VALUES ({source_id}, 0, '', 'MATCHED', '{{}}', '{name}', "
+                "'{address}', '{country}', {location}, '{address}', "
+                "'{created_at}', '{updated_at}', {source_id}, "
+                "'{clean_address}', '{clean_name}', '{sector}');\n"
             )
             list_item_copy_header = (
                 "COPY api_facilitylistitem "
-                "(id, row_index, raw_data, status, processing_results, name, address, country_code, geocoded_point, geocoded_address, created_at, updated_at, source_id, clean_address, clean_name, sector) "
+                "(id, row_index, raw_data, status, processing_results, name, "
+                "address, country_code, geocoded_point, geocoded_address, "
+                "created_at, updated_at, source_id, clean_address, "
+                "clean_name, sector) "
                 "FROM stdin;\n"
             )
             list_item_copy = (
-                '{source_id}\t0\t\tMATCHED\t{{}}\t{name}\t{address}\t{country}\t{hexewkb}\t{address}\t{created_at}\t{updated_at}\t{source_id}\t{clean_address}\t{clean_name}\t{sector}\n'
+                '{source_id}\t0\t\tMATCHED\t{{}}\t{name}\t{address}\t'
+                '{country}\t{hexewkb}\t{address}\t{created_at}\t{updated_at}\t'
+                '{source_id}\t{clean_address}\t{clean_name}\t{sector}\n'
             )
 
             facility_insert = (
                 "INSERT INTO api_facility "
-                "(id, name, address, country_code, location, created_at, updated_at, created_from_id, has_inexact_coordinates) "
-                "VALUES ('{oar_id}', '{name}', '{address}', '{country}', {location}, '{created_at}', '{updated_at}', {created_from_id}, '{has_inexact_coordinates}');\n")
+                "(id, name, address, country_code, location, created_at, "
+                "updated_at, created_from_id, has_inexact_coordinates) "
+                "VALUES ('{oar_id}', '{name}', '{address}', '{country}', "
+                "{location}, '{created_at}', '{updated_at}', "
+                "{created_from_id}, '{has_inexact_coordinates}');\n")
             facility_copy_header = (
                 "COPY api_facility "
-                "(id, name, address, country_code, location, created_at, updated_at, created_from_id, has_inexact_coordinates) "
+                "(id, name, address, country_code, location, created_at, "
+                "updated_at, created_from_id, has_inexact_coordinates) "
                 "FROM stdin;\n")
             facility_copy = (
-                '{oar_id}\t{name}\t{address}\t{country}\t{hexewkb}\t{created_at}\t{updated_at}\t{created_from_id}\t{has_inexact_coordinates}\n')
-
+                '{oar_id}\t{name}\t{address}\t{country}\t{hexewkb}\t'
+                '{created_at}\t{updated_at}\t{created_from_id}\t'
+                '{has_inexact_coordinates}\n')
 
             match_insert = (
                 "INSERT INTO api_facilitymatch "
-                "(id, results, confidence, status, created_at, updated_at, facility_id, facility_list_item_id, is_active) "
-                "VALUES ({match_id}, {{}}, 98.76, 'AUTOMATIC', '{created_at}', '{updated_at}', '{oar_id}', {list_item_id}, 't');\n"
+                "(id, results, confidence, status, created_at, updated_at, "
+                "facility_id, facility_list_item_id, is_active) "
+                "VALUES ({match_id}, {{}}, 98.76, 'AUTOMATIC', "
+                "'{created_at}', '{updated_at}', '{oar_id}', "
+                "{list_item_id}, 't');\n"
             )
             match_copy_header = (
                 'COPY api_facilitymatch '
-                '(id, results, confidence, status, created_at, updated_at, facility_id, facility_list_item_id, is_active) '
+                '(id, results, confidence, status, created_at, updated_at, '
+                'facility_id, facility_list_item_id, is_active) '
                 'FROM stdin;\n'
             )
             match_copy = (
-                '{match_id}\t{{}}\t98.76\tAUTOMATIC\t{created_at}\t{updated_at}\t{oar_id}\t{list_item_id}\tt\n'
+                '{match_id}\t{{}}\t98.76\tAUTOMATIC\t{created_at}\t'
+                '{updated_at}\t{oar_id}\t{list_item_id}\tt\n'
             )
 
             def prepare(rows):
@@ -185,8 +210,12 @@ class Command(BaseCommand):
                     new_row = row.copy()
                     for col in ('name', 'address'):
                         new_row[col] = new_row[col].replace("'", "''")
-                    new_row['location'] = 'ST_SetSRID(ST_POINT({lng}, {lat}),4326)'.format(**new_row)
-                    new_row['hexewkb'] = GEOSGeometry('POINT ({lng} {lat})'.format(**new_row), srid=4326).hexewkb.decode('ascii')
+                    new_row['location'] = \
+                        'ST_SetSRID(ST_POINT({lng}, {lat}),4326)' \
+                        .format(**new_row)
+                    new_row['hexewkb'] = \
+                        GEOSGeometry('POINT ({lng} {lat})'.format(**new_row),
+                                     srid=4326).hexewkb.decode('ascii')
                     new_row['created_at'] = now
                     new_row['updated_at'] = now
                     new_row['has_inexact_coordinates'] = 'f'
@@ -199,12 +228,16 @@ class Command(BaseCommand):
                     yield new_row
                     idval += 1
 
-            # TODO Create a post load update that sets facility_id on api_facilitylistitem
+            # TODO Create a post load update that sets facility_id on
+            # api_facilitylistitem
             s_c_file = os.path.join(out_dir, 'sources_copy.sql')
             i_c_file = os.path.join(out_dir, 'facilitylistitems_copy.sql')
             f_c_file = os.path.join(out_dir, 'facilities_copy.sql')
             m_c_file = os.path.join(out_dir, 'facilitymatches_copy.sql')
-            with open(f_c_file, 'w') as f_c, open(s_c_file, 'w') as s_c, open(i_c_file, 'w') as i_c, open(m_c_file, 'w') as m_c:
+            with open(f_c_file, 'w') as f_c, \
+                 open(s_c_file, 'w') as s_c, \
+                 open(i_c_file, 'w') as i_c, \
+                 open(m_c_file, 'w') as m_c:
                 s_c.write(source_copy_header)
                 i_c.write(list_item_copy_header)
                 f_c.write(facility_copy_header)
@@ -223,7 +256,10 @@ class Command(BaseCommand):
             i_file = os.path.join(out_dir, 'facilitylistitems.sql')
             f_file = os.path.join(out_dir, 'facilities.sql')
             m_file = os.path.join(out_dir, 'facilitymatches.sql')
-            with open(f_file, 'w') as f, open(s_file, 'w') as s, open(i_file, 'w') as i, open(m_file, 'w') as m:
+            with open(f_file, 'w') as f, \
+                 open(s_file, 'w') as s, \
+                 open(i_file, 'w') as i, \
+                 open(m_file, 'w') as m:
                 for row in prepare(rows):
                     s.write(source_insert.format(**row))
                     i.write(list_item_insert.format(**row))
