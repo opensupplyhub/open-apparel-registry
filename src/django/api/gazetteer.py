@@ -49,7 +49,7 @@ class OgrGazetteerMatching(GazetteerMatching):
             for item in self.fingerprinter(data.items(), target=True):
                 cursor.execute(
                     """
-                    INSERT INTO api_dedupe_indexed_records (block_key,
+                    INSERT INTO dedupe_indexed_records (block_key,
                                                             record_id,
                                                             record_data)
                     VALUES (%s, %s, %s)
@@ -140,7 +140,7 @@ class OgrGazetteerMatching(GazetteerMatching):
             cursor.execute(
                 """SELECT DISTINCT a.record_id, b.record_id, b.record_data
                                FROM dedupe_blocking_map a
-                               INNER JOIN api_dedupe_indexed_records b
+                               INNER JOIN dedupe_indexed_records b
                                USING (block_key)
                                ORDER BY a.record_id"""
             )
@@ -179,7 +179,7 @@ class OgrGazetteer(Link, OgrGazetteerMatching):
 
         with connection.cursor() as cursor:
             cursor.execute(
-                "CREATE TABLE {} (LIKE api_dedupe_indexed_records INCLUDING "
+                "CREATE TABLE {} (LIKE dedupe_indexed_records INCLUDING "
                                   "ALL)"
                 .format(table_name)
             )
