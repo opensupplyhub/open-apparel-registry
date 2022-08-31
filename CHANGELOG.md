@@ -69,6 +69,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Use 'pending' as the default status filter on the dashboard list page [#2109](https://github.com/open-apparel-registry/open-apparel-registry/pull/2109)
 - Suppress "pure-python SequenceMatcher" warning [#2011](https://github.com/open-apparel-registry/open-apparel-registry/pull/2011)
 - Fix geocode error messages to include the status code [#1853](https://github.com/open-apparel-registry/open-apparel-registry/pull/1853)
 - Fix processing_type_facility_type_unmatched [#1875](https://github.com/open-apparel-registry/open-apparel-registry/pull/1875)
