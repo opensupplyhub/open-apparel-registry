@@ -123,13 +123,12 @@ class Command(BaseCommand):
         if make_sql:
             now = timezone.now().isoformat()
 
-            # TODO Consider useing different contributor IDs
             source_insert = (
                 "INSERT INTO api_source "
                 "(id, source_type, is_active, is_public, \"create\", "
                 "created_at, updated_at, contributor_id) "
                 "VALUES ({source_id}, 'SINGLE', 't', 't', 't', "
-                "'{created_at}', '{updated_at}', 1);\n"
+                "'{created_at}', '{updated_at}', {contributor_id});\n"
             )
             source_copy_header = (
                 'COPY api_source '
@@ -138,7 +137,8 @@ class Command(BaseCommand):
                 'FROM stdin;\n'
             )
             source_copy = (
-                '{source_id}\tSINGLE\tt\tt\tt\t{created_at}\t{updated_at}\t1\n'
+                '{source_id}\tSINGLE\tt\tt\tt\t{created_at}\t{updated_at}\t'
+                '{contributor_id}\n'
             )
 
             # TODO Consider generating multiple line items that match to each
@@ -233,6 +233,7 @@ class Command(BaseCommand):
                     new_row['match_id'] = idval
                     new_row['clean_address'] = clean(new_row['address'])
                     new_row['clean_name'] = clean(new_row['name'])
+                    new_row['contributor_id'] = random.randrange(2, 99)
                     yield new_row
                     idval += 1
 
