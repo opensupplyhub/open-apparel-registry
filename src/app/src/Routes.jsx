@@ -32,6 +32,7 @@ import ClaimedFacilities from './components/ClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
 import Settings from './components/Settings';
 import ExternalRedirect from './components/ExternalRedirect';
+import FacilityDetails from './components/FacilityDetails';
 
 import { sessionLogin } from './actions/auth';
 import { fetchFeatureFlags } from './actions/featureFlags';
@@ -50,6 +51,7 @@ import {
     listsRoute,
     facilityListItemsRoute,
     facilitiesRoute,
+    facilityDetailsRoute,
     profileRoute,
     dashboardRoute,
     claimFacilityRoute,
@@ -139,6 +141,20 @@ class Routes extends Component {
                                             />
                                         </FeatureFlag>
                                     )}
+                                />
+                                <Route
+                                    path={facilityDetailsRoute}
+                                    render={() => {
+                                        if (fetchingFeatureFlags) {
+                                            return <CircularProgress />;
+                                        }
+
+                                        return (
+                                            <Route
+                                                component={FacilityDetails}
+                                            />
+                                        );
+                                    }}
                                 />
                                 <Route
                                     path={facilitiesRoute}
