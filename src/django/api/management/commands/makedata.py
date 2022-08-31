@@ -204,6 +204,14 @@ class Command(BaseCommand):
                 '{updated_at}\t{oar_id}\t{list_item_id}\tt\n'
             )
 
+            update_query = (
+                'UPDATE api_facilitylistitem '
+                'SET facility_id = api_facility.id '
+                'FROM api_facility '
+                'WHERE api_facilitylistitem.id >= 100000000 '
+                'AND created_from_id = api_facilitylistitem.id;\n'
+            )
+
             def prepare(rows):
                 idval = 100000000
                 for row in rows:
@@ -228,20 +236,21 @@ class Command(BaseCommand):
                     yield new_row
                     idval += 1
 
-            # TODO Create a post load update that sets facility_id on
-            # api_facilitylistitem
             s_c_file = os.path.join(out_dir, 'sources_copy.sql')
             i_c_file = os.path.join(out_dir, 'facilitylistitems_copy.sql')
             f_c_file = os.path.join(out_dir, 'facilities_copy.sql')
             m_c_file = os.path.join(out_dir, 'facilitymatches_copy.sql')
+            u_file = os.path.join(out_dir, 'facility_to_item_update.sql')
             with open(f_c_file, 'w') as f_c, \
                  open(s_c_file, 'w') as s_c, \
                  open(i_c_file, 'w') as i_c, \
-                 open(m_c_file, 'w') as m_c:
+                 open(m_c_file, 'w') as m_c, \
+                 open(u_file, 'w') as u:
                 s_c.write(source_copy_header)
                 i_c.write(list_item_copy_header)
                 f_c.write(facility_copy_header)
                 m_c.write(match_copy_header)
+                u.write(update_query)
                 for row in prepare(rows):
                     s_c.write(source_copy.format(**row))
                     i_c.write(list_item_copy.format(**row))
