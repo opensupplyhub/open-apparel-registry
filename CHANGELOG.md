@@ -62,6 +62,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace font and global colors [#2077](https://github.com/open-apparel-registry/open-apparel-registry/pull/2077)
 - Change map marker #[2089](https://github.com/open-apparel-registry/open-apparel-registry/pull/2089)
 - Speed up XLSX parsing by using iteration [#2086](https://github.com/open-apparel-registry/open-apparel-registry/pull/2086)
+- Rename makecsvs to makedata and add stub SQL mode [#2108](https://github.com/open-apparel-registry/open-apparel-registry/pull/2108)
 
 ### Deprecated
 
