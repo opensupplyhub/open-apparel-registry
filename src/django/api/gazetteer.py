@@ -179,8 +179,7 @@ class OgrGazetteer(Link, OgrGazetteerMatching):
 
         with connection.cursor() as cursor:
             cursor.execute(
-                "CREATE TABLE {} (LIKE dedupe_indexed_records INCLUDING "
-                                  "ALL)"
+                "CREATE TABLE {} (LIKE dedupe_indexed_records INCLUDING ALL)"
                 .format(table_name)
             )
             # TODO: Bulk insert for speed?
