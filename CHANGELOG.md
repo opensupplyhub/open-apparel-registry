@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add facility details page [#2115](https://github.com/open-apparel-registry/open-apparel-registry/pull/2115)
 
 ### Changed
+
 - Upgrade terraform to 1.1.9 [#2054](https://github.com/open-apparel-registry/open-apparel-registry/pull/2054)
 - Use autocomplete ordered by name for admin contributors dropdown [#1848](https://github.com/open-apparel-registry/open-apparel-registry/pull/1848)
 - Document parallel OGR workflow in the README [#1851](https://github.com/open-apparel-registry/open-apparel-registry/pull/1851)

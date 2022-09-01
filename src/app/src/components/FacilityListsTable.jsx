@@ -41,17 +41,9 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                             <TableCell colSpan={2}>Name</TableCell>
                             <TableCell colSpan={2}>Description</TableCell>
                             <TableCell colSpan={2}>File Name</TableCell>
-                            <TableCell padding="dense">Total</TableCell>
                             <TableCell padding="dense">Uploaded</TableCell>
-                            <TableCell padding="dense">Parsed</TableCell>
-                            <TableCell padding="dense">Geocoded</TableCell>
-                            <TableCell padding="dense">Matched</TableCell>
-                            <TableCell padding="dense">Duplicate</TableCell>
-                            <TableCell padding="dense">Error</TableCell>
-                            <TableCell padding="dense">
-                                Potential Match
-                            </TableCell>
-                            <TableCell padding="dense">Deleted</TableCell>
+                            <TableCell padding="dense">Duplicates</TableCell>
+                            <TableCell padding="dense">Errors</TableCell>
                             <TableCell padding="dense" colSpan={2}>
                                 Status
                             </TableCell>
@@ -113,43 +105,13 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                 </TableCell>
                                 <FacilityListsTooltipTableCell
                                     tooltipTitle={
-                                        facilitiesListTableTooltipTitles.total
+                                        facilitiesListTableTooltipTitles.uploaded
                                     }
                                     tableCellText={list.item_count}
                                 />
                                 <FacilityListsTooltipTableCell
                                     tooltipTitle={
-                                        facilitiesListTableTooltipTitles.uploaded
-                                    }
-                                    tableCellText={list.status_counts.UPLOADED}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={
-                                        facilitiesListTableTooltipTitles.parsed
-                                    }
-                                    tableCellText={list.status_counts.PARSED}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={
-                                        facilitiesListTableTooltipTitles.geocoded
-                                    }
-                                    tableCellText={sum([
-                                        list.status_counts.GEOCODED,
-                                        list.status_counts.GEOCODED_NO_RESULTS,
-                                    ])}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={
-                                        facilitiesListTableTooltipTitles.matched
-                                    }
-                                    tableCellText={sum([
-                                        list.status_counts.MATCHED,
-                                        list.status_counts.CONFIRMED_MATCH,
-                                    ])}
-                                />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={
-                                        facilitiesListTableTooltipTitles.duplicate
+                                        facilitiesListTableTooltipTitles.duplicates
                                     }
                                     tableCellText={sum([
                                         list.status_counts.DUPLICATE,
@@ -157,7 +119,7 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                 />
                                 <FacilityListsTooltipTableCell
                                     tooltipTitle={
-                                        facilitiesListTableTooltipTitles.error
+                                        facilitiesListTableTooltipTitles.errors
                                     }
                                     tableCellText={sum([
                                         list.status_counts.ERROR,
@@ -166,23 +128,54 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                         list.status_counts.ERROR_MATCHING,
                                     ])}
                                 />
+                                {/* Status derivation:
+                                    Pending approval: the list status == PENDING
+                                    Rejected: the list status == REJECTED
+                                    Processing: If the list status is APPROVED and any of the UPLOADED, PARSED, or GEOCODED counts are > 0
+                                    Action Required: If not processing and match_resposibility == contributor
+                                    Pending Moderation: If not processing and match_resposibility == moderator
+                                    Approved: if list status is APPROVED and there are no items in UPLOADED, PARSED, GEOCODED, or POTENTIAL_MATCH
+                                */}
                                 <FacilityListsTooltipTableCell
+                                    colSpan={2}
                                     tooltipTitle={
-                                        facilitiesListTableTooltipTitles.potentialMatch
+                                        facilitiesListTableTooltipTitles.status
                                     }
-                                    tableCellText={
-                                        list.status_counts.POTENTIAL_MATCH
-                                    }
+                                    tableCellText={(() => {
+                                        let status;
+                                        if (list.status === 'PENDING') {
+                                            status = 'Pending approval';
+                                        } else if (list.status === 'REJECTED') {
+                                            status = 'Rejected';
+                                        } else if (list.status === 'APPROVED') {
+                                            if (
+                                                sum([
+                                                    list.status_counts.UPLOADED,
+                                                    list.status_counts.PARSED,
+                                                    list.status_counts.GEOCODED,
+                                                ]) > 0
+                                            ) {
+                                                status = 'Processing';
+                                            } else if (
+                                                list.status_counts
+                                                    .POTENTIAL_MATCH > 0
+                                            ) {
+                                                return 'Approved';
+                                            } else if (
+                                                list.match_responsibility ===
+                                                'contributor'
+                                            ) {
+                                                status = 'Action required';
+                                            } else if (
+                                                list.match_responsibility ===
+                                                'moderator'
+                                            ) {
+                                                status = 'Pending Moderation';
+                                            }
+                                        }
+                                        return status;
+                                    })()}
                                 />
-                                <FacilityListsTooltipTableCell
-                                    tooltipTitle={
-                                        facilitiesListTableTooltipTitles.deleted
-                                    }
-                                    tableCellText={list.status_counts.DELETED}
-                                />
-                                <TableCell padding="dense" colSpan={2}>
-                                    {list.is_active ? 'Active' : 'Inactive'}
-                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
