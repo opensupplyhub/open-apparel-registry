@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { arrayOf, bool, func, number, string } from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -93,6 +94,9 @@ function FilterSidebarFacilitiesTab({
     returnToSearchTab,
     fetchNextPage,
     isInfiniteLoading,
+    history: {
+        location: { search },
+    },
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
         false,
@@ -280,12 +284,16 @@ function FilterSidebarFacilitiesTab({
                                             to={{
                                                 pathname: makeFacilityDetailLink(
                                                     oarID,
+                                                    search,
                                                 ),
                                                 state: {
                                                     panMapToFacilityDetails: true,
                                                 },
                                             }}
-                                            href={makeFacilityDetailLink(oarID)}
+                                            href={makeFacilityDetailLink(
+                                                oarID,
+                                                search,
+                                            )}
                                             style={
                                                 facilitiesTabStyles.linkStyles
                                             }
@@ -413,7 +421,6 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(FilterSidebarFacilitiesTab);
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(FilterSidebarFacilitiesTab),
+);

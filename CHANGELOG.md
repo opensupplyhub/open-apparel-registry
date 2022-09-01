@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add duplicate status to list filter and item counts [#2061](https://github.com/open-apparel-registry/open-apparel-registry/pull/2061)
 - Add notify management command [#2045](https://github.com/open-apparel-registry/open-apparel-registry/pull/2045)
 - Add the new homepage [#2085](https://github.com/open-apparel-registry/open-apparel-registry/pull/2085)
+- Add facility details page [#2115](https://github.com/open-apparel-registry/open-apparel-registry/pull/2115)
 
 ### Changed
 - Upgrade terraform to 1.1.9 [#2054](https://github.com/open-apparel-registry/open-apparel-registry/pull/2054)

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Redirect } from 'react-router';
+import { Redirect, withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
@@ -55,6 +55,7 @@ const detailsSidebarStyles = theme =>
             flex: 1,
             overflow: 'scroll',
             paddingBottom: '50px',
+            backgroundColor: '#fff',
         },
         label: {
             padding: '12px 24px 6px 24px',
@@ -576,7 +577,9 @@ function mapDispatchToProps(
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(withStyles(detailsSidebarStyles)(FacilityDetailSidebar));
+export default withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(withStyles(detailsSidebarStyles)(FacilityDetailSidebar)),
+);

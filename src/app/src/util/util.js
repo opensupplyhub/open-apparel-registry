@@ -578,7 +578,8 @@ export const mapDjangoChoiceTuplesValueToSelectOptions = data =>
 
 export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 
-export const makeFacilityDetailLink = oarID => `${facilitiesRoute}/${oarID}`;
+export const makeFacilityDetailLink = (oarID, search) =>
+    `${facilitiesRoute}/${oarID}${search || ''}`;
 
 export const makeClaimFacilityLink = oarID =>
     `${facilitiesRoute}/${oarID}/claim`;
