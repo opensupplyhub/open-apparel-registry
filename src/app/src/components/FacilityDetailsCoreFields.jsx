@@ -10,6 +10,7 @@ import ContentCopyIcon from './ContentCopyIcon';
 import ArrowDropDownIcon from './ArrowDropDownIcon';
 import FlagIcon from './FlagIcon';
 import ShowOnly from './ShowOnly';
+import ReportFacilityStatusDialog from './ReportFacilityStatusDialog';
 
 import { facilitySidebarActions } from '../util/constants';
 
@@ -17,7 +18,6 @@ import {
     makeReportADataIssueEmailLink,
     makeReportADuplicateEmailLink,
     makeDisputeClaimEmailLink,
-    getIsMobile
 } from '../util/util';
 
 const coreFieldsStyles = theme =>
@@ -68,6 +68,10 @@ const coreFieldsStyles = theme =>
         osId: {
             marginTop: theme.spacing.unit * 2,
         },
+        menuLink: {
+            color: 'inherit',
+            textDecoration: 'inherit',
+        },
     });
 
 const FacilityDetailsCoreFields = ({
@@ -75,7 +79,12 @@ const FacilityDetailsCoreFields = ({
     name,
     oarId,
     isEmbed,
+    isClaimed,
+    isClosed,
+    facilityIsClaimedByCurrentUser,
+    userHasPendingFacilityClaim,
 }) => {
+    const [showDialog, setShowDialog] = useState(false);
     const [anchorEl, setAnchorEl] = useState();
     const handleClick = event => {
         setAnchorEl(event.currentTarget);
@@ -170,25 +179,7 @@ const FacilityDetailsCoreFields = ({
                                 </span>
                                 <ArrowDropDownIcon />
                             </Button>
-                            <Menu
-                                id="report-menu"
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                            >
-                                <MenuItem onClick={handleClose}>
-                                    Report as Duplicate
-                                </MenuItem>
-                                <MenuItem onClick={handleClose}>
-                                    Report as Closed
-                                </MenuItem>
-                                <MenuItem onClick={handleClose}>
-                                    Suggest an Edit
-                                </MenuItem>
-                                <MenuItem onClick={handleClose}>
-                                    Dispute Claim
-                                </MenuItem>
-                            </Menu>
+                            {menu}
                             <Button variant="outlined">
                                 <ContentCopyIcon />
                                 <span className={classes.buttonText}>
@@ -202,6 +193,10 @@ const FacilityDetailsCoreFields = ({
                     <strong>OS ID:</strong> {oarId}
                 </Typography>
             </div>
+            <ReportFacilityStatusDialog
+                showDialog={showDialog}
+                setShowDialog={setShowDialog}
+            />
         </div>
     );
 };

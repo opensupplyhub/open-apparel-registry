@@ -20,8 +20,6 @@ import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 import FacilityDetailSidebarLocation from './FacilityDetailSidebarLocation';
 import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
 import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
-import FacilityDetailSidebarAction from './FacilityDetailSidebarAction';
-import ReportFacilityStatus from './ReportFacilityStatus';
 import ShowOnly from './ShowOnly';
 import FeatureFlag from './FeatureFlag';
 
@@ -40,9 +38,6 @@ import {
 } from '../util/constants';
 
 import {
-    makeReportADataIssueEmailLink,
-    makeReportADuplicateEmailLink,
-    makeDisputeClaimEmailLink,
     makeClaimFacilityLink,
     getLocationWithoutEmbedParam,
 } from '../util/util';
@@ -90,6 +85,10 @@ const detailsSidebarStyles = theme =>
             flexDirection: 'column',
             alignItems: 'flex-start',
             padding: '30px 12px 0 12px',
+        },
+        link: {
+            color: theme.palette.primary.main,
+            paddingLeft: theme.spacing.unit * 2,
         },
     });
 
@@ -271,7 +270,7 @@ const FacilityDetailSidebar = ({
             <div className={classes.root}>
                 <ul>
                     {error.map(err => (
-                        <li key={err} classNames={classes.error}>
+                        <li key={err} className={classes.error}>
                             {err}
                         </li>
                     ))}
@@ -383,6 +382,13 @@ const FacilityDetailSidebar = ({
                     name={nameField.primary}
                     oarId={data.properties.oar_id}
                     isEmbed={embed}
+                    isClaimed={isClaimed}
+                    facilityIsClaimedByCurrentUser={
+                        facilityIsClaimedByCurrentUser
+                    }
+                    userHasPendingFacilityClaim={userHasPendingFacilityClaim}
+                    claimFacility={claimFacility}
+                    isClosed={data.properties.is_closed}
                 />
                 <FacilityDetailSidebarItem
                     label="Name"
@@ -438,48 +444,15 @@ const FacilityDetailSidebar = ({
                 </FeatureFlag>
                 <ShowOnly when={embed}>{renderEmbedFields()}</ShowOnly>
                 <div className={classes.actions}>
-                    <ShowOnly when={!embed}>
-                        <FacilityDetailSidebarAction
-                            href={makeReportADataIssueEmailLink(oarId)}
-                            iconName="pencil"
-                            text={facilitySidebarActions.SUGGEST_AN_EDIT}
-                            link
-                        />
-                        <FacilityDetailSidebarAction
-                            href={makeReportADuplicateEmailLink(oarId)}
-                            iconName="clone"
-                            text={facilitySidebarActions.REPORT_AS_DUPLICATE}
-                            link
-                        />
-                        <ReportFacilityStatus data={data} />
-                        <ShowOnly when={!facilityIsClaimedByCurrentUser}>
-                            {isClaimed ? (
-                                <FacilityDetailSidebarAction
-                                    href={makeDisputeClaimEmailLink(oarId)}
-                                    iconName="shield-alt"
-                                    text={facilitySidebarActions.DISPUTE_CLAIM}
-                                    link
-                                />
-                            ) : (
-                                <ShowOnly when={!userHasPendingFacilityClaim}>
-                                    <FacilityDetailSidebarAction
-                                        iconName="shield-check"
-                                        text={
-                                            facilitySidebarActions.CLAIM_FACILITY
-                                        }
-                                        onClick={claimFacility}
-                                    />
-                                </ShowOnly>
-                            )}
-                        </ShowOnly>
-                    </ShowOnly>
                     <ShowOnly when={embed}>
-                        <FacilityDetailSidebarAction
-                            iconName="external-link-square-alt"
-                            text={facilitySidebarActions.VIEW_ON_OAR}
+                        <a
+                            className={classes.link}
                             href={getLocationWithoutEmbedParam()}
-                            link
-                        />
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            {facilitySidebarActions.VIEW_ON_OAR}
+                        </a>
                     </ShowOnly>
                 </div>
             </List>
