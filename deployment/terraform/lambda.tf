@@ -10,7 +10,7 @@ resource "aws_lambda_function" "alert_batch_failures" {
   description   = "Function to alert on AWS Batch Job Failures."
   role          = aws_iam_role.alert_batch_failures.arn
   handler       = "alert_batch_failures.handler"
-  runtime       = "python3.6"
+  runtime       = "python3.8"
   timeout       = 10
   memory_size   = 128
 
@@ -72,7 +72,7 @@ resource "aws_lambda_function" "alert_sfn_failures" {
   description   = "Function to alert on AWS Step Functions Failures."
   role          = aws_iam_role.alert_sfn_failures.arn
   handler       = "alert_sfn_failures.handler"
-  runtime       = "python3.6"
+  runtime       = "python3.8"
   timeout       = 10
   memory_size   = 128
 
@@ -88,4 +88,3 @@ resource "aws_lambda_function" "alert_sfn_failures" {
     Environment = var.environment
   }
 }
-
