@@ -14,7 +14,7 @@ import List from '@material-ui/core/List';
 
 import FacilityDetailSidebarClosureStatus from './FacilityDetailSidebarClosureStatus';
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
-import FacilityDetailSidebarHeader from './FacilityDetailSidebarHeader';
+import FacilityDetailsClaimFlag from './FacilityDetailsClaimFlag';
 import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 import FacilityDetailSidebarLocation from './FacilityDetailSidebarLocation';
 import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
@@ -182,10 +182,7 @@ const FacilityDetailSidebar = ({
     },
     userHasPendingFacilityClaim,
     facilityIsClaimedByCurrentUser,
-    embedContributor,
     embedConfig,
-    searchForFacilities,
-    vectorTileFlagIsActive,
 }) => {
     useEffect(() => {
         fetchFacility(Number(embed), contributors);
@@ -371,24 +368,11 @@ const FacilityDetailSidebar = ({
     return (
         <div className={classes.root}>
             <List className={classes.list}>
-                <FacilityDetailSidebarHeader
+                <FacilityDetailsClaimFlag
+                    oarId={data.properties.oar_id}
                     isClaimed={isClaimed}
                     isPending={userHasPendingFacilityClaim}
                     isEmbed={embed}
-                    claimantName={get(
-                        data,
-                        'properties.claim_info.contributor',
-                        'A Contributor',
-                    )}
-                    embedContributor={embedContributor}
-                    fetching={fetching}
-                    push={push}
-                    oarId={data.properties.oar_id}
-                    onClaimFacility={claimFacility}
-                    onBack={() => {
-                        clearFacility();
-                        searchForFacilities(vectorTileFlagIsActive);
-                    }}
                 />
                 <FacilityDetailSidebarClosureStatus
                     data={data}
