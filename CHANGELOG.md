@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Fix getLangFromTranslateElement function [#2096](https://github.com/open-apparel-registry/open-apparel-registry/pull/2096)
+- Update the Python and Rollber versions used for lamba functions [#2121](https://github.com/open-apparel-registry/open-apparel-registry/pull/2121/files)
+]
 
 ### Security
 
