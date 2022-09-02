@@ -291,7 +291,7 @@ function FilterSidebarFacilitiesTab({
                                     is_closed: isClosed,
                                 },
                             }) => (
-                                <Fragment
+                                <div
                                     key={oarID}
                                     style={facilitiesTabStyles.listItemStyles}
                                 >
@@ -385,7 +385,7 @@ function FilterSidebarFacilitiesTab({
                                             </FeatureFlag>
                                         ) : null}
                                     </ListItem>
-                                </Fragment>
+                                </div>
                             ),
                         )}
                     />
