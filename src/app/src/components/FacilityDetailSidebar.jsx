@@ -15,6 +15,7 @@ import List from '@material-ui/core/List';
 import FacilityDetailSidebarClosureStatus from './FacilityDetailSidebarClosureStatus';
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailsClaimFlag from './FacilityDetailsClaimFlag';
+import FacilityDetailsCoreFields from './FacilityDetailsCoreFields';
 import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 import FacilityDetailSidebarLocation from './FacilityDetailSidebarLocation';
 import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
@@ -378,10 +379,10 @@ const FacilityDetailSidebar = ({
                     data={data}
                     clearFacility={clearFacility}
                 />
-                <FacilityDetailSidebarItem
-                    label="OS Hub ID"
-                    primary={oarId}
-                    embed={embed}
+                <FacilityDetailsCoreFields
+                    name={nameField.primary}
+                    oarId={data.properties.oar_id}
+                    isEmbed={embed}
                 />
                 <FacilityDetailSidebarItem
                     label="Name"
