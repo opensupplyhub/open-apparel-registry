@@ -21,7 +21,7 @@ import {
     mainRoute,
 } from '../util/constants';
 
-import { makeFacilityDetailLink } from '../util/util';
+import { makeFacilityDetailLink, getIsMobile } from '../util/util';
 
 import { resetSingleFacility } from '../actions/facilities';
 
@@ -241,7 +241,7 @@ function mapStateToProps({
         boundary,
         isEmbedded,
         mapStyle: config.map_style,
-        isMobile: windowInnerWidth < 600,
+        isMobile: getIsMobile(windowInnerWidth),
     };
 }
 

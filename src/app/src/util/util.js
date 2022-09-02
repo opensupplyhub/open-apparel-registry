@@ -920,3 +920,5 @@ export const createIFrameHTML = ({ fullWidth, contributor, height, width }) =>
                 style="width:${width}px;height:${height}px"
                 title="embedded-map"
             />`;
+
+export const getIsMobile = windowInnerWidth => windowInnerWidth < 600;

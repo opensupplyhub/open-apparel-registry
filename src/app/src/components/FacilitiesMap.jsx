@@ -36,7 +36,7 @@ import {
     GOOGLE_CLIENT_SIDE_API_KEY,
 } from '../util/constants.facilitiesMap';
 
-import { makeFacilityDetailLink } from '../util/util';
+import { makeFacilityDetailLink, getIsMobile } from '../util/util';
 
 const selectedMarkerURL = '/images/selectedmarker.png';
 const unselectedMarkerURL = '/images/marker.png';
@@ -385,7 +385,7 @@ function mapStateToProps({
         clientInfoFetched: fetched,
         countryCode: countryCode || COUNTRY_CODES.default,
         isEmbedded,
-        isMobile: windowInnerWidth < 600,
+        isMobile: getIsMobile(windowInnerWidth),
     };
 }
 
