@@ -13,11 +13,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
 
 import FacilityDetailSidebarClosureStatus from './FacilityDetailSidebarClosureStatus';
-import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
 import FacilityDetailsClaimFlag from './FacilityDetailsClaimFlag';
 import FacilityDetailsCoreFields from './FacilityDetailsCoreFields';
+import FacilityDetailsLocationFields from './FacilityDetailsLocationFields';
 import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
-import FacilityDetailSidebarLocation from './FacilityDetailSidebarLocation';
 import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
 import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
 import ShowOnly from './ShowOnly';
@@ -219,26 +218,6 @@ const FacilityDetailSidebar = ({
         return [defaultNameField[0], otherNameFields];
     }, [data]);
 
-    const [addressField, otherAddresses] = useMemo(() => {
-        const coreAddress = get(data, 'properties.address', '');
-        const addressFields = filterByUniqueField(data, 'address');
-        const [defaultAddressField, otherAddressFields] = partition(
-            addressFields,
-            field => field.primary === coreAddress,
-        );
-        if (!defaultAddressField.length) {
-            return [
-                {
-                    primary: coreAddress,
-                    secondary: createdFrom,
-                    key: coreAddress + createdFrom,
-                },
-                otherAddressFields,
-            ];
-        }
-        return [defaultAddressField[0], otherAddressFields];
-    }, [data]);
-
     const [activityReport, otherActivityReports] = useMemo(
         () => formatActivityReports(data),
         [data],
@@ -390,6 +369,12 @@ const FacilityDetailSidebar = ({
                     claimFacility={claimFacility}
                     isClosed={data.properties.is_closed}
                 />
+                <FacilityDetailsLocationFields
+                    data={data}
+                    filterByUniqueField={filterByUniqueField}
+                    createdFrom={createdFrom}
+                    embed={embed}
+                />
                 <FacilityDetailSidebarItem
                     label="Name"
                     {...nameField}
@@ -402,21 +387,7 @@ const FacilityDetailSidebar = ({
                     additionalContent={otherSectors}
                     embed={embed}
                 />
-                <FacilityDetailSidebarItem
-                    label="Address"
-                    {...addressField}
-                    primary={`${addressField.primary} - ${get(
-                        data,
-                        'properties.country_name',
-                        '',
-                    )}`}
-                    additionalContent={otherAddresses}
-                    embed={embed}
-                />
-                <div style={{ padding: '0 16px' }}>
-                    <FacilityDetailsStaticMap data={data} />
-                </div>
-                <FacilityDetailSidebarLocation data={data} embed={embed} />
+
                 <ShowOnly when={!embed}>
                     <FacilityDetailSidebarContributors
                         contributors={data.properties.contributors}
