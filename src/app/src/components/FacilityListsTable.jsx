@@ -13,7 +13,10 @@ import FacilityListsTooltipTableCell from './FacilityListsTooltipTableCell';
 
 import { facilityListPropType } from '../util/propTypes';
 import { makeFacilityListItemsDetailLink } from '../util/util';
-import { facilitiesListTableTooltipTitles } from '../util/constants';
+import {
+    facilitiesListTableTooltipTitles,
+    matchResponsibilityEnum,
+} from '../util/constants';
 
 const facilityListsTableStyles = Object.freeze({
     inactiveListStyles: Object.freeze({
@@ -170,14 +173,14 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                                 return 'Approved';
                                             } else if (
                                                 list.match_responsibility ===
-                                                'contributor'
+                                                matchResponsibilityEnum.CONTRIBUTOR
                                             ) {
                                                 status = 'Action required';
                                             } else if (
                                                 list.match_responsibility ===
-                                                'moderator'
+                                                matchResponsibilityEnum.MODERATOR
                                             ) {
-                                                status = 'Pending Moderation';
+                                                status = 'Pending moderation';
                                             }
                                         }
                                         return status;
