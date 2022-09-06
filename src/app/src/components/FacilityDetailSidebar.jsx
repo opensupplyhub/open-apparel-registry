@@ -6,8 +6,6 @@ import get from 'lodash/get';
 import uniqBy from 'lodash/uniqBy';
 import partition from 'lodash/partition';
 import includes from 'lodash/includes';
-import filter from 'lodash/filter';
-import isNil from 'lodash/isNil';
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
@@ -16,9 +14,9 @@ import FacilityDetailSidebarClosureStatus from './FacilityDetailSidebarClosureSt
 import FacilityDetailsClaimFlag from './FacilityDetailsClaimFlag';
 import FacilityDetailsCoreFields from './FacilityDetailsCoreFields';
 import FacilityDetailsLocationFields from './FacilityDetailsLocationFields';
+import FacilityDetailsGeneralFields from './FacilityDetailsGeneralFields';
 import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
-import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
 import ShowOnly from './ShowOnly';
 import FeatureFlag from './FeatureFlag';
 
@@ -30,10 +28,8 @@ import {
 
 import {
     facilitySidebarActions,
-    EXTENDED_FIELD_TYPES,
     REPORT_A_FACILITY,
     FACILITIES_REQUEST_PAGE_SIZE,
-    CLAIM_A_FACILITY,
 } from '../util/constants';
 
 import {
@@ -223,19 +219,6 @@ const FacilityDetailSidebar = ({
         [data],
     );
 
-    const [sectorField, otherSectors] = useMemo(() => {
-        const sectors = get(data, 'properties.sector', []).map(item => ({
-            primary: item.values.join(', '),
-            secondary: formatAttribution(
-                item.updated_at,
-                item.contributor_name,
-            ),
-            isFromClaim: item.is_from_claim,
-            key: item.contributor_id,
-        }));
-        return [sectors[0], sectors.slice(1)];
-    });
-
     if (fetching) {
         return (
             <div className={classes.root}>
@@ -279,71 +262,6 @@ const FacilityDetailSidebar = ({
     const isClaimed = !!data?.properties?.claim_info;
     const claimFacility = () => push(makeClaimFacilityLink(oarId));
 
-    const renderExtendedField = ({ label, fieldName, formatValue }) => {
-        let values = get(data, `properties.extended_fields.${fieldName}`, []);
-
-        const formatField = item =>
-            formatExtendedField({ ...item, formatValue });
-
-        if (fieldName === 'facility_type') {
-            // Filter by values where a matched value has a facility_type field
-            values = values.filter(v =>
-                v?.value?.matched_values?.some(mv => mv[2]),
-            );
-        }
-
-        if (!values.length || !values[0]) return null;
-
-        const topValue = formatField(values[0]);
-
-        return (
-            <FacilityDetailSidebarItem
-                {...topValue}
-                label={label}
-                additionalContent={values.slice(1).map(formatField)}
-                embed={embed}
-            />
-        );
-    };
-
-    const renderContributorField = ({ label, value }) => {
-        if (isNil(value) || value.toString().trim() === '') {
-            return null;
-        }
-        return (
-            <FacilityDetailSidebarItem
-                label={label}
-                primary={value}
-                key={label}
-            />
-        );
-    };
-
-    const contributorFields = filter(
-        get(data, 'properties.contributor_fields', null),
-        field => field.value !== null,
-    );
-
-    const renderEmbedFields = () => {
-        const fields = embedConfig?.embed_fields?.filter(f => f.visible) || [];
-        return fields.map(({ column_name: fieldName, display_name: label }) => {
-            // If there is an extended field for that name, render and return it
-            const eft = EXTENDED_FIELD_TYPES.find(
-                x => x.fieldName === fieldName,
-            );
-            const ef = eft ? renderExtendedField({ ...eft, label }) : null;
-            if (ef) {
-                return ef;
-            }
-            // Otherwise, try rendering it as a contributor field
-            const cf = contributorFields.find(x => x.fieldName === fieldName);
-            if (cf) {
-                return renderContributorField(cf);
-            }
-            return null;
-        });
-    };
-
     return (
         <div className={classes.root}>
             <List className={classes.list}>
@@ -375,17 +293,17 @@ const FacilityDetailSidebar = ({
                     createdFrom={createdFrom}
                     embed={embed}
                 />
-                <FacilityDetailSidebarItem
-                    label="Name"
-                    {...nameField}
-                    additionalContent={otherNames}
+                <FacilityDetailsGeneralFields
+                    data={data}
                     embed={embed}
-                />
-                <FacilityDetailSidebarItem
-                    label="Sector"
-                    {...sectorField}
-                    additionalContent={otherSectors}
-                    embed={embed}
+                    nameField={nameField}
+                    otherNames={otherNames}
+                    formatAttribution={formatAttribution}
+                    embedConfig={embedConfig}
+                    formatExtendedField={formatExtendedField}
+                    formatIfListAndRemoveDuplicates={
+                        formatIfListAndRemoveDuplicates
+                    }
                 />
 
                 <ShowOnly when={!embed}>
@@ -393,16 +311,7 @@ const FacilityDetailSidebar = ({
                         contributors={data.properties.contributors}
                         push={push}
                     />
-                    {EXTENDED_FIELD_TYPES.map(renderExtendedField)}
                 </ShowOnly>
-                <FeatureFlag flag={CLAIM_A_FACILITY}>
-                    <ShowOnly when={!!data.properties.claim_info}>
-                        <FacilityDetailSidebarClaimedInfo
-                            data={data.properties.claim_info}
-                            formatListItem={formatIfListAndRemoveDuplicates}
-                        />
-                    </ShowOnly>
-                </FeatureFlag>
                 <FeatureFlag flag={REPORT_A_FACILITY}>
                     <ShowOnly when={!!activityReport}>
                         <FacilityDetailSidebarItem
@@ -413,7 +322,6 @@ const FacilityDetailSidebar = ({
                         />
                     </ShowOnly>
                 </FeatureFlag>
-                <ShowOnly when={embed}>{renderEmbedFields()}</ShowOnly>
                 <div className={classes.actions}>
                     <ShowOnly when={embed}>
                         <a

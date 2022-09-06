@@ -3,6 +3,7 @@ import { number, string, shape } from 'prop-types';
 import trim from 'lodash/trim';
 import orderBy from 'lodash/orderBy';
 import identity from 'lodash/identity';
+import Grid from '@material-ui/core/Grid';
 
 import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 
@@ -10,7 +11,13 @@ import { addProtocolToWebsiteURLIfMissing } from '../util/util';
 
 const ClaimInfoSection = ({ label, value }) =>
     trim(value) && (
-        <FacilityDetailSidebarItem label={label} primary={value} isFromClaim />
+        <Grid item xs={12} md={6}>
+            <FacilityDetailSidebarItem
+                label={label}
+                primary={value}
+                isFromClaim
+            />
+        </Grid>
     );
 
 export default function FacilityDetailsSidebarClaimedInfo({
