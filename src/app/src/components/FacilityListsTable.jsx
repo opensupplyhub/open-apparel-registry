@@ -144,7 +144,14 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                     tableCellText={(() => {
                                         let status;
                                         if (list.status === 'PENDING') {
-                                            status = 'Pending approval';
+                                            if (
+                                                list.item_count ===
+                                                list.status_counts.UPLOADED
+                                            ) {
+                                                status = 'Processing';
+                                            } else {
+                                                status = 'Pending approval';
+                                            }
                                         } else if (list.status === 'REJECTED') {
                                             status = 'Rejected';
                                         } else if (list.status === 'APPROVED') {
