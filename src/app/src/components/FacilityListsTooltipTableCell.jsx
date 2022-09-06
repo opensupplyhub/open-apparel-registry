@@ -14,6 +14,7 @@ const facilityListTooltipTableCellStyles = Object.freeze({
 export default function FacilityListsTooltipTableCell({
     tooltipTitle,
     tableCellText,
+    colSpan,
 }) {
     const [tooltipIsOpen, toggleTooltipIsOpen] = useState(false);
 
@@ -29,6 +30,7 @@ export default function FacilityListsTooltipTableCell({
     return (
         <Tooltip title={title} open={tooltipIsOpen}>
             <TableCell
+                colSpan={colSpan}
                 padding="dense"
                 onMouseEnter={openTooltip}
                 onMouseLeave={closeTooltip}

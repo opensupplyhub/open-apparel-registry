@@ -480,19 +480,11 @@ export const emptyFeatureCollection = Object.freeze({
 export const ENTER_KEY = 'Enter';
 
 export const facilitiesListTableTooltipTitles = Object.freeze({
-    total: 'Total number of items in this list.',
-    uploaded: 'Number of items that have been uploaded but not yet processed.',
-    parsed:
-        'Number of items that have had their addresses parsed but have not yet been geocoded.',
-    geocoded: 'Number of items that have been geocoded but not yet matched.',
-    matched:
-        'Number of items that have been matched with an existing facility or created a new facility.',
-    duplicate:
+    uploaded: 'Total number of items that have been uploaded.',
+    duplicates:
         'Number of items identified as a duplicate of another item in the same list.',
-    error: 'Number of items that have encountered errors during processing',
-    potentialMatch:
-        'Number of items with potential matches to confirm or reject.',
-    deleted: 'Number of items where the related facility has been deleted.',
+    errors: 'Number of items that have encountered errors during processing',
+    status: 'Processing status of this list.',
 });
 
 export const CLAIM_A_FACILITY = 'claim_a_facility';
