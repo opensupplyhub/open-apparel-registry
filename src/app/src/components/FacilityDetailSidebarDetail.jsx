@@ -1,7 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import ShowOnly from './ShowOnly';
@@ -10,13 +9,29 @@ import FeatureFlag from './FeatureFlag';
 
 import { CLAIM_A_FACILITY } from '../util/constants';
 
-const detailsSidebarStyles = () =>
+const detailsSidebarStyles = theme =>
     Object.freeze({
+        root: {
+            display: 'flex',
+            alignItems: 'center',
+        },
+        badgeWrapper: {
+            paddingRight: theme.spacing.unit,
+            paddingTop: theme.spacing.unit,
+        },
         primaryText: {
             wordWrap: 'break-word',
+            fontWeight: 500,
+            fontSize: '18px',
+            lineHeight: '21px',
+            paddingTop: theme.spacing.unit,
         },
-        item: {
-            boxShadow: '0px -1px 0px 0px rgb(240, 240, 240)',
+        secondaryText: {
+            wordWrap: 'break-word',
+            fontWeight: 500,
+            fontSize: '14px',
+            lineHeight: '17px',
+            paddingTop: theme.spacing.unit,
         },
     });
 
@@ -34,23 +49,30 @@ const FacilityDetailSidebarDetail = ({
     isFromClaim,
     classes,
 }) => (
-    <ListItem className={classes.item}>
-        <ShowOnly when={isVerified && !isFromClaim}>
-            <BadgeVerified />
-        </ShowOnly>
-        <FeatureFlag flag={CLAIM_A_FACILITY}>
-            <ShowOnly when={isFromClaim}>
-                <Tooltip title={CLAIM_EXPLANATORY_TEXT}>
+    <div className={classes.root}>
+        <ShowOnly when={isVerified || isFromClaim}>
+            <div className={classes.badgeWrapper}>
+                <ShowOnly when={isVerified && !isFromClaim}>
                     <BadgeVerified />
-                </Tooltip>
-            </ShowOnly>
-        </FeatureFlag>
-        <ListItemText
-            primary={primary}
-            secondary={secondary}
-            classes={{ primary: classes.primaryText }}
-        />
-    </ListItem>
+                </ShowOnly>
+                <FeatureFlag flag={CLAIM_A_FACILITY}>
+                    <ShowOnly when={isFromClaim}>
+                        <Tooltip title={CLAIM_EXPLANATORY_TEXT}>
+                            <BadgeVerified />
+                        </Tooltip>
+                    </ShowOnly>
+                </FeatureFlag>
+            </div>
+        </ShowOnly>
+        <div>
+            <Typography className={classes.primaryText}>{primary}</Typography>
+            {secondary ? (
+                <Typography className={classes.secondaryText}>
+                    {secondary}
+                </Typography>
+            ) : null}
+        </div>
+    </div>
 );
 
 export default withStyles(detailsSidebarStyles)(FacilityDetailSidebarDetail);

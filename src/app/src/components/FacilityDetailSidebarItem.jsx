@@ -1,39 +1,32 @@
 import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 import FacilityDetailSidebarDetail from './FacilityDetailSidebarDetail';
+import TitledDrawer from './TitledDrawer';
 import ShowOnly from './ShowOnly';
 
-const detailsSidebarStyles = () =>
+const detailsSidebarStyles = theme =>
     Object.freeze({
         item: {
-            paddingTop: '16px',
+            paddingTop: theme.spacing.unit * 3,
         },
         label: {
-            fontSize: '0.75rem',
+            fontSize: '14px',
             textTransform: 'uppercase',
-            fontWeight: 'bold',
+            fontWeight: 900,
         },
-        primaryText: {
-            wordWrap: 'break-word',
+        button: {
+            textTransform: 'none',
+            fontWeight: 500,
+            fontSize: '14px',
+            padding: 0,
+            lineHeight: '17px',
+            textDecorationLine: 'underline',
         },
-        secondaryText: {
-            color: 'rgba(0, 0, 0, 0.54)',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '12px',
-            justify: 'flex-end',
-        },
-        divider: {
-            backgroundColor: 'rgba(0, 0, 0, 0.06)',
-        },
-        icon: {
-            color: 'rgb(106, 106, 106)',
-            fontSize: '24px',
-            fontWeight: 300,
-            textAlign: 'center',
+        itemWrapper: {
+            paddingBottom: theme.spacing.unit * 3,
         },
     });
 
@@ -53,38 +46,54 @@ const FacilityDetailSidebarItem = ({
 
     return (
         <div className={classes.item}>
-            <ListItem
-                button={hasAdditionalContent}
-                onClick={() => {
-                    if (!hasAdditionalContent) return;
-                    setIsOpen(!isOpen);
-                }}
-            >
-                <ListItemText
-                    primary={label}
-                    classes={{ primary: classes.label }}
-                />
-                <ShowOnly when={hasAdditionalContent}>
-                    <div className={classes.secondaryText}>
-                        <ListItemText secondary={additionalContentCount + 1} />
-                        <i
-                            className={`${classes.icon} far fa-fw fa-${
-                                isOpen ? 'angle-up' : 'angle-down'
-                            }`}
-                        />
-                    </div>
-                </ShowOnly>
-            </ListItem>
+            <div>
+                <Typography className={classes.label}>{label}</Typography>
+            </div>
             <FacilityDetailSidebarDetail
                 primary={primary}
                 secondary={!embed ? secondary : null}
                 isVerified={isVerified}
                 isFromClaim={isFromClaim}
             />
-            {isOpen &&
-                additionalContent.map(item => (
-                    <FacilityDetailSidebarDetail {...item} />
-                ))}
+            <ShowOnly when={hasAdditionalContent}>
+                <Button
+                    color="primary"
+                    className={classes.button}
+                    onClick={() => {
+                        if (!hasAdditionalContent) return;
+                        setIsOpen(!isOpen);
+                    }}
+                >
+                    {additionalContentCount} more{' '}
+                    {additionalContentCount === 1
+                        ? 'contribution'
+                        : 'contributions'}
+                </Button>
+            </ShowOnly>
+            <TitledDrawer
+                open={isOpen}
+                anchor="right"
+                onClose={() => setIsOpen(false)}
+                title={label}
+                subtitle={`${additionalContentCount + 1} contributions`}
+            >
+                <div className={classes.drawer}>
+                    <div className={classes.itemWrapper}>
+                        <FacilityDetailSidebarDetail
+                            primary={primary}
+                            secondary={!embed ? secondary : null}
+                            isVerified={isVerified}
+                            isFromClaim={isFromClaim}
+                        />
+                    </div>
+                    {isOpen &&
+                        additionalContent.map(item => (
+                            <div className={classes.itemWrapper} key={item.id}>
+                                <FacilityDetailsDetail {...item} />
+                            </div>
+                        ))}
+                </div>
+            </TitledDrawer>
         </div>
     );
 };
