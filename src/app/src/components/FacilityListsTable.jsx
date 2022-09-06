@@ -165,7 +165,7 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                                 status = 'Processing';
                                             } else if (
                                                 list.status_counts
-                                                    .POTENTIAL_MATCH > 0
+                                                    .POTENTIAL_MATCH === 0
                                             ) {
                                                 return 'Approved';
                                             } else if (
