@@ -20,7 +20,8 @@ class Command(BaseCommand):
                          'sources.json',
                          'facility_list_items.json',
                          'sectors.json',
-                         'trainedmodel.json')
+                         'trainedmodel.json',
+                         'dedupe_indexed_records.json')
             if match:
                 call_command('loaddata',
                              'facilities.json',
