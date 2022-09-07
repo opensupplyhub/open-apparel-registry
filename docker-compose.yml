@@ -12,6 +12,10 @@ services:
       timeout: 3s
       retries: 3
 
+  memcached:
+    image: memcached:1.6-alpine
+    command: -v -I 8m -m 256
+
   django:
     image: opensupplyhub
     env_file: .env
@@ -21,6 +25,8 @@ services:
       - POSTGRES_USER=openapparelregistry
       - POSTGRES_PASSWORD=openapparelregistry
       - POSTGRES_DB=openapparelregistry
+      - CACHE_HOST=memcached
+      - CACHE_PORT=11211
       - DJANGO_ENV=Development
       - DJANGO_SECRET_KEY=secret
       - DJANGO_LOG_LEVEL=INFO
@@ -37,6 +43,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      memcached:
+        condition: service_started
     command:
       - "-b :8081"
       - "--reload"
