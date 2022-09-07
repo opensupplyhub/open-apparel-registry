@@ -14,6 +14,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.db.models.expressions import Subquery, OuterRef
 from django.db.models import F, Q, ExpressionWrapper, Func
@@ -52,6 +53,12 @@ def get_default_burst_rate():
 
 def get_default_sustained_rate():
     return settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['sustained']
+
+
+throttle_rate_validator = RegexValidator(
+    r"\d+/(second|minute|hour|day)",
+    "You must enter value of the format N/(second|minute|hour|day)"
+)
 
 
 class ArrayLength(models.Func):
@@ -309,11 +316,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     burst_rate = models.CharField(
         default=get_default_burst_rate,
-        max_length=20
+        max_length=20,
+        validators=[throttle_rate_validator]
     )
     sustained_rate = models.CharField(
         default=get_default_sustained_rate,
         max_length=20,
+        validators=[throttle_rate_validator]
     )
 
     def __str__(self):
