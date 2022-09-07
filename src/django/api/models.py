@@ -4,6 +4,7 @@ import json
 import logging
 from unidecode import unidecode
 
+from django.conf import settings
 from django.contrib.auth.models import (AbstractBaseUser,
                                         BaseUserManager,
                                         PermissionsMixin)
@@ -43,6 +44,14 @@ from api.facility_type_processing_type import (
 
 
 logger = logging.getLogger(__name__)
+
+
+def get_default_burst_rate():
+    return settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['burst']
+
+
+def get_default_sustained_rate():
+    return settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['sustained']
 
 
 class ArrayLength(models.Func):
@@ -297,6 +306,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    burst_rate = models.CharField(
+        default=get_default_burst_rate,
+        max_length=20
+    )
+    sustained_rate = models.CharField(
+        default=get_default_sustained_rate,
+        max_length=20,
+    )
 
     def __str__(self):
         return self.email
