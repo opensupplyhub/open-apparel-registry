@@ -3028,7 +3028,7 @@ class TrainedModelManager(models.Manager):
         return self.get_active().id
 
 
-class NoTrainedModel(Exception):
+class TrainedModelNotSaved(Exception):
         pass
 
 
@@ -3054,7 +3054,7 @@ class TrainedModel(models.Model):
 
     def activate(self):
         if self.pk is None:
-            raise NoTrainedModel()
+            raise TrainedModelNotSaved()
         if self.is_active:
             raise ModelAlreadyActive()
         if self.activated_at is not None:
