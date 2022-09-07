@@ -2985,7 +2985,7 @@ class TrainedModel(models.Model):
                     """
                         ALTER TABLE dedupe_indexed_records RENAME TO dedupe_indexed_records_{prev_active_version_id};
                         ALTER TABLE dedupe_indexed_records_{active_version_id} RENAME TO dedupe_indexed_records;
-                        """.format({
+                        """.format(**{
                                 "prev_active_version_id": prev_active_version_id, "active_version_id": self.pk,
                             })
                 )
