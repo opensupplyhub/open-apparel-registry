@@ -21,7 +21,7 @@ from api.models import (Facility,
                         HistoricalFacilityMatch,
                         TrainedModel)
 from api.helpers import clean
-from api.gazetteer import OgrGazetteer,OgrStaticGazetteer
+from api.gazetteer import OgrGazetteer, OgrStaticGazetteer
 
 logger = logging.getLogger(__name__)
 
@@ -228,17 +228,19 @@ def get_messy_items_for_training(mod_factor=5):
     return {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
             for i in records}
 
-def load_gazetteer():
-            """
-            Load a preexisting dedupe.Gazetteer model by using the TrainedModel object in
-            the Django ORM.
-            """
-            retrieve_model_obj = TrainedModel.objects.get(is_active=True)
-            input_stream = io.BytesIO(retrieve_model_obj.dedupe_model)
-            gazetteer = OgrStaticGazetteer(input_stream)
-            gazetteer.trained_model = retrieve_model_obj
 
-            return gazetteer
+def load_gazetteer():
+    """
+    Load a preexisting dedupe.Gazetteer model by using the TrainedModel
+    object in the Django ORM.
+    """
+    retrieve_model_obj = TrainedModel.objects.get(is_active=True)
+    input_stream = io.BytesIO(retrieve_model_obj.dedupe_model)
+    gazetteer = OgrStaticGazetteer(input_stream)
+    gazetteer.trained_model = retrieve_model_obj
+
+    return gazetteer
+
 
 def train_gazetteer(messy, canonical, should_index=False):
     """
