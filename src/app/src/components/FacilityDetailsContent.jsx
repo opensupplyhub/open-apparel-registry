@@ -87,9 +87,9 @@ const detailsStyles = theme =>
 const formatIfListAndRemoveDuplicates = value =>
     Array.isArray(value)
         ? [...new Set(value)].map(v => (
-              <p style={{ margin: 0 }} key={v}>
+              <span style={{ margin: 0, display: 'block' }} key={v}>
                   {v}
-              </p>
+              </span>
           ))
         : value;
 

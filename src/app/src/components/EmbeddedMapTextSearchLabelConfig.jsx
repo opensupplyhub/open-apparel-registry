@@ -53,11 +53,13 @@ function EmbeddedMapTextSearchLabelConfig({
         saveTextValue(DEFAULT_SEARCH_TEXT);
     };
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         if (!anyFieldSearchable) {
             saveTextValue(DEFAULT_SEARCH_TEXT);
         }
     }, [anyFieldSearchable]);
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     useEffect(() => {
         if (textInputValue === DEFAULT_SEARCH_TEXT) {

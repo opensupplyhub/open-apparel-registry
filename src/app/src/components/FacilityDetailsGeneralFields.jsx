@@ -107,7 +107,7 @@ const FacilityDetailsLocationFields = ({
         const topValue = formatField(values[0]);
 
         return (
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} key={label}>
                 <FacilityDetailsItem
                     {...topValue}
                     label={label}

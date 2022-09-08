@@ -92,7 +92,7 @@ const FacilityDetailsItem = ({
                     </div>
                     {isOpen &&
                         additionalContent.map(item => (
-                            <div className={classes.itemWrapper} key={item.id}>
+                            <div className={classes.itemWrapper} key={item.key}>
                                 <FacilityDetailsDetail {...item} />
                             </div>
                         ))}
