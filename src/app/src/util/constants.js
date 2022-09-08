@@ -734,7 +734,7 @@ export const createUserDropdownLinks = (
         .concat(logoutLinks);
 };
 
-export const facilitySidebarActions = {
+export const facilityDetailsActions = {
     SUGGEST_AN_EDIT: 'Suggest an Edit',
     REPORT_AS_DUPLICATE: 'Report as Duplicate',
     REPORT_AS_CLOSED: 'Report as Closed',

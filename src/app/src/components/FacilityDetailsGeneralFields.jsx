@@ -5,8 +5,8 @@ import isNil from 'lodash/isNil';
 import filter from 'lodash/filter';
 import { withStyles } from '@material-ui/core/styles';
 
-import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
-import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
+import FacilityDetailsItem from './FacilityDetailsItem';
+import FacilityDetailsClaimedInfo from './FacilityDetailsClaimedInfo';
 import ShowOnly from './ShowOnly';
 import FeatureFlag from './FeatureFlag';
 import { formatAttribution } from '../util/util';
@@ -108,7 +108,7 @@ const FacilityDetailsLocationFields = ({
 
         return (
             <Grid item xs={12} md={6}>
-                <FacilityDetailSidebarItem
+                <FacilityDetailsItem
                     {...topValue}
                     label={label}
                     additionalContent={values.slice(1).map(formatField)}
@@ -124,7 +124,7 @@ const FacilityDetailsLocationFields = ({
         }
         return (
             <Grid item xs={12} md={6}>
-                <FacilityDetailSidebarItem
+                <FacilityDetailsItem
                     label={label}
                     primary={value}
                     key={label}
@@ -166,7 +166,7 @@ const FacilityDetailsLocationFields = ({
         <div className={classes.root}>
             <Grid container className={classes.contentContainer}>
                 <Grid item xs={12} md={6}>
-                    <FacilityDetailSidebarItem
+                    <FacilityDetailsItem
                         label="Name"
                         {...nameField}
                         additionalContent={otherNames}
@@ -174,7 +174,7 @@ const FacilityDetailsLocationFields = ({
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <FacilityDetailSidebarItem
+                    <FacilityDetailsItem
                         label="Sector"
                         {...sectorField}
                         additionalContent={otherSectors}
@@ -186,7 +186,7 @@ const FacilityDetailsLocationFields = ({
                     : EXTENDED_FIELD_TYPES.map(renderExtendedField)}
                 <FeatureFlag flag={REPORT_A_FACILITY}>
                     <ShowOnly when={!!activityReport}>
-                        <FacilityDetailSidebarItem
+                        <FacilityDetailsItem
                             label="Status"
                             {...activityReport}
                             additionalContent={otherActivityReports}
@@ -200,7 +200,7 @@ const FacilityDetailsLocationFields = ({
             <Grid container className={classes.contentContainer}>
                 <FeatureFlag flag={CLAIM_A_FACILITY}>
                     <ShowOnly when={!!data.properties.claim_info}>
-                        <FacilityDetailSidebarClaimedInfo
+                        <FacilityDetailsClaimedInfo
                             data={data.properties.claim_info}
                             formatListItem={formatIfListAndRemoveDuplicates}
                         />

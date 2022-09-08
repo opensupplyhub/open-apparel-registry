@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import ArrowBack from '@material-ui/icons/ArrowBackIos';
 import get from 'lodash/get';
 
-import FacilityDetailSidebar from './FacilityDetailSidebar';
+import FacilityDetailsContent from './FacilityDetailsContent';
 
 import { resetSingleFacility, fetchFacilities } from '../actions/facilities';
 import withQueryStringSync from '../util/withQueryStringSync';
@@ -62,7 +62,7 @@ function FacilityDetails({
                     Back to search results
                 </Button>
             </div>
-            <FacilityDetailSidebar />
+            <FacilityDetailsContent />
         </div>
     );
 }

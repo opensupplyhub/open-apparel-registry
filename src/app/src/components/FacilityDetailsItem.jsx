@@ -3,11 +3,11 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-import FacilityDetailSidebarDetail from './FacilityDetailSidebarDetail';
+import FacilityDetailsDetail from './FacilityDetailsDetail';
 import TitledDrawer from './TitledDrawer';
 import ShowOnly from './ShowOnly';
 
-const detailsSidebarStyles = theme =>
+const detailssStyles = theme =>
     Object.freeze({
         item: {
             paddingTop: theme.spacing.unit * 3,
@@ -30,7 +30,7 @@ const detailsSidebarStyles = theme =>
         },
     });
 
-const FacilityDetailSidebarItem = ({
+const FacilityDetailsItem = ({
     additionalContent,
     label,
     primary,
@@ -51,7 +51,7 @@ const FacilityDetailSidebarItem = ({
             <div>
                 <Typography className={classes.label}>{label}</Typography>
             </div>
-            <FacilityDetailSidebarDetail
+            <FacilityDetailsDetail
                 primary={primary}
                 secondary={!embed ? secondary : null}
                 isVerified={isVerified}
@@ -83,7 +83,7 @@ const FacilityDetailSidebarItem = ({
             >
                 <div className={classes.drawer}>
                     <div className={classes.itemWrapper}>
-                        <FacilityDetailSidebarDetail
+                        <FacilityDetailsDetail
                             primary={primary}
                             secondary={!embed ? secondary : null}
                             isVerified={isVerified}
@@ -102,4 +102,4 @@ const FacilityDetailSidebarItem = ({
     );
 };
 
-export default withStyles(detailsSidebarStyles)(FacilityDetailSidebarItem);
+export default withStyles(detailssStyles)(FacilityDetailsItem);

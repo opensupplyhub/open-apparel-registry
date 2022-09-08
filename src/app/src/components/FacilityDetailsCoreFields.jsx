@@ -12,7 +12,7 @@ import FlagIcon from './FlagIcon';
 import ShowOnly from './ShowOnly';
 import ReportFacilityStatusDialog from './ReportFacilityStatusDialog';
 
-import { facilitySidebarActions } from '../util/constants';
+import { facilityDetailsActions } from '../util/constants';
 
 import {
     makeReportADataIssueEmailLink,
@@ -105,7 +105,7 @@ const FacilityDetailsCoreFields = ({
                     rel="noreferrer"
                     className={classes.menuLink}
                 >
-                    {facilitySidebarActions.REPORT_AS_DUPLICATE}
+                    {facilityDetailsActions.REPORT_AS_DUPLICATE}
                 </a>
             </MenuItem>
             <MenuItem
@@ -115,8 +115,8 @@ const FacilityDetailsCoreFields = ({
                 }}
             >
                 {isClosed
-                    ? facilitySidebarActions.REPORT_AS_REOPENED
-                    : facilitySidebarActions.REPORT_AS_CLOSED}
+                    ? facilityDetailsActions.REPORT_AS_REOPENED
+                    : facilityDetailsActions.REPORT_AS_CLOSED}
             </MenuItem>
             <MenuItem onClick={handleClose}>
                 <a
@@ -125,7 +125,7 @@ const FacilityDetailsCoreFields = ({
                     rel="noreferrer"
                     className={classes.menuLink}
                 >
-                    {facilitySidebarActions.SUGGEST_AN_EDIT}
+                    {facilityDetailsActions.SUGGEST_AN_EDIT}
                 </a>
             </MenuItem>
             <ShowOnly
@@ -142,7 +142,7 @@ const FacilityDetailsCoreFields = ({
                         rel="noreferrer"
                         className={classes.menuLink}
                     >
-                        {facilitySidebarActions.DISPUTE_CLAIM}
+                        {facilityDetailsActions.DISPUTE_CLAIM}
                     </a>
                 </MenuItem>
             </ShowOnly>

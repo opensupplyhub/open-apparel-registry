@@ -5,8 +5,8 @@ import get from 'lodash/get';
 import partition from 'lodash/partition';
 
 import FacilityDetailsStaticMap from './FacilityDetailsStaticMap';
-import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
-import FacilityDetailSidebarLocation from './FacilityDetailSidebarLocation';
+import FacilityDetailsItem from './FacilityDetailsItem';
+import FacilityDetailsLocation from './FacilityDetailsLocation';
 
 const locationFieldsStyles = theme =>
     Object.freeze({
@@ -35,11 +35,12 @@ const FacilityDetailsLocationFields = ({
     const [addressField, otherAddresses] = useMemo(() => {
         const coreAddress = get(data, 'properties.address', '');
         const addressFields = filterByUniqueField(data, 'address');
+
         const [defaultAddressField, otherAddressFields] = partition(
             addressFields,
             field => field.primary === coreAddress,
         );
-        if (!defaultAddressField.length) {
+        if (!defaultAddressField.length && !!coreAddress) {
             return [
                 {
                     primary: coreAddress,
@@ -48,6 +49,9 @@ const FacilityDetailsLocationFields = ({
                 },
                 otherAddressFields,
             ];
+        }
+        if (!defaultAddressField.length) {
+            return [otherAddressFields[0], otherAddressFields.slice(1)];
         }
         return [defaultAddressField[0], otherAddressFields];
     }, [data, createdFrom, filterByUniqueField]);
@@ -59,7 +63,7 @@ const FacilityDetailsLocationFields = ({
                     <FacilityDetailsStaticMap data={data} />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <FacilityDetailSidebarItem
+                    <FacilityDetailsItem
                         label="Address"
                         {...addressField}
                         primary={`${addressField.primary} - ${get(
@@ -70,7 +74,7 @@ const FacilityDetailsLocationFields = ({
                         additionalContent={otherAddresses}
                         embed={embed}
                     />
-                    <FacilityDetailSidebarLocation data={data} embed={embed} />
+                    <FacilityDetailsLocation data={data} embed={embed} />
                 </Grid>
             </Grid>
         </div>

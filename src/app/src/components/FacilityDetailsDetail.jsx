@@ -9,7 +9,7 @@ import FeatureFlag from './FeatureFlag';
 
 import { CLAIM_A_FACILITY } from '../util/constants';
 
-const detailsSidebarStyles = theme =>
+const detailsStyles = theme =>
     Object.freeze({
         root: {
             display: 'flex',
@@ -42,7 +42,7 @@ const CLAIM_EXPLANATORY_TEXT =
     'certifications, production capabilities etc. Users interested in those ' +
     'details will need to carry out their own due diligence checks.';
 
-const FacilityDetailSidebarDetail = ({
+const FacilityDetailsDetail = ({
     primary,
     secondary,
     isVerified,
@@ -75,4 +75,4 @@ const FacilityDetailSidebarDetail = ({
     </div>
 );
 
-export default withStyles(detailsSidebarStyles)(FacilityDetailSidebarDetail);
+export default withStyles(detailsStyles)(FacilityDetailsDetail);

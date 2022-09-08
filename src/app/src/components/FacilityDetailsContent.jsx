@@ -9,12 +9,12 @@ import includes from 'lodash/includes';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
 
-import FacilityDetailSidebarClosureStatus from './FacilityDetailSidebarClosureStatus';
+import FacilityDetailsClosureStatus from './FacilityDetailsClosureStatus';
 import FacilityDetailsClaimFlag from './FacilityDetailsClaimFlag';
 import FacilityDetailsCoreFields from './FacilityDetailsCoreFields';
 import FacilityDetailsLocationFields from './FacilityDetailsLocationFields';
 import FacilityDetailsGeneralFields from './FacilityDetailsGeneralFields';
-import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
+import FacilityDetailsContributors from './FacilityDetailsContributors';
 import ShowOnly from './ShowOnly';
 
 import {
@@ -24,7 +24,7 @@ import {
 } from '../actions/facilities';
 
 import {
-    facilitySidebarActions,
+    facilityDetailsActions,
     FACILITIES_REQUEST_PAGE_SIZE,
 } from '../util/constants';
 
@@ -34,7 +34,7 @@ import {
     formatAttribution,
 } from '../util/util';
 
-const detailsSidebarStyles = theme =>
+const detailsStyles = theme =>
     Object.freeze({
         root: {
             fontFamily: theme.typography.fontFamily,
@@ -122,7 +122,7 @@ const filterByUniqueField = (data, extendedFieldName) =>
         item => item.primary + item.secondary,
     );
 
-const FacilityDetailSidebar = ({
+const FacilityDetailsContent = ({
     classes,
     data,
     fetching,
@@ -226,7 +226,7 @@ const FacilityDetailSidebar = ({
                     isPending={userHasPendingFacilityClaim}
                     isEmbed={embed}
                 />
-                <FacilityDetailSidebarClosureStatus
+                <FacilityDetailsClosureStatus
                     data={data}
                     clearFacility={clearFacility}
                 />
@@ -260,7 +260,7 @@ const FacilityDetailSidebar = ({
                     }
                 />
                 <ShowOnly when={!embed}>
-                    <FacilityDetailSidebarContributors
+                    <FacilityDetailsContributors
                         contributors={data.properties.contributors}
                         push={push}
                     />
@@ -273,7 +273,7 @@ const FacilityDetailSidebar = ({
                             target="_blank"
                             rel="noreferrer"
                         >
-                            {facilitySidebarActions.VIEW_ON_OAR}
+                            {facilityDetailsActions.VIEW_ON_OAR}
                         </a>
                     </ShowOnly>
                 </div>
@@ -361,5 +361,5 @@ export default withRouter(
     connect(
         mapStateToProps,
         mapDispatchToProps,
-    )(withStyles(detailsSidebarStyles)(FacilityDetailSidebar)),
+    )(withStyles(detailsStyles)(FacilityDetailsContent)),
 );

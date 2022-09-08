@@ -11,7 +11,7 @@ import TitledDrawer from './TitledDrawer';
 
 import { makeProfileRouteLink } from '../util/util';
 
-const detailsSidebarStyles = theme =>
+const detailssStyles = theme =>
     Object.freeze({
         root: {
             color: '#191919',
@@ -62,7 +62,7 @@ const detailsSidebarStyles = theme =>
         },
     });
 
-const FacilityDetailSidebarContributors = ({ classes, contributors }) => {
+const FacilityDetailsContributors = ({ classes, contributors }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const visibleContributors = contributors.filter(
@@ -130,6 +130,4 @@ const FacilityDetailSidebarContributors = ({ classes, contributors }) => {
         </div>
     );
 };
-export default withStyles(detailsSidebarStyles)(
-    FacilityDetailSidebarContributors,
-);
+export default withStyles(detailssStyles)(FacilityDetailsContributors);
