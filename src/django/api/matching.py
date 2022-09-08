@@ -234,10 +234,10 @@ def load_gazetteer():
     Load a preexisting dedupe.Gazetteer model by using the TrainedModel
     object in the Django ORM.
     """
-    retrieve_model_obj = TrainedModel.objects.get(is_active=True)
-    input_stream = io.BytesIO(retrieve_model_obj.dedupe_model)
+    active_model = TrainedModel.objects.get_active()
+    input_stream = io.BytesIO(active_model.dedupe_model)
     gazetteer = OgrStaticGazetteer(input_stream)
-    gazetteer.trained_model = retrieve_model_obj
+    gazetteer.trained_model = active_model
 
     return gazetteer
 
