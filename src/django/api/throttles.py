@@ -28,3 +28,8 @@ class BurstRateThrottle(UserCustomRateThrottle):
 class SustainedRateThrottle(UserCustomRateThrottle):
     scope = 'sustained'
     model_rate_field = 'sustained_rate'
+
+
+class DataUploadThrottle(UserCustomRateThrottle):
+    scope = 'data_upload'
+    model_rate_field = 'data_upload_rate'

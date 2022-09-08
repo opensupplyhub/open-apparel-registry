@@ -55,6 +55,10 @@ def get_default_sustained_rate():
     return settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['sustained']
 
 
+def get_default_data_upload_rate():
+    return settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['data_upload']
+
+
 throttle_rate_validator = RegexValidator(
     r"\d+/(second|minute|hour|day)",
     "You must enter value of the format N/(second|minute|hour|day)"
@@ -317,12 +321,31 @@ class User(AbstractBaseUser, PermissionsMixin):
     burst_rate = models.CharField(
         default=get_default_burst_rate,
         max_length=20,
-        validators=[throttle_rate_validator]
+        validators=[throttle_rate_validator],
+        help_text=(
+            "Maximum allowed burst requests for this user. "
+            "Burst rate should be shorter periods, 'second' or 'minute'. "
+            "This applies to most API requests, but excludes Facility uploads."
+        )
     )
     sustained_rate = models.CharField(
         default=get_default_sustained_rate,
         max_length=20,
-        validators=[throttle_rate_validator]
+        validators=[throttle_rate_validator],
+        help_text=(
+            "Maximum allowed sustained requests for this user. "
+            "Sustained rate should be longer periods, 'hour' or 'day'. "
+            "This applies to most API requests, but excludes Facility uploads."
+        )
+    )
+    data_upload_rate = models.CharField(
+        default=get_default_data_upload_rate,
+        max_length=20,
+        validators=[throttle_rate_validator],
+        help_text=(
+            "Maximum allowed facility upload rate for this user. "
+            "This applies to only API Facility uploads."
+        )
     )
 
     def __str__(self):

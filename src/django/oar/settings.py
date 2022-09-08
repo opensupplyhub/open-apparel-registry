@@ -157,11 +157,12 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_THROTTLE_CLASSES': [
         'api.throttles.BurstRateThrottle',
-        'api.throttles.SustainedRateThrottle'
+        'api.throttles.SustainedRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'burst': '100/minute',
-        'sustained': '10000/day'
+        'sustained': '10000/day',
+        'data_upload': '30/minute'
     }
 }
 

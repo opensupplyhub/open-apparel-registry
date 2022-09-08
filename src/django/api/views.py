@@ -130,6 +130,7 @@ from api.serializers import (ContributorWebhookSerializer,
                              ApiBlockSerializer,
                              FacilityActivityReportSerializer,
                              EmbedConfigSerializer)
+from api.throttles import DataUploadThrottle
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs, submit_parse_job
 from api.permissions import (IsRegisteredAndConfirmed,
@@ -922,6 +923,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
     pagination_class = FacilitiesGeoJSONPagination
+
+    def get_throttles(self):
+        if self.request.method == 'POST':
+            return [DataUploadThrottle()]
+
+        return super().get_throttles()
 
     @swagger_auto_schema(manual_parameters=facilities_list_parameters)
     def list(self, request):
