@@ -67,6 +67,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Speed up XLSX parsing by using iteration [#2086](https://github.com/open-apparel-registry/open-apparel-registry/pull/2086)
 - Rename makecsvs to makedata and add stub SQL mode [#2108](https://github.com/open-apparel-registry/open-apparel-registry/pull/2108)
 - Update facility lists for contributor workflow updates [#2050](https://github.com/open-apparel-registry/open-apparel-registry/issues/2050)
+- Update facility details content [#2126](https://github.com/open-apparel-registry/open-apparel-registry/pull/2126)
 
 ### Deprecated
 

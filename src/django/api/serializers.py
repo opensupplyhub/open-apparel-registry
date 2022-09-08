@@ -632,7 +632,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     def get_address(self, facility):
         claim = facility.get_approved_claim()
         if claim is not None:
-            if claim.facility_address is not None:
+            if claim.facility_address and claim.facility_address is not None:
                 return claim.facility_address
         return facility.address
 
@@ -1150,7 +1150,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
         claim_locations = []
         claim = facility.get_approved_claim()
         if claim is not None:
-            if claim.facility_address is not None:
+            if claim.facility_address and claim.facility_address is not None:
                 claim_locations = [
                     {
                         'lat': claim.facility_location.y
