@@ -11,6 +11,7 @@ import ArrowDropDownIcon from './ArrowDropDownIcon';
 import FlagIcon from './FlagIcon';
 import ShowOnly from './ShowOnly';
 import ReportFacilityStatusDialog from './ReportFacilityStatusDialog';
+import CopySearch from './CopySearch';
 
 import { facilityDetailsActions } from '../util/constants';
 
@@ -180,12 +181,14 @@ const FacilityDetailsCoreFields = ({
                                 <ArrowDropDownIcon />
                             </Button>
                             {menu}
-                            <Button variant="outlined">
-                                <ContentCopyIcon />
-                                <span className={classes.buttonText}>
-                                    Copy Link
-                                </span>
-                            </Button>
+                            <CopySearch toastText="Copied link">
+                                <Button variant="outlined">
+                                    <ContentCopyIcon />
+                                    <span className={classes.buttonText}>
+                                        Copy Link
+                                    </span>
+                                </Button>
+                            </CopySearch>
                         </Grid>
                     </ShowOnly>
                 </Grid>
