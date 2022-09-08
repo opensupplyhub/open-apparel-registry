@@ -32,6 +32,7 @@ import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 import hash from 'object-hash';
 import * as XLSX from 'xlsx';
+import moment from 'moment';
 
 import env from './env';
 
@@ -922,3 +923,10 @@ export const createIFrameHTML = ({ fullWidth, contributor, height, width }) =>
             />`;
 
 export const getIsMobile = windowInnerWidth => windowInnerWidth < 600;
+
+export const formatAttribution = (createdAt, contributor) => {
+    if (contributor) {
+        return `${moment(createdAt).format('LL')} by ${contributor}`;
+    }
+    return moment(createdAt).format('LL');
+};

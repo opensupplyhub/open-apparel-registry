@@ -6,7 +6,6 @@ import get from 'lodash/get';
 import uniqBy from 'lodash/uniqBy';
 import partition from 'lodash/partition';
 import includes from 'lodash/includes';
-import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
 
@@ -15,10 +14,8 @@ import FacilityDetailsClaimFlag from './FacilityDetailsClaimFlag';
 import FacilityDetailsCoreFields from './FacilityDetailsCoreFields';
 import FacilityDetailsLocationFields from './FacilityDetailsLocationFields';
 import FacilityDetailsGeneralFields from './FacilityDetailsGeneralFields';
-import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 import FacilityDetailSidebarContributors from './FacilityDetailSidebarContributors';
 import ShowOnly from './ShowOnly';
-import FeatureFlag from './FeatureFlag';
 
 import {
     fetchSingleFacility,
@@ -28,13 +25,13 @@ import {
 
 import {
     facilitySidebarActions,
-    REPORT_A_FACILITY,
     FACILITIES_REQUEST_PAGE_SIZE,
 } from '../util/constants';
 
 import {
     makeClaimFacilityLink,
     getLocationWithoutEmbedParam,
+    formatAttribution,
 } from '../util/util';
 
 const detailsSidebarStyles = theme =>
@@ -87,13 +84,6 @@ const detailsSidebarStyles = theme =>
         },
     });
 
-const formatAttribution = (createdAt, contributor) => {
-    if (contributor) {
-        return `${moment(createdAt).format('LL')} by ${contributor}`;
-    }
-    return moment(createdAt).format('LL');
-};
-
 const formatIfListAndRemoveDuplicates = value =>
     Array.isArray(value)
         ? [...new Set(value)].map(v => (
@@ -131,36 +121,6 @@ const filterByUniqueField = (data, extendedFieldName) =>
         ),
         item => item.primary + item.secondary,
     );
-
-const formatActivityReports = data => {
-    const reports = get(data, 'properties.activity_reports', []);
-    if (!reports.length) return [null, []];
-    const formattedReports = reports.reduce((list, r) => {
-        let updatedList = [...list];
-        if (r.status === 'CONFIRMED') {
-            updatedList = [
-                ...updatedList,
-                {
-                    primary: `Verified ${r.closure_state.toLowerCase()}`,
-                    secondary: formatAttribution(r.status_change_date),
-                    key: `${r.id}-verified}`,
-                },
-            ];
-        }
-        return [
-            ...updatedList,
-            {
-                primary: `Reported ${r.closure_state.toLowerCase()}`,
-                secondary: formatAttribution(
-                    r.created_at,
-                    r.reported_by_contributor,
-                ),
-                key: r.id,
-            },
-        ];
-    }, []);
-    return [formattedReports[0], formattedReports.slice(1)];
-};
 
 const FacilityDetailSidebar = ({
     classes,
@@ -213,11 +173,6 @@ const FacilityDetailSidebar = ({
         }
         return [defaultNameField[0], otherNameFields];
     }, [data]);
-
-    const [activityReport, otherActivityReports] = useMemo(
-        () => formatActivityReports(data),
-        [data],
-    );
 
     if (fetching) {
         return (
@@ -298,30 +253,18 @@ const FacilityDetailSidebar = ({
                     embed={embed}
                     nameField={nameField}
                     otherNames={otherNames}
-                    formatAttribution={formatAttribution}
                     embedConfig={embedConfig}
                     formatExtendedField={formatExtendedField}
                     formatIfListAndRemoveDuplicates={
                         formatIfListAndRemoveDuplicates
                     }
                 />
-
                 <ShowOnly when={!embed}>
                     <FacilityDetailSidebarContributors
                         contributors={data.properties.contributors}
                         push={push}
                     />
                 </ShowOnly>
-                <FeatureFlag flag={REPORT_A_FACILITY}>
-                    <ShowOnly when={!!activityReport}>
-                        <FacilityDetailSidebarItem
-                            label="Status"
-                            {...activityReport}
-                            additionalContent={otherActivityReports}
-                            embed={embed}
-                        />
-                    </ShowOnly>
-                </FeatureFlag>
                 <div className={classes.actions}>
                     <ShowOnly when={embed}>
                         <a

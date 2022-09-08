@@ -39,6 +39,8 @@ const FacilityDetailSidebarItem = ({
     embed,
     isVerified,
     isFromClaim,
+    additionalContentText = 'contribution',
+    additionalContentTextPlural = 'contributions',
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const hasAdditionalContent = !embed && !!additionalContent?.length;
@@ -66,8 +68,8 @@ const FacilityDetailSidebarItem = ({
                 >
                     {additionalContentCount} more{' '}
                     {additionalContentCount === 1
-                        ? 'contribution'
-                        : 'contributions'}
+                        ? additionalContentText
+                        : additionalContentTextPlural}
                 </Button>
             </ShowOnly>
             <TitledDrawer
@@ -75,7 +77,9 @@ const FacilityDetailSidebarItem = ({
                 anchor="right"
                 onClose={() => setIsOpen(false)}
                 title={label}
-                subtitle={`${additionalContentCount + 1} contributions`}
+                subtitle={`${
+                    additionalContentCount + 1
+                } ${additionalContentTextPlural}`}
             >
                 <div className={classes.drawer}>
                     <div className={classes.itemWrapper}>

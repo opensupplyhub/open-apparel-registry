@@ -9,8 +9,13 @@ import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
 import FacilityDetailSidebarClaimedInfo from './FacilityDetailSidebarClaimedInfo';
 import ShowOnly from './ShowOnly';
 import FeatureFlag from './FeatureFlag';
+import { formatAttribution } from '../util/util';
 
-import { EXTENDED_FIELD_TYPES, CLAIM_A_FACILITY } from '../util/constants';
+import {
+    EXTENDED_FIELD_TYPES,
+    CLAIM_A_FACILITY,
+    REPORT_A_FACILITY,
+} from '../util/constants';
 
 const locationFieldsStyles = theme =>
     Object.freeze({
@@ -31,12 +36,41 @@ const locationFieldsStyles = theme =>
         },
     });
 
+const formatActivityReports = data => {
+    const reports = get(data, 'properties.activity_reports', []);
+    if (!reports.length) return [null, []];
+    const formattedReports = reports.reduce((list, r) => {
+        let updatedList = [...list];
+        if (r.status === 'CONFIRMED') {
+            updatedList = [
+                ...updatedList,
+                {
+                    primary: `Verified ${r.closure_state.toLowerCase()}`,
+                    secondary: formatAttribution(r.status_change_date),
+                    key: `${r.id}-verified}`,
+                },
+            ];
+        }
+        return [
+            ...updatedList,
+            {
+                primary: `Reported ${r.closure_state.toLowerCase()}`,
+                secondary: formatAttribution(
+                    r.created_at,
+                    r.reported_by_contributor,
+                ),
+                key: r.id,
+            },
+        ];
+    }, []);
+    return [formattedReports[0], formattedReports.slice(1)];
+};
+
 const FacilityDetailsLocationFields = ({
     classes,
     data,
     nameField,
     otherNames,
-    formatAttribution,
     embed,
     embedConfig,
     formatExtendedField,
@@ -123,6 +157,11 @@ const FacilityDetailsLocationFields = ({
         });
     };
 
+    const [activityReport, otherActivityReports] = useMemo(
+        () => formatActivityReports(data),
+        [data],
+    );
+
     return (
         <div className={classes.root}>
             <Grid container className={classes.contentContainer}>
@@ -145,6 +184,18 @@ const FacilityDetailsLocationFields = ({
                 {embed
                     ? renderEmbedFields()
                     : EXTENDED_FIELD_TYPES.map(renderExtendedField)}
+                <FeatureFlag flag={REPORT_A_FACILITY}>
+                    <ShowOnly when={!!activityReport}>
+                        <FacilityDetailSidebarItem
+                            label="Status"
+                            {...activityReport}
+                            additionalContent={otherActivityReports}
+                            additionalContentText="status"
+                            additionalContentTextPlural="statuses"
+                            embed={embed}
+                        />
+                    </ShowOnly>
+                </FeatureFlag>
             </Grid>
             <Grid container className={classes.contentContainer}>
                 <FeatureFlag flag={CLAIM_A_FACILITY}>
