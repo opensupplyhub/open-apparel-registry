@@ -21,7 +21,7 @@ from api.models import (Facility,
                         HistoricalFacilityMatch,
                         TrainedModel)
 from api.helpers import clean
-from api.gazetteer import OgrGazetteer
+from api.gazetteer import OgrGazetteer, OgrStaticGazetteer
 
 logger = logging.getLogger(__name__)
 
@@ -227,6 +227,19 @@ def get_messy_items_for_training(mod_factor=5):
                if i % mod_factor == 0]
     return {str(i['id']): {k: clean(i[k]) for k in i if k != 'id'}
             for i in records}
+
+
+def load_gazetteer():
+    """
+    Load a preexisting dedupe.Gazetteer model by using the TrainedModel
+    object in the Django ORM.
+    """
+    active_model = TrainedModel.objects.get_active()
+    input_stream = io.BytesIO(active_model.dedupe_model)
+    gazetteer = OgrStaticGazetteer(input_stream)
+    gazetteer.trained_model = active_model
+
+    return gazetteer
 
 
 def train_gazetteer(messy, canonical, should_index=False):
@@ -662,7 +675,7 @@ class GazetteerCache:
     def get_latest(cls):
         try:
             if cls._gazetter is None:
-                return cls._rebuild_gazetteer()
+                return load_gazetteer()
 
             facility_changes, latest_facility_dedupe_records = \
                 cls._get_new_facility_history()
