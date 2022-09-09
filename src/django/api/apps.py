@@ -10,4 +10,4 @@ class ApiConfig(AppConfig):
         # has been loaded from gunicorn, not a management command.
         if os.environ.get('SERVER_SOFTWARE') is not None:
             from .matching import GazetteerCache
-            GazetteerCache.get_latest()
+            GazetteerCache.load_gazetteer_if_none()
