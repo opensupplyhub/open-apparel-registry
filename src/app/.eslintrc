@@ -19,34 +19,35 @@
       "react-hooks"
   ],
   "rules": {
-    "max-statements": [0, 10],
+    "func-names": "off",
+    "implicit-arrow-linebreak": "off",
+    "import/no-cycle": "off",
+    "import/extensions": "off",
+    "import/no-named-as-default": "off",
+    "import/no-named-as-default-member": "off",
+    "import/no-unresolved": "off",
+    "import/no-useless-path-segments": "off",
+    "jsx-a11y/label-has-associated-control": "off",
     "jsx-a11y/label-has-for": [2, {
       "required": {
          "every": ["id"]
       }
     }],
-    "implicit-arrow-linebreak": "off",
+    "max-statements": [0, 10],
     "object-curly-newline": "off",
     "operator-linebreak": "off",
-    "import/extensions": "off",
-    "import/no-unresolved": "off",
-    "import/no-useless-path-segments": "off",
-    "jsx-a11y/label-has-associated-control": "off",
+    "prefer-object-spread": "off",
     "react/destructuring-assignment": "off",
+    "react/forbid-prop-types": "off",
+    "react/function-component-definition": "off",
+    "react/jsx-fragments": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/jsx-one-expression-per-line": "off",
     "react/jsx-wrap-multilines": "off",
     "react/prop-types": "off",
     "react/sort-comp": "off",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "prefer-object-spread": "off",
-    "react/jsx-props-no-spreading": "off",
     "react/state-in-constructor": "off",
-    "react/jsx-fragments": "off",
-    "import/no-cycle": "off",
-    "react/forbid-prop-types": "off",
-    "import/no-named-as-default": "off",
-    "import/no-named-as-default-member": "off",
-    "func-names": "off"
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }

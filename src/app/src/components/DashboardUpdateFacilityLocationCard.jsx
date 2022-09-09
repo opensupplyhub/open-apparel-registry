@@ -139,76 +139,72 @@ export default function DashboardUpdateLocationCard({
             );
 
         return (
-            <>
-                {newFacility && (
-                    <>
-                        <div style={styles.mapStyles}>
-                            <FacilityDetailsStaticMap data={newFacility} />
-                        </div>
-                        <div style={styles.infoContainerStyles}>
-                            <Typography style={styles.labelStyles}>
-                                Distance From Current Location
-                            </Typography>
-                            <Typography style={styles.fieldStyles}>
-                                {`${round(distanceBetweenLocations, 2)} km`}
-                            </Typography>
-                        </div>
-                    </>
-                )}
-            </>
+            newFacility && (
+                <>
+                    <div style={styles.mapStyles}>
+                        <FacilityDetailsStaticMap data={newFacility} />
+                    </div>
+                    <div style={styles.infoContainerStyles}>
+                        <Typography style={styles.labelStyles}>
+                            Distance From Current Location
+                        </Typography>
+                        <Typography style={styles.fieldStyles}>
+                            {`${round(distanceBetweenLocations, 2)} km`}
+                        </Typography>
+                    </div>
+                </>
+            )
         );
     })();
 
     return (
-        <>
-            <Card style={styles.cardStyles}>
-                <Typography variant="title" style={styles.textSectionStyles}>
-                    {title}
-                </Typography>
-                <CardActions>
-                    <TextField
-                        variant="outlined"
-                        placeholder="Longitude"
-                        value={get(newLocation, 'lng', '') || ''}
-                        onChange={updateLng}
+        <Card style={styles.cardStyles}>
+            <Typography variant="title" style={styles.textSectionStyles}>
+                {title}
+            </Typography>
+            <CardActions>
+                <TextField
+                    variant="outlined"
+                    placeholder="Longitude"
+                    value={get(newLocation, 'lng', '') || ''}
+                    onChange={updateLng}
+                />
+                <TextField
+                    variant="outlined"
+                    placeholder="Latitude"
+                    value={get(newLocation, 'lat', '') || ''}
+                    onChange={updateLat}
+                />
+            </CardActions>
+            <CardContent style={styles.cardContentStyles}>
+                {cardContent}
+            </CardContent>
+            <CardActions>
+                <div style={styles.optionalFieldsStyles}>
+                    <ReactSelect
+                        styles={styles.selectStyles}
+                        isClearable
+                        id="contributors"
+                        name="contributors"
+                        placeholder="Contributor (optional)"
+                        className="basic-multi-select notranslate"
+                        classNamePrefix="select"
+                        options={contributorOptions}
+                        value={contributor}
+                        onChange={updateContributor}
                     />
                     <TextField
                         variant="outlined"
-                        placeholder="Latitude"
-                        value={get(newLocation, 'lat', '') || ''}
-                        onChange={updateLat}
+                        multiline
+                        rows={20}
+                        value={notes || ''}
+                        placeholder="Notes (optional)"
+                        onChange={updateNotes}
+                        style={styles.descriptionStyles}
                     />
-                </CardActions>
-                <CardContent style={styles.cardContentStyles}>
-                    {cardContent}
-                </CardContent>
-                <CardActions>
-                    <div style={styles.optionalFieldsStyles}>
-                        <ReactSelect
-                            styles={styles.selectStyles}
-                            isClearable
-                            id="contributors"
-                            name="contributors"
-                            placeholder="Contributor (optional)"
-                            className="basic-multi-select notranslate"
-                            classNamePrefix="select"
-                            options={contributorOptions}
-                            value={contributor}
-                            onChange={updateContributor}
-                        />
-                        <TextField
-                            variant="outlined"
-                            multiline
-                            rows={20}
-                            value={notes || ''}
-                            placeholder="Notes (optional)"
-                            onChange={updateNotes}
-                            style={styles.descriptionStyles}
-                        />
-                    </div>
-                </CardActions>
-            </Card>
-        </>
+                </div>
+            </CardActions>
+        </Card>
     );
 }
 

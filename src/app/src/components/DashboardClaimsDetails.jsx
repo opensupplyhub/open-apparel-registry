@@ -63,6 +63,24 @@ InfoSection.propTypes = {
     value: node.isRequired,
 };
 
+const ParentCompanyLink = ({ data }) => {
+    const parentCompanyName = get(data, 'facility_parent_company.name', null);
+
+    if (!parentCompanyName) {
+        return '';
+    }
+
+    const profileLink = makeProfileRouteLink(
+        get(data, 'facility_parent_company.id', null),
+    );
+
+    return (
+        <Link to={profileLink} href={profileLink}>
+            {parentCompanyName}
+        </Link>
+    );
+};
+
 function DashboardClaimsDetails({
     getFacilityClaim,
     clearFacilityClaim,
@@ -150,27 +168,7 @@ function DashboardClaimsDetails({
                 />
                 <InfoSection
                     label="Facility Parent Company / Supplier Group"
-                    value={(() => {
-                        const parentCompanyName = get(
-                            data,
-                            'facility_parent_company.name',
-                            null,
-                        );
-
-                        if (!parentCompanyName) {
-                            return '';
-                        }
-
-                        const profileLink = makeProfileRouteLink(
-                            get(data, 'facility_parent_company.id', null),
-                        );
-
-                        return (
-                            <Link to={profileLink} href={profileLink}>
-                                {parentCompanyName}
-                            </Link>
-                        );
-                    })()}
+                    value={<ParentCompanyLink data={data} />}
                 />
                 <InfoSection
                     label="Preferred Contact Method"

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { FeatureGroup, withLeaflet } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet-draw';
-import '../../node_modules/leaflet-draw/dist/leaflet.draw.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
 import { fetchFacilities } from '../actions/facilities';
 import { updateBoundaryFilter } from '../actions/filters';
 import { showDrawFilter } from '../actions/ui';

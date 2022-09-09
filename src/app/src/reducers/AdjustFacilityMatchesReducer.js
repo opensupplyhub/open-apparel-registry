@@ -48,10 +48,10 @@ const handleCompleteSplitFacilityMatch = (state, data) => {
 
     const matchIDFromData = get(data, 'match_id', null);
 
-    const {
-        list_contributor_id = null, // eslint-disable-line camelcase
-        // eslint-disable-next-line camelcase
-    } = find(existingMatches, ({ match_id }) => match_id === matchIDFromData);
+    const { list_contributor_id: contributorId = null } = find(
+        existingMatches,
+        ({ match_id: id }) => id === matchIDFromData,
+    );
 
     return update(state, {
         adjustFacilities: {
@@ -64,7 +64,7 @@ const handleCompleteSplitFacilityMatch = (state, data) => {
                     contributors: {
                         $set: reject(
                             state.facility.data.properties.contributors,
-                            { id: list_contributor_id },
+                            { id: contributorId },
                         ),
                     },
                 },

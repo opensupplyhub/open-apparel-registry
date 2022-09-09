@@ -15,8 +15,8 @@ import head from 'lodash/head';
 import last from 'lodash/last';
 import distance from '@turf/distance';
 
-import '../../node_modules/leaflet/dist/leaflet.css';
-import '../../node_modules/react-leaflet-markercluster/dist/styles.min.css';
+import 'leaflet/dist/leaflet.css';
+import 'react-leaflet-markercluster/dist/styles.min.css';
 import '../styles/css/leafletMap.css';
 
 import FacilitiesMapPopup from './FacilitiesMapPopup';

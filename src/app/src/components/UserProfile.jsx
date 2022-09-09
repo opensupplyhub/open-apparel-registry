@@ -274,24 +274,31 @@ UserProfile.propTypes = {
     errorFetchingProfile: arrayOf(string),
 };
 
-function mapStateToProps({
-    auth: {
-        user: { user },
-        session: { fetching: sessionFetching },
-        fetching: authFetching,
-    },
-    profile: {
-        profile,
-        fetching,
-        error: errorFetchingProfile,
-        formSubmission: {
-            fetching: updatingProfile,
-            error: errorsUpdatingProfile,
+function mapStateToProps(
+    {
+        auth: {
+            user: { user },
+            session: { fetching: sessionFetching },
+            fetching: authFetching,
+        },
+        profile: {
+            profile,
+            fetching,
+            error: errorFetchingProfile,
+            formSubmission: {
+                fetching: updatingProfile,
+                error: errorsUpdatingProfile,
+            },
+        },
+        match: {
+            params: { id: urlID },
         },
     },
-}) {
+    { id: propID },
+) {
     return {
         user,
+        id: propID || urlID,
         fetching: fetching || sessionFetching || authFetching,
         profile,
         updatingProfile,

@@ -153,74 +153,67 @@ function ClaimFacilityStepper({
 
     const controlsSection =
         activeStepName !== lastStepName ? (
-            <>
-                <div style={claimFacilityStepperStyles.formContainerStyles}>
-                    <Typography variant="title">
-                        {nextButtonAction !== SUBMIT_FORM
-                            ? `Step ${activeStep + 2}: ${nextStepName}`
-                            : nextStepName}
-                    </Typography>
-                    {error || !stepInputIsValid(formData) ? (
-                        <Typography
-                            variant="body2"
-                            style={
-                                claimFacilityStepperStyles.validationMessageStyles
-                            }
-                            color="error"
-                        >
-                            {error
-                                ? 'An error prevented submitting the form'
-                                : 'Some required fields are missing or invalid.'}
-                        </Typography>
-                    ) : null}
-                    <div
+            <div style={claimFacilityStepperStyles.formContainerStyles}>
+                <Typography variant="title">
+                    {nextButtonAction !== SUBMIT_FORM
+                        ? `Step ${activeStep + 2}: ${nextStepName}`
+                        : nextStepName}
+                </Typography>
+                {error || !stepInputIsValid(formData) ? (
+                    <Typography
+                        variant="body2"
                         style={
-                            claimFacilityStepperStyles.buttonsContainerStyles
+                            claimFacilityStepperStyles.validationMessageStyles
                         }
+                        color="error"
                     >
-                        {hasBackButton && (
-                            <Button
-                                color="default"
-                                variant="outlined"
-                                onClick={decrementActiveStep}
-                                style={claimFacilityStepperStyles.buttonStyles}
-                                disabled={activeStep === 0}
-                            >
-                                Back
-                            </Button>
-                        )}
-                        {hasNextButton && nextButtonAction !== SUBMIT_FORM && (
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                onClick={incrementActiveStep}
-                                style={claimFacilityStepperStyles.buttonStyles}
-                                disabled={!stepInputIsValid(formData)}
-                            >
-                                Next
-                            </Button>
-                        )}
-                        {hasNextButton && nextButtonAction === SUBMIT_FORM && (
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                onClick={submitClaimForm}
-                                style={claimFacilityStepperStyles.buttonStyles}
-                                disabled={
-                                    fetching ||
-                                    !claimAFacilityFormIsValid(formData)
-                                }
-                            >
-                                {fetching ? (
-                                    <CircularProgress size={5} />
-                                ) : (
-                                    'Submit'
-                                )}
-                            </Button>
-                        )}
-                    </div>
+                        {error
+                            ? 'An error prevented submitting the form'
+                            : 'Some required fields are missing or invalid.'}
+                    </Typography>
+                ) : null}
+                <div style={claimFacilityStepperStyles.buttonsContainerStyles}>
+                    {hasBackButton && (
+                        <Button
+                            color="default"
+                            variant="outlined"
+                            onClick={decrementActiveStep}
+                            style={claimFacilityStepperStyles.buttonStyles}
+                            disabled={activeStep === 0}
+                        >
+                            Back
+                        </Button>
+                    )}
+                    {hasNextButton && nextButtonAction !== SUBMIT_FORM && (
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={incrementActiveStep}
+                            style={claimFacilityStepperStyles.buttonStyles}
+                            disabled={!stepInputIsValid(formData)}
+                        >
+                            Next
+                        </Button>
+                    )}
+                    {hasNextButton && nextButtonAction === SUBMIT_FORM && (
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={submitClaimForm}
+                            style={claimFacilityStepperStyles.buttonStyles}
+                            disabled={
+                                fetching || !claimAFacilityFormIsValid(formData)
+                            }
+                        >
+                            {fetching ? (
+                                <CircularProgress size={5} />
+                            ) : (
+                                'Submit'
+                            )}
+                        </Button>
+                    )}
                 </div>
-            </>
+            </div>
         ) : null;
 
     return (
