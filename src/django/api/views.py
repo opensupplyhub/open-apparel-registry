@@ -39,7 +39,8 @@ from rest_framework.generics import (CreateAPIView,
 from rest_framework.decorators import (api_view,
                                        permission_classes,
                                        renderer_classes,
-                                       action)
+                                       action,
+                                       throttle_classes)
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from drf_yasg import openapi
@@ -129,6 +130,7 @@ from api.serializers import (ContributorWebhookSerializer,
                              ApiBlockSerializer,
                              FacilityActivityReportSerializer,
                              EmbedConfigSerializer)
+from api.throttles import DataUploadThrottle
 from api.countries import COUNTRY_CHOICES
 from api.aws_batch import submit_jobs, submit_parse_job
 from api.permissions import (IsRegisteredAndConfirmed,
@@ -454,6 +456,7 @@ def active_contributors():
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def all_contributors(request):
     """
     Returns list contributors as a list of tuples of contributor IDs and names.
@@ -475,6 +478,7 @@ def all_contributors(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def active_contributors_count(request):
     """
     Returns count of active contributors
@@ -487,6 +491,7 @@ def active_contributors_count(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def contributor_embed_config(request, pk=None):
     """
     Returns a contributor's embedded map configuration.
@@ -512,6 +517,7 @@ def getContributorTypeCount(value, counts):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def all_contributor_types(request):
     """
     Returns a list of contributor type choices as tuples of values and display
@@ -530,6 +536,7 @@ def all_contributor_types(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def all_countries(request):
     """
     Returns a list of country choices as tuples of country codes and names.
@@ -547,6 +554,7 @@ def all_countries(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def active_countries_count(request):
     """
     Returns a count of disctinct country codes for active facilities.
@@ -563,6 +571,7 @@ def active_countries_count(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def number_of_workers_ranges(request):
     """
     Returns a list of standardized ranges for the number_of_workers extended
@@ -583,6 +592,7 @@ def number_of_workers_ranges(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def facility_processing_types(request):
     """
     Returns an array of objects with facilityType set to the name of a facility
@@ -610,6 +620,7 @@ def facility_processing_types(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def product_types(request):
     """
     Returns a list of suggested product types by combining standard types with
@@ -628,11 +639,13 @@ def product_types(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def current_tile_cache_key(request):
     return Response(Facility.current_tile_cache_key())
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def sectors(request):
     """
     Returns a list of suggested sectors submitted by contributors,
@@ -657,6 +670,7 @@ def sectors(request):
 
 
 @api_view(['GET'])
+@throttle_classes([])
 def parent_companies(request):
     """
     Returns list parent companies submitted by contributors, as a list of
@@ -909,6 +923,12 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
     pagination_class = FacilitiesGeoJSONPagination
+
+    def get_throttles(self):
+        if self.request.method == 'POST':
+            return [DataUploadThrottle()]
+
+        return super().get_throttles()
 
     @swagger_auto_schema(manual_parameters=facilities_list_parameters)
     def list(self, request):
@@ -2720,6 +2740,7 @@ class AdminFacilityListView(ListAPIView):
     permission_classes = [IsSuperuser]
     pagination_class = PageAndSizePagination
     swagger_schema = None
+    throttle_classes = []
 
     def get_queryset(self):
         """
@@ -3202,6 +3223,7 @@ class FacilityClaimViewSet(viewsets.ModelViewSet):
     serializer_class = FacilityClaimSerializer
     permission_classes = [IsSuperuser]
     swagger_schema = None
+    throttle_classes = []
 
     def create(self, request):
         pass
@@ -3932,6 +3954,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
 @permission_classes([IsAllowedHost])
 @renderer_classes([MvtRenderer])
 @cache_control(max_age=settings.TILE_CACHE_MAX_AGE_IN_SECONDS)
+@throttle_classes([])
 @waffle_switch('vector_tile')
 def get_tile(request, layer, cachekey, z, x, y, ext):
     if cachekey is None:
@@ -3972,6 +3995,7 @@ class ApiBlockViewSet(mixins.ListModelMixin,
     permission_classes = [IsSuperuser]
     swagger_schema = None
     pagination_class = None
+    throttle_classes = []
 
 
 class ContributorWebhookViewSet(mixins.CreateModelMixin,
@@ -4271,6 +4295,7 @@ class NonstandardFieldsViewSet(mixins.ListModelMixin,
 
 
 @api_view(['GET'])
+@throttle_classes([])
 @permission_classes([IsAdminUser])
 def get_geocoding(request):
     """

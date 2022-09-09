@@ -48,7 +48,8 @@ class OarUserAdmin(UserAdmin):
         (None, {'fields': ('email', 'is_staff', 'is_superuser', 'is_active',
                            'should_receive_newsletter',
                            'has_agreed_to_terms_of_service',
-                           'groups')}),
+                           'groups', 'burst_rate', 'sustained_rate',
+                           'data_upload_rate')}),
     )
     search_fields = ('email',)
     list_display = ('email', 'is_active')

@@ -155,6 +155,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.PageAndSizePagination',
     'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_THROTTLE_CLASSES': [
+        'api.throttles.BurstRateThrottle',
+        'api.throttles.SustainedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'burst': '100/minute',
+        'sustained': '10000/day',
+        'data_upload': '30/minute'
+    }
 }
 
 SWAGGER_SETTINGS = {
@@ -252,6 +261,28 @@ AUTH_USER_MODEL = 'api.User'
 
 # Api Limits
 API_FREE_REQUEST_LIMIT = 50
+
+# Caching
+# https://docs.djangoproject.com/en/3.2/topics/cache/
+
+MEMCACHED_LOCATION = f"{os.getenv('CACHE_HOST')}:{os.getenv('CACHE_PORT')}"
+if DEBUG:
+    CACHE_BACKEND = 'django.core.cache.backends.memcached.PyLibMCCache'
+else:
+    # TODO (GH #2091) use django_elasticache in staging / production
+    CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
+
+CACHES = {
+    'default': {
+        # Use the default in-memory cache when not specifying cache
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+    'api_throttling': {
+        # Use memcached for API throttling
+        'BACKEND': CACHE_BACKEND,
+        'LOCATION': MEMCACHED_LOCATION
+    }
+}
 
 # Logging
 # https://docs.djangoproject.com/en/2.1/topics/logging/
