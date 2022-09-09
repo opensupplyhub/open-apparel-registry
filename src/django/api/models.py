@@ -13,7 +13,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates.general import ArrayAgg
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db import models, transaction
+from django.db import models, transaction, connection
 from django.db.models.constraints import UniqueConstraint
 from django.db.models.expressions import Subquery, OuterRef
 from django.db.models import F, Q, ExpressionWrapper, Func
@@ -2943,6 +2943,14 @@ class TrainedModelManager(models.Manager):
         return self.get_active().id
 
 
+class TrainedModelNotSaved(Exception):
+        pass
+
+
+class ModelAlreadyActive(Exception):
+        pass
+
+
 class TrainedModel(models.Model):
     class Meta():
         constraints = [UniqueConstraint(name='unique_is_active',
@@ -2958,6 +2966,30 @@ class TrainedModel(models.Model):
                    'dedupe model')
     )
     objects = TrainedModelManager()
+
+    def activate(self):
+        if self.pk is None:
+            raise TrainedModelNotSaved()
+        if self.is_active:
+            raise ModelAlreadyActive()
+        if self.activated_at is not None:
+            raise ModelAlreadyActive()
+        with transaction.atomic():
+            prev_active_version_id = TrainedModel.objects.get_active_version_id()
+            TrainedModel.objects.update(is_active=False)
+            self.is_active = True
+            self.activated_at = timezone.now()
+            self.save()
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                        ALTER TABLE dedupe_indexed_records RENAME TO dedupe_indexed_records_{prev_active_version_id};
+                        ALTER TABLE dedupe_indexed_records_{active_version_id} RENAME TO dedupe_indexed_records;
+                        """.format(**{
+                                "prev_active_version_id": prev_active_version_id, "active_version_id": self.pk,
+                            })
+                )
+        return prev_active_version_id
 
 
 class DedupeIndexedRecords(models.Model):
