@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction
 from django.db.models import Q
+from django.db.models.signals import post_save
 from django.utils import timezone
 
 from api.models import (Facility,
@@ -591,3 +592,41 @@ def get_model_data():
         messy = get_messy_items_for_training()
 
     return messy, canonical
+
+
+def should_index_match_with_dedupe(match):
+    if match.is_active:
+        if match.status == FacilityMatch.AUTOMATIC:
+            return match.facility.created_from == match.facility_list_item
+        if match.status == FacilityMatch.CONFIRMED:
+            return True
+    return False
+
+
+def should_unindex_match_from_dedupe(match):
+    if not match.is_active:
+        return match.facility.created_from != match.facility_list_item
+    return False
+
+
+def dedupe_record_for_match(match):
+    record_id = (
+        match.facility.id
+        if match.facility.created_from == match.facility_list_item
+        else match_to_extended_facility_id(match))
+    return {record_id: {
+        'country': clean(match.facility_list_item.country_code),
+        'name': clean(match.facility_list_item.name),
+        'address': clean(match.facility_list_item.address),
+    }}
+
+
+def facilitymatch_post_save(sender, **kwargs):
+    instance = kwargs.get('instance')
+    if should_index_match_with_dedupe(instance):
+        GazetteerCache.index(dedupe_record_for_match(instance))
+    if should_unindex_match_from_dedupe(instance):
+        GazetteerCache.unindex(dedupe_record_for_match(instance))
+
+
+post_save.connect(facilitymatch_post_save, sender=FacilityMatch)
