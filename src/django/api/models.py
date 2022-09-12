@@ -3029,11 +3029,11 @@ class TrainedModelManager(models.Manager):
 
 
 class TrainedModelNotSaved(Exception):
-        pass
+    pass
 
 
 class ModelAlreadyActive(Exception):
-        pass
+    pass
 
 
 class TrainedModel(models.Model):
@@ -3060,7 +3060,8 @@ class TrainedModel(models.Model):
         if self.activated_at is not None:
             raise ModelAlreadyActive()
         with transaction.atomic():
-            prev_active_version_id = TrainedModel.objects.get_active_version_id()
+            prev_active_version_id = \
+                TrainedModel.objects.get_active_version_id()
             TrainedModel.objects.update(is_active=False)
             self.is_active = True
             self.activated_at = timezone.now()
@@ -3068,11 +3069,14 @@ class TrainedModel(models.Model):
             with connection.cursor() as cursor:
                 cursor.execute(
                     """
-                        ALTER TABLE dedupe_indexed_records RENAME TO dedupe_indexed_records_{prev_active_version_id};
-                        ALTER TABLE dedupe_indexed_records_{active_version_id} RENAME TO dedupe_indexed_records;
+                    ALTER TABLE dedupe_indexed_records
+                    RENAME TO dedupe_indexed_records_{prev_active_version_id};
+                    ALTER TABLE dedupe_indexed_records_{active_version_id}
+                    RENAME TO dedupe_indexed_records;
                         """.format(**{
-                                "prev_active_version_id": prev_active_version_id, "active_version_id": self.pk,
-                            })
+                            "prev_active_version_id": prev_active_version_id,
+                            "active_version_id": self.pk,
+                        })
                 )
         return prev_active_version_id
 
