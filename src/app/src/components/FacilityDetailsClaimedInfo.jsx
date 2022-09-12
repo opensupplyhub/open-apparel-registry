@@ -3,20 +3,20 @@ import { number, string, shape } from 'prop-types';
 import trim from 'lodash/trim';
 import orderBy from 'lodash/orderBy';
 import identity from 'lodash/identity';
+import Grid from '@material-ui/core/Grid';
 
-import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
+import FacilityDetailsItem from './FacilityDetailsItem';
 
 import { addProtocolToWebsiteURLIfMissing } from '../util/util';
 
 const ClaimInfoSection = ({ label, value }) =>
     trim(value) && (
-        <FacilityDetailSidebarItem label={label} primary={value} isFromClaim />
+        <Grid item xs={12} md={6}>
+            <FacilityDetailsItem label={label} primary={value} isFromClaim />
+        </Grid>
     );
 
-export default function FacilityDetailsSidebarClaimedInfo({
-    data,
-    formatListItem,
-}) {
+export default function FacilityDetailsClaimedInfo({ data, formatListItem }) {
     if (!data) {
         return null;
     }
@@ -114,11 +114,11 @@ export default function FacilityDetailsSidebarClaimedInfo({
     );
 }
 
-FacilityDetailsSidebarClaimedInfo.defaultProps = {
+FacilityDetailsClaimedInfo.defaultProps = {
     data: null,
 };
 
-FacilityDetailsSidebarClaimedInfo.propTypes = {
+FacilityDetailsClaimedInfo.propTypes = {
     data: shape({
         id: number.isRequired,
         facility: shape({

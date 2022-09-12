@@ -5,10 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
 import TuneIcon from '@material-ui/icons/Tune';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 
 import ShowOnly from './ShowOnly';
@@ -18,6 +15,7 @@ import TextSearchFilter from './Filters/TextSearchFilter';
 import ContributorFilter from './Filters/ContributorFilter';
 import CountryNameFilter from './Filters/CountryNameFilter';
 import SectorFilter from './Filters/SectorFilter';
+import TitledDrawer from './TitledDrawer';
 
 import { resetAllFilters, resetDrawerFilters } from '../actions/filters';
 
@@ -283,34 +281,18 @@ function FilterSidebarSearchTab({
                     {searchResetButtonGroup()}
                 </div>
             </div>
-            <Drawer
-                anchor="right"
+            <TitledDrawer
                 open={expand}
                 onClose={() => setExpand(false)}
+                title="Find facilities"
+                subtitle="Browse facilities using the criteria below."
             >
-                <div className={classes.drawer}>
-                    <div className={classes.drawerHeader}>
-                        <IconButton
-                            aria-label="Close"
-                            className={classes.closeButton}
-                            onClick={() => setExpand(false)}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                    </div>
-                    <Typography className={classes.drawerTitle}>
-                        Find facilities
-                    </Typography>
-                    <Typography className={classes.drawerSubtitle}>
-                        Browse facilities using the criteria below.
-                    </Typography>
-                    <SectorFilter />
-                    <FeatureFlag flag={EXTENDED_PROFILE_FLAG}>
-                        <FilterSidebarExtendedSearch />
-                    </FeatureFlag>
-                    {getHiddenFieldsButtonGroup()}
-                </div>
-            </Drawer>
+                <SectorFilter />
+                <FeatureFlag flag={EXTENDED_PROFILE_FLAG}>
+                    <FilterSidebarExtendedSearch />
+                </FeatureFlag>
+                {getHiddenFieldsButtonGroup()}
+            </TitledDrawer>
         </div>
     );
 }

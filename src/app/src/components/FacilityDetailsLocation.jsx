@@ -3,9 +3,9 @@ import head from 'lodash/head';
 import last from 'lodash/last';
 import partition from 'lodash/partition';
 
-import FacilityDetailSidebarItem from './FacilityDetailSidebarItem';
+import FacilityDetailsItem from './FacilityDetailsItem';
 
-import { facilitySidebarActions } from '../util/constants';
+import { facilityDetailsActions } from '../util/constants';
 
 const getDetailsText = ({
     embed,
@@ -19,7 +19,7 @@ const getDetailsText = ({
             them ${
                 embed
                     ? 'on the Open Supply Hub.'
-                    : `using the "${facilitySidebarActions.SUGGEST_AN_EDIT}" link below.`
+                    : `using the "${facilityDetailsActions.SUGGEST_AN_EDIT}" link below.`
             }`;
     }
     if (hasInvalidClaimCoordinates) {
@@ -28,7 +28,7 @@ const getDetailsText = ({
     return canonicalLocationData?.contributor_name;
 };
 
-const FacilityDetailSidebarLocation = ({ data, embed }) => {
+const FacilityDetailsLocation = ({ data, embed }) => {
     const facilityLat = last(data.geometry.coordinates);
     const facilityLng = head(data.geometry.coordinates);
 
@@ -56,7 +56,7 @@ const FacilityDetailSidebarLocation = ({ data, embed }) => {
 
     return (
         <>
-            <FacilityDetailSidebarItem
+            <FacilityDetailsItem
                 label="GPS"
                 primary={`${facilityLng}, ${facilityLat}`}
                 secondary={detailsText}
@@ -75,4 +75,4 @@ const FacilityDetailSidebarLocation = ({ data, embed }) => {
     );
 };
 
-export default FacilityDetailSidebarLocation;
+export default FacilityDetailsLocation;

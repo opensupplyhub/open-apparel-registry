@@ -3,10 +3,10 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { getLocationWithoutEmbedParam } from '../util/util';
 
-const CopySearch = ({ children }) => (
+const CopySearch = ({ children, toastText = 'Copied search to clipboard' }) => (
     <CopyToClipboard
         text={getLocationWithoutEmbedParam()}
-        onCopy={() => toast('Copied search to clipboard')}
+        onCopy={() => toast(toastText)}
     >
         {children}
     </CopyToClipboard>

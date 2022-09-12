@@ -8,20 +8,27 @@ import FeatureFlag from './FeatureFlag';
 import { REPORT_A_FACILITY } from '../util/constants';
 import { makeFacilityDetailLink } from '../util/util';
 
-const styles = () =>
+const styles = theme =>
     Object.freeze({
         status: {
-            background: 'rgb(40, 39, 39)',
+            backgroundColor: 'rgb(40, 39, 39)',
             borderRadius: 0,
             display: 'flex',
-            padding: '8px 16px',
+            justifyContent: 'center',
+        },
+        contentContainer: {
+            width: '100%',
+            maxWidth: '1072px',
+            display: 'flex',
             alignItems: 'center',
-            margin: '24px 24px 0 24px',
+            flexWrap: 'wrap',
+            padding: theme.spacing.unit,
         },
         icon: {
             fontSize: '24px',
             fontWeight: 'normal',
-            padding: '8px 16px 8px 0',
+            paddingLeft: theme.spacing.unit * 2,
+            paddingRight: theme.spacing.unit * 3,
         },
         textBox: {
             display: 'flex',
@@ -29,6 +36,7 @@ const styles = () =>
         },
         text: {
             color: 'rgb(255, 255, 255)',
+            fontSize: '14px',
         },
     });
 
@@ -76,16 +84,22 @@ const FacilityDetailClosureStatus = ({ data, clearFacility, classes }) => {
     return (
         <FeatureFlag flag={REPORT_A_FACILITY}>
             <div className={classes.status}>
-                <i
-                    className={`${classes.text} ${classes.icon} far fa-fw fa-store-slash`}
-                />
-                <div className={classes.textBox}>
-                    {primaryText}
-                    {isPending && (
-                        <Typography className={classes.text} variant="body1">
-                            Status pending
-                        </Typography>
-                    )}
+                <div className={classes.contentContainer}>
+                    <i
+                        className={`${classes.text} ${classes.icon} far fa-fw fa-store-slash`}
+                        style={{ fontSize: '24px' }}
+                    />
+                    <div className={classes.textBox}>
+                        {primaryText}
+                        {isPending && (
+                            <Typography
+                                className={classes.text}
+                                variant="body1"
+                            >
+                                Status pending
+                            </Typography>
+                        )}
+                    </div>
                 </div>
             </div>
         </FeatureFlag>

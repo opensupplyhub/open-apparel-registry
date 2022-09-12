@@ -734,13 +734,13 @@ export const createUserDropdownLinks = (
         .concat(logoutLinks);
 };
 
-export const facilitySidebarActions = {
-    SUGGEST_AN_EDIT: 'Suggest an edit',
-    REPORT_AS_DUPLICATE: 'Report as duplicate',
-    REPORT_AS_CLOSED: 'Report as closed',
-    REPORT_AS_REOPENED: 'Report as reopened',
-    DISPUTE_CLAIM: 'Dispute claim',
-    CLAIM_FACILITY: 'Claim this facility',
+export const facilityDetailsActions = {
+    SUGGEST_AN_EDIT: 'Suggest an Edit',
+    REPORT_AS_DUPLICATE: 'Report as Duplicate',
+    REPORT_AS_CLOSED: 'Report as Closed',
+    REPORT_AS_REOPENED: 'Report as Reopened',
+    DISPUTE_CLAIM: 'Dispute Claim',
+    CLAIM_FACILITY: 'Claim this Facility',
     VIEW_ON_OAR: 'View on the Open Supply Hub',
 };
 
