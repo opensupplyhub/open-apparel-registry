@@ -85,7 +85,7 @@ class OgrGazetteerMatching(GazetteerMatching):
                     DELETE FROM dedupe_indexed_records
                     WHERE record_id = %s
                     """,
-                    k,
+                    [k],
                 )
 
     def blocks(self, data: Data) -> Blocks:
