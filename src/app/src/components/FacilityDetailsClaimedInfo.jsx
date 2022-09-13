@@ -9,9 +9,9 @@ import FacilityDetailsItem from './FacilityDetailsItem';
 
 import { addProtocolToWebsiteURLIfMissing } from '../util/util';
 
-const ClaimInfoSection = ({ label, value }) =>
+const ClaimInfoSection = ({ label, value, fullWidth }) =>
     trim(value) && (
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={fullWidth ? 12 : 6}>
             <FacilityDetailsItem label={label} primary={value} isFromClaim />
         </Grid>
     );
@@ -25,10 +25,6 @@ export default function FacilityDetailsClaimedInfo({ data, formatListItem }) {
 
     const facilitySection = (
         <>
-            <ClaimInfoSection
-                label="Description"
-                value={facility.description}
-            />
             <ClaimInfoSection
                 label="Website"
                 value={
@@ -110,6 +106,11 @@ export default function FacilityDetailsClaimedInfo({ data, formatListItem }) {
         <>
             {facilitySection}
             {officeSection}
+            <ClaimInfoSection
+                label="Description"
+                value={facility.description}
+                fullWidth
+            />
         </>
     );
 }
