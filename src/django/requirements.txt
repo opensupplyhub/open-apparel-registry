@@ -7,6 +7,7 @@ defusedxml==0.6.0
 django-amazon-ses==4.0.1
 django-cors-headers==3.13.0
 django-ecsmanage==2.0.1
+django-elasticache==1.0.3
 django-extensions==3.1.4
 django-jsonview==2.0.0
 django-rest-auth[with_social]==0.9.5
