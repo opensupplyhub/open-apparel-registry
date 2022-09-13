@@ -139,6 +139,8 @@ data "template_file" "app" {
     batch_job_queue_name             = local.batch_job_queue_name
     batch_job_def_name               = local.batch_job_def_name
     log_group_name                   = "log${local.short}App"
+    cache_host                       = aws_route53_record.cache.name
+    cache_port                       = module.cache.port
   }
 }
 
@@ -184,6 +186,8 @@ data "template_file" "app_cli" {
     batch_job_queue_name             = local.batch_job_queue_name
     batch_job_def_name               = local.batch_job_def_name
     log_group_name                   = "log${local.short}AppCLI"
+    cache_host                       = aws_route53_record.cache.name
+    cache_port                       = module.cache.port
   }
 }
 
@@ -238,4 +242,3 @@ resource "aws_cloudwatch_log_group" "cli" {
   name              = "log${local.short}AppCLI"
   retention_in_days = 30
 }
-
