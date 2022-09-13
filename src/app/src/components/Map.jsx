@@ -9,8 +9,6 @@ import VectorTileFacilitiesMap from './VectorTileFacilitiesMap';
 
 import '../styles/css/Map.css';
 
-import withQueryStringSync from '../util/withQueryStringSync';
-
 import {
     mainRoute,
     facilitiesRoute,
@@ -103,4 +101,4 @@ class Map extends Component {
     }
 }
 
-export default withQueryStringSync(Map);
+export default Map;

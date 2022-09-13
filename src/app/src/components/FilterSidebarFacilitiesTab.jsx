@@ -40,7 +40,6 @@ import { makeFacilityDetailLink } from '../util/util';
 import COLOURS from '../util/COLOURS';
 
 import { filterSidebarStyles } from '../util/styles';
-import withQueryStringSync from '../util/withQueryStringSync';
 import BadgeClaimed from './BadgeClaimed';
 import CopyLinkIcon from './CopyLinkIcon';
 
@@ -489,11 +488,6 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default withQueryStringSync(
-    withRouter(
-        connect(
-            mapStateToProps,
-            mapDispatchToProps,
-        )(FilterSidebarFacilitiesTab),
-    ),
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(FilterSidebarFacilitiesTab),
 );

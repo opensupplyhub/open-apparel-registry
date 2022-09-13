@@ -17,7 +17,6 @@ import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
 import Contribute from './components/Contribute';
 import Homepage from './components/Homepage';
-import MapAndSidebar from './components/MapAndSidebar';
 import FacilityLists from './components/FacilityLists';
 import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -32,7 +31,7 @@ import ClaimedFacilities from './components/ClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
 import Settings from './components/Settings';
 import ExternalRedirect from './components/ExternalRedirect';
-import FacilityDetails from './components/FacilityDetails';
+import Facilities from './components/Facilities';
 
 import { sessionLogin } from './actions/auth';
 import { fetchFeatureFlags } from './actions/featureFlags';
@@ -51,7 +50,6 @@ import {
     listsRoute,
     facilityListItemsRoute,
     facilitiesRoute,
-    facilityDetailsRoute,
     profileRoute,
     dashboardRoute,
     claimFacilityRoute,
@@ -120,9 +118,7 @@ class Routes extends Component {
                                         <FeatureFlag
                                             flag={CLAIM_A_FACILITY}
                                             alternative={
-                                                <Route
-                                                    component={MapAndSidebar}
-                                                />
+                                                <Route component={Facilities} />
                                             }
                                         >
                                             <Route component={ClaimFacility} />
@@ -143,30 +139,8 @@ class Routes extends Component {
                                     )}
                                 />
                                 <Route
-                                    path={facilityDetailsRoute}
-                                    render={() => {
-                                        if (fetchingFeatureFlags) {
-                                            return <CircularProgress />;
-                                        }
-
-                                        return (
-                                            <Route
-                                                component={FacilityDetails}
-                                            />
-                                        );
-                                    }}
-                                />
-                                <Route
                                     path={facilitiesRoute}
-                                    render={() => {
-                                        if (fetchingFeatureFlags) {
-                                            return <CircularProgress />;
-                                        }
-
-                                        return (
-                                            <Route component={MapAndSidebar} />
-                                        );
-                                    }}
+                                    component={Facilities}
                                 />
                                 <Route
                                     exact

@@ -35,7 +35,6 @@ import { makeFacilityDetailLink, getValueFromEvent } from '../util/util';
 import COLOURS from '../util/COLOURS';
 
 import { filterSidebarStyles } from '../util/styles';
-import withQueryStringSync from '../util/withQueryStringSync';
 
 const SEARCH_TERM_INPUT = 'SEARCH_TERM_INPUT';
 
@@ -384,9 +383,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default withQueryStringSync(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(NonVectorTileFilterSidebarFacilitiesTab),
-);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(NonVectorTileFilterSidebarFacilitiesTab);
