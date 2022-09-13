@@ -19,7 +19,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
-## [69] 2022-08-23
+## [71] 2022-09-13
+
+### Fixed
+
+- Fix getLangFromTranslateElement function [#2096](https://github.com/open-apparel-registry/open-apparel-registry/pull/2096)
+- Update the Python and Rollber versions used for lamba functions [#2121](https://github.com/open-apparel-registry/open-apparel-registry/pull/2121/files)
+]
+
+## [70] 2022-08-23
 
 ### Added
 - Added a script to automate restoring an anonymized production snapshot [#1948](https://github.com/open-apparel-registry/open-apparel-registry/pull/1948)
@@ -1237,7 +1245,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/70...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/71...HEAD
+[71]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/71
 [70]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/70
 [69]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/69
 [68]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/68
