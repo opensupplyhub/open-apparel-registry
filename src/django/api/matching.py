@@ -4,12 +4,13 @@ import os
 import sys
 import traceback
 import io
+import json
 
 from collections import defaultdict
 from datetime import datetime
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
-from django.db import transaction
+from django.db import transaction, connection
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.utils import timezone
@@ -239,6 +240,54 @@ def load_gazetteer():
     gazetteer.trained_model = active_model
 
     return gazetteer
+
+
+class ModelNotActivated(Exception):
+    pass
+
+
+def train_and_activate_gazetteer(messy, canonical):
+    fields = [
+        {'field': 'country', 'type': 'Exact'},
+        {'field': 'name', 'type': 'String'},
+        {'field': 'address', 'type': 'String'},
+    ]
+
+    gazetteer = OgrGazetteer(fields)
+    training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
+                                 'training.json')
+    with open(training_file) as tf:
+        gazetteer.prepare_training(messy, canonical, tf, 15000)
+    gazetteer.train(index_predicates=False)
+    output_stream = io.BytesIO()
+    gazetteer.write_settings(output_stream)
+    output_stream.seek(0)
+    active_model = TrainedModel(dedupe_model=output_stream.read())
+    active_model.save()
+    gazetteer.trained_model = active_model
+    gazetteer.cleanup_training()
+    gazetteer.build_index_table(canonical)
+    #TODO make sure this works
+    try:
+        prev_active_model_id = active_model.activate()
+    except ModelNotActivated:
+        pass
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """SELECT record_id, record_data
+               FROM dedupe_indexed_records_{} d1
+               WHERE NOT EXISTS
+                (SELECT *
+                    FROM dedupe_indexed_records d2
+                    WHERE d1.record_id = d2.record_id)""".format(prev_active_model_id)
+        )
+        while True:
+            records = cursor.fetchmany(1000)
+            if not records:
+                break
+            for record in records:
+                item = {record[0]: json.loads(record[1])    }
+                gazetteer.index(item)
 
 
 def train_gazetteer(messy, canonical, should_index=False):
