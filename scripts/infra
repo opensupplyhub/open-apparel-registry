@@ -16,7 +16,12 @@ Execute Terraform subcommands with remote state management.
 if [[ -n "${GIT_COMMIT}" ]]; then
     GIT_COMMIT="${GIT_COMMIT:0:7}"
 else
-    GIT_COMMIT="$(git rev-parse --short HEAD)"
+    # TODO A run of cipublish on Jenkins resulted in an image being published
+    # with an 8-character tag. Is this workaround the best solution? This SO
+    # answer indicates that --short does not guarantee a length of 7
+    # https://stackoverflow.com/a/44287003
+    SHORT_SHA="$(git rev-parse --short HEAD)"
+    GIT_COMMIT="${SHORT_SHA:0:7}"
 fi
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
