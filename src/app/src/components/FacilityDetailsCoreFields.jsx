@@ -68,6 +68,7 @@ const coreFieldsStyles = theme =>
         },
         osId: {
             marginTop: theme.spacing.unit * 2,
+            fontSize: '18px',
         },
         menuLink: {
             color: 'inherit',
