@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from api.matching import train_gazetteer, get_model_data
+from api.matching import train_and_activate_gazetteer, get_model_data
 
 
 class Command(BaseCommand):
@@ -8,6 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         messy, canonical = get_model_data()
-
-        gazetter = train_gazetteer(messy, canonical)
-        gazetter.build_index_table(canonical)
+        gazetteer = train_and_activate_gazetteer(messy, canonical)
