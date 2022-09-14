@@ -47,6 +47,7 @@ class OgrGazetteerMatching(GazetteerMatching):
 
         with connection.cursor() as cursor:
             for item in self.fingerprinter(data.items(), target=True):
+                print(item)
                 cursor.execute(
                     """
                     INSERT INTO dedupe_indexed_records (block_key,

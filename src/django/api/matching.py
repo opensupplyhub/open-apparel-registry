@@ -272,6 +272,8 @@ def train_and_activate_gazetteer(messy, canonical):
         prev_active_model_id = active_model.activate()
     except ModelNotActivated:
         pass
+    print(prev_active_model_id)
+    input("Press Enter to continue...")
     with connection.cursor() as cursor:
         cursor.execute(
             """SELECT record_id, record_data
@@ -288,6 +290,7 @@ def train_and_activate_gazetteer(messy, canonical):
                 break
             for record in records:
                 item = {record[0]: json.loads(record[1])}
+                print(item)
                 gazetteer.index(item)
 
 
