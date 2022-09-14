@@ -123,6 +123,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allow facility list items to be removed from pending lists [#2228](https://github.com/open-apparel-registry/open-apparel-registry/pull/2228)
 - Update copy text for OS Hub [#2237](https://github.com/open-apparel-registry/open-apparel-registry/pull/2237)
 - Update embedded map footer logo [#2243](https://github.com/open-apparel-registry/open-apparel-registry/pull/2243)
+- Rewrite the GazetteerCache to work with database-backed gazetteer [#2134](https://github.com/open-apparel-registry/open-apparel-registry/pull/2134)
 
 ### Fixed
 
