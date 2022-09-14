@@ -91,6 +91,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Terminology updates [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
 - Change claim wizard header color [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
 - Hide nav links on My Account - Settings page [#2212](https://github.com/open-apparel-registry/open-apparel-registry/pull/2212)
+- Rewrite the GazetteerCache to work with database-backed gazetteer [#2134](https://github.com/open-apparel-registry/open-apparel-registry/pull/2134)
 
 ### Deprecated
 
