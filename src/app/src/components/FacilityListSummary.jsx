@@ -17,17 +17,33 @@ const facilityListSummaryStyles = Object.freeze({
 function FacilityListSummary({ name, description, id, contributor }) {
     return (
         <div>
-            <a
-                style={facilityListSummaryStyles.nameStyles}
-                href={`/?contributors=${contributor}&lists=${id}`}
-                target="_blank"
-                rel="noopener noreferrer"
+            <div
+                style={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}
             >
-                {name}
-            </a>
+                <p style={facilityListSummaryStyles.nameStyles}>{name}</p>
+                <a
+                    href={`/?contributors=${contributor}&lists=${id}`}
+                    rel="noopener noreferrer"
+                    style={{
+                        color: '#8428FA',
+                        fontSize: '18px',
+                        fontWeight: '500',
+                        lineHeight: '21px',
+                        textDecoration: 'none',
+                    }}
+                >
+                    {'View facilities >'}
+                </a>
+            </div>
             <p style={facilityListSummaryStyles.descriptionStyles}>
                 {description}
             </p>
+            <hr color="#E7E8EA" />
         </div>
     );
 }

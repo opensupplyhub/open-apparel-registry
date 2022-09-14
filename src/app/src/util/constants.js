@@ -146,7 +146,7 @@ the data source for each facility contributed.`,
 
 const accountDescriptionField = Object.freeze({
     id: registrationFieldsEnum.description,
-    label: 'Contributor Description',
+    label: 'Description',
     type: inputTypesEnum.text,
     required: true,
     hint: `Enter a description of the contributor. This will appear in your
@@ -156,7 +156,7 @@ public contributor profile.`,
 
 const accountWebsiteField = Object.freeze({
     id: registrationFieldsEnum.website,
-    label: 'Website (Optional)',
+    label: 'Website',
     type: inputTypesEnum.text,
     required: false,
     hint: null,
@@ -264,9 +264,9 @@ export const profileFormFields = Object.freeze([
     accountEmailField,
     accountNameField,
     accountDescriptionField,
+    accountWebsiteField,
     accountContributorTypeField,
     accountOtherContributorTypeField,
-    accountWebsiteField,
     accountCurrentPasswordField,
     accountNewPasswordField,
     accountConfirmNewPasswordField,

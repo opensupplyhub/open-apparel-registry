@@ -72,6 +72,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update facility details content [#2126](https://github.com/open-apparel-registry/open-apparel-registry/pull/2126)
 - Search/Filtering/Results UX Updates [#2110](https://github.com/open-apparel-registry/open-apparel-registry/pull/2110)
 - Delete matched facilities from created contributer [#2153](https://github.com/open-apparel-registry/open-apparel-registry/pull/2153)
+- Update contributor profile UX [#2151](https://github.com/open-apparel-registry/open-apparel-registry/pull/2151)
 
 ### Deprecated
 
