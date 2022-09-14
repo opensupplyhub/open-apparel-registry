@@ -267,7 +267,6 @@ def train_and_activate_gazetteer(messy, canonical):
     gazetteer.trained_model = active_model
     gazetteer.cleanup_training()
     gazetteer.build_index_table(canonical)
-    #TODO make sure this works
     try:
         prev_active_model_id = active_model.activate()
     except ModelNotActivated:
@@ -279,14 +278,15 @@ def train_and_activate_gazetteer(messy, canonical):
                WHERE NOT EXISTS
                 (SELECT *
                     FROM dedupe_indexed_records d2
-                    WHERE d1.record_id = d2.record_id)""".format(prev_active_model_id)
+                    WHERE d1.record_id = d2.record_id)
+                    """.format(prev_active_model_id)
         )
         while True:
             records = cursor.fetchmany(1000)
             if not records:
                 break
             for record in records:
-                item = {record[0]: json.loads(record[1])    }
+                item = {record[0]: json.loads(record[1])}
                 gazetteer.index(item)
 
 
