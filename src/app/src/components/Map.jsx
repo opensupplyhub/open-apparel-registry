@@ -10,7 +10,6 @@ import VectorTileFacilitiesMap from './VectorTileFacilitiesMap';
 import '../styles/css/Map.css';
 
 import {
-    mainRoute,
     facilitiesRoute,
     facilityDetailsRoute,
     VECTOR_TILE,
@@ -64,22 +63,6 @@ class Map extends Component {
                         <Route
                             exact
                             path={facilitiesRoute}
-                            render={() => (
-                                <FeatureFlag
-                                    flag={VECTOR_TILE}
-                                    alternative={
-                                        <Route component={FacilitiesMap} />
-                                    }
-                                >
-                                    <Route
-                                        component={VectorTileFacilitiesMap}
-                                    />
-                                </FeatureFlag>
-                            )}
-                        />
-                        <Route
-                            exact
-                            path={mainRoute}
                             render={() => (
                                 <FeatureFlag
                                     flag={VECTOR_TILE}

@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Route } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core';
 
 import SidebarWithErrorBoundary from './SidebarWithErrorBoundary';
 import FacilitiesMap from './FacilitiesMap';
@@ -13,6 +14,15 @@ import '../styles/css/Map.css';
 import withQueryStringSync from '../util/withQueryStringSync';
 
 import { VECTOR_TILE } from '../util/constants';
+
+const homepageStyles = theme =>
+    Object.freeze({
+        mapSidebarContainer: Object.freeze({
+            [theme.breakpoints.down('md')]: {
+                height: 'auto !important',
+            },
+        }),
+    });
 
 class Homepage extends Component {
     state = { hasError: false };
@@ -29,10 +39,14 @@ class Homepage extends Component {
 
     render() {
         const { hasError } = this.state;
+        const { classes } = this.props;
 
         return (
             <Fragment>
-                <Grid container className="map-sidebar-container">
+                <Grid
+                    container
+                    className={`map-sidebar-container ${classes.mapSidebarContainer}`}
+                >
                     <Grid item sm={12} md={6} id="sidebar-container">
                         <Route component={SidebarWithErrorBoundary} />
                     </Grid>
@@ -61,4 +75,4 @@ class Homepage extends Component {
     }
 }
 
-export default withQueryStringSync(Homepage);
+export default withStyles(homepageStyles)(withQueryStringSync(Homepage));
