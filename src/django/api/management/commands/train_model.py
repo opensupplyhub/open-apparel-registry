@@ -8,4 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         messy, canonical = get_model_data()
-        gazetteer = train_and_activate_gazetteer(messy, canonical)
+        train_and_activate_gazetteer(messy, canonical)
