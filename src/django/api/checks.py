@@ -4,7 +4,7 @@ from api.matching import GazetteerCache
 
 @check
 def _check_gazetteercache():
-    GazetteerCache.get_latest()
+    GazetteerCache.load_gazetteer_if_none()
     return {'ok': True}
 
 

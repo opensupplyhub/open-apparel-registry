@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update list match confirm / rejection to be done by admins [#2030](https://github.com/open-apparel-registry/open-apparel-registry/pull/2030)
 - Update moderation UI to trigger batch processing [#2048](https://github.com/open-apparel-registry/open-apparel-registry/pull/2048)
 - Create a log group for AWS Batch jobs [#2060](https://github.com/open-apparel-registry/open-apparel-registry/pull/2060)
+- Rewrite the GazetteerCache to work with database-backed gazetteer [#2134](https://github.com/open-apparel-registry/open-apparel-registry/pull/2134)
 
 ### Deprecated
 
