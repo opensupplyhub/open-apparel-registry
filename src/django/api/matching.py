@@ -242,10 +242,6 @@ def load_gazetteer():
     return gazetteer
 
 
-class ModelNotActivated(Exception):
-    pass
-
-
 def train_and_activate_gazetteer(messy, canonical):
     fields = [
         {'field': 'country', 'type': 'Exact'},
@@ -267,10 +263,7 @@ def train_and_activate_gazetteer(messy, canonical):
     gazetteer.trained_model = active_model
     gazetteer.cleanup_training()
     gazetteer.build_index_table(canonical)
-    try:
-        prev_active_model_id = active_model.activate()
-    except ModelNotActivated:
-        pass
+    prev_active_model_id = active_model.activate()
     with connection.cursor() as cursor:
         cursor.execute(
             """SELECT record_id, record_data
