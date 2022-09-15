@@ -68,6 +68,31 @@ resource "aws_iam_role_policy" "batch_describe_and_submit" {
   policy = data.aws_iam_policy_document.batch_describe_and_submit.json
 }
 
+
+data "aws_iam_policy_document" "s3_read_write_files_bucket" {
+  statement {
+    effect = "Allow"
+
+    resources = [
+      aws_s3_bucket.files.arn,
+      "${aws_s3_bucket.files.arn}/*",
+    ]
+
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:PutObject"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "s3_read_write_files_bucket" {
+  name   = "S3ReadWriteFiles"
+  role   = aws_iam_role.ecs_task_role.name
+  policy = data.aws_iam_policy_document.s3_read_write_files_bucket.json
+}
+
 #
 # ALB IAM resources
 #
@@ -358,4 +383,3 @@ resource "aws_iam_role_policy" "cloudwatch_events_service_role_policy" {
   role   = aws_iam_role.cloudwatch_events_service_role.name
   policy = data.aws_iam_policy_document.cloudwatch_events_service_role_policy.json
 }
-

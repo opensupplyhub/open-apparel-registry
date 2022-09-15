@@ -26,6 +26,35 @@ resource "aws_s3_bucket" "logs" {
   }
 }
 
+
+resource "aws_s3_bucket" "files" {
+  bucket = lower("${var.project}-${var.environment}-files-${var.aws_region}")
+  acl    = "private"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  tags = {
+    Name        = lower("${var.project}-${var.environment}-files-${var.aws_region}")
+    Project     = var.project
+    Environment = var.environment
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "files" {
+  bucket = aws_s3_bucket.files.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 #
 # ECR resources
 #
@@ -44,4 +73,3 @@ module "ecr_repository_batch" {
 
   attach_lifecycle_policy = true
 }
-
