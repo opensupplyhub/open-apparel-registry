@@ -7,7 +7,6 @@ import io
 import json
 
 from collections import defaultdict
-from datetime import datetime
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction, connection
@@ -281,49 +280,6 @@ def train_and_activate_gazetteer(messy, canonical):
             for record in records:
                 item = {record[0]: json.loads(record[1])}
                 gazetteer.index(item)
-
-
-def train_gazetteer(messy, canonical, should_index=False):
-    """
-    Train and return a dedupe.Gazetteer using the specified messy and canonical
-    dictionaries. The messy and canonical objects should have the same
-    structure:
-      - The key is a unique ID
-      - The value is another dictionary of field:value pairs. This dictionary
-        must contain at least 'country', 'name', and 'address' keys.
-
-    Reads a training.json file containing positive and negative matches.
-    """
-    fields = [
-        {'field': 'country', 'type': 'Exact'},
-        {'field': 'name', 'type': 'String'},
-        {'field': 'address', 'type': 'String'},
-    ]
-
-    gazetteer = OgrGazetteer(fields)
-    training_file = os.path.join(settings.BASE_DIR, 'api', 'data',
-                                 'training.json')
-    with open(training_file) as tf:
-        gazetteer.prepare_training(messy, canonical, tf, 15000)
-    # Messy and canonical aren't doing anything if index_predicates are off?
-    gazetteer.train(index_predicates=False)
-    output_stream = io.BytesIO()
-    gazetteer.write_settings(output_stream)
-    output_stream.seek(0)
-    model_object = TrainedModel(dedupe_model=output_stream.read())
-    model_object.save()
-    gazetteer.trained_model = model_object
-    gazetteer.cleanup_training()
-
-    if should_index:
-        index_start = datetime.now()
-        logger.info('Indexing started')
-        gazetteer.index(canonical)
-        index_duration = datetime.now() - index_start
-        logger.info('Indexing finished ({})'.format(index_duration))
-        logger.info('Cleanup training')
-
-    return gazetteer
 
 
 class MatchDefaults:
