@@ -25,8 +25,6 @@ const locationFieldsStyles = theme =>
             justifyContent: 'center',
             borderTop: '2px solid #F9F7F7',
             borderBottom: '2px solid #F9F7F7',
-            flexDirection: 'column',
-            alignItems: 'center',
         },
         contentContainer: {
             width: '100%',
@@ -164,49 +162,51 @@ const FacilityDetailsLocationFields = ({
 
     return (
         <div className={classes.root}>
-            <Grid container className={classes.contentContainer}>
-                <Grid item xs={12} md={6}>
-                    <FacilityDetailsItem
-                        label="Name"
-                        {...nameField}
-                        additionalContent={otherNames}
-                        embed={embed}
-                    />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <FacilityDetailsItem
-                        label="Sector"
-                        {...sectorField}
-                        additionalContent={otherSectors}
-                        embed={embed}
-                    />
-                </Grid>
-                {embed
-                    ? renderEmbedFields()
-                    : EXTENDED_FIELD_TYPES.map(renderExtendedField)}
-                <FeatureFlag flag={REPORT_A_FACILITY}>
-                    <ShowOnly when={!!activityReport}>
+            <div className={classes.contentContainer}>
+                <Grid container>
+                    <Grid item xs={12} md={6}>
                         <FacilityDetailsItem
-                            label="Status"
-                            {...activityReport}
-                            additionalContent={otherActivityReports}
-                            additionalContentText="status"
-                            additionalContentTextPlural="statuses"
+                            label="Name"
+                            {...nameField}
+                            additionalContent={otherNames}
                             embed={embed}
                         />
-                    </ShowOnly>
-                </FeatureFlag>
-            </Grid>
-            <Grid container className={classes.contentContainer}>
-                <FeatureFlag flag={CLAIM_A_FACILITY}>
-                    <ShowOnly when={!!data.properties.claim_info}>
-                        <FacilityDetailsClaimedInfo
-                            data={data.properties.claim_info}
-                            formatListItem={formatIfListAndRemoveDuplicates}
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <FacilityDetailsItem
+                            label="Sector"
+                            {...sectorField}
+                            additionalContent={otherSectors}
+                            embed={embed}
                         />
-                    </ShowOnly>
-                </FeatureFlag>
-            </Grid>
+                    </Grid>
+                    {embed
+                        ? renderEmbedFields()
+                        : EXTENDED_FIELD_TYPES.map(renderExtendedField)}
+                    <FeatureFlag flag={REPORT_A_FACILITY}>
+                        <ShowOnly when={!!activityReport}>
+                            <FacilityDetailsItem
+                                label="Status"
+                                {...activityReport}
+                                additionalContent={otherActivityReports}
+                                additionalContentText="status"
+                                additionalContentTextPlural="statuses"
+                                embed={embed}
+                            />
+                        </ShowOnly>
+                    </FeatureFlag>
+                </Grid>
+                <Grid container>
+                    <FeatureFlag flag={CLAIM_A_FACILITY}>
+                        <ShowOnly when={!!data.properties.claim_info}>
+                            <FacilityDetailsClaimedInfo
+                                data={data.properties.claim_info}
+                                formatListItem={formatIfListAndRemoveDuplicates}
+                            />
+                        </ShowOnly>
+                    </FeatureFlag>
+                </Grid>
+            </div>
         </div>
     );
 };

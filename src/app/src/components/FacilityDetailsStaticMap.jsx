@@ -26,6 +26,7 @@ function FacilityDetailsStaticMap({
     clientInfoFetched,
     baseURL,
     countryCode,
+    style = {},
 }) {
     return (
         <ShowOnly when={clientInfoFetched}>
@@ -38,6 +39,7 @@ function FacilityDetailsStaticMap({
                 })}
                 alt={`Facility ${name} at latitude ${lat} and longitude ${lng}`}
                 className="facility-detail_map"
+                style={style}
             />
         </ShowOnly>
     );

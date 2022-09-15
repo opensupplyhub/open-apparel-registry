@@ -12,6 +12,7 @@ import List from '@material-ui/core/List';
 import FacilityDetailsClosureStatus from './FacilityDetailsClosureStatus';
 import FacilityDetailsClaimFlag from './FacilityDetailsClaimFlag';
 import FacilityDetailsCoreFields from './FacilityDetailsCoreFields';
+import FacilityDetailsInteractiveMap from './FacilityDetailsInteractiveMap';
 import FacilityDetailsLocationFields from './FacilityDetailsLocationFields';
 import FacilityDetailsGeneralFields from './FacilityDetailsGeneralFields';
 import FacilityDetailsContributors from './FacilityDetailsContributors';
@@ -242,6 +243,7 @@ const FacilityDetailsContent = ({
                     claimFacility={claimFacility}
                     isClosed={data.properties.is_closed}
                 />
+                <FacilityDetailsInteractiveMap />
                 <FacilityDetailsLocationFields
                     data={data}
                     filterByUniqueField={filterByUniqueField}
