@@ -7,7 +7,12 @@ import FacilityDetails from './FacilityDetails';
 import MapAndSidebar from './MapAndSidebar';
 
 import withQueryStringSync from '../util/withQueryStringSync';
-import { facilitiesRoute, facilityDetailsRoute } from '../util/constants';
+import {
+    facilitiesRoute,
+    facilityDetailsRoute,
+    profileRoute,
+} from '../util/constants';
+import UserProfile from './UserProfile';
 
 const Facilities = ({ fetchingFeatureFlags }) => {
     if (fetchingFeatureFlags) {
@@ -18,6 +23,14 @@ const Facilities = ({ fetchingFeatureFlags }) => {
         <Switch>
             <Route path={facilityDetailsRoute} component={FacilityDetails} />
             <Route path={facilitiesRoute} component={MapAndSidebar} />
+            <Route
+                path={profileRoute}
+                component={({
+                    match: {
+                        params: { id },
+                    },
+                }) => <UserProfile id={id} />}
+            />
         </Switch>
     );
 };
