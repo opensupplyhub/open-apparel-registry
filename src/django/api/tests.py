@@ -62,7 +62,7 @@ from api.models import (
 
 from api.os_id import make_os_id, validate_os_id
 from api.matching import (match_facility_list_items, GazetteerCache,
-                          sort_exact_matches)
+                          sort_exact_matches, get_canonical_items)
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             reduce_matches, is_string_match,
@@ -1905,11 +1905,7 @@ class DedupeMatchingTests(TestCase):
 
     def setUp(self):
         self.contributor = Contributor.objects.first()
-
-    def tearDown(self):
-        GazetteerCache._gazetter = None
-        GazetteerCache._facility_version = None
-        GazetteerCache._match_version = None
+        GazetteerCache.index(get_canonical_items())
 
     def create_list(self, items, status=FacilityListItem.GEOCODED):
         facility_list = FacilityList(
