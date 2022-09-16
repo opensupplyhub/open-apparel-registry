@@ -334,22 +334,6 @@ export const contributeFormFields = Object.freeze([
 
 export const contributeReplacesNoneSelectionID = -1;
 
-export const filterSidebarTabsEnum = Object.freeze({
-    search: 'search',
-    facilities: 'facilities',
-});
-
-export const filterSidebarTabs = Object.freeze([
-    Object.freeze({
-        tab: filterSidebarTabsEnum.facilities,
-        label: 'Facilities',
-    }),
-    Object.freeze({
-        tab: filterSidebarTabsEnum.search,
-        label: 'Search',
-    }),
-]);
-
 // These values must be kept in sync with the tuple of STATUS_CHOICES
 // declared on the API's FacilityListItem model. See:
 // https://github.com/open-apparel-registry/open-apparel-registry/blob/a6e68960d3e1c547c7c2c1935fd28fde6108e3c6/src/django/api/models.py#L224

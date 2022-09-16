@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { toast } from 'react-toastify';
 
 import downloadFacilities from '../actions/downloadFacilities';
+import DownloadIcon from './DownloadIcon';
 
 const downloadFacilitiesStyles = Object.freeze({
     listHeaderButtonStyles: Object.freeze({
@@ -56,13 +57,21 @@ function DownloadFacilitiesButton({
         <div>
             <Button
                 variant="outlined"
-                color="primary"
                 styles={downloadFacilitiesStyles.listHeaderButtonStyles}
                 aria-owns={anchorEl ? 'download-menu' : undefined}
                 aria-haspopup="true"
                 onClick={handleClick}
+                style={{
+                    backgroundColor: '#FFCF3F',
+                    fontSize: '16px',
+                    fontWeight: 900,
+                    lineHeight: '20px',
+                }}
             >
-                Download
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <DownloadIcon />
+                    Download
+                </div>
             </Button>
             <Menu
                 id="download-menu"

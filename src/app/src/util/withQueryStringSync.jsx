@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { bool, func, number, shape, string } from 'prop-types';
 import get from 'lodash/get';
 
@@ -107,10 +108,6 @@ export default function withQueryStringSync(WrappedComponent) {
             return replace(newQueryString);
         }
 
-        componentWillUnmount() {
-            return this.props.clearFacilities();
-        }
-
         render() {
             return <WrappedComponent {...this.props} />;
         }
@@ -166,5 +163,7 @@ export default function withQueryStringSync(WrappedComponent) {
         };
     }
 
-    return connect(mapStateToProps, mapDispatchToProps)(componentWithWrapper);
+    return withRouter(
+        connect(mapStateToProps, mapDispatchToProps)(componentWithWrapper),
+    );
 }

@@ -18,20 +18,7 @@ import {
     completeFetchNextPageOfFacilities,
 } from '../actions/facilities';
 
-import {
-    updateFacilityFreeTextQueryFilter,
-    updateContributorFilter,
-    updateContributorTypeFilter,
-    updateCountryFilter,
-    updateParentCompanyFilter,
-    updateFacilityTypeFilter,
-    updateProcessingTypeFilter,
-    updateProductTypeFilter,
-    updateNumberofWorkersFilter,
-    updatePPEFilter,
-    resetAllFilters,
-    updateAllFilters,
-} from '../actions/filters';
+import { resetAllFilters, updateAllFilters } from '../actions/filters';
 
 import {
     startFetchDownloadFacilities,
@@ -184,16 +171,6 @@ export default createReducer(
             update(state, {
                 singleFacility: { $set: initialState.singleFacility },
             }),
-        [updateFacilityFreeTextQueryFilter]: clearFacilitiesDataOnFilterChange,
-        [updateContributorFilter]: clearFacilitiesDataOnFilterChange,
-        [updateContributorTypeFilter]: clearFacilitiesDataOnFilterChange,
-        [updateCountryFilter]: clearFacilitiesDataOnFilterChange,
-        [updateParentCompanyFilter]: clearFacilitiesDataOnFilterChange,
-        [updateFacilityTypeFilter]: clearFacilitiesDataOnFilterChange,
-        [updateProcessingTypeFilter]: clearFacilitiesDataOnFilterChange,
-        [updateProductTypeFilter]: clearFacilitiesDataOnFilterChange,
-        [updateNumberofWorkersFilter]: clearFacilitiesDataOnFilterChange,
-        [updatePPEFilter]: clearFacilitiesDataOnFilterChange,
         [resetAllFilters]: clearFacilitiesDataOnFilterChange,
         [updateAllFilters]: clearFacilitiesDataOnFilterChange,
         [completeSubmitLogOut]: clearFacilitiesDataOnFilterChange,

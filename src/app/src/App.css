@@ -58,12 +58,14 @@ li.dropdown-list-item button {
 
 .control-panel {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   background: #fff;
 }
 
 .control-panel__content {
   padding: 24px 16px;
+  height: 90%;
+  overflow-y: scroll;
 }
 
 .control-panel__group {
@@ -578,8 +580,6 @@ hr {
   }
 
   .map-sidebar-container {
-    flex-direction: column;
-    height: auto;
     position: relative;
     margin: -10px;
     width: auto !important;

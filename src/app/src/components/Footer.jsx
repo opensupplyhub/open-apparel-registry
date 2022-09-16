@@ -18,8 +18,8 @@ const linkButtonStyle = {
 };
 
 const Footer = ({ openGDPR }) => (
-    <footer className="results-height-subtract" xs={12}>
-        <div className="simple-footer">
+    <footer xs={12}>
+        <div className="simple-footer results-height-subtract">
             {FooterLinks.map(l => {
                 if (l.external && 'prefix' in l) {
                     return (

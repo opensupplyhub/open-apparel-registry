@@ -22,7 +22,7 @@ import ControlledTextInput from './ControlledTextInput';
 import DownloadFacilitiesButton from './DownloadFacilitiesButton';
 
 import {
-    makeSidebarSearchTabActive,
+    toggleFilterModal,
     updateSidebarFacilitiesTabTextFilter,
 } from '../actions/ui';
 
@@ -35,6 +35,7 @@ import { makeFacilityDetailLink, getValueFromEvent } from '../util/util';
 import COLOURS from '../util/COLOURS';
 
 import { filterSidebarStyles } from '../util/styles';
+import withQueryStringSync from '../util/withQueryStringSync';
 
 const SEARCH_TERM_INPUT = 'SEARCH_TERM_INPUT';
 
@@ -375,7 +376,7 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        returnToSearchTab: () => dispatch(makeSidebarSearchTabActive()),
+        returnToSearchTab: () => dispatch(toggleFilterModal()),
         updateFilterText: e =>
             dispatch(
                 updateSidebarFacilitiesTabTextFilter(getValueFromEvent(e)),
@@ -383,7 +384,9 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(NonVectorTileFilterSidebarFacilitiesTab);
+export default withQueryStringSync(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(NonVectorTileFilterSidebarFacilitiesTab),
+);
