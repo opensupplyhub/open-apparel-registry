@@ -92,6 +92,17 @@ from api.facility_type_processing_type import (
 from api.extended_fields import MAX_PRODUCT_TYPE_COUNT
 
 
+# Ensure that a trained and actived model is available for all tests that
+# interact with dedupe or FacilityMatch records (FacilityMatch has a post-save
+# signal handler that updates the traind model index)
+def setUpModule():
+    call_command(
+        'loaddata',
+        'trainedmodel.json',
+        verbosity=0
+    )
+
+
 class FacilityListCreateTest(APITestCase):
     def setUp(self):
         self.email = 'test@example.com'
