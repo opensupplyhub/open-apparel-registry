@@ -500,32 +500,6 @@ def text_match_item(country_code, name, threshold=0.5):
                    .order_by('-similarity')
 
 
-def facility_values_to_dedupe_record(facility_dict):
-    """
-    Convert a dictionary with id, country, name, and address keys into a
-    dictionary suitable for training and indexing a Dedupe model.
-
-    Arguments:
-    facility_dict -- A dict with id, country, name, and address key created
-                     from a `Facility` values query.
-
-    Returns:
-    A dictionary with the id as the key and a dictionary of fields
-    as the value.
-    """
-    return {
-        str(facility_dict['id']): {
-            "country": clean(facility_dict['country']),
-            "name": clean(facility_dict['name']),
-            "address": clean(facility_dict['address']),
-        }
-    }
-
-
-class GazetteerCacheTimeoutError(Exception):
-    pass
-
-
 class GazetteerCache:
     """
     A container for holding a single, trained and indexed Gazetteer in memory,

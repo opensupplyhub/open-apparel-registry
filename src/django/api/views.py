@@ -71,8 +71,7 @@ from api.constants import (CsvHeaderField,
 from api.geocoding import geocode_address
 from api.matching import (match_item,
                           exact_match_item,
-                          text_match_item,
-                          GazetteerCacheTimeoutError)
+                          text_match_item)
 from api.helpers import clean
 from api.models import (ContributorWebhook,
                         FacilityList,
@@ -1554,22 +1553,6 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                                     kwargs={'pk': match.pk})
                             result['matches'].append(facility_dict)
 
-        except GazetteerCacheTimeoutError as te:
-            item.status = FacilityListItem.ERROR_MATCHING
-            item.processing_results.append({
-                'action': ProcessingAction.MATCH,
-                'started_at': match_started,
-                'error': True,
-                'message': str(te),
-                'finished_at': str(timezone.now())
-            })
-            item.save()
-            result['status'] = item.status
-            result['message'] = (
-                'A timeout occurred waiting for match results. Training may '
-                'be in progress. Retry your request in a few minutes')
-            return Response(result,
-                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except Exception as e:
             item.status = FacilityListItem.ERROR_MATCHING
             item.processing_results.append({
