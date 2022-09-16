@@ -9,10 +9,7 @@ import VectorTileFacilitiesMap from './VectorTileFacilitiesMap';
 
 import '../styles/css/Map.css';
 
-import withQueryStringSync from '../util/withQueryStringSync';
-
 import {
-    mainRoute,
     facilitiesRoute,
     facilityDetailsRoute,
     VECTOR_TILE,
@@ -79,22 +76,6 @@ class Map extends Component {
                                 </FeatureFlag>
                             )}
                         />
-                        <Route
-                            exact
-                            path={mainRoute}
-                            render={() => (
-                                <FeatureFlag
-                                    flag={VECTOR_TILE}
-                                    alternative={
-                                        <Route component={FacilitiesMap} />
-                                    }
-                                >
-                                    <Route
-                                        component={VectorTileFacilitiesMap}
-                                    />
-                                </FeatureFlag>
-                            )}
-                        />
                     </Switch>
                 )}
                 {hasError && <FacilitiesMapErrorMessage />}
@@ -103,4 +84,4 @@ class Map extends Component {
     }
 }
 
-export default withQueryStringSync(Map);
+export default Map;

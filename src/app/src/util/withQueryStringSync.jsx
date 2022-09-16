@@ -67,6 +67,7 @@ export default function withQueryStringSync(WrappedComponent) {
 
         componentDidUpdate({
             resetButtonClickCount: prevResetButtonClickCount,
+            vectorTileFeatureIsActive: prevVectorTileFeatureIsActive,
         }) {
             const {
                 filters,
@@ -78,6 +79,7 @@ export default function withQueryStringSync(WrappedComponent) {
                 hydrateFiltersFromQueryString,
                 vectorTileFeatureIsActive,
                 embeddedMap: { embed },
+                fetchFacilitiesForCurrentSearch,
             } = this.props;
 
             const newQueryString = `?${createQueryStringFromSearchFilters(
@@ -95,6 +97,10 @@ export default function withQueryStringSync(WrappedComponent) {
                     newQueryString,
                     fetchFacilitiesOnQSChange,
                 );
+            }
+
+            if (!prevVectorTileFeatureIsActive && vectorTileFeatureIsActive) {
+                fetchFacilitiesForCurrentSearch();
             }
 
             if (search === newQueryString) {
@@ -159,6 +165,13 @@ export default function withQueryStringSync(WrappedComponent) {
                       )
                     : null;
             },
+            fetchFacilitiesForCurrentSearch: () =>
+                dispatch(
+                    fetchFacilities({
+                        ...push,
+                        activateFacilitiesTab: false,
+                    }),
+                ),
             clearFacilities: () => dispatch(resetFacilities()),
         };
     }

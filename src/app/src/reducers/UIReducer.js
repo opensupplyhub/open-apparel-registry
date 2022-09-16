@@ -12,6 +12,7 @@ import {
     showDrawFilter,
     setGDPROpen,
     toggleFilterModal,
+    reportListScroll,
 } from '../actions/ui';
 
 import { completeFetchFacilities } from '../actions/facilities';
@@ -30,6 +31,7 @@ const initialState = Object.freeze({
     zoomToSearch: true,
     drawFilterActive: false,
     gdprOpen: false,
+    scrollTop: 0,
 });
 
 export default createReducer(
@@ -98,6 +100,10 @@ export default createReducer(
             update(state, {
                 gdprOpen: { $set: payload },
             }),
+        [reportListScroll]: (state, payload) =>
+            update(state, { scrollTop: { $set: payload } }),
+        [completeFetchFacilities]: state =>
+            update(state, { scrollTop: { $set: 0 } }),
     },
     initialState,
 );

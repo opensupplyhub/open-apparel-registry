@@ -3,16 +3,11 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ArrowBack from '@material-ui/icons/ArrowBackIos';
-import get from 'lodash/get';
 
 import FacilityDetailsContent from './FacilityDetailsContent';
 
-import { resetSingleFacility, fetchFacilities } from '../actions/facilities';
-import withQueryStringSync from '../util/withQueryStringSync';
-import {
-    facilitiesRoute,
-    FACILITIES_REQUEST_PAGE_SIZE,
-} from '../util/constants';
+import { resetSingleFacility } from '../actions/facilities';
+import { facilitiesRoute } from '../util/constants';
 
 const facilityDetailsStyles = theme => ({
     container: {
@@ -39,13 +34,7 @@ const facilityDetailsStyles = theme => ({
     },
 });
 
-function FacilityDetails({
-    classes,
-    clearFacility,
-    searchForFacilities,
-    vectorTileFlagIsActive,
-    history: { push },
-}) {
+function FacilityDetails({ classes, clearFacility, history: { push } }) {
     return (
         <div className={classes.container}>
             <div className={classes.buttonContainer}>
@@ -54,7 +43,6 @@ function FacilityDetails({
                     className={classes.backButton}
                     onClick={() => {
                         clearFacility();
-                        searchForFacilities(vectorTileFlagIsActive);
                         push(facilitiesRoute);
                     }}
                 >
@@ -67,31 +55,17 @@ function FacilityDetails({
     );
 }
 
-function mapStateToProps({ filters, featureFlags, embeddedMap: { embed } }) {
-    const vectorTileFlagIsActive = get(
-        featureFlags,
-        'flags.vector_tile',
-        false,
-    );
-
-    return { filters, vectorTileFlagIsActive, embedded: !!embed };
+function mapStateToProps({ filters, embeddedMap: { embed } }) {
+    return { filters, embedded: !!embed };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         clearFacility: () => dispatch(resetSingleFacility()),
-        searchForFacilities: vectorTilesAreActive =>
-            dispatch(
-                fetchFacilities({
-                    pageSize: vectorTilesAreActive
-                        ? FACILITIES_REQUEST_PAGE_SIZE
-                        : 50,
-                }),
-            ),
     };
 }
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(withStyles(facilityDetailsStyles)(withQueryStringSync(FacilityDetails)));
+)(withStyles(facilityDetailsStyles)(FacilityDetails));

@@ -23,7 +23,7 @@ import CopySearch from './CopySearch';
 import FeatureFlag from './FeatureFlag';
 import DownloadFacilitiesButton from './DownloadFacilitiesButton';
 
-import { toggleFilterModal } from '../actions/ui';
+import { toggleFilterModal, reportListScroll } from '../actions/ui';
 
 import { fetchNextPageOfFacilities } from '../actions/facilities';
 
@@ -40,7 +40,6 @@ import { makeFacilityDetailLink } from '../util/util';
 import COLOURS from '../util/COLOURS';
 
 import { filterSidebarStyles } from '../util/styles';
-import withQueryStringSync from '../util/withQueryStringSync';
 import BadgeClaimed from './BadgeClaimed';
 import CopyLinkIcon from './CopyLinkIcon';
 
@@ -104,10 +103,26 @@ function FilterSidebarFacilitiesTab({
     history: {
         location: { search },
     },
+    handleScroll,
+    scrollTop,
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
         false,
     );
+
+    const [hasScrolled, setHasScrolled] = useState(false);
+    const scrollElements = Array.from(
+        document.getElementsByClassName('infinite-scroll'),
+    );
+    if (!hasScrolled && scrollElements.length) {
+        setHasScrolled(true);
+        // The timeout allows persisted data to be restored before scroll is attemped
+        setTimeout(() => {
+            scrollElements.forEach(x => {
+                x.scrollTo(0, scrollTop);
+            });
+        }, 100);
+    }
 
     if (fetching) {
         return (
@@ -254,7 +269,6 @@ function FilterSidebarFacilitiesTab({
     const nonResultListComponentHeight = Array.from(
         document.getElementsByClassName('results-height-subtract'),
     ).reduce((sum, x) => sum + x.offsetHeight, 0);
-
     const resultListHeight = windowHeight - nonResultListComponentHeight;
 
     const loadingElement = facilities.length !== facilitiesCount && (
@@ -272,6 +286,8 @@ function FilterSidebarFacilitiesTab({
             <div style={filterSidebarStyles.controlPanelContentStyles}>
                 <List component="div">
                     <InfiniteAnyHeight
+                        className="infinite-scroll"
+                        handleScroll={e => handleScroll(e.scrollTop)}
                         containerHeight={resultListHeight}
                         infiniteLoadBeginEdgeOffset={100}
                         isInfiniteLoading={fetching || isInfiniteLoading}
@@ -464,6 +480,7 @@ function mapStateToProps({
     ui: {
         facilitiesSidebarTabSearch: { filterText },
         window: { innerHeight: windowHeight },
+        scrollTop,
     },
     logDownload: { fetching: downloadingCSV },
     facilitiesDownload: {
@@ -479,6 +496,7 @@ function mapStateToProps({
         downloadingCSV,
         windowHeight,
         isInfiniteLoading,
+        scrollTop,
     };
 }
 
@@ -486,14 +504,10 @@ function mapDispatchToProps(dispatch) {
     return {
         returnToSearchTab: () => dispatch(toggleFilterModal()),
         fetchNextPage: () => dispatch(fetchNextPageOfFacilities()),
+        handleScroll: scrollTop => dispatch(reportListScroll(scrollTop)),
     };
 }
 
-export default withQueryStringSync(
-    withRouter(
-        connect(
-            mapStateToProps,
-            mapDispatchToProps,
-        )(FilterSidebarFacilitiesTab),
-    ),
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(FilterSidebarFacilitiesTab),
 );
