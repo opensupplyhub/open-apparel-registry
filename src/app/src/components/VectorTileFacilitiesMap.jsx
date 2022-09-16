@@ -66,6 +66,7 @@ function VectorTileFacilitiesMap({
     mapStyle = 'silver',
     navigateToFacilities,
     isMobile,
+    disableZoom,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         oarID,
@@ -118,7 +119,7 @@ function VectorTileFacilitiesMap({
             ref={mapRef}
             center={initialCenter}
             zoom={initialZoom}
-            scrollWheelZoom={!isEmbedded && !isMobile}
+            scrollWheelZoom={!isEmbedded && !isMobile && !disableZoom}
             minZoom={minimumZoom}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}

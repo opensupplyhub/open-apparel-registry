@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -11,7 +11,7 @@ import { updateBoundaryFilter } from '../actions/filters';
 
 import { fetchFacilities } from '../actions/facilities';
 
-import { facilitiesRoute } from '../util/constants';
+import { facilitiesRoute, mainRoute } from '../util/constants';
 
 const zoomStyles = theme =>
     Object.freeze({
@@ -48,8 +48,6 @@ function SearchControls({
     clearDrawFilter,
     classes,
 }) {
-    const location = useLocation();
-
     const boundaryButton =
         boundary == null ? (
             <Button
@@ -94,19 +92,29 @@ function SearchControls({
         </div>
     );
 
-    if (location?.pathname?.includes(facilitiesRoute)) {
-        return (
-            <div className={classes.controlsStyle}>
-                {zoomControl}
-                <div className={classes.dividerStyle} />
-                <div>{boundaryButton}</div>
-            </div>
-        );
-    }
     return (
-        <div className={classes.controlsStyle}>
-            <div>{boundaryButton}</div>
-        </div>
+        <Switch>
+            <Route
+                exact
+                path={facilitiesRoute}
+                render={() => (
+                    <div className={classes.controlsStyle}>
+                        {zoomControl}
+                        <div className={classes.dividerStyle} />
+                        <div>{boundaryButton}</div>
+                    </div>
+                )}
+            />
+            <Route
+                exact
+                path={mainRoute}
+                render={() => (
+                    <div className={classes.controlsStyle}>
+                        <div>{boundaryButton}</div>
+                    </div>
+                )}
+            />
+        </Switch>
     );
 }
 

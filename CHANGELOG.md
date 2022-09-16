@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add the new homepage [#2085](https://github.com/open-apparel-registry/open-apparel-registry/pull/2085)
 - Add facility details page [#2115](https://github.com/open-apparel-registry/open-apparel-registry/pull/2115)
 - Added API throttling w/ customizable rates per user [#2125](https://github.com/open-apparel-registry/open-apparel-registry/pull/2125)
+- Add interactive map to facility details [#2145](https://github.com/open-apparel-registry/open-apparel-registry/pull/2145)
 
 ### Changed
 

@@ -20,8 +20,14 @@ const locationFieldsStyles = theme =>
         contentContainer: {
             width: '100%',
             maxWidth: '1072px',
-            paddingLeft: theme.spacing.unit * 3,
-            paddingBottom: theme.spacing.unit * 3,
+            padding: theme.spacing.unit * 3,
+        },
+        mapContainer: {
+            display: 'flex',
+            justifyContent: 'center',
+            [theme.breakpoints.up('md')]: {
+                display: 'block',
+            },
         },
     });
 
@@ -59,8 +65,11 @@ const FacilityDetailsLocationFields = ({
     return (
         <div className={classes.root}>
             <Grid container className={classes.contentContainer}>
-                <Grid item xs={12} md={6}>
-                    <FacilityDetailsStaticMap data={data} />
+                <Grid item xs={12} md={6} className={classes.mapContainer}>
+                    <FacilityDetailsStaticMap
+                        data={data}
+                        style={{ margin: 0 }}
+                    />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <FacilityDetailsItem

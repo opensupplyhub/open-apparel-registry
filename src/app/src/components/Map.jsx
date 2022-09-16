@@ -51,11 +51,23 @@ class Map extends Component {
                                 <FeatureFlag
                                     flag={VECTOR_TILE}
                                     alternative={
-                                        <Route component={FacilitiesMap} />
+                                        <Route
+                                            render={props => (
+                                                <FacilitiesMap
+                                                    {...props}
+                                                    disableZoom
+                                                />
+                                            )}
+                                        />
                                     }
                                 >
                                     <Route
-                                        component={VectorTileFacilitiesMap}
+                                        render={props => (
+                                            <VectorTileFacilitiesMap
+                                                {...props}
+                                                disableZoom
+                                            />
+                                        )}
                                     />
                                 </FeatureFlag>
                             )}

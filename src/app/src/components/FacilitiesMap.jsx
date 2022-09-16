@@ -75,6 +75,7 @@ function FacilitiesMap({
     },
     isEmbedded,
     isMobile,
+    disableZoom,
 }) {
     const mapRef = useRef(null);
 
@@ -238,7 +239,7 @@ function FacilitiesMap({
             center={initialCenter}
             zoom={initialZoom}
             minZoom={minimumZoom}
-            scrollWheelZoom={!isEmbedded && !isMobile}
+            scrollWheelZoom={!isEmbedded && !isMobile && !disableZoom}
             renderer={L.canvas()}
             style={mapComponentStyles.mapContainerStyles}
             zoomControl={false}
