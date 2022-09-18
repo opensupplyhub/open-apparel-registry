@@ -2971,6 +2971,12 @@ class FacilityDeleteTest(APITestCase):
         self.user.set_password(self.user_password)
         self.user.save()
 
+        self.other_user_email = 'other@example.com'
+        self.other_user_password = 'other123'
+        self.other_user = User.objects.create(email=self.other_user_email)
+        self.other_user.set_password(self.other_user_password)
+        self.other_user.save()
+
         self.superuser_email = 'super@example.com'
         self.superuser_password = 'example123'
         self.superuser = User.objects.create_superuser(
@@ -2981,6 +2987,12 @@ class FacilityDeleteTest(APITestCase):
             .objects \
             .create(admin=self.user,
                     name='test contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.other_contributor = Contributor \
+            .objects \
+            .create(admin=self.other_user,
+                    name='other contributor',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.list = FacilityList \
@@ -3103,7 +3115,7 @@ class FacilityDeleteTest(APITestCase):
                     source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
-                    contributor=self.contributor)
+                    contributor=self.other_contributor)
 
         list_item_2 = FacilityListItem \
             .objects \
@@ -3136,7 +3148,7 @@ class FacilityDeleteTest(APITestCase):
                     source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
-                    contributor=self.contributor)
+                    contributor=self.other_contributor)
 
         list_item_3 = FacilityListItem \
             .objects \
@@ -3188,6 +3200,115 @@ class FacilityDeleteTest(APITestCase):
 
         # We should have replaced the alias with one pointing to the new
         # facility
+        alias.refresh_from_db()
+        self.assertEqual(match_3.facility, alias.facility)
+
+    def test_match_from_other_contributor_is_promoted(self):
+        initial_facility_count = Facility.objects.all().count()
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List')
+
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(1, 1),
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility,
+                    source=source_2)
+
+        match_2 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='')
+
+        list_3 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='three',
+                    name='Third List')
+
+        source_3 = Source \
+            .objects \
+            .create(facility_list=list_3,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.other_contributor)
+
+        list_item_3 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(2, 2),
+                    source=source_3,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility)
+
+        match_3 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_3,
+                    confidence=0.85,
+                    results='')
+
+        alias = FacilityAlias.objects.create(
+            facility=self.facility,
+            oar_id='US1234567ABCDEF')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        # The original facility should be deleted and have no matches
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+
+        # We should have "promoted" the other contributor's
+        # matched facility to replace the deleted facility
+        facility_count = Facility.objects.all().count()
+        self.assertEqual(facility_count, initial_facility_count)
+        self.assertEqual(2, FacilityAlias.objects.all().count())
+
+        # match 2 should be deleted because it's from the
+        # deleted facility's contributor
+        list_item_2.refresh_from_db()
+        self.assertEqual(
+            FacilityListItem.DELETED, list_item_2.status)
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(id=match_2.id).count())
+
+        # We should have created a new alias
+        new_alias = FacilityAlias.objects.exclude(
+            oar_id='US1234567ABCDEF').first()
+        self.assertEqual(FacilityAlias.DELETE, new_alias.reason)
+        self.assertEqual(self.facility.id, new_alias.oar_id)
+
+        # We should have replaced the alias with one pointing to the new
+        # facility
+        match_3.refresh_from_db()
         alias.refresh_from_db()
         self.assertEqual(match_3.facility, alias.facility)
 
@@ -3259,7 +3380,7 @@ class FacilityDeleteTest(APITestCase):
                     source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
-                    contributor=self.contributor)
+                    contributor=self.other_contributor)
 
         list_item_2 = FacilityListItem \
             .objects \
@@ -3293,6 +3414,53 @@ class FacilityDeleteTest(APITestCase):
         self.assertEqual(1, FacilityAlias.objects.all().count())
         alias = FacilityAlias.objects.first()
         self.assertEqual(list_item_2, alias.facility.created_from)
+
+    def test_other_matches_from_same_contributor_are_deleted(self):
+        initial_facility_count = Facility.objects.all().count()
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List')
+
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(1, 1),
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility,
+                    source=source_2)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='',
+                    is_active=False)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        # The facility should be deleted and not be replaced
+        # since both items/matches came from the same contributor.
+        facility_count = Facility.objects.all().count()
+        self.assertEqual(facility_count, initial_facility_count - 1)
+        self.assertEqual(0, FacilityAlias.objects.all().count())
 
     def test_rejected_match_is_deleted_not_promoted(self):
         list_2 = FacilityList \
