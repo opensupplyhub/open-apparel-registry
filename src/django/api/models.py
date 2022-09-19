@@ -2732,6 +2732,13 @@ class Event(models.Model):
             self.content_type.name, self.object_id, self.event_type, self.id)
 
 
+class Sector(models.Model):
+    name = models.CharField(max_length=200, primary_key=True)
+
+    def __str__(self):
+        return self.name
+
+
 @transaction.atomic
 def get_custom_text(facility_ids=list):
     # If passed an empty array, update all facilities (where applicable)

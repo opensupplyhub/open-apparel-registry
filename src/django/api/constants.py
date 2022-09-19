@@ -191,3 +191,7 @@ class NumberOfWorkersRanges:
         'min': 10001,
         'label': 'More than 10000'
     }]
+
+
+class Sector:
+    DEFAULT_SECTOR_NAME = 'Unspecified'
