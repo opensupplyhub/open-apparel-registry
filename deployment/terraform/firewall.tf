@@ -66,12 +66,12 @@ resource "aws_security_group_rule" "bastion_https_egress" {
 
 resource "aws_security_group_rule" "bastion_memcached_egress" {
   type      = "egress"
-  from_port = module.cache.port
-  to_port   = module.cache.port
+  from_port = var.ec_memcached_port
+  to_port   = var.ec_memcached_port
   protocol  = "tcp"
 
   security_group_id        = module.vpc.bastion_security_group_id
-  source_security_group_id = module.cache.cache_security_group_id
+  source_security_group_id = aws_security_group.memcached.id
 }
 
 #
@@ -136,31 +136,31 @@ resource "aws_security_group_rule" "rds_enc_bastion_ingress" {
 #
 resource "aws_security_group_rule" "memcached_app_ingress" {
   type      = "ingress"
-  from_port = module.cache.port
-  to_port   = module.cache.port
+  from_port = var.ec_memcached_port
+  to_port   = var.ec_memcached_port
   protocol  = "tcp"
 
-  security_group_id        = module.cache.cache_security_group_id
+  security_group_id        = aws_security_group.memcached.id
   source_security_group_id = aws_security_group.app.id
 }
 
 resource "aws_security_group_rule" "memcached_batch_ingress" {
   type      = "ingress"
-  from_port = module.cache.port
-  to_port   = module.cache.port
+  from_port = var.ec_memcached_port
+  to_port   = var.ec_memcached_port
   protocol  = "tcp"
 
-  security_group_id        = module.cache.cache_security_group_id
+  security_group_id        = aws_security_group.memcached.id
   source_security_group_id = aws_security_group.batch.id
 }
 
 resource "aws_security_group_rule" "memcached_bastion_ingress" {
   type      = "ingress"
-  from_port = module.cache.port
-  to_port   = module.cache.port
+  from_port = var.ec_memcached_port
+  to_port   = var.ec_memcached_port
   protocol  = "tcp"
 
-  security_group_id        = module.cache.cache_security_group_id
+  security_group_id        = aws_security_group.memcached.id
   source_security_group_id = module.vpc.bastion_security_group_id
 }
 
@@ -210,12 +210,12 @@ resource "aws_security_group_rule" "app_bastion_ingress" {
 
 resource "aws_security_group_rule" "app_memcached_egress" {
   type      = "egress"
-  from_port = module.cache.port
-  to_port   = module.cache.port
+  from_port = var.ec_memcached_port
+  to_port   = var.ec_memcached_port
   protocol  = "tcp"
 
   security_group_id        = aws_security_group.app.id
-  source_security_group_id = module.cache.cache_security_group_id
+  source_security_group_id = aws_security_group.memcached.id
 }
 
 #
@@ -253,10 +253,10 @@ resource "aws_security_group_rule" "batch_bastion_ingress" {
 
 resource "aws_security_group_rule" "batch_memcached_egress" {
   type      = "egress"
-  from_port = module.cache.port
-  to_port   = module.cache.port
+  from_port = var.ec_memcached_port
+  to_port   = var.ec_memcached_port
   protocol  = "tcp"
 
   security_group_id        = aws_security_group.batch.id
-  source_security_group_id = module.cache.cache_security_group_id
+  source_security_group_id = aws_security_group.memcached.id
 }

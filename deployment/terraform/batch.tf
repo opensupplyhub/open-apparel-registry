@@ -70,7 +70,7 @@ data "template_file" "default_job_definition" {
     batch_job_def_name               = "job${local.short}Default"
     log_group_name                   = "log${local.short}Batch"
     cache_host                       = aws_route53_record.cache.name
-    cache_port                       = module.cache.port
+    cache_port                       = var.ec_memcached_port
   }
 }
 
@@ -158,7 +158,7 @@ data "template_file" "notifications_job_definition" {
     batch_job_def_name               = "job${local.short}Notifications"
     log_group_name                   = "log${local.short}Batch"
     cache_host                       = aws_route53_record.cache.name
-    cache_port                       = module.cache.port
+    cache_port                       = var.ec_memcached_port
   }
 }
 

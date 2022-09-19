@@ -28,7 +28,7 @@ resource "aws_route53_record" "cache" {
   name    = "cache.service.${var.r53_private_hosted_zone}"
   type    = "CNAME"
   ttl     = "10"
-  records = [module.cache.endpoint]
+  records = [aws_elasticache_cluster.memcached.cluster_address]
 }
 
 #

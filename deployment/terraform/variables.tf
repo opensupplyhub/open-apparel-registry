@@ -359,6 +359,10 @@ variable "aws_cloudfront_canonical_user_id" {
 
 variable "ec_memcached_identifier" {}
 
+variable "ec_memcached_port" {
+  default = 11211
+}
+
 variable "ec_memcached_parameter_group_family" {
   default = "memcached1.6"
 }

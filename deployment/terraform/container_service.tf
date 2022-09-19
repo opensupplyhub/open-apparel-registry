@@ -140,7 +140,7 @@ data "template_file" "app" {
     batch_job_def_name               = local.batch_job_def_name
     log_group_name                   = "log${local.short}App"
     cache_host                       = aws_route53_record.cache.name
-    cache_port                       = module.cache.port
+    cache_port                       = var.ec_memcached_port
   }
 }
 
@@ -187,7 +187,7 @@ data "template_file" "app_cli" {
     batch_job_def_name               = local.batch_job_def_name
     log_group_name                   = "log${local.short}AppCLI"
     cache_host                       = aws_route53_record.cache.name
-    cache_port                       = module.cache.port
+    cache_port                       = var.ec_memcached_port
   }
 }
 
