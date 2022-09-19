@@ -30,7 +30,8 @@ from api.constants import (FacilityHistoryActions,
                            MatchResponsibility,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
-                           FeatureGroups)
+                           FeatureGroups,
+                           Sector)
 from api.models import (
     ApiBlock,
     ApiLimit,
@@ -6756,17 +6757,6 @@ class FacilityCreateBodySerializerTest(TestCase):
         self.assertNotIn('country', serializer.errors)
         self.assertNotIn('name', serializer.errors)
 
-        serializer = FacilityCreateBodySerializer(data={
-            'country': 'United States',
-            'name': 'Pants Hut',
-            'address': '123 Main St, Anywhereville, PA'
-        })
-        self.assertFalse(serializer.is_valid())
-        self.assertIn('sector', serializer.errors)
-        self.assertNotIn('address', serializer.errors)
-        self.assertNotIn('country', serializer.errors)
-        self.assertNotIn('name', serializer.errors)
-
     def test_invalid_country(self):
         serializer = FacilityCreateBodySerializer(data={
             'sector': 'Apparel',
@@ -8449,6 +8439,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertIn('a', facility_index.product_type)
         self.assertIn('b', facility_index.product_type)
+        self.assertIn('Apparel', facility_index.sector)
 
     @patch('api.geocoding.requests.get')
     def test_string(self, mock_get):
@@ -8471,6 +8462,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertIn('a', facility_index.product_type)
         self.assertIn('b', facility_index.product_type)
+        self.assertIn('Apparel', facility_index.sector)
 
     @patch('api.geocoding.requests.get')
     def test_list_validation(self, mock_get):
@@ -8536,6 +8528,117 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         data = json.loads(response.content)
         self.assertEqual(data['count'], 1)
         self.assertEqual(data['features'][0]['id'], facility_id)
+
+
+class SectorTestCase(FacilityAPITestCaseBase):
+    SECTOR_A = 'Agriculture'
+    SECTOR_B = 'Apparel'
+    SECTOR_NON_EXISTANT = 'Encabulation'
+
+    def setUp(self):
+        super(SectorTestCase, self).setUp()
+        self.url = reverse('facility-list')
+
+    @patch('api.geocoding.requests.get')
+    def test_array(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': [self.SECTOR_A, self.SECTOR_B]
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        facility_index = FacilityIndex.objects.get(
+            id=response_data['oar_id'])
+        self.assertIn(self.SECTOR_A, facility_index.sector)
+        self.assertIn(self.SECTOR_B, facility_index.sector)
+
+    @patch('api.geocoding.requests.get')
+    def test_string(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': '{}|{}'.format(self.SECTOR_A, self.SECTOR_B)
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        facility_index = FacilityIndex.objects.get(
+            id=response_data['oar_id'])
+        self.assertIn(self.SECTOR_A, facility_index.sector)
+        self.assertIn(self.SECTOR_B, facility_index.sector)
+
+    @patch('api.geocoding.requests.get')
+    def test_list_validation(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': {}
+        }), content_type='application/json')
+        self.assertEqual(0, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)
+
+    @patch('api.geocoding.requests.get')
+    def test_mixed_sector_product_type(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': [
+                self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT]
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        facility_index = FacilityIndex.objects.get(
+            id=response_data['oar_id'])
+        self.assertIn(self.SECTOR_A, facility_index.sector)
+        self.assertIn(self.SECTOR_B, facility_index.sector)
+
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [self.SECTOR_NON_EXISTANT]
+        }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn(
+            self.SECTOR_NON_EXISTANT.lower(), facility_index.product_type)
+
+    @patch('api.geocoding.requests.get')
+    def test_product_types_only(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': ['a', 'b']
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': ['a', 'b']
+        }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn('a', facility_index.product_type)
+        self.assertIn('b', facility_index.product_type)
+        self.assertIn(Sector.DEFAULT_SECTOR_NAME, facility_index.sector)
 
 
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
@@ -8865,13 +8968,13 @@ class SectorAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'sector': ['Apparel', 'Beauty']
+            'sector': ['Apparel', 'Agriculture']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['oar_id']
 
         response = self.client.get(
-            self.url + '?sectors=Beauty'
+            self.url + '?sectors=Agriculture'
         )
         data = json.loads(response.content)
         print(data)
@@ -9398,7 +9501,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         facility_id = resp.data['oar_id']
 
         resp = self.client.post(self.url, {
-            'sector': ["Mining", "Metals"],
+            'sector': ["Mining", "Metal Manufacturing"],
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
@@ -9407,7 +9510,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         self.assertEqual(resp.data['oar_id'], facility_id)
         facility_index = FacilityIndex.objects.get(id=facility_id)
         self.assertIn('Mining', facility_index.sector)
-        self.assertIn('Metals', facility_index.sector)
+        self.assertIn('Metal Manufacturing', facility_index.sector)
         self.assertNotIn('Apparel', facility_index.sector)
         self.assertEqual(len(facility_index.sector), 2)
 

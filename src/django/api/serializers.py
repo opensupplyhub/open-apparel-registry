@@ -48,7 +48,11 @@ from api.models import (FacilityList,
                         ExtendedField)
 from api.constants import MatchResponsibility
 from api.countries import COUNTRY_NAMES, COUNTRY_CHOICES
-from api.processing import get_country_code, parse_array_values
+from api.processing import (
+    get_country_code,
+    remove_empty_array_values,
+    strip_array_values
+)
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
                          get_list_contributor_field_values)
@@ -129,7 +133,7 @@ class PipeSeparatedField(ListField):
             raise ValidationError(
                 'Expected value to be a string or a list of strings '
                 f'but got {data}')
-        data = parse_array_values(data)
+        data = remove_empty_array_values(strip_array_values(data))
         return super().to_internal_value(data)
 
 
@@ -1345,8 +1349,18 @@ class FacilityDetailsSerializer(FacilitySerializer):
 
 class FacilityCreateBodySerializer(Serializer):
     sector = PipeSeparatedField(
-        required=True, allow_empty=False,
+        required=False,
+        allow_empty=False,
         child=CharField(required=True, max_length=200))
+    product_type = PipeSeparatedField(
+        required=False,
+        allow_empty=False,
+        child=CharField(required=True, max_length=200))
+    sector_product_type = PipeSeparatedField(
+        required=False,
+        allow_empty=False,
+        child=CharField(required=True, max_length=200))
+
     country = CharField(required=True)
     name = CharField(required=True, max_length=200)
     address = CharField(required=True, max_length=200)
