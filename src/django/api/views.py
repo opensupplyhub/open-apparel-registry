@@ -95,6 +95,7 @@ from api.models import (ContributorWebhook,
                         NonstandardField,
                         FacilityIndex,
                         ExtendedField,
+                        Sector,
                         index_custom_text,
                         index_extendedfields,
                         index_sectors)
@@ -1113,16 +1114,17 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         ## Sample Request Body
 
             {
-                "sector": "Apparel",
+                "sector_product_type": "Apparel"
                 "country": "China",
                 "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
+
             }
 
         ## Sample Request Body With PPE Fields
 
             {
-                "sector": ["Apparel", "Health"],
+                "sector_product_type": ["Apparel", "Health"],
                 "country": "China",
                 "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
@@ -1403,7 +1405,17 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             create=should_create
         )
 
-        sector = body_serializer.validated_data.get('sector')
+        sector, product_types = determine_sector_and_product_types(
+            body_serializer.validated_data
+        )
+
+        cleaned_user_data = request.data.copy()
+        cleaned_user_data['sector'] = sector
+        if len(product_types) > 0:
+            cleaned_user_data['product_type'] = product_types
+        if 'sector_product_type' in cleaned_user_data:
+            del cleaned_user_data['sector_product_type']
+
         country_code = get_country_code(
             body_serializer.validated_data.get('country'))
         name = body_serializer.validated_data.get('name')
@@ -1416,7 +1428,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             body_serializer.validated_data.get('ppe_contact_email')
         ppe_website = body_serializer.validated_data.get('ppe_website')
 
-        fields = list(request.data.keys())
+        fields = list(cleaned_user_data.keys())
         create_nonstandard_fields(fields, request.user.contributor)
 
         item = FacilityListItem.objects.create(
@@ -1452,7 +1464,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         }
 
         try:
-            create_extendedfields_for_single_item(item, request.data)
+            create_extendedfields_for_single_item(item, cleaned_user_data)
         except (core_exceptions.ValidationError, ValueError) as e:
             error_message = ''
 
@@ -2777,6 +2789,31 @@ def create_nonstandard_fields(fields, contributor):
             contributor=contributor,
             column_name=f
         )
+
+
+def determine_sector_and_product_types(data):
+    sector_names = [sector.name for sector in Sector.objects.all()]
+    lower_case_sector_names = [name.lower() for name in sector_names]
+
+    all_values = set([
+        *data.get('sector', []),
+        *data.get('product_type', []),
+        *data.get('sector_product_type', [])
+    ])
+
+    sectors = []
+    product_types = []
+    for value in all_values:
+        try:
+            index = lower_case_sector_names.index(value.lower())
+            sectors.append(sector_names[index])
+        except ValueError:
+            product_types.append(value)
+
+    if len(sectors) == 0:
+        sectors.append(Sector.DEFAULT_SECTOR_NAME)
+
+    return sectors, product_types
 
 
 class AdminFacilityListView(ListAPIView):
