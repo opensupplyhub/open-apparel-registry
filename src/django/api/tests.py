@@ -10,6 +10,7 @@ from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib import auth
@@ -60,7 +61,7 @@ from api.models import (
 
 from api.oar_id import make_oar_id, validate_oar_id
 from api.matching import (match_facility_list_items, GazetteerCache,
-                          sort_exact_matches)
+                          sort_exact_matches, get_canonical_items)
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             reduce_matches, is_string_match,
@@ -86,6 +87,17 @@ from api.facility_type_processing_type import (
     get_facility_and_processing_type
 )
 from api.extended_fields import MAX_PRODUCT_TYPE_COUNT
+
+
+# Ensure that a trained and actived model is available for all tests that
+# interact with dedupe or FacilityMatch records (FacilityMatch has a post-save
+# signal handler that updates the traind model index)
+def setUpModule():
+    call_command(
+        'loaddata',
+        'trainedmodel.json',
+        verbosity=0
+    )
 
 
 class FacilityListCreateTest(APITestCase):
@@ -1766,11 +1778,7 @@ class DedupeMatchingTests(TestCase):
 
     def setUp(self):
         self.contributor = Contributor.objects.first()
-
-    def tearDown(self):
-        GazetteerCache._gazetter = None
-        GazetteerCache._facility_version = None
-        GazetteerCache._match_version = None
+        GazetteerCache.index(get_canonical_items())
 
     def create_list(self, items, status=FacilityListItem.GEOCODED):
         facility_list = FacilityList(
