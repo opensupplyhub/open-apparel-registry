@@ -70,9 +70,21 @@ def format_cell_value(value):
 
 
 def parse_array_values(values):
-    # The nested list comprehension ensures that we filter out whitespace-only
-    # values
-    return [s.title() for s in [s.strip() for s in values] if s]
+    return capitalize_array_values(
+        remove_empty_array_values(
+            strip_array_values(values)))
+
+
+def strip_array_values(values):
+    return [s.strip() for s in values]
+
+
+def remove_empty_array_values(values):
+    return [s for s in values if s]
+
+
+def capitalize_array_values(values):
+    return [s.title() for s in values]
 
 
 def parse_xlsx(file, request):
