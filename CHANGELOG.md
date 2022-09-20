@@ -91,7 +91,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Terminology updates [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
 - Change claim wizard header color [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
 - Hide nav links on My Account - Settings page [#2212](https://github.com/open-apparel-registry/open-apparel-registry/pull/2212)
+- Build a new branch for the new dedupe version and architecture and make changes to TrainedModel [#2083](https://github.com/open-apparel-registry/open-apparel-registry/pull/2083)
+- Add a method to build an index table for a newly trained model [#2100](https://github.com/open-apparel-registry/open-apparel-registry/pull/2100)
+- Create a fixture to load a trained model in development[#2106](https://github.com/open-apparel-registry/open-apparel-registry/pull/2106)
+- Add an activate() method to TrainedModel [#2114](https://github.com/open-apparel-registry/open-apparel-registry/pull/2114)
 - Rewrite the GazetteerCache to work with database-backed gazetteer [#2134](https://github.com/open-apparel-registry/open-apparel-registry/pull/2134)
+- Update train model command [#2147](https://github.com/open-apparel-registry/open-apparel-registry/pull/2147)
 
 ### Deprecated
 
