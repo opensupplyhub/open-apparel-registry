@@ -1,0 +1,587 @@
+[
+    {
+        "model": "api.sector",
+        "pk": "Unspecified",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Accessories",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Accommodation",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Aerospace",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Agriculture",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Air Transportation",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Allied Products",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Ambulatory Care Facility",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Animal Production",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Apparel",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Apparel Accessories",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Appliances",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Aquaculture",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Archives",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Arts",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Audio Recording",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Automotive",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Automotive Parts",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Banking",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Beverages",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Books",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Building Construction",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Building Material",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Chemical Industry",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Chemical Substances",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Civics",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Civil Engineering Construction",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Coal",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Commodity Contracts",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Components",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Computer",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Computing Infrastructure",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Construction",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Consumer Products",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Crop Production",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Durable Goods",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Educational Services",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Electrical Devices",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Electricity",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Electronic Product Manufacturing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Electronics",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Energy",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Entertainment",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Environmental, Social and Corporate Governance",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Equipment",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Farming",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Finance",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Financial Services",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Fishing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Food",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Food Industry",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Food Manufacturing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Footwear",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Forestry",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Furniture",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Garden Tools",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Gas",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "General Merchandise",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Ground Passenger Transportation",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Health",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Healthcare",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Hobby",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Home Furnishings",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Hospitals",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Hunting",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Information",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "International Affairs",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Jewelry",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Leather",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Logging",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Machinery Manufacturing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Maintenance",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Manufacture of fabricated metal products",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Manufacturing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Merchant Wholesalers",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Metal Manufacturing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Mining",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Multi-Category",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Musical Instruments",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Nondurable Goods",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Nonmetallic Mineral Product Manufacturing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Nursing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Oil",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Paper",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Parts Dealers",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Personal Care Products",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Pharmaceutical Product",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Pipeline Transportation",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Plastics",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Printing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Professional",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Professional, scientific and technical activities",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Quarrying",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Rail Transportation",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Recreation",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Renewable Energy",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Renting",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Repair",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Rubber Products",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Scientific",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Solar Energy",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Space Research",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Specialty Trade Contractors",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Sports Equipment",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Storage",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Supplies Dealers",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Technical Services",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Technology",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Telecommunications",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Textile Mills",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Tobacco Products",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Transportation Equipment",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Trucking",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Utilities",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Warehousing",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Wholesale Trade",
+        "fields": {}
+    },
+    {
+        "model": "api.sector",
+        "pk": "Wood Products",
+        "fields": {}
+    }
+]
