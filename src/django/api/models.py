@@ -519,6 +519,11 @@ class FacilityList(models.Model):
         max_length=12,
         help_text="Who is responsible for moderating this list's data"
     )
+    file = models.FileField(
+        null=True,
+        blank=True,
+        help_text='The uploaded file.'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
