@@ -456,32 +456,28 @@ class Command(BaseCommand):
             else:
                 self.stderr.write("Skipped making facilities and matches")
 
-            with open('/usr/local/src/api/fixtures/users.json', 'w') as f:
-                json.dump(make_users(count=user_count), f,
-                          separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/contributors.json',
-                      'w') as f:
-                json.dump(make_contributors(max_id=max_contributor_id), f,
-                          separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/facility_lists.json',
-                      'w') as f:
-                json.dump(make_facility_lists(max_id=max_list_id), f,
-                          separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/sources.json',
-                      'w') as f:
-                json.dump(make_sources(max_id=max_source_id), f,
-                          separators=(',', ': '), indent=4)
-            with open('/usr/local/src/api/fixtures/facility_list_items.json',
-                      'w') as f:
-                json.dump(list_items, f, separators=(',', ': '), indent=4)
+            self.dump_fixture('users.json', make_users(count=user_count))
+            self.dump_fixture(
+                'contributors.json',
+                make_contributors(max_id=max_contributor_id)
+            )
+            self.dump_fixture(
+                'facility_lists.json',
+                make_facility_lists(max_id=max_list_id)
+            )
+            self.dump_fixture(
+                'sources.json',
+                make_sources(max_id=max_source_id)
+            )
+            self.dump_fixture('facility_list_items.json', list_items)
 
             if match:
-                with open('/usr/local/src/api/fixtures/facilities.json',
-                          'w') as f:
-                    json.dump(facilities, f, separators=(',', ': '), indent=4)
-                with open('/usr/local/src/api/fixtures/facility_matches.json',
-                          'w') as f:
-                    json.dump(matches, f, separators=(',', ': '), indent=4)
+                self.dump_fixture('facilities.json', facilities)
+                self.dump_fixture('facility_matches.json', matches)
 
         except CommandError as e:
             self.stderr.write("Error creating fixtures: {}".format(e))
+
+    def dump_fixture(self, filename, data):
+        with open(os.path.join(FIXTURES_DIRECTORY, filename), 'w') as f:
+            json.dump(data, f, separators=(',', ': '), indent=4)
