@@ -1,7 +1,13 @@
 from django.core.management.base import (BaseCommand,
                                          CommandError)
 
-from api.models import Contributor, FacilityMatch, FacilityListItem, Source
+from api.models import (
+    Contributor,
+    FacilityMatch,
+    FacilityListItem,
+    Source,
+    Sector,
+)
 from api.os_id import make_os_id
 
 import csv
@@ -59,6 +65,8 @@ COUNTRY_CODES = {
     'USA': 'US',
     'VIETNAM': 'VN',
 }
+
+FIXTURES_DIRECTORY = '/usr/local/src/api/fixtures'
 
 
 def make_created_updated():
@@ -276,6 +284,31 @@ def make_sources(max_id=15):
     return [make_source(pk) for pk in range(2, max_id+1)]
 
 
+def make_sectors():
+    sectors = [make_sector(Sector.DEFAULT_SECTOR_NAME)]
+
+    with open('/usr/local/src/api/data/sectors.csv', 'r') as sector_data:
+        sector_data.readline()  # skip header
+
+        for line in sector_data:
+            name = line.strip('" \n')
+
+            if not name:
+                continue
+
+            sectors.append(make_sector(name))
+
+    return sectors
+
+
+def make_sector(name):
+    return {
+        'model': 'api.sector',
+        'pk': name,
+        'fields': {}
+    }
+
+
 def make_facility_list_item(source_pk, item_pk, row_index, raw_data):
     (created_at, updated_at) = make_created_updated()
 
@@ -469,6 +502,7 @@ class Command(BaseCommand):
                 'sources.json',
                 make_sources(max_id=max_source_id)
             )
+            self.dump_fixture('sectors.json', make_sectors())
             self.dump_fixture('facility_list_items.json', list_items)
 
             if match:

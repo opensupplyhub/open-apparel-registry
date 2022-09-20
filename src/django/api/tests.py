@@ -6730,6 +6730,8 @@ def is_json(myjson):
 
 
 class FacilitySubmitTest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(FacilitySubmitTest, self).setUp()
         self.url = reverse('facility-list')
@@ -8435,6 +8437,8 @@ class ContributorManagerTest(TestCase):
 
 
 class ParentCompanyTestCase(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(ParentCompanyTestCase, self).setUp()
         self.url = reverse('facility-list')
@@ -8585,6 +8589,8 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
 
 
 class ProductTypeTestCase(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(ProductTypeTestCase, self).setUp()
         self.url = reverse('facility-list')
@@ -8702,6 +8708,8 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
 
 
 class SectorTestCase(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     SECTOR_A = 'Agriculture'
     SECTOR_B = 'Apparel'
     SECTOR_NON_EXISTANT = 'Encabulation'
@@ -8846,6 +8854,8 @@ class SectorTestCase(FacilityAPITestCaseBase):
 
 
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(FacilityAndProcessingTypeAPITest, self).setUp()
         self.url = reverse('facility-list')
@@ -8995,6 +9005,8 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
 
 
 class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(NumberOfWorkersAPITest, self).setUp()
         self.url = reverse('facility-list')
@@ -9159,6 +9171,8 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
 
 
 class SectorAPITest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(SectorAPITest, self).setUp()
         self.url = reverse('facility-list')
@@ -9652,6 +9666,8 @@ class ParentCompanyChoiceViewTest(APITestCase):
 
 
 class IndexFacilitiesTest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(IndexFacilitiesTest, self).setUp()
         self.url = reverse('facility-list')
@@ -9756,6 +9772,8 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
 
 
 class FacilityDownloadTest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(FacilityDownloadTest, self).setUp()
         self.download_url = '/api/facilities-downloads/'
