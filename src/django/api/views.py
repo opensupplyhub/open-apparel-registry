@@ -2909,6 +2909,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             name=name,
             description=description,
             file_name=csv_file.name,
+            file=csv_file,
             header=header,
             replaces=replaces,
             match_responsibility=contributor.match_responsibility)
