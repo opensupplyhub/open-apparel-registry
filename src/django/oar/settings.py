@@ -449,3 +449,20 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"http://127.0.0.1",
 ]
 CORS_REPLACE_HTTPS_REFERER = True
+
+# django-storages
+# Reference # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
+
+# To test S3 in development, change this conditional to be True and make sure
+# the following are set in the .env file
+#   AWS_S3_ACCESS_KEY_ID
+#   AWS_S3_SECRET_ACCESS_KEY
+#   AWS_STORAGE_BUCKET_NAME
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+if AWS_STORAGE_BUCKET_NAME is None and not DEBUG:
+    raise ImproperlyConfigured(
+        'Invalid AWS_STORAGE_BUCKET_NAME provided, must be set in the environment'
+    )
