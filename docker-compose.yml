@@ -33,6 +33,12 @@ services:
       - AWS_PROFILE=${AWS_PROFILE:-open-apparel-registry}
       - OAR_CLIENT_KEY=
       - NOTIFICATION_EMAIL_TO=notification@example.com
+      # NOTE the AWS_S3* variables are only used for testing s3 in development.
+      # The deployed application uses a policy attached to the ECS task instead
+      # of using keys.
+      - AWS_S3_ACCESS_KEY_ID
+      - AWS_S3_SECRET_ACCESS_KEY
+      - AWS_STORAGE_BUCKET_NAME
     build:
       context: ./src/django
       dockerfile: Dockerfile
