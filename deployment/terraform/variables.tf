@@ -1,5 +1,6 @@
 locals {
   short = "${replace(var.project, " ", "")}${var.environment}"
+  files_bucket_name = lower("${replace(var.project, " ", "")}-${var.environment}-files-${var.aws_region}")
 }
 
 variable "project" {
