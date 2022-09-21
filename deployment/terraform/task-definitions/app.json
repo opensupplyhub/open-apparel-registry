@@ -37,7 +37,8 @@
         { "name": "OAR_CLIENT_KEY", "value": "${oar_client_key}" },
         { "name": "EXTERNAL_DOMAIN", "value": "${external_domain}" },
         { "name": "CACHE_HOST", "value": "${cache_host}" },
-        { "name": "CACHE_PORT", "value": "${cache_port}" }
+        { "name": "CACHE_PORT", "value": "${cache_port}" },
+        { "name": "AWS_STORAGE_BUCKET_NAME", "value": "${aws_storage_bucket_name}" }
     ],
     "portMappings": [
       {

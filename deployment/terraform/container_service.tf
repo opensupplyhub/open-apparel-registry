@@ -141,6 +141,7 @@ data "template_file" "app" {
     log_group_name                   = "log${local.short}App"
     cache_host                       = aws_route53_record.cache.name
     cache_port                       = var.ec_memcached_port
+    aws_storage_bucket_name          = local.files_bucket_name
   }
 }
 
@@ -188,6 +189,7 @@ data "template_file" "app_cli" {
     log_group_name                   = "log${local.short}AppCLI"
     cache_host                       = aws_route53_record.cache.name
     cache_port                       = var.ec_memcached_port
+    aws_storage_bucket_name          = local.files_bucket_name
   }
 }
 

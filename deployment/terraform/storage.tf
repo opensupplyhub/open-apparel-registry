@@ -28,7 +28,7 @@ resource "aws_s3_bucket" "logs" {
 
 
 resource "aws_s3_bucket" "files" {
-  bucket = lower("${var.project}-${var.environment}-files-${var.aws_region}")
+  bucket = local.files_bucket_name
   acl    = "private"
 
   server_side_encryption_configuration {
@@ -40,7 +40,7 @@ resource "aws_s3_bucket" "files" {
   }
 
   tags = {
-    Name        = lower("${var.project}-${var.environment}-files-${var.aws_region}")
+    Name        = local.files_bucket_name
     Project     = var.project
     Environment = var.environment
   }
