@@ -77,6 +77,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Tweak copy link, download buttons [#2162](https://github.com/open-apparel-registry/open-apparel-registry/pull/2162)
 - Update static map marker to OS Hub style marker [#2169](https://github.com/open-apparel-registry/open-apparel-registry/pull/2169)
 - Updated OAR ID to OS ID [#2163](https://github.com/open-apparel-registry/open-apparel-registry/pull/2163)
+- Update search results dropdowns [#2161](https://github.com/open-apparel-registry/open-apparel-registry/pull/2161)
 
 ### Deprecated
 

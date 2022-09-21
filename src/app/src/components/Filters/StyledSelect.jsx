@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { makeFilterStyles } from '../../util/styles';
 import { OARColor } from '../../util/constants';
 
+import ArrowDropDownIcon from '../ArrowDropDownIcon';
 import CreatableInputOnly from '../CreatableInputOnly';
 
 const makeSelectFilterStyles = color => {
@@ -68,6 +69,19 @@ function StyledSelect({ name, label, color, creatable, classes, ...rest }) {
                 <ReactSelect
                     isMulti
                     id={name}
+                    components={{
+                        DropdownIndicator: () => (
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    marginRight: '0.5em',
+                                }}
+                            >
+                                <ArrowDropDownIcon />
+                            </div>
+                        ),
+                        IndicatorSeparator: null,
+                    }}
                     name={name}
                     className={`basic-multi-select notranslate ${classes.selectStyle}`}
                     classNamePrefix="select"
