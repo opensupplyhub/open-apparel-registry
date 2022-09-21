@@ -80,6 +80,16 @@ const facilityListItemsStyles = Object.freeze({
         justifyContent: 'center',
         alignContent: 'center',
     }),
+    buttonLinkStyles: Object.freeze({
+        marginLeft: '20px',
+        padding: '8px 16px',
+        border: '1px solid rgba(0, 0, 0, 0.23)',
+        textTransform: 'uppercase',
+        color: 'rgba(0, 0, 0, 0.87)',
+        textDecoration: 'none',
+        fontSize: '0.875rem',
+        fontWeight: '500',
+    }),
 });
 
 class FacilityListItems extends Component {
@@ -170,8 +180,20 @@ class FacilityListItems extends Component {
                 onClick={downloadCSV}
                 disabled={downloadingCSV}
             >
-                Download CSV
+                Download Formatted CSV
             </Button>
+        );
+
+        const originalCsvDownloadButton = (
+            <a
+                style={facilityListItemsStyles.buttonLinkStyles}
+                href={list.file}
+                target="_blank"
+                rel="noreferrer"
+                component={Button}
+            >
+                Download Submitted CSV
+            </a>
         );
 
         const backRoute = isAdminUser
@@ -208,6 +230,7 @@ class FacilityListItems extends Component {
                                     }
                                 >
                                     {csvDownloadButton}
+                                    {originalCsvDownloadButton}
                                     <Button
                                         variant="outlined"
                                         component={Link}
