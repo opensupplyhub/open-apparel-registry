@@ -184,7 +184,7 @@ class FacilityListItems extends Component {
             </Button>
         );
 
-        const originalCsvDownloadButton = (
+        const originalCsvDownloadButton = list.file ? (
             <a
                 style={facilityListItemsStyles.buttonLinkStyles}
                 href={list.file}
@@ -194,7 +194,7 @@ class FacilityListItems extends Component {
             >
                 Download Submitted CSV
             </a>
-        );
+        ) : null;
 
         const backRoute = isAdminUser
             ? `${dashboardListsRoute}${adminSearch || ''}`
