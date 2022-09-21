@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 ### Changed
+- Delete matched facilities from created contributer [#2155](https://github.com/open-apparel-registry/open-apparel-registry/pull/2153)
 
 ### Deprecated
 

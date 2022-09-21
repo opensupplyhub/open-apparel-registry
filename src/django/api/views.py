@@ -1578,26 +1578,37 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'Facilities with approved claims cannot be deleted'
             )
 
-        now = str(datetime.utcnow())
-        list_items = FacilityListItem \
-            .objects \
-            .filter(facility=facility) \
-            .filter(Q(source__create=False) | Q(id=facility.created_from.id))
-        for list_item in list_items:
-            list_item.status = FacilityListItem.DELETED
-            list_item.processing_results.append({
+        def delete_facility_match(match):
+            match.changeReason = 'Deleted {}'.format(facility.id)
+            match.delete()
+
+        def delete_facility_list_item(item):
+            item.status = FacilityListItem.DELETED
+            item.processing_results.append({
                 'action': ProcessingAction.DELETE_FACILITY,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
                 'deleted_oar_id': facility.id,
             })
-            list_item.facility = None
-            list_item.save()
+            item.facility = None
+            item.save()
+
+        now = str(timezone.now())
+        created_by_contributor = facility.created_from.source.contributor
+
+        list_items = FacilityListItem \
+            .objects \
+            .filter(facility=facility) \
+            .filter(
+                Q(source__create=False) |
+                Q(id=facility.created_from.id) |
+                Q(source__contributor=created_by_contributor))
+        for list_item in list_items:
+            delete_facility_list_item(list_item)
 
         for match in facility.get_created_from_matches():
-            match.changeReason = 'Deleted {}'.format(facility.id)
-            match.delete()
+            delete_facility_match(match)
 
         other_matches = facility.get_other_matches()
         if other_matches.count() > 0:
@@ -1605,13 +1616,24 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 best_match = max(
                     other_matches.filter(
                         status__in=(FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED)).exclude(
-                        facility_list_item__geocoded_point__isnull=True),
+                                    FacilityMatch.CONFIRMED)
+                        ).exclude(
+                            facility_list_item__geocoded_point__isnull=True
+                        ).exclude(**{
+                            "facility_list_item__source__contributor":
+                            created_by_contributor}),
                     key=lambda m: m.confidence)
             except ValueError:
                 # Raised when there are no AUTOMATIC or CONFIRMED matches
                 best_match = None
             if best_match:
+                for match in other_matches.filter(**{
+                    "facility_list_item__source__contributor":
+                    created_by_contributor
+                }):
+                    delete_facility_match(match)
+                    delete_facility_list_item(match.facility_list_item)
+
                 best_item = best_match.facility_list_item
 
                 promoted_facility = Facility.objects.create(
@@ -1684,20 +1706,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         reason=FacilityAlias.DELETE)
             else:
                 for other_match in other_matches:
-                    other_match.changeReason = 'Deleted {}'.format(facility.id)
-                    other_match.delete()
-
-                    other_item = other_match.facility_list_item
-                    other_item.status = FacilityListItem.DELETED
-                    other_item.processing_results.append({
-                        'action': ProcessingAction.DELETE_FACILITY,
-                        'started_at': now,
-                        'error': False,
-                        'finished_at': now,
-                        'deleted_oar_id': facility.id,
-                    })
-                    other_item.facility = None
-                    other_item.save()
+                    delete_facility_match(other_match)
+                    delete_facility_list_item(other_match.facility_list_item)
 
         for claim in FacilityClaim.objects.filter(facility=facility):
             claim.changeReason = 'Deleted {}'.format(facility.id)
