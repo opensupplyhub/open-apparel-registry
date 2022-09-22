@@ -398,6 +398,17 @@ class ProcessingTestCase(TestCase):
 class FacilityListItemParseTest(ProcessingTestCase):
     fixtures = ['sectors']
 
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'password'
+        self.name = 'Test User'
+        self.user = User(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor.objects.create(
+            name=self.name, admin=self.user)
+
     def assert_successful_parse_results(self, item):
         self.assertEqual(FacilityListItem.PARSED, item.status)
         self.assert_status(item, ProcessingAction.PARSE)
@@ -547,6 +558,54 @@ class FacilityListItemParseTest(ProcessingTestCase):
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
         self.assertEqual(['Apparel', 'Food'], item.sector)
+
+    def test_sector_product_type_parsing(self):
+        facility_list = FacilityList.objects.create(
+            header="sector_product_type,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list,
+            contributor=self.contributor
+        )
+        item = FacilityListItem.objects.create(
+            row_index=1,
+            sector=[],
+            raw_data="Apparel| Toys,1234 main st,ChInA,Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel'], item.sector)
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [' Toys']
+        }, ef.value)
+
+    def test_sector_product_type_and_product_type_parsing(self):
+        facility_list = FacilityList.objects.create(
+            header="sector_product_type,product_type,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list,
+            contributor=self.contributor
+        )
+        item = FacilityListItem.objects.create(
+            row_index=1,
+            sector=[],
+            raw_data="Apparel| Toys,Games,1234 main st,ChInA,Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel'], item.sector)
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [' Toys', 'Games']
+        }, ef.value)
 
 
 class UserTokenGenerationTest(TestCase):

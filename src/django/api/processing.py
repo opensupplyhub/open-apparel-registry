@@ -187,7 +187,11 @@ def parse_facility_list_item(item):
 
         parser = CsvRowSectorProductTypeParser(fields, values)
         item.sector = parser.sectors
-        item.product_types = parser.product_types
+        if 'product_type' in fields:
+            values[fields.index('product_type')] = parser.product_types
+        else:
+            fields.append('product_type')
+            values.append(parser.product_types)
 
         if CsvHeaderField.COUNTRY in fields:
             item.country_code = get_country_code(
