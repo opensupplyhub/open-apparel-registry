@@ -43,6 +43,7 @@
         "redux-logger": "3.0.6",
         "redux-persist": "5.10.0",
         "redux-thunk": "2.3.0",
+        "sass": "^1.54.9",
         "validator": "10.11.0",
         "xlsx": "0.18.5"
     },
