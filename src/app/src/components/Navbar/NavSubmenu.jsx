@@ -1,0 +1,108 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const getColumnKey = column => {
+    const firstSectionLabel = column[0].label;
+    if (firstSectionLabel && firstSectionLabel !== '') {
+        return firstSectionLabel;
+    }
+
+    return column[0].items[0].label;
+};
+
+export default function NavSubmenu({ columns, open }) {
+    const lastIndex = columns.length - 1;
+
+    return (
+        <div className="nav-submenu" style={open ? { maxHeight: '500px' } : {}}>
+            <div className="nav-submenu__container">
+                <div className="nav-submenu__grid">
+                    {columns.map((column, index) => (
+                        <SubmenuColumn
+                            key={getColumnKey(column)}
+                            column={column}
+                            last={index === lastIndex}
+                        />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function SubmenuColumn({ column, last }) {
+    const lastClass = ' nav-submenu__col--last';
+
+    return (
+        <div className={`nav-submenu__col${last ? lastClass : ''}`}>
+            {column.map(columnSection => (
+                <SubmenuColumnSection
+                    key={columnSection.label}
+                    columnSection={columnSection}
+                />
+            ))}
+        </div>
+    );
+}
+
+function SubmenuColumnSection({ columnSection }) {
+    return (
+        <>
+            <h3 className="nav-submenu__heading">{columnSection.label}</h3>
+            <ul className="nav-submenu__list">
+                {columnSection.items.map(sectionItem => (
+                    <SubmenuColumnSectionItem
+                        key={sectionItem.label}
+                        sectionItem={sectionItem}
+                    />
+                ))}
+            </ul>
+        </>
+    );
+}
+
+function SubmenuColumnSectionItem({ sectionItem }) {
+    switch (sectionItem.type) {
+        case 'link':
+            return (
+                <li className="nav-submenu__list-item">
+                    <a
+                        className="nav-submenu__link"
+                        href={sectionItem.href}
+                        target=""
+                    >
+                        {sectionItem.label}
+                    </a>
+                </li>
+            );
+        case 'button':
+            return (
+                <li className="nav-submenu__list-item nav-submenu__list-item--button">
+                    <a
+                        className="button button--yellow"
+                        href={sectionItem.href}
+                        target=""
+                        onClick={sectionItem.action}
+                    >
+                        <span>{sectionItem.label}</span>
+                    </a>
+                </li>
+            );
+        case 'auth-button':
+            return (
+                <li className="nav-submenu__list-item nav-submenu__list-item--button">
+                    <Link
+                        className="button button--auth"
+                        to={sectionItem.href}
+                        onClick={sectionItem.action}
+                    >
+                        <span>{sectionItem.label}</span>
+                    </Link>
+                </li>
+            );
+        default:
+            throw new Error(
+                `Invalid submenu column section item type: ${sectionItem.type}`,
+            );
+    }
+}

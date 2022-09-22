@@ -6,6 +6,8 @@ import logo from '../styles/images/Creative-Commons-Attribution-ShareAlike-40-In
 import { setGDPROpen } from '../actions/ui';
 import { FooterLinks } from '../util/constants';
 
+import '../styles/css/footer.css';
+
 const linkButtonStyle = {
     minHeight: 'auto',
     color: 'white',

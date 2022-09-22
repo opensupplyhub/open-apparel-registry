@@ -1,200 +1,80 @@
 import React from 'react';
-import { bool } from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import startsWith from 'lodash/startsWith';
 
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AccountCircleIcon from '@material-ui/icons/AccountCircleOutlined';
 
 import { submitLogOut } from '../../actions/auth';
-import COLOURS from '../../util/COLOURS';
 import {
     authLoginFormRoute,
-    authRegisterFormRoute,
     mainRoute,
     facilitiesRoute,
-    contributeRoute,
     createUserDropdownLinks,
 } from '../../util/constants';
-import { userPropType } from '../../util/propTypes';
 import { convertFeatureFlagsObjectToListOfActiveFlags } from '../../util/util';
-
-const styles = {
-    profileButton: {
-        color: COLOURS.NEAR_BLACK,
-        marginRight: '1rem',
-    },
-    contributeButton: {
-        fontFamily: 'inherit',
-        cursor: 'pointer',
-        border: `1px solid ${COLOURS.NEAR_BLACK}`,
-        fontSize: '0.875rem',
-        letterSpacing: '0.125rem',
-        textDecoration: 'none',
-        textTransform: 'uppercase',
-        backgroundColor: '#FFCF3F',
-        color: '#191919',
-        padding: '8px 16px',
-        borderRadius: '20px',
-        marginRight: '1rem',
-        marginLeft: '1rem',
-    },
-    loginButton: {
-        fontFamily: 'inherit',
-        cursor: 'pointer',
-        border: '1px solid white',
-        fontSize: '0.875rem',
-        letterSpacing: '0.125rem',
-        textDecoration: 'none',
-        textTransform: 'uppercase',
-        color: COLOURS.NEAR_BLACK,
-        padding: '8px 16px',
-        borderRadius: '20px',
-        backgroundColor: 'white',
-        marginRight: '1rem',
-    },
-    submenuButton: {
-        fontFamily: 'inherit',
-        cursor: 'pointer',
-        border: '1px solid white',
-        fontSize: '0.875rem',
-        letterSpacing: '0.125rem',
-        textDecoration: 'none',
-        textTransform: 'uppercase',
-        color: COLOURS.NEAR_BLACK,
-        fontWeight: 'normal',
-    },
-};
+import { SubmenuButtonArrow } from './navIcons';
+import NavSubmenu from './NavSubmenu';
 
 function AuthMenu({
     user,
     logout,
     sessionFetching,
     featureFlagsFetching,
-    activeSubmenu,
-    setActiveSubmenu,
+    isActive,
+    setActive,
+    setInactive,
     activeFeatureFlags,
 }) {
-    const title = 'auth';
-    const isActive = activeSubmenu === title;
-    const toggleSubmenu = () =>
-        isActive ? setActiveSubmenu(null) : setActiveSubmenu(title);
-
-    const navSubmenuStyle = isActive
-        ? { height: 'auto', opacity: 1 }
-        : { height: 0, opacity: 0 };
-
-    const links = createUserDropdownLinks(user, logout, activeFeatureFlags);
-
-    const renderLink = ({ text, url, type, action }) => {
-        if (type === 'link') {
-            return (
-                <Link
-                    className="nav__link nav__link--level-2"
-                    href={url}
-                    to={url}
-                    key={text}
-                    target=""
-                    onClick={() => {
-                        setActiveSubmenu(null);
-                    }}
-                >
-                    {text}
-                </Link>
-            );
-        }
-        if (type === 'button') {
-            return (
-                <Button
-                    type="button"
-                    onClick={() => {
-                        setActiveSubmenu(null);
-                        action();
-                    }}
-                    className="nav__link nav__link--level-2"
-                    key={text}
-                    style={styles.submenuButton}
-                >
-                    {text}
-                </Button>
-            );
-        }
-        return null;
-    };
+    const toggleActive = isActive ? setInactive : setActive;
 
     if (!user || sessionFetching || featureFlagsFetching) {
         return (
-            <>
-                <Link
-                    className="app-header-button"
-                    style={styles.contributeButton}
-                    to={authRegisterFormRoute}
-                    href={authRegisterFormRoute}
-                    disabled={sessionFetching}
-                >
-                    Contribute
-                </Link>
-                <Link
-                    className="app-header-button"
-                    to={authLoginFormRoute}
-                    href={authLoginFormRoute}
-                    disabled={sessionFetching}
-                    style={styles.loginButton}
-                >
-                    Login
-                </Link>
-            </>
+            <a
+                className="nav-link"
+                href={authLoginFormRoute}
+                disabled={sessionFetching}
+            >
+                Login/Register
+            </a>
         );
     }
 
     return (
         <>
-            <div
-                className="nav__parent"
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
+            <button
+                type="button"
+                className="nav-submenu-button"
+                onClick={toggleActive}
             >
-                <Link
-                    className="app-header-button"
-                    style={styles.contributeButton}
-                    to={contributeRoute}
-                    href={contributeRoute}
-                >
-                    Contribute
-                </Link>
-            </div>
-            <div
-                className={`nav__parent ${isActive && 'nav-submenu-is-active'}`}
-            >
-                <IconButton
-                    className="nav__link"
-                    style={styles.profileButton}
-                    onClick={toggleSubmenu}
-                >
+                <span className="nav-submenu-button__text">
                     <AccountCircleIcon fontSize="large" />
-                </IconButton>
-                <div className="nav__submenu" style={navSubmenuStyle}>
-                    {links.map(renderLink)}
-                </div>
-            </div>
+                </span>
+                <span
+                    className="nav-submenu-button__text"
+                    style={{ marginLeft: '.75rem' }}
+                >
+                    My Account
+                </span>
+                <SubmenuButtonArrow />
+            </button>
+
+            <NavSubmenu
+                open={isActive}
+                columns={createUserDropdownLinks(
+                    user,
+                    logout,
+                    activeFeatureFlags,
+                ).map(item => [
+                    {
+                        label: '',
+                        items: [{ ...item, type: 'auth-button' }],
+                    },
+                ])}
+            />
         </>
     );
 }
-
-AuthMenu.defaultProps = {
-    user: null,
-};
-
-AuthMenu.propTypes = {
-    user: userPropType,
-    sessionFetching: bool.isRequired,
-    featureFlagsFetching: bool.isRequired,
-};
 
 function mapStateToProps({
     auth: {
