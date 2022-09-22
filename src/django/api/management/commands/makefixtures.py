@@ -1,9 +1,14 @@
 from django.core.management.base import (BaseCommand,
                                          CommandError)
 
-from api.models import Contributor, FacilityMatch, FacilityListItem, Source
+from api.models import (
+    Contributor,
+    FacilityMatch,
+    FacilityListItem,
+    Sector,
+    Source
+)
 from api.oar_id import make_oar_id
-from api.constants import Sector
 
 import csv
 import json
