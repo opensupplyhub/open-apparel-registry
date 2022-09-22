@@ -83,7 +83,7 @@ export const facilityMatchPropType = shape({
     id: number.isRequired,
     status: oneOf(Object.values(facilityMatchStatusChoicesEnum)).isRquired,
     confidence: number.isRequired,
-    oar_id: string.isRequired,
+    os_id: string.isRequired,
     name: string.isRequired,
     address: string.isRequired,
     results: arrayOf(
@@ -109,7 +109,7 @@ export const facilityListItemPropType = shape({
     geocoded_address: string,
     processing_errors: arrayOf(string.isRequired),
     matched_facility: shape({
-        oar_id: string.isRequired,
+        os_id: string.isRequired,
         address: string.isRequired,
         name: string.isRequired,
         created_from_id: number.isRequired,
@@ -121,7 +121,7 @@ export const facilityListItemPropType = shape({
     matches: arrayOf(
         shape({
             id: number.isRequired,
-            oar_id: string.isRequired,
+            os_id: string.isRequired,
             address: string.isRequired,
             name: string.isRequired,
             location: shape({
@@ -311,7 +311,7 @@ export const facilityClaimsListPropType = arrayOf(
         created_at: string.isRequired,
         updated_at: string.isRequired,
         id: number.isRequired,
-        oar_id: string.isRequired,
+        os_id: string.isRequired,
         facility_name: string.isRequired,
         contributor_id: number.isRequired,
         contributor_name: string.isRequired,

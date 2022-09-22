@@ -6,7 +6,7 @@ import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
-    makeGetFacilityByOARIdURL,
+    makeGetFacilityByOSIdURL,
     makeUpdateFacilityLocationURL,
     makeGetContributorsURL,
     mapDjangoChoiceTuplesToSelectOptions,
@@ -24,8 +24,8 @@ export const completeFetchUpdateLocationFacility = createAction(
 export const clearUpdateLocationFacility = createAction(
     'CLEAR_UPDATE_LOCATION_FACILITY',
 );
-export const updateUpdateLocationFacilityOARID = createAction(
-    'UPDATE_UPDATE_LOCATION_FACILITY_OAR_ID',
+export const updateUpdateLocationFacilityOSID = createAction(
+    'UPDATE_UPDATE_LOCATION_FACILITY_OS_ID',
 );
 export const updateUpdateLocationLat = createAction(
     'UPDATE_UPDATE_LOCATION_LAT',
@@ -43,17 +43,17 @@ export const updateUpdateLocationContributor = createAction(
 export function fetchUpdateLocationFacility() {
     return (dispatch, getState) => {
         const {
-            updateFacilityLocation: { oarID },
+            updateFacilityLocation: { osID },
         } = getState();
 
-        if (!oarID) {
+        if (!osID) {
             return null;
         }
 
         dispatch(startFetchUpdateLocationFacility());
 
         return apiRequest
-            .get(makeGetFacilityByOARIdURL(oarID))
+            .get(makeGetFacilityByOSIdURL(osID))
             .then(({ data }) =>
                 dispatch(completeFetchUpdateLocationFacility(data)),
             )
@@ -83,7 +83,7 @@ export function updateFacilityLocation() {
     return (dispatch, getState) => {
         const {
             updateFacilityLocation: {
-                oarID,
+                osID,
                 newLocation: { lat, lng },
                 notes,
                 contributor,
@@ -93,7 +93,7 @@ export function updateFacilityLocation() {
         dispatch(startUpdateFacilityLocation());
 
         return apiRequest
-            .post(makeUpdateFacilityLocationURL(oarID), {
+            .post(makeUpdateFacilityLocationURL(osID), {
                 lat,
                 lng,
                 notes: notes || undefined,

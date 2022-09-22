@@ -56,7 +56,7 @@ const FacilityListItemsMatchTableRow = ({
                 <FacilityListItemsDetailedTableRowCell
                     title={rowIndex}
                     stringIsHidden
-                    data={[matchedFacility.oar_id]}
+                    data={[matchedFacility.os_id]}
                     hasActions={false}
                 />
             </TableCell>
@@ -68,7 +68,7 @@ const FacilityListItemsMatchTableRow = ({
                 <FacilityListItemsDetailedTableRowCell
                     title={countryName || ' '}
                     stringIsHidden
-                    data={[matchedFacility.oar_id]}
+                    data={[matchedFacility.os_id]}
                     hasActions={false}
                 />
             </TableCell>
@@ -103,7 +103,7 @@ const FacilityListItemsMatchTableRow = ({
                 <FacilityListItemsDetailedTableRowCell
                     title={status}
                     stringIsHidden
-                    data={[matchedFacility.oar_id]}
+                    data={[matchedFacility.os_id]}
                     hasActions={false}
                     isRemoved={isRemoved}
                     handleRemoveItem={handleRemoveItem}
@@ -137,10 +137,8 @@ const FacilityListItemsMatchTableRow = ({
                         <b>Facility Match Name</b>
                         <br />
                         <Link
-                            to={makeFacilityDetailLink(matchedFacility.oar_id)}
-                            href={makeFacilityDetailLink(
-                                matchedFacility.oar_id,
-                            )}
+                            to={makeFacilityDetailLink(matchedFacility.os_id)}
+                            href={makeFacilityDetailLink(matchedFacility.os_id)}
                         >
                             {matchedFacility.name}
                         </Link>
@@ -187,7 +185,7 @@ FacilityListItemsMatchTableRow.propTypes = {
     status: facilityListItemStatusPropType.isRequired,
     hover: bool,
     matchedFacility: shape({
-        oar_id: string.isRequired,
+        os_id: string.isRequired,
         address: string.isRequired,
         name: string.isRequired,
     }).isRequired,

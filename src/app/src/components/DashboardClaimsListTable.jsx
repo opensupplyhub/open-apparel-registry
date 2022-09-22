@@ -68,8 +68,8 @@ function DashboardClaimsListTable({ data, history: { push } }) {
                             <TableCell padding="dense">{claim.id}</TableCell>
                             <TableCell>
                                 <Link
-                                    to={makeFacilityDetailLink(claim.oar_id)}
-                                    href={makeFacilityDetailLink(claim.oar_id)}
+                                    to={makeFacilityDetailLink(claim.os_id)}
+                                    href={makeFacilityDetailLink(claim.os_id)}
                                     id={FACILITY_LINK_ID}
                                 >
                                     {claim.facility_name}

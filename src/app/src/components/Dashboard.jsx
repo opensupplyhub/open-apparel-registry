@@ -14,7 +14,7 @@ import DashboardUpdateFacilityLocation from './DashboardUpdateFacilityLocation';
 import DashboardApiBlocks from './DashboardApiBlocks';
 import DashboardActivityReports from './DashboardActivityReports';
 import DashboardApiBlock from './DashboardApiBlock';
-import DashboardLinkToOarId from './DashboardLinkToOarId';
+import DashboardLinkToOsId from './DashboardLinkToOsId';
 import DashboardGeocoder from './DashboardGeocoder';
 import FeatureFlag from './FeatureFlag';
 import RouteNotFound from './RouteNotFound';
@@ -35,7 +35,7 @@ import {
     dashboardApiBlockRoute,
     dashboardActivityReportsRoute,
     dashboardGeocoderRoute,
-    dashboardLinkOarIdRoute,
+    dashboardLinkOsIdRoute,
 } from '../util/constants';
 
 import AppGrid from './AppGrid';
@@ -101,7 +101,7 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
             </Link>
             <Link to={dashboardApiBlocksRoute}>View API Blocks</Link>
             <Link to={dashboardActivityReportsRoute}>View Status Reports</Link>
-            <Link to={dashboardLinkOarIdRoute}>Link to New OS Hub ID</Link>
+            <Link to={dashboardLinkOsIdRoute}>Link to New OS ID</Link>
             <Link to={dashboardGeocoderRoute}>Geocode</Link>
         </div>
     );
@@ -198,9 +198,9 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                         />
                         <Route
                             exact
-                            path={dashboardLinkOarIdRoute}
+                            path={dashboardLinkOsIdRoute}
                             render={makeClickableDashboardLinkFn(
-                                'Link to New OS Hub ID',
+                                'Link to New OS ID',
                             )}
                         />
                         <Route
@@ -283,8 +283,8 @@ function Dashboard({ userWithAccessHasSignedIn, fetchingSessionSignIn }) {
                     />
                     <Route
                         exact
-                        path={dashboardLinkOarIdRoute}
-                        component={DashboardLinkToOarId}
+                        path={dashboardLinkOsIdRoute}
+                        component={DashboardLinkToOsId}
                     />
                     <Route
                         exact

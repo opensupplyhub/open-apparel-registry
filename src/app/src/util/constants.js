@@ -282,8 +282,8 @@ export const contributeRoute = '/contribute';
 export const listsRoute = '/lists';
 export const facilityListItemsRoute = '/lists/:listID';
 export const facilitiesRoute = '/facilities';
-export const facilityDetailsRoute = '/facilities/:oarID';
-export const claimFacilityRoute = '/facilities/:oarID/claim';
+export const facilityDetailsRoute = '/facilities/:osID';
+export const claimFacilityRoute = '/facilities/:osID/claim';
 export const profileRoute = '/profile/:id';
 export const aboutProcessingRoute = `${InfoLink}/${InfoPaths.dataQuality}`;
 export const dashboardRoute = '/dashboard';
@@ -298,7 +298,7 @@ export const dashboardAdjustFacilityMatchesRoute =
 export const dashboardUpdateFacilityLocationRoute =
     '/dashboard/updatefacilitylocation';
 export const dashboardActivityReportsRoute = '/dashboard/activityreports';
-export const dashboardLinkOarIdRoute = '/dashboard/linkid';
+export const dashboardLinkOsIdRoute = '/dashboard/linkid';
 export const dashboardGeocoderRoute = '/dashboard/geocoder';
 export const claimedFacilitiesRoute = '/claimed';
 export const claimedFacilitiesDetailRoute = '/claimed/:claimID';
@@ -477,7 +477,7 @@ export const PPE = 'ppe';
 export const REPORT_A_FACILITY = 'report_a_facility';
 export const EMBEDDED_MAP_FLAG = 'embedded_map';
 export const EXTENDED_PROFILE_FLAG = 'extended_profile';
-export const DEFAULT_SEARCH_TEXT = 'Facility Name or OS Hub ID';
+export const DEFAULT_SEARCH_TEXT = 'Facility Name or OS ID';
 
 export const COUNTRY_CODES = Object.freeze({
     default: 'IE',

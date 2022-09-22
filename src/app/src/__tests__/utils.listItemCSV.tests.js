@@ -48,7 +48,7 @@ it('creates the first few fields for a match row from a list item', () => {
         name: 'name',
         address: 'address',
         matched_facility: {
-            oar_id: 'oar_id',
+            os_id: 'os_id',
             name: 'oar_name',
             address: 'oar_address',
             location: {
@@ -65,7 +65,7 @@ it('creates the first few fields for a match row from a list item', () => {
         'country_name',
         'name',
         'address',
-        'oar_id',
+        'os_id',
         'oar_name',
         'oar_address',
         'oar_lng',
@@ -82,7 +82,7 @@ it('creates the first few fields for a match row from a list item', () => {
 
 it('formats a potential match into a list of fields for a CSV row', () => {
     const potentialMatchData = {
-        oar_id: 'oar_id',
+        os_id: 'os_id',
         name: 'name',
         address: 'address',
         confidence: 'confidence',
@@ -94,7 +94,7 @@ it('formats a potential match into a list of fields for a CSV row', () => {
     };
 
     const expectedFormattedPotentialMatchData = [
-        'oar_id',
+        'os_id',
         'name',
         'address',
         'lng',
@@ -175,7 +175,7 @@ it('creates a single CSV row for a list item with one PENDING and one REJECTED m
             matched_facility: null,
             matches: [
                 {
-                    oar_id: 'oar_id',
+                    os_id: 'os_id',
                     name: 'oar_name',
                     address: 'oar_address',
                     confidence: 'confidence',
@@ -186,7 +186,7 @@ it('creates a single CSV row for a list item with one PENDING and one REJECTED m
                     },
                 },
                 {
-                    oar_id: 'oar_id',
+                    os_id: 'os_id',
                     name: 'oar_name',
                     address: 'oar_address',
                     confidence: 'confidence',
@@ -214,7 +214,7 @@ it('creates a single CSV row for a list item with one PENDING and one REJECTED m
             '',
             '',
             '',
-            'oar_id',
+            'os_id',
             'oar_name',
             'oar_address',
             'pending_lng',
@@ -253,7 +253,7 @@ it('creates two CSV rows for a list item with two PENDING matches', () => {
             matched_facility: null,
             matches: [
                 {
-                    oar_id: 'oar_id_one',
+                    os_id: 'os_id_one',
                     name: 'oar_name_one',
                     address: 'oar_address_one',
                     confidence: 'confidence_one',
@@ -264,7 +264,7 @@ it('creates two CSV rows for a list item with two PENDING matches', () => {
                     },
                 },
                 {
-                    oar_id: 'oar_id_two',
+                    os_id: 'os_id_two',
                     name: 'oar_name_two',
                     address: 'oar_address_two',
                     confidence: 'confidence_two',
@@ -292,7 +292,7 @@ it('creates two CSV rows for a list item with two PENDING matches', () => {
             '',
             '',
             '',
-            'oar_id_one',
+            'os_id_one',
             'oar_name_one',
             'oar_address_one',
             'lng_one',
@@ -312,7 +312,7 @@ it('creates two CSV rows for a list item with two PENDING matches', () => {
             '',
             '',
             '',
-            'oar_id_two',
+            'os_id_two',
             'oar_name_two',
             'oar_address_two',
             'lng_two',
@@ -353,7 +353,7 @@ it('creates a CSV row for a list item with a matched facility', () => {
             name: 'name',
             address: 'address',
             matched_facility: {
-                oar_id: 'oar_id',
+                os_id: 'os_id',
                 name: 'oar_name',
                 address: 'oar_address',
                 location: {
@@ -363,7 +363,7 @@ it('creates a CSV row for a list item with a matched facility', () => {
             },
             matches: [
                 {
-                    oar_id: 'oar_id',
+                    os_id: 'os_id',
                     name: 'oar_name',
                     address: 'oar_address',
                     confidence: 'confidence',
@@ -386,12 +386,12 @@ it('creates a CSV row for a list item with a matched facility', () => {
             'country_name',
             'name',
             'address',
-            'oar_id',
+            'os_id',
             'oar_name',
             'oar_address',
             'lng',
             'lat',
-            'oar_id',
+            'os_id',
             'oar_name',
             'oar_address',
             'lng',

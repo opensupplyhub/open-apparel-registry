@@ -11,7 +11,7 @@ import {
     completeFetchFacilityToAdjust,
     clearFacilityToAdjust,
     resetAdjustFacilityState,
-    updateFacilityToAdjustOARID,
+    updateFacilityToAdjustOSID,
     startSplitFacilityMatch,
     failSplitFacilityMatch,
     completeSplitFacilityMatch,
@@ -19,7 +19,7 @@ import {
 
 const initialState = Object.freeze({
     facility: Object.freeze({
-        oarID: '',
+        osID: '',
         data: null,
         fetching: false,
         error: null,
@@ -84,10 +84,10 @@ export default createReducer(
                     fetching: { $set: initialState.facility.fetching },
                 },
             }),
-        [updateFacilityToAdjustOARID]: (state, oarID) =>
+        [updateFacilityToAdjustOSID]: (state, osID) =>
             update(state, {
                 facility: {
-                    oarID: { $set: oarID },
+                    osID: { $set: osID },
                     error: { $set: initialState.facility.error },
                 },
             }),

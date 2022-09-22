@@ -56,14 +56,14 @@ const getMainText = (isClaimed, isPending) => {
 
 const FacilityDetailsClaimFlag = ({
     classes,
-    oarId,
+    osId,
     isClaimed,
     isPending,
     isEmbed,
 }) => {
     if (isEmbed) return null;
     const backgroundColor = getBackgroundColor(isClaimed, isPending);
-    const claimFacilityLink = makeClaimFacilityLink(oarId);
+    const claimFacilityLink = makeClaimFacilityLink(osId);
     return (
         <div className={classes.root} style={{ backgroundColor }}>
             <div className={classes.contentContainer}>

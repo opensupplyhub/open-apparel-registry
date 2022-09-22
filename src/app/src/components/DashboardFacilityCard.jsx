@@ -49,7 +49,7 @@ const dashboardFacilityCardStyles = Object.freeze({
         alignItems: 'center',
         width: '100%',
     }),
-    oarIDStyles: Object.freeze({
+    osIDStyles: Object.freeze({
         fontSize: '18px',
     }),
     errorStyles: Object.freeze({
@@ -61,10 +61,10 @@ const dashboardFacilityCardStyles = Object.freeze({
 });
 
 export default function DashboardFacilityCard({
-    updateOARID,
+    updateOSID,
     fetchFacility,
     clearFacility,
-    oarID,
+    osID,
     data,
     fetching,
     error,
@@ -73,8 +73,8 @@ export default function DashboardFacilityCard({
 }) {
     const cardActions = data ? (
         <>
-            <Typography style={dashboardFacilityCardStyles.oarIDStyles}>
-                {oarID}
+            <Typography style={dashboardFacilityCardStyles.osIDStyles}>
+                {osID}
             </Typography>
             <Button
                 onClick={clearFacility}
@@ -88,16 +88,16 @@ export default function DashboardFacilityCard({
         <>
             <TextField
                 variant="outlined"
-                onChange={updateOARID}
-                value={oarID}
-                placeholder="Enter an OS Hub ID"
+                onChange={updateOSID}
+                value={osID}
+                placeholder="Enter an OS ID"
                 onKeyPress={handleEnterKeyPress}
             />
             <Button
                 onClick={fetchFacility}
                 variant="contained"
                 color="primary"
-                disabled={fetching || !oarID}
+                disabled={fetching || !osID}
             >
                 Search
             </Button>
@@ -130,10 +130,10 @@ DashboardFacilityCard.defaultProps = {
 };
 
 DashboardFacilityCard.propTypes = {
-    updateOARID: func.isRequired,
+    updateOSID: func.isRequired,
     fetchFacility: func.isRequired,
     clearFacility: func.isRequired,
-    oarID: string.isRequired,
+    osID: string.isRequired,
     data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),

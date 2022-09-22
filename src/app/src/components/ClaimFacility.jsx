@@ -43,7 +43,7 @@ function ClaimFacility({
     clearClaimData,
     userHasSignedIn,
     match: {
-        params: { oarID },
+        params: { osID },
     },
 }) {
     /* eslint-disable react-hooks/exhaustive-deps */
@@ -88,8 +88,8 @@ function ClaimFacility({
                 title="Claim this facility"
                 backButtonComponent={
                     <Link
-                        to={makeFacilityDetailLink(oarID)}
-                        href={makeFacilityDetailLink(oarID)}
+                        to={makeFacilityDetailLink(osID)}
+                        href={makeFacilityDetailLink(osID)}
                         style={{ color: 'black' }}
                     >
                         <ArrowBackIcon fill="black" />
@@ -145,14 +145,14 @@ function mapDispatchToProps(
     dispatch,
     {
         match: {
-            params: { oarID },
+            params: { osID },
         },
     },
 ) {
     return {
         getClaimData: () => {
             dispatch(fetchParentCompanyOptions());
-            return dispatch(fetchClaimFacilityData(oarID));
+            return dispatch(fetchClaimFacilityData(osID));
         },
         clearClaimData: () => dispatch(clearClaimFacilityDataAndForm()),
     };

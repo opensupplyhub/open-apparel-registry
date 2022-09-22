@@ -15,7 +15,7 @@ import {
 export default function useUpdateLeafletMapImperatively(
     resetButtonClickCount,
     {
-        oarID,
+        osID,
         data,
         shouldPanMapToFacilityDetails,
         isVectorTileMap = false,
@@ -85,11 +85,11 @@ export default function useUpdateLeafletMapImperatively(
     ]);
 
     // Set the map view centered on the facility marker, zoomed to level 15
-    // if the user has arrived at the page with a URL including an OAR ID.
+    // if the user has arrived at the page with a URL including an OS ID.
     const [
         shouldSetViewOnReceivingData,
         setShouldSetViewOnReceivingData,
-    ] = useState(!!oarID);
+    ] = useState(!!osID);
 
     useEffect(() => {
         if (data && shouldSetViewOnReceivingData) {

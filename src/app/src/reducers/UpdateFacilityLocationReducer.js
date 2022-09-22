@@ -9,7 +9,7 @@ import {
     failFetchUpdateLocationFacility,
     completeFetchUpdateLocationFacility,
     clearUpdateLocationFacility,
-    updateUpdateLocationFacilityOARID,
+    updateUpdateLocationFacilityOSID,
     updateUpdateLocationLat,
     updateUpdateLocationLng,
     updateUpdateLocationNotes,
@@ -20,7 +20,7 @@ import {
 } from '../actions/updateFacilityLocation';
 
 const initialState = Object.freeze({
-    oarID: '',
+    osID: '',
     data: null,
     fetching: false,
     error: null,
@@ -83,14 +83,14 @@ export default createReducer(
             }),
         [clearUpdateLocationFacility]: state =>
             update(state, {
-                oarID: { $set: initialState.oarID },
+                osID: { $set: initialState.osID },
                 data: { $set: initialState.data },
                 fetching: { $set: initialState.fetching },
                 error: { $set: initialState.error },
             }),
-        [updateUpdateLocationFacilityOARID]: (state, oarID) =>
+        [updateUpdateLocationFacilityOSID]: (state, osID) =>
             update(state, {
-                oarID: { $set: oarID },
+                osID: { $set: osID },
                 error: { $set: initialState.error },
             }),
         [updateUpdateLocationLat]: (state, lat) =>

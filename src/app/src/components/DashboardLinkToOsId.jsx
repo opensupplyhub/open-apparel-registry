@@ -45,7 +45,7 @@ const styles = Object.freeze({
     }),
 });
 
-function DashboardLinkToOarID({
+function DashboardLinkToOsID({
     fetchingSource,
     sourceData,
     error,
@@ -81,7 +81,7 @@ function DashboardLinkToOarID({
         setNewID('');
     };
     const handleLinkFacilityId = () => linkId(newID, sourceID);
-    const currentLinkedId = sourceData?.properties?.new_oar_id;
+    const currentLinkedId = sourceData?.properties?.new_os_id;
 
     return (
         <div style={styles.container}>
@@ -98,7 +98,7 @@ function DashboardLinkToOarID({
                             variant="outlined"
                             onChange={e => setSourceID(getValueFromEvent(e))}
                             value={sourceID}
-                            placeholder="Enter an OS Hub ID"
+                            placeholder="Enter an OS ID"
                             onKeyPress={handleSourceKeypress}
                         />
                         <Button
@@ -115,7 +115,7 @@ function DashboardLinkToOarID({
                         <div style={styles.textSectionStyles}>
                             {currentLinkedId && (
                                 <div>
-                                    <strong>Linked OS Hub ID:</strong>{' '}
+                                    <strong>Linked OS ID:</strong>{' '}
                                     {currentLinkedId}
                                 </div>
                             )}
@@ -132,14 +132,14 @@ function DashboardLinkToOarID({
                         variant="title"
                         style={styles.textSectionStyles}
                     >
-                        New OS Hub ID
+                        New OS ID
                     </Typography>
                     <CardActions style={styles.cardActionsStyles}>
                         <TextField
                             variant="outlined"
                             onChange={e => setNewID(getValueFromEvent(e))}
                             value={newID}
-                            placeholder="Enter an OS Hub ID"
+                            placeholder="Enter an OS ID"
                             onKeyPress={handleNewKeypress}
                         />
                         <Button
@@ -197,12 +197,11 @@ function mapStateToProps({ facilityCards }) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchSourceFacility: oarID =>
-            dispatch(fetchFacilityForCard({ oarID, card: SOURCE })),
-        fetchNewFacility: oarID =>
-            dispatch(fetchFacilityForCard({ oarID, card: NEWID })),
-        linkId: (newOarID, oarID) =>
-            dispatch(linkFacilityId({ newOarID, oarID })),
+        fetchSourceFacility: osID =>
+            dispatch(fetchFacilityForCard({ osID, card: SOURCE })),
+        fetchNewFacility: osID =>
+            dispatch(fetchFacilityForCard({ osID, card: NEWID })),
+        linkId: (newOsID, osID) => dispatch(linkFacilityId({ newOsID, osID })),
         resetCards: () => dispatch(clearFacilityForCard()),
     };
 }
@@ -210,4 +209,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(DashboardLinkToOarID);
+)(DashboardLinkToOsID);

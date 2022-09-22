@@ -71,7 +71,7 @@ function FacilitiesMap({
     clientInfoFetched,
     countryCode,
     match: {
-        params: { oarID },
+        params: { osID },
     },
     isEmbedded,
     isMobile,
@@ -89,7 +89,7 @@ function FacilitiesMap({
 
     useEffect(() => {
         if (isInitialPageLoad) {
-            if (oarID) {
+            if (osID) {
                 setCenterOnFacilityDataWhenLoaded(true);
             }
             setIsInitialPageLoad(false);
@@ -98,7 +98,7 @@ function FacilitiesMap({
         isInitialPageLoad,
         setIsInitialPageLoad,
         setCenterOnFacilityDataWhenLoaded,
-        oarID,
+        osID,
     ]);
 
     useEffect(() => {
@@ -132,7 +132,7 @@ function FacilitiesMap({
     ]);
 
     // Center the viewport on the facility if the selected facility is currently off-screen
-    const [loadedFacilityOARID, setLoadedFacilityOARID] = useState(null);
+    const [loadedFacilityOSID, setLoadedFacilityOSID] = useState(null);
 
     useEffect(() => {
         if (
@@ -141,10 +141,10 @@ function FacilitiesMap({
             facilityDetailsData
         ) {
             const leafletMap = get(mapRef, 'current.leafletElement', null);
-            const facilityOARID = get(facilityDetailsData, 'id', null);
+            const facilityOSID = get(facilityDetailsData, 'id', null);
 
-            if (facilityOARID && facilityOARID !== loadedFacilityOARID) {
-                setLoadedFacilityOARID(facilityOARID);
+            if (facilityOSID && facilityOSID !== loadedFacilityOSID) {
+                setLoadedFacilityOSID(facilityOSID);
 
                 if (leafletMap) {
                     const facilityLocation = get(
@@ -175,8 +175,8 @@ function FacilitiesMap({
         facilityDetailsData,
         centerOnFacilityDataWhenLoaded,
         isInitialPageLoad,
-        loadedFacilityOARID,
-        setLoadedFacilityOARID,
+        loadedFacilityOSID,
+        setLoadedFacilityOSID,
     ]);
 
     // Show the disambiguation popup menu when appropriate
@@ -310,7 +310,7 @@ function FacilitiesMap({
                                 get(f, 'geometry.coordinates[0]', null),
                             ]}
                             icon={
-                                f.id === oarID
+                                f.id === osID
                                     ? selectedMarkerIcon
                                     : unselectedMarkerIcon
                             }
@@ -336,7 +336,7 @@ function FacilitiesMap({
                 >
                     <FacilitiesMapPopup
                         facilities={facilitiesToDisambiguate}
-                        selectedFacilityID={oarID}
+                        selectedFacilityID={osID}
                         selectFacilityOnClick={navigateToFacilityDetails}
                         closePopup={() => setFacilitiesToDisambiguate(null)}
                     />
@@ -361,7 +361,7 @@ FacilitiesMap.propTypes = {
     countryCode: string.isRequired,
     match: shape({
         params: shape({
-            oarID: string,
+            osID: string,
         }),
     }).isRequired,
 };

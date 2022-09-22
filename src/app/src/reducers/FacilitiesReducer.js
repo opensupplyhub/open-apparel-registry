@@ -60,11 +60,8 @@ const handleFetchSingleFacility = (state, payload) => {
         isNull(state.facilities.data) ||
         isEmpty(state.facilities.data) ||
         (state.facilities.data.features.length === 1 &&
-            get(
-                state,
-                'facilities.data.features[0].properties.oar_id',
-                null,
-            ) !== payload.properties.oar_id);
+            get(state, 'facilities.data.features[0].properties.os_id', null) !==
+                payload.properties.os_id);
 
     if (shouldReplaceAllFacilities) {
         return update(state, {

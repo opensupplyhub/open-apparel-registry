@@ -20,7 +20,7 @@ const dashboardClaimsListTableStyles = Object.freeze({
     rowStyles: Object.freeze({
         cursor: 'pointer',
     }),
-    oarIdColumnStyles: Object.freeze({
+    osIdColumnStyles: Object.freeze({
         width: '20%',
     }),
 });
@@ -35,7 +35,7 @@ function ClaimedFacilitiesListTable({ data, history: { push } }) {
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
-                        <TableCell>OS Hub ID</TableCell>
+                        <TableCell>OS ID</TableCell>
                         <TableCell>Address</TableCell>
                         <TableCell>Country</TableCell>
                     </TableRow>
@@ -49,7 +49,7 @@ function ClaimedFacilitiesListTable({ data, history: { push } }) {
                             style={dashboardClaimsListTableStyles.rowStyles}
                         >
                             <TableCell>{claim.facility_name}</TableCell>
-                            <TableCell>{claim.oar_id}</TableCell>
+                            <TableCell>{claim.os_id}</TableCell>
                             <TableCell>{claim.facility_address}</TableCell>
                             <TableCell>{claim.facility_country_name}</TableCell>
                         </TableRow>

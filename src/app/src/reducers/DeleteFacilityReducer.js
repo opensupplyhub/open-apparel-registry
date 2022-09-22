@@ -6,7 +6,7 @@ import {
     failFetchFacilityToDelete,
     completeFetchFacilityToDelete,
     clearFacilityToDelete,
-    updateFacilityToDeleteOARID,
+    updateFacilityToDeleteOSID,
     startDeleteFacility,
     failDeleteFacility,
     completeDeleteFacility,
@@ -15,7 +15,7 @@ import {
 
 const initialState = Object.freeze({
     facility: Object.freeze({
-        oarID: '',
+        osID: '',
         data: null,
         fetching: false,
         error: null,
@@ -49,10 +49,10 @@ export default createReducer(
                     data: { $set: data },
                 },
             }),
-        [updateFacilityToDeleteOARID]: (state, oarID) =>
+        [updateFacilityToDeleteOSID]: (state, osID) =>
             update(state, {
                 facility: {
-                    oarID: { $set: oarID },
+                    osID: { $set: osID },
                     error: { $set: initialState.facility.error },
                 },
             }),

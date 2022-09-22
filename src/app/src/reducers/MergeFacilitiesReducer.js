@@ -6,12 +6,12 @@ import {
     failFetchMergeTargetFacility,
     completeFetchMergeTargetFacility,
     clearMergeTargetFacility,
-    updateMergeTargetFacilityOARID,
+    updateMergeTargetFacilityOSID,
     startFetchFacilityToMerge,
     failFetchFacilityToMerge,
     completeFetchFacilityToMerge,
     clearFacilityToMerge,
-    updateFacilityToMergeOARID,
+    updateFacilityToMergeOSID,
     startMergeFacilities,
     failMergeFacilities,
     completeMergeFacilities,
@@ -21,13 +21,13 @@ import {
 
 const initialState = Object.freeze({
     targetFacility: Object.freeze({
-        oarID: '',
+        osID: '',
         data: null,
         fetching: false,
         error: null,
     }),
     facilityToMerge: Object.freeze({
-        oarID: '',
+        osID: '',
         data: null,
         fetching: false,
         error: null,
@@ -77,10 +77,10 @@ export default createReducer(
                     $set: initialState.targetFacility,
                 },
             }),
-        [updateMergeTargetFacilityOARID]: (state, oarID) =>
+        [updateMergeTargetFacilityOSID]: (state, osID) =>
             update(state, {
                 targetFacility: {
-                    oarID: { $set: oarID },
+                    osID: { $set: osID },
                     error: { $set: initialState.targetFacility.error },
                 },
             }),
@@ -112,10 +112,10 @@ export default createReducer(
                     $set: initialState.facilityToMerge,
                 },
             }),
-        [updateFacilityToMergeOARID]: (state, oarID) =>
+        [updateFacilityToMergeOSID]: (state, osID) =>
             update(state, {
                 facilityToMerge: {
-                    oarID: { $set: oarID },
+                    osID: { $set: osID },
                     error: { $set: initialState.facilityToMerge.error },
                 },
             }),

@@ -52,7 +52,7 @@ function VectorTileFacilitiesMap({
     handleMarkerClick,
     handleFacilityClick,
     match: {
-        params: { oarID },
+        params: { osID },
     },
     history: { push },
     location,
@@ -69,7 +69,7 @@ function VectorTileFacilitiesMap({
     disableZoom,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
-        oarID,
+        osID,
         data: facilityDetailsData,
         shouldPanMapToFacilityDetails: get(
             location,
@@ -83,7 +83,7 @@ function VectorTileFacilitiesMap({
     });
 
     const [currentMapZoomLevel, setCurrentMapZoomLevel] = useState(
-        oarID ? detailsZoomLevel : initialZoom,
+        osID ? detailsZoomLevel : initialZoom,
     );
 
     const handleZoomEnd = e => {
@@ -156,7 +156,7 @@ function VectorTileFacilitiesMap({
             <VectorTileFacilitiesLayer
                 handleMarkerClick={handleMarkerClick}
                 handleFacilityClick={handleFacilityClick}
-                oarID={oarID}
+                osID={osID}
                 pushRoute={push}
                 minZoom={maxVectorTileFacilitiesGridZoom + 1}
                 maxZoom={22}
@@ -199,7 +199,7 @@ VectorTileFacilitiesMap.propTypes = {
     handleMarkerClick: func.isRequired,
     match: shape({
         params: shape({
-            oarID: string,
+            osID: string,
         }),
     }).isRequired,
     history: shape({
@@ -256,18 +256,18 @@ function mapDispatchToProps(
         }
         return noop();
     };
-    const visitFacility = oarID => {
-        if (oarID && oarID !== params?.oarID) {
+    const visitFacility = osID => {
+        if (osID && osID !== params?.osID) {
             dispatch(resetSingleFacility());
-            return push(makeFacilityDetailLink(oarID));
+            return push(makeFacilityDetailLink(osID));
         }
 
         return noop();
     };
     return {
         handleMarkerClick: e => {
-            const oarID = get(e, 'layer.properties.id', null);
-            visitFacility(oarID);
+            const osID = get(e, 'layer.properties.id', null);
+            visitFacility(osID);
         },
         handleFacilityClick: visitFacility,
         navigateToFacilities,

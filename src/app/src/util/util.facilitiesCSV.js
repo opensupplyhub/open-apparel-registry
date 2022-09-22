@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import { joinDataIntoCSVString } from './util';
 
 export const csvHeaders = Object.freeze([
-    'oar_id',
+    'os_id',
     'name',
     'address',
     'country_code',

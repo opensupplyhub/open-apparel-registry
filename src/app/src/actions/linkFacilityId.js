@@ -19,12 +19,12 @@ export const completeFetchFacilityForCard = createAction(
 );
 export const clearFacilityForCard = createAction('CLEAR_FACILITY_FOR_CARD');
 
-export function fetchFacilityForCard({ oarID, card }) {
+export function fetchFacilityForCard({ osID, card }) {
     return dispatch => {
         dispatch(startFetchFacilityForCard(card));
 
         return apiRequest
-            .get(makeSplitFacilityAPIURL(oarID))
+            .get(makeSplitFacilityAPIURL(osID))
             .then(({ data }) =>
                 dispatch(completeFetchFacilityForCard({ data, card })),
             )
@@ -44,16 +44,16 @@ export const startLinkFacilityId = createAction('START_LINK_FACILITY_ID');
 export const failLinkFacilityId = createAction('FAIL_LINK_FACILITY_ID');
 export const completeLinkFacilityId = createAction('COMPLETE_LINK_FACILITY_ID');
 
-export function linkFacilityId({ newOarID, oarID }) {
+export function linkFacilityId({ newOsID, osID }) {
     return dispatch => {
-        if (!oarID || !newOarID) {
+        if (!osID || !newOsID) {
             return null;
         }
 
         dispatch(startLinkFacilityId());
 
         return apiRequest
-            .post(makeLinkFacilityAPIURL(oarID), { new_oar_id: newOarID })
+            .post(makeLinkFacilityAPIURL(osID), { new_os_id: newOsID })
             .then(({ data }) => {
                 dispatch(completeLinkFacilityId(data));
             })

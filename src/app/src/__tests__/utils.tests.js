@@ -14,7 +14,7 @@ const {
     makeGetContributorTypesURL,
     makeGetCountriesURL,
     makeGetFacilitiesURL,
-    makeGetFacilityByOARIdURL,
+    makeGetFacilityByOSIdURL,
     makeClaimFacilityAPIURL,
     makeMergeTwoFacilitiesAPIURL,
     makeGetFacilitiesURLWithQueryString,
@@ -135,9 +135,9 @@ it('creates an API URL for getting all facilities', () => {
     expect(makeGetFacilitiesURL()).toEqual(expectedMatch);
 });
 
-it('creates an API URL for getting a single facility by OAR ID', () => {
+it('creates an API URL for getting a single facility by OS ID', () => {
     const expectedMatch = '/api/facilities/12345/';
-    expect(makeGetFacilityByOARIdURL(12345)).toEqual(expectedMatch);
+    expect(makeGetFacilityByOSIdURL(12345)).toEqual(expectedMatch);
 });
 
 it('creates an API URL for getting facilities with a query string', () => {
@@ -1014,11 +1014,11 @@ it('creates params from a query string', () => {
         .toEqual(expectedParamsForIgnoredArg);
 });
 
-it('creates an email link for reporting a data issue for a facility with a given OAR ID', () => {
-    const oarID = 'oarID';
-    const expectedMatch = 'mailto:info@openapparel.org?subject=Reporting a data issue on ID oarID';
+it('creates an email link for reporting a data issue for a facility with a given OS ID', () => {
+    const osID = 'osID';
+    const expectedMatch = 'mailto:info@openapparel.org?subject=Reporting a data issue on ID osID';
 
-    expect(makeReportADataIssueEmailLink(oarID)).toBe(expectedMatch);
+    expect(makeReportADataIssueEmailLink(osID)).toBe(expectedMatch);
 });
 
 it('creates a geojson FeatureCollection from a single geojson Feature', () => {
@@ -1397,12 +1397,12 @@ it('checks whether a user has dashboard access', () => {
 });
 
 it('creates a URL for POSTing the claim a facility form', () => {
-    const oarID = '12345';
+    const osID = '12345';
 
     const expectedURLMatch = '/api/facilities/12345/claim/';
 
     expect(isEqual(
-        makeClaimFacilityAPIURL(oarID),
+        makeClaimFacilityAPIURL(osID),
         expectedURLMatch,
     )).toBe(true);
 });

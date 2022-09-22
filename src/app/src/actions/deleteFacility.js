@@ -5,7 +5,7 @@ import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
-    makeGetFacilityByOARIdURL,
+    makeGetFacilityByOSIdURL,
 } from '../util/util';
 
 export const startFetchFacilityToDelete = createAction(
@@ -18,26 +18,26 @@ export const completeFetchFacilityToDelete = createAction(
     'COMPLETE_FETCH_FACILITY_TO_DELETE',
 );
 export const clearFacilityToDelete = createAction('CLEAR_FACILITY_TO_DELETE');
-export const updateFacilityToDeleteOARID = createAction(
-    'UPDATE_FACILITY_TO_DELETE_OAR_ID',
+export const updateFacilityToDeleteOSID = createAction(
+    'UPDATE_FACILITY_TO_DELETE_OS_ID',
 );
 
 export function fetchFacilityToDelete() {
     return (dispatch, getState) => {
         const {
             deleteFacility: {
-                facility: { oarID },
+                facility: { osID },
             },
         } = getState();
 
-        if (!oarID) {
+        if (!osID) {
             return null;
         }
 
         dispatch(startFetchFacilityToDelete());
 
         return apiRequest
-            .get(makeGetFacilityByOARIdURL(oarID))
+            .get(makeGetFacilityByOSIdURL(osID))
             .then(({ data }) => dispatch(completeFetchFacilityToDelete(data)))
             .catch(err =>
                 dispatch(
@@ -68,9 +68,9 @@ export function deleteFacility() {
 
         dispatch(startDeleteFacility());
 
-        const oarID = get(facilityToDeleteData, 'id', null);
+        const osID = get(facilityToDeleteData, 'id', null);
 
-        if (!oarID) {
+        if (!osID) {
             return dispatch(
                 logErrorAndDispatchFailure(
                     null,
@@ -81,7 +81,7 @@ export function deleteFacility() {
         }
 
         return apiRequest
-            .delete(makeGetFacilityByOARIdURL(oarID))
+            .delete(makeGetFacilityByOSIdURL(osID))
             .then(() => dispatch(completeDeleteFacility()))
             .catch(err =>
                 dispatch(
