@@ -30,8 +30,7 @@ from api.constants import (FacilityHistoryActions,
                            MatchResponsibility,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
-                           FeatureGroups,
-                           Sector)
+                           FeatureGroups)
 from api.models import (
     ApiBlock,
     ApiLimit,
@@ -55,6 +54,7 @@ from api.models import (
     FacilityAlias,
     NonstandardField,
     RequestLog,
+    Sector,
     Source,
     User,
     index_custom_text
@@ -8647,6 +8647,39 @@ class SectorTestCase(FacilityAPITestCaseBase):
         self.assertIn('a', facility_index.product_type)
         self.assertIn('b', facility_index.product_type)
         self.assertIn(Sector.DEFAULT_SECTOR_NAME, facility_index.sector)
+
+    @patch('api.geocoding.requests.get')
+    def test_same_values_for_product_type_and_sector(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type':
+            [self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT],
+            'sector':
+            [self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT],
+            'product_type':
+            [self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT],
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        item = FacilityListItem.objects.get(
+            facility_id=response_data['oar_id'])
+        self.assertIn(self.SECTOR_A, item.sector)
+        self.assertIn(self.SECTOR_B, item.sector)
+
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [self.SECTOR_NON_EXISTANT]
+        }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn(
+            self.SECTOR_NON_EXISTANT.lower(), facility_index.product_type)
 
 
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):

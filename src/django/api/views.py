@@ -2745,11 +2745,11 @@ def determine_sector_and_product_types(data):
     sector_names = [sector.name for sector in Sector.objects.all()]
     lower_case_sector_names = [name.lower() for name in sector_names]
 
-    all_values = [
+    all_values = set([
         *data.get('sector', []),
         *data.get('product_type', []),
         *data.get('sector_product_type', [])
-    ]
+    ])
 
     sectors = []
     product_types = []
@@ -2761,7 +2761,7 @@ def determine_sector_and_product_types(data):
             product_types.append(value)
 
     if len(sectors) == 0:
-        sectors.append(SectorConstants.DEFAULT_SECTOR_NAME)
+        sectors.append(Sector.DEFAULT_SECTOR_NAME)
 
     return sectors, product_types
 
