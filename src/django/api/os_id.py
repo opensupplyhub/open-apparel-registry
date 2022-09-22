@@ -8,7 +8,7 @@ from api.countries import COUNTRY_NAMES
 
 def checksum(short_id):
     """
-    Given an OAR ID string without the final digit, calculate and return the
+    Given an OS ID string without the final digit, calculate and return the
     final checksum digit.
     """
     country_val = ord(short_id[0]) + ord(short_id[1])
@@ -25,9 +25,9 @@ def random_base_32_string(length):
     return base32_crockford.encode(random.randint(0, maximum)).zfill(length)
 
 
-def make_oar_id(country_code, hyphenate=False):
+def make_os_id(country_code, hyphenate=False):
     """
-    Return a new, semi-random OAR ID string with the following schema
+    Return a new, semi-random OS ID string with the following schema
 
     country code    day of creation   random base32 string   check digit
     |                      |                    |                  |
@@ -56,12 +56,12 @@ def make_oar_id(country_code, hyphenate=False):
     return separator.join([country_code, day, r, checksum(short_id)])
 
 
-def validate_oar_id(raw_id, raise_on_invalid=True):
+def validate_os_id(raw_id, raise_on_invalid=True):
     """
-    Verify that the specified OAR ID has the proper length and that the
+    Verify that the specified OS ID has the proper length and that the
     checksum digit matches the computed value of the rest of the digits.
-    Returns True if the specified OAR ID is valid. Either returns False or
-    raises an error when the specified OAR ID is invalid, depending on the
+    Returns True if the specified OS ID is valid. Either returns False or
+    raises an error when the specified OS ID is invalid, depending on the
     value of the `raise_on_invalid` argument.
     Any spaces or hyphens present in the string are removed before validation.
     """

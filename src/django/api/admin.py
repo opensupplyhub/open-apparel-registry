@@ -112,8 +112,8 @@ class FacilityClaimReviewNoteAdmin(SimpleHistoryAdmin):
 
 
 class FacilityAliasAdmin(SimpleHistoryAdmin):
-    history_list_display = ('oar_id', 'facility')
-    readonly_fields = ('oar_id', 'facility', 'reason')
+    history_list_display = ('os_id', 'facility')
+    readonly_fields = ('os_id', 'facility', 'reason')
 
 
 class SourceAdmin(admin.ModelAdmin):

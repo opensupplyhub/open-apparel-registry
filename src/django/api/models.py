@@ -32,7 +32,7 @@ from api.constants import (
     MatchResponsibility
 )
 from api.countries import COUNTRY_CHOICES
-from api.oar_id import make_oar_id
+from api.os_id import make_os_id
 from api.constants import (Affiliations, Certifications, FacilitiesQueryParams)
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
@@ -1543,7 +1543,7 @@ class Facility(PPEMixin):
         max_length=32,
         primary_key=True,
         editable=False,
-        help_text='The OS Hub ID of a facility.')
+        help_text='The OS ID of a facility.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -1574,11 +1574,11 @@ class Facility(PPEMixin):
         null=True,
         help_text=('Whether this facility is closed.')
     )
-    new_oar_id = models.CharField(
+    new_os_id = models.CharField(
         max_length=32,
         null=True,
         blank=True,
-        help_text=('The new OS Hub ID where this facility can be found if it '
+        help_text=('The new OS ID where this facility can be found if it '
                    'has been moved.'))
     has_inexact_coordinates = models.BooleanField(
         null=False,
@@ -1599,7 +1599,7 @@ class Facility(PPEMixin):
         if self.id == '':
             new_id = None
             while new_id is None:
-                new_id = make_oar_id(self.country_code)
+                new_id = make_os_id(self.country_code)
                 if Facility.objects.filter(id=new_id).exists():
                     new_id = None
             self.id = new_id
@@ -1845,7 +1845,7 @@ class FacilityIndex(models.Model):
         primary_key=True,
         editable=False,
         db_index=True,
-        help_text='The OS Hub ID of a facility.')
+        help_text='The OS ID of a facility.')
     name = models.CharField(
         max_length=200,
         null=False,
@@ -2041,7 +2041,7 @@ class FacilityMatch(models.Model):
 
 class FacilityAlias(models.Model):
     """
-    Links the OAR ID of a no longer existing Facility to another Facility
+    Links the OS ID of a no longer existing Facility to another Facility
     """
     class Meta:
         verbose_name_plural = "facility aliases"
@@ -2054,17 +2054,17 @@ class FacilityAlias(models.Model):
         (DELETE, DELETE),
     )
 
-    oar_id = models.CharField(
+    os_id = models.CharField(
         max_length=32,
         primary_key=True,
         editable=False,
-        help_text=('The OS Hub ID of a no longer existent Facility which '
+        help_text=('The OS ID of a no longer existent Facility which '
                    'should be redirected to a different Facility.'))
     facility = models.ForeignKey(
         'Facility',
         null=False,
         on_delete=models.PROTECT,
-        help_text='The facility now associated with the oar_id'
+        help_text='The facility now associated with the os_id'
     )
     reason = models.CharField(
         null=False,
@@ -2078,7 +2078,7 @@ class FacilityAlias(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return '{} -> {}'.format(self.oar_id, self.facility)
+        return '{} -> {}'.format(self.os_id, self.facility)
 
 
 class RequestLog(models.Model):
@@ -2501,7 +2501,7 @@ class EmbedConfig(models.Model):
         max_length=200,
         null=True,
         blank=True,
-        default='Facility name or OS Hub ID',
+        default='Facility name or OS ID',
         help_text='The label for the search box.')
     map_style = models.CharField(
         max_length=200,

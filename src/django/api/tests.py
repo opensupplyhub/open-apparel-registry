@@ -59,7 +59,7 @@ from api.models import (
     index_custom_text
 )
 
-from api.oar_id import make_oar_id, validate_oar_id
+from api.os_id import make_os_id, validate_os_id
 from api.matching import (match_facility_list_items, GazetteerCache,
                           sort_exact_matches)
 from api.processing import (parse_facility_list_item,
@@ -1909,21 +1909,21 @@ class DedupeMatchingTests(TestCase):
         self.assertFalse(is_string_match(item, facility))
 
 
-class OarIdTests(TestCase):
+class OsIdTests(TestCase):
 
-    def test_make_and_validate_oar_id(self):
-        id = make_oar_id('US')
-        validate_oar_id(id)
+    def test_make_and_validate_os_id(self):
+        id = make_os_id('US')
+        validate_os_id(id)
         self.assertEqual(id[:2], 'US')
 
     def test_id_too_long(self):
-        self.assertRaises(ValueError, validate_oar_id, 'US2019070KTWK4x')
+        self.assertRaises(ValueError, validate_os_id, 'US2019070KTWK4x')
 
     def test_invalid_checksum(self):
-        self.assertRaises(ValueError, validate_oar_id, 'USX019070KTWK4')
+        self.assertRaises(ValueError, validate_os_id, 'USX019070KTWK4')
 
     def test_invalid_country(self):
-        self.assertRaises(ValueError, make_oar_id, '99')
+        self.assertRaises(ValueError, make_os_id, '99')
 
 
 class ContributorsListAPIEndpointTests(TestCase):
@@ -3328,7 +3328,7 @@ class FacilityDeleteTest(APITestCase):
             self.list_item.processing_results[-1]['action'])
         self.assertEqual(
             self.facility.id,
-            self.list_item.processing_results[-1]['deleted_oar_id'])
+            self.list_item.processing_results[-1]['deleted_os_id'])
 
     def test_cant_delete_if_there_is_an_appoved_claim(self):
         FacilityClaim.objects.create(
@@ -3430,7 +3430,7 @@ class FacilityDeleteTest(APITestCase):
 
         alias = FacilityAlias.objects.create(
             facility=self.facility,
-            oar_id='US1234567ABCDEF')
+            os_id='US1234567ABCDEF')
 
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
@@ -3445,9 +3445,9 @@ class FacilityDeleteTest(APITestCase):
 
         # We should have created a new alias
         new_alias = FacilityAlias.objects.exclude(
-            oar_id='US1234567ABCDEF').first()
+            os_id='US1234567ABCDEF').first()
         self.assertEqual(FacilityAlias.DELETE, new_alias.reason)
-        self.assertEqual(self.facility.id, new_alias.oar_id)
+        self.assertEqual(self.facility.id, new_alias.os_id)
 
         # The line item previously matched to the deleted facility should now
         # be matched to a new facility
@@ -3534,7 +3534,7 @@ class FacilityDeleteTest(APITestCase):
 
         alias = FacilityAlias.objects.create(
             facility=self.facility,
-            oar_id='US1234567ABCDEF')
+            os_id='US1234567ABCDEF')
 
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
@@ -3563,9 +3563,9 @@ class FacilityDeleteTest(APITestCase):
 
         # We should have created a new alias
         new_alias = FacilityAlias.objects.exclude(
-            oar_id='US1234567ABCDEF').first()
+            os_id='US1234567ABCDEF').first()
         self.assertEqual(FacilityAlias.DELETE, new_alias.reason)
-        self.assertEqual(self.facility.id, new_alias.oar_id)
+        self.assertEqual(self.facility.id, new_alias.os_id)
 
         # We should have replaced the alias with one pointing to the new
         # facility
@@ -3626,7 +3626,7 @@ class FacilityDeleteTest(APITestCase):
             self.list_item.processing_results[-1]['action'])
         self.assertEqual(
             self.facility.id,
-            self.list_item.processing_results[-1]['deleted_oar_id'])
+            self.list_item.processing_results[-1]['deleted_os_id'])
 
     def test_other_inactive_match_is_promoted(self):
         initial_facility_count = Facility.objects.all().count()
@@ -3778,7 +3778,7 @@ class FacilityDeleteTest(APITestCase):
 
     def test_delete_with_alias(self):
         FacilityAlias.objects.create(facility=self.facility,
-                                     oar_id='US1234567ABCDEF')
+                                     os_id='US1234567ABCDEF')
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
         response = self.client.delete(self.facility_url)
@@ -4019,7 +4019,7 @@ class FacilityMergeTest(APITestCase):
 
         self.existing_alias = FacilityAlias.objects.create(
             facility=self.facility_2,
-            oar_id='US1234567ABCDEF')
+            os_id='US1234567ABCDEF')
 
         self.merge_endpoint = '/api/facilities/merge/'
         self.merge_url = '{}?target={}&merge={}'.format(
@@ -4073,8 +4073,8 @@ class FacilityMergeTest(APITestCase):
         alias = FacilityAlias.objects.first()
         for alias in FacilityAlias.objects.all():
             self.assertEqual(self.facility_1, alias.facility)
-            self.assertIn(alias.oar_id,
-                          (self.facility_2.id, self.existing_alias.oar_id))
+            self.assertIn(alias.os_id,
+                          (self.facility_2.id, self.existing_alias.os_id))
             self.assertEqual(FacilityAlias.MERGE, alias.reason)
 
         # The PPE fields should have been copied
@@ -4440,7 +4440,7 @@ class FacilitySplitTest(APITestCase):
             1,
         )
 
-    def test_post_returns_match_id_and_new_oar_id(self):
+    def test_post_returns_match_id_and_new_os_id(self):
         self.client.login(email=self.superuser_email,
                           password=self.superuser_password)
         post_response = self.client.post(self.split_url,
@@ -4458,7 +4458,7 @@ class FacilitySplitTest(APITestCase):
 
         self.assertEqual(
             self.match_two.facility.id,
-            data['new_oar_id'],
+            data['new_os_id'],
         )
 
     def test_post_reverts_ppe_data(self):
@@ -4485,7 +4485,7 @@ class FacilitySplitTest(APITestCase):
                                          {'match_id': self.match_two.id})
         self.assertEqual(post_response.status_code, 200)
         data = json.loads(post_response.content)
-        new_facility_id = data['new_oar_id']
+        new_facility_id = data['new_os_id']
 
         # Fields not associated with the split-off match should be unchanged
         self.extended_field_one.refresh_from_db()
@@ -4506,7 +4506,7 @@ class FacilitySplitTest(APITestCase):
                                          {'match_id': self.match_two.id})
         self.assertEqual(post_response.status_code, 200)
         data = json.loads(post_response.content)
-        new_facility_id = data['new_oar_id']
+        new_facility_id = data['new_os_id']
 
         facility_index_one = FacilityIndex.objects.get(id=self.facility_one.id)
         self.assertIn(self.extended_field_one.value,
@@ -8538,7 +8538,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(
             self.url + '?parent_company={}'.format(self.contributor.id)
@@ -8560,7 +8560,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(
             self.url + '?parent_company={}'.format(self.contributor.name)
@@ -8582,7 +8582,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
             'parent_company': 'test contributor 1'
         })
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(
             self.url + '?parent_company={}?parent_company={}'.format(
@@ -8701,7 +8701,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         }), content_type='application/json')
 
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(self.url + '?product_type=A')
         data = json.loads(response.content)
@@ -8811,7 +8811,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEqual(response.status_code, 201)
 
         data = json.loads(response.content)
-        index_row = FacilityIndex.objects.filter(id=data['oar_id']).first()
+        index_row = FacilityIndex.objects.filter(id=data['os_id']).first()
         self.assertEqual(['Final Product Assembly'], index_row.facility_type)
         self.assertEqual(['Sewing'], index_row.processing_type)
 
@@ -8828,7 +8828,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'processing_type': ['cutting']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(self.url + '?processing_type=cutting')
         data = json.loads(response.content)
@@ -8848,7 +8848,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'facility_type': ['office hq', 'final product assembly']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(
             self.url + '?facility_type=final%20product%20assembly'
@@ -8963,7 +8963,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         }), content_type='application/json')
 
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(
             self.url + '?number_of_workers=1001-5000'
@@ -9012,7 +9012,7 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
         }), content_type='application/json')
 
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(
             self.url + '?native_language_name={}'.format(self.long_name)
@@ -9039,7 +9039,7 @@ class SectorAPITest(FacilityAPITestCaseBase):
             'sector': ['Apparel', 'Beauty']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
-        facility_id = facility_data['oar_id']
+        facility_id = facility_data['os_id']
 
         response = self.client.get(
             self.url + '?sectors=Beauty'
@@ -9546,7 +9546,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         mock_get.assert_called()
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(len(resp.data['matches']), 0)
-        facility_id = resp.data['oar_id']
+        facility_id = resp.data['os_id']
         facility_index = FacilityIndex.objects.get(id=facility_id)
         self.assertIn('Mining', facility_index.sector)
         self.assertNotIn('Apparel', facility_index.sector)
@@ -9566,7 +9566,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         })
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(len(resp.data['matches']), 0)
-        facility_id = resp.data['oar_id']
+        facility_id = resp.data['os_id']
 
         resp = self.client.post(self.url, {
             'sector': ["Mining", "Metals"],
@@ -9575,7 +9575,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
             'address': "990 Spring Garden St., Philadelphia PA 19123",
         })
         self.assertEqual(resp.status_code, 201)
-        self.assertEqual(resp.data['oar_id'], facility_id)
+        self.assertEqual(resp.data['os_id'], facility_id)
         facility_index = FacilityIndex.objects.get(id=facility_id)
         self.assertIn('Mining', facility_index.sector)
         self.assertIn('Metals', facility_index.sector)
@@ -9750,7 +9750,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         self.contrib_api_list_item.facility = self.contrib_facility_two
         self.contrib_api_list_item.save()
 
-        self.default_headers = ['oar_id', 'contribution_date', 'name',
+        self.default_headers = ['os_id', 'contribution_date', 'name',
                                 'address', 'country_code', 'country_name',
                                 'lat', 'lng', 'sector', 'contributor (list)',
                                 'number_of_workers', 'parent_company',
@@ -10171,13 +10171,13 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
             "product_type": "shoes",
             "sector": "Apparel"
         }), content_type='application/json')
-        oar_id = response.data["oar_id"]
+        os_id = response.data["os_id"]
 
         source = Source.objects.latest('created_at')
         source.is_active = False
         source.save()
 
-        params = 'q={}'.format(oar_id)
+        params = 'q={}'.format(os_id)
         response = self.get_facility_download(params)
         contributor = self.get_rows(response)[0][self.contributor_column_index]
         expected_contributor = 'An Other (API)'
