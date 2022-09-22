@@ -183,20 +183,7 @@ function FilterSidebarFacilitiesTab({
                         style={facilitiesTabStyles.noResultsTextStyles}
                         align="center"
                     >
-                        No facilities to display
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
-                        align="center"
-                    >
-                        <Button
-                            onClick={returnToSearchTab}
-                            variant="outlined"
-                            color="secondary"
-                        >
-                            Search for facilities
-                        </Button>
+                        No facilities matching this search
                     </Typography>
                 </div>
             </div>
