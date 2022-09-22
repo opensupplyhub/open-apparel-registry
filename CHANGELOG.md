@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add facility details page [#2115](https://github.com/open-apparel-registry/open-apparel-registry/pull/2115)
 - Added API throttling w/ customizable rates per user [#2125](https://github.com/open-apparel-registry/open-apparel-registry/pull/2125)
 - Add interactive map to facility details [#2145](https://github.com/open-apparel-registry/open-apparel-registry/pull/2145)
+- Provision an ElastiCache memcached cluster [#2138](https://github.com/open-apparel-registry/open-apparel-registry/pull/2138)
 
 ### Changed
 
@@ -71,6 +72,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update facility details content [#2126](https://github.com/open-apparel-registry/open-apparel-registry/pull/2126)
 - Search/Filtering/Results UX Updates [#2110](https://github.com/open-apparel-registry/open-apparel-registry/pull/2110)
 - Add Sector model and update create facility product type/sector parsing [#2157](https://github.com/open-apparel-registry/open-apparel-registry/pull/2157)
+- Search/Filtering/Results UX Updates [#2110](https://github.com/open-apparel-registry/open-apparel-registry/pull/2110)
+- Search/Filtering/Results UX Updates [#2110](https://github.com/open-apparel-registry/open-apparel-registry/pull/2110) [#2159](https://github.com/open-apparel-registry/open-apparel-registry/pull/2159)
+- Delete matched facilities from created contributer [#2153](https://github.com/open-apparel-registry/open-apparel-registry/pull/2153)
 
 ### Deprecated
 

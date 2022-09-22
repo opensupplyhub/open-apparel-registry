@@ -269,8 +269,7 @@ MEMCACHED_LOCATION = f"{os.getenv('CACHE_HOST')}:{os.getenv('CACHE_PORT')}"
 if DEBUG:
     CACHE_BACKEND = 'django.core.cache.backends.memcached.PyLibMCCache'
 else:
-    # TODO (GH #2091) use django_elasticache in staging / production
-    CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
+    CACHE_BACKEND = 'django_elasticache.memcached.ElastiCache'
 
 CACHES = {
     'default': {
@@ -355,7 +354,8 @@ STATICFILES_STORAGE = 'spa.storage.SPAStaticFilesStorage'
 WATCHMAN_ERROR_CODE = 503
 WATCHMAN_CHECKS = (
     'watchman.checks.databases',
-    'api.checks.gazetteercache'
+    'watchman.checks.caches',
+    'api.checks.gazetteercache',
 )
 
 # django-ecsmanage

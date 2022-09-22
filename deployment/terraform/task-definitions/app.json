@@ -35,7 +35,9 @@
         { "name": "ROLLBAR_SERVER_SIDE_ACCESS_TOKEN", "value": "${rollbar_server_side_access_token}" },
         { "name": "REACT_APP_ROLLBAR_CLIENT_SIDE_ACCESS_TOKEN", "value": "${rollbar_client_side_access_token}" },
         { "name": "OAR_CLIENT_KEY", "value": "${oar_client_key}" },
-        { "name": "EXTERNAL_DOMAIN", "value": "${external_domain}" }
+        { "name": "EXTERNAL_DOMAIN", "value": "${external_domain}" },
+        { "name": "CACHE_HOST", "value": "${cache_host}" },
+        { "name": "CACHE_PORT", "value": "${cache_port}" }
     ],
     "portMappings": [
       {

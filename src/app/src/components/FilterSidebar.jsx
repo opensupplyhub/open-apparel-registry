@@ -184,7 +184,7 @@ class FilterSidebar extends Component {
                         </Tabs>
                         {this.props.activeFilterSidebarTab === 0 && (
                             <Grid item sm={12} md={3}>
-                                {this.props.facilitiesCount && (
+                                {this.props.facilitiesCount > 0 && (
                                     <div
                                         className="results-height-subtract"
                                         style={{
@@ -234,7 +234,7 @@ class FilterSidebar extends Component {
                 </Hidden>
                 <Hidden mdDown>
                     <Grid item sm={12} md={4}>
-                        {this.props.facilitiesCount && (
+                        {this.props.facilitiesCount > 0 && (
                             <div
                                 className="results-height-subtract"
                                 style={{

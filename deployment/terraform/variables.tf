@@ -357,3 +357,41 @@ variable "aws_cloudfront_canonical_user_id" {
   default = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
 }
 
+variable "ec_memcached_identifier" {}
+
+variable "ec_memcached_port" {
+  default = 11211
+}
+
+variable "ec_memcached_parameter_group_family" {
+  default = "memcached1.6"
+}
+
+variable "ec_memcached_maintenance_window" {
+  default = "sun:02:30-sun:03:30"
+}
+
+variable "ec_memcached_desired_clusters" {
+  default = 1
+}
+
+variable "ec_memcached_instance_type" {
+  default = "cache.t3.medium"
+}
+
+variable "ec_memcached_engine_version" {
+  default = "1.6.12"
+}
+
+variable "ec_memcached_alarm_cpu_threshold_percent" {
+  default = "75"
+}
+
+variable "ec_memcached_alarm_memory_threshold_bytes" {
+  default = "10000000"
+}
+
+variable "ec_memcached_max_item_size" {
+  # 1MB
+  default = "1048576"
+}

@@ -23,6 +23,14 @@ resource "aws_route53_record" "database" {
   records = [module.database_enc.hostname]
 }
 
+resource "aws_route53_record" "cache" {
+  zone_id = aws_route53_zone.internal.zone_id
+  name    = "cache.service.${var.r53_private_hosted_zone}"
+  type    = "CNAME"
+  ttl     = "10"
+  records = [aws_elasticache_cluster.memcached.cluster_address]
+}
+
 #
 # Public DNS resources
 #
@@ -90,4 +98,3 @@ resource "aws_route53_record" "ses_dkim" {
   ttl     = "300"
   records = ["${element(aws_ses_domain_dkim.app.dkim_tokens, count.index)}.dkim.amazonses.com"]
 }
-
