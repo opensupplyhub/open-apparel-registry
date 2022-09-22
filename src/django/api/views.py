@@ -5,7 +5,6 @@ import traceback
 import csv
 import json
 import requests
-from requests.auth import HTTPBasicAuth
 
 from functools import reduce
 
@@ -174,7 +173,7 @@ def _report_facility_claim_email_error_to_rollbar(claim):
         )
 
 
-def _report_mailchimp_error_to_rollbar(email, name, contrib_type):
+def _report_hubspot_error_to_rollbar(email, name, contrib_type, error_text):
     ROLLBAR = getattr(settings, 'ROLLBAR', {})
 
     if ROLLBAR:
@@ -185,30 +184,62 @@ def _report_mailchimp_error_to_rollbar(email, name, contrib_type):
                 'email': email,
                 'name': name,
                 'contrib_type': contrib_type,
+                'error_text': error_text
             }
         )
 
 
+HUBSPOT_ROOT = 'https://api.hubapi.com'
+HUBSPOT_CONTACT_URL = HUBSPOT_ROOT + '/crm/v3/objects/contacts'
+HUBSPOT_SUBSCRIBE_URL = HUBSPOT_ROOT + \
+    '/communication-preferences/v3/subscribe'
+
+
 def add_user_to_mailing_list(email, name, contrib_type):
     try:
-        if settings.MAILCHIMP_API_KEY is None:
+        if settings.HUBSPOT_API_KEY is None:
             return None
-        # The data center for API calls is at the end of the API key
-        DC = settings.MAILCHIMP_API_KEY.split('-')[-1]
-        endpoint = "https://" + DC + ".api.mailchimp.com/3.0/lists/" + \
-                   settings.MAILCHIMP_LIST_ID + "/members/"
-        data = json.dumps({
-            "email_address": email,
-            "status": "subscribed",
-            "merge_fields": {
-                "ORGANISATI": name,
-                "ORGTYPE": contrib_type
-            }
+
+        headers = {
+          'Authorization': "Bearer {}".format(settings.HUBSPOT_API_KEY),
+          'Content-Type': 'application/json'
+        }
+
+        # Add new contact
+        new_contact = json.dumps({
+          "properties": {
+            "company": name,
+            "email": email,
+          }
         })
-        auth = HTTPBasicAuth('randomstringuser', settings.MAILCHIMP_API_KEY)
-        requests.post(endpoint, data=data, auth=auth)
+        r = requests.post(HUBSPOT_CONTACT_URL, headers=headers,
+                          data=new_contact)
+
+        # Raise error for error statuses other than existing contact
+        contact_already_exists = r.status_code != 409
+        if not contact_already_exists:
+            r.raise_for_status()
+
+        # Set new contact subscription type
+        subscription = json.dumps({
+            "emailAddress": email,
+            "subscriptionId": settings.HUBSPOT_SUBSCRIPTION_ID,
+            "status": "SUBSCRIBED",
+            "sourceOfStatus": "SUBSCRIPTION_STATUS",
+            "legalBasis": "CONSENT_WITH_NOTICE",
+            "legalBasisExplanation": "At user's request, we opted them in"
+        })
+        r = requests.post(HUBSPOT_SUBSCRIBE_URL, headers=headers,
+                          data=subscription)
+
+        # Raise error for error statuses other than existing subscription
+        is_already_subscribed = r.status_code == 400 and \
+            'is already subscribed' in r.text
+        if not is_already_subscribed:
+            r.raise_for_status()
+
     except Exception:
-        _report_mailchimp_error_to_rollbar(email, name, contrib_type)
+        _report_hubspot_error_to_rollbar(email, name, contrib_type, r.text)
 
 
 class SubmitNewUserForm(CreateAPIView):
