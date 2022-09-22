@@ -63,6 +63,7 @@ const facilitiesTabStyles = Object.freeze({
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
         padding: '0.25rem',
+        display: 'flex',
         maxHeight: '130px',
     }),
     titleRowStyles: Object.freeze({
@@ -235,12 +236,14 @@ function FilterSidebarFacilitiesTab({
                                 fontSize: '16px',
                                 fontWeight: '900',
                                 lineWeight: '20px',
+                                marginLeft: '1em',
                             }}
                         >
                             <div
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
+                                    textTransform: 'none',
                                 }}
                             >
                                 <CopyLinkIcon />

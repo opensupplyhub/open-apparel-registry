@@ -9,11 +9,16 @@ import { toast } from 'react-toastify';
 
 import downloadFacilities from '../actions/downloadFacilities';
 import DownloadIcon from './DownloadIcon';
+import ArrowDropDownIcon from './ArrowDropDownIcon';
 
 const downloadFacilitiesStyles = Object.freeze({
     listHeaderButtonStyles: Object.freeze({
         height: '45px',
         margin: '5px 0',
+    }),
+    buttonText: Object.freeze({
+        marginLeft: '0.2rem',
+        marginRight: '0.6rem',
     }),
 });
 
@@ -68,9 +73,18 @@ function DownloadFacilitiesButton({
                     lineHeight: '20px',
                 }}
             >
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        textTransform: 'none',
+                    }}
+                >
                     <DownloadIcon />
-                    Download
+                    <span style={downloadFacilitiesStyles.buttonText}>
+                        Download
+                    </span>
+                    <ArrowDropDownIcon />
                 </div>
             </Button>
             <Menu

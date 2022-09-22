@@ -201,7 +201,9 @@ class FilterSidebar extends Component {
                                         >
                                             <FacilityIcon /> Facilities
                                         </h1>
-                                        {`${this.props.facilitiesCount} results`}
+                                        <span style={{ fontWeight: 800 }}>
+                                            {`${this.props.facilitiesCount} results`}
+                                        </span>
                                     </div>
                                 )}
                                 <FeatureFlag
