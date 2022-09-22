@@ -68,8 +68,7 @@ from api.constants import (CsvHeaderField,
                            LogDownloadQueryParams,
                            UpdateLocationParams,
                            FeatureGroups,
-                           NumberOfWorkersRanges,
-                           Sector as SectorConstants)
+                           NumberOfWorkersRanges)
 from api.geocoding import geocode_address
 from api.matching import (match_item,
                           exact_match_item,
@@ -659,16 +658,14 @@ def sectors(request):
         [
             "Agriculture",
             "Apparel",
-            "Industry",
+            "Information",
         ]
 
     """
-    sectors = FacilityIndex \
-        .objects \
-        .annotate(all_sectors=Func(F('sector'), function='unnest')) \
-        .values_list('all_sectors', flat=True) \
-        .distinct()
-    return Response(sorted(sectors))
+    return Response(Sector
+                    .objects
+                    .exclude(name='Unspecified')
+                    .values_list('name', flat=True))
 
 
 @api_view(['GET'])
