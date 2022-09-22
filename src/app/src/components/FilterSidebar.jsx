@@ -183,7 +183,7 @@ class FilterSidebar extends Component {
                             />
                         </Tabs>
                         {this.props.activeFilterSidebarTab === 0 && (
-                            <Grid item sm={12} md={3}>
+                            <Grid item sm={12}>
                                 {this.props.facilitiesCount > 0 && (
                                     <div
                                         className="results-height-subtract"
