@@ -396,6 +396,8 @@ class ProcessingTestCase(TestCase):
 
 
 class FacilityListItemParseTest(ProcessingTestCase):
+    fixtures = ['sectors']
+
     def assert_successful_parse_results(self, item):
         self.assertEqual(FacilityListItem.PARSED, item.status)
         self.assert_status(item, ProcessingAction.PARSE)
@@ -539,31 +541,12 @@ class FacilityListItemParseTest(ProcessingTestCase):
             source_type=Source.LIST, facility_list=facility_list
         )
         item = FacilityListItem(
-            raw_data="Apparel| Industry,1234 main st,ChInA,Shirts!",
+            raw_data="Apparel| Food,1234 main st,ChInA,Shirts!",
             source=source
         )
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
-        self.assertEqual(['Apparel', 'Industry'], item.sector)
-
-    def test_sector_invalid_value(self):
-        facility_list = FacilityList.objects.create(
-            header="address,country,name,sector")
-        source = Source.objects.create(
-            source_type=Source.LIST,
-            facility_list=facility_list)
-        # Using a long string for ppe_product_types to trigger a error
-        item = FacilityListItem(
-            raw_data="1234 main st,de,Shirts!,012345678901234567890123456789012345678901234567890123456789",  # NOQA
-            source=source
-        )
-        parse_facility_list_item(item)
-        # After validation error results should be cleared
-        self.assert_failed_parse_results(
-            item, 'There is a problem with the sector: '
-            'Item 1 in the array did not validate: '
-            'Ensure this value has at most 50 characters (it has 60).')
-        self.assertEqual([], item.sector)
+        self.assertEqual(['Apparel', 'Food'], item.sector)
 
 
 class UserTokenGenerationTest(TestCase):
@@ -9381,6 +9364,8 @@ class FacilityDetailSerializerTest(TestCase):
 
 
 class SectorChoiceViewTest(APITestCase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super().setUp()
         email = 'test@example.com'
@@ -9391,42 +9376,27 @@ class SectorChoiceViewTest(APITestCase):
 
         self.client.login(email=email, password=password)
 
-    def test_sector_choices_no_values(self):
-        indexes = [FacilityIndex(name="Name", country_code="US",
-                                 location=Point(0, 0), sector=[],
-                                 contrib_types=[], contributors=[],
-                                 lists=[], id=i)
-                   for i in range(10)]
-        FacilityIndex.objects.bulk_create(indexes)
-        response = self.client.get(reverse('sectors'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), [])
-        self.assertEqual(len(response.json()), 0)
+        self.sorted_sector_names = []
+        with open('/usr/local/src/api/data/sectors.csv', 'r') as sector_data:
+            sector_data.readline()  # skip header
+
+            for line in sector_data:
+                name = line.strip('" \n')
+
+                if not name:
+                    continue
+
+                self.sorted_sector_names.append(name)
+
+        self.sorted_sector_names.sort()
 
     def test_sector_choices_basic(self):
-        indexes = [FacilityIndex(name="Name", country_code="US",
-                                 location=Point(0, 0), sector=[],
-                                 contrib_types=[], contributors=[],
-                                 lists=[], id=i)
-                   for i in range(10)]
-        indexes[0].sector = ['Apparel']
-        indexes[1].sector = ['Apparel', 'Agriculture']
-        indexes[2].sector = ['Mining']
-        indexes[3].sector = ['Chemicals', 'Construction']
-        indexes[4].sector = ['Electronics']
-        indexes[5].sector = ['Mining', 'Petroleum']
-        indexes[6].sector = ['Metals', 'Automotive']
-        indexes[7].sector = ['Mining']
-        indexes[8].sector = ['Apparel']
-        indexes[9].sector = ['Agriculture']
-        FacilityIndex.objects.bulk_create(indexes)
         response = self.client.get(reverse('sectors'))
         self.assertEqual(response.status_code, 200)
+
         # Response should be sorted and deduped
-        self.assertEqual(response.json(), [
-            'Agriculture', 'Apparel', 'Automotive', 'Chemicals',
-            'Construction', 'Electronics', 'Metals', 'Mining', 'Petroleum'
-        ])
+        for index, sector_name in enumerate(self.sorted_sector_names):
+            self.assertEqual(response.json()[index], sector_name)
 
 
 class ParentCompanyChoiceViewTest(APITestCase):

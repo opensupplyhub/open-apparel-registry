@@ -19,6 +19,7 @@ from api.matching import normalize_extended_facility_id
 from api.helpers import clean
 from api.extended_fields import (create_extendedfields_for_listitem,
                                  update_extendedfields_for_list_item)
+from api.sector_product_type_parser import CsvRowSectorProductTypeParser
 
 
 def _report_error_to_rollbar(file, request):
@@ -184,9 +185,10 @@ def parse_facility_list_item(item):
                 values.append(
                     values[fields.index('facility_type_processing_type')])
 
-        if CsvHeaderField.SECTOR in fields:
-            item.sector = parse_array_values(
-                values[fields.index(CsvHeaderField.SECTOR)].split("|"))
+        parser = CsvRowSectorProductTypeParser(fields, values)
+        item.sector = parser.sectors
+        item.product_types = parser.product_types
+
         if CsvHeaderField.COUNTRY in fields:
             item.country_code = get_country_code(
                 values[fields.index(CsvHeaderField.COUNTRY)])
