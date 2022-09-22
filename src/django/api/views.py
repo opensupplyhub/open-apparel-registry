@@ -2816,14 +2816,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if header is None or header == '':
             raise ValidationError('Header cannot be blank.')
         parsed_header = [i.lower() for i in parse_csv_line(header)]
-        if CsvHeaderField.SECTOR not in parsed_header \
-           or CsvHeaderField.COUNTRY not in parsed_header \
+        if CsvHeaderField.COUNTRY not in parsed_header \
            or CsvHeaderField.NAME not in parsed_header \
            or CsvHeaderField.ADDRESS not in parsed_header:
             raise ValidationError(
-                'Header must contain {0}, {1}, {2}, and {3} fields.'.format(
-                    CsvHeaderField.SECTOR, CsvHeaderField.COUNTRY,
-                    CsvHeaderField.NAME, CsvHeaderField.ADDRESS))
+                'Header must contain {0}, {1}, and {2} fields.'.format(
+                    CsvHeaderField.COUNTRY, CsvHeaderField.NAME,
+                    CsvHeaderField.ADDRESS))
 
     def _extract_header_rows(self, file, request):
         ext = file.name[-4:]

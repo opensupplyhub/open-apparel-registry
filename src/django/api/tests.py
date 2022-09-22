@@ -229,7 +229,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content),
-            ["Header must contain sector, country, name, and address fields."],
+            ["Header must contain country, name, and address fields."],
         )
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count)
@@ -244,7 +244,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content),
-            ["Header must contain sector, country, name, and address fields."],
+            ["Header must contain country, name, and address fields."],
         )
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count)
