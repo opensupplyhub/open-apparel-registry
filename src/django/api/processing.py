@@ -70,7 +70,7 @@ def format_cell_value(value):
 
 
 def parse_array_values(values):
-    return capitalize_array_values(
+    return title_array_values(
         remove_empty_array_values(
             strip_array_values(values)))
 
@@ -83,7 +83,7 @@ def remove_empty_array_values(values):
     return [s for s in values if s]
 
 
-def capitalize_array_values(values):
+def title_array_values(values):
     return [s.title() for s in values]
 
 
