@@ -159,6 +159,7 @@ from api.extended_fields import (create_extendedfields_for_single_item,
                                  get_product_types)
 from api.facility_type_processing_type import (
     FACILITY_PROCESSING_TYPES_VALUES)
+from api.sector_product_type_parser import RequestBodySectorProductTypeParser
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -706,6 +707,7 @@ def sectors(request):
     return Response(Sector
                     .objects
                     .exclude(name='Unspecified')
+                    .order_by('name')
                     .values_list('name', flat=True))
 
 
@@ -1405,9 +1407,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             create=should_create
         )
 
-        sector, product_types = determine_sector_and_product_types(
-            body_serializer.validated_data
-        )
+        parser = RequestBodySectorProductTypeParser(
+            body_serializer.validated_data)
+        sector = parser.sectors
+        product_types = parser.product_types
 
         cleaned_user_data = request.data.copy()
         cleaned_user_data['sector'] = sector
@@ -2789,31 +2792,6 @@ def create_nonstandard_fields(fields, contributor):
             contributor=contributor,
             column_name=f
         )
-
-
-def determine_sector_and_product_types(data):
-    sector_names = [sector.name for sector in Sector.objects.all()]
-    lower_case_sector_names = [name.lower() for name in sector_names]
-
-    all_values = set([
-        *data.get('sector', []),
-        *data.get('product_type', []),
-        *data.get('sector_product_type', [])
-    ])
-
-    sectors = []
-    product_types = []
-    for value in all_values:
-        try:
-            index = lower_case_sector_names.index(value.lower())
-            sectors.append(sector_names[index])
-        except ValueError:
-            product_types.append(value)
-
-    if len(sectors) == 0:
-        sectors.append(Sector.DEFAULT_SECTOR_NAME)
-
-    return sectors, product_types
 
 
 class AdminFacilityListView(ListAPIView):
