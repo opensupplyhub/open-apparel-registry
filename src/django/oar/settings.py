@@ -425,9 +425,9 @@ if OAR_CLIENT_KEY is None:
     raise ImproperlyConfigured(
         'Invalid OAR_CLIENT_KEY provided, must be set')
 
-# Mailchimp settings
-MAILCHIMP_API_KEY = os.getenv('MAILCHIMP_API_KEY')
-MAILCHIMP_LIST_ID = os.getenv('MAILCHIMP_LIST_ID')
+# Hubspot settings
+HUBSPOT_API_KEY = os.getenv('HUBSPOT_API_KEY')
+HUBSPOT_SUBSCRIPTION_ID = os.getenv('HUBSPOT_SUBSCRIPTION_ID')
 
 # CORS
 # Regex defining which endpoints enable CORS
