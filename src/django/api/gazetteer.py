@@ -179,7 +179,12 @@ class OgrGazetteer(Link, OgrGazetteerMatching):
 
         with connection.cursor() as cursor:
             cursor.execute(
-                "CREATE TABLE {} (LIKE dedupe_indexed_records INCLUDING ALL)"
+                """CREATE TABLE IF NOT EXISTS {}
+                (block_key text,
+                record_id varchar(32),
+                record_data text,
+                UNIQUE (block_key, record_id))
+                """
                 .format(table_name)
             )
             # TODO: Bulk insert for speed?
