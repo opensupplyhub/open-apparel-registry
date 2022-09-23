@@ -180,7 +180,7 @@ class FacilityListItems extends Component {
                 onClick={downloadCSV}
                 disabled={downloadingCSV}
             >
-                Download Formatted CSV
+                Download Formatted File
             </Button>
         );
 
@@ -192,7 +192,7 @@ class FacilityListItems extends Component {
                 rel="noreferrer"
                 component={Button}
             >
-                Download Submitted CSV
+                Download Submitted File
             </a>
         ) : null;
 
