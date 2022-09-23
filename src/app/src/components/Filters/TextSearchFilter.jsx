@@ -1,7 +1,6 @@
 import React from 'react';
 import { func, string } from 'prop-types';
 import { connect } from 'react-redux';
-import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -26,6 +25,11 @@ const filterStyles = Object.freeze({
     notchedOutline: {
         borderRadius: 0,
     },
+    inputLabelStyle: {
+        fontSize: '18px',
+        fontWeight: 700,
+        color: '#000',
+    },
 });
 
 const FACILITIES = 'FACILITIES';
@@ -39,21 +43,21 @@ function TextSearchFilter({
     searchLabel,
 }) {
     return (
-        <div className="form__field" style={{ marginBottom: '10px' }}>
-            <InputLabel htmlFor={FACILITIES} className="form__label">
-                {searchLabel}
-            </InputLabel>
+        <div>
+            <p style={filterStyles.inputLabelStyle}>{searchLabel}</p>
             <TextField
                 id={FACILITIES}
-                placeholder="What are you looking for?"
-                className="form__text-input"
+                placeholder="e.g. ABC Textiles Limited"
                 value={facilityFreeTextQuery}
                 onChange={updateFacilityFreeTextQuery}
                 onKeyPress={submitFormOnEnterKeyPress}
                 variant="outlined"
                 margin="dense"
+                style={{
+                    display: 'flex',
+                }}
                 InputProps={{
-                    startAdornment: (
+                    endAdornment: (
                         <InputAdornment position="end">
                             <IconButton
                                 aria-label={searchLabel}

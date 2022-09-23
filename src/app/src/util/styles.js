@@ -96,8 +96,8 @@ export const makeFilterStyles = theme =>
     Object.freeze({
         inputLabelStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
-            fontSize: '16px',
-            fontWeight: 500,
+            fontSize: '18px',
+            fontWeight: 700,
             color: '#000',
             transform: 'translate(0, -8px) scale(1)',
             paddingBottom: '0.5rem',

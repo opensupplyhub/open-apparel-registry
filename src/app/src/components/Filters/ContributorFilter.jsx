@@ -94,7 +94,7 @@ function ContributorFilter({
     );
 
     return (
-        <div className="form__field">
+        <div>
             <ShowOnly when={!embed}>
                 <StyledSelect
                     label={
