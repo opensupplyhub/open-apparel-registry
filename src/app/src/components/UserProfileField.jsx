@@ -63,6 +63,7 @@ export default function UserProfileField({
                     <div style={userProfileFieldStyles.viewOnlyStyles}>
                         {id === registrationFieldsEnum.website ? (
                             <a
+                                color="#8428FA"
                                 href={addProtocolToWebsiteURLIfMissing(value)}
                                 target="_blank"
                                 rel="noopener noreferrer"

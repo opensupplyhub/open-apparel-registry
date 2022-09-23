@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
+import ArrowBack from '@material-ui/icons/ArrowBackIos';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { toast } from 'react-toastify';
 
@@ -13,13 +14,19 @@ import FacilityListSummary from './FacilityListSummary';
 import UserProfileField from './UserProfileField';
 import UserCookiePreferences from './UserCookiePreferences';
 import BadgeVerified from './BadgeVerified';
+import MapIcon from './MapIcon';
 import ShowOnly from './ShowOnly';
 import RouteNotFound from './RouteNotFound';
 import COLOURS from '../util/COLOURS';
 
 import '../styles/css/specialStates.css';
 
-import { profileFieldsEnum, profileFormFields, OTHER } from '../util/constants';
+import {
+    facilitiesRoute,
+    profileFieldsEnum,
+    profileFormFields,
+    OTHER,
+} from '../util/constants';
 
 import {
     userPropType,
@@ -55,6 +62,7 @@ const profileStyles = Object.freeze({
     appGridContainer: Object.freeze({
         justifyContent: 'space-between',
         marginBottom: '100px',
+        backgroundColor: '#fff',
     }),
     submitButton: Object.freeze({
         display: 'flex',
@@ -66,8 +74,10 @@ const profileStyles = Object.freeze({
         padding: '1rem',
     }),
     titleStyles: Object.freeze({
-        fontWeight: 'normal',
-        fontSize: '32px',
+        fontWeight: '900',
+        fontSize: '56px',
+        lineHeight: '60px',
+        margin: 0,
     }),
     badgeVerifiedStyles: Object.freeze({
         padding: '10px',
@@ -121,6 +131,7 @@ class UserProfile extends Component {
             errorFetchingProfile,
             id,
             allowEdits,
+            history: { push },
         } = this.props;
 
         if (fetching) {
@@ -168,8 +179,21 @@ class UserProfile extends Component {
             ));
 
         const title = (
-            <React.Fragment>
-                {!isEditableProfile && profile.name}
+            <div>
+                <h3
+                    style={{
+                        fontWeight: '900',
+                        fontSize: '14px',
+                        letterSpacing: '0.5px',
+                        lineHeight: '14px',
+                        textTransform: 'uppercase',
+                    }}
+                >
+                    Contributor
+                </h3>
+                <h2 style={profileStyles.titleStyles}>
+                    {!isEditableProfile && profile.name}
+                </h2>
                 <ShowOnly when={profile.isVerified}>
                     <span
                         title="Verified"
@@ -178,7 +202,39 @@ class UserProfile extends Component {
                         <BadgeVerified color={COLOURS.NAVY_BLUE} />
                     </span>
                 </ShowOnly>
-            </React.Fragment>
+            </div>
+        );
+
+        const titleBar = (
+            <div
+                className="user-profile-title-bar"
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}
+            >
+                {title}
+                <div>
+                    <a
+                        href={`/facilities?contributors=${profile.id}`}
+                        rel="noopener noreferrer"
+                        style={{
+                            backgroundColor: '#FFCF3F',
+                            color: '#000',
+                            fontSize: '18px',
+                            fontWeight: '900',
+                            lineHeight: '20px',
+                            textDecoration: 'none',
+                            padding: '16px',
+                            gap: '8px',
+                            display: 'flex',
+                        }}
+                    >
+                        <MapIcon />
+                        View map of facilities
+                    </a>
+                </div>
+            </div>
         );
 
         const toolbar =
@@ -221,7 +277,21 @@ class UserProfile extends Component {
         const facilityLists =
             !isEditableProfile && profile.facilityLists.length > 0 ? (
                 <React.Fragment>
-                    <h3>Facility Lists</h3>
+                    <h3
+                        style={{
+                            fontWeight: '900',
+                            fontSize: '14px',
+                            letterSpacing: '0.5px',
+                            lineHeight: '14px',
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        Facility Lists
+                    </h3>
+                    <p color="#191919">
+                        The following lists have been provided by this
+                        contributor:
+                    </p>
                     {profile.facilityLists.map(list => (
                         <FacilityListSummary
                             key={list.id}
@@ -238,16 +308,37 @@ class UserProfile extends Component {
 
         return (
             <AppOverflow>
-                <AppGrid title={title} style={profileStyles.appGridContainer}>
-                    <Grid item xs={12} sm={7}>
-                        {toolbar}
-                        {profileInputs}
-                        {facilityLists}
-                        {errorMessages}
-                        {submitButton}
-                        {cookiePreferences}
-                    </Grid>
-                </AppGrid>
+                <div style={{ backgroundColor: '#F9F7F7' }}>
+                    <Button
+                        style={{
+                            backgroundColor: 'transparent',
+                            color: '#8428FA',
+                            fontSize: '18px',
+                            fontWeight: '700',
+                            lineHeight: '18px',
+                            letterSpacing: '0.5px',
+                            textTransform: 'none',
+                        }}
+                        Icon={ArrowBack}
+                        text="Back to search results"
+                        onClick={() => {
+                            push(facilitiesRoute);
+                        }}
+                    />
+                    <AppGrid
+                        title={titleBar}
+                        style={profileStyles.appGridContainer}
+                    >
+                        <Grid item xs={12}>
+                            {toolbar}
+                            {profileInputs}
+                            {facilityLists}
+                            {errorMessages}
+                            {submitButton}
+                            {cookiePreferences}
+                        </Grid>
+                    </AppGrid>
+                </div>
             </AppOverflow>
         );
     }
@@ -332,4 +423,6 @@ const mapDispatchToProps = (dispatch, { id: profileID }) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(UserProfile),
+);

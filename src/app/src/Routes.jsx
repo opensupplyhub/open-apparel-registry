@@ -14,7 +14,6 @@ import EmbeddedFooter from './components/EmbeddedFooter';
 import RegisterForm from './components/RegisterForm';
 import ResetPasswordForm from './components/ResetPasswordForm';
 import LoginForm from './components/LoginForm';
-import UserProfile from './components/UserProfile';
 import Contribute from './components/Contribute';
 import Homepage from './components/Homepage';
 import FacilityLists from './components/FacilityLists';
@@ -50,7 +49,6 @@ import {
     listsRoute,
     facilityListItemsRoute,
     facilitiesRoute,
-    profileRoute,
     dashboardRoute,
     claimFacilityRoute,
     claimedFacilitiesRoute,
@@ -164,15 +162,6 @@ class Routes extends Component {
                                 />
                                 <Route
                                     exact
-                                    path={profileRoute}
-                                    component={({
-                                        match: {
-                                            params: { id },
-                                        },
-                                    }) => <UserProfile id={id} />}
-                                />
-                                <Route
-                                    exact
                                     path={contributeRoute}
                                     component={Contribute}
                                 />
@@ -218,6 +207,10 @@ class Routes extends Component {
 
                                         return <Route component={Homepage} />;
                                     }}
+                                />
+                                <Route
+                                    path={mainRoute}
+                                    component={Facilities}
                                 />
                                 <Route render={() => <RouteNotFound />} />
                             </Switch>
