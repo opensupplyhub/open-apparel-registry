@@ -1,0 +1,18 @@
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+.google-translate-container {
+    width: 80px
+}
+
+.goog-te-gadget-simple {
+    width: 0;
+    height: 50px;
+    width: 80px;
+}
+
+.goog-te-menu-frame {
+    top: 80px !important;
+    box-shadow: none !important;
+}
