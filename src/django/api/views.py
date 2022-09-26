@@ -193,6 +193,16 @@ HUBSPOT_ROOT = 'https://api.hubapi.com'
 HUBSPOT_CONTACT_URL = HUBSPOT_ROOT + '/crm/v3/objects/contacts'
 HUBSPOT_SUBSCRIBE_URL = HUBSPOT_ROOT + \
     '/communication-preferences/v3/subscribe'
+OSHUB_LEGAL_BASIS = "<p>Open Apparel Registry, Inc., doing business as " + \
+    "Open Supply Hub, is committed to protecting and respecting your " + \
+    "privacy, and we’ll only use your personal information to administer " + \
+    "your account and to provide the products and services you requested " + \
+    "from us. From time to time, we would like to contact you about our " + \
+    "products and services, as well as other content that may be of " + \
+    "interest to you. If you consent to us contacting you for this " + \
+    "purpose, please tick below to confirm:</p>\n<p>I agree to receive " + \
+    "communications from Open Apparel Registry, Inc., doing business as " + \
+    "Open Supply Hub.</p>"
 
 
 def add_user_to_mailing_list(email, name, contrib_type):
@@ -227,7 +237,7 @@ def add_user_to_mailing_list(email, name, contrib_type):
             "status": "SUBSCRIBED",
             "sourceOfStatus": "SUBSCRIPTION_STATUS",
             "legalBasis": "CONSENT_WITH_NOTICE",
-            "legalBasisExplanation": "At user's request, we opted them in"
+            "legalBasisExplanation": OSHUB_LEGAL_BASIS
         })
         r = requests.post(HUBSPOT_SUBSCRIBE_URL, headers=headers,
                           data=subscription)
