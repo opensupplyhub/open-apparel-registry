@@ -95,6 +95,7 @@ from api.models import (ContributorWebhook,
                         NonstandardField,
                         FacilityIndex,
                         ExtendedField,
+                        Sector,
                         index_custom_text,
                         index_extendedfields,
                         index_sectors)
@@ -158,6 +159,7 @@ from api.extended_fields import (create_extendedfields_for_single_item,
                                  get_product_types)
 from api.facility_type_processing_type import (
     FACILITY_PROCESSING_TYPES_VALUES)
+from api.sector_product_type_parser import RequestBodySectorProductTypeParser
 
 
 def _report_facility_claim_email_error_to_rollbar(claim):
@@ -698,16 +700,15 @@ def sectors(request):
         [
             "Agriculture",
             "Apparel",
-            "Industry",
+            "Information",
         ]
 
     """
-    sectors = FacilityIndex \
-        .objects \
-        .annotate(all_sectors=Func(F('sector'), function='unnest')) \
-        .values_list('all_sectors', flat=True) \
-        .distinct()
-    return Response(sorted(sectors))
+    return Response(Sector
+                    .objects
+                    .exclude(name='Unspecified')
+                    .order_by('name')
+                    .values_list('name', flat=True))
 
 
 @api_view(['GET'])
@@ -1115,16 +1116,17 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         ## Sample Request Body
 
             {
-                "sector": "Apparel",
+                "sector_product_type": "Apparel"
                 "country": "China",
                 "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
+
             }
 
         ## Sample Request Body With PPE Fields
 
             {
-                "sector": ["Apparel", "Health"],
+                "sector_product_type": ["Apparel", "Health"],
                 "country": "China",
                 "name": "Nantong Jackbeanie Headwear & Garment Co. Ltd.",
                 "address": "No.808,the third industry park,Guoyuan Town,Nantong 226500."
@@ -1405,7 +1407,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             create=should_create
         )
 
-        sector = body_serializer.validated_data.get('sector')
+        parser = RequestBodySectorProductTypeParser(
+            body_serializer.validated_data)
+        sector = parser.sectors
+        product_types = parser.product_types
+
+        cleaned_user_data = request.data.copy()
+        cleaned_user_data['sector'] = sector
+        if len(product_types) > 0:
+            cleaned_user_data['product_type'] = product_types
+        if 'sector_product_type' in cleaned_user_data:
+            del cleaned_user_data['sector_product_type']
+
         country_code = get_country_code(
             body_serializer.validated_data.get('country'))
         name = body_serializer.validated_data.get('name')
@@ -1418,7 +1431,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             body_serializer.validated_data.get('ppe_contact_email')
         ppe_website = body_serializer.validated_data.get('ppe_website')
 
-        fields = list(request.data.keys())
+        fields = list(cleaned_user_data.keys())
         create_nonstandard_fields(fields, request.user.contributor)
 
         item = FacilityListItem.objects.create(
@@ -1454,7 +1467,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         }
 
         try:
-            create_extendedfields_for_single_item(item, request.data)
+            create_extendedfields_for_single_item(item, cleaned_user_data)
         except (core_exceptions.ValidationError, ValueError) as e:
             error_message = ''
 
@@ -2844,14 +2857,13 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         if header is None or header == '':
             raise ValidationError('Header cannot be blank.')
         parsed_header = [i.lower() for i in parse_csv_line(header)]
-        if CsvHeaderField.SECTOR not in parsed_header \
-           or CsvHeaderField.COUNTRY not in parsed_header \
+        if CsvHeaderField.COUNTRY not in parsed_header \
            or CsvHeaderField.NAME not in parsed_header \
            or CsvHeaderField.ADDRESS not in parsed_header:
             raise ValidationError(
-                'Header must contain {0}, {1}, {2}, and {3} fields.'.format(
-                    CsvHeaderField.SECTOR, CsvHeaderField.COUNTRY,
-                    CsvHeaderField.NAME, CsvHeaderField.ADDRESS))
+                'Header must contain {0}, {1}, and {2} fields.'.format(
+                    CsvHeaderField.COUNTRY, CsvHeaderField.NAME,
+                    CsvHeaderField.ADDRESS))
 
     def _extract_header_rows(self, file, request):
         ext = file.name[-4:]

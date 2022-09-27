@@ -54,6 +54,7 @@ from api.models import (
     FacilityAlias,
     NonstandardField,
     RequestLog,
+    Sector,
     Source,
     User,
     index_custom_text
@@ -228,7 +229,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content),
-            ["Header must contain sector, country, name, and address fields."],
+            ["Header must contain country, name, and address fields."],
         )
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count)
@@ -243,7 +244,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             json.loads(response.content),
-            ["Header must contain sector, country, name, and address fields."],
+            ["Header must contain country, name, and address fields."],
         )
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count)
@@ -395,6 +396,19 @@ class ProcessingTestCase(TestCase):
 
 
 class FacilityListItemParseTest(ProcessingTestCase):
+    fixtures = ['sectors']
+
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.password = 'password'
+        self.name = 'Test User'
+        self.user = User(email=self.email)
+        self.user.set_password(self.password)
+        self.user.save()
+
+        self.contributor = Contributor.objects.create(
+            name=self.name, admin=self.user)
+
     def assert_successful_parse_results(self, item):
         self.assertEqual(FacilityListItem.PARSED, item.status)
         self.assert_status(item, ProcessingAction.PARSE)
@@ -538,31 +552,60 @@ class FacilityListItemParseTest(ProcessingTestCase):
             source_type=Source.LIST, facility_list=facility_list
         )
         item = FacilityListItem(
-            raw_data="Apparel| Industry,1234 main st,ChInA,Shirts!",
+            raw_data="Apparel| Food,1234 main st,ChInA,Shirts!",
             source=source
         )
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
-        self.assertEqual(['Apparel', 'Industry'], item.sector)
+        self.assertEqual(['Apparel', 'Food'], item.sector)
 
-    def test_sector_invalid_value(self):
+    def test_sector_product_type_parsing(self):
         facility_list = FacilityList.objects.create(
-            header="address,country,name,sector")
+            header="sector_product_type,address,country,name"
+        )
         source = Source.objects.create(
-            source_type=Source.LIST,
-            facility_list=facility_list)
-        # Using a long string for ppe_product_types to trigger a error
-        item = FacilityListItem(
-            raw_data="1234 main st,de,Shirts!,012345678901234567890123456789012345678901234567890123456789",  # NOQA
+            source_type=Source.LIST, facility_list=facility_list,
+            contributor=self.contributor
+        )
+        item = FacilityListItem.objects.create(
+            row_index=1,
+            sector=[],
+            raw_data="Apparel| Toys,1234 main st,ChInA,Shirts!",
             source=source
         )
         parse_facility_list_item(item)
-        # After validation error results should be cleared
-        self.assert_failed_parse_results(
-            item, 'There is a problem with the sector: '
-            'Item 1 in the array did not validate: '
-            'Ensure this value has at most 50 characters (it has 60).')
-        self.assertEqual([], item.sector)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel'], item.sector)
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [' Toys']
+        }, ef.value)
+
+    def test_sector_product_type_and_product_type_parsing(self):
+        facility_list = FacilityList.objects.create(
+            header="sector_product_type,product_type,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list,
+            contributor=self.contributor
+        )
+        item = FacilityListItem.objects.create(
+            row_index=1,
+            sector=[],
+            raw_data="Apparel| Toys,Games,1234 main st,ChInA,Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel'], item.sector)
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [' Toys', 'Games']
+        }, ef.value)
 
 
 class UserTokenGenerationTest(TestCase):
@@ -6729,6 +6772,8 @@ def is_json(myjson):
 
 
 class FacilitySubmitTest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(FacilitySubmitTest, self).setUp()
         self.url = reverse('facility-list')
@@ -6924,17 +6969,6 @@ class FacilityCreateBodySerializerTest(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertNotIn('sector', serializer.errors)
         self.assertIn('address', serializer.errors)
-        self.assertNotIn('country', serializer.errors)
-        self.assertNotIn('name', serializer.errors)
-
-        serializer = FacilityCreateBodySerializer(data={
-            'country': 'United States',
-            'name': 'Pants Hut',
-            'address': '123 Main St, Anywhereville, PA'
-        })
-        self.assertFalse(serializer.is_valid())
-        self.assertIn('sector', serializer.errors)
-        self.assertNotIn('address', serializer.errors)
         self.assertNotIn('country', serializer.errors)
         self.assertNotIn('name', serializer.errors)
 
@@ -8445,6 +8479,8 @@ class ContributorManagerTest(TestCase):
 
 
 class ParentCompanyTestCase(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(ParentCompanyTestCase, self).setUp()
         self.url = reverse('facility-list')
@@ -8595,6 +8631,8 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
 
 
 class ProductTypeTestCase(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(ProductTypeTestCase, self).setUp()
         self.url = reverse('facility-list')
@@ -8620,6 +8658,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertIn('a', facility_index.product_type)
         self.assertIn('b', facility_index.product_type)
+        self.assertIn('Apparel', facility_index.sector)
 
     @patch('api.geocoding.requests.get')
     def test_string(self, mock_get):
@@ -8642,6 +8681,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertIn('a', facility_index.product_type)
         self.assertIn('b', facility_index.product_type)
+        self.assertIn('Apparel', facility_index.sector)
 
     @patch('api.geocoding.requests.get')
     def test_list_validation(self, mock_get):
@@ -8709,7 +8749,155 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertEqual(data['features'][0]['id'], facility_id)
 
 
+class SectorTestCase(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
+    SECTOR_A = 'Agriculture'
+    SECTOR_B = 'Apparel'
+    SECTOR_NON_EXISTANT = 'Encabulation'
+
+    def setUp(self):
+        super(SectorTestCase, self).setUp()
+        self.url = reverse('facility-list')
+
+    @patch('api.geocoding.requests.get')
+    def test_array(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': [self.SECTOR_A, self.SECTOR_B]
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        facility_index = FacilityIndex.objects.get(
+            id=response_data['os_id'])
+        self.assertIn(self.SECTOR_A, facility_index.sector)
+        self.assertIn(self.SECTOR_B, facility_index.sector)
+
+    @patch('api.geocoding.requests.get')
+    def test_string(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': '{}|{}'.format(self.SECTOR_A, self.SECTOR_B)
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        facility_index = FacilityIndex.objects.get(
+            id=response_data['os_id'])
+        self.assertIn(self.SECTOR_A, facility_index.sector)
+        self.assertIn(self.SECTOR_B, facility_index.sector)
+
+    @patch('api.geocoding.requests.get')
+    def test_list_validation(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': {}
+        }), content_type='application/json')
+        self.assertEqual(0, ExtendedField.objects.all().count())
+        self.assertEqual(response.status_code, 400)
+
+    @patch('api.geocoding.requests.get')
+    def test_mixed_sector_product_type(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': [
+                self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT]
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        facility_index = FacilityIndex.objects.get(
+            id=response_data['os_id'])
+        self.assertIn(self.SECTOR_A, facility_index.sector)
+        self.assertIn(self.SECTOR_B, facility_index.sector)
+
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [self.SECTOR_NON_EXISTANT]
+        }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn(
+            self.SECTOR_NON_EXISTANT.lower(), facility_index.product_type)
+
+    @patch('api.geocoding.requests.get')
+    def test_product_types_only(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': ['a', 'b']
+        }), content_type='application/json')
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': ['a', 'b']
+        }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn('a', facility_index.product_type)
+        self.assertIn('b', facility_index.product_type)
+        self.assertIn(Sector.DEFAULT_SECTOR_NAME, facility_index.sector)
+
+    @patch('api.geocoding.requests.get')
+    def test_same_values_for_product_type_and_sector(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type':
+            [self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT],
+            'sector':
+            [self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT],
+            'product_type':
+            [self.SECTOR_A, self.SECTOR_B, self.SECTOR_NON_EXISTANT],
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        item = FacilityListItem.objects.get(
+            facility_id=response_data['os_id'])
+        self.assertIn(self.SECTOR_A, item.sector)
+        self.assertIn(self.SECTOR_B, item.sector)
+
+        self.assertEqual(1, ExtendedField.objects.all().count())
+        ef = ExtendedField.objects.first()
+        self.assertEqual(ExtendedField.PRODUCT_TYPE, ef.field_name)
+        self.assertEqual({
+            'raw_values': [self.SECTOR_NON_EXISTANT]
+        }, ef.value)
+        facility_index = FacilityIndex.objects.get(id=ef.facility.id)
+        self.assertIn(
+            self.SECTOR_NON_EXISTANT.lower(), facility_index.product_type)
+
+
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(FacilityAndProcessingTypeAPITest, self).setUp()
         self.url = reverse('facility-list')
@@ -8859,6 +9047,8 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
 
 
 class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(NumberOfWorkersAPITest, self).setUp()
         self.url = reverse('facility-list')
@@ -9023,6 +9213,8 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
 
 
 class SectorAPITest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(SectorAPITest, self).setUp()
         self.url = reverse('facility-list')
@@ -9036,16 +9228,15 @@ class SectorAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'sector': ['Apparel', 'Beauty']
+            'sector': ['Apparel', 'Agriculture']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
         facility_id = facility_data['os_id']
 
         response = self.client.get(
-            self.url + '?sectors=Beauty'
+            self.url + '?sectors=Agriculture'
         )
         data = json.loads(response.content)
-        print(data)
         self.assertEqual(data['count'], 1)
         self.assertEqual(data['features'][0]['id'], facility_id)
 
@@ -9402,6 +9593,8 @@ class FacilityDetailSerializerTest(TestCase):
 
 
 class SectorChoiceViewTest(APITestCase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super().setUp()
         email = 'test@example.com'
@@ -9412,42 +9605,27 @@ class SectorChoiceViewTest(APITestCase):
 
         self.client.login(email=email, password=password)
 
-    def test_sector_choices_no_values(self):
-        indexes = [FacilityIndex(name="Name", country_code="US",
-                                 location=Point(0, 0), sector=[],
-                                 contrib_types=[], contributors=[],
-                                 lists=[], id=i)
-                   for i in range(10)]
-        FacilityIndex.objects.bulk_create(indexes)
-        response = self.client.get(reverse('sectors'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), [])
-        self.assertEqual(len(response.json()), 0)
+        self.sorted_sector_names = []
+        with open('/usr/local/src/api/data/sectors.csv', 'r') as sector_data:
+            sector_data.readline()  # skip header
+
+            for line in sector_data:
+                name = line.strip('" \n')
+
+                if not name:
+                    continue
+
+                self.sorted_sector_names.append(name)
+
+        self.sorted_sector_names.sort()
 
     def test_sector_choices_basic(self):
-        indexes = [FacilityIndex(name="Name", country_code="US",
-                                 location=Point(0, 0), sector=[],
-                                 contrib_types=[], contributors=[],
-                                 lists=[], id=i)
-                   for i in range(10)]
-        indexes[0].sector = ['Apparel']
-        indexes[1].sector = ['Apparel', 'Agriculture']
-        indexes[2].sector = ['Mining']
-        indexes[3].sector = ['Chemicals', 'Construction']
-        indexes[4].sector = ['Electronics']
-        indexes[5].sector = ['Mining', 'Petroleum']
-        indexes[6].sector = ['Metals', 'Automotive']
-        indexes[7].sector = ['Mining']
-        indexes[8].sector = ['Apparel']
-        indexes[9].sector = ['Agriculture']
-        FacilityIndex.objects.bulk_create(indexes)
         response = self.client.get(reverse('sectors'))
         self.assertEqual(response.status_code, 200)
+
         # Response should be sorted and deduped
-        self.assertEqual(response.json(), [
-            'Agriculture', 'Apparel', 'Automotive', 'Chemicals',
-            'Construction', 'Electronics', 'Metals', 'Mining', 'Petroleum'
-        ])
+        for index, sector_name in enumerate(self.sorted_sector_names):
+            self.assertEqual(response.json()[index], sector_name)
 
 
 class ParentCompanyChoiceViewTest(APITestCase):
@@ -9517,6 +9695,8 @@ class ParentCompanyChoiceViewTest(APITestCase):
 
 
 class IndexFacilitiesTest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(IndexFacilitiesTest, self).setUp()
         self.url = reverse('facility-list')
@@ -9569,7 +9749,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         facility_id = resp.data['os_id']
 
         resp = self.client.post(self.url, {
-            'sector': ["Mining", "Metals"],
+            'sector': ["Mining", "Metal Manufacturing"],
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
@@ -9578,7 +9758,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
         self.assertEqual(resp.data['os_id'], facility_id)
         facility_index = FacilityIndex.objects.get(id=facility_id)
         self.assertIn('Mining', facility_index.sector)
-        self.assertIn('Metals', facility_index.sector)
+        self.assertIn('Metal Manufacturing', facility_index.sector)
         self.assertNotIn('Apparel', facility_index.sector)
         self.assertEqual(len(facility_index.sector), 2)
 
@@ -9621,6 +9801,8 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
 
 
 class FacilityDownloadTest(FacilityAPITestCaseBase):
+    fixtures = ['sectors']
+
     def setUp(self):
         super(FacilityDownloadTest, self).setUp()
         self.download_url = '/api/facilities-downloads/'

@@ -159,6 +159,11 @@ class ExtendedFieldAdmin(admin.ModelAdmin):
                        'facility_claim')
 
 
+class SectorAdmin(admin.ModelAdmin):
+    def get_ordering(self, request):
+        return ['name']
+
+
 admin_site.register(models.Version)
 admin_site.register(models.User, OarUserAdmin)
 admin_site.register(models.Contributor, ContributorAdmin)
@@ -178,3 +183,4 @@ admin_site.register(Switch, SwitchAdmin)
 admin_site.register(Group)
 admin_site.register(models.RequestLog, RequestLogAdmin)
 admin_site.register(models.ApiLimit, ApiLimitAdmin)
+admin_site.register(models.Sector, SectorAdmin)
