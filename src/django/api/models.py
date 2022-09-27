@@ -1630,12 +1630,18 @@ class Facility(PPEMixin):
         }
 
     def extended_fields(self, contributor_id=None):
-        active_items = self.facilitymatch_set \
+        active_matches = self.facilitymatch_set \
                            .filter(status__in=[FacilityMatch.AUTOMATIC,
                                                FacilityMatch.CONFIRMED,
                                                FacilityMatch.MERGED]) \
                            .filter(is_active=True) \
                            .values_list('facility_list_item')
+
+        active_sources = self.facilitylistitem_set \
+                             .filter(source__is_active=True) \
+                             .values_list('id')
+
+        active_items = active_matches.intersection(active_sources)
 
         base_qs = ExtendedField.objects \
                                .filter(facility=self)

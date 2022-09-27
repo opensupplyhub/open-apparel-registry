@@ -1289,6 +1289,15 @@ class FacilityNamesAddressesAndContributorsTest(TestCase):
                     country_code=self.country_code,
                     location=Point(0, 0),
                     created_from=self.list_item_one)
+        self.list_item_one.facility = self.facility
+        self.list_item_one.save()
+        self.list_item_two.facility = self.facility
+        self.list_item_two.save()
+
+        self.list_item_one.facility = self.facility
+        self.list_item_one.save()
+        self.list_item_two.facility = self.facility
+        self.list_item_two.save()
 
         self.extended_field_one = ExtendedField \
             .objects \
@@ -5492,7 +5501,8 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
                     row_index=1,
                     geocoded_point=Point(5, 5),
                     status=FacilityListItem.CONFIRMED_MATCH,
-                    source=self.other_source)
+                    source=self.other_source,
+                    facility=self.facility)
 
         self.other_match = FacilityMatch \
             .objects \
@@ -5680,6 +5690,7 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
         self.assertEqual(len(fields), 3)
         self.assertEqual(fields[0]['value'], 'name one')
 
+    def test_serializes_extended_fields_sorts_verified_first(self):
         self.extended_field_one.is_verified = False
         self.extended_field_one.save()
 
@@ -5691,6 +5702,34 @@ class SerializeOtherLocationsTest(FacilityAPITestCaseBase):
 
         self.assertEqual(len(fields), 3)
         self.assertEqual(fields[0]['value'], 'name two')
+
+    def test_serializes_extended_fields_drops_inactive(self):
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        fields = data['properties']['extended_fields']['native_language_name']
+
+        self.assertEqual(len(fields), 3)
+        self.assertEqual(fields[1]['value'], 'name two')
+        self.assertEqual(fields[1]['value_count'], 2)
+
+        self.source.is_active = False
+        self.source.save()
+
+        response = self.client.get(
+            '/api/facilities/{}/'.format(self.facility.id)
+        )
+        data = json.loads(response.content)
+        fields = data['properties']['extended_fields']['native_language_name']
+
+        self.assertEqual(len(fields), 1)
+        self.assertEqual(fields[0]['value'], 'name two')
+        self.assertEqual(fields[0]['value_count'], 1)
+
+    def test_serializes_extended_fields_inactive_isnt_counted(self):
+        self.extended_field_two.facility_list_item.source.is_active = False
+        self.extended_field_two.facility_list_item.source.save()
 
 
 class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
