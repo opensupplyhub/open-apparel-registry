@@ -62,8 +62,8 @@ data "template_file" "default_job_definition" {
     google_server_side_api_key       = var.google_server_side_api_key
     oar_client_key                   = var.oar_client_key
     external_domain                  = var.r53_public_hosted_zone
-    mailchimp_api_key                = var.mailchimp_api_key
-    mailchimp_list_id                = var.mailchimp_list_id
+    hubspot_api_key                  = var.hubspot_api_key
+    hubspot_subscription_id          = var.hubspot_subscription_id
     rollbar_server_side_access_token = var.rollbar_server_side_access_token
     aws_region                       = var.aws_region
     batch_job_queue_name             = "queue${local.short}Default"
@@ -151,8 +151,8 @@ data "template_file" "notifications_job_definition" {
     google_server_side_api_key       = var.google_server_side_api_key
     oar_client_key                   = var.oar_client_key
     external_domain                  = var.r53_public_hosted_zone
-    mailchimp_api_key                = var.mailchimp_api_key
-    mailchimp_list_id                = var.mailchimp_list_id
+    hubspot_api_key                  = var.hubspot_api_key
+    hubspot_subscription_id          = var.hubspot_subscription_id
     rollbar_server_side_access_token = var.rollbar_server_side_access_token
     aws_region                       = var.aws_region
     batch_job_queue_name             = "queue${local.short}Notifications"

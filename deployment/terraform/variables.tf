@@ -261,12 +261,12 @@ variable "default_from_email" {
 variable "notification_email_to" {
 }
 
-variable "mailchimp_api_key" {
+variable "hubspot_api_key" {
   default   = ""
   sensitive = true
 }
 
-variable "mailchimp_list_id" {
+variable "hubspot_subscription_id" {
   default = ""
 }
 
