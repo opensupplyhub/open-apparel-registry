@@ -179,13 +179,17 @@ class OgrGazetteer(Link, OgrGazetteerMatching):
 
         with connection.cursor() as cursor:
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS {}
-                (block_key text,
-                record_id varchar(32),
-                record_data text,
-                UNIQUE (block_key, record_id))
                 """
-                .format(table_name)
+                CREATE TABLE IF NOT EXISTS {table_name}
+                    (id SERIAL PRIMARY KEY,
+                    block_key text NOT NULL,
+                    record_id varchar(32) NOT NULL,
+                    record_data text NOT NULL,
+                    UNIQUE (block_key, record_id));
+                CREATE INDEX {table_name}_idx
+                ON {table_name} (block_key, record_id);
+                """
+                .format(table_name=table_name)
             )
             # TODO: Bulk insert for speed?
             # The `target` kwarg is related to index predicates, which we are
