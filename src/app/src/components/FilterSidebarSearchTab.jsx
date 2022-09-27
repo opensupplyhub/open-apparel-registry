@@ -211,23 +211,7 @@ function FilterSidebarSearchTab({
                     flexDirection: 'column',
                 }}
             >
-                <div className="form__field" style={{ marginBottom: '10px' }}>
-                    <div className={classes.headerStyle}>
-                        Search the Open Supply Hub
-                        <div>
-                            <a
-                                className={classes.helpSubheadStyle}
-                                target="blank"
-                                href="https://info.openapparel.org/stories-resources/how-to-search-the-open-apparel-registry"
-                            >
-                                Need tips for searching the OS Hub?
-                            </a>
-                        </div>
-                    </div>
-                    <TextSearchFilter
-                        searchForFacilities={searchForFacilities}
-                    />
-                </div>
+                <TextSearchFilter searchForFacilities={searchForFacilities} />
                 <ContributorFilter />
                 <CountryNameFilter />
                 <SectorFilter />

@@ -5,9 +5,20 @@
 import React, { Component } from 'react';
 
 import CreatableSelect from 'react-select/creatable';
+import SearchIcon from './SearchIcon';
 
 const components = {
-    DropdownIndicator: null,
+    DropdownIndicator: () => (
+        <div
+            style={{
+                display: 'flex',
+                marginRight: '0.5em',
+            }}
+        >
+            <SearchIcon />
+        </div>
+    ),
+    IndicatorSeparator: null,
 };
 
 const createOption = label => ({
