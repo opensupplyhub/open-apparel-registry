@@ -134,7 +134,7 @@ const FacilityDetailsContent = ({
     clearFacility,
     history: { push },
     match: {
-        params: { oarID },
+        params: { osID },
     },
     userHasPendingFacilityClaim,
     facilityIsClaimedByCurrentUser,
@@ -143,7 +143,7 @@ const FacilityDetailsContent = ({
     useEffect(() => {
         fetchFacility(Number(embed), contributors);
         /* eslint-disable react-hooks/exhaustive-deps */
-    }, [oarID]);
+    }, [osID]);
 
     // Clears the selected facility when unmounted
     useEffect(() => () => clearFacility(), []);
@@ -201,28 +201,28 @@ const FacilityDetailsContent = ({
         return (
             <div className={classes.root}>
                 <p className={classes.primaryText}>
-                    {`No facility found for OS Hub ID ${oarID}`}
+                    {`No facility found for OS ID ${osID}`}
                 </p>
             </div>
         );
     }
 
-    if (data?.id && data?.id !== oarID) {
+    if (data?.id && data?.id !== osID) {
         // When redirecting to a facility alias from a deleted facility,
-        // the OAR ID in the url will not match the facility data id;
+        // the OS ID in the url will not match the facility data id;
         // redirect to the appropriate facility URL.
         return <Redirect to={`/facilities/${data.id}`} />;
     }
 
-    const oarId = data.properties.oar_id;
+    const osId = data.properties.os_id;
     const isClaimed = !!data?.properties?.claim_info;
-    const claimFacility = () => push(makeClaimFacilityLink(oarId));
+    const claimFacility = () => push(makeClaimFacilityLink(osId));
 
     return (
         <div className={classes.root}>
             <List className={classes.list}>
                 <FacilityDetailsClaimFlag
-                    oarId={data.properties.oar_id}
+                    osId={data.properties.os_id}
                     isClaimed={isClaimed}
                     isPending={userHasPendingFacilityClaim}
                     isEmbed={embed}
@@ -233,7 +233,7 @@ const FacilityDetailsContent = ({
                 />
                 <FacilityDetailsCoreFields
                     name={nameField.primary}
-                    oarId={data.properties.oar_id}
+                    osId={data.properties.os_id}
                     isEmbed={embed}
                     isClaimed={isClaimed}
                     facilityIsClaimedByCurrentUser={
@@ -296,7 +296,7 @@ function mapStateToProps(
     },
     {
         match: {
-            params: { oarID },
+            params: { osID },
         },
     },
 ) {
@@ -307,13 +307,13 @@ function mapStateToProps(
 
     const facilityIsClaimedByCurrentUser = includes(
         currentUserApprovedClaimedFacilities,
-        oarID,
+        osID,
     );
 
     // Make this false if the current user has an approved claim
     // regardless of the presence of any other pending claims
     const userHasPendingFacilityClaim =
-        includes(currentUserPendingClaimedFacilities, oarID) &&
+        includes(currentUserPendingClaimedFacilities, osID) &&
         !facilityIsClaimedByCurrentUser;
 
     const vectorTileFlagIsActive = get(
@@ -340,13 +340,13 @@ function mapDispatchToProps(
     dispatch,
     {
         match: {
-            params: { oarID },
+            params: { osID },
         },
     },
 ) {
     return {
         fetchFacility: (embed, contributorId) =>
-            dispatch(fetchSingleFacility(oarID, embed, contributorId)),
+            dispatch(fetchSingleFacility(osID, embed, contributorId)),
         clearFacility: () => dispatch(resetSingleFacility()),
         searchForFacilities: vectorTilesAreActive =>
             dispatch(

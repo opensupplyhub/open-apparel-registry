@@ -22,26 +22,26 @@ export const clearFacilityToAdjust = createAction('CLEAR_FACILITY_TO_ADJUST');
 export const resetAdjustFacilityState = createAction(
     'RESET_ADJUST_FACILITY_STATE',
 );
-export const updateFacilityToAdjustOARID = createAction(
-    'UPDATE_FACILITY_TO_ADJUST_OAR_ID',
+export const updateFacilityToAdjustOSID = createAction(
+    'UPDATE_FACILITY_TO_ADJUST_OS_ID',
 );
 
 export function fetchFacilityToAdjust() {
     return (dispatch, getState) => {
         const {
             adjustFacilityMatches: {
-                facility: { oarID },
+                facility: { osID },
             },
         } = getState();
 
-        if (!oarID) {
+        if (!osID) {
             return null;
         }
 
         dispatch(startFetchFacilityToAdjust());
 
         return apiRequest
-            .get(makeSplitFacilityAPIURL(oarID))
+            .get(makeSplitFacilityAPIURL(osID))
             .then(({ data }) => dispatch(completeFetchFacilityToAdjust(data)))
             .catch(err =>
                 dispatch(
@@ -67,12 +67,12 @@ export const completeFetchFacilityToTransfer = createAction(
 export const clearFacilityToTransfer = createAction(
     'CLEAR_FACILITY_TO_TRANSFER',
 );
-export function fetchFacilityToTransfer(oarID) {
+export function fetchFacilityToTransfer(osID) {
     return dispatch => {
         dispatch(startFetchFacilityToTransfer());
 
         return apiRequest
-            .get(makeSplitFacilityAPIURL(oarID))
+            .get(makeSplitFacilityAPIURL(osID))
             .then(({ data }) => dispatch(completeFetchFacilityToTransfer(data)))
             .catch(err =>
                 dispatch(
@@ -98,18 +98,18 @@ export function splitFacilityMatch(matchID) {
     return (dispatch, getState) => {
         const {
             adjustFacilityMatches: {
-                facility: { oarID },
+                facility: { osID },
             },
         } = getState();
 
-        if (!oarID || !matchID) {
+        if (!osID || !matchID) {
             return null;
         }
 
         dispatch(startSplitFacilityMatch());
 
         return apiRequest
-            .post(makeSplitFacilityAPIURL(oarID), { match_id: matchID })
+            .post(makeSplitFacilityAPIURL(osID), { match_id: matchID })
             .then(({ data }) => dispatch(completeSplitFacilityMatch(data)))
             .catch(err =>
                 dispatch(
@@ -137,18 +137,18 @@ export function promoteFacilityMatch(matchID) {
     return (dispatch, getState) => {
         const {
             adjustFacilityMatches: {
-                facility: { oarID },
+                facility: { osID },
             },
         } = getState();
 
-        if (!oarID || !matchID) {
+        if (!osID || !matchID) {
             return null;
         }
 
         dispatch(startPromoteFacilityMatch());
 
         return apiRequest
-            .post(makePromoteFacilityMatchAPIURL(oarID), { match_id: matchID })
+            .post(makePromoteFacilityMatchAPIURL(osID), { match_id: matchID })
             .then(({ data }) => dispatch(completePromoteFacilityMatch(data)))
             .catch(err =>
                 dispatch(
@@ -172,16 +172,16 @@ export const completeTransferFacilityMatch = createAction(
     'COMPLETE_TRANSFER_FACILITY_MATCH',
 );
 
-export function transferFacilityMatch({ matchID, oarID }) {
+export function transferFacilityMatch({ matchID, osID }) {
     return dispatch => {
-        if (!oarID || !matchID) {
+        if (!osID || !matchID) {
             return null;
         }
 
         dispatch(startTransferFacilityMatch());
 
         return apiRequest
-            .post(makeTransferFacilityAPIURL(oarID), { match_id: matchID })
+            .post(makeTransferFacilityAPIURL(osID), { match_id: matchID })
             .then(({ data }) => {
                 dispatch(completeTransferFacilityMatch(data));
                 // Refresh facility to show match is no longer present

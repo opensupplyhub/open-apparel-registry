@@ -302,12 +302,12 @@ function mapDispatchToProps(
     dispatch,
     {
         match: {
-            params: { oarID },
+            params: { osID },
         },
     },
 ) {
     return {
-        submitClaimForm: () => dispatch(submitClaimAFacilityData(oarID)),
+        submitClaimForm: () => dispatch(submitClaimAFacilityData(osID)),
         setEmailFromContributorEmail: email =>
             dispatch(updateClaimAFacilityEmail(email)),
     };

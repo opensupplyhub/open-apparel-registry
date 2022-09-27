@@ -26,15 +26,15 @@ with open(args.csv, 'r') as f:
     clusters = {}
     for row in reader:
         # rows with matching cluster_ids should be merged together
-        clusters[row['cluster_id']] = clusters.get(row['cluster_id'], []) + [row['oar_id']]
+        clusters[row['cluster_id']] = clusters.get(row['cluster_id'], []) + [row['os_id']]
 
     for cluster in clusters.values():
         # the first item in a cluster is the target facility
         target_id = cluster[0]
         for i in range(1, len(cluster)):
             # all other facilities in the cluster should be merged into the target
-            oar_id = cluster[i]
-            URL = '{}/api/facilities/merge/?target={}&merge={}'.format(args.rooturl, target_id, oar_id);
+            os_id = cluster[i]
+            URL = '{}/api/facilities/merge/?target={}&merge={}'.format(args.rooturl, target_id, os_id);
             try:
                 response = requests.post(URL, headers={
                     'Authorization': 'Token {}'.format(args.token),
@@ -43,7 +43,7 @@ with open(args.csv, 'r') as f:
 
                 if response.status_code != 200:
                     print('Status:', response.status_code, 'Content:', response.content,
-                          'Target ID:', target_id, 'Merge ID:', oar_id)
+                          'Target ID:', target_id, 'Merge ID:', os_id)
 
             except Exception as e:
                 print(e)

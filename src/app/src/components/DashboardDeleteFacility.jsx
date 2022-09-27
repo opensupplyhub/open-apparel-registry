@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import {
     clearFacilityToDelete,
-    updateFacilityToDeleteOARID,
+    updateFacilityToDeleteOSID,
     fetchFacilityToDelete,
     resetDeleteFacilityState,
     deleteFacility,
@@ -21,11 +21,11 @@ import DashboardFacilityCard from './DashboardFacilityCard';
 import DashboardDeleteFacilityControls from './DashboardDeleteFacilityControls';
 
 function DashboardDeleteFacility({
-    oarID,
+    osID,
     data,
     fetching,
     error,
-    updateOARID,
+    updateOSID,
     fetchFacility,
     clearFacility,
     resetDeleteState,
@@ -50,10 +50,10 @@ function DashboardDeleteFacility({
             />
             <div style={{ width: '100%' }}>
                 <DashboardFacilityCard
-                    updateOARID={updateOARID}
+                    updateOSID={updateOSID}
                     fetchFacility={fetchFacility}
                     clearFacility={clearFacility}
-                    oarID={oarID}
+                    osID={osID}
                     data={data}
                     fetching={fetching}
                     error={error}
@@ -72,11 +72,11 @@ DashboardDeleteFacility.defaultProps = {
 };
 
 DashboardDeleteFacility.propTypes = {
-    oarID: string.isRequired,
+    osID: string.isRequired,
     data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
-    updateOARID: func.isRequired,
+    updateOSID: func.isRequired,
     fetchFacility: func.isRequired,
     clearFacility: func.isRequired,
     resetDeleteState: func.isRequired,
@@ -88,12 +88,12 @@ DashboardDeleteFacility.propTypes = {
 
 function mapStateToProps({
     deleteFacility: {
-        facility: { oarID, data, fetching, error },
+        facility: { osID, data, fetching, error },
         delete: { fetching: deletingFacility, error: errorDeletingFacility },
     },
 }) {
     return {
-        oarID,
+        osID,
         data,
         fetching,
         error,
@@ -104,8 +104,8 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateOARID: e =>
-            dispatch(updateFacilityToDeleteOARID(getValueFromEvent(e))),
+        updateOSID: e =>
+            dispatch(updateFacilityToDeleteOSID(getValueFromEvent(e))),
         clearFacility: () => dispatch(clearFacilityToDelete()),
         fetchFacility: () => dispatch(fetchFacilityToDelete()),
         resetDeleteState: () => dispatch(resetDeleteFacilityState()),

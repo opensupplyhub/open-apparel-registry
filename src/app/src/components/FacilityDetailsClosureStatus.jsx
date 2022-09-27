@@ -42,7 +42,7 @@ const styles = theme =>
 
 const FacilityDetailClosureStatus = ({ data, clearFacility, classes }) => {
     const report = get(data, 'properties.activity_reports[0]');
-    const newOarId = get(data, 'properties.new_oar_id');
+    const newOsId = get(data, 'properties.new_os_id');
     const isClosed = get(data, 'properties.is_closed');
     const isPending = report?.status === 'PENDING';
 
@@ -55,13 +55,13 @@ const FacilityDetailClosureStatus = ({ data, clearFacility, classes }) => {
                 This facility may be {report.closure_state.toLowerCase()}
             </Typography>
         );
-    } else if (isClosed && !!newOarId) {
+    } else if (isClosed && !!newOsId) {
         primaryText = (
             <Typography className={classes.text} variant="subheading">
                 This facility has moved to{' '}
                 <Link
                     to={{
-                        pathname: makeFacilityDetailLink(newOarId),
+                        pathname: makeFacilityDetailLink(newOsId),
                         state: {
                             panMapToFacilityDetails: true,
                         },
@@ -69,7 +69,7 @@ const FacilityDetailClosureStatus = ({ data, clearFacility, classes }) => {
                     className={classes.text}
                     onClick={() => clearFacility()}
                 >
-                    {newOarId}
+                    {newOsId}
                 </Link>
             </Typography>
         );

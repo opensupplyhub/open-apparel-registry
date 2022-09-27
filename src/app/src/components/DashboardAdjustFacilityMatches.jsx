@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import {
     clearFacilityToAdjust,
-    updateFacilityToAdjustOARID,
+    updateFacilityToAdjustOSID,
     fetchFacilityToAdjust,
     resetAdjustFacilityState,
     splitFacilityMatch,
@@ -22,11 +22,11 @@ import DashboardFacilityCard from './DashboardFacilityCard';
 import DashboardAdjustMatchCard from './DashboardAdjustMatchCard';
 
 function DashboardAdjustFacilityMatches({
-    oarID,
+    osID,
     data,
     fetching,
     error,
-    updateOARID,
+    updateOSID,
     clearFacility,
     fetchFacility,
     fetchFacilityOnEnterKeyPress,
@@ -44,10 +44,10 @@ function DashboardAdjustFacilityMatches({
     return (
         <div style={{ width: '100%', display: 'flex' }}>
             <DashboardFacilityCard
-                updateOARID={updateOARID}
+                updateOSID={updateOSID}
                 fetchFacility={fetchFacility}
                 clearFacility={clearFacility}
-                oarID={oarID}
+                osID={osID}
                 data={data}
                 fetching={fetching}
                 error={error}
@@ -75,19 +75,19 @@ DashboardAdjustFacilityMatches.defaultProps = {
 };
 
 DashboardAdjustFacilityMatches.propTypes = {
-    oarID: string.isRequired,
+    osID: string.isRequired,
     data: facilityDetailsPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
     adjustData: arrayOf(
         shape({
             match_id: number.isRequired,
-            new_oar_id: string.isRequired,
+            new_os_id: string.isRequired,
         }),
     ).isRequired,
     adjusting: bool.isRequired,
     errorAdjusting: arrayOf(string),
-    updateOARID: func.isRequired,
+    updateOSID: func.isRequired,
     clearFacility: func.isRequired,
     fetchFacility: func.isRequired,
     fetchFacilityOnEnterKeyPress: func.isRequired,
@@ -98,7 +98,7 @@ DashboardAdjustFacilityMatches.propTypes = {
 
 function mapStateToProps({
     adjustFacilityMatches: {
-        facility: { oarID, data, fetching, error },
+        facility: { osID, data, fetching, error },
         adjustFacilities: {
             data: adjustData,
             fetching: adjusting,
@@ -107,7 +107,7 @@ function mapStateToProps({
     },
 }) {
     return {
-        oarID,
+        osID,
         data,
         fetching,
         error,
@@ -119,8 +119,8 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateOARID: e =>
-            dispatch(updateFacilityToAdjustOARID(getValueFromEvent(e))),
+        updateOSID: e =>
+            dispatch(updateFacilityToAdjustOSID(getValueFromEvent(e))),
         clearFacility: () => dispatch(clearFacilityToAdjust()),
         fetchFacility: () => dispatch(fetchFacilityToAdjust()),
         fetchFacilityOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(

@@ -54,7 +54,7 @@ const styles = Object.freeze({
         alignItems: 'center',
         width: '100%',
     }),
-    oarIDStyles: Object.freeze({
+    osIDStyles: Object.freeze({
         fontSize: '18px',
     }),
     errorStyles: Object.freeze({
@@ -85,16 +85,16 @@ function MoveMatchDialog({
     clearFacility,
     moveMatch,
 }) {
-    const [oarID, updateOARID] = useState('');
+    const [osID, updateOSID] = useState('');
     const onClose = () => {
-        updateOARID('');
+        updateOSID('');
         clearFacility();
         handleClose();
     };
 
-    const handleFetchFacility = () => fetchFacility(oarID);
+    const handleFetchFacility = () => fetchFacility(osID);
     const handleMoveMatch = () => {
-        moveMatch({ oarID, matchID: matchToMove.match_id });
+        moveMatch({ osID, matchID: matchToMove.match_id });
         onClose();
     };
     const fetchOnEnter = ({ key }) => {
@@ -117,16 +117,16 @@ function MoveMatchDialog({
                 <CardActions style={styles.cardActionsStyles}>
                     <TextField
                         variant="outlined"
-                        onChange={e => updateOARID(getValueFromEvent(e))}
-                        value={oarID}
-                        placeholder="Enter an OS Hub ID"
+                        onChange={e => updateOSID(getValueFromEvent(e))}
+                        value={osID}
+                        placeholder="Enter an OS ID"
                         onKeyPress={fetchOnEnter}
                     />
                     <Button
                         onClick={handleFetchFacility}
                         variant="contained"
                         color="primary"
-                        disabled={fetching || !oarID}
+                        disabled={fetching || !osID}
                     >
                         Search
                     </Button>
@@ -173,10 +173,10 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchFacility: oarID => dispatch(fetchFacilityToTransfer(oarID)),
+        fetchFacility: osID => dispatch(fetchFacilityToTransfer(osID)),
         clearFacility: () => dispatch(clearFacilityToTransfer()),
-        moveMatch: ({ oarID, matchID }) =>
-            dispatch(transferFacilityMatch({ oarID, matchID })),
+        moveMatch: ({ osID, matchID }) =>
+            dispatch(transferFacilityMatch({ osID, matchID })),
     };
 }
 

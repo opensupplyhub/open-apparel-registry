@@ -12,10 +12,10 @@ import { FACILITIES_REQUEST_PAGE_SIZE } from '../util/constants';
 import {
     logErrorAndDispatchFailure,
     makeGetFacilitiesURLWithQueryString,
-    makeGetFacilityByOARIdURL,
+    makeGetFacilityByOSIdURL,
     makeFacilityDetailLink,
     createQueryStringFromSearchFilters,
-    makeGetFacilityByOARIdURLWithContributorId,
+    makeGetFacilityByOSIdURLWithContributorId,
 } from '../util/util';
 
 import { toggleFilterModal } from './ui';
@@ -140,30 +140,30 @@ export function fetchNextPageOfFacilities() {
 }
 
 export function fetchSingleFacility(
-    oarID = null,
+    osID = null,
     embed = 0,
     contributors = null,
 ) {
     return dispatch => {
         dispatch(startFetchSingleFacility());
 
-        if (!oarID) {
+        if (!osID) {
             return dispatch(
                 logErrorAndDispatchFailure(
                     null,
-                    'No OS Hub ID was provided',
+                    'No OS ID was provided',
                     failFetchSingleFacility,
                 ),
             );
         }
 
         const fetchUrl = embed
-            ? makeGetFacilityByOARIdURLWithContributorId(
-                  oarID,
+            ? makeGetFacilityByOSIdURLWithContributorId(
+                  osID,
                   embed,
                   contributors[0].value,
               )
-            : makeGetFacilityByOARIdURL(oarID);
+            : makeGetFacilityByOSIdURL(osID);
 
         return apiRequest
             .get(fetchUrl)

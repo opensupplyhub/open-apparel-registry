@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import {
     clearUpdateLocationFacility,
     fetchUpdateLocationFacility,
-    updateUpdateLocationFacilityOARID,
+    updateUpdateLocationFacilityOSID,
     updateUpdateLocationLat,
     updateUpdateLocationLng,
     updateFacilityLocation,
@@ -29,14 +29,14 @@ import DashboardUpdateFacilityLocationCard from './DashboardUpdateFacilityLocati
 import DashboardUpdateFacilityLocationControls from './DashboardUpdateFacilityLocationControls';
 
 function DashboardUpdateFacilityLocation({
-    targetOARID,
+    targetOSID,
     targetData,
     targetFetching,
     targetError,
     clearTargetFacility,
     fetchTargetFacility,
     fetchTargetFacilityOnEnterKeyPress,
-    updateTargetOARID,
+    updateTargetOSID,
     newLocation,
     notes,
     updateLat,
@@ -78,10 +78,10 @@ function DashboardUpdateFacilityLocation({
             />
             <div style={{ width: '100%', display: 'flex' }}>
                 <DashboardFacilityCard
-                    updateOARID={updateTargetOARID}
+                    updateOSID={updateTargetOSID}
                     fetchFacility={fetchTargetFacility}
                     clearFacility={clearTargetFacility}
-                    oarID={targetOARID}
+                    osID={targetOSID}
                     data={targetData}
                     fetching={targetFetching}
                     error={targetError}
@@ -113,7 +113,7 @@ DashboardUpdateFacilityLocation.defaultProps = {
 };
 
 DashboardUpdateFacilityLocation.propTypes = {
-    targetOARID: string.isRequired,
+    targetOSID: string.isRequired,
     targetData: facilityDetailsPropType,
     targetFetching: bool.isRequired,
     targetError: arrayOf(string),
@@ -130,7 +130,7 @@ DashboardUpdateFacilityLocation.propTypes = {
 
 function mapStateToProps({
     updateFacilityLocation: {
-        oarID: targetOARID,
+        osID: targetOSID,
         data: targetData,
         fetching: targetFetching,
         error: targetError,
@@ -142,7 +142,7 @@ function mapStateToProps({
     },
 }) {
     return {
-        targetOARID,
+        targetOSID,
         targetData,
         targetFetching,
         targetError,
@@ -162,8 +162,8 @@ function mapDispatchToProps(dispatch) {
         fetchTargetFacilityOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
             () => dispatch(fetchUpdateLocationFacility()),
         ),
-        updateTargetOARID: e =>
-            dispatch(updateUpdateLocationFacilityOARID(getValueFromEvent(e))),
+        updateTargetOSID: e =>
+            dispatch(updateUpdateLocationFacilityOSID(getValueFromEvent(e))),
         updateLat: e => dispatch(updateUpdateLocationLat(getValueFromEvent(e))),
         updateLng: e => dispatch(updateUpdateLocationLng(getValueFromEvent(e))),
         updateNotes: e =>

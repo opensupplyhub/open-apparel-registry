@@ -7,7 +7,7 @@ import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
-    makeGetFacilityByOARIdURL,
+    makeGetFacilityByOSIdURL,
     makeClaimFacilityAPIURL,
     claimAFacilityFormIsValid,
 } from '../util/util';
@@ -25,12 +25,12 @@ export const clearClaimFacilityDataAndForm = createAction(
     'CLEAR_CLAIM_FACILITY_DATA_AND_FORM',
 );
 
-export function fetchClaimFacilityData(oarID) {
+export function fetchClaimFacilityData(osID) {
     return dispatch => {
         dispatch(startFetchClaimFacilityData());
 
         return apiRequest
-            .get(makeGetFacilityByOARIdURL(oarID))
+            .get(makeGetFacilityByOSIdURL(osID))
             .then(({ data }) => dispatch(completeFetchClaimFacilityData(data)))
             .catch(err =>
                 dispatch(
@@ -88,7 +88,7 @@ export const completeSubmitClaimAFacilityData = createAction(
     'COMPLETE_SUBMIT_CLAIM_A_FACILITY_DATA',
 );
 
-export function submitClaimAFacilityData(oarID) {
+export function submitClaimAFacilityData(osID) {
     return (dispatch, getState) => {
         const {
             claimFacility: {
@@ -115,7 +115,7 @@ export function submitClaimAFacilityData(oarID) {
         dispatch(startSubmitClaimAFacilityData());
 
         return apiRequest
-            .post(makeClaimFacilityAPIURL(oarID), postData)
+            .post(makeClaimFacilityAPIURL(osID), postData)
             .then(({ data }) =>
                 dispatch(completeSubmitClaimAFacilityData(data)),
             )

@@ -77,24 +77,24 @@ function useUpdateTileURL(
     return vectorTileURLWithQueryParams;
 }
 
-const useUpdateTileLayerWithMarkerForSelectedOARID = (
-    oarID,
+const useUpdateTileLayerWithMarkerForSelectedOSID = (
+    osID,
     selectedMarkerIcon,
     otherFacilitiesAtPoint = [],
 ) => {
     const tileLayerRef = useRef(null);
 
     const [currentSelectedMarkerID, setCurrentSelectedMarkerID] = useState(
-        oarID,
+        osID,
     );
 
     useEffect(() => {
-        const oarIDsAtSamePoint = map(otherFacilitiesAtPoint, f =>
-            get(f, 'properties.oar_id', null),
+        const osIDsAtSamePoint = map(otherFacilitiesAtPoint, f =>
+            get(f, 'properties.os_id', null),
         );
-        const oarIDForSharedMarker = get(
+        const osIDForSharedMarker = get(
             otherFacilitiesAtPoint,
-            '[0].properties.visibleMarkerOARID',
+            '[0].properties.visibleMarkerOSID',
             null,
         );
 
@@ -102,27 +102,27 @@ const useUpdateTileLayerWithMarkerForSelectedOARID = (
 
         if (!tileLayer) {
             noop();
-        } else if (!oarID && currentSelectedMarkerID) {
+        } else if (!osID && currentSelectedMarkerID) {
             tileLayer.setFeatureStyle(currentSelectedMarkerID, {
                 icon: unselectedMarkerIcon,
             });
 
             setCurrentSelectedMarkerID(null);
         } else if (
-            oarIDsAtSamePoint.length < 2 &&
-            oarID !== currentSelectedMarkerID
+            osIDsAtSamePoint.length < 2 &&
+            osID !== currentSelectedMarkerID
         ) {
             tileLayer.setFeatureStyle(currentSelectedMarkerID, {
                 icon: unselectedMarkerIcon,
             });
 
-            tileLayer.setFeatureStyle(oarID, {
+            tileLayer.setFeatureStyle(osID, {
                 icon: selectedMarkerIcon,
             });
 
-            setCurrentSelectedMarkerID(oarID);
+            setCurrentSelectedMarkerID(osID);
         } else if (
-            intersection(oarIDsAtSamePoint, [oarID, currentSelectedMarkerID])
+            intersection(osIDsAtSamePoint, [osID, currentSelectedMarkerID])
                 .length
         ) {
             if (currentSelectedMarkerID) {
@@ -131,18 +131,18 @@ const useUpdateTileLayerWithMarkerForSelectedOARID = (
                 });
             }
 
-            if (oarIDForSharedMarker) {
-                tileLayer.setFeatureStyle(oarIDForSharedMarker, {
+            if (osIDForSharedMarker) {
+                tileLayer.setFeatureStyle(osIDForSharedMarker, {
                     icon: selectedMarkerIcon,
                 });
 
-                setCurrentSelectedMarkerID(oarIDForSharedMarker);
+                setCurrentSelectedMarkerID(osIDForSharedMarker);
             }
         }
         /* eslint-disable react-hooks/exhaustive-deps */
         // Disabled to prevent rerendering due to marker changes
     }, [
-        oarID,
+        osID,
         currentSelectedMarkerID,
         setCurrentSelectedMarkerID,
         tileLayerRef,
@@ -195,10 +195,10 @@ const findFacilitiesAtSamePointFromVectorTile = (data, tileLayerRef = null) => {
         }),
         f => ({
             properties: {
-                oar_id: get(f, 'feature.properties.id', null),
+                os_id: get(f, 'feature.properties.id', null),
                 name: get(f, 'feature.properties.name', null),
                 address: get(f, 'feature.properties.address', null),
-                visibleMarkerOARID: get(clickedFeature, 'properties.id', null),
+                visibleMarkerOSID: get(clickedFeature, 'properties.id', null),
             },
         }),
     );
@@ -211,7 +211,7 @@ const VectorTileFacilitiesLayer = ({
     fetching,
     resetButtonClickCount,
     tileCacheKey,
-    oarID,
+    osID,
     minZoom,
     maxZoom,
     iconColor,
@@ -243,8 +243,8 @@ const VectorTileFacilitiesLayer = ({
         handleFacilityClick(facilityID);
     };
 
-    const vectorTileLayerRef = useUpdateTileLayerWithMarkerForSelectedOARID(
-        oarID,
+    const vectorTileLayerRef = useUpdateTileLayerWithMarkerForSelectedOSID(
+        osID,
         selectedMarkerIcon,
         multipleFacilitiesAtPoint,
     );
@@ -305,7 +305,7 @@ const VectorTileFacilitiesLayer = ({
 
                         return {
                             icon:
-                                oarID && facilityID === oarID
+                                osID && facilityID === osID
                                     ? selectedMarkerIcon
                                     : unselectedMarkerIcon,
                         };
@@ -333,7 +333,7 @@ const VectorTileFacilitiesLayer = ({
                                 setMultipleFacilitiesAtPointPosition(null)
                             }
                             selectFacilityOnClick={selectFacilityOnClick}
-                            selectedFacilityID={oarID}
+                            selectedFacilityID={osID}
                         />
                     </Popup>
                 )}
@@ -342,7 +342,7 @@ const VectorTileFacilitiesLayer = ({
 };
 
 VectorTileFacilitiesLayer.defaultProps = {
-    oarID: null,
+    osID: null,
 };
 
 VectorTileFacilitiesLayer.propTypes = {
@@ -351,7 +351,7 @@ VectorTileFacilitiesLayer.propTypes = {
     tileCacheKey: string.isRequired,
     fetching: bool.isRequired,
     resetButtonClickCount: number.isRequired,
-    oarID: string,
+    osID: string,
 };
 
 function mapStateToProps({

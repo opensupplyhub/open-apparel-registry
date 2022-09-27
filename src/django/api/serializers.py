@@ -597,7 +597,7 @@ def get_facility_name(serializer, facility):
 
 
 class FacilitySerializer(GeoFeatureModelSerializer):
-    oar_id = SerializerMethodField()
+    os_id = SerializerMethodField()
     country_name = SerializerMethodField()
     contributors = SerializerMethodField()
     name = SerializerMethodField()
@@ -610,7 +610,7 @@ class FacilitySerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
-                  'oar_id', 'country_name', 'contributors',
+                  'os_id', 'country_name', 'contributors',
                   'has_approved_claim', 'ppe_product_types',
                   'ppe_contact_phone', 'ppe_contact_email',
                   'ppe_website', 'is_closed', 'contributor_fields',
@@ -639,8 +639,8 @@ class FacilitySerializer(GeoFeatureModelSerializer):
                 return claim.facility_address
         return facility.address
 
-    # Added to ensure including the OAR ID in the geojson properties map
-    def get_oar_id(self, facility):
+    # Added to ensure including the OS ID in the geojson properties map
+    def get_os_id(self, facility):
         return facility.id
 
     def get_country_name(self, facility):
@@ -805,7 +805,7 @@ class FacilityDownloadSerializer(Serializer):
 
     def get_headers(self):
         headers = [
-            'oar_id',
+            'os_id',
             'contribution_date',
             'name',
             'address',
@@ -1081,11 +1081,11 @@ class FacilityDetailsSerializer(FacilitySerializer):
     class Meta:
         model = Facility
         fields = ('id', 'name', 'address', 'country_code', 'location',
-                  'oar_id', 'other_names', 'other_addresses', 'contributors',
+                  'os_id', 'other_names', 'other_addresses', 'contributors',
                   'country_name', 'claim_info', 'other_locations',
                   'ppe_product_types', 'ppe_contact_phone',
                   'ppe_contact_email', 'ppe_website',  'is_closed',
-                  'activity_reports', 'contributor_fields', 'new_oar_id',
+                  'activity_reports', 'contributor_fields', 'new_os_id',
                   'has_inexact_coordinates', 'extended_fields', 'created_from',
                   'sector')
         geo_field = 'location'
@@ -1372,7 +1372,7 @@ class FacilityCreateQueryParamsSerializer(Serializer):
 
 class FacilityClaimSerializer(ModelSerializer):
     facility_name = SerializerMethodField()
-    oar_id = SerializerMethodField()
+    os_id = SerializerMethodField()
     contributor_name = SerializerMethodField()
     contributor_id = SerializerMethodField()
     facility_address = SerializerMethodField()
@@ -1380,14 +1380,14 @@ class FacilityClaimSerializer(ModelSerializer):
 
     class Meta:
         model = FacilityClaim
-        fields = ('id', 'created_at', 'updated_at', 'contributor_id', 'oar_id',
+        fields = ('id', 'created_at', 'updated_at', 'contributor_id', 'os_id',
                   'contributor_name', 'facility_name', 'facility_address',
                   'facility_country_name', 'status')
 
     def get_facility_name(self, claim):
         return claim.facility.name
 
-    def get_oar_id(self, claim):
+    def get_os_id(self, claim):
         return claim.facility_id
 
     def get_contributor_name(self, claim):
@@ -1526,7 +1526,7 @@ class ApprovedFacilityClaimSerializer(ModelSerializer):
 
 
 class FacilityMatchSerializer(ModelSerializer):
-    oar_id = SerializerMethodField()
+    os_id = SerializerMethodField()
     name = SerializerMethodField()
     address = SerializerMethodField()
     location = SerializerMethodField()
@@ -1534,10 +1534,10 @@ class FacilityMatchSerializer(ModelSerializer):
     class Meta:
         model = FacilityMatch
         fields = ('id', 'status', 'confidence', 'results',
-                  'oar_id', 'name', 'address', 'location',
+                  'os_id', 'name', 'address', 'location',
                   'is_active')
 
-    def get_oar_id(self, match):
+    def get_os_id(self, match):
         return match.facility.id
 
     def get_name(self, match):
@@ -1597,7 +1597,7 @@ class FacilityListItemSerializer(ModelSerializer):
         [lng, lat] = facility_list_item.facility.location
 
         return {
-            "oar_id": facility_list_item.facility.id,
+            "os_id": facility_list_item.facility.id,
             "address": facility_list_item.facility.address,
             "name": facility_list_item.facility.name,
             "created_from_id": facility_list_item.facility.created_from.id,

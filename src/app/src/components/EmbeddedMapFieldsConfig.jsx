@@ -346,7 +346,7 @@ function EmbeddedMapFieldsConfig({
                                         }}
                                     />
                                     <Tooltip
-                                        title="Choose which visible fields to include in text search for your map. Facility name, address, and OS Hub ID will always be included."
+                                        title="Choose which visible fields to include in text search for your map. Facility name, address, and OS ID will always be included."
                                         classes={{ tooltip: classes.tooltip }}
                                     >
                                         <FormLabel

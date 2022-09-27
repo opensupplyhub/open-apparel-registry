@@ -130,8 +130,8 @@ export const makeRejectDashboardActivityReportURL = id =>
     `/api/facility-activity-reports/${id}/reject/`;
 export const makeConfirmDashboardActivityReportURL = id =>
     `/api/facility-activity-reports/${id}/approve/`;
-export const makeCreateDashboardActivityReportURL = oarId =>
-    `/api/facilities/${oarId}/report/`;
+export const makeCreateDashboardActivityReportURL = osId =>
+    `/api/facilities/${osId}/report/`;
 
 export const makeAPITokenURL = () => '/api-token-auth/';
 
@@ -147,28 +147,26 @@ export const makeGetNumberOfWorkersURL = () => '/api/workers-ranges/';
 export const makeGetNativeLanguageName = () => '/api/native_language_name/';
 
 export const makeGetFacilitiesURL = () => '/api/facilities/';
-export const makeGetFacilityByOARIdURL = oarId => `/api/facilities/${oarId}/`;
-export const makeGetFacilityByOARIdURLWithContributorId = (
-    oarId,
+export const makeGetFacilityByOSIdURL = osId => `/api/facilities/${osId}/`;
+export const makeGetFacilityByOSIdURLWithContributorId = (
+    osId,
     embed,
     contributorId,
-) => `/api/facilities/${oarId}/?embed=${embed}&contributor=${contributorId}`;
+) => `/api/facilities/${osId}/?embed=${embed}&contributor=${contributorId}`;
 export const makeGetFacilitiesURLWithQueryString = (qs, pageSize) =>
     `/api/facilities/?${qs}&pageSize=${pageSize}`;
 export const makeGetFacilitiesDownloadURLWithQueryString = (qs, pageSize) =>
     `/api/facilities-downloads/?${qs}&pageSize=${pageSize}`;
-export const makeClaimFacilityAPIURL = oarId =>
-    `/api/facilities/${oarId}/claim/`;
-export const makeSplitFacilityAPIURL = oarID =>
-    `/api/facilities/${oarID}/split/`;
-export const makeTransferFacilityAPIURL = oarID =>
-    `/api/facilities/${oarID}/move/`;
-export const makePromoteFacilityMatchAPIURL = oarID =>
-    `/api/facilities/${oarID}/promote/`;
-export const makeLinkFacilityAPIURL = oarID => `/api/facilities/${oarID}/link/`;
+export const makeClaimFacilityAPIURL = osId => `/api/facilities/${osId}/claim/`;
+export const makeSplitFacilityAPIURL = osID => `/api/facilities/${osID}/split/`;
+export const makeTransferFacilityAPIURL = osID =>
+    `/api/facilities/${osID}/move/`;
+export const makePromoteFacilityMatchAPIURL = osID =>
+    `/api/facilities/${osID}/promote/`;
+export const makeLinkFacilityAPIURL = osID => `/api/facilities/${osID}/link/`;
 
-export const makeMergeTwoFacilitiesAPIURL = (targetOARID, toMergeOARID) =>
-    `/api/facilities/merge/?target=${targetOARID}&merge=${toMergeOARID}`;
+export const makeMergeTwoFacilitiesAPIURL = (targetOSID, toMergeOSID) =>
+    `/api/facilities/merge/?target=${targetOSID}&merge=${toMergeOSID}`;
 
 export const makeGetFacilitiesCountURL = () => '/api/facilities/count/';
 
@@ -205,8 +203,8 @@ export const makeGetClientInfoURL = () => {
 export const makeLogDownloadUrl = (path, recordCount) =>
     `/api/log-download/?path=${path}&record_count=${recordCount}`;
 
-export const makeUpdateFacilityLocationURL = oarID =>
-    `/api/facilities/${oarID}/update-location/`;
+export const makeUpdateFacilityLocationURL = osID =>
+    `/api/facilities/${osID}/update-location/`;
 
 export const makeEmbedConfigURL = id =>
     `/api/embed-configs/${id ? `${id}/` : ''}`;
@@ -579,11 +577,10 @@ export const mapDjangoChoiceTuplesValueToSelectOptions = data =>
 
 export const allListsAreEmpty = (...lists) => negate(some)(lists, size);
 
-export const makeFacilityDetailLink = (oarID, search) =>
-    `${facilitiesRoute}/${oarID}${search || ''}`;
+export const makeFacilityDetailLink = (osID, search) =>
+    `${facilitiesRoute}/${osID}${search || ''}`;
 
-export const makeClaimFacilityLink = oarID =>
-    `${facilitiesRoute}/${oarID}/claim`;
+export const makeClaimFacilityLink = osID => `${facilitiesRoute}/${osID}/claim`;
 
 export const makeApprovedClaimDetailsLink = claimID => `/claimed/${claimID}`;
 
@@ -634,14 +631,14 @@ export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (
 export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) =>
     Object.freeze([page * rowsPerPage, (page + 1) * rowsPerPage]);
 
-export const makeReportADataIssueEmailLink = oarId =>
-    `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${oarId}`;
+export const makeReportADataIssueEmailLink = osId =>
+    `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${osId}`;
 
-export const makeDisputeClaimEmailLink = oarId =>
-    `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${oarId}`;
+export const makeDisputeClaimEmailLink = osId =>
+    `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${osId}`;
 
-export const makeReportADuplicateEmailLink = oarId =>
-    `mailto:info@openapparel.org?subject=Reporting ID ${oarId} as a duplicate facility`;
+export const makeReportADuplicateEmailLink = osId =>
+    `mailto:info@openapparel.org?subject=Reporting ID ${osId} as a duplicate facility`;
 
 export const makeFeatureCollectionFromSingleFeature = feature =>
     Object.freeze({

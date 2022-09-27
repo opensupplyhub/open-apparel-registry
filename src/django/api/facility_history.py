@@ -236,18 +236,18 @@ def maybe_get_move_action_time_from_processing_results(item):
     return next(iter(move_processing_times), None)
 
 
-def processing_results_has_split_action_for_oar_id(list_item, facility_id):
+def processing_results_has_split_action_for_os_id(list_item, facility_id):
     return facility_id in [
-        r.get('previous_facility_oar_id', None)
+        r.get('previous_facility_os_id', None)
         for r
         in list_item.processing_results
         if r.get('action', None) == ProcessingAction.SPLIT_FACILITY
     ]
 
 
-def processing_results_has_move_action_for_oar_id(list_item, facility_id):
+def processing_results_has_move_action_for_os_id(list_item, facility_id):
     return facility_id in [
-        r.get('previous_facility_oar_id', None)
+        r.get('previous_facility_os_id', None)
         for r
         in list_item.processing_results
         if r.get('action', None) == ProcessingAction.MOVE_FACILITY
@@ -344,7 +344,7 @@ def create_facility_history_list(entries, facility_id, user=None):
             processing_results=F('facility_list_item__processing_results'))
         .extra(
             where=['processing_results @> \'[{"action": "split_facility"}]\''])
-        if processing_results_has_split_action_for_oar_id(
+        if processing_results_has_split_action_for_os_id(
             m.facility_list_item,
             facility_id,
         )
@@ -373,7 +373,7 @@ def create_facility_history_list(entries, facility_id, user=None):
             processing_results=F('facility_list_item__processing_results'))
         .extra(
             where=['processing_results @> \'[{"action": "move_facility"}]\''])
-        if processing_results_has_move_action_for_oar_id(
+        if processing_results_has_move_action_for_os_id(
             m.facility_list_item,
             facility_id,
         )

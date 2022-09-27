@@ -6,7 +6,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from api.helpers import clean
-from api.oar_id import make_oar_id
+from api.os_id import make_os_id
 
 
 # Taken from https://stackoverflow.com/a/312464
@@ -77,13 +77,13 @@ class Command(BaseCommand):
             text = re.sub('\\\\', '', text)
             return text
 
-        oar_ids = set()
+        os_ids = set()
 
-        def new_oar_id(country_code):
-            new_id = make_oar_id(country_code)
-            while new_id in oar_ids:
-                new_id = make_oar_id(country_code)
-            oar_ids.add(new_id)
+        def new_os_id(country_code):
+            new_id = make_os_id(country_code)
+            while new_id in os_ids:
+                new_id = make_os_id(country_code)
+            os_ids.add(new_id)
             return new_id
 
         with open(csv_file) as f:
@@ -94,7 +94,7 @@ class Command(BaseCommand):
                     sector = '{Apparel}'
                 rows.append(
                     {
-                        'oar_id': new_oar_id(row['country_code']),
+                        'os_id': new_os_id(row['country_code']),
                         'country': fix_characters(row['country_code']),
                         'name': fix_characters(row['name']),
                         'address': fix_characters(row['address']),
@@ -113,7 +113,7 @@ class Command(BaseCommand):
             max_file_row = len(rows) - 1
             for _ in range(len(rows), row_count):
                 new_row = rows[random.randint(0, max_file_row)].copy()
-                new_row['oar_id'] = new_oar_id(new_row['country'])
+                new_row['os_id'] = new_os_id(new_row['country'])
                 new_row['name'] = shuffle_words(new_row['name'])
                 new_row['address'] = shuffle_words(new_row['address'])
                 rows.append(new_row)
@@ -172,7 +172,7 @@ class Command(BaseCommand):
                 "INSERT INTO api_facility "
                 "(id, name, address, country_code, location, created_at, "
                 "updated_at, created_from_id, has_inexact_coordinates) "
-                "VALUES ('{oar_id}', '{name}', '{address}', '{country}', "
+                "VALUES ('{os_id}', '{name}', '{address}', '{country}', "
                 "{location}, '{created_at}', '{updated_at}', "
                 "{created_from_id}, '{has_inexact_coordinates}');\n")
             facility_copy_header = (
@@ -181,7 +181,7 @@ class Command(BaseCommand):
                 "updated_at, created_from_id, has_inexact_coordinates) "
                 "FROM stdin;\n")
             facility_copy = (
-                '{oar_id}\t{name}\t{address}\t{country}\t{hexewkb}\t'
+                '{os_id}\t{name}\t{address}\t{country}\t{hexewkb}\t'
                 '{created_at}\t{updated_at}\t{created_from_id}\t'
                 '{has_inexact_coordinates}\n')
 
@@ -190,7 +190,7 @@ class Command(BaseCommand):
                 "(id, results, confidence, status, created_at, updated_at, "
                 "facility_id, facility_list_item_id, is_active) "
                 "VALUES ({match_id}, '{{}}', 98.76, 'AUTOMATIC', "
-                "'{created_at}', '{updated_at}', '{oar_id}', "
+                "'{created_at}', '{updated_at}', '{os_id}', "
                 "{list_item_id}, 't');\n"
             )
             match_copy_header = (
@@ -201,7 +201,7 @@ class Command(BaseCommand):
             )
             match_copy = (
                 '{match_id}\t{{}}\t98.76\tAUTOMATIC\t{created_at}\t'
-                '{updated_at}\t{oar_id}\t{list_item_id}\tt\n'
+                '{updated_at}\t{os_id}\t{list_item_id}\tt\n'
             )
 
             update_query = (

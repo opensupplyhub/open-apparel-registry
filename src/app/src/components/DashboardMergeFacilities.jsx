@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 
 import {
     clearMergeTargetFacility,
-    updateMergeTargetFacilityOARID,
+    updateMergeTargetFacilityOSID,
     fetchMergeTargetFacility,
     clearFacilityToMerge,
-    updateFacilityToMergeOARID,
+    updateFacilityToMergeOSID,
     fetchFacilityToMerge,
     resetMergeFacilitiesState,
     mergeFacilities,
@@ -25,19 +25,19 @@ import DashboardFacilityCard from './DashboardFacilityCard';
 import DashboardMergeFacilityControls from './DashboardMergeFacilityControls';
 
 function DashboardMergeFacilities({
-    targetOARID,
+    targetOSID,
     targetData,
     targetFetching,
     targetError,
-    toMergeOARID,
+    toMergeOSID,
     toMergeData,
     toMergeFetching,
     toMergeError,
-    updateTargetOARID,
+    updateTargetOSID,
     clearTargetFacility,
     fetchTargetFacility,
     fetchTargetFacilityOnEnterKeyPress,
-    updateToMergeOARID,
+    updateToMergeOSID,
     clearToMergeFacility,
     fetchToMergeFacility,
     fetchToMergeFacilityOnEnterKeyPress,
@@ -69,10 +69,10 @@ function DashboardMergeFacilities({
             />
             <div style={{ width: '100%', display: 'flex' }}>
                 <DashboardFacilityCard
-                    updateOARID={updateTargetOARID}
+                    updateOSID={updateTargetOSID}
                     fetchFacility={fetchTargetFacility}
                     clearFacility={clearTargetFacility}
-                    oarID={targetOARID}
+                    osID={targetOSID}
                     data={targetData}
                     fetching={targetFetching}
                     error={targetError}
@@ -80,10 +80,10 @@ function DashboardMergeFacilities({
                     title="Target facility for merge"
                 />
                 <DashboardFacilityCard
-                    updateOARID={updateToMergeOARID}
+                    updateOSID={updateToMergeOSID}
                     fetchFacility={fetchToMergeFacility}
                     clearFacility={clearToMergeFacility}
-                    oarID={toMergeOARID}
+                    osID={toMergeOSID}
                     data={toMergeData}
                     fetching={toMergeFetching}
                     error={toMergeError}
@@ -104,19 +104,19 @@ DashboardMergeFacilities.defaultProps = {
 };
 
 DashboardMergeFacilities.propTypes = {
-    targetOARID: string.isRequired,
+    targetOSID: string.isRequired,
     targetData: facilityDetailsPropType,
     targetFetching: bool.isRequired,
     targetError: arrayOf(string),
-    toMergeOARID: string.isRequired,
+    toMergeOSID: string.isRequired,
     toMergeData: facilityDetailsPropType,
     toMergeFetching: bool.isRequired,
     toMergeError: arrayOf(string),
-    updateTargetOARID: func.isRequired,
+    updateTargetOSID: func.isRequired,
     clearTargetFacility: func.isRequired,
     fetchTargetFacility: func.isRequired,
     fetchTargetFacilityOnEnterKeyPress: func.isRequired,
-    updateToMergeOARID: func.isRequired,
+    updateToMergeOSID: func.isRequired,
     clearToMergeFacility: func.isRequired,
     fetchToMergeFacility: func.isRequired,
     fetchToMergeFacilityOnEnterKeyPress: func.isRequired,
@@ -130,13 +130,13 @@ DashboardMergeFacilities.propTypes = {
 function mapStateToProps({
     mergeFacilities: {
         targetFacility: {
-            oarID: targetOARID,
+            osID: targetOSID,
             data: targetData,
             fetching: targetFetching,
             error: targetError,
         },
         facilityToMerge: {
-            oarID: toMergeOARID,
+            osID: toMergeOSID,
             data: toMergeData,
             fetching: toMergeFetching,
             error: toMergeError,
@@ -145,11 +145,11 @@ function mapStateToProps({
     },
 }) {
     return {
-        targetOARID,
+        targetOSID,
         targetData,
         targetFetching,
         targetError,
-        toMergeOARID,
+        toMergeOSID,
         toMergeData,
         toMergeFetching,
         toMergeError,
@@ -160,15 +160,15 @@ function mapStateToProps({
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateTargetOARID: e =>
-            dispatch(updateMergeTargetFacilityOARID(getValueFromEvent(e))),
+        updateTargetOSID: e =>
+            dispatch(updateMergeTargetFacilityOSID(getValueFromEvent(e))),
         clearTargetFacility: () => dispatch(clearMergeTargetFacility()),
         fetchTargetFacility: () => dispatch(fetchMergeTargetFacility()),
         fetchTargetFacilityOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(
             () => dispatch(fetchMergeTargetFacility()),
         ),
-        updateToMergeOARID: e =>
-            dispatch(updateFacilityToMergeOARID(getValueFromEvent(e))),
+        updateToMergeOSID: e =>
+            dispatch(updateFacilityToMergeOSID(getValueFromEvent(e))),
         clearToMergeFacility: () => dispatch(clearFacilityToMerge()),
         fetchToMergeFacility: () => dispatch(fetchFacilityToMerge()),
         fetchToMergeFacilityOnEnterKeyPress: makeSubmitFormOnEnterKeyPressFunction(

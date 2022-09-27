@@ -116,7 +116,7 @@ function FacilityListItemsConfirmationTableRow({
                 </TableCell>
             </TableRow>
             {item.matches.map((
-                { id, status, address, oar_id, name }, // eslint-disable-line camelcase
+                { id, status, address, os_id, name }, // eslint-disable-line camelcase
             ) => (
                 <TableRow
                     hover={false}
@@ -132,7 +132,7 @@ function FacilityListItemsConfirmationTableRow({
                     >
                         <CellElement
                             item={name}
-                            linkURL={makeFacilityDetailLink(oar_id)}
+                            linkURL={makeFacilityDetailLink(os_id)}
                         />
                     </TableCell>
                     <TableCell

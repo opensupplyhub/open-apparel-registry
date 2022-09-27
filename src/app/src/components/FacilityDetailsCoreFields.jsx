@@ -79,7 +79,7 @@ const coreFieldsStyles = theme =>
 const FacilityDetailsCoreFields = ({
     classes,
     name,
-    oarId,
+    osId,
     isEmbed,
     isClaimed,
     isClosed,
@@ -102,7 +102,7 @@ const FacilityDetailsCoreFields = ({
         >
             <MenuItem onClick={handleClose}>
                 <a
-                    href={makeReportADuplicateEmailLink(oarId)}
+                    href={makeReportADuplicateEmailLink(osId)}
                     target="_blank"
                     rel="noreferrer"
                     className={classes.menuLink}
@@ -122,7 +122,7 @@ const FacilityDetailsCoreFields = ({
             </MenuItem>
             <MenuItem onClick={handleClose}>
                 <a
-                    href={makeReportADataIssueEmailLink(oarId)}
+                    href={makeReportADataIssueEmailLink(osId)}
                     target="_blank"
                     rel="noreferrer"
                     className={classes.menuLink}
@@ -139,7 +139,7 @@ const FacilityDetailsCoreFields = ({
             >
                 <MenuItem onClick={handleClose}>
                     <a
-                        href={makeDisputeClaimEmailLink(oarId)}
+                        href={makeDisputeClaimEmailLink(osId)}
                         target="_blank"
                         rel="noreferrer"
                         className={classes.menuLink}
@@ -194,7 +194,7 @@ const FacilityDetailsCoreFields = ({
                     </ShowOnly>
                 </Grid>
                 <Typography className={classes.osId}>
-                    <strong>OS ID:</strong> {oarId}
+                    <strong>OS ID:</strong> {osId}
                 </Typography>
             </div>
             <ReportFacilityStatusDialog

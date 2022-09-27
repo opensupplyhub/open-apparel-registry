@@ -176,21 +176,19 @@ export default function DashboardAdjustMatchCard({
 
     const matches = get(data, 'properties.matches', []);
 
-    const getNewOARIDFromAdjustData = ({ match_id: matchID }) =>
-        get(find(adjustData, { match_id: matchID }), 'new_oar_id', null);
+    const getNewOSIDFromAdjustData = ({ match_id: matchID }) =>
+        get(find(adjustData, { match_id: matchID }), 'new_os_id', null);
 
     const createButtonControls = match => {
-        if (getNewOARIDFromAdjustData(match)) {
+        if (getNewOSIDFromAdjustData(match)) {
             return (
                 <Link
-                    to={makeFacilityDetailLink(
-                        getNewOARIDFromAdjustData(match),
-                    )}
+                    to={makeFacilityDetailLink(getNewOSIDFromAdjustData(match))}
                     href={makeFacilityDetailLink(
-                        getNewOARIDFromAdjustData(match),
+                        getNewOSIDFromAdjustData(match),
                     )}
                 >
-                    {getNewOARIDFromAdjustData(match)}
+                    {getNewOSIDFromAdjustData(match)}
                 </Link>
             );
         }
@@ -424,7 +422,7 @@ DashboardAdjustMatchCard.propTypes = {
     adjustData: arrayOf(
         shape({
             match_id: number.isRequired,
-            new_oar_id: string.isRequired,
+            new_os_id: string.isRequired,
         }),
     ).isRequired,
     adjusting: bool.isRequired,

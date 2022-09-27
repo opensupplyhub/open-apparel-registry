@@ -253,13 +253,13 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                                     address,
                                     name,
                                     country_name: countryName,
-                                    oar_id: oarID,
+                                    os_id: osID,
                                 },
                             }) => (
-                                <Fragment key={oarID}>
+                                <Fragment key={osID}>
                                     <Divider />
                                     <ListItem
-                                        key={oarID}
+                                        key={osID}
                                         style={
                                             facilitiesTabStyles.listItemStyles
                                         }
@@ -267,13 +267,13 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                                         <Link
                                             to={{
                                                 pathname: makeFacilityDetailLink(
-                                                    oarID,
+                                                    osID,
                                                 ),
                                                 state: {
                                                     panMapToFacilityDetails: true,
                                                 },
                                             }}
-                                            href={makeFacilityDetailLink(oarID)}
+                                            href={makeFacilityDetailLink(osID)}
                                             style={
                                                 facilitiesTabStyles.linkStyles
                                             }

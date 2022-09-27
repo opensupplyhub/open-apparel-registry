@@ -414,7 +414,7 @@ class FacilityListItemsTable extends Component {
                               handleSelectRow={null}
                               hover={false}
                               newFacility
-                              oarID={item.matched_facility.oar_id}
+                              osID={item.matched_facility.os_id}
                               isRemoved={anyListItemMatchesAreInactive(item)}
                               handleRemoveItem={() =>
                                   this.handleRemoveButtonClick(item)

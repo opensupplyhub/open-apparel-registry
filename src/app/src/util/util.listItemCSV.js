@@ -15,12 +15,12 @@ export const csvHeaders = Object.freeze([
     'country_name',
     'name',
     'address',
-    'matched_facility_oar_id',
+    'matched_facility_os_id',
     'matched_facility_name',
     'matched_facility_address',
     'matched_facility_lng',
     'matched_facility_lat',
-    'potential_match_oar_id',
+    'potential_match_os_id',
     'potential_match_name',
     'potential_match_address',
     'potential_match_lng',
@@ -47,7 +47,7 @@ export const createMatchRowFromListItem = ({
         country_name,
         name,
         address,
-        get(matched_facility, 'oar_id', ''),
+        get(matched_facility, 'os_id', ''),
         get(matched_facility, 'name', ''),
         get(matched_facility, 'address', ''),
         get(matched_facility, 'location.lng', ''),
@@ -55,13 +55,13 @@ export const createMatchRowFromListItem = ({
     ]);
 
 export const formatPotentialMatchData = ({
-    oar_id,
+    os_id,
     name,
     address,
     confidence,
     status,
     location: { lng, lat },
-}) => Object.freeze([oar_id, name, address, lng, lat, confidence, status]);
+}) => Object.freeze([os_id, name, address, lng, lat, confidence, status]);
 
 export const listItemReducer = (acc, next) => {
     if (isEmpty(next.matches)) {

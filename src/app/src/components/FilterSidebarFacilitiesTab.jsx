@@ -293,17 +293,17 @@ function FilterSidebarFacilitiesTab({
                                     address,
                                     name,
                                     has_approved_claim: hasApprovedClaim,
-                                    oar_id: oarID,
+                                    os_id: osID,
                                     is_closed: isClosed,
                                 },
                             }) => (
                                 <div
-                                    key={oarID}
+                                    key={osID}
                                     style={facilitiesTabStyles.listItemStyles}
                                 >
                                     <Divider />
                                     <ListItem
-                                        key={oarID}
+                                        key={osID}
                                         style={
                                             facilitiesTabStyles.listItemStyles
                                         }
@@ -311,7 +311,7 @@ function FilterSidebarFacilitiesTab({
                                         <Link
                                             to={{
                                                 pathname: makeFacilityDetailLink(
-                                                    oarID,
+                                                    osID,
                                                     search,
                                                 ),
                                                 state: {
@@ -319,7 +319,7 @@ function FilterSidebarFacilitiesTab({
                                                 },
                                             }}
                                             href={makeFacilityDetailLink(
-                                                oarID,
+                                                osID,
                                                 search,
                                             )}
                                             style={
@@ -343,7 +343,7 @@ function FilterSidebarFacilitiesTab({
                                                     fontSize: '16px',
                                                 }}
                                             >
-                                                {`OS ID: ${oarID}`}
+                                                {`OS ID: ${osID}`}
                                                 {hasApprovedClaim && (
                                                     <span
                                                         style={{

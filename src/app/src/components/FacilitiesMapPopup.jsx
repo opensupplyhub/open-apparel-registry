@@ -91,24 +91,24 @@ export default function FacilitiesMapPopup({
             </div>
             <List>
                 {facilities.map(
-                    ({ properties: { address, name, oar_id: oarID } }) => (
+                    ({ properties: { address, name, os_id: osID } }) => (
                         <ListItem
                             className="popup-item display-flex notranslate"
-                            key={oarID}
+                            key={osID}
                             style={
-                                oarID === selectedFacilityID
+                                osID === selectedFacilityID
                                     ? PopupStyles.selectedListItemStyles
                                     : PopupStyles.unselectedListItemStyles
                             }
                         >
                             <button
                                 type="button"
-                                onClick={() => selectFacilityOnClick(oarID)}
+                                onClick={() => selectFacilityOnClick(osID)}
                                 style={PopupStyles.linkStyles}
                             >
                                 <ListItemIcon
                                     style={
-                                        oarID === selectedFacilityID
+                                        osID === selectedFacilityID
                                             ? PopupStyles.selectedItemTextStyles
                                             : PopupStyles.unselectedItemTextStyles
                                     }
@@ -120,13 +120,13 @@ export default function FacilitiesMapPopup({
                                     secondary={address}
                                     primaryTypographyProps={{
                                         style:
-                                            oarID === selectedFacilityID
+                                            osID === selectedFacilityID
                                                 ? PopupStyles.selectedPrimaryTextStyles
                                                 : PopupStyles.unselectedPrimaryTextStyles,
                                     }}
                                     secondaryTypographyProps={{
                                         style:
-                                            oarID === selectedFacilityID
+                                            osID === selectedFacilityID
                                                 ? PopupStyles.selectedSecondaryTextStyles
                                                 : PopupStyles.unselectedSecondaryTextStyles,
                                     }}
@@ -150,7 +150,7 @@ FacilitiesMapPopup.propTypes = {
         shape({
             properties: shape({
                 address: string.isRequired,
-                oar_id: string.isRequired,
+                os_id: string.isRequired,
             }).isRequired,
         }),
     ),

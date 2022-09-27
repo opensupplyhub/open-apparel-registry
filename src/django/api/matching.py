@@ -68,7 +68,7 @@ def get_canonical_items():
     Dedupe model.
 
     Returns:
-    A dictionary. The key is the `Facility` OAR ID. The value is a dictionary
+    A dictionary. The key is the `Facility` OS ID. The value is a dictionary
     of clean field values keyed by field name (country, name, address). A
     "clean" value is one which has been passed through the `clean` function.
     """

@@ -29,7 +29,7 @@ const FacilityListItemsTableRow = ({
     hover,
     handleSelectRow,
     newFacility,
-    oarID,
+    osID,
     isRemoved,
     handleRemoveItem,
     removeButtonDisabled,
@@ -61,10 +61,10 @@ const FacilityListItemsTableRow = ({
             style={listTableCellStyles.nameCellStyles}
             colSpan={2}
         >
-            {newFacility && oarID ? (
+            {newFacility && osID ? (
                 <Link
-                    to={makeFacilityDetailLink(oarID)}
-                    href={makeFacilityDetailLink(oarID)}
+                    to={makeFacilityDetailLink(osID)}
+                    href={makeFacilityDetailLink(osID)}
                 >
                     {name}
                 </Link>
@@ -128,7 +128,7 @@ FacilityListItemsTableRow.defaultProps = {
     hover: false,
     handleSelectRow: null,
     newFacility: false,
-    oarID: null,
+    osID: null,
     isRemoved: false,
     handleRemoveItem: null,
     removeButtonDisabled: false,
@@ -143,7 +143,7 @@ FacilityListItemsTableRow.propTypes = {
     hover: bool,
     handleSelectRow: func,
     newFacility: bool,
-    oarID: string,
+    osID: string,
     isRemoved: bool,
     handleRemoveItem: func,
     removeButtonDisabled: bool,

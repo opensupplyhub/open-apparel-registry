@@ -5,7 +5,7 @@ import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
-    makeGetFacilityByOARIdURL,
+    makeGetFacilityByOSIdURL,
     makeMergeTwoFacilitiesAPIURL,
 } from '../util/util';
 
@@ -21,28 +21,28 @@ export const completeFetchMergeTargetFacility = createAction(
 export const clearMergeTargetFacility = createAction(
     'CLEAR_MERGE_TARGET_FACILITY',
 );
-export const updateMergeTargetFacilityOARID = createAction(
-    'UPDATE_MERGE_TARGET_FACILITY_OAR_ID',
+export const updateMergeTargetFacilityOSID = createAction(
+    'UPDATE_MERGE_TARGET_FACILITY_OS_ID',
 );
 
 export function fetchMergeTargetFacility() {
     return (dispatch, getState) => {
         const {
             mergeFacilities: {
-                targetFacility: { oarID },
+                targetFacility: { osID },
                 facilityToMerge: { data: toMergeData },
             },
         } = getState();
 
-        if (!oarID) {
+        if (!osID) {
             return null;
         }
 
         dispatch(startFetchMergeTargetFacility());
 
-        const toMergeOARID = get(toMergeData, 'id', null);
+        const toMergeOSID = get(toMergeData, 'id', null);
 
-        if (oarID === toMergeOARID) {
+        if (osID === toMergeOSID) {
             return dispatch(
                 logErrorAndDispatchFailure(
                     null,
@@ -53,7 +53,7 @@ export function fetchMergeTargetFacility() {
         }
 
         return apiRequest
-            .get(makeGetFacilityByOARIdURL(oarID))
+            .get(makeGetFacilityByOSIdURL(osID))
             .then(({ data }) =>
                 dispatch(completeFetchMergeTargetFacility(data)),
             )
@@ -79,28 +79,28 @@ export const completeFetchFacilityToMerge = createAction(
     'COMPLETE_FETCH_FACILITY_TO_MERGE',
 );
 export const clearFacilityToMerge = createAction('CLEAR_FACILITY_TO_MERGE');
-export const updateFacilityToMergeOARID = createAction(
-    'UPDATE_FACILITY_TO_MERGE_OAR_ID',
+export const updateFacilityToMergeOSID = createAction(
+    'UPDATE_FACILITY_TO_MERGE_OS_ID',
 );
 
 export function fetchFacilityToMerge() {
     return (dispatch, getState) => {
         const {
             mergeFacilities: {
-                facilityToMerge: { oarID },
+                facilityToMerge: { osID },
                 targetFacility: { data: targetData },
             },
         } = getState();
 
-        if (!oarID) {
+        if (!osID) {
             return null;
         }
 
         dispatch(startFetchFacilityToMerge());
 
-        const targetOARID = get(targetData, 'id', null);
+        const targetOSID = get(targetData, 'id', null);
 
-        if (oarID === targetOARID) {
+        if (osID === targetOSID) {
             return dispatch(
                 logErrorAndDispatchFailure(
                     null,
@@ -111,7 +111,7 @@ export function fetchFacilityToMerge() {
         }
 
         return apiRequest
-            .get(makeGetFacilityByOARIdURL(oarID))
+            .get(makeGetFacilityByOSIdURL(osID))
             .then(({ data }) => dispatch(completeFetchFacilityToMerge(data)))
             .catch(err =>
                 dispatch(
@@ -145,10 +145,10 @@ export function mergeFacilities() {
             },
         } = getState();
 
-        const targetOARID = get(targetData, 'id', null);
-        const toMergeOARID = get(toMergeData, 'id', null);
+        const targetOSID = get(targetData, 'id', null);
+        const toMergeOSID = get(toMergeData, 'id', null);
 
-        if (!targetOARID || !toMergeOARID) {
+        if (!targetOSID || !toMergeOSID) {
             return dispatch(
                 logErrorAndDispatchFailure(
                     null,
@@ -159,7 +159,7 @@ export function mergeFacilities() {
         }
 
         return apiRequest
-            .post(makeMergeTwoFacilitiesAPIURL(targetOARID, toMergeOARID))
+            .post(makeMergeTwoFacilitiesAPIURL(targetOSID, toMergeOSID))
             .then(({ data }) => dispatch(completeMergeFacilities(data)))
             .catch(err =>
                 dispatch(

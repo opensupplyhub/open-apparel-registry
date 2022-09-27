@@ -58,7 +58,7 @@ const styles = Object.freeze({
         alignItems: 'center',
         width: '100%',
     }),
-    oarIDStyles: Object.freeze({
+    osIDStyles: Object.freeze({
         fontSize: '18px',
     }),
     errorStyles: Object.freeze({

@@ -750,7 +750,7 @@ facilities_list_parameters = [
         openapi.IN_QUERY,
         type=openapi.TYPE_STRING,
         required=False,
-        description='Facility Name or OS Hub ID',
+        description='Facility Name or OS ID',
     ),
     openapi.Parameter(
         'name',
@@ -942,7 +942,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 "type": "FeatureCollection",
                 "features": [
                     {
-                        "id": "OAR_ID_1",
+                        "id": "OS_ID_1",
                         "type": "Feature",
                         "geometry": {
                             "type": "Point",
@@ -953,11 +953,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "address" "facility address_1",
                             "country_code": "US",
                             "country_name": "United States",
-                            "oar_id": "OAR_ID_1",
+                            "os_id": "OS_ID_1",
                         }
                     },
                     {
-                        "id": "OAR_ID_2",
+                        "id": "OS_ID_2",
                         "type": "Feature",
                         "geometry": {
                             "type": "Point",
@@ -968,7 +968,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "address" "facility address_2",
                             "country_code": "US",
                             "country_name": "United States",
-                            "oar_id": "OAR_ID_2"
+                            "os_id": "OS_ID_2"
                         }
                     }
                 ]
@@ -1011,7 +1011,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     @swagger_auto_schema(responses={200: FacilityDetailsSerializer})
     def retrieve(self, request, pk=None):
         """
-        Returns the facility specified by a given OS Hub ID in GeoJSON format.
+        Returns the facility specified by a given OS ID in GeoJSON format.
 
         ### Sample Response
             {
@@ -1026,7 +1026,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     "address" "facility address",
                     "country_code": "US",
                     "country_name": "United States",
-                    "oar_id": "OSHUB_ID",
+                    "os_id": "OSHUB_ID",
                     "other_names": [],
                     "other_addresses": [],
                     "contributors": [
@@ -1048,11 +1048,11 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         except Facility.DoesNotExist:
             # If the facility is not found but an alias is available,
             # redirect to the alias
-            aliases = FacilityAlias.objects.filter(oar_id=pk)
+            aliases = FacilityAlias.objects.filter(os_id=pk)
             if len(aliases) == 0:
                 raise NotFound()
-            oar_id = aliases.first().facility.id
-            return redirect('/api/facilities/' + oar_id)
+            os_id = aliases.first().facility.id
+            return redirect('/api/facilities/' + os_id)
 
     @swagger_auto_schema(request_body=openapi.Schema(
         'data',
@@ -1123,7 +1123,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     "name": "Nantong Jackbeanie Headwear Garment Co. Ltd.",
                     "address": "No. 808, The Third Industry Park, Guoyuan Town, Rugao City Nantong",
                     "country_code": "CN",
-                    "oar_id": "CN2019303BQ3FZP",
+                    "os_id": "CN2019303BQ3FZP",
                     "other_names": [],
                     "other_addresses": [],
                     "contributors": [
@@ -1163,7 +1163,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
               },
               "geocoded_address": "Guoyuanzhen, Rugao, Nantong, Jiangsu, China",
               "status": "MATCHED",
-              "oar_id": "CN2019303BQ3FZP"
+              "os_id": "CN2019303BQ3FZP"
             }
 
         ### Potential Match
@@ -1194,7 +1194,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                       }
                     ],
                     "country_code": "CN",
-                    "oar_id": "CN2019303BQ3FZP",
+                    "os_id": "CN2019303BQ3FZP",
                     "other_names": [],
                     "other_addresses": [],
                     "contributors": [
@@ -1254,7 +1254,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         ]
                       }
                     ],
-                    "oar_id": "CN2019303BQ3FZP",
+                    "os_id": "CN2019303BQ3FZP",
                     "other_names": [],
                     "other_addresses": [],
                     "contributors": [
@@ -1613,7 +1613,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             # If the item has been linked to a facility,
             # update the ExtendedFields
             update_extendedfields_for_list_item(item)
-            result['oar_id'] = item.facility.id
+            result['os_id'] = item.facility.id
             if item.facility.created_from == item:
                 result['status'] = FacilityListItem.NEW_FACILITY
             # and ensure that the sector index is updated since the indexed
@@ -1665,7 +1665,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
-                'deleted_oar_id': facility.id,
+                'deleted_os_id': facility.id,
             })
             item.facility = None
             item.save()
@@ -1724,7 +1724,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     ppe_website=best_item.ppe_website)
 
                 FacilityAlias.objects.create(
-                    oar_id=facility.id,
+                    os_id=facility.id,
                     facility=promoted_facility,
                     reason=FacilityAlias.DELETE
                 )
@@ -1744,7 +1744,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     'started_at': now,
                     'error': False,
                     'finished_at': now,
-                    'promoted_oar_id': promoted_facility.id,
+                    'promoted_os_id': promoted_facility.id,
                 })
                 best_item.save()
 
@@ -1766,19 +1766,19 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             'started_at': now,
                             'error': False,
                             'finished_at': now,
-                            'promoted_oar_id': promoted_facility.id,
+                            'promoted_os_id': promoted_facility.id,
                         })
                         other_item.save()
 
                 for alias in FacilityAlias.objects.filter(facility=facility):
-                    oar_id = alias.oar_id
+                    os_id = alias.os_id
                     alias._change_reason = 'Deleted {} and promoted {}'.format(
                         facility.id,
                         promoted_facility.id)
                     alias.delete()
                     FacilityAlias.objects.create(
                         facility=promoted_facility,
-                        oar_id=oar_id,
+                        os_id=os_id,
                         reason=FacilityAlias.DELETE)
             else:
                 for other_match in other_matches:
@@ -1931,7 +1931,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     "created_at": "2019-06-10T17:28:17.155025Z",
                     "updated_at": "2019-06-10T17:28:17.155042Z",
                     "contributor_id": 1,
-                    "oar_id": "US2019161ABC123",
+                    "os_id": "US2019161ABC123",
                     "contributor_name": "A Contributor",
                     "facility_name": "Clothing, Inc.",
                     "facility_address": "1234 Main St",
@@ -1996,7 +1996,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
-                'merged_oar_id': merge.id,
+                'merged_os_id': merge.id,
             })
             merge_item.save()
 
@@ -2011,7 +2011,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
-                'merged_oar_id': merge.id,
+                'merged_os_id': merge.id,
             })
             unmatched_item.save()
 
@@ -2046,18 +2046,18 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             field.save()
 
         for alias in FacilityAlias.objects.filter(facility=merge):
-            oar_id = alias.oar_id
+            os_id = alias.os_id
             alias._change_reason = 'Merging {} into {}'.format(
                 merge.id,
                 target.id)
             alias.delete()
             FacilityAlias.objects.create(
                 facility=target,
-                oar_id=oar_id,
+                os_id=os_id,
                 reason=FacilityAlias.MERGE)
 
         FacilityAlias.objects.create(
-            oar_id=merge.id,
+            os_id=merge.id,
             facility=target,
             reason=FacilityAlias.MERGE)
         # any change to this message will also need to
@@ -2122,7 +2122,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             in m.facility_list_item.processing_results
                             if r.get('action', '')
                             == ProcessingAction.MOVE_FACILITY]
-                            [0]['previous_facility_oar_id']
+                            [0]['previous_facility_os_id']
                             if len(
                                 [r for r
                                     in m.facility_list_item.processing_results
@@ -2182,7 +2182,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             match_for_new_facility.status = FacilityMatch.CONFIRMED
             match_for_new_facility.results = {
                 'match_type': 'split_by_administator',
-                'split_from_oar_id': match_for_new_facility.facility.id,
+                'split_from_os_id': match_for_new_facility.facility.id,
             }
 
             match_for_new_facility.save()
@@ -2195,7 +2195,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
-                'previous_facility_oar_id': old_facility.id,
+                'previous_facility_os_id': old_facility.id,
             })
 
             list_item_for_match.save()
@@ -2213,7 +2213,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             return Response({
                 'match_id': match_for_new_facility.id,
-                'new_oar_id': new_facility.id,
+                'new_os_id': new_facility.id,
             })
         except FacilityListItem.DoesNotExist:
             raise NotFound()
@@ -2244,7 +2244,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             match.status = FacilityMatch.CONFIRMED
             match.results = {
                 'match_type': 'moved_by_administator',
-                'move_to_oar_id': match.facility.id,
+                'move_to_os_id': match.facility.id,
             }
 
             match.save()
@@ -2257,7 +2257,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
-                'previous_facility_oar_id': old_facility.id,
+                'previous_facility_os_id': old_facility.id,
             })
 
             list_item_for_match.save()
@@ -2270,7 +2270,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
 
             return Response({
                 'match_id': match.id,
-                'new_oar_id': new_facility.id,
+                'new_os_id': new_facility.id,
             })
 
         except FacilityListItem.DoesNotExist:
@@ -2518,7 +2518,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 "type": "FeatureCollection",
                 "features": [
                     {
-                        "id": "OAR_ID_1",
+                        "id": "OS_ID_1",
                         "type": "Feature",
                         "geometry": {
                             "type": "Point",
@@ -2529,7 +2529,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "address" "facility address_1",
                             "country_code": "US",
                             "country_name": "United States",
-                            "oar_id": "OAR_ID_1",
+                            "os_id": "OS_ID_1",
                             "contributors": [
                                 {
                                     "id": 1,
@@ -2540,7 +2540,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         }
                     },
                     {
-                        "id": "OAR_ID_2",
+                        "id": "OS_ID_2",
                         "type": "Feature",
                         "geometry": {
                             "type": "Point",
@@ -2551,7 +2551,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             "address" "facility address_2",
                             "country_code": "US",
                             "country_name": "United States",
-                            "oar_id": "OAR_ID_2"
+                            "os_id": "OS_ID_2"
                             "contributors": [
                                 {
                                     "id": 1,
@@ -2573,7 +2573,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
-            raise NotFound('Facility with OS Hub ID {} not found'.format(pk))
+            raise NotFound('Facility with OS ID {} not found'.format(pk))
         contributor = request.user.contributor
         matches = FacilityMatch.objects.filter(
             facility=facility,
@@ -2620,7 +2620,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
-            raise NotFound('Facility with OS Hub ID {} not found'.format(pk))
+            raise NotFound('Facility with OS ID {} not found'.format(pk))
 
         try:
             contributor = request.user.contributor
@@ -2650,14 +2650,14 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     @transaction.atomic
     def link(self, request, pk=None):
         try:
-            new_oar_id = request.data.get('new_oar_id')
-            if new_oar_id is None:
-                raise BadRequestException('Missing required param new_oar_id')
-            if not Facility.objects.filter(pk=new_oar_id).exists():
-                raise BadRequestException('Invalid param new_oar_id')
+            new_os_id = request.data.get('new_os_id')
+            if new_os_id is None:
+                raise BadRequestException('Missing required param new_os_id')
+            if not Facility.objects.filter(pk=new_os_id).exists():
+                raise BadRequestException('Invalid param new_os_id')
 
             source_facility = Facility.objects.get(pk=pk)
-            source_facility.new_oar_id = new_oar_id
+            source_facility.new_os_id = new_os_id
 
             source_facility.save()
 
@@ -3704,7 +3704,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                             "gazetteer_threshold": 0.5,
                             "no_gazetteer_matches": false
                         }
-                        "oar_id": "oar_id_1",
+                        "os_id": "os_id_1",
                         "name": "facility match name 1",
                         "address": "facility match address 1",
                         "location": {
@@ -3725,7 +3725,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                             "gazetteer_threshold": 0.5,
                             "no_gazetteer_matches": false
                         }
-                        "oar_id": "oar_id_2",
+                        "os_id": "os_id_2",
                         "name": "facility match name 2",
                         "address": "facility match address 2",
                         "location": {
@@ -3748,7 +3748,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                 "processing_errors": null,
                 "list_statuses": ["CONFIRMED_MATCH"],
                 "matched_facility": {
-                    "oar_id": "oar_id_1",
+                    "os_id": "os_id_1",
                     "name": "facility match name 1",
                     "address": "facility match address 1",
                     "location": {
@@ -3834,7 +3834,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                             "gazetteer_threshold": 0.5,
                             "no_gazetteer_matches": false
                         }
-                        "oar_id": "oar_id_1",
+                        "os_id": "os_id_1",
                         "name": "facility match name 1",
                         "address": "facility match address 1",
                         "location": {
@@ -3855,7 +3855,7 @@ class FacilityMatchViewSet(mixins.RetrieveModelMixin,
                             "gazetteer_threshold": 0.5,
                             "no_gazetteer_matches": false
                         }
-                        "oar_id": "oar_id_2",
+                        "os_id": "os_id_2",
                         "name": "facility match name 2",
                         "address": "facility match address 2",
                         "location": {

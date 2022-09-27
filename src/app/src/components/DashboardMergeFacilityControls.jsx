@@ -118,8 +118,8 @@ export default function DashboardMergeFacilityControls({
                                 variant="body1"
                                 style={mergeControlsStyles.dialogContentStyles}
                             >
-                                {toMergeName} will be deleted and its OS Hub ID
-                                will point to {targetName}, {targetID}.
+                                {toMergeName} will be deleted and its OS ID will
+                                point to {targetName}, {targetID}.
                             </Typography>
                             <Typography
                                 variant="body1"

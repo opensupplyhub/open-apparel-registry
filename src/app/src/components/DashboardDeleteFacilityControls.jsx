@@ -103,7 +103,7 @@ export default function DashboardDeleteFacilityControls({
                                     <Typography
                                         style={deleteControlsStyles.labelStyles}
                                     >
-                                        OS Hub ID: {get(data, 'id', '')}
+                                        OS ID: {get(data, 'id', '')}
                                     </Typography>
                                 </li>
                                 <li>

@@ -2,7 +2,7 @@ from django.core.management.base import (BaseCommand,
                                          CommandError)
 
 from api.models import Contributor, FacilityMatch, FacilityListItem, Source
-from api.oar_id import make_oar_id
+from api.os_id import make_os_id
 
 import csv
 import json
@@ -328,7 +328,7 @@ def make_facility(facility_item):
         parsed = row
 
     country_code = COUNTRY_CODES[parsed[0].upper()]
-    pk = make_oar_id(country_code)
+    pk = make_os_id(country_code)
 
     return {
         'model': 'api.facility',
