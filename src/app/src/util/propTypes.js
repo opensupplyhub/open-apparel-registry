@@ -17,6 +17,7 @@ import {
     registrationFieldsEnum,
     profileFieldsEnum,
     facilityListItemStatusChoicesEnum,
+    ALLOW_LARGE_DOWNLOADS,
     FEATURE,
     FEATURE_COLLECTION,
     POINT,
@@ -304,6 +305,7 @@ export const featureFlagPropType = oneOf([
     REPORT_A_FACILITY,
     EMBEDDED_MAP_FLAG,
     EXTENDED_PROFILE_FLAG,
+    ALLOW_LARGE_DOWNLOADS,
 ]);
 
 export const facilityClaimsListPropType = arrayOf(

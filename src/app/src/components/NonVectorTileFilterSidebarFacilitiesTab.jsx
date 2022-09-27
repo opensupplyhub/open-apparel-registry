@@ -20,6 +20,7 @@ import lowerCase from 'lodash/lowerCase';
 
 import ControlledTextInput from './ControlledTextInput';
 import DownloadFacilitiesButton from './DownloadFacilitiesButton';
+import FeatureFlag from './FeatureFlag';
 
 import {
     toggleFilterModal,
@@ -28,7 +29,12 @@ import {
 
 import { facilityCollectionPropType } from '../util/propTypes';
 
-import { authLoginFormRoute, authRegisterFormRoute } from '../util/constants';
+import {
+    ALLOW_LARGE_DOWNLOADS,
+    FACILITIES_DOWNLOAD_DEFAULT_LIMIT,
+    authLoginFormRoute,
+    authRegisterFormRoute,
+} from '../util/constants';
 
 import { makeFacilityDetailLink, getValueFromEvent } from '../util/util';
 
@@ -215,11 +221,27 @@ function NonVectorTileFilterSidebarFacilitiesTab({
             <Typography variant="subheading" align="center">
                 <div style={facilitiesTabStyles.titleRowStyles}>
                     {headerDisplayString}
-                    <DownloadFacilitiesButton
-                        setLoginRequiredDialogIsOpen={
-                            setLoginRequiredDialogIsOpen
+                    <FeatureFlag
+                        flag={ALLOW_LARGE_DOWNLOADS}
+                        alternative={
+                            <DownloadFacilitiesButton
+                                disabled={
+                                    facilitiesCount >=
+                                    FACILITIES_DOWNLOAD_DEFAULT_LIMIT
+                                }
+                                setLoginRequiredDialogIsOpen={
+                                    setLoginRequiredDialogIsOpen
+                                }
+                            />
                         }
-                    />
+                    >
+                        <DownloadFacilitiesButton
+                            allowLargeDownloads
+                            setLoginRequiredDialogIsOpen={
+                                setLoginRequiredDialogIsOpen
+                            }
+                        />
+                    </FeatureFlag>
                 </div>
             </Typography>
             <div style={facilitiesTabStyles.listHeaderTextSearchStyles}>

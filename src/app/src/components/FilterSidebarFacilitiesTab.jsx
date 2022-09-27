@@ -33,6 +33,8 @@ import {
     REPORT_A_FACILITY,
     authLoginFormRoute,
     authRegisterFormRoute,
+    ALLOW_LARGE_DOWNLOADS,
+    FACILITIES_DOWNLOAD_DEFAULT_LIMIT,
 } from '../util/constants';
 
 import { makeFacilityDetailLink } from '../util/util';
@@ -222,11 +224,27 @@ function FilterSidebarFacilitiesTab({
                             />
                         </div>
                     ) : (
-                        <DownloadFacilitiesButton
-                            setLoginRequiredDialogIsOpen={
-                                setLoginRequiredDialogIsOpen
+                        <FeatureFlag
+                            flag={ALLOW_LARGE_DOWNLOADS}
+                            alternative={
+                                <DownloadFacilitiesButton
+                                    disabled={
+                                        facilitiesCount >=
+                                        FACILITIES_DOWNLOAD_DEFAULT_LIMIT
+                                    }
+                                    setLoginRequiredDialogIsOpen={
+                                        setLoginRequiredDialogIsOpen
+                                    }
+                                />
                             }
-                        />
+                        >
+                            <DownloadFacilitiesButton
+                                allowLargeDownloads
+                                setLoginRequiredDialogIsOpen={
+                                    setLoginRequiredDialogIsOpen
+                                }
+                            />
+                        </FeatureFlag>
                     )}
                     <CopySearch>
                         <Button

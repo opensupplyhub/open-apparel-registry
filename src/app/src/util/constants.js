@@ -4,6 +4,7 @@ import { checkWhetherUserHasDashboardAccess } from './util';
 export const OTHER = 'Other';
 
 export const FACILITIES_REQUEST_PAGE_SIZE = 50;
+export const FACILITIES_DOWNLOAD_DEFAULT_LIMIT = 10000;
 export const FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE = 10;
 
 export const WEB_HEADER_HEIGHT = '80px';
@@ -471,6 +472,7 @@ export const facilitiesListTableTooltipTitles = Object.freeze({
     status: 'Processing status of this list.',
 });
 
+export const ALLOW_LARGE_DOWNLOADS = 'allow_large_downloads';
 export const CLAIM_A_FACILITY = 'claim_a_facility';
 export const VECTOR_TILE = 'vector_tile';
 export const PPE = 'ppe';
