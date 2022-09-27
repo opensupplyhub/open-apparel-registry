@@ -7,7 +7,7 @@ export const FACILITIES_REQUEST_PAGE_SIZE = 50;
 export const FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE = 10;
 
 export const WEB_HEADER_HEIGHT = '160px';
-export const MOBILE_HEADER_HEIGHT = '68px';
+export const MOBILE_HEADER_HEIGHT = '140px';
 
 export const InfoLink = 'https://info.openapparel.org';
 

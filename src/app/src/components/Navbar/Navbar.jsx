@@ -5,6 +5,7 @@ import '../../styles/css/header.scss';
 import { MobileNavbarItems, NavbarItems } from '../../util/constants';
 import Logo from './Logo';
 import BurgerButton from './BurgerButton';
+import GoogleTranslateBar from './GoogleTranslateBar';
 
 const breakpoint = '(max-width: 75rem)';
 
@@ -53,7 +54,7 @@ export default function Navbar() {
         mobileMode ? ' mobile-nav-is-active' : ''
     }`;
 
-    return (
+    const Header = (
         <header className={headerClassName} id="header">
             <div className="header__main">
                 <Logo />
@@ -104,5 +105,12 @@ export default function Navbar() {
                 />
             </div>
         </header>
+    );
+
+    return (
+        <>
+            <GoogleTranslateBar />
+            {Header}
+        </>
     );
 }

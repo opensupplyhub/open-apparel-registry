@@ -266,7 +266,6 @@ $pink-500: #FFA6D0;
   @include media($xl-screen-up) {
     position: sticky;
     top: 0;
-    padding-top: rem(44);
   }
 
   // }

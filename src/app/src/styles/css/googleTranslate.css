@@ -2,10 +2,6 @@
     display: none !important;
 }
 
-.google-translate-container {
-    width: 80px
-}
-
 .goog-te-gadget-simple {
     width: 0;
     height: 50px;
@@ -13,6 +9,6 @@
 }
 
 .goog-te-menu-frame {
-    top: 80px !important;
+    top: 2.75rem !important;
     box-shadow: none !important;
 }
