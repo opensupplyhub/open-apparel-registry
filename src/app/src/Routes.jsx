@@ -70,7 +70,6 @@ const appStyles = theme =>
             top: MOBILE_HEADER_HEIGHT,
             bottom: 0,
             left: '0',
-            position: 'fixed',
             [theme.breakpoints.up('lg')]: {
                 top: WEB_HEADER_HEIGHT,
                 bottom: '51px',

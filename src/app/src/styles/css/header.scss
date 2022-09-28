@@ -222,7 +222,7 @@ $pink-500: #FFA6D0;
       left: 0;
       top: 0;
       background: $grey-500;
-      z-index: 0;
+      z-index: 1000;
       transform: scaleY(0);
       transform-origin: bottom;
       transition: all 0.1s;
@@ -259,7 +259,7 @@ $pink-500: #FFA6D0;
   background: $grey-500;
   position: relative;
   width: 100%;
-  z-index: 3;
+  z-index: 1003;
   top: 0;
   transition: background-color 0.1s linear;
 
@@ -339,7 +339,7 @@ $pink-500: #FFA6D0;
     width: 100%;
     top: 100%;
     left: -100%;
-    z-index: 1;
+    z-index: 1001;
     color: $grey-500;
     pointer-events: none;
 

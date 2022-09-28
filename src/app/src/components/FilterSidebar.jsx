@@ -23,7 +23,11 @@ import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
 import Map from './Map';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
 
-import { VECTOR_TILE } from '../util/constants';
+import {
+    MOBILE_HEADER_HEIGHT,
+    VECTOR_TILE,
+    WEB_HEADER_HEIGHT,
+} from '../util/constants';
 
 import { setSidebarTabActive, toggleFilterModal } from '../actions/ui';
 
@@ -51,6 +55,12 @@ const filterSidebarStyles = theme =>
                 fontFamily: theme.typography.fontFamily,
             },
         }),
+        screenAreaMaxHeight: {
+            maxHeight: `calc(100vh - ${MOBILE_HEADER_HEIGHT})`,
+            [theme.breakpoints.up('lg')]: {
+                maxHeight: `calc(100vh - ${WEB_HEADER_HEIGHT})`,
+            },
+        },
     });
 
 class FilterSidebar extends Component {
@@ -230,12 +240,22 @@ class FilterSidebar extends Component {
                     </Grid>
                 </Hidden>
                 <Hidden mdDown>
-                    <Grid item md={3} style={{ height: '100%' }}>
+                    <Grid
+                        item
+                        md={3}
+                        style={{ overflowY: 'scroll' }}
+                        className={this.props.classes.screenAreaMaxHeight}
+                    >
                         <FilterSidebarSearchTab />
                     </Grid>
                 </Hidden>
                 <Hidden mdDown>
-                    <Grid item sm={12} md={4}>
+                    <Grid
+                        item
+                        sm={12}
+                        md={4}
+                        className={this.props.classes.screenAreaMaxHeight}
+                    >
                         {this.props.facilitiesCount > 0 && (
                             <div
                                 className="results-height-subtract"

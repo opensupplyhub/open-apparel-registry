@@ -1,0 +1,475 @@
+// Functions
+$em-base: 16;
+
+// Convert pixels to rems
+// eg. for a relational value of 12px write rem(12)
+// Assumes $em-base is the font-size of <html>
+@function rem($pxval) {
+    @return calc($pxval / $em-base) * 1rem;
+}
+
+// Convert pixels to ems
+// eg. for a relational value of 12px write em(12) when the parent is 16px
+// if the parent is another value say 24px write em(12, 24)
+@function em($pxval, $base: $em-base) {
+    @return calc($pxval / $base) * 1em;
+}
+
+// Breakpoints
+$xs-screen : rem(420);
+$s-screen : rem(550);
+$m-screen : rem(768);
+$l-screen : rem(960);
+$xl-screen : rem(1200);
+$xxl-screen : rem(1400);
+
+$xs-screen-down : "max-width: #{$xs-screen - rem(1)}";
+$xs-screen-up : "min-width: #{$xs-screen}";
+
+$s-screen-down : "max-width: #{$s-screen - rem(1)}";
+$s-screen-up : "min-width: #{$s-screen}";
+
+$m-screen-down : "max-width: #{$m-screen - rem(1)}";
+$m-screen-up : "min-width: #{$m-screen}";
+
+$l-screen-down : "max-width: #{$l-screen - rem(1)}";
+$l-screen-up : "min-width: #{$l-screen}";
+
+$xl-screen-down : "max-width: #{$xl-screen - rem(1)}";
+$xl-screen-up : "min-width: #{$xl-screen}";
+
+$xxl-screen-down : "max-width: #{$xxl-screen - rem(1)}";
+$xxl-screen-up : "min-width: #{$xxl-screen}";
+
+// Variables
+// Spacing
+$gtr: rem(16);
+$max-width: rem(1100);
+
+// Typography
+$ff-main: 'Darker Grotesque', sans-serif;
+$fw-bold: 900;
+$fw-regular: 400;
+$line-height: 1.4;
+
+// Colours
+$white-50: #FFFFFF;
+$white-500: #F9F7F7;
+$grey-500: #0D1128;
+$yellow-500: #FCCF3F;
+$purple-100: #E6D4FE;
+$purple-200: #CEA9FD;
+$purple-500: #8428FA;
+$pink-500: #FFA6D0;
+
+// Mixins
+@mixin media($breakpoint) {
+    @media only screen and ($breakpoint) {
+        @content;
+    }
+}
+
+@mixin navItemStyle {
+    text-decoration: none;
+    position: relative;
+    font-family: $ff-main;
+    font-weight: 900;
+    font-size: rem(18);
+    transition: color 0.1s;
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: rem(4);
+        background-color: $purple-500;
+        bottom: -$gtr;
+        left: 0;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.1s;
+    }
+}
+
+@mixin navItemActive {
+    color: $purple-500;
+
+    &::after {
+        transform: scaleX(1);
+    }
+}
+
+@mixin svg($width, $height) {
+    position: relative;
+
+    &::before {
+        display: block;
+        content: '';
+        width: 100%;
+        height: 0;
+        padding-bottom: percentage(calc($height/$width));
+        // Need to set padding-bottom as percentage(height/width) to maintain aspect ratio when scaled
+        // E.g. padding-bottom: percentage(132/1444);
+    }
+
+    svg {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+@mixin flow($ratio: 1.25) {
+    >*+* {
+        margin-top: $ratio * 1em;
+    }
+}
+
+@mixin visuallyHidden {
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+@mixin grid($number: 12) {
+    display: grid;
+    grid-template-columns: repeat($number, 1fr);
+}
+
+@mixin rowGap($val: $gtr*2) {
+    grid-row-gap: $val;
+}
+
+@mixin colGap($val: $gtr*2) {
+    grid-column-gap: $val;
+}
+
+@mixin col($end: 12, $start: auto) {
+    grid-column: $start / span $end;
+}
+
+#footer {
+
+    // Utility classes
+    .visually-hidden {
+        @include visuallyHidden;
+    }
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: border-box;
+    }
+
+
+    // Default element styles
+    button {
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    a {
+        color: inherit;
+    }
+
+    strong {
+        font-weight: $fw-bold;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        font-weight: $fw-bold;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .button {
+        position: relative;
+        cursor: pointer;
+        display: inline-flex;
+        justify-content: center;
+        padding: $gtr;
+        background: $white-50;
+        color: $grey-500;
+        border: none;
+        outline: none;
+        text-decoration: none;
+        font-family: $ff-main;
+        font-size: rem(18);
+        line-height: 1;
+        font-weight: 900;
+        text-align: center;
+
+        span {
+            position: relative;
+            transition: all 0.1s;
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background: $grey-500;
+            z-index: 0;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: all 0.1s;
+        }
+
+        &:hover,
+        &:focus {
+            color: $white-50;
+
+            &::before {
+                transform: scaleY(1);
+            }
+        }
+
+        &--yellow {
+            background: $yellow-500;
+
+            &:hover {
+                color: $yellow-500;
+            }
+        }
+    }
+
+    // Footer
+    // .footer {
+    background: $grey-500;
+    color: $white-50;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    bottom: 0;
+
+    @include media($xl-screen-up) {
+        flex-direction: row;
+    }
+
+    //}
+}
+
+.footer__container {
+    max-width: rem(450);
+    padding-top: $gtr*3;
+    padding-left: $gtr*2;
+    padding-right: $gtr*2;
+
+    @include media($m-screen-up) {
+        padding-bottom: $gtr*3;
+    }
+
+    @include media($l-screen-up) {
+        max-width: rem(800);
+    }
+
+    @include media($xl-screen-up) {
+        max-width: $max-width;
+        padding-bottom: $gtr*3;
+    }
+}
+
+.footer__grid {
+    @include grid;
+    @include rowGap;
+    align-items: flex-end;
+
+    @include media($l-screen-up) {
+        @include colGap($gtr*4);
+        align-items: flex-start;
+    }
+}
+
+.footer__col {
+    @include col;
+    @include flow;
+
+    @include media($l-screen-up) {
+        @include col(6);
+    }
+
+
+    @include media($xl-screen-up) {
+        max-width: none;
+    }
+}
+
+.footer__col--1 {
+    @include media($xl-screen-down) {
+        order: 0;
+    }
+
+    @include media($xl-screen-up) {
+        @include col(4)
+    }
+}
+
+.footer__col--2 {
+    @include media($xl-screen-up) {
+        @include col(4)
+    }
+}
+
+.footer__col--3 {
+    @include col(6);
+
+    @include media($xl-screen-up) {
+        @include col(4);
+    }
+
+    @include media($xl-screen-up) {
+        @include col(3, 10);
+    }
+}
+
+.footer__col--4 {
+    @include col(3);
+
+    @include media($xl-screen-up) {
+        @include col(4);
+    }
+}
+
+.footer__col--5 {
+    @include media($xl-screen-up) {
+        @include col(4);
+    }
+}
+
+.footer__home {
+    display: inline-block;
+    padding-bottom: $gtr;
+}
+
+.footer__logo {
+    @include svg(86, 32);
+    width: rem(85);
+}
+
+.footer__text {
+    @include flow;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: rem(16);
+    font-weight: 500;
+}
+
+.footer__nav {
+    @include grid(2);
+    @include rowGap($gtr*0.5);
+    @include colGap($gtr*0.5);
+}
+
+.footer__link {
+    text-decoration: none;
+    color: $pink-500;
+    font-weight: 600;
+    font-size: rem(18);
+    letter-spacing: rem(0.5);
+}
+
+.footer__follow {
+    @include flow;
+}
+
+.footer__heading {
+    font-size: rem(18);
+    font-weight: 500;
+}
+
+.footer__socials {
+    display: flex;
+    align-items: baseline;
+
+    .footer__link {
+        margin-right: $gtr*1.5;
+
+        &--last {
+            margin-right: 0;
+        }
+    }
+}
+
+.footer__social {
+    display: block;
+    font-size: 0;
+}
+
+.footer__cc {
+    @include svg(120, 42);
+    width: rem(80);
+    margin-left: auto;
+
+    @include media($s-screen-up) {
+        margin-left: 0;
+    }
+}
+
+.footer__shapes-container {
+    position: relative;
+    width: 100%;
+
+    @include media($xl-screen-up) {
+        max-width: rem(240);
+    }
+}
+
+.footer__credit {
+    font-weight: 600;
+
+    a {
+        text-decoration: none;
+        color: $pink-500;
+        font-weight: 900;
+    }
+}
+
+.footer__shapes-mobile {
+    @include svg(328, 164);
+    width: 100%;
+    max-width: rem(328);
+    margin-left: auto;
+
+    @include media($m-screen-up) {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+
+    @include media($xl-screen-up) {
+        display: none;
+    }
+}
+
+.footer__shapes {
+    @include svg(480, 301);
+    width: 100%;
+    display: none;
+
+    @include media($xl-screen-up) {
+        display: block;
+        width: rem(480);
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+}
