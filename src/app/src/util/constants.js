@@ -150,23 +150,6 @@ const accountOtherContributorTypeField = Object.freeze({
     modelFieldName: 'other_contributor_type',
 });
 
-const accountPasswordField = Object.freeze({
-    id: registrationFieldsEnum.password,
-    label: 'Password',
-    type: inputTypesEnum.password,
-    required: true,
-    modelFieldName: 'password',
-    hideOnViewOnlyProfile: true,
-});
-
-const accountConfirmPasswordField = Object.freeze({
-    id: registrationFieldsEnum.confirmPassword,
-    label: 'Confirm Password',
-    type: inputTypesEnum.password,
-    required: true,
-    modelFieldName: 'confirmPassword',
-});
-
 const accountCurrentPasswordField = Object.freeze({
     id: profileFieldsEnum.currentPassword,
     label: 'Current Password',
@@ -196,39 +179,6 @@ const accountConfirmNewPasswordField = Object.freeze({
     required: false,
 });
 
-const accountNewsletterField = Object.freeze({
-    id: registrationFieldsEnum.newsletter,
-    label:
-        "I'd like to receive important email updates about OAR features and data.",
-    modelFieldName: 'should_receive_newsletter',
-    type: inputTypesEnum.checkbox,
-});
-
-const accountTOSField = Object.freeze({
-    id: registrationFieldsEnum.tos,
-    label: 'Terms of Service',
-    link: Object.freeze({
-        prefixText: 'Agree to ',
-        url: `${InfoLink}/${InfoPaths.termsOfUse}`,
-    }),
-    required: true,
-    modelFieldName: 'has_agreed_to_terms_of_service',
-    type: inputTypesEnum.checkbox,
-});
-
-export const registrationFormFields = Object.freeze([
-    accountEmailField,
-    accountNameField,
-    accountDescriptionField,
-    accountWebsiteField,
-    accountContributorTypeField,
-    accountOtherContributorTypeField,
-    accountPasswordField,
-    accountConfirmPasswordField,
-    accountNewsletterField,
-    accountTOSField,
-]);
-
 export const profileFormFields = Object.freeze([
     accountEmailField,
     accountNameField,
@@ -246,7 +196,6 @@ export const settingsRoute = '/settings';
 export const authLoginFormRoute = '/auth/login';
 export const authRegisterFormRoute = '/auth/register';
 export const authResetPasswordFormRoute = '/auth/resetpassword/:uid';
-export const authConfirmRegistrationRoute = '/auth/confirm/:uid';
 export const contributeRoute = '/contribute';
 export const listsRoute = '/lists';
 export const facilityListItemsRoute = '/lists/:listID';

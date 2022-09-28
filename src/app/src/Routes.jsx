@@ -11,17 +11,14 @@ import history from './util/history';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import EmbeddedFooter from './components/EmbeddedFooter';
-import RegisterForm from './components/RegisterForm';
 import ResetPasswordForm from './components/ResetPasswordForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
-import Contribute from './components/Contribute';
 import MapAndSidebar from './components/MapAndSidebar';
 import FacilityLists from './components/FacilityLists';
 import FacilityListItems from './components/FacilityListItems';
 import ErrorBoundary from './components/ErrorBoundary';
 import GDPRNotification from './components/GDPRNotification';
-import ConfirmRegistration from './components/ConfirmRegistration';
 import RouteNotFound from './components/RouteNotFound';
 import Dashboard from './components/Dashboard';
 import Translate from './components/Translate';
@@ -31,6 +28,7 @@ import ClaimedFacilities from './components/ClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
 import Settings from './components/Settings';
 import ExternalRedirect from './components/ExternalRedirect';
+import NotAvailable from './components/NotAvailable';
 
 import { sessionLogin } from './actions/auth';
 import { fetchFeatureFlags } from './actions/featureFlags';
@@ -44,7 +42,6 @@ import {
     authLoginFormRoute,
     authRegisterFormRoute,
     authResetPasswordFormRoute,
-    authConfirmRegistrationRoute,
     contributeRoute,
     listsRoute,
     facilityListItemsRoute,
@@ -154,7 +151,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={authRegisterFormRoute}
-                                    component={RegisterForm}
+                                    component={NotAvailable}
                                 />
                                 <Route
                                     exact
@@ -168,11 +165,6 @@ class Routes extends Component {
                                 />
                                 <Route
                                     exact
-                                    path={authConfirmRegistrationRoute}
-                                    component={ConfirmRegistration}
-                                />
-                                <Route
-                                    exact
                                     path={profileRoute}
                                     component={({
                                         match: {
@@ -183,7 +175,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={contributeRoute}
-                                    component={Contribute}
+                                    component={NotAvailable}
                                 />
                                 <Route
                                     path={dashboardRoute}

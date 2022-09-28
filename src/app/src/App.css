@@ -703,3 +703,8 @@ hr {
   font-size: 18px;
   text-transform: capitalize;
 }
+
+.disabled-link {
+  pointer-events: none;
+  opacity: .5;
+}
