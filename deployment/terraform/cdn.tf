@@ -38,6 +38,12 @@ resource "aws_cloudfront_distribution" "cdn" {
     min_ttl                = 0
     default_ttl            = 0
     max_ttl                = 300
+
+    ## This feature is only available in Terraform AWS Provider 3.41.0 and later
+    # function_association {
+    #   event_type   = "viewer-request"
+    #   function_arn = "${aws_cloudfront_function.oshub_conditional_redirect.arn}"
+    # }
   }
 
   ordered_cache_behavior {
@@ -106,3 +112,13 @@ resource "aws_cloudfront_distribution" "cdn" {
     Environment = "${var.environment}"
   }
 }
+
+
+## This resource is only available in Terraform AWS Provider 3.41.0 and later
+# resource "aws_cloudfront_function" "oshub_conditional_redirect" {
+#   name    = "cffn${replace(var.project, " ", "")}${var.environment}OSHubConditionalRedirect"
+#   runtime = "cloudfront-js-1.0"
+#   comment = "Redirect non-embedded map traffic to opensupplyhub.org"
+#   publish = true
+#   code    = "${file("cloudfront-functions/conditional_oshub_redirect.js")}"
+# }
