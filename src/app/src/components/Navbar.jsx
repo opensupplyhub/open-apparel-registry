@@ -7,6 +7,7 @@ import AuthMenu from './Navbar/AuthMenu';
 import MobileAuthMenu from './Navbar/MobileAuthMenu';
 import GoogleTranslateButton from './Navbar/GoogleTranslateButton';
 import MainMobileNav from './Navbar/MainMobileNav';
+import ReadOnlyBanner from './ReadOnlyBanner';
 
 import '../styles/css/header.css';
 
@@ -16,7 +17,7 @@ function Navbar() {
     const [activeSubmenu, setActiveSubmenu] = useState(null);
     const [mobileNavActive, setMobileNavActive] = useState(null);
 
-    return (
+    const Header = (
         <header
             className={`app-header results-height-subtract ${
                 mobileNavActive && 'mobile-nav-is-active'
@@ -62,6 +63,13 @@ function Navbar() {
                 />
             </div>
         </header>
+    );
+
+    return (
+        <>
+            <ReadOnlyBanner />
+            {Header}
+        </>
     );
 }
 

@@ -6,8 +6,9 @@ export const OTHER = 'Other';
 export const FACILITIES_REQUEST_PAGE_SIZE = 50;
 export const FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE = 10;
 
-export const WEB_HEADER_HEIGHT = '80px';
-export const MOBILE_HEADER_HEIGHT = '68px';
+// Header height + read-only banner height
+export const WEB_HEADER_HEIGHT = '140px';
+export const MOBILE_HEADER_HEIGHT = '170px';
 
 export const InfoLink = 'https://info.openapparel.org';
 
