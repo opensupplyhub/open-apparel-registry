@@ -239,7 +239,7 @@ variable "batch_default_ce_spot_fleet_bid_percentage" {
 variable "batch_ami_id" {
   # Latest ECS-optimized Amazon Linux AMI in eu-west-1
   # See: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
-  default = "ami-00921cd1ce43d567a"
+  default = "ami-002e2fef4b94f8fd0"
 }
 
 variable "batch_default_ce_min_vcpus" {
