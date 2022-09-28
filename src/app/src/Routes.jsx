@@ -26,7 +26,6 @@ import FeatureFlag from './components/FeatureFlag';
 import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
-import Settings from './components/Settings';
 import ExternalRedirect from './components/ExternalRedirect';
 import NotAvailable from './components/NotAvailable';
 
@@ -192,7 +191,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={settingsRoute}
-                                    component={Settings}
+                                    component={NotAvailable}
                                 />
                                 <Route exact path="/about/processing">
                                     <ExternalRedirect
