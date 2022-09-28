@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useMenuClickHandlerContext } from './MenuClickHandlerContext';
 import { MobileSubmenuButtonArrowDown } from './navIcons';
 
 export default function MobileNavSubmenuColumnSection({
@@ -40,12 +41,18 @@ export default function MobileNavSubmenuColumnSection({
 }
 
 function SubmenuColumnSectionItem({ sectionItem, last }) {
+    const createMenuClickHandler = useMenuClickHandlerContext();
+
     const lastClassName = 'mobile-nav__item--last';
 
     return (
         <li className={`mobile-nav__item ${last ? lastClassName : ''}`}>
             {sectionItem.internal && sectionItem.href ? (
-                <Link className="mobile-nav-link" to={sectionItem.href}>
+                <Link
+                    className="mobile-nav-link"
+                    to={sectionItem.href}
+                    onClick={createMenuClickHandler(sectionItem.action)}
+                >
                     {sectionItem.label}
                 </Link>
             ) : (
@@ -53,7 +60,7 @@ function SubmenuColumnSectionItem({ sectionItem, last }) {
                     className="mobile-nav-link"
                     href={sectionItem.href}
                     target=""
-                    onClick={sectionItem.action}
+                    onClick={createMenuClickHandler(sectionItem.action)}
                 >
                     {sectionItem.label}
                 </a>

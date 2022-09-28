@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useMenuClickHandlerContext } from './MenuClickHandlerContext';
 
 const getColumnKey = column => {
     const firstSectionLabel = column[0].label;
@@ -62,6 +63,8 @@ function SubmenuColumnSection({ columnSection }) {
 }
 
 function SubmenuColumnSectionItem({ sectionItem }) {
+    const createMenuClickHandler = useMenuClickHandlerContext();
+
     switch (sectionItem.type) {
         case 'link':
             return (
@@ -70,6 +73,7 @@ function SubmenuColumnSectionItem({ sectionItem }) {
                         className="nav-submenu__link"
                         href={sectionItem.href}
                         target=""
+                        onClick={createMenuClickHandler()}
                     >
                         {sectionItem.label}
                     </a>
@@ -78,26 +82,35 @@ function SubmenuColumnSectionItem({ sectionItem }) {
         case 'button':
             return (
                 <li className="nav-submenu__list-item nav-submenu__list-item--button">
-                    <a
+                    <Link
                         className="button button--yellow"
-                        href={sectionItem.href}
-                        target=""
-                        onClick={sectionItem.action}
+                        to={sectionItem.href}
+                        onClick={createMenuClickHandler(sectionItem.action)}
                     >
                         <span>{sectionItem.label}</span>
-                    </a>
+                    </Link>
                 </li>
             );
         case 'auth-button':
             return (
                 <li className="nav-submenu__list-item nav-submenu__list-item--button">
-                    <Link
-                        className="button button--auth"
-                        to={sectionItem.href}
-                        onClick={sectionItem.action}
-                    >
-                        <span>{sectionItem.label}</span>
-                    </Link>
+                    {sectionItem.href ? (
+                        <Link
+                            className="button button--auth"
+                            to={sectionItem.href}
+                            onClick={createMenuClickHandler()}
+                        >
+                            <span>{sectionItem.label}</span>
+                        </Link>
+                    ) : (
+                        <button
+                            type="button"
+                            className="button button--auth"
+                            onClick={createMenuClickHandler(sectionItem.action)}
+                        >
+                            <span>{sectionItem.label}</span>
+                        </button>
+                    )}
                 </li>
             );
         default:

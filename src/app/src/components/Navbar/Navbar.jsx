@@ -6,6 +6,7 @@ import { MobileNavbarItems, NavbarItems } from '../../util/constants';
 import Logo from './Logo';
 import BurgerButton from './BurgerButton';
 import GoogleTranslateBar from './GoogleTranslateBar';
+import MenuClickHandlerContext from './MenuClickHandlerContext';
 
 const breakpoint = '(max-width: 75rem)';
 
@@ -107,10 +108,18 @@ export default function Navbar() {
         </header>
     );
 
+    const createMenuClickHandler = (callback = () => {}) => () => {
+        setActiveSubmenu(null);
+        setShowMobileMenu(false);
+        callback();
+    };
+
     return (
         <>
             <GoogleTranslateBar />
-            {Header}
+            <MenuClickHandlerContext.Provider value={createMenuClickHandler}>
+                {Header}
+            </MenuClickHandlerContext.Provider>
         </>
     );
 }
