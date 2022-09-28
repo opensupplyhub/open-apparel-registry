@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { arrayOf, string } from 'prop-types';
+import { arrayOf, string, bool } from 'prop-types';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { toast } from 'react-toastify';
 
@@ -29,6 +30,8 @@ function DownloadFacilitiesButton({
     logDownloadError,
     user,
     /* from props */
+    allowLargeDownloads,
+    disabled,
     setLoginRequiredDialogIsOpen,
 }) {
     const [requestedDownload, setRequestedDownload] = useState(false);
@@ -59,56 +62,79 @@ function DownloadFacilitiesButton({
     };
 
     return (
-        <div>
-            <Button
-                variant="outlined"
-                styles={downloadFacilitiesStyles.listHeaderButtonStyles}
-                aria-owns={anchorEl ? 'download-menu' : undefined}
-                aria-haspopup="true"
-                onClick={handleClick}
-                style={{
-                    backgroundColor: '#FFCF3F',
-                    fontSize: '16px',
-                    fontWeight: 900,
-                    lineHeight: '20px',
-                }}
-            >
-                <div
+        <Tooltip
+            title={
+                allowLargeDownloads ? (
+                    ''
+                ) : (
+                    <p style={{ fontSize: '0.875rem' }}>
+                        Downloads are supported only for searches resulting in
+                        10,000 facilities or less.
+                    </p>
+                )
+            }
+            placement="left"
+        >
+            <div>
+                <Button
+                    disabled={disabled}
+                    variant="outlined"
+                    styles={downloadFacilitiesStyles.listHeaderButtonStyles}
+                    aria-owns={anchorEl ? 'download-menu' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleClick}
                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        textTransform: 'none',
+                        backgroundColor: '#FFCF3F',
+                        fontSize: '16px',
+                        fontWeight: 900,
+                        lineHeight: '20px',
                     }}
                 >
-                    <DownloadIcon />
-                    <span style={downloadFacilitiesStyles.buttonText}>
-                        Download
-                    </span>
-                    <ArrowDropDownIcon />
-                </div>
-            </Button>
-            <Menu
-                id="download-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
-                <MenuItem onClick={() => selectFormatAndDownload('csv')}>
-                    CSV
-                </MenuItem>
-                <MenuItem onClick={() => selectFormatAndDownload('xlsx')}>
-                    Excel
-                </MenuItem>
-            </Menu>
-        </div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            textTransform: 'none',
+                        }}
+                    >
+                        <DownloadIcon
+                            color={disabled ? 'rgba(0, 0, 0, 0.26)' : '#1C1B1F'}
+                        />
+                        <span style={downloadFacilitiesStyles.buttonText}>
+                            Download
+                        </span>
+                        <ArrowDropDownIcon
+                            color={disabled ? 'rgba(0, 0, 0, 0.26)' : '#1C1B1F'}
+                        />
+                    </div>
+                </Button>
+                <Menu
+                    id="download-menu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    <MenuItem onClick={() => selectFormatAndDownload('csv')}>
+                        CSV
+                    </MenuItem>
+                    <MenuItem onClick={() => selectFormatAndDownload('xlsx')}>
+                        Excel
+                    </MenuItem>
+                </Menu>
+            </div>
+        </Tooltip>
     );
 }
 
 DownloadFacilitiesButton.defaultProps = {
+    allowLargeDownloads: false,
+    disabled: false,
     logDownloadError: null,
 };
 
 DownloadFacilitiesButton.propTypes = {
+    allowLargeDownloads: bool,
+    disabled: bool,
     logDownloadError: arrayOf(string),
 };
 
