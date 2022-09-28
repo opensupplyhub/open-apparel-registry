@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Deprecated
 
 ### Removed
+- Prepare code for read-only database [#2184](https://github.com/open-apparel-registry/open-apparel-registry/pull/2184)
 
 ### Fixed
 
