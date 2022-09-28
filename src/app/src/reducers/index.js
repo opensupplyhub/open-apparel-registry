@@ -28,7 +28,7 @@ import DashboardActivityReportsReducer from './DashboardActivityReportsReducer';
 import DeleteFacilityReducer from './DeleteFacilityReducer';
 import MergeFacilitiesReducer from './MergeFacilitiesReducer';
 import AdjustFacilityMatchesReducer from './AdjustFacilityMatchesReducer';
-import LogDownloadReducer from './LogDownloadReducer';
+import DownloadFacilitiesReducer from './DownloadFacilitiesReducer';
 import VectorTileLayer from './VectorTileLayer';
 import UpdateFacilityLocationReducer from './UpdateFacilityLocationReducer';
 import EmbeddedMapReducer from './EmbeddedMapReducer';
@@ -57,7 +57,7 @@ export default combineReducers({
     deleteFacility: DeleteFacilityReducer,
     mergeFacilities: MergeFacilitiesReducer,
     adjustFacilityMatches: AdjustFacilityMatchesReducer,
-    logDownload: LogDownloadReducer,
+    downloadFacilities: DownloadFacilitiesReducer,
     vectorTileLayer: VectorTileLayer,
     updateFacilityLocation: UpdateFacilityLocationReducer,
     embeddedMap: EmbeddedMapReducer,

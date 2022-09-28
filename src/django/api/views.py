@@ -64,7 +64,6 @@ from api.constants import (CsvHeaderField,
                            FacilityMergeQueryParams,
                            FacilityCreateQueryParams,
                            ProcessingAction,
-                           LogDownloadQueryParams,
                            UpdateLocationParams,
                            FeatureGroups,
                            NumberOfWorkersRanges)
@@ -84,7 +83,6 @@ from api.models import (FacilityList,
                         FacilityActivityReport,
                         Contributor,
                         User,
-                        DownloadLog,
                         Version,
                         FacilityLocation,
                         Source,
@@ -120,7 +118,6 @@ from api.serializers import (FacilityListSerializer,
                              FacilityClaimDetailsSerializer,
                              ApprovedFacilityClaimSerializer,
                              FacilityMergeQueryParamsSerializer,
-                             LogDownloadQueryParamsSerializer,
                              FacilityUpdateLocationParamsSerializer,
                              ApiBlockSerializer,
                              FacilityActivityReportSerializer,
@@ -639,27 +636,6 @@ class RootAutoSchema(AutoSchema):
 
         return super(RootAutoSchema, self).get_link(
             path, method, base_url)
-
-
-@api_view(['POST'])
-@permission_classes([IsRegisteredAndConfirmed])
-@schema(RootAutoSchema())
-def log_download(request):
-    params = LogDownloadQueryParamsSerializer(data=request.query_params)
-    if not params.is_valid():
-        raise ValidationError(params.errors)
-
-    path = request.query_params.get(LogDownloadQueryParams.PATH)
-    record_count = request.query_params.get(
-        LogDownloadQueryParams.RECORD_COUNT)
-
-    DownloadLog.objects.create(
-        user=request.user,
-        path=path,
-        record_count=record_count,
-    )
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FacilitiesAPIFilterBackend(BaseFilterBackend):

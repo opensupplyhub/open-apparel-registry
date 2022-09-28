@@ -388,7 +388,7 @@ function mapStateToProps({
         facilitiesSidebarTabSearch: { filterText },
         window: { innerHeight: windowHeight },
     },
-    logDownload: { fetching: downloadingCSV },
+    downloadFacilities: { fetching: downloadingCSV },
 }) {
     return {
         data,

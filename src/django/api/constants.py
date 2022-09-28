@@ -136,11 +136,6 @@ class Certifications:
     FAIRTRADE_USA = 'Fairtrade USA'
 
 
-class LogDownloadQueryParams:
-    PATH = 'path'
-    RECORD_COUNT = 'record_count'
-
-
 class UpdateLocationParams:
     LAT = 'lat'
     LNG = 'lng'
