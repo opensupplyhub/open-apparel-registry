@@ -23,7 +23,6 @@ import RouteNotFound from './components/RouteNotFound';
 import Dashboard from './components/Dashboard';
 import Translate from './components/Translate';
 import FeatureFlag from './components/FeatureFlag';
-import ClaimFacility from './components/ClaimFacility';
 import ClaimedFacilities from './components/ClaimedFacilities';
 import SurveyDialogNotification from './components/SurveyDialogNotification';
 import ExternalRedirect from './components/ExternalRedirect';
@@ -118,7 +117,7 @@ class Routes extends Component {
                                                 />
                                             }
                                         >
-                                            <Route component={ClaimFacility} />
+                                            <Route component={NotAvailable} />
                                         </FeatureFlag>
                                     )}
                                 />

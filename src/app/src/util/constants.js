@@ -653,12 +653,8 @@ export const createUserDropdownLinks = (
 };
 
 export const facilitySidebarActions = {
-    SUGGEST_AN_EDIT: 'Suggest an edit',
-    REPORT_AS_DUPLICATE: 'Report as duplicate',
-    REPORT_AS_CLOSED: 'Report as closed',
     REPORT_AS_REOPENED: 'Report as reopened',
     DISPUTE_CLAIM: 'Dispute claim',
-    CLAIM_FACILITY: 'Claim this facility',
     VIEW_ON_OAR: 'View on the Open Apparel Registry',
 };
 

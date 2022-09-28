@@ -43,7 +43,6 @@ const {
     getNumberFromParsedQueryStringParamOrUseDefault,
     createPaginationOptionsFromQueryString,
     createParamsFromQueryString,
-    makeReportADataIssueEmailLink,
     makeFeatureCollectionFromSingleFeature,
     createConfirmFacilityListItemMatchURL,
     createRejectFacilityListItemMatchURL,
@@ -891,13 +890,6 @@ it('creates params from a query string', () => {
     const expectedParamsForIgnoredArg = {};
     expect(createParamsFromQueryString(ignoredArgQueryString))
         .toEqual(expectedParamsForIgnoredArg);
-});
-
-it('creates an email link for reporting a data issue for a facility with a given OAR ID', () => {
-    const oarID = 'oarID';
-    const expectedMatch = 'mailto:info@openapparel.org?subject=Reporting a data issue on ID oarID';
-
-    expect(makeReportADataIssueEmailLink(oarID)).toBe(expectedMatch);
 });
 
 it('creates a geojson FeatureCollection from a single geojson Feature', () => {

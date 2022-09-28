@@ -555,9 +555,6 @@ export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (
 export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) =>
     Object.freeze([page * rowsPerPage, (page + 1) * rowsPerPage]);
 
-export const makeReportADataIssueEmailLink = oarId =>
-    `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${oarId}`;
-
 export const makeDisputeClaimEmailLink = oarId =>
     `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${oarId}`;
 
