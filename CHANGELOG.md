@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add interactive map to facility details [#2145](https://github.com/open-apparel-registry/open-apparel-registry/pull/2145)
 - Provision an ElastiCache memcached cluster [#2138](https://github.com/open-apparel-registry/open-apparel-registry/pull/2138)
 - Store raw list files [#2154](https://github.com/open-apparel-registry/open-apparel-registry/pull/2154)
+- Add documentation for AWS debugging [#2176](https://github.com/open-apparel-registry/open-apparel-registry/pull/2176)
 
 ### Changed
 
