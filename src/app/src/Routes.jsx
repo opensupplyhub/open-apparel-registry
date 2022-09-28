@@ -117,7 +117,11 @@ class Routes extends Component {
                                                 />
                                             }
                                         >
-                                            <Route component={NotAvailable} />
+                                            <Route
+                                                component={NotAvailable(
+                                                    'Claim Facility',
+                                                )}
+                                            />
                                         </FeatureFlag>
                                     )}
                                 />
@@ -149,7 +153,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={authRegisterFormRoute}
-                                    component={NotAvailable}
+                                    component={NotAvailable('Register')}
                                 />
                                 <Route
                                     exact
@@ -173,7 +177,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={contributeRoute}
-                                    component={NotAvailable}
+                                    component={NotAvailable('Contribute')}
                                 />
                                 <Route
                                     path={dashboardRoute}
@@ -190,7 +194,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={settingsRoute}
-                                    component={NotAvailable}
+                                    component={NotAvailable('Settings')}
                                 />
                                 <Route exact path="/about/processing">
                                     <ExternalRedirect
