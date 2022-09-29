@@ -66,7 +66,8 @@ from api.matching import (match_facility_list_items, GazetteerCache,
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             reduce_matches, is_string_match,
-                            save_match_details)
+                            save_match_details,
+                            get_country_code)
 from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
@@ -644,6 +645,42 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assert_successful_parse_results(item)
         self.assertEqual(['Apparel'], item.sector)
         self.assertEqual(0, ExtendedField.objects.all().count())
+
+    def test_parse_multi_line_country(self):
+        facility_list = FacilityList.objects.create(
+            header="sector,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list
+        )
+
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,\"United\nKingdom\",Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,\"Dominican\r\nRepublic\",Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,\"United\n\nKingdom\",Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+
+        item = FacilityListItem(
+            raw_data="Apparel,1234 main st,\"Hong\r\n\r\nKong\",Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
 
 
 class UserTokenGenerationTest(TestCase):
@@ -10672,3 +10709,29 @@ class NotificationTests(FacilityAPITestCaseBase):
             self.assertEqual(2, len(cm.output))
             self.assertIn("ContributorWebhook FAILED", cm.output[0])
             self.assertIn("ContributorWebhook DELIVERED", cm.output[1])
+
+
+class CountryCodeParserTests(TestCase):
+    def test_parse_countries_with_new_lines(self):
+        self.assertEqual(
+            get_country_code('United\nKingdom'),
+            'GB'
+        )
+        self.assertEqual(
+            get_country_code('Dominican\r\nRepublic'),
+            'DO'
+        )
+        self.assertEqual(
+            get_country_code('Russian\n\nFederation'),
+            'RU'
+        )
+        self.assertEqual(
+            get_country_code('Hong\r\n\r\nKong'),
+            'HK'
+        )
+
+    def test_parse_hong_kong_sar(self):
+        self.assertEqual(
+            get_country_code('Hong Kong SAR'),
+            'HK'
+        )
