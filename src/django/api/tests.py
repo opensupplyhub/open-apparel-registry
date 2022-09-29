@@ -607,6 +607,44 @@ class FacilityListItemParseTest(ProcessingTestCase):
             'raw_values': [' Toys', 'Games']
         }, ef.value)
 
+    def test_sector_product_type_parsing_with_only_sector(self):
+        facility_list = FacilityList.objects.create(
+            header="sector_product_type,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list,
+            contributor=self.contributor
+        )
+        item = FacilityListItem.objects.create(
+            row_index=1,
+            sector=[],
+            raw_data="Apparel,1234 main st,ChInA,Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel'], item.sector)
+        self.assertEqual(0, ExtendedField.objects.all().count())
+
+    def test_only_valid_sectors_as_product_type(self):
+        facility_list = FacilityList.objects.create(
+            header="product_type,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list,
+            contributor=self.contributor
+        )
+        item = FacilityListItem.objects.create(
+            row_index=1,
+            sector=[],
+            raw_data="Apparel,1234 main st,ChInA,Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel'], item.sector)
+        self.assertEqual(0, ExtendedField.objects.all().count())
+
 
 class UserTokenGenerationTest(TestCase):
     def setUp(self):
@@ -8893,6 +8931,25 @@ class SectorTestCase(FacilityAPITestCaseBase):
         facility_index = FacilityIndex.objects.get(id=ef.facility.id)
         self.assertIn(
             self.SECTOR_NON_EXISTANT.lower(), facility_index.product_type)
+
+    @patch('api.geocoding.requests.get')
+    def test_sector_product_type_contains_only_sector(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        response = self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type':
+            [self.SECTOR_A],
+        }), content_type='application/json')
+        response_data = json.loads(response.content)
+
+        item = FacilityListItem.objects.get(
+            facility_id=response_data['os_id'])
+        self.assertIn(self.SECTOR_A, item.sector)
+        self.assertEqual(0, ExtendedField.objects.all().count())
 
 
 class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
