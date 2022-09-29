@@ -109,6 +109,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix getLangFromTranslateElement function [#2097](https://github.com/open-apparel-registry/open-apparel-registry/pull/2097)
 - Update the Python and Rollber versions used for lamba functions [#2120](https://github.com/open-apparel-registry/open-apparel-registry/pull/2120)
 - Fixup recent UX changes [#2141](https://github.com/open-apparel-registry/open-apparel-registry/pull/2141)
+- Fixed parsing country strings with newline characters [#2195](https://github.com/open-apparel-registry/open-apparel-registry/pull/2195)
 
 ### Security
 

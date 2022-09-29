@@ -2,6 +2,7 @@ import copy
 import csv
 import traceback
 import sys
+import re
 
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
@@ -151,7 +152,11 @@ def parse_csv_line(line):
 
 def get_country_code(country):
     # TODO: Handle minor spelling errors in country names
+    remove_new_lines_pattern = re.compile(r'[\n\r]+')
+
     country = str(country).strip()
+    country = remove_new_lines_pattern.sub(' ', country)
+
     if country.upper() in COUNTRY_NAMES:
         return country.upper()
     elif country.lower() in COUNTRY_CODES:
