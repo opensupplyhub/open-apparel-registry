@@ -626,6 +626,25 @@ class FacilityListItemParseTest(ProcessingTestCase):
         self.assertEqual(['Apparel'], item.sector)
         self.assertEqual(0, ExtendedField.objects.all().count())
 
+    def test_only_valid_sectors_as_product_type(self):
+        facility_list = FacilityList.objects.create(
+            header="product_type,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list,
+            contributor=self.contributor
+        )
+        item = FacilityListItem.objects.create(
+            row_index=1,
+            sector=[],
+            raw_data="Apparel,1234 main st,ChInA,Shirts!",
+            source=source
+        )
+        parse_facility_list_item(item)
+        self.assert_successful_parse_results(item)
+        self.assertEqual(['Apparel'], item.sector)
+        self.assertEqual(0, ExtendedField.objects.all().count())
+
 
 class UserTokenGenerationTest(TestCase):
     def setUp(self):

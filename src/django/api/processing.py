@@ -193,6 +193,13 @@ def parse_facility_list_item(item):
             else:
                 fields.append('product_type')
                 values.append(parser.product_types)
+        else:
+            # In this case the parse found that all of the product_type values
+            # for the item were actually sectors. Setting None instead of an
+            # empty list ensures that we do not create an extended field for
+            # product_type
+            if 'product_type' in fields:
+                values[fields.index('product_type')] = None
 
         if CsvHeaderField.COUNTRY in fields:
             item.country_code = get_country_code(
