@@ -8,7 +8,7 @@ from django.db import transaction
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import password_validation
 from django.urls import reverse
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework.serializers import (BooleanField,
                                         CharField,
                                         ChoiceField,
@@ -1889,10 +1889,14 @@ class ExtendedFieldListSerializer(ModelSerializer):
                                   self.should_display_contributor(instance))
 
     def get_value_count(self, instance):
-        return ExtendedField.objects.filter(facility=instance.facility) \
+        from_claim = Q(facility_list_item=None)
+        from_active_list = Q(facility_list_item__source__is_active=True)
+        vals = ExtendedField.objects.filter(facility=instance.facility) \
                                     .filter(field_name=instance.field_name) \
                                     .filter(value=instance.value) \
+                                    .filter(from_claim | from_active_list) \
                                     .count()
+        return vals
 
     def get_is_from_claim(self, instance):
         return instance.facility_list_item is None

@@ -1024,6 +1024,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         queryset = Facility \
             .objects \
             .filter_by_query_params(request.query_params) \
+            .prefetch_related('facilitymatch_set', 'facilitylistitem_set',
+                              'facilitylistitem_set__source') \
             .order_by('name')
 
         page_queryset = self.paginate_queryset(queryset)
