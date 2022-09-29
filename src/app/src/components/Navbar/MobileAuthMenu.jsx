@@ -1,144 +1,103 @@
 import React from 'react';
-import { bool } from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import startsWith from 'lodash/startsWith';
 
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AccountCircleIcon from '@material-ui/icons/AccountCircleOutlined';
 
 import { submitLogOut } from '../../actions/auth';
-import { userPropType } from '../../util/propTypes';
-
 import {
+    authLoginFormRoute,
     mainRoute,
     facilitiesRoute,
-    MOBILE_HEADER_HEIGHT,
     createUserDropdownLinks,
 } from '../../util/constants';
-
 import { convertFeatureFlagsObjectToListOfActiveFlags } from '../../util/util';
-import COLOURS from '../../util/COLOURS';
-
-const styles = {
-    mobileNavActive: {
-        left: 0,
-        width: '100%',
-        top: MOBILE_HEADER_HEIGHT,
-        opacity: 1,
-    },
-    mobileNavInactive: { left: 0, opacity: 0, display: 'none' },
-    profileButton: {
-        color: COLOURS.NEAR_BLACK,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0.5rem 1rem',
-        fontSize: '1.5rem',
-    },
-    submenuButton: {
-        cursor: 'pointer',
-        textTransform: 'uppercase',
-        color: 'white',
-        fontWeight: 'normal',
-        padding: '1.5rem 1rem',
-        fontSize: '1.5rem',
-        width: '100%',
-        justifyContent: 'flex-start',
-    },
-};
+import { BackButtonArrowLeft, MobileSubmenuButtonArrowRight } from './navIcons';
+import MobileNavSubmenuColumnSection from './MobileNavSubmenuColumnSection';
 
 function AuthMenu({
     user,
     logout,
     sessionFetching,
     featureFlagsFetching,
+    isActive,
+    setActive,
+    setInactive,
     activeFeatureFlags,
-    mobileNavActive,
-    setMobileNavActive,
 }) {
-    const title = 'auth';
-    const isActive = mobileNavActive === title;
-    const handleClose = () => setMobileNavActive(null);
-    const toggleNav = () =>
-        isActive ? handleClose() : setMobileNavActive(title);
-    const links = createUserDropdownLinks(user, logout, activeFeatureFlags);
-
-    const renderLink = ({ text, url, type, action }) => {
-        if (type === 'link') {
-            return (
-                <div className="mobile-nav__item" key={url}>
-                    <Link
-                        className="mobile-nav__link"
-                        href={url}
-                        to={url}
-                        key={text}
-                        target=""
-                        onClick={handleClose}
-                    >
-                        <span>{text}</span>
-                    </Link>
-                </div>
-            );
-        }
-        if (type === 'button') {
-            return (
-                <div className="mobile-nav__item " key={text}>
-                    <Button
-                        type="button"
-                        onClick={() => {
-                            handleClose();
-                            action();
-                        }}
-                        style={styles.submenuButton}
-                    >
-                        {text}
-                    </Button>
-                </div>
-            );
-        }
-        return null;
-    };
+    const toggleActive = isActive ? setInactive : setActive;
 
     if (!user || sessionFetching || featureFlagsFetching) {
-        return null;
+        return (
+            <a
+                className="mobile-nav-link"
+                href={authLoginFormRoute}
+                disabled={sessionFetching}
+            >
+                Login/Register
+            </a>
+        );
     }
 
     return (
         <>
-            {!mobileNavActive && (
-                <IconButton
-                    className="nav__link mobile-auth"
-                    style={styles.profileButton}
-                    onClick={toggleNav}
-                >
-                    <AccountCircleIcon fontSize="large" />
-                </IconButton>
-            )}
-            <nav
-                className="mobile-nav"
-                id="mobile-nav"
-                role="navigation"
+            <button
+                type="button"
+                className="mobile-nav-submenu-button"
+                onClick={toggleActive}
+            >
+                <span className="">
+                    <AccountCircleIcon
+                        fontSize="large"
+                        style={{ verticalAlign: 'middle' }}
+                    />
+                    <span
+                        style={{ marginLeft: '.5rem', verticalAlign: 'middle' }}
+                    >
+                        My Account
+                    </span>
+                </span>
+
+                <MobileSubmenuButtonArrowRight />
+            </button>
+
+            <div
+                className="mobile-nav-submenu"
                 style={
-                    isActive ? styles.mobileNavActive : styles.mobileNavInactive
+                    isActive
+                        ? { width: '100%', height: 'auto', left: '100%' }
+                        : {}
                 }
             >
-                {links.map(renderLink)}
-            </nav>
+                <button
+                    type="button"
+                    className="mobile-nav-back-button"
+                    onClick={setInactive}
+                >
+                    <BackButtonArrowLeft />
+                    <span>Back</span>
+                </button>
+
+                <MobileNavSubmenuColumnSection
+                    columnSection={{
+                        label: 'User Links',
+                        items: createUserDropdownLinks(
+                            user,
+                            logout,
+                            activeFeatureFlags,
+                        ).map(item => ({
+                            ...item,
+                            type: 'link',
+                            internal: true,
+                        })),
+                    }}
+                    startOpen
+                />
+            </div>
         </>
     );
 }
-
-AuthMenu.defaultProps = {
-    user: null,
-};
-
-AuthMenu.propTypes = {
-    user: userPropType,
-    sessionFetching: bool.isRequired,
-    featureFlagsFetching: bool.isRequired,
-};
 
 function mapStateToProps({
     auth: {

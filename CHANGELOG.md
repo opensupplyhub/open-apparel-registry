@@ -82,6 +82,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update search results dropdowns [#2161](https://github.com/open-apparel-registry/open-apparel-registry/pull/2161)
 - Use HubSpot for mailing list [#2166](https://github.com/open-apparel-registry/open-apparel-registry/pull/2166)
 - Add Sector model and update create facility product type/sector parsing [#2157](https://github.com/open-apparel-registry/open-apparel-registry/pull/2157)
+- Update site header with OS Hub styling [#2167](https://github.com/open-apparel-registry/open-apparel-registry/pull/2167)
 
 ### Deprecated
 

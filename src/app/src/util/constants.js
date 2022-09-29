@@ -7,29 +7,52 @@ export const FACILITIES_REQUEST_PAGE_SIZE = 50;
 export const FACILITIES_DOWNLOAD_DEFAULT_LIMIT = 10000;
 export const FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE = 10;
 
-export const WEB_HEADER_HEIGHT = '80px';
-export const MOBILE_HEADER_HEIGHT = '68px';
+export const WEB_HEADER_HEIGHT = '160px';
+export const MOBILE_HEADER_HEIGHT = '140px';
 
 export const InfoLink = 'https://info.openapparel.org';
 
 export const InfoPaths = {
-    home: '',
     gettingStarted: 'getting-started',
     dataTechnology: 'data-technology',
-    api: 'api',
-    embeddedMap: 'embedded-map',
-    faqs: 'faqs',
     aboutUs: 'about-us',
     funding: 'funding',
-    press: 'press',
-    workWithUs: 'work-with-us',
-    contactUs: 'contact-us',
+
     storiesResources: 'stories-resources',
     privacyPolicy: 'privacy-policy',
     termsOfUse: 'terms-of-use',
     contribute: 'stories-resources/how-to-contribute-data-to-the-oar',
     dataQuality: 'how-the-oar-improves-data-quality',
     claimedFacilities: 'stories-resources/claim-a-facility',
+
+    // How It Works
+    home: '',
+    faqs: 'faqs',
+    brands: 'brands',
+    civilSociety: 'civil-society',
+    facilities: 'facilities',
+    multiStakeholderInitiatives: 'msis',
+    researchers: 'researchers',
+    serviceProviders: 'service-providers',
+    sectors: 'sectors',
+    technology: 'technology',
+    developerResources: 'developer-resources',
+    api: 'api',
+    embeddedMap: 'embedded-map',
+
+    // About Us
+    mission: 'mission',
+    supporters: 'supporters',
+    press: 'press',
+    financials: 'financials',
+    governanceAndPolicies: 'governance-policies',
+    team: 'team',
+    boardOfDirectors: 'board',
+    workWithUs: 'work-with-us',
+    contactUs: 'contact-us',
+
+    // Other
+    resources: 'resources',
 };
 
 // This choices must be kept in sync with the identical list
@@ -568,61 +591,223 @@ export const SelectedMarkerColor = '#FFCF3F';
 // when the width is set to 100%
 export const minimum100PercentWidthEmbedHeight = '500px';
 
-export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
+export const NavbarItems = [
+    {
+        type: 'link',
+        label: 'Explore',
+        href: '/',
+        internal: true,
+    },
+    {
+        type: 'submenu',
+        label: 'How It Works',
+        columns: [
+            [
+                {
+                    label: 'What is OS Hub?',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'Introduction',
+                            href: InfoLink,
+                        },
+                        {
+                            type: 'link',
+                            label: 'FAQs',
+                            href: `${InfoLink}/${InfoPaths.faqs}`,
+                        },
+                        {
+                            type: 'button',
+                            label: 'Donate',
+                            href: '/donate',
+                            internal: true,
+                        },
+                    ],
+                },
+            ],
+            [
+                {
+                    label: 'Who is it for?',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'Brands & Retailers',
+                            href: `${InfoLink}/${InfoPaths.brands}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Civil Society',
+                            href: `${InfoLink}/${InfoPaths.civilSociety}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Facilities',
+                            href: `${InfoLink}/${InfoPaths.facilities}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Multi-Stakeholder Initiatives',
+                            href: `${InfoLink}/${InfoPaths.multiStakeholderInitiatives}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Researchers',
+                            href: `${InfoLink}/${InfoPaths.researchers}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Service Providers',
+                            href: `${InfoLink}/${InfoPaths.serviceProviders}`,
+                        },
+                    ],
+                },
+            ],
+            [
+                {
+                    label: 'What does it cover?',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'Sectors',
+                            href: `${InfoLink}/${InfoPaths.sectors}`,
+                        },
+                    ],
+                },
+            ],
+            [
+                {
+                    label: 'The Technology',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'Overview',
+                            href: `${InfoLink}/${InfoPaths.technology}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Developer Resources',
+                            href: `${InfoLink}/${InfoPaths.developerResources}`,
+                        },
+                    ],
+                },
+                {
+                    label: 'Premium Features',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'API',
+                            href: `${InfoLink}/${InfoPaths.api}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Embedded Map',
+                            href: `${InfoLink}/${InfoPaths.embeddedMap}`,
+                        },
+                    ],
+                },
+            ],
+        ],
+    },
+    {
+        type: 'submenu',
+        label: 'About Us',
+        columns: [
+            [
+                {
+                    label: 'Organization',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'Mission',
+                            href: `${InfoLink}/${InfoPaths.mission}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Supporters',
+                            href: `${InfoLink}/${InfoPaths.supporters}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Press',
+                            href: `${InfoLink}/${InfoPaths.press}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Financials',
+                            href: `${InfoLink}/${InfoPaths.financials}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Governance & Policies',
+                            href: `${InfoLink}/${InfoPaths.governanceAndPolicies}`,
+                        },
+                    ],
+                },
+            ],
+            [
+                {
+                    label: 'People',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'Team',
+                            href: `${InfoLink}/${InfoPaths.team}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Board of Directors',
+                            href: `${InfoLink}/${InfoPaths.boardOfDirectors}`,
+                        },
+                        {
+                            type: 'link',
+                            label: 'Work with Us',
+                            href: `${InfoLink}/${InfoPaths.workWithUs}`,
+                        },
+                    ],
+                },
+            ],
+            [
+                {
+                    label: 'Connect',
+                    items: [
+                        {
+                            type: 'link',
+                            label: 'Contact Us',
+                            href: `${InfoLink}/${InfoPaths.contactUs}`,
+                        },
+                        {
+                            type: 'button',
+                            label: 'Donate',
+                            href: '/donate',
+                            internal: true,
+                        },
+                    ],
+                },
+            ],
+        ],
+    },
+    {
+        type: 'link',
+        label: 'Resources',
+        href: `${InfoLink}/${InfoPaths.resources}`,
+    },
+    { type: 'international' },
+    { type: 'auth' },
+    {
+        type: 'button',
+        label: 'Upload Data',
+        href: '/contribute',
+        internal: true,
+    },
+];
 
-export const SubmenuLinks = {
-    'How It Works': [
-        {
-            url: InfoPaths.home,
-            text: 'Home',
-            external: true,
-        },
-        {
-            url: InfoPaths.gettingStarted,
-            text: 'Getting Started',
-            external: true,
-        },
-        {
-            url: InfoPaths.dataTechnology,
-            text: 'Data & Technology',
-            external: true,
-        },
-        { url: InfoPaths.api, text: 'API', external: true },
-        {
-            url: InfoPaths.embeddedMap,
-            text: 'Embedded Map',
-            external: true,
-        },
-        { url: InfoPaths.faqs, text: 'FAQs', external: true },
-    ],
-    'About Us': [
-        { url: InfoPaths.aboutUs, text: 'About Us', external: true },
-        { url: InfoPaths.funding, text: 'Funding', external: true },
-        { url: InfoPaths.press, text: 'Press', external: true },
-        {
-            url: InfoPaths.workWithUs,
-            text: 'Work With Us',
-            external: true,
-        },
-        { url: InfoPaths.contactUs, text: 'Contact Us', external: true },
-    ],
-    More: [
-        {
-            text: 'Cookie Preferences',
-            button: true,
-        },
-        {
-            url: InfoPaths.privacyPolicy,
-            text: 'Privacy policy',
-            external: true,
-        },
-        {
-            url: InfoPaths.termsOfUse,
-            text: 'Terms of use',
-            external: true,
-        },
-    ],
-};
+// Move the Upload to the front of the list
+export const MobileNavbarItems = [
+    NavbarItems[NavbarItems.length - 1],
+    ...NavbarItems.slice(0, -1),
+];
+
+export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 
 export const FooterLinks = [
     {
@@ -676,9 +861,8 @@ export const createUserDropdownLinks = (
     const dashboardLink = checkWhetherUserHasDashboardAccess(user)
         ? Object.freeze([
               Object.freeze({
-                  text: 'Dashboard',
-                  url: dashboardRoute,
-                  type: 'link',
+                  label: 'Dashboard',
+                  href: dashboardRoute,
               }),
           ])
         : [];
@@ -686,30 +870,26 @@ export const createUserDropdownLinks = (
     const claimedFacilityLinks = includes(activeFeatureFlags, CLAIM_A_FACILITY)
         ? Object.freeze([
               Object.freeze({
-                  text: 'My Facilities',
-                  url: '/claimed',
-                  type: 'link',
+                  label: 'My Facilities',
+                  href: '/claimed',
               }),
           ])
         : [];
 
     const userLinks = Object.freeze([
         Object.freeze({
-            text: 'My Lists',
-            url: '/lists',
-            type: 'link',
+            label: 'My Lists',
+            href: '/lists',
         }),
         Object.freeze({
-            text: 'Settings',
-            url: '/settings',
-            type: 'link',
+            label: 'Settings',
+            href: '/settings',
         }),
     ]);
 
     const logoutLinks = Object.freeze([
         Object.freeze({
-            text: 'Log Out',
-            type: 'button',
+            label: 'Log Out',
             action: logoutAction,
         }),
     ]);

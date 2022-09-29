@@ -1,0 +1,14 @@
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+.goog-te-gadget-simple {
+    width: 0;
+    height: 50px;
+    width: 80px;
+}
+
+.goog-te-menu-frame {
+    top: 2.75rem !important;
+    box-shadow: none !important;
+}
