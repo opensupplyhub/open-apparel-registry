@@ -87,6 +87,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update site footer with OS Hub styling [#2189](https://github.com/open-apparel-registry/open-apparel-registry/pull/2189)
 - Updated withQueryStringSync to render only after query params are hydrated [#2205](https://github.com/open-apparel-registry/open-apparel-registry/pull/2205)
 - Rename Jenkinsfile.release for OSH [#2211](https://github.com/open-apparel-registry/open-apparel-registry/pull/2211)
+- Terminology updates [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
+- Change claim wizard header color [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
 
 ### Deprecated
 
