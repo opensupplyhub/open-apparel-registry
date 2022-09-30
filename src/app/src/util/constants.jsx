@@ -163,23 +163,23 @@ const accountEmailField = Object.freeze({
 
 const accountNameField = Object.freeze({
     id: registrationFieldsEnum.name,
-    label: 'Contributor Name',
+    label: 'Organization Name',
     type: inputTypesEnum.text,
     required: true,
-    hint: `If you are uploading a supplier list on behalf of the organisation
-you work for, you should add the organisation name here, not your personal name.
-Your contributor name will appear publicly on all facilities that you upload as
+    hint: `If you are uploading a supplier list on behalf of the organization
+you work for, you should add the organization name here, not your personal name.
+Your organization name will appear publicly on all facilities that you upload as
 the data source for each facility contributed.`,
     modelFieldName: 'name',
 });
 
 const accountDescriptionField = Object.freeze({
     id: registrationFieldsEnum.description,
-    label: 'Description',
+    label: 'Organization Description',
     type: inputTypesEnum.text,
     required: true,
-    hint: `Enter a description of the contributor. This will appear in your
-public contributor profile.`,
+    hint: `Enter a description of the organization. This will appear in your
+public organization profile.`,
     modelFieldName: 'description',
 });
 
@@ -194,7 +194,7 @@ const accountWebsiteField = Object.freeze({
 
 const accountContributorTypeField = Object.freeze({
     id: registrationFieldsEnum.contributorType,
-    label: 'Contributor Type',
+    label: 'Organization Type',
     type: inputTypesEnum.select,
     options: contributorTypeOptions,
     required: true,

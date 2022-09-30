@@ -51,7 +51,7 @@ function DashboardClaimsListTable({ data, history: { push } }) {
                     <TableRow>
                         <TableCell padding="dense">Claim ID</TableCell>
                         <TableCell>Facility Name</TableCell>
-                        <TableCell>Contributor Name</TableCell>
+                        <TableCell>Organization Name</TableCell>
                         <TableCell padding="dense">Created</TableCell>
                         <TableCell padding="dense">Last Updated</TableCell>
                         <TableCell padding="dense">Status</TableCell>

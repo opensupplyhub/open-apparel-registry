@@ -99,7 +99,7 @@ function ContributorFilter({
                 <StyledSelect
                     label={
                         <div style={{ display: 'flex' }}>
-                            <p>Contributor</p>
+                            <p>Data Contributor</p>
                             <ShowOnly
                                 when={contributors && contributors.length > 1}
                             >

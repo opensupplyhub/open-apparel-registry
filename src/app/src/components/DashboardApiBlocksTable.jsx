@@ -60,7 +60,7 @@ function DashboardApiBlocksTable({
                 <TableHead>
                     <TableRow>
                         <TableCell>Date Created</TableCell>
-                        <TableCell>Contributor</TableCell>
+                        <TableCell>Organization</TableCell>
                         <TableCell>In Effect Until</TableCell>
                         <TableCell padding="dense">Count Limit</TableCell>
                         <TableCell padding="dense">Actual Count</TableCell>

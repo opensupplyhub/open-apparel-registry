@@ -21,7 +21,7 @@ import { convertFeatureFlagsObjectToListOfActiveFlags } from '../util/util';
 const PROFILE_TAB = 'Profile';
 const EMBED_TAB = 'Embed';
 const TOKEN_TAB = 'Tokens';
-const NOTIFICATIONS_TAB = 'Notifications';
+const NOTIFICATIONS_TAB = 'API Notifications';
 
 const getTabs = ({ fetchingFlags, activeFeatureFlags }) => {
     if (fetchingFlags || !includes(activeFeatureFlags, EMBEDDED_MAP_FLAG)) {

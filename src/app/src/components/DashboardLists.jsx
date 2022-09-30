@@ -233,7 +233,7 @@ function DashboardLists({
         <Paper style={styles.container}>
             <div style={styles.filterRow}>
                 <div style={styles.filter}>
-                    <label htmlFor={CONTRIBUTORS}>Contributor</label>
+                    <label htmlFor={CONTRIBUTORS}>Organization</label>
                     <ReactSelect
                         id={CONTRIBUTORS}
                         name={CONTRIBUTORS}

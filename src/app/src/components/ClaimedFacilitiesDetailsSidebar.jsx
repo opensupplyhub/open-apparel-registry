@@ -45,7 +45,7 @@ export default function ClaimedFacilitiesDetailsSidebar({ facilityDetails }) {
                 </Typography>
             </div>
             <div style={claimedFacilitiesDetailsSidebarStyles.sectionStyles}>
-                <Typography variant="title">Contributors</Typography>
+                <Typography variant="title">Organizations</Typography>
                 <ul
                     style={claimedFacilitiesDetailsSidebarStyles.bodyTextStyles}
                 >
