@@ -110,6 +110,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 - Updated Node to version 14 [#1986](https://github.com/open-apparel-registry/open-apparel-registry/pull/1986)
+- Updated Batch AMI ID to latest version [#2190](https://github.com/open-apparel-registry/open-apparel-registry/pull/2190)
 
 ## [66] - 2022-05-12
 
