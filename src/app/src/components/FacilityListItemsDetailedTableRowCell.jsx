@@ -10,9 +10,7 @@ import {
     string,
 } from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import get from 'lodash/get';
-import isFunction from 'lodash/isFunction';
 
 import CellElement from './CellElement';
 import ShowOnly from './ShowOnly';
@@ -32,39 +30,13 @@ export default function FacilityListItemsDetailedTableRowCell({
     linkURLs,
     readOnly,
     isRemoved,
-    handleRemoveItem,
-    removeButtonDisabled,
-    removeButtonID,
 }) {
     const statusSection = (() => {
         if (isRemoved) {
             return 'REMOVED';
         }
 
-        if (!isFunction(handleRemoveItem)) {
-            return title;
-        }
-
-        return (
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
-            >
-                <span style={{ marginRight: '5px' }}>{title}</span>
-                <Button
-                    color="primary"
-                    onClick={handleRemoveItem}
-                    disabled={removeButtonDisabled}
-                    style={{ marginLeft: '5px', marginRight: '5px' }}
-                    id={removeButtonID}
-                >
-                    Remove
-                </Button>
-            </div>
-        );
+        return title;
     })();
 
     return (
@@ -100,9 +72,6 @@ FacilityListItemsDetailedTableRowCell.defaultProps = {
     linkURLs: null,
     readOnly: false,
     isRemoved: false,
-    handleRemoveItem: null,
-    removeButtonDisabled: true,
-    removeButtonID: null,
 };
 
 FacilityListItemsDetailedTableRowCell.propTypes = {
@@ -132,7 +101,4 @@ FacilityListItemsDetailedTableRowCell.propTypes = {
     linkURLs: arrayOf(string),
     readOnly: bool,
     isRemoved: bool,
-    handleRemoveItem: func,
-    removeButtonDisabled: bool,
-    removeButtonID: string,
 };

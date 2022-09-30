@@ -3,7 +3,6 @@ import { bool, func, number, oneOfType, string } from 'prop-types';
 import { Link } from 'react-router-dom';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import Button from '@material-ui/core/Button';
 import isFunction from 'lodash/isFunction';
 
 import { facilityListItemStatusPropType } from '../util/propTypes';
@@ -11,8 +10,6 @@ import { facilityListItemStatusPropType } from '../util/propTypes';
 import { listTableCellStyles } from '../util/styles';
 
 import { makeFacilityDetailLink } from '../util/util';
-
-import { facilityListItemErrorStatuses } from '../util/constants';
 
 const makeTableRowStyles = ({ handleSelectRow, isRemoved }) => ({
     cursor: isFunction(handleSelectRow) ? 'pointer' : 'auto',
@@ -31,9 +28,6 @@ const FacilityListItemsTableRow = ({
     newFacility,
     oarID,
     isRemoved,
-    handleRemoveItem,
-    removeButtonDisabled,
-    removeButtonID,
     className,
 }) => (
     <TableRow
@@ -88,37 +82,7 @@ const FacilityListItemsTableRow = ({
                     return 'REMOVED';
                 }
 
-                if (!isFunction(handleRemoveItem)) {
-                    return newFacility ? 'NEW_FACILITY' : status;
-                }
-
-                return (
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <span style={{ marginRight: '5px' }}>
-                            {newFacility ? 'NEW_FACILITY' : status}
-                        </span>
-                        {!facilityListItemErrorStatuses.includes(status) && (
-                            <Button
-                                color="primary"
-                                onClick={handleRemoveItem}
-                                style={{
-                                    marginLeft: '5px',
-                                    marginRight: '5px',
-                                }}
-                                disabled={removeButtonDisabled}
-                                id={removeButtonID}
-                            >
-                                Remove
-                            </Button>
-                        )}
-                    </div>
-                );
+                return newFacility ? 'NEW_FACILITY' : status;
             })()}
         </TableCell>
     </TableRow>
@@ -130,9 +94,6 @@ FacilityListItemsTableRow.defaultProps = {
     newFacility: false,
     oarID: null,
     isRemoved: false,
-    handleRemoveItem: null,
-    removeButtonDisabled: false,
-    removeButtonID: null,
 };
 
 FacilityListItemsTableRow.propTypes = {
@@ -145,9 +106,6 @@ FacilityListItemsTableRow.propTypes = {
     newFacility: bool,
     oarID: string,
     isRemoved: bool,
-    handleRemoveItem: func,
-    removeButtonDisabled: bool,
-    removeButtonID: string,
 };
 
 export default FacilityListItemsTableRow;

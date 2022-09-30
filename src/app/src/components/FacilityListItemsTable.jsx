@@ -381,11 +381,6 @@ class FacilityListItemsTable extends Component {
                               listID={listID}
                               readOnly={readOnly}
                               isRemoved={anyListItemMatchesAreInactive(item)}
-                              handleRemoveItem={() =>
-                                  this.handleRemoveButtonClick(item)
-                              }
-                              removeButtonDisabled={isRemovingItem}
-                              removeButtonID={REMOVE_BUTTON_ID}
                               className="STATUS_POTENTIAL_MATCH facility-list-row__expanded"
                           />
                       );
@@ -411,11 +406,6 @@ class FacilityListItemsTable extends Component {
                               newFacility
                               oarID={item.matched_facility.oar_id}
                               isRemoved={anyListItemMatchesAreInactive(item)}
-                              handleRemoveItem={() =>
-                                  this.handleRemoveButtonClick(item)
-                              }
-                              removeButtonDisabled={isRemovingItem}
-                              removeButtonID={REMOVE_BUTTON_ID}
                               className="STATUS_NEW_FACILITY"
                           />
                       );
@@ -433,11 +423,6 @@ class FacilityListItemsTable extends Component {
                               handleSelectRow={handleSelectRow}
                               hover
                               isRemoved={anyListItemMatchesAreInactive(item)}
-                              handleRemoveItem={() =>
-                                  this.handleRemoveButtonClick(item)
-                              }
-                              removeButtonDisabled={isRemovingItem}
-                              removeButtonID={REMOVE_BUTTON_ID}
                               className={`STATUS_MATCHED_COLLAPSED ${
                                   facilityListItemErrorStatuses.includes(
                                       item.status,
@@ -466,11 +451,6 @@ class FacilityListItemsTable extends Component {
                               matchedFacility={item.matched_facility}
                               handleSelectRow={handleSelectRow}
                               isRemoved={anyListItemMatchesAreInactive(item)}
-                              handleRemoveItem={() =>
-                                  this.handleRemoveButtonClick(item)
-                              }
-                              removeButtonDisabled={isRemovingItem}
-                              removeButtonID={REMOVE_BUTTON_ID}
                               className="STATUS_MATCHED_EXPANDED facility-list-row__expanded"
                           />
                       );

@@ -36,9 +36,6 @@ const FacilityListItemsMatchTableRow = ({
     matchedFacility,
     handleSelectRow,
     isRemoved,
-    handleRemoveItem,
-    removeButtonDisabled,
-    removeButtonID,
     className,
 }) => (
     <>
@@ -106,9 +103,6 @@ const FacilityListItemsMatchTableRow = ({
                     data={[matchedFacility.oar_id]}
                     hasActions={false}
                     isRemoved={isRemoved}
-                    handleRemoveItem={handleRemoveItem}
-                    removeButtonDisabled={removeButtonDisabled}
-                    removeButtonID={removeButtonID}
                 />
             </TableCell>
         </TableRow>
@@ -175,9 +169,6 @@ const FacilityListItemsMatchTableRow = ({
 FacilityListItemsMatchTableRow.defaultProps = {
     hover: false,
     isRemoved: false,
-    handleRemoveItem: null,
-    removeButtonDisabled: true,
-    removeButtonID: null,
 };
 
 FacilityListItemsMatchTableRow.propTypes = {
@@ -193,9 +184,6 @@ FacilityListItemsMatchTableRow.propTypes = {
     }).isRequired,
     handleSelectRow: func.isRequired,
     isRemoved: bool,
-    handleRemoveItem: func,
-    removeButtonDisabled: bool,
-    removeButtonID: string,
 };
 
 export default FacilityListItemsMatchTableRow;
