@@ -36,7 +36,7 @@ class Map extends Component {
                 sm={12}
                 md={7}
                 className="map-container"
-                style={this.props.fullHeight ? { height: '100%' } : {}}
+                style={this.props.height ? { height: this.props.height } : {}}
             >
                 {!hasError && (
                     <Switch>

@@ -38,7 +38,7 @@ export default function GoogleTranslateBar() {
                 backgroundColor: 'black',
                 maxHeight: GOOGLE_TRANSLATE_BAR_HEIGHT,
             }}
-            className="results-height-subtract"
+            className="header-height-contributor"
         >
             <div
                 id="google_translate_element"

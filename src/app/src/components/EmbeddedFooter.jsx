@@ -4,7 +4,7 @@ import { InfoLink } from '../util/constants';
 
 const EmbeddedFooter = () => (
     <footer
-        className="footerContainerEmbedded results-height-subtract"
+        className="footerContainerEmbedde footer-height-contributor"
         xs={12}
         style={{ position: 'absolute', bottom: 0 }}
     >

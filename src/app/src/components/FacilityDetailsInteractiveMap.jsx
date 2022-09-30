@@ -32,7 +32,7 @@ const locationFieldsStyles = theme =>
 const FacilityDetailsInteractiveMap = ({ classes }) => (
     <div className={classes.root}>
         <div className={`${classes.contentContainer}`}>
-            <Map fullHeight />
+            <Map height="100%" />
         </div>
     </div>
 );

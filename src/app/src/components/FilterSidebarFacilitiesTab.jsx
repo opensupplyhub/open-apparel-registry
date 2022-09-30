@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { arrayOf, bool, func, number, string } from 'prop-types';
+import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -44,6 +44,7 @@ import COLOURS from '../util/COLOURS';
 import { filterSidebarStyles } from '../util/styles';
 import BadgeClaimed from './BadgeClaimed';
 import CopyLinkIcon from './CopyLinkIcon';
+import { useResultListHeight } from '../util/useHeightSubtract';
 
 const facilitiesTabStyles = Object.freeze({
     noResultsTextStyles: Object.freeze({
@@ -97,7 +98,6 @@ function FilterSidebarFacilitiesTab({
     fetching,
     data,
     error,
-    windowHeight,
     downloadingCSV,
     downloadData,
     returnToSearchTab,
@@ -126,6 +126,8 @@ function FilterSidebarFacilitiesTab({
             });
         }, 100);
     }
+
+    const resultListHeight = useResultListHeight();
 
     if (fetching) {
         return (
@@ -273,11 +275,6 @@ function FilterSidebarFacilitiesTab({
             </Typography>
         </div>
     );
-
-    const nonResultListComponentHeight = Array.from(
-        document.getElementsByClassName('results-height-subtract'),
-    ).reduce((sum, x) => sum + x.offsetHeight, 0);
-    const resultListHeight = windowHeight - nonResultListComponentHeight;
 
     const loadingElement = facilities.length !== facilitiesCount && (
         <Fragment>
@@ -474,7 +471,6 @@ FilterSidebarFacilitiesTab.propTypes = {
     data: facilityCollectionPropType,
     fetching: bool.isRequired,
     error: arrayOf(string),
-    windowHeight: number.isRequired,
     downloadingCSV: bool.isRequired,
     returnToSearchTab: func.isRequired,
     fetchNextPage: func.isRequired,
