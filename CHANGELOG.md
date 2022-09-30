@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+- Updated Batch AMI ID to latest [#2201](https://github.com/open-apparel-registry/open-apparel-registry/pull/2201)
+
 ## [71] 2022-09-13
 
 ### Fixed
