@@ -160,6 +160,7 @@ export default createReducer(
                                 profileSummaryFieldsEnum.facilityLists
                             ],
                     },
+                    contributorId: { $set: payload.contributor_id || null },
                 },
                 fetching: { $set: false },
                 error: { $set: null },
