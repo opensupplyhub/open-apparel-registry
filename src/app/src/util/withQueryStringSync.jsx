@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bool, func, number, shape, string } from 'prop-types';
 import get from 'lodash/get';
+import { CircularProgress } from '@material-ui/core';
 
 import { setFiltersFromQueryString } from '../actions/filters';
 
@@ -23,6 +24,8 @@ const getCleanPathname = pathname => {
 
 export default function withQueryStringSync(WrappedComponent) {
     const componentWithWrapper = class extends Component {
+        state = { finishedInitialHydrate: false };
+
         componentDidMount() {
             const {
                 history: {
@@ -32,37 +35,39 @@ export default function withQueryStringSync(WrappedComponent) {
                 match: { path },
                 filters,
                 hydrateFiltersFromQueryString,
+                fetchFacilitiesForCurrentSearch,
                 vectorTileFeatureIsActive,
                 embeddedMap: { embed },
             } = this.props;
 
-            // This check returns null when the component mounts on the facility details route
-            // with a path like /facilities/hello-world?name=facility to stop all facilities
-            // from loading in the background and superseding single facility for the details
-            // page.
-            //
-            // In that case, `path` will be `/facilities` and `pathname` will be
-            // `/facilities/hello-world`. In other cases -- `/` and `/facilities` -- these paths
-            // will match.
-            //
-            // Furthermore, limits fetching facilities to the facilities route.
-            const cleanPathname = getCleanPathname(pathname);
-            const isFacilitiesRoute = path.includes(facilitiesRoute);
-            const fetchFacilitiesOnMount =
-                cleanPathname === path && isFacilitiesRoute;
+            if (vectorTileFeatureIsActive || search) {
+                hydrateFiltersFromQueryString(search);
 
-            if (vectorTileFeatureIsActive) {
-                return hydrateFiltersFromQueryString(
-                    search,
-                    fetchFacilitiesOnMount,
+                // This check returns null when the component mounts on the facility details route
+                // with a path like /facilities/hello-world?name=facility to stop all facilities
+                // from loading in the background and superseding single facility for the details
+                // page.
+                //
+                // In that case, `path` will be `/facilities` and `pathname` will be
+                // `/facilities/hello-world`. In other cases -- `/` and `/facilities` -- these paths
+                // will match.
+                //
+                // Furthermore, limits fetching facilities to the facilities route.
+                const cleanPathname = getCleanPathname(pathname);
+                const isFacilitiesRoute = path.includes(facilitiesRoute);
+                const fetchFacilitiesOnMount =
+                    cleanPathname === path && isFacilitiesRoute;
+
+                if (fetchFacilitiesOnMount) {
+                    fetchFacilitiesForCurrentSearch();
+                }
+
+                this.setState({ finishedInitialHydrate: true });
+            } else {
+                replace(
+                    `?${createQueryStringFromSearchFilters(filters, embed)}`,
                 );
             }
-
-            return search
-                ? hydrateFiltersFromQueryString(search, fetchFacilitiesOnMount)
-                : replace(
-                      `?${createQueryStringFromSearchFilters(filters, embed)}`,
-                  );
         }
 
         componentDidUpdate({
@@ -115,7 +120,11 @@ export default function withQueryStringSync(WrappedComponent) {
         }
 
         render() {
-            return <WrappedComponent {...this.props} />;
+            return this.state.finishedInitialHydrate ? (
+                <WrappedComponent {...this.props} />
+            ) : (
+                <CircularProgress />
+            );
         }
     };
 
@@ -153,17 +162,8 @@ export default function withQueryStringSync(WrappedComponent) {
 
     function mapDispatchToProps(dispatch, { history: { push } }) {
         return {
-            hydrateFiltersFromQueryString: (qs, fetch = true) => {
+            hydrateFiltersFromQueryString: qs => {
                 dispatch(setFiltersFromQueryString(qs));
-
-                return fetch
-                    ? dispatch(
-                          fetchFacilities({
-                              ...push,
-                              activateFacilitiesTab: false,
-                          }),
-                      )
-                    : null;
             },
             fetchFacilitiesForCurrentSearch: () =>
                 dispatch(
