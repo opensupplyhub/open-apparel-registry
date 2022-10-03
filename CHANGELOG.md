@@ -85,6 +85,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update site header with OS Hub styling [#2167](https://github.com/open-apparel-registry/open-apparel-registry/pull/2167) [#2022](https://github.com/open-apparel-registry/open-apparel-registry/pull/2202)
 - Filter out fields from inactive lists in facility API response [#2180](https://github.com/open-apparel-registry/open-apparel-registry/pull/2180)
 - Update site footer with OS Hub styling [#2189](https://github.com/open-apparel-registry/open-apparel-registry/pull/2189)
+- Updated withQueryStringSync to render only after query params are hydrated [#2205](https://github.com/open-apparel-registry/open-apparel-registry/pull/2205)
 
 ### Deprecated
 
