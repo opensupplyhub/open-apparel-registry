@@ -438,6 +438,9 @@ def get_facility_and_processing_type(facility_or_processing_type):
     # Assign a default value to field_type
     field_type = PROCESSING_TYPE
 
+    if cleaned_input is None:
+        return (None, None, None, None)
+
     # Try for exact match
     processing_type = ALL_PROCESSING_TYPES.get(cleaned_input)
     facility_type = ALL_FACILITY_TYPES.get(cleaned_input)
