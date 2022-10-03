@@ -89,6 +89,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rename Jenkinsfile.release for OSH [#2211](https://github.com/open-apparel-registry/open-apparel-registry/pull/2211)
 - Terminology updates [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
 - Change claim wizard header color [#2194](https://github.com/open-apparel-registry/open-apparel-registry/pull/2194)
+- Hide nav links on My Account - Settings page [#2212](https://github.com/open-apparel-registry/open-apparel-registry/pull/2212)
 
 ### Deprecated
 
