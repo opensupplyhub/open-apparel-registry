@@ -248,7 +248,8 @@ $pink-500: #FFA6D0;
     &--auth {
       padding-top: calc($gtr / 4);
       padding-bottom: calc($gtr / 4);
-      background-color: #D9D2E9;
+      background-color: $purple-100;
+      line-height: 1.4;
     }
   }
 
@@ -590,6 +591,10 @@ $pink-500: #FFA6D0;
     padding-left: 0;
     padding-top: $gtr;
     list-style: none;
+  }
+
+  .auth-menu .nav-submenu__list {
+    padding-top: 0;
   }
 
   .nav-submenu__list-item {

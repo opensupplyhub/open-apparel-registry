@@ -41,7 +41,7 @@ function AuthMenu({
     }
 
     return (
-        <>
+        <div className="auth-menu">
             <button
                 type="button"
                 className="nav-submenu-button"
@@ -72,7 +72,7 @@ function AuthMenu({
                     },
                 ])}
             />
-        </>
+        </div>
     );
 }
 
