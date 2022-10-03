@@ -214,26 +214,28 @@ class UserProfile extends Component {
                 }}
             >
                 {title}
-                <div>
-                    <a
-                        href={`/facilities?contributors=${profile.contributorId}`}
-                        rel="noopener noreferrer"
-                        style={{
-                            backgroundColor: '#FFCF3F',
-                            color: '#000',
-                            fontSize: '18px',
-                            fontWeight: '900',
-                            lineHeight: '20px',
-                            textDecoration: 'none',
-                            padding: '16px',
-                            gap: '8px',
-                            display: 'flex',
-                        }}
-                    >
-                        <MapIcon />
-                        View map of facilities
-                    </a>
-                </div>
+                <ShowOnly when={!isEditableProfile}>
+                    <div>
+                        <a
+                            href={`/facilities?contributors=${profile.contributorId}`}
+                            rel="noopener noreferrer"
+                            style={{
+                                backgroundColor: '#FFCF3F',
+                                color: '#000',
+                                fontSize: '18px',
+                                fontWeight: '900',
+                                lineHeight: '20px',
+                                textDecoration: 'none',
+                                padding: '16px',
+                                gap: '8px',
+                                display: 'flex',
+                            }}
+                        >
+                            <MapIcon />
+                            View map of facilities
+                        </a>
+                    </div>
+                </ShowOnly>
             </div>
         );
 
@@ -309,22 +311,24 @@ class UserProfile extends Component {
         return (
             <AppOverflow>
                 <div style={{ backgroundColor: '#F9F7F7' }}>
-                    <Button
-                        style={{
-                            backgroundColor: 'transparent',
-                            color: '#8428FA',
-                            fontSize: '18px',
-                            fontWeight: '700',
-                            lineHeight: '18px',
-                            letterSpacing: '0.5px',
-                            textTransform: 'none',
-                        }}
-                        Icon={ArrowBack}
-                        text="Back to search results"
-                        onClick={() => {
-                            push(facilitiesRoute);
-                        }}
-                    />
+                    <ShowOnly when={!isEditableProfile}>
+                        <Button
+                            style={{
+                                backgroundColor: 'transparent',
+                                color: '#8428FA',
+                                fontSize: '18px',
+                                fontWeight: '700',
+                                lineHeight: '18px',
+                                letterSpacing: '0.5px',
+                                textTransform: 'none',
+                            }}
+                            Icon={ArrowBack}
+                            text="Back to search results"
+                            onClick={() => {
+                                push(facilitiesRoute);
+                            }}
+                        />
+                    </ShowOnly>
                     <AppGrid
                         title={titleBar}
                         style={profileStyles.appGridContainer}
