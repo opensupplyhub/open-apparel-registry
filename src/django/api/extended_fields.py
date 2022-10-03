@@ -73,8 +73,16 @@ def get_product_type_extendedfield_value(field_value):
     }
 
 
+def all_values_empty(value):
+    if value is not None and isinstance(value, list):
+        values = [v for v in value if v is not None and v != ""]
+        return len(values) == 0
+    return False
+
+
 def create_extendedfield(field, field_value, item, contributor):
-    if field_value is not None and field_value != "":
+    if field_value is not None and field_value != "" \
+            and not all_values_empty(field_value):
         if field == ExtendedField.NUMBER_OF_WORKERS:
             field_value = extract_int_range_value(field_value)
         elif field == ExtendedField.PARENT_COMPANY:
