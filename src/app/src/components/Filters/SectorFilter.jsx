@@ -18,7 +18,11 @@ function SectorFilter({
     fetchSectors,
     fetchingSectors,
     fetchingOptions,
+    hideSectorData,
 }) {
+    if (hideSectorData) {
+        return null;
+    }
     return (
         <div className="form__field">
             <StyledSelect
@@ -59,12 +63,14 @@ function mapStateToProps({
         countries: { fetching: fetchingCountries },
     },
     filters: { sectors },
+    embeddedMap: { embed, config },
 }) {
     return {
         sectorOptions,
         sectors,
         fetchingSectors,
         fetchingOptions: fetchingCountries || fetchingContributors,
+        hideSectorData: embed ? config.hide_sector_data : false,
     };
 }
 

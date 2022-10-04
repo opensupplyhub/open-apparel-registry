@@ -73,6 +73,7 @@ const FacilityDetailsLocationFields = ({
     embedConfig,
     formatExtendedField,
     formatIfListAndRemoveDuplicates,
+    hideSectorData,
 }) => {
     const [sectorField, otherSectors] = useMemo(() => {
         const sectors = get(data, 'properties.sector', []).map(item => ({
@@ -172,14 +173,16 @@ const FacilityDetailsLocationFields = ({
                             embed={embed}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                        <FacilityDetailsItem
-                            label="Sector"
-                            {...sectorField}
-                            additionalContent={otherSectors}
-                            embed={embed}
-                        />
-                    </Grid>
+                    {hideSectorData ? null : (
+                        <Grid item xs={12} md={6}>
+                            <FacilityDetailsItem
+                                label="Sector"
+                                {...sectorField}
+                                additionalContent={otherSectors}
+                                embed={embed}
+                            />
+                        </Grid>
+                    )}
                     {embed
                         ? renderEmbedFields()
                         : EXTENDED_FIELD_TYPES.map(renderExtendedField)}

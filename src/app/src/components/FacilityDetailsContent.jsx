@@ -139,6 +139,7 @@ const FacilityDetailsContent = ({
     userHasPendingFacilityClaim,
     facilityIsClaimedByCurrentUser,
     embedConfig,
+    hideSectorData,
 }) => {
     useEffect(() => {
         fetchFacility(Number(embed), contributors);
@@ -260,6 +261,7 @@ const FacilityDetailsContent = ({
                     formatIfListAndRemoveDuplicates={
                         formatIfListAndRemoveDuplicates
                     }
+                    hideSectorData={hideSectorData}
                 />
                 <ShowOnly when={!embed}>
                     <FacilityDetailsContributors
@@ -333,6 +335,7 @@ function mapStateToProps(
         userHasPendingFacilityClaim,
         facilityIsClaimedByCurrentUser,
         vectorTileFlagIsActive,
+        hideSectorData: embed ? config.hide_sector_data : false,
     };
 }
 
