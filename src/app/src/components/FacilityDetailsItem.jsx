@@ -39,8 +39,8 @@ const FacilityDetailsItem = ({
     embed,
     isVerified,
     isFromClaim,
-    additionalContentText = 'contribution',
-    additionalContentTextPlural = 'contributions',
+    additionalContentText = 'entry',
+    additionalContentTextPlural = 'entries',
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const hasAdditionalContent = !embed && !!additionalContent?.length;

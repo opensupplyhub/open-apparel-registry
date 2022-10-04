@@ -31,11 +31,7 @@
 
 .panel-header {
   color: white;
-  background-color: #3d2f8c;  /* Old browsers */
-  background: -moz-linear-gradient(-45deg, #003de5 0%, #7964ff 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(-45deg, #003de5 0%,#7964ff 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(135deg, #003de5 0%,#7964ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#003de5', endColorstr='#7964ff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  background-color: #8428FA; 
   padding: 20px 16px;
 }
 

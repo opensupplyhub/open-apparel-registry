@@ -1,29 +1,31 @@
 {% block content %}
 Hi there,
 
-Thanks for submitting {{ list_name }} to the Open Supply Hub. The list has now been processed by our system and the results are available here: {{list_url}}.
+Thank you for submitting {{ list_name }} to Open Supply Hub. This list has been approved by the OS Hub team and has completed processing. This means that all facilities from the list that did not require additional verification by our team are now live on OS Hub. The admin view of your list is now available here: {{list_url}}.
 
-What next?
+What’s next? 
 
-Reviewing your upload:
+For You:
 
-1. Check for and Resolve Errors: Some entries in your list may have generated an error message. You can review these entries to see whether it’s caused by an error in data entry, such as a country name being mis-spelled, or whether our geo-coder is unable to plot the facility due to the address lacking sufficient details. You can read the Processing data in the OS Hub section of our FAQs (https://info.openapparel.org/faqs#processing-data-in-the-oar) for more information on error types and how to resolve them. Once you have pin-pointed the cause of the error, update your facility information in your Excel/CSV file and re-upload your FULL list to the OS Hub again (uploading one facility at a time results in multiple lists that are harder to manage).
+Check for and Resolve Errors: Some entries in your list may have generated an error message. You can review these entries to see whether it’s caused by an error in data entry, such as a country name being mis-spelled, or whether our geo-coder is unable to plot the facility due to the address lacking sufficient details. Check out our FAQs for more information on error types and how to resolve them. Once you have pin-pointed the cause of the error, update your facility information in your Excel/CSV file and re-upload your FULL list to the OS Hub again (uploading one facility at a time results in multiple lists that are harder to manage in the future).
 
-2. Confirm or Reject Potential Matches: In some cases, our algorithm wasn’t certain whether to identify a facility as a match, or whether to create a new entity in the tool. Once you have resolved any errors in your list, next we ask you to filter your list by “Potential matches” and confirm or reject the options presented to you. For more information on this process, see the “What am I meant to do on the confirm / reject page?” question of our FAQ page (https://info.openapparel.org/faqs#uploading-to-the-oar).
+NOTE: Data Points Beyond Name and Address: If you uploaded additional data points beyond facility name and address, note that you won’t be able to see these data points in your admin view – but don’t worry, they are there. You can confirm that we’ve received them by selecting the “Download submitted file” from the admin view of your list (linked above) or by searching/downloading your list in Open Supply Hub.
 
-3. Data Points Beyond Name and Address: If you uploaded additional data points beyond facility name and address, you will now be able to see them by searching or downloading your contribution from the Open Supply Hub.
+Behind the Scenes:
 
-Once your list is uploaded and cleaned:
+Finalizing facility matches: If some of the facilities you uploaded aren’t yet showing up in your public-facing list on OS Hub and are appearing as a “Potential Match” in your admin view, this means our algorithm flagged them to be checked by a human, to confirm whether or not they match an existing facility in the database. This helps us accurately address more nuanced matching cases and maintain a higher level of data quality in OS Hub. The OS Hub team is now working through these instances in your list. If you would prefer to complete this step yourself, instead of our Data Moderation team, please reach out to info@opensupplyhub.org.You can see each facility’s current match status here:  {{list_url}}.
 
-1. See who else is connected with your facilities/suppliers: Once you have contributed to the OS Hub, check out your facility profiles to see which other companies and organizations are connected with the facilities you uploaded. What collaborations could you explore working on together?
+Once your list is finalized:
 
-2. Share your OS Hub contribution: Link directly to your facility/supplier data on the OS Hub from your website, so your users can easily search and navigate through your list. These free graphics are available (https://info.openapparel.org/stories-resources/assets-for-oar-stakeholders) for use to point users to your OS Hub contribution on your website, LinkedIn profile, and/or on social media. You can also display your facility/supplier data as an interactive map, embedded on your website (https://info.openapparel.org/embedded-map).
+1. See who else is connected with your facilities/suppliers: Once you have uploaded data  to OS Hub, check out your facility profiles to see which other companies and organizations are connected with the facilities you uploaded. What collaborations could you explore working on together? If you want to search for facilities that you share with a specific contributor, you can use our contributor search feature – be sure to check the “show only shared facilities” option.
 
-3. Encourage your facilities/suppliers to claim their profiles or claim your facility, if you are the owner: By claiming their facilities on the OS Hub, facility owners or senior management can provide facility location data straight from the source, as well as add additional details to their profiles, including MOQs, lead times, certifications, and more.
+2. Share your OS Hub contribution: Link directly to your facility/supplier data on the OS Hub from your website, so your users can easily search and navigate through your list. These free graphics are available for use to point users to your OS Hub contribution on your website, LinkedIn profile, and/or on social media. You can also display your facility/supplier data as an interactive map, embedded on your website.
 
-If you are a brand or organization uploading a facility list, you can find suggested text for a message to your suppliers here (https://info.openapparel.org/stories-resources/encourage-your-facilities-to-claim-their-profiles), to encourage them to claim their profiles.
+3. Encourage your facilities/suppliers to claim their profiles or claim your facility, if you are the owner: By claiming their facilities on OS Hub, facility owners or senior management can provide facility location data straight from the source, as well as add additional details to their profiles, including MOQs, lead times, certifications, and more.
 
-For any questions, feel free to reach out to the OS Hub team: info@openapparel.org.
+If you are a brand or organization uploading a facility list, you can find suggested text for a message to your suppliers here, to encourage them to claim their profiles.
+
+For any questions, feel free to reach out to the OS Hub team: info@opensupplyhub.org.
 
 All the best,
 

@@ -189,7 +189,7 @@ export default function DashboardUpdateLocationCard({
                             isClearable
                             id="contributors"
                             name="contributors"
-                            placeholder="Contributor (optional)"
+                            placeholder="Organization (optional)"
                             className="basic-multi-select notranslate"
                             classNamePrefix="select"
                             options={contributorOptions}

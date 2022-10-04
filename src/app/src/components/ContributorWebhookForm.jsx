@@ -66,6 +66,10 @@ function ContributorWebhookForm({
                 saveWebhook(form);
             }}
         >
+            <p>
+                This feature is in development. Notification logic can be
+                created but events will not be sent at this time.
+            </p>
             <div>
                 <div className="form__field">
                     <label

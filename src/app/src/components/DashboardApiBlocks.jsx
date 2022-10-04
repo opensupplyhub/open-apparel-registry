@@ -27,7 +27,7 @@ const styles = {
 };
 
 const currentDate = moment();
-const ALL_CONTRIBUTORS = { value: '', label: 'All Contributors' };
+const ALL_CONTRIBUTORS = { value: '', label: 'All Organizations' };
 
 function DashboardApiBlocks({
     dashboardApiBlocks: { apiBlocks },
@@ -88,7 +88,7 @@ function DashboardApiBlocks({
                                 name={CONTRIBUTORS}
                                 classNamePrefix="select"
                                 options={contributors}
-                                placeholder="Select a contributor..."
+                                placeholder="Select an organization..."
                                 value={contributor}
                                 onChange={c => setContributor(c)}
                                 disabled={apiBlocks.fetching}

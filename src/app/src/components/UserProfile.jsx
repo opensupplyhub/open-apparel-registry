@@ -189,7 +189,7 @@ class UserProfile extends Component {
                         textTransform: 'uppercase',
                     }}
                 >
-                    Contributor
+                    Organization
                 </h3>
                 <h2 style={profileStyles.titleStyles}>
                     {!isEditableProfile && profile.name}

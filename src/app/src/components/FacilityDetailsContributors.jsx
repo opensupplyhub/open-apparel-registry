@@ -85,7 +85,7 @@ const FacilityDetailsContributors = ({ classes, contributors }) => {
                         {visibleContributors.length === 1
                             ? 'organization has'
                             : 'organizations have'}{' '}
-                        contributed data for this facility
+                        uploaded data for this facility
                     </span>
                 </Button>
             </div>
@@ -94,7 +94,7 @@ const FacilityDetailsContributors = ({ classes, contributors }) => {
                     <>
                         <GroupIcon />{' '}
                         <span className={classes.buttonText}>
-                            Contributors ({visibleContributors.length})
+                            Organizations ({visibleContributors.length})
                         </span>
                     </>
                 }
