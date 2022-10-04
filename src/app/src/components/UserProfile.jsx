@@ -216,7 +216,7 @@ class UserProfile extends Component {
                 {title}
                 <div>
                     <a
-                        href={`/facilities?contributors=${profile.id}`}
+                        href={`/facilities?contributors=${profile.contributorId}`}
                         rel="noopener noreferrer"
                         style={{
                             backgroundColor: '#FFCF3F',

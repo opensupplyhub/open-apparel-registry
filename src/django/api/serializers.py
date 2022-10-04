@@ -267,12 +267,14 @@ class UserProfileSerializer(ModelSerializer):
     facility_lists = SerializerMethodField()
     is_verified = SerializerMethodField()
     embed_config = SerializerMethodField()
+    contributor_id = SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'description', 'website', 'contributor_type',
                   'other_contributor_type', 'facility_lists', 'is_verified',
-                  'embed_config')
+                  'embed_config', 'contributor_id')
+        read_only_fields = ('contributor_id',)
 
     def get_name(self, user):
         try:
