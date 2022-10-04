@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bool, func } from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
@@ -54,29 +53,9 @@ import {
     claimedFacilitiesRoute,
     CLAIM_A_FACILITY,
     settingsRoute,
-    WEB_HEADER_HEIGHT,
-    MOBILE_HEADER_HEIGHT,
     InfoLink,
     InfoPaths,
 } from './util/constants';
-
-const appStyles = theme =>
-    Object.freeze({
-        root: Object.freeze({
-            flexGrow: 1,
-        }),
-        mainPanelStyle: Object.freeze({
-            right: '0',
-            top: MOBILE_HEADER_HEIGHT,
-            bottom: 0,
-            left: '0',
-            position: 'fixed',
-            [theme.breakpoints.up('lg')]: {
-                top: WEB_HEADER_HEIGHT,
-                bottom: '51px',
-            },
-        }),
-    });
 
 class Routes extends Component {
     componentDidMount() {
@@ -94,7 +73,7 @@ class Routes extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags, embed, classes } = this.props;
+        const { fetchingFeatureFlags, embed } = this.props;
 
         const mainPanelStyle = embed ? { top: 0, bottom: '64px' } : {};
 
@@ -104,10 +83,7 @@ class Routes extends Component {
                     <div className="App">
                         <Translate />
                         {!embed ? <Navbar /> : null}
-                        <main
-                            style={mainPanelStyle}
-                            className={`mainPanel ${classes.mainPanelStyle}`}
-                        >
+                        <main style={mainPanelStyle} className="mainPanel">
                             <Switch>
                                 <Route
                                     exact
@@ -256,7 +232,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(withStyles(appStyles)(Routes));
+export default connect(mapStateToProps, mapDispatchToProps)(Routes);

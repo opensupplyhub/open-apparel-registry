@@ -51,7 +51,7 @@ export default function Navbar() {
         setActiveSubmenu,
     });
 
-    const headerClassName = `header results-height-subtract ${
+    const headerClassName = `header header-height-contributor ${
         mobileMode ? ' mobile-nav-is-active' : ''
     }`;
 

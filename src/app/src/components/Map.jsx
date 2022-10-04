@@ -35,12 +35,8 @@ class Map extends Component {
                 item
                 sm={12}
                 md={7}
-                style={{
-                    position: 'relative',
-                    height: '100%',
-                    width: '100%',
-                }}
                 className="map-container"
+                style={this.props.height ? { height: this.props.height } : {}}
             >
                 {!hasError && (
                     <Switch>

@@ -40,12 +40,11 @@ import {
     processingTypeOptionsPropType,
     productTypeOptionsPropType,
     numberOfWorkerOptionsPropType,
-    facilityCollectionPropType,
 } from '../util/propTypes';
 
 import { filterSidebarStyles } from '../util/styles';
-
 import { getValueFromEvent } from '../util/util';
+import { useFilterListHeight } from '../util/useHeightSubtract';
 
 import {
     FACILITIES_REQUEST_PAGE_SIZE,
@@ -54,6 +53,23 @@ import {
 
 const filterSidebarSearchTabStyles = theme =>
     Object.freeze({
+        sidebarDiv: Object.freeze({
+            display: 'flex',
+            flexDirection: 'column',
+        }),
+        topSidebarDiv: Object.freeze({
+            overflowY: 'scroll',
+        }),
+        bottomSidebarDiv: Object.freeze({
+            paddingBottom: '16px',
+            paddingLeft: '24px',
+            paddingRight: '24px',
+        }),
+        filtersDiv: Object.freeze({
+            overflowY: 'scroll',
+            paddingRight: '24px',
+            paddingLeft: '24px',
+        }),
         headerStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
             fontSize: '18px',
@@ -102,13 +118,14 @@ function FilterSidebarSearchTab({
     numberOfWorkers,
     fetchingFacilities,
     searchForFacilities,
-    facilities,
     fetchingOptions,
     vectorTileFlagIsActive,
     embed,
     classes,
     embedExtendedFields,
 }) {
+    const filterListHeight = useFilterListHeight();
+
     const extendedFields = [
         contributorTypes,
         parentCompany,
@@ -132,28 +149,6 @@ function FilterSidebarSearchTab({
             </div>
         );
     }
-
-    const noFacilitiesFoundMessage = (() => {
-        if (fetchingFacilities) {
-            return null;
-        }
-
-        if (!facilities) {
-            return null;
-        }
-
-        if (facilities.features.length) {
-            return null;
-        }
-
-        return (
-            <div className="form__field">
-                <p style={{ color: 'red' }}>
-                    No facilities were found for that search
-                </p>
-            </div>
-        );
-    })();
 
     const searchButton = (
         <Button
@@ -205,17 +200,25 @@ function FilterSidebarSearchTab({
     return (
         <div className="control-panel__content">
             <div
+                className={`${classes.sidebarDiv} ${classes.topSidebarDiv}`}
                 style={{
-                    marginBottom: '60px',
-                    display: 'flex',
-                    flexDirection: 'column',
+                    height: filterListHeight,
                 }}
             >
-                <TextSearchFilter searchForFacilities={searchForFacilities} />
-                <ContributorFilter />
-                <CountryNameFilter />
-                <SectorFilter />
-                <FilterSidebarExtendedSearch />
+                <div className={classes.filtersDiv}>
+                    <TextSearchFilter
+                        searchForFacilities={searchForFacilities}
+                    />
+                    <ContributorFilter />
+                    <CountryNameFilter />
+                    <SectorFilter />
+                    <FilterSidebarExtendedSearch />
+                </div>
+            </div>
+
+            <div
+                className={`${classes.sidebarDiv} ${classes.bottomSidebarDiv} filter-list-subtract`}
+            >
                 <div className="form__action" style={{ marginBottom: '40px' }}>
                     {searchResetButtonGroup()}
                 </div>
@@ -238,28 +241,28 @@ function FilterSidebarSearchTab({
                         </ShowOnly>
                     </div>
                 </ShowOnly>
-                <div
-                    className="form__report"
-                    style={{ flex: 1, alignItems: 'flex-end', display: 'flex' }}
-                >
-                    {!embed ? (
-                        <a
-                            className={`${classes.helpSubheadStyle} control-link inherit-font`}
-                            href="mailto:info@openapparel.org?subject=Reporting an issue"
-                        >
-                            Have a suggestion? Let us know!
-                        </a>
-                    ) : null}
-                </div>
-                {noFacilitiesFoundMessage}
+            </div>
+
+            <div
+                className="form__report filter-list-subtract"
+                style={{
+                    flex: 1,
+                    alignItems: 'flex-end',
+                    display: 'flex',
+                }}
+            >
+                {!embed ? (
+                    <a
+                        className={`${classes.helpSubheadStyle} control-link inherit-font`}
+                        href="mailto:info@openapparel.org?subject=Reporting an issue"
+                    >
+                        Have a suggestion? Let us know!
+                    </a>
+                ) : null}
             </div>
         </div>
     );
 }
-
-FilterSidebarSearchTab.defaultProps = {
-    facilities: null,
-};
 
 FilterSidebarSearchTab.propTypes = {
     resetFilters: func.isRequired,
@@ -273,7 +276,6 @@ FilterSidebarSearchTab.propTypes = {
     numberOfWorkers: numberOfWorkerOptionsPropType.isRequired,
     fetchingFacilities: bool.isRequired,
     searchForFacilities: func.isRequired,
-    facilities: facilityCollectionPropType,
     fetchingOptions: bool.isRequired,
     vectorTileFlagIsActive: bool.isRequired,
 };
@@ -298,7 +300,7 @@ function mapStateToProps({
         boundary,
     },
     facilities: {
-        facilities: { data: facilities, fetching: fetchingFacilities },
+        facilities: { fetching: fetchingFacilities },
     },
     featureFlags,
     embeddedMap: { embed, config },
@@ -323,7 +325,6 @@ function mapStateToProps({
         numberOfWorkers,
         nativeLanguageName,
         fetchingFacilities,
-        facilities,
         boundary,
         fetchingOptions: fetchingContributors || fetchingCountries,
         embed: !!embed,

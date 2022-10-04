@@ -9,9 +9,7 @@
 }
 
 .control-panel__content {
-  padding: 24px 16px;
   height: 90%;
-  overflow-y: scroll;
 }
 
 .control-panel__group {

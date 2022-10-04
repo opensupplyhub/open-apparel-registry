@@ -230,7 +230,7 @@ class FilterSidebar extends Component {
                     </Grid>
                 </Hidden>
                 <Hidden mdDown>
-                    <Grid item md={3} style={{ height: '100%' }}>
+                    <Grid item md={3}>
                         <FilterSidebarSearchTab />
                     </Grid>
                 </Hidden>

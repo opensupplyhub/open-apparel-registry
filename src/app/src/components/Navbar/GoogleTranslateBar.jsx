@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
 import '../../styles/css/googleTranslate.css';
+import { GOOGLE_TRANSLATE_BAR_HEIGHT } from '../../util/constants';
 
 const arrowStyles = {
     position: 'relative',
@@ -35,7 +36,9 @@ export default function GoogleTranslateBar() {
             style={{
                 width: '100%',
                 backgroundColor: 'black',
+                maxHeight: GOOGLE_TRANSLATE_BAR_HEIGHT,
             }}
+            className="header-height-contributor"
         >
             <div
                 id="google_translate_element"

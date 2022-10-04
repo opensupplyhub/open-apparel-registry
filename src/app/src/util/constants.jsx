@@ -1,3 +1,4 @@
+import React from 'react';
 import includes from 'lodash/includes';
 import { checkWhetherUserHasDashboardAccess } from './util';
 
@@ -9,6 +10,7 @@ export const FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE = 10;
 
 export const WEB_HEADER_HEIGHT = '160px';
 export const MOBILE_HEADER_HEIGHT = '140px';
+export const GOOGLE_TRANSLATE_BAR_HEIGHT = '44px';
 
 export const InfoLink = 'https://info.openapparel.org';
 
@@ -17,13 +19,12 @@ export const InfoPaths = {
     dataTechnology: 'data-technology',
     aboutUs: 'about-us',
     funding: 'funding',
-
     storiesResources: 'stories-resources',
     privacyPolicy: 'privacy-policy',
-    termsOfUse: 'terms-of-use',
     contribute: 'stories-resources/how-to-contribute-data-to-the-oar',
     dataQuality: 'how-the-oar-improves-data-quality',
     claimedFacilities: 'stories-resources/claim-a-facility',
+    termsOfUse: 'terms-of-use',
 
     // How It Works
     home: '',
@@ -53,6 +54,10 @@ export const InfoPaths = {
 
     // Other
     resources: 'resources',
+
+    // Footer
+    termsOfService: 'terms-of-service',
+    mediaHub: 'media-hub',
 };
 
 // This choices must be kept in sync with the identical list
@@ -811,45 +816,94 @@ export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 
 export const FooterLinks = [
     {
-        href: 'https://www.azavea.com/',
-        prefix: 'Built by ',
-        text: 'Azavea',
-        external: true,
-        newTab: true,
+        label: 'Donate',
+        href: '/donate',
+        internal: true,
+    },
+
+    { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },
+    { label: 'FAQs', href: `${InfoLink}/${InfoPaths.faqs}` },
+    {
+        label: 'Terms of Service',
+        href: `${InfoLink}/${InfoPaths.termsOfService}`,
+    },
+    { label: 'Media Hub', href: `${InfoLink}/${InfoPaths.mediaHub}` },
+    { label: 'Contact Us', href: `${InfoLink}/${InfoPaths.contactUs}` },
+    { label: 'Reporting Line', href: '' },
+];
+
+export const SocialMediaLinks = [
+    {
+        label: 'LinkedIn',
+        Icon: () => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+            >
+                <path
+                    d="M4.477 19.996H.33V6.646h4.147v13.35ZM2.4 4.825C1.076 4.825 0 3.727 0 2.4a2.402 2.402 0 0 1 4.802 0c0 1.326-1.075 2.424-2.4 2.424Zm17.595 15.17h-4.138v-6.498c0-1.549-.031-3.535-2.156-3.535-2.155 0-2.486 1.683-2.486 3.423v6.61H7.074V6.646h3.977v1.822h.058c.554-1.049 1.906-2.156 3.923-2.156 4.196 0 4.968 2.763 4.968 6.351v7.334h-.004Z"
+                    fill="#FFF"
+                    fillRule="nonzero"
+                />
+            </svg>
+        ),
+        href: 'https://www.linkedin.com/company/open-supply-hub/',
     },
     {
-        text: 'Cookie Preferences',
-        button: true,
+        label: 'Twitter',
+        Icon: () => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="17"
+                viewBox="0 0 20 17"
+            >
+                <path
+                    d="M17.944 4.048c.013.178.013.356.013.533 0 5.419-4.124 11.663-11.663 11.663-2.322 0-4.48-.673-6.294-1.84.33.038.647.05.99.05a8.21 8.21 0 0 0 5.089-1.75A4.106 4.106 0 0 1 2.246 9.86c.254.038.508.064.774.064.368 0 .736-.05 1.079-.14A4.1 4.1 0 0 1 .812 5.761v-.05c.546.304 1.18.495 1.853.52A4.096 4.096 0 0 1 .838 2.817c0-.761.203-1.46.558-2.068a11.651 11.651 0 0 0 8.452 4.29 4.627 4.627 0 0 1-.102-.94A4.097 4.097 0 0 1 13.846 0a4.09 4.09 0 0 1 2.994 1.294 8.07 8.07 0 0 0 2.602-.99 4.088 4.088 0 0 1-1.802 2.26A8.217 8.217 0 0 0 20 1.928a8.811 8.811 0 0 1-2.056 2.12Z"
+                    fill="#FFF"
+                    fillRule="nonzero"
+                />
+            </svg>
+        ),
+        href: 'https://twitter.com/OpenSupplyHub',
     },
     {
-        href: `${InfoLink}/${InfoPaths.contactUs}`,
-        text: 'Contact us',
-        external: true,
-        newTab: true,
+        label: 'YouTube',
+        Icon: () => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="27"
+                height="19"
+                viewBox="0 0 27 19"
+            >
+                <path
+                    d="M2.932.583c4.39-.916 19.522-.62 21.084-.017A3.379 3.379 0 0 1 26.4 2.95c.823 3.318.769 9.591.017 12.961a3.379 3.379 0 0 1-2.385 2.385c-3.283.812-17.99.712-21.084 0a3.379 3.379 0 0 1-2.385-2.385C-.212 12.75-.158 6.062.547 2.968A3.379 3.379 0 0 1 2.932.583Zm7.95 4.804v8.088l7.05-4.044-7.05-4.044Z"
+                    fill="#FFF"
+                    fillRule="nonzero"
+                />
+            </svg>
+        ),
+        href: 'https://www.youtube.com/channel/UCZ8Qn5HvFHX453JfI4dhYpA',
     },
     {
-        href: `${InfoLink}/${InfoPaths.workWithUs}`,
-        text: 'Work with us',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/${InfoPaths.faqs}`,
-        text: 'FAQs',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/${InfoPaths.privacyPolicy}`,
-        text: 'Privacy policy',
-        external: true,
-        newTab: true,
-    },
-    {
-        href: `${InfoLink}/${InfoPaths.termsOfUse}`,
-        text: 'Terms of use',
-        external: true,
-        newTab: true,
+        label: 'Github',
+        Icon: () => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 22 22"
+            >
+                <path
+                    d="M11 0C4.923 0 0 4.923 0 11c0 4.867 3.149 8.979 7.521 10.436.55.096.756-.233.756-.522 0-.262-.013-1.128-.013-2.049-2.764.509-3.479-.674-3.699-1.292-.124-.317-.66-1.293-1.128-1.554-.384-.206-.934-.715-.013-.729.866-.014 1.485.797 1.691 1.128.99 1.663 2.571 1.196 3.204.907.096-.715.385-1.196.701-1.471-2.447-.275-5.005-1.224-5.005-5.431 0-1.197.426-2.187 1.128-2.957-.11-.275-.495-1.402.11-2.915 0 0 .92-.288 3.024 1.128.88-.248 1.816-.372 2.75-.372.936 0 1.87.124 2.75.372 2.104-1.43 3.025-1.128 3.025-1.128.605 1.513.22 2.64.11 2.915.702.77 1.128 1.747 1.128 2.956 0 4.222-2.571 5.157-5.019 5.432.399.344.743 1.004.743 2.035 0 1.471-.014 2.654-.014 3.025 0 .288.206.632.756.522C18.851 19.98 22 15.854 22 11c0-6.077-4.922-11-11-11Z"
+                    fill="#FFF"
+                    fillRule="evenodd"
+                />
+            </svg>
+        ),
+        href: 'https://github.com/open-supply-hub',
     },
 ];
 

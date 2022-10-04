@@ -8,13 +8,17 @@ import SidebarWithErrorBoundary from './SidebarWithErrorBoundary';
 import '../styles/css/Map.css';
 import Map from './Map';
 
+import { useMapHeight } from '../util/useHeightSubtract';
+
 function MapAndSidebar() {
+    const mapHeight = useMapHeight();
+
     return (
         <Fragment>
             <Grid container className="map-sidebar-container">
                 <Route component={SidebarWithErrorBoundary} />
                 <Hidden mdDown>
-                    <Map />
+                    <Map height={mapHeight} />
                 </Hidden>
             </Grid>
         </Fragment>
