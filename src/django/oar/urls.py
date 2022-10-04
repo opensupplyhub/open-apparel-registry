@@ -78,7 +78,7 @@ schema_view = get_schema_view(
         title='Open Supply Hub API',
         default_version='1',
         description='Open Supply Hub API',
-        terms_of_service="https://info.openapparel.org/terms-of-service",
+        terms_of_service="https://info.opensupplyhub.org/terms-of-service",
         license=openapi.License(name='MIT', url='https://github.com/open-apparel-registry/open-apparel-registry/blob/develop/LICENSE')  # NOQA
     ),
     public=True,
