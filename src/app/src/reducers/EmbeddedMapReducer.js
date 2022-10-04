@@ -15,6 +15,7 @@ import { completeSubmitLogOut } from '../actions/auth';
 const initialConfig = Object.freeze({
     color: OARColor,
     selectedMarkerColor: SelectedMarkerColor,
+    hideSectorData: false,
     contributor: null,
     font: OARFont,
 });

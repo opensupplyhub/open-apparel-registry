@@ -107,6 +107,8 @@ function EmbeddedMapFieldsConfig({
     setFields,
     preferContributorName,
     setPreferContributorName,
+    hideSectorData,
+    setShowSectorData,
     classes,
     errors,
     textSearchLabel,
@@ -373,6 +375,28 @@ function EmbeddedMapFieldsConfig({
                         </Droppable>
                     </div>
                 ) : null}
+                <div style={styles.section}>
+                    <Typography style={styles.subsectionHeader}>
+                        Sectors
+                    </Typography>
+                    <Typography>
+                        Choose whether to hide sector data for your facilities.
+                    </Typography>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={hideSectorData}
+                                onChange={e =>
+                                    setShowSectorData(e.target.checked)
+                                }
+                                style={styles.checkbox}
+                                value="hideSectorData"
+                            />
+                        }
+                        label="Hide sector data"
+                        classes={{ label: classes.listText }}
+                    />
+                </div>
                 {userEmbedLevel === 3 ? (
                     <div style={styles.section}>
                         <Typography style={styles.subsectionHeader}>

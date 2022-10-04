@@ -90,6 +90,7 @@ function EmbeddedMapConfig({
         textSearchLabel,
         height,
         preferContributorName,
+        hideSectorData,
         mapStyle,
     },
     setEmbedConfig,
@@ -174,6 +175,8 @@ function EmbeddedMapConfig({
                         setPreferContributorName={updateEmbedConfig(
                             'preferContributorName',
                         )}
+                        hideSectorData={hideSectorData}
+                        setShowSectorData={updateEmbedConfig('hideSectorData')}
                         textSearchLabel={textSearchLabel}
                         setTextSearchLabel={updateEmbedConfig(
                             'textSearchLabel',
