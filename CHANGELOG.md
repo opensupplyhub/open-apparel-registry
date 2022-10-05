@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Store raw list files [#2154](https://github.com/open-apparel-registry/open-apparel-registry/pull/2154)
 - Add documentation for AWS debugging [#2176](https://github.com/open-apparel-registry/open-apparel-registry/pull/2176)
 - Add Allow Large Downloads Waffle Switch [#2175](https://github.com/open-apparel-registry/open-apparel-registry/pull/2175)
+- Enable hiding sectors in embed [#2215](https://github.com/open-apparel-registry/open-apparel-registry/pull/2215)
 
 ### Changed
 
