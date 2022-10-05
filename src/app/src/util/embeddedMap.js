@@ -22,6 +22,7 @@ export const formatExistingConfig = embedConfig => {
             color: '#3d2f8c',
             font: OARFont,
             height: DEFAULT_HEIGHT,
+            hideSectorData: true,
         };
     }
     return {
@@ -35,6 +36,7 @@ export const formatExistingConfig = embedConfig => {
             ? embedConfig.text_search_label
             : DEFAULT_SEARCH_TEXT,
         mapStyle: embedConfig.map_style ? embedConfig.map_style : 'default',
+        hideSectorData: embedConfig.hide_sector_data,
     };
 };
 
@@ -113,6 +115,7 @@ export const formatEmbedConfigForServer = (embedConfig, embedFields) => ({
     embed_fields: formatEmbedFieldsForServer(embedFields),
     text_search_label: embedConfig.textSearchLabel,
     map_style: embedConfig.mapStyle,
+    hide_sector_data: embedConfig.hideSectorData,
 });
 
 export const getErrorMessage = e => e.response.data || e.message;

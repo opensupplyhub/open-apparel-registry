@@ -2515,6 +2515,11 @@ class EmbedConfig(models.Model):
         blank=False,
         default='default',
         help_text='The map style for the embedded map')
+    hide_sector_data = models.BooleanField(
+        null=True,
+        blank=True,
+        help_text='Whether to hide sector data in the embedded map.'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

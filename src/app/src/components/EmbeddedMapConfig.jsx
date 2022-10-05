@@ -90,6 +90,7 @@ function EmbeddedMapConfig({
         textSearchLabel,
         height,
         preferContributorName,
+        hideSectorData,
         mapStyle,
     },
     setEmbedConfig,
@@ -167,25 +168,25 @@ function EmbeddedMapConfig({
                     <EmbeddedMapCode {...mapSettings} />
                 </Grid>
                 <Grid item xs={12} md={7} lg={6}>
-                    {user.embed_level === 3 ? (
-                        <EmbeddedMapFieldsConfig
-                            fields={fields}
-                            setFields={setFields}
-                            preferContributorName={preferContributorName}
-                            setPreferContributorName={updateEmbedConfig(
-                                'preferContributorName',
-                            )}
-                            textSearchLabel={textSearchLabel}
-                            setTextSearchLabel={updateEmbedConfig(
-                                'textSearchLabel',
-                            )}
-                            anyFieldSearchable={fields.some(
-                                field => field.searchable,
-                            )}
-                            errors={errors}
-                        />
-                    ) : null}
-
+                    <EmbeddedMapFieldsConfig
+                        fields={fields}
+                        setFields={setFields}
+                        preferContributorName={preferContributorName}
+                        setPreferContributorName={updateEmbedConfig(
+                            'preferContributorName',
+                        )}
+                        hideSectorData={hideSectorData}
+                        setShowSectorData={updateEmbedConfig('hideSectorData')}
+                        textSearchLabel={textSearchLabel}
+                        setTextSearchLabel={updateEmbedConfig(
+                            'textSearchLabel',
+                        )}
+                        anyFieldSearchable={fields.some(
+                            field => field.searchable,
+                        )}
+                        errors={errors}
+                        userEmbedLevel={user.embed_level}
+                    />
                     <EmbeddedMapThemeConfig
                         color={color}
                         setColor={updateEmbedConfig('color')}

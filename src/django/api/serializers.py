@@ -1821,7 +1821,7 @@ class EmbedConfigSerializer(ModelSerializer):
         fields = ('id', 'width', 'height', 'color', 'font', 'contributor',
                   'embed_fields', 'prefer_contributor_name',
                   'contributor_name', 'text_search_label', 'map_style',
-                  'extended_fields')
+                  'extended_fields', 'hide_sector_data')
 
     def get_contributor(self, instance):
         try:
