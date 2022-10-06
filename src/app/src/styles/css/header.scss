@@ -222,7 +222,7 @@ $pink-500: #FFA6D0;
       left: 0;
       top: 0;
       background: $grey-500;
-      z-index: 1000;
+      z-index: 0;
       transform: scaleY(0);
       transform-origin: bottom;
       transition: all 0.1s;
