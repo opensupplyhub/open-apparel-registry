@@ -9725,32 +9725,47 @@ class FacilityDetailSerializerTest(TestCase):
         self.assertIn(self.facility.address, other_addresses)
 
 
-class SectorChoiceViewTest(APITestCase):
+class SectorChoiceViewTest(FacilityAPITestCaseBase):
     fixtures = ['sectors']
 
-    def setUp(self):
+    @patch('api.geocoding.requests.get')
+    def setUp(self, mock_get):
         super().setUp()
-        email = 'test@example.com'
-        password = 'example123'
-        user = User.objects.create(email=email)
-        user.set_password(password)
-        user.save()
 
-        self.client.login(email=email, password=password)
+        self.user_email_2 = 'test2@example.com'
+        self.user_password_2 = 'example123'
+        self.user_2 = User.objects.create(email=self.user_email_2)
+        self.user_2.set_password(self.user_password_2)
+        self.user_2.save()
 
-        self.sorted_sector_names = []
-        with open('/usr/local/src/api/data/sectors.csv', 'r') as sector_data:
-            sector_data.readline()  # skip header
+        self.contributor_2 = Contributor \
+            .objects \
+            .create(admin=self.user_2,
+                    name='test contributor 2',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
-            for line in sector_data:
-                name = line.strip('" \n')
+        self.client.logout()
+        group = auth.models.Group.objects.get(
+            name=FeatureGroups.CAN_SUBMIT_FACILITY,
+        )
+        self.user_2.groups.set([group.id])
+        self.user_2.save()
+        self.client.login(email=self.user_email_2,
+                          password=self.user_password_2)
 
-                if not name:
-                    continue
+        self.SECTOR_A = 'Apparel'
+        self.SECTOR_B = 'Health'
 
-                self.sorted_sector_names.append(name)
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.client.post(reverse('facility-list'), json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector_product_type': [self.SECTOR_A, self.SECTOR_B]
+        }), content_type='application/json')
 
-        self.sorted_sector_names.sort()
+        self.sorted_sector_names = [self.SECTOR_A, self.SECTOR_B]
 
     def test_sector_choices_basic(self):
         response = self.client.get(reverse('sectors'))
@@ -9759,6 +9774,46 @@ class SectorChoiceViewTest(APITestCase):
         # Response should be sorted and deduped
         for index, sector_name in enumerate(self.sorted_sector_names):
             self.assertEqual(response.json()[index], sector_name)
+
+    def test_sector_choices_unspecified(self):
+        fi = FacilityIndex.objects.first()
+        fi.sector = ['Apparel', 'Health', 'Unspecified']
+        fi.save()
+
+        response = self.client.get(reverse('sectors'))
+        self.assertEqual(response.status_code, 200)
+
+        # Response should be sorted and deduped
+        for index, sector_name in enumerate(self.sorted_sector_names):
+            self.assertEqual(response.json()[index], sector_name)
+
+    def test_sector_choices_embed(self):
+        response = self.client.get('{}?contributor={}&embed=1'.format(
+            reverse('sectors'), self.contributor.id
+        ))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_sector_choices_embed_inactive(self):
+        Source.objects \
+            .filter(contributor=self.contributor) \
+            .update(is_active=False)
+
+        response = self.client.get('{}?contributor={}&embed=1'.format(
+            reverse('sectors'), self.contributor.id
+        ))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 0)
+
+    def test_sector_choices_embed_no_contributor(self):
+        response = self.client.get('{}?embed=1'.format(
+            reverse('sectors')
+        ))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 0)
 
 
 class ParentCompanyChoiceViewTest(APITestCase):

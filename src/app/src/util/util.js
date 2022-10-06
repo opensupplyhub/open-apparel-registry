@@ -139,7 +139,10 @@ export const makeGetContributorsURL = () => '/api/contributors/';
 export const makeGetListsURL = () => '/api/contributor-lists/';
 export const makeGetContributorTypesURL = () => '/api/contributor-types/';
 export const makeGetCountriesURL = () => '/api/countries/';
-export const makeGetSectorsURL = () => '/api/sectors/';
+export const makeGetSectorsURL = options =>
+    options && options.embed
+        ? `/api/sectors?contributor=${options.contributor}&embed=${options.embed}`
+        : '/api/sectors/';
 export const makeGetParentCompaniesURL = () => '/api/parent-companies/';
 export const makeGetFacilitiesTypeProcessingTypeURL = () =>
     '/api/facility-processing-types/';
