@@ -1,16 +1,10 @@
 import React from 'react';
-import { bool, func } from 'prop-types';
+import { bool } from 'prop-types';
 import { connect } from 'react-redux';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import FacilityListItemsDetailedTableRowCell from './FacilityListItemsDetailedTableRowCell';
 import CellElement from './CellElement';
-import ShowOnly from './ShowOnly';
-
-import {
-    confirmFacilityListItemMatch,
-    rejectFacilityListItemMatch,
-} from '../actions/facilityListDetails';
 
 import { facilityListItemPropType } from '../util/propTypes';
 
@@ -20,8 +14,6 @@ import { makeFacilityDetailLink } from '../util/util';
 
 function FacilityListItemsConfirmationTableRow({
     item,
-    makeConfirmMatchFunction,
-    makeRejectMatchFunction,
     fetching,
     readOnly,
     className,
@@ -109,12 +101,10 @@ function FacilityListItemsConfirmationTableRow({
                     padding="default"
                     variant="head"
                     style={listTableCellStyles.headerCellStyles}
-                >
-                    <b>Actions</b>
-                </TableCell>
+                />
             </TableRow>
             {item.matches.map((
-                { id, status, address, oar_id, name }, // eslint-disable-line camelcase
+                { id, address, oar_id, name }, // eslint-disable-line camelcase
             ) => (
                 <TableRow
                     hover={false}
@@ -144,25 +134,7 @@ function FacilityListItemsConfirmationTableRow({
                         padding="default"
                         variant="head"
                         style={listTableCellStyles.headerCellStyles}
-                    >
-                        <ShowOnly when={!readOnly}>
-                            <CellElement
-                                item={{
-                                    confirmMatch: makeConfirmMatchFunction(id),
-                                    rejectMatch: makeRejectMatchFunction(id),
-                                    id,
-                                    status,
-                                    matchName: name,
-                                    matchAddress: address,
-                                    itemName: item.name,
-                                    itemAddress: item.address,
-                                }}
-                                fetching={fetching}
-                                hasActions
-                                stringIsHidden
-                            />
-                        </ShowOnly>
-                    </TableCell>
+                    />
                 </TableRow>
             ))}
         </>
@@ -175,8 +147,6 @@ FacilityListItemsConfirmationTableRow.defaultProps = {
 
 FacilityListItemsConfirmationTableRow.propTypes = {
     item: facilityListItemPropType.isRequired,
-    makeConfirmMatchFunction: func.isRequired,
-    makeRejectMatchFunction: func.isRequired,
     fetching: bool.isRequired,
     readOnly: bool,
 };
@@ -191,16 +161,4 @@ function mapStateToProps({
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        makeConfirmMatchFunction: matchID => () =>
-            dispatch(confirmFacilityListItemMatch(matchID)),
-        makeRejectMatchFunction: matchID => () =>
-            dispatch(rejectFacilityListItemMatch(matchID)),
-    };
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(FacilityListItemsConfirmationTableRow);
+export default connect(mapStateToProps)(FacilityListItemsConfirmationTableRow);
