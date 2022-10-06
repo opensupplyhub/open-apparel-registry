@@ -56,6 +56,7 @@ function ContributorFilter({
     listOptions,
     lists,
     updateList,
+    contributorListBottomMargin,
 }) {
     const [
         contributorPopoverAnchorEl,
@@ -165,6 +166,9 @@ function ContributorFilter({
                     style={{
                         marginLeft: embed ? 0 : '16px',
                         marginTop: '12px',
+                        marginBottom: contributorListBottomMargin
+                            ? '24px'
+                            : undefined,
                     }}
                 >
                     <StyledSelect
@@ -184,6 +188,7 @@ function ContributorFilter({
 ContributorFilter.defaultProps = {
     contributorOptions: null,
     listOptions: null,
+    contributorListBottomMargin: false,
 };
 
 ContributorFilter.propTypes = {
@@ -196,6 +201,7 @@ ContributorFilter.propTypes = {
     fetchingFacilities: bool.isRequired,
     fetchingOptions: bool.isRequired,
     fetchingLists: bool.isRequired,
+    contributorListBottomMargin: bool,
 };
 
 function mapStateToProps({
