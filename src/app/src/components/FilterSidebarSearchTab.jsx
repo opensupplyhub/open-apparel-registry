@@ -57,9 +57,6 @@ const filterSidebarSearchTabStyles = theme =>
             display: 'flex',
             flexDirection: 'column',
         }),
-        topSidebarDiv: Object.freeze({
-            overflowY: 'scroll',
-        }),
         bottomSidebarDiv: Object.freeze({
             paddingBottom: '16px',
             paddingLeft: '24px',
@@ -200,10 +197,8 @@ function FilterSidebarSearchTab({
     return (
         <div className="control-panel__content">
             <div
-                className={`${classes.sidebarDiv} ${classes.topSidebarDiv}`}
-                style={{
-                    height: filterListHeight,
-                }}
+                className={classes.sidebarDiv}
+                style={{ height: filterListHeight }}
             >
                 <div className={classes.filtersDiv}>
                     <TextSearchFilter
