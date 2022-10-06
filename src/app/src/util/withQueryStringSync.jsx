@@ -63,6 +63,8 @@ export default function withQueryStringSync(WrappedComponent) {
                 }
 
                 this.setState({ finishedInitialHydrate: true });
+            } else if (!search) {
+                this.setState({ finishedInitialHydrate: true });
             } else {
                 replace(
                     `?${createQueryStringFromSearchFilters(filters, embed)}`,
