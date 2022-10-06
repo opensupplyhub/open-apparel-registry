@@ -1,5 +1,4 @@
 import React from 'react';
-import { useMenuClickHandlerContext } from './MenuClickHandlerContext';
 
 import MobileNavSubmenuColumnSection from './MobileNavSubmenuColumnSection';
 import { BackButtonArrowLeft, MobileSubmenuButtonArrowRight } from './navIcons';
@@ -11,8 +10,6 @@ export default function MobileNavParent({
     setActive,
     setInactive,
 }) {
-    const createMenuClickHandler = useMenuClickHandlerContext();
-
     return (
         <>
             <button
@@ -35,7 +32,7 @@ export default function MobileNavParent({
                 <button
                     type="button"
                     className="mobile-nav-back-button"
-                    onClick={createMenuClickHandler(setInactive)}
+                    onClick={setInactive}
                 >
                     <BackButtonArrowLeft />
                     <span>Back</span>
