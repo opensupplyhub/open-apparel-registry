@@ -83,7 +83,7 @@ class FacilityLists extends Component {
 
         return (
             <AppOverflow>
-                <AppGrid title="My Lists">
+                <AppGrid title="My Lists" style={{ marginBottom: '100px' }}>
                     <ShowOnly
                         when={!!myFacilitiesRoute && !!facilityLists.length}
                     >
