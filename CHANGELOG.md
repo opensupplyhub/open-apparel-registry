@@ -120,6 +120,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed parsing country strings with newline characters [#2195](https://github.com/open-apparel-registry/open-apparel-registry/pull/2195)
 - Fixed user profile facilites map link [#2204](https://github.com/open-apparel-registry/open-apparel-registry/pull/2204)
 - Fix parse errors [#2207](https://github.com/open-apparel-registry/open-apparel-registry/pull/2207)
+- OS Hub style fixes [#2222](https://github.com/open-apparel-registry/open-apparel-registry/pull/2222)
 
 ### Security
 
