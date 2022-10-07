@@ -296,10 +296,10 @@ const check2xx = res => {
     );
 };
 
-const referer = "https://oshstaging.openapparel.org/";
+const referer = "https://prd.fb84e0f7529f2737.openapparel.org/";
 
 // rootUrl should NOT have a trailing slash
-const rootUrl = "https://oshstaging.openapparel.org";
+const rootUrl = "https://prd.fb84e0f7529f2737.openapparel.org";
 
 const token = __ENV.TOKEN || "NOT_SPECIFIED";
 

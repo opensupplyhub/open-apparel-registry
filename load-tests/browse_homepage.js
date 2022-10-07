@@ -14,10 +14,10 @@ const check2xx = res => {
     );
 };
 
-const referer = 'https://oshstaging.openapparel.org/';
+const referer = 'https://prd.fb84e0f7529f2737.openapparel.org/';
 
 // rootUrl should NOT have a trailing slash
-const rootUrl = 'https://oshstaging.openapparel.org';
+const rootUrl = 'https://prd.fb84e0f7529f2737.openapparel.org';
 
 const staticHeaders = {
     'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="99", "Google Chrome";v="99"',
@@ -52,7 +52,7 @@ export default function main() {
     // Wait up to 5 seconds so that the iterations aren't exactly overlapping
     sleep(Math.random() * 5);
 
-    group('https://oshstaging.openapparel.org/', function () {
+    group('https://prd.fb84e0f7529f2737.openapparel.org/', function () {
         responses = http.batch([
             buildGet(`${rootUrl}/web/environment.js`),
             buildGet(`${rootUrl}/static/css/2.037bc208.chunk.css`),
