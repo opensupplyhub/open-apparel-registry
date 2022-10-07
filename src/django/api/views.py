@@ -3269,10 +3269,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             url_path='remove')
     def remove_item(self, request, pk=None):
         try:
-            facility_list = FacilityList \
-                .objects \
-                .filter(source__contributor=request.user.contributor) \
-                .get(pk=pk)
+            facility_list = FacilityList.objects.get(pk=pk)
+            is_users_facility = request.user.has_contributor and \
+                request.user.contributor == facility_list.source.contributor
+
+            if not is_users_facility and not request.user.is_superuser:
+                raise FacilityList.DoesNotExist
 
             facility_list_item = FacilityListItem \
                 .objects \

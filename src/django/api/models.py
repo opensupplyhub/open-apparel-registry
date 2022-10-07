@@ -392,6 +392,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return True
 
+    @property
+    def has_contributor(self):
+        return hasattr(self, 'contributor')
+
 
 class Source(models.Model):
     LIST = 'LIST'

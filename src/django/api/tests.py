@@ -1619,6 +1619,11 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
         self.current_user.set_password(self.current_user_password)
         self.current_user.save()
 
+        self.superuser = User.objects.create_superuser(
+            'superuser@example.com',
+            'superuser'
+        )
+
         self.current_address = 'current_address'
         self.current_name = 'current_name'
 
@@ -1875,6 +1880,48 @@ class ConfirmRejectAndRemoveAndDissociateFacilityMatchTest(TestCase):
         )
 
         self.assertEqual(remove_response.status_code, 404)
+
+    def test_superuser_can_remove_list_item(self):
+        confirm_response = self.client.post(
+            self.match_url(self.potential_facility_match_one, action='confirm')
+        )
+
+        confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        rejected_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_two.id)
+
+        self.assertEqual(confirm_response.status_code, 200)
+        self.assertEqual(confirmed_match.status, FacilityMatch.CONFIRMED)
+        self.assertEqual(rejected_match.status, FacilityMatch.REJECTED)
+        self.assertEqual(confirmed_match.is_active, True)
+        self.assertEqual(rejected_match.is_active, True)
+
+        self.client.logout()
+
+        self.client.login(email='superuser@example.com',
+                          password='superuser')
+
+        remove_response = self.client.post(
+            self.remove_url,
+            {"list_item_id": self.current_list_item.id},
+        )
+
+        self.assertEqual(remove_response.status_code, 200)
+
+        updated_confirmed_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_one.id)
+
+        updated_rejected_match = FacilityMatch \
+            .objects \
+            .get(pk=self.potential_facility_match_two.id)
+
+        self.assertEqual(updated_confirmed_match.is_active, False)
+        self.assertEqual(updated_rejected_match.is_active, False)
 
     def test_dissociate_sets_matches_to_inactive(self):
         confirm_response = self.client.post(
