@@ -233,7 +233,7 @@ class Command(BaseCommand):
                     new_row['match_id'] = idval
                     new_row['clean_address'] = clean(new_row['address'])
                     new_row['clean_name'] = clean(new_row['name'])
-                    new_row['contributor_id'] = random.randrange(2, 99)
+                    new_row['contributor_id'] = random.randrange(33, 99)
                     yield new_row
                     idval += 1
 
