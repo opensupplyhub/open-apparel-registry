@@ -233,11 +233,13 @@ def load_gazetteer():
     Load a preexisting dedupe.Gazetteer model by using the TrainedModel
     object in the Django ORM.
     """
+    logger.info(' IN LOAD_GAZETTEER {}'.format(timezone.now()))
     active_model = TrainedModel.objects.get_active()
     input_stream = io.BytesIO(active_model.dedupe_model)
     gazetteer = OgrStaticGazetteer(input_stream)
     gazetteer.trained_model = active_model
 
+    logger.info('OUT LOAD_GAZETTEER {}'.format(timezone.now()))
     return gazetteer
 
 
@@ -542,12 +544,15 @@ class GazetteerCache:
 
     @classmethod
     def search(cls, messy, threshold, n_matches, generator):
+        logger.info(' IN SEARCH {}'.format(timezone.now()))
         gazetteer = cls.load_gazetteer_if_none()
         try:
             return gazetteer.search(messy, threshold, n_matches, generator)
         except ModelOutOfDate:
             gazetteer = cls.load_latest_gazetteer()
             return gazetteer.search(messy, threshold, n_matches, generator)
+        finally:
+            logger.info('OUT SEARCH {}'.format(timezone.now()))
 
 
 def get_model_data():

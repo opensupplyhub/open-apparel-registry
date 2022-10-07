@@ -1,9 +1,14 @@
+from django.utils import timezone
+import logging
 import itertools
 import json
 from dedupe.api import Link, GazetteerMatching, StaticMatching
 from dedupe._typing import Data, Blocks
 from django.db import connection
 from api.models import TrainedModel
+
+
+logger = logging.getLogger(__name__)
 
 
 class ModelOutOfDate(Exception):
@@ -89,6 +94,7 @@ class OgrGazetteerMatching(GazetteerMatching):
                 )
 
     def blocks(self, data: Data) -> Blocks:
+        logger.info(' IN BLOCKS {}'.format(timezone.now()))
         """
         Yield groups of pairs of records that share fingerprints.
         Each group contains one record from data_1 paired with the records
@@ -160,6 +166,7 @@ class OgrGazetteerMatching(GazetteerMatching):
             db_pair_blocks = itertools.groupby(ResultIter(cursor),
                                                lambda x: x[0])
             for _, pair_block in db_pair_blocks:
+                logger.info('YIELDING BLOCK {}'.format(timezone.now()))
                 yield [
                     (
                         (a_record_id, data[a_record_id]),
@@ -167,6 +174,7 @@ class OgrGazetteerMatching(GazetteerMatching):
                     )
                     for a_record_id, b_record_id, b_record_data in pair_block
                 ]
+        logger.info('OUT BLOCKS {}'.format(timezone.now()))
 
 
 class OgrStaticGazetteer(StaticMatching, OgrGazetteerMatching):
