@@ -3020,12 +3020,19 @@ def index_facilities(facility_ids=list):
     index_extendedfields(facility_ids)
 
 
+class NoActiveTrainedModel(Exception):
+    pass
+
+
 class TrainedModelManager(models.Manager):
     def get_active(self):
         return self.get(is_active=True)
 
     def get_active_version_id(self):
-        return self.get_active().id
+        try:
+            return self.filter(is_active=True).values_list('id', flat=True)[0]
+        except IndexError as ie:
+            raise NoActiveTrainedModel() from ie
 
 
 class TrainedModelNotSaved(Exception):
