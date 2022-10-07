@@ -46,12 +46,12 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
 
     return (
         <AppOverflow>
-            <AppGrid title="Contribute">
+            <AppGrid title="Upload">
                 <Grid container className="margin-bottom-64">
                     <Grid item xs={12}>
                         <p>
-                            Thank you for contributing your data to the Open
-                            Supply Hub.
+                            Thank you for contributing your data to Open Supply
+                            Hub.
                         </p>
 
                         <p>
@@ -62,8 +62,8 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
                             >
                                 Please follow these step-by-step instructions
                             </a>{' '}
-                            to prepare and upload your data to the OS Hub via
-                            CSV or Excel file.
+                            to prepare and upload your data to OS Hub via CSV or
+                            Excel file.
                         </p>
 
                         <p>
