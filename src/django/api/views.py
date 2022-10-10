@@ -1,3 +1,4 @@
+# flake8: noqa
 import operator
 import os
 import sys
@@ -1560,75 +1561,79 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                             facility, context=context).data
                         result['matches'].append(facility_dict)
             else:
-                match_results = match_item(country_code, name, address,
-                                           item.id)
-                item_matches = match_results['item_matches']
+                from api import tracing
+                from viztracer import VizTracer
+                trace_file_path = tracing.make_trace_file_name()
+                with VizTracer(output_file=trace_file_path):
+                    match_results = match_item(country_code, name, address,
+                                               item.id)
+                    item_matches = match_results['item_matches']
 
-                gazetteer_match_count = len(item_matches.keys())
+                    gazetteer_match_count = len(item_matches.keys())
 
-                if gazetteer_match_count == 0 and text_only_fallback:
-                    # When testing with more realistic data the text matching
-                    # was returning dozens of results. Limiting to the first 5
-                    # is reasonable because the results are sorted with the
-                    # highest confidence first.
-                    text_only_matches = {
-                        item.id:
-                        list(text_match_item(item.country_code,
-                                             item.name)[:5])}
-                else:
-                    text_only_matches = {}
+                    if gazetteer_match_count == 0 and text_only_fallback:
+                        # When testing with more realistic data the text matching
+                        # was returning dozens of results. Limiting to the first 5
+                        # is reasonable because the results are sorted with the
+                        # highest confidence first.
+                        text_only_matches = {
+                            item.id:
+                            list(text_match_item(item.country_code,
+                                                 item.name)[:5])}
+                    else:
+                        text_only_matches = {}
 
-                match_objects = save_match_details(
-                    match_results, text_only_matches=text_only_matches)
+                    match_objects = save_match_details(
+                        match_results, text_only_matches=text_only_matches)
 
-                automatic_threshold = \
-                    match_results['results']['automatic_threshold']
+                    automatic_threshold = \
+                        match_results['results']['automatic_threshold']
 
-                for item_id, matches in item_matches.items():
-                    result['item_id'] = item_id
-                    result['status'] = item.status
-                    for (facility_id, score), match in \
-                            zip(reduce_matches(matches), match_objects):
-                        facility = Facility.objects.get(id=facility_id)
-                        context = {'request': request}
-                        facility_dict = FacilityDetailsSerializer(
-                            facility, context=context).data
-                        # calling `round` alone was not trimming digits
-                        facility_dict['confidence'] = float(str(round(score,
-                                                                      4)))
-                        # If there is a single match for an item, it only needs
-                        # to be confirmed if it has a low score.
-                        if score < automatic_threshold or \
-                                len(match_objects) > 1:
-                            if should_create:
-                                facility_dict['confirm_match_url'] = reverse(
-                                    'facility-match-confirm',
-                                    kwargs={'pk': match.pk})
-                                facility_dict['reject_match_url'] = reverse(
-                                    'facility-match-reject',
-                                    kwargs={'pk': match.pk})
-                        result['matches'].append(facility_dict)
-
-                # Append the text only match results to the response if there
-                # were no gazetteer matches
-                if gazetteer_match_count == 0:
-                    for match in match_objects:
-                        if match.results and match.results['text_only_match']:
-                            item.status = FacilityListItem.POTENTIAL_MATCH
+                    for item_id, matches in item_matches.items():
+                        result['item_id'] = item_id
+                        result['status'] = item.status
+                        for (facility_id, score), match in \
+                                zip(reduce_matches(matches), match_objects):
+                            facility = Facility.objects.get(id=facility_id)
                             context = {'request': request}
                             facility_dict = FacilityDetailsSerializer(
-                                match.facility, context=context).data
-                            facility_dict['confidence'] = match.confidence
-                            facility_dict['text_only_match'] = True
-                            if should_create:
-                                facility_dict['confirm_match_url'] = reverse(
-                                    'facility-match-confirm',
-                                    kwargs={'pk': match.pk})
-                                facility_dict['reject_match_url'] = reverse(
-                                    'facility-match-reject',
-                                    kwargs={'pk': match.pk})
+                                facility, context=context).data
+                            # calling `round` alone was not trimming digits
+                            facility_dict['confidence'] = float(str(round(score,
+                                                                          4)))
+                            # If there is a single match for an item, it only needs
+                            # to be confirmed if it has a low score.
+                            if score < automatic_threshold or \
+                                    len(match_objects) > 1:
+                                if should_create:
+                                    facility_dict['confirm_match_url'] = reverse(
+                                        'facility-match-confirm',
+                                        kwargs={'pk': match.pk})
+                                    facility_dict['reject_match_url'] = reverse(
+                                        'facility-match-reject',
+                                        kwargs={'pk': match.pk})
                             result['matches'].append(facility_dict)
 
+                    # Append the text only match results to the response if there
+                    # were no gazetteer matches
+                    if gazetteer_match_count == 0:
+                        for match in match_objects:
+                            if match.results and match.results['text_only_match']:
+                                item.status = FacilityListItem.POTENTIAL_MATCH
+                                context = {'request': request}
+                                facility_dict = FacilityDetailsSerializer(
+                                    match.facility, context=context).data
+                                facility_dict['confidence'] = match.confidence
+                                facility_dict['text_only_match'] = True
+                                if should_create:
+                                    facility_dict['confirm_match_url'] = reverse(
+                                        'facility-match-confirm',
+                                        kwargs={'pk': match.pk})
+                                    facility_dict['reject_match_url'] = reverse(
+                                        'facility-match-reject',
+                                        kwargs={'pk': match.pk})
+                                result['matches'].append(facility_dict)
+                tracing.write_trace_to_bucket(source_file_path=trace_file_path)
         except Exception as e:
             item.status = FacilityListItem.ERROR_MATCHING
             item.processing_results.append({
