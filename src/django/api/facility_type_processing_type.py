@@ -1,8 +1,9 @@
+import re
+from unidecode import unidecode
 import warnings
 warnings.filterwarnings(
     "ignore",
     message="Using slow pure-python SequenceMatcher. Install python-Levenshte")
-
 from api.helpers import clean  # NOQA: E402
 from thefuzz import process  # NOQA: E402
 
@@ -400,6 +401,7 @@ PROCESSING_TYPE = 'PROCESSING_TYPE'
 EXACT_MATCH = 'EXACT'
 ALIAS_MATCH = 'ALIAS'
 FUZZY_MATCH = 'FUZZY'
+SKIPPED_MATCHING = 'SKIPPED_MATCHING'
 
 ALL_PROCESSING_TYPES = {
     **OFFICE_PROCESSING_TYPES,
@@ -429,7 +431,23 @@ FACILITY_PROCESSING_TYPES_VALUES = [{
 } for k, v in sorted(ALL_FACILITY_TYPES.items())]
 
 
-def get_facility_and_processing_type(facility_or_processing_type):
+# This is the clean() function without the lowercasing and apostrophe sub,
+# to maintain capitalization/punctuation for raw data.
+def clean_raw_data(raw_data):
+    data = unidecode(raw_data)
+    data = re.sub('\n', ' ', data)
+    data = re.sub('-', '', data)
+    data = re.sub('/', ' ', data)
+    data = re.sub(",", '', data)
+    data = re.sub(":", ' ', data)
+    data = re.sub(' +', ' ', data)
+    data = data.strip().strip('"').strip("'").strip()
+    if not data:
+        data = None
+    return data
+
+
+def get_facility_and_processing_type(facility_or_processing_type, sector=None):
     """Attempts to match the input value to a facility or processing
     type via various methods.
     """
@@ -440,6 +458,11 @@ def get_facility_and_processing_type(facility_or_processing_type):
 
     if cleaned_input is None:
         return (None, None, None, None)
+
+    if sector is None or 'Apparel' not in sector:
+        # No taxonomy for non-apparel sectors has been created.
+        formatted_raw_data = clean_raw_data(facility_or_processing_type)
+        return (PROCESSING_TYPE, SKIPPED_MATCHING, None, formatted_raw_data)
 
     # Try for exact match
     processing_type = ALL_PROCESSING_TYPES.get(cleaned_input)

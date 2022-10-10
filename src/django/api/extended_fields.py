@@ -20,7 +20,8 @@ def extract_int_range_value(value):
 MAX_PRODUCT_TYPE_COUNT = 50
 
 
-def get_facility_and_processing_type_extendfield_value(field, field_value):
+def get_facility_and_processing_type_extendfield_value(field,
+                                                       field_value, sector):
     values = field_value
 
     if isinstance(field_value, str):
@@ -31,7 +32,7 @@ def get_facility_and_processing_type_extendfield_value(field, field_value):
     results = []
 
     for value in deduped_values:
-        result = get_facility_and_processing_type(value)
+        result = get_facility_and_processing_type(value, sector)
         results.append(result)
 
     return {
@@ -92,7 +93,7 @@ def create_extendedfield(field, field_value, item, contributor):
         elif (field == ExtendedField.FACILITY_TYPE or
               field == ExtendedField.PROCESSING_TYPE):
             field_value = get_facility_and_processing_type_extendfield_value(
-                field, field_value
+                field, field_value, item.sector
             )
 
         ExtendedField.objects.create(
@@ -211,7 +212,7 @@ def create_extendedfields_for_claim(claim):
                                     ExtendedField.FACILITY_TYPE]:
                 field_value = (
                     get_facility_and_processing_type_extendfield_value(
-                        extended_field, field_value
+                        extended_field, field_value, claim.sector
                     )
                 )
             elif extended_field == ExtendedField.PRODUCT_TYPE:
