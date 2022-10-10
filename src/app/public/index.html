@@ -60,7 +60,17 @@
             window[disableGAKey] = true;
         }
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GOOGLE_ANALYTICS_KEY%"></script>
+    <script async id="analytics"></script>
+    <script>
+        if (window.ENVIRONMENT &&
+            window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY &&
+            window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY !== "") {
+            // Import the Google Analytics script. This must occur AFTER the GA key is disabled.
+            var rootGtagUrl = "https://www.googletagmanager.com/gtag/js?id="
+            var analyticsKey = window.ENVIRONMENT.REACT_APP_GOOGLE_ANALYTICS_KEY;
+            document.getElementById('analytics').src = rootGtagUrl + analyticsKey;
+        }
+    </script>
     <!-- End Google Analytics -->
     <!--
       Rollbar Configuration
