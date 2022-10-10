@@ -196,7 +196,7 @@ def make_contributor(pk, admin_pk=None):
             'admin': admin,
             'name': make_contributor_name(contrib_type),
             'description': make_contributor_description(contrib_type),
-            'website': 'https://info.openapparel.org',
+            'website': 'https://info.opensupplyhub.org',
             'contrib_type': contrib_type,
             'other_contrib_type': other_contrib_type,
             'created_at': created_at,

@@ -12,16 +12,12 @@ export const WEB_HEADER_HEIGHT = '160px';
 export const MOBILE_HEADER_HEIGHT = '140px';
 export const GOOGLE_TRANSLATE_BAR_HEIGHT = '44px';
 
-export const InfoLink = 'https://info.openapparel.org';
+export const InfoLink = 'https://info.opensupplyhub.org';
 
 export const InfoPaths = {
-    gettingStarted: 'getting-started',
-    dataTechnology: 'data-technology',
-    aboutUs: 'about-us',
-    funding: 'funding',
     storiesResources: 'stories-resources',
     privacyPolicy: 'privacy-policy',
-    contribute: 'stories-resources/how-to-contribute-data-to-the-oar',
+    contribute: 'stories-resources/how-to-contribute-data',
     dataQuality: 'how-the-oar-improves-data-quality',
     claimedFacilities: 'stories-resources/claim-a-facility',
     termsOfUse: 'terms-of-use',
@@ -40,6 +36,7 @@ export const InfoPaths = {
     developerResources: 'developer-resources',
     api: 'api',
     embeddedMap: 'embedded-map',
+    donate: 'donate',
 
     // About Us
     mission: 'mission',
@@ -624,8 +621,7 @@ export const NavbarItems = [
                         {
                             type: 'button',
                             label: 'Donate',
-                            href: '/donate',
-                            internal: true,
+                            href: `${InfoLink}/${InfoPaths.donate}`,
                         },
                     ],
                 },
@@ -783,8 +779,7 @@ export const NavbarItems = [
                         {
                             type: 'button',
                             label: 'Donate',
-                            href: '/donate',
-                            internal: true,
+                            href: `${InfoLink}/${InfoPaths.donate}`,
                         },
                     ],
                 },
@@ -817,8 +812,7 @@ export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 export const FooterLinks = [
     {
         label: 'Donate',
-        href: '/donate',
-        internal: true,
+        href: `${InfoLink}/${InfoPaths.donate}`,
     },
 
     { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },

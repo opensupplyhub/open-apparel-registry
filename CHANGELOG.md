@@ -93,6 +93,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Hide nav links on My Account - Settings page [#2212](https://github.com/open-apparel-registry/open-apparel-registry/pull/2212)
 - Upgrade Google Analytics to gtag.js [#2221](https://github.com/open-apparel-registry/open-apparel-registry/pull/2221)
 - Update Contribute page copy [#2226](https://github.com/open-apparel-registry/open-apparel-registry/pull/2226)
+- Update info site URL to opensupplyhub.org [#2214](https://github.com/open-apparel-registry/open-apparel-registry/pull/2214)
 
 ### Deprecated
 

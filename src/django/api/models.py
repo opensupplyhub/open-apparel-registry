@@ -143,7 +143,7 @@ class ContributorManager(models.QuerySet):
                 has_active_sources=ExpressionWrapper(
                     Q(active_source_count__gt=0),
                     models.BooleanField())) \
-            .order_by('-is_verified', '-has_active_sources')
+            .order_by('-is_verified', '-has_active_sources', '-created_at')
 
 
 class Contributor(models.Model):
