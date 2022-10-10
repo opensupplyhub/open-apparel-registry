@@ -1482,7 +1482,9 @@ class FacilityManager(models.Manager):
         if len(facility_types):
             standard_facility_types = []
             for facility_type in facility_types:
-                standard_type = get_facility_and_processing_type(facility_type)
+                standard_type = get_facility_and_processing_type(
+                    facility_type, ['Apparel']
+                )
                 if standard_type[0] is not None:
                     standard_facility_types.append(standard_type[2])
             facilities_qs = facilities_qs.filter(
@@ -1493,7 +1495,7 @@ class FacilityManager(models.Manager):
             standard_processing_types = []
             for processing_type in processing_types:
                 standard_type = get_facility_and_processing_type(
-                    processing_type
+                    processing_type, ['Apparel']
                 )
                 if standard_type[0] is not None:
                     standard_processing_types.append(standard_type[3])
