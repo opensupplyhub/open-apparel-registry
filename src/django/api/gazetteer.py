@@ -151,29 +151,35 @@ class OgrGazetteerMatching(GazetteerMatching):
                                ORDER BY a.record_id"""
             )
 
-            # https://code.activestate.com/recipes/137270-use-generators-for-fetching-large-db-record-sets/
-            def ResultIter(c, arraysize=1000):
-                'An iterator that uses fetchmany to keep memory usage down'
-                while True:
-                    results = c.fetchmany(arraysize)
-                    if not results:
-                        break
-                    for result in results:
-                        yield result
+            # https://code.activestate.com/recipes/137270-use-generators-for-fetching-large-db-record-sets/  # noqa
+            # def ResultIter(c, arraysize=1000):
+            #     'An iterator that uses fetchmany to keep memory usage down'
+            #     while True:
+            #         results = c.fetchmany(arraysize)
+            #         if not results:
+            #             break
+            #         for result in results:
+            #             yield result
 
-            # TODO server-side cursor could trade performance for lower
-            # memory footprint (would eliminate the need for ResultIter)
-            db_pair_blocks = itertools.groupby(ResultIter(cursor),
-                                               lambda x: x[0])
-            for _, pair_block in db_pair_blocks:
-                logger.info('YIELDING BLOCK {}'.format(timezone.now()))
-                yield [
-                    (
-                        (a_record_id, data[a_record_id]),
-                        (b_record_id, json.loads(b_record_data)),
-                    )
-                    for a_record_id, b_record_id, b_record_data in pair_block
-                ]
+            # # TODO server-side cursor could trade performance for lower
+            # # memory footprint (would eliminate the need for ResultIter)
+            # db_pair_blocks = itertools.groupby(ResultIter(cursor),
+            #                                    lambda x: x[0])
+
+            results = cursor.fetchall()
+
+        db_pair_blocks = itertools.groupby(results,
+                                           lambda x: x[0])
+        for _, pair_block in db_pair_blocks:
+            print('PAIR_BLOCK', pair_block)
+            logger.info('YIELDING BLOCK {}'.format(timezone.now()))
+            yield [
+                (
+                    (a_record_id, data[a_record_id]),
+                    (b_record_id, json.loads(b_record_data)),
+                )
+                for a_record_id, b_record_id, b_record_data in pair_block
+            ]
         logger.info('OUT BLOCKS {}'.format(timezone.now()))
 
 
