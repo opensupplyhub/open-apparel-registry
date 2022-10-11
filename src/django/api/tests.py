@@ -67,7 +67,8 @@ from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             reduce_matches, is_string_match,
                             save_match_details,
-                            get_country_code)
+                            get_country_code,
+                            ItemRemovedException)
 from api.geocoding import (create_geocoding_params,
                            format_geocoded_address_data,
                            geocode_address)
@@ -682,6 +683,23 @@ class FacilityListItemParseTest(ProcessingTestCase):
         parse_facility_list_item(item)
         self.assert_successful_parse_results(item)
 
+    def test_removed_item_raises_exception(self):
+        facility_list = FacilityList.objects.create(
+            header="sector,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list
+        )
+        item = FacilityListItem(
+            raw_data='Apparel,"hello, world, foo, bar, baz",us,Shirts!',
+            source=source
+        )
+
+        item.status = FacilityListItem.ITEM_REMOVED
+
+        with self.assertRaises(ItemRemovedException):
+            parse_facility_list_item(item)
+
 
 class UserTokenGenerationTest(TestCase):
     def setUp(self):
@@ -1268,6 +1286,24 @@ class FacilityListItemGeocodingTest(ProcessingTestCase):
         self.assertEqual(item.status, FacilityListItem.GEOCODED_NO_RESULTS)
         self.assertIsNone(item.geocoded_address)
         self.assertIsNone(item.geocoded_point)
+
+    def test_removed_item_raises_exception(self):
+        facility_list = FacilityList.objects.create(
+            header="sector,address,country,name"
+        )
+        source = Source.objects.create(
+            source_type=Source.LIST, facility_list=facility_list
+        )
+        item = FacilityListItem(
+            raw_data='Apparel,"hello, world, foo, bar, baz",us,Shirts!',
+            source=source
+        )
+        parse_facility_list_item(item)
+
+        item.status = FacilityListItem.ITEM_REMOVED
+
+        with self.assertRaises(ItemRemovedException):
+            geocode_facility_list_item(item)
 
 
 class FacilityNamesAddressesAndContributorsTest(TestCase):

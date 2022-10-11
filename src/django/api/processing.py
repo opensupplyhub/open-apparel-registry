@@ -166,10 +166,16 @@ def get_country_code(country):
             'Could not find a country code for "{0}".'.format(country))
 
 
+class ItemRemovedException(Exception):
+    pass
+
+
 def parse_facility_list_item(item):
     started = str(timezone.now())
     if type(item) != FacilityListItem:
         raise ValueError('Argument must be a FacilityListItem')
+    if item.status == FacilityListItem.ITEM_REMOVED:
+        raise ItemRemovedException
     if item.status != FacilityListItem.UPLOADED:
         raise ValueError('Items to be parsed must be in the UPLOADED status')
     try:
@@ -299,6 +305,8 @@ def geocode_facility_list_item(item):
     started = str(timezone.now())
     if type(item) != FacilityListItem:
         raise ValueError('Argument must be a FacilityListItem')
+    if item.status == FacilityListItem.ITEM_REMOVED:
+        raise ItemRemovedException()
     if item.status != FacilityListItem.PARSED:
         raise ValueError('Items to be geocoded must be in the PARSED status')
     try:
