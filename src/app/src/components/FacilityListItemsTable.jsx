@@ -368,6 +368,10 @@ class FacilityListItemsTable extends Component {
 
         const listIsEmpty = !fetchingItems && items && items.length === 0;
 
+        const getIsRemoved = item =>
+            item.status === facilityListItemStatusChoicesEnum.ITEM_REMOVED ||
+            anyListItemMatchesAreInactive(item);
+
         const tableRows = fetchingItems
             ? []
             : items.map(item => {
@@ -385,7 +389,7 @@ class FacilityListItemsTable extends Component {
                               item={item}
                               listID={listID}
                               readOnly={readOnly}
-                              isRemoved={anyListItemMatchesAreInactive(item)}
+                              isRemoved={getIsRemoved(item)}
                               handleRemoveItem={() =>
                                   this.handleRemoveButtonClick(item)
                               }
@@ -415,7 +419,7 @@ class FacilityListItemsTable extends Component {
                               hover={false}
                               newFacility
                               osID={item.matched_facility.os_id}
-                              isRemoved={anyListItemMatchesAreInactive(item)}
+                              isRemoved={getIsRemoved(item)}
                               handleRemoveItem={() =>
                                   this.handleRemoveButtonClick(item)
                               }
@@ -437,7 +441,7 @@ class FacilityListItemsTable extends Component {
                               status={item.status}
                               handleSelectRow={handleSelectRow}
                               hover
-                              isRemoved={anyListItemMatchesAreInactive(item)}
+                              isRemoved={getIsRemoved(item)}
                               handleRemoveItem={() =>
                                   this.handleRemoveButtonClick(item)
                               }
@@ -470,7 +474,7 @@ class FacilityListItemsTable extends Component {
                               status={item.status}
                               matchedFacility={item.matched_facility}
                               handleSelectRow={handleSelectRow}
-                              isRemoved={anyListItemMatchesAreInactive(item)}
+                              isRemoved={getIsRemoved(item)}
                               handleRemoveItem={() =>
                                   this.handleRemoveButtonClick(item)
                               }
@@ -507,7 +511,7 @@ class FacilityListItemsTable extends Component {
                           status={item.status}
                           handleSelectRow={handleSelectRow}
                           hover
-                          isRemoved={anyListItemMatchesAreInactive(item)}
+                          isRemoved={getIsRemoved(item)}
                           className={`STATUS_${item.status}`}
                       />
                   );
