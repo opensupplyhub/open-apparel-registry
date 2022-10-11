@@ -664,6 +664,7 @@ class FacilityListItem(PPEMixin):
     ERROR_GEOCODING = 'ERROR_GEOCODING'
     ERROR_MATCHING = 'ERROR_MATCHING'
     DELETED = 'DELETED'
+    ITEM_REMOVED = 'ITEM_REMOVED'
 
     # NEW_FACILITY is a meta status. If the `status` of a `FacilityListItem` is
     # `MATCHED` or `CONFIRMED_MATCH` and the `facility` was `created_from` the
@@ -691,6 +692,7 @@ class FacilityListItem(PPEMixin):
         (ERROR_GEOCODING, ERROR_GEOCODING),
         (ERROR_MATCHING, ERROR_MATCHING),
         (DELETED, DELETED),
+        (ITEM_REMOVED, ITEM_REMOVED)
     )
 
     ERROR_STATUSES = [ERROR, ERROR_PARSING, ERROR_GEOCODING, ERROR_MATCHING,
