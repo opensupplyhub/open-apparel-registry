@@ -95,7 +95,6 @@ from api.models import (ContributorWebhook,
                         NonstandardField,
                         FacilityIndex,
                         ExtendedField,
-                        Sector,
                         index_custom_text,
                         index_extendedfields,
                         index_sectors)
@@ -704,11 +703,54 @@ def sectors(request):
         ]
 
     """
-    return Response(Sector
-                    .objects
-                    .exclude(name='Unspecified')
-                    .order_by('name')
-                    .values_list('name', flat=True))
+    submitted_sectors = set()
+
+    embed = request.query_params.get('embed', None)
+    if embed is not None:
+        contributor = request.query_params.get('contributor', None)
+        if contributor is None:
+            return Response(submitted_sectors)
+
+        item_sectors = set(
+            FacilityListItem
+            .objects
+            .filter(
+                status__in=[
+                    FacilityListItem.MATCHED,
+                    FacilityListItem.CONFIRMED_MATCH],
+                source__contributor_id=contributor,
+                source__is_active=True,
+                source__is_public=True
+            ).annotate(
+                values=Func('sector', function='unnest')
+            ).values_list('values', flat=True)
+             .distinct()
+        )
+
+        claim_sectors = set(
+            FacilityClaim
+            .objects
+            .filter(contributor_id=contributor,
+                    status=FacilityClaim.APPROVED)
+            .annotate(values=Func('sector', function='unnest'))
+            .values_list('values', flat=True)
+            .distinct()
+        )
+
+        submitted_sectors = item_sectors.union(claim_sectors)
+
+    else:
+        submitted_sectors = set(
+            FacilityIndex
+            .objects
+            .annotate(all_sectors=Func(F('sector'), function='unnest'))
+            .values_list('all_sectors', flat=True)
+            .distinct()
+        )
+
+    submitted_sectors.discard('Unspecified')
+
+    return Response(sorted(list(submitted_sectors)))
 
 
 @api_view(['GET'])

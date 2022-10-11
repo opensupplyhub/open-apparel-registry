@@ -189,11 +189,21 @@ export function fetchCountryOptions() {
 }
 
 export function fetchSectorOptions() {
-    return dispatch => {
+    return (dispatch, getState) => {
         dispatch(startFetchSectorOptions());
 
+        const {
+            filters: { contributors },
+            embeddedMap: { embed },
+        } = getState();
+
         return apiRequest
-            .get(makeGetSectorsURL())
+            .get(
+                makeGetSectorsURL({
+                    contributor: contributors[0]?.value,
+                    embed,
+                }),
+            )
             .then(({ data }) => mapDjangoChoiceTuplesValueToSelectOptions(data))
             .then(data => dispatch(completeFetchSectorOptions(data)))
             .catch(err =>
