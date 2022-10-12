@@ -96,8 +96,7 @@ from api.extended_fields import MAX_PRODUCT_TYPE_COUNT
 # signal handler that updates the traind model index)
 def setUpModule():
     call_command(
-        'loaddata',
-        'trainedmodel.json',
+        'createtrainedmodel',
         verbosity=0
     )
 
