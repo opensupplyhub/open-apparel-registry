@@ -3269,10 +3269,12 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             url_path='remove')
     def remove_item(self, request, pk=None):
         try:
-            facility_list = FacilityList \
-                .objects \
-                .filter(source__contributor=request.user.contributor) \
-                .get(pk=pk)
+            facility_list = FacilityList.objects.get(pk=pk)
+            is_users_facility = request.user.has_contributor and \
+                request.user.contributor == facility_list.source.contributor
+
+            if not is_users_facility and not request.user.is_superuser:
+                raise FacilityList.DoesNotExist
 
             facility_list_item = FacilityListItem \
                 .objects \
@@ -3282,17 +3284,30 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             matches_to_deactivate = FacilityMatch \
                 .objects \
                 .filter(facility_list_item=facility_list_item)
-            # Call `save` in a loop rather than use `update` to make sure that
-            # django-simple-history can log the changes
-            for item in matches_to_deactivate:
-                item.is_active = False
 
-                item._change_reason = create_dissociate_match_change_reason(
-                    facility_list_item,
-                    item.facility,
-                )
+            if len(matches_to_deactivate) == 0:
+                now = str(timezone.now())
+                facility_list_item.processing_results.append({
+                    'action': ProcessingAction.ITEM_REMOVED,
+                    'started_at': now,
+                    'error': False,
+                    'finished_at': now,
+                })
+                facility_list_item.status = FacilityListItem.ITEM_REMOVED
+                facility_list_item.save()
 
-                item.save()
+            else:
+                # Call `save` in a loop rather than use `update` to make sure
+                # that django-simple-history can log the changes
+                for item in matches_to_deactivate:
+                    item.is_active = False
+                    reason = create_dissociate_match_change_reason(
+                        facility_list_item,
+                        item.facility,
+                    )
+
+                    item._change_reason = reason
+                    item.save()
 
             facility_list_item.refresh_from_db()
 

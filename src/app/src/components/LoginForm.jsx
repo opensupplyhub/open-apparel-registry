@@ -62,7 +62,7 @@ class LoginForm extends Component {
 
         return (
             <AppOverflow>
-                <AppGrid title="Log In">
+                <AppGrid title="Log In" style={{ marginBottom: '100px' }}>
                     <Grid item xs={12} sm={7}>
                         <p>
                             You must be a registered user to contribute to the

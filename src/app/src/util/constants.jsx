@@ -380,6 +380,7 @@ export const facilityListItemStatusChoicesEnum = Object.freeze({
     DELETED: 'DELETED',
     REMOVED: 'REMOVED', // This is not a status that appears in the database
     DUPLICATE: 'DUPLICATE',
+    ITEM_REMOVED: 'ITEM_REMOVED',
 });
 
 export const facilityListItemErrorStatuses = Object.freeze([

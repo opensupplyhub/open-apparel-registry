@@ -25,6 +25,7 @@ class ProcessingAction:
     SPLIT_FACILITY = 'split_facility'
     MOVE_FACILITY = 'move_facility'
     NOTIFY_COMPLETE = 'notify_complete'
+    ITEM_REMOVED = 'item_removed'
 
 
 class FacilitiesQueryParams:

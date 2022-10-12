@@ -10,7 +10,8 @@ from api.matching import match_facility_list_items, identify_exact_matches
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
                             save_match_details,
-                            save_exact_match_details)
+                            save_exact_match_details,
+                            ItemRemovedException)
 from api.mail import notify_facility_list_complete
 
 LINE_ITEM_ACTIONS = {
@@ -70,6 +71,11 @@ class Command(BaseCommand):
             total_item_count = \
                 facility_list.source.facilitylistitem_set.count()
 
+            removed_item_count = \
+                facility_list.source.facilitylistitem_set.filter(
+                    status=FacilityListItem.ITEM_REMOVED
+                ).count()
+
             exact_result = identify_exact_matches(facility_list)
             with transaction.atomic():
                 save_exact_match_details(exact_result)
@@ -80,12 +86,17 @@ class Command(BaseCommand):
 
             success_count = len(result['processed_list_item_ids']) + \
                 len(exact_result['processed_list_item_ids'])
-            fail_count = total_item_count - success_count
+            fail_count = total_item_count - success_count - removed_item_count
             if success_count > 0:
                 self.stdout.write(
                     self.style.SUCCESS(
                         '{}: {} successes'.format(
                             action, success_count)))
+            if removed_item_count > 0:
+                self.stdout.write(
+                    self.style.WARNING(
+                        '{} {} skips'.format(
+                            action, removed_item_count)))
             if fail_count > 0:
                 self.stdout.write(
                     self.style.ERROR(
@@ -106,6 +117,7 @@ class Command(BaseCommand):
 
         result = {
             'success': 0,
+            'warning': 0,
             'failure': 0,
         }
 
@@ -150,6 +162,9 @@ class Command(BaseCommand):
             except ValueError as e:
                 self.stderr.write('Value Error: {}'.format(e))
                 result['failure'] += 1
+            except ItemRemovedException:
+                self.stderr.write(self.style.WARNING('Skipping removed item'))
+                result['warning'] += 1
 
         # Print successes
         if result['success'] > 0:
@@ -157,6 +172,13 @@ class Command(BaseCommand):
                 self.style.SUCCESS(
                     '{}: {} successes'.format(
                         action, result['success'])))
+
+        # Print warnings
+        if result['warning'] > 0:
+            self.stdout.write(
+                self.style.WARNING(
+                    '{}: {} warnings'.format(
+                        action, result['warning'])))
 
         # Print failures
         if result['failure'] > 0:

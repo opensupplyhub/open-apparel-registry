@@ -482,6 +482,11 @@ class FacilityListSerializer(ModelSerializer):
             0
         )
 
+        item_removed = status_counts_dictionary.get(
+            FacilityListItem.ITEM_REMOVED,
+            0
+        )
+
         return {
             FacilityListItem.UPLOADED: uploaded,
             FacilityListItem.PARSED: parsed,
@@ -496,6 +501,7 @@ class FacilityListSerializer(ModelSerializer):
             FacilityListItem.ERROR_MATCHING: error_matching,
             FacilityListItem.DUPLICATE: duplicate,
             FacilityListItem.DELETED: deleted,
+            FacilityListItem.ITEM_REMOVED: item_removed,
         }
 
     def get_contributor_id(self, facility_list):
