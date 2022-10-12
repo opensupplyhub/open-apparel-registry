@@ -8,4 +8,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         call_command('reset_schema', '--noinput')
         call_command('migrate')
+        call_command('createtrainedmodel')
         call_command('loadfixtures')
