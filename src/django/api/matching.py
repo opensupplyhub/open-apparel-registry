@@ -8,6 +8,7 @@ import json
 
 from collections import defaultdict
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import transaction, connection
 from django.db.models import Q
@@ -235,8 +236,8 @@ def load_gazetteer():
     """
     logger.info(' IN LOAD_GAZETTEER {}'.format(timezone.now()))
     active_model = TrainedModel.objects.get_active()
-    input_stream = io.BytesIO(active_model.dedupe_model)
-    gazetteer = OgrStaticGazetteer(input_stream)
+    input_stream = active_model.dedupe_model
+    gazetteer = OgrStaticGazetteer(input_stream.open())
     gazetteer.trained_model = active_model
 
     logger.info('OUT LOAD_GAZETTEER {}'.format(timezone.now()))
@@ -259,7 +260,13 @@ def train_and_activate_gazetteer(messy, canonical):
     output_stream = io.BytesIO()
     gazetteer.write_settings(output_stream)
     output_stream.seek(0)
-    active_model = TrainedModel(dedupe_model=output_stream.read())
+    active_model = TrainedModel()
+    active_model.save()
+
+    # Saving the active model before assigning the file allows us to include
+    # the active_model id in the filename
+    active_model.dedupe_model = ContentFile(output_stream.read(),
+                                            name='dedupe.pickle')
     active_model.save()
     gazetteer.trained_model = active_model
     gazetteer.cleanup_training()
