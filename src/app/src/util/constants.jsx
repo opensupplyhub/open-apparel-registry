@@ -348,7 +348,7 @@ export const contributeFileDescription = Object.freeze({
     id: contributeFieldsEnum.description,
     label: `Enter a description of this facility list and include a timeframe
 for the list's validity`,
-    hint: `example: 'This is the Alpha Brand list of suppliers for their apparel products valid from June 2021 to Sept 2021'`,
+    hint: `example: 'This is the Alpha Company list of suppliers for their retail products valid from Jan 2023 to June 2023'`,
     type: inputTypesEnum.text,
     placeholder: 'Facility List Description',
 });

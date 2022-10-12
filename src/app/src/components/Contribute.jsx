@@ -95,9 +95,7 @@ function ContributeList({ userHasSignedIn, fetchingSessionSignIn }) {
                                     >
                                         your list processing
                                     </a>{' '}
-                                    is complete. You can then view your list,
-                                    resolve errors, and confirm or reject
-                                    matches.
+                                    is complete.
                                 </p>
                             </div>
                             <div className="form__field">
