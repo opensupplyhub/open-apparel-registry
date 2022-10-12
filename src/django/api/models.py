@@ -482,6 +482,11 @@ class Source(models.Model):
             self.display_name, self.id)
 
 
+def list_file_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/django_files/lists/<filename>
+    return 'django_files/lists/{0}'.format(filename)
+
+
 class FacilityList(models.Model):
     """
     Metadata for an uploaded list of facilities.
@@ -523,7 +528,8 @@ class FacilityList(models.Model):
     file = models.FileField(
         null=True,
         blank=True,
-        help_text='The uploaded file.'
+        help_text='The uploaded file.',
+        upload_to=list_file_path
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -3043,12 +3049,24 @@ class ModelAlreadyActive(Exception):
     pass
 
 
+def dedupe_model_path(instance, filename):
+    # file will be uploaded to:
+    # MEDIA_ROOT/django_files/models/<TrainedModel.id>_<filename>
+    return 'django_files/models/{0}_{1}'.format(
+        instance.id, filename
+    )
+
+
 class TrainedModel(models.Model):
     class Meta():
         constraints = [UniqueConstraint(name='unique_is_active',
                        fields=['is_active'],
                        condition=Q(is_active=True))]
-    dedupe_model = models.BinaryField()
+    dedupe_model = models.FileField(
+        null=True,
+        blank=True,
+        upload_to=dedupe_model_path
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     activated_at = models.DateTimeField(null=True)
     is_active = models.BooleanField(
@@ -3061,6 +3079,8 @@ class TrainedModel(models.Model):
 
     def activate(self):
         if self.pk is None:
+            raise TrainedModelNotSaved()
+        if self.dedupe_model is None:
             raise TrainedModelNotSaved()
         if self.is_active:
             raise ModelAlreadyActive()
