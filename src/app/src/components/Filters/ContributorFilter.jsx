@@ -70,15 +70,14 @@ function ContributorFilter({
                 share? If so, tick this box.
             </p>
             <p>
-                There are now two ways to filter a Contributor search on the OS
-                Hub:
+                There are now two ways to filter a Contributor search on OS Hub:
             </p>
             <ol>
                 <li style={styles.popoverLineItem}>
                     You can search for all the facilities of multiple
                     contributors. This means that the results would show all of
-                    the facilities contributed to the OS Hub by, for example,
-                    BRAC University or Clarks. Some facilities might have been
+                    the facilities contributed to OS Hub by, for example, BRAC
+                    University or Clarks. Some facilities might have been
                     contributed by BRAC University but not by Clarks, or
                     vice-versa.
                 </li>

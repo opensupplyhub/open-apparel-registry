@@ -136,9 +136,9 @@ class RegisterForm extends Component {
                     <Grid container className="margin-bottom-100">
                         <Grid item xs={12} sm={8}>
                             <p>
-                                Thank you for your interest in the OS Hub. In
-                                order to download data from, or contribute to,
-                                the OS Hub please first set up a free account:
+                                Thank you for your interest in OS Hub. In order
+                                to download data from, or contribute to, OS Hub
+                                please first set up a free account:
                             </p>
                             {formInputs}
                             <ShowOnly when={!!(error && error.length)}>

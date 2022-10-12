@@ -1163,4 +1163,4 @@ export const SILVER_MAP_STYLE = [
 ];
 
 export const EXTENDED_FIELDS_EXPLANATORY_TEXT =
-    'These fields were added to the OS Hub in March 2022. As more data is contributed, more results will become available.';
+    'These fields were added to OS Hub in March 2022. As more data is contributed, more results will become available.';

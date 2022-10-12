@@ -7,7 +7,7 @@ What’s next?
 
 For You:
 
-Check for and Resolve Errors: Some entries in your list may have generated an error message. You can review these entries to see whether it’s caused by an error in data entry, such as a country name being mis-spelled, or whether our geo-coder is unable to plot the facility due to the address lacking sufficient details. Check out our FAQs for more information on error types and how to resolve them. Once you have pin-pointed the cause of the error, update your facility information in your Excel/CSV file and re-upload your FULL list to the OS Hub again (uploading one facility at a time results in multiple lists that are harder to manage in the future).
+Check for and Resolve Errors: Some entries in your list may have generated an error message. You can review these entries to see whether it’s caused by an error in data entry, such as a country name being mis-spelled, or whether our geo-coder is unable to plot the facility due to the address lacking sufficient details. Check out our FAQs for more information on error types and how to resolve them. Once you have pin-pointed the cause of the error, update your facility information in your Excel/CSV file and re-upload your FULL list to OS Hub again (uploading one facility at a time results in multiple lists that are harder to manage in the future).
 
 NOTE: Data Points Beyond Name and Address: If you uploaded additional data points beyond facility name and address, note that you won’t be able to see these data points in your admin view – but don’t worry, they are there. You can confirm that we’ve received them by selecting the “Download submitted file” from the admin view of your list (linked above) or by searching/downloading your list in Open Supply Hub.
 
@@ -19,7 +19,7 @@ Once your list is finalized:
 
 1. See who else is connected with your facilities/suppliers: Once you have uploaded data  to OS Hub, check out your facility profiles to see which other companies and organizations are connected with the facilities you uploaded. What collaborations could you explore working on together? If you want to search for facilities that you share with a specific contributor, you can use our contributor search feature – be sure to check the “show only shared facilities” option.
 
-2. Share your OS Hub contribution: Link directly to your facility/supplier data on the OS Hub from your website, so your users can easily search and navigate through your list. These free graphics are available for use to point users to your OS Hub contribution on your website, LinkedIn profile, and/or on social media. You can also display your facility/supplier data as an interactive map, embedded on your website.
+2. Share your OS Hub contribution: Link directly to your facility/supplier data on OS Hub from your website, so your users can easily search and navigate through your list. These free graphics are available for use to point users to your OS Hub contribution on your website, LinkedIn profile, and/or on social media. You can also display your facility/supplier data as an interactive map, embedded on your website.
 
 3. Encourage your facilities/suppliers to claim their profiles or claim your facility, if you are the owner: By claiming their facilities on OS Hub, facility owners or senior management can provide facility location data straight from the source, as well as add additional details to their profiles, including MOQs, lead times, certifications, and more.
 

@@ -3,7 +3,7 @@ Hi there,
 
 Thanks for reporting {{ facility_name }} facility as {{ closure_state|lower }}.
 
-{% if is_closure and is_rejected %}We have rejected this report and the facility's profile in the OS Hub has not been changed.{% endif %}{% if is_closure and is_confirmed %}The facility profile in the Open Supply Hub has now been updated and the facility is marked as closed.{% endif %}{% if is_reopening and is_rejected %}We have rejected this report and the facility's profile in the OS Hub has not been changed.{% endif %}{% if is_reopening and is_confirmed %}The facility profile in the Open Supply Hub has now been updated and the facility is no longer marked as closed.{% endif %}
+{% if is_closure and is_rejected %}We have rejected this report and the facility's profile in OS Hub has not been changed.{% endif %}{% if is_closure and is_confirmed %}The facility profile in the Open Supply Hub has now been updated and the facility is marked as closed.{% endif %}{% if is_reopening and is_rejected %}We have rejected this report and the facility's profile in OS Hub has not been changed.{% endif %}{% if is_reopening and is_confirmed %}The facility profile in the Open Supply Hub has now been updated and the facility is no longer marked as closed.{% endif %}
 
 {% if status_change_reason|length %}OS Hub Team review notes: {{ status_change_reason }}{% endif %}
 
