@@ -110,8 +110,8 @@ function ClaimFacilityVerificationInfoStep({
                     If you do not have a website or LinkedIn page for your
                     facility, or if those pages do not list the address of the
                     facility you wish to claim, please email{' '}
-                    <a href="mailto:info@openapparel.org">
-                        info@openapparel.org
+                    <a href="mailto:info@opensupplyhub.org">
+                        info@opensupplyhub.org
                     </a>{' '}
                     with documentation confirming the address of your facility,
                     to assist the OS Hub team in verifying your claim.

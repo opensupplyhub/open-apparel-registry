@@ -124,8 +124,8 @@ class ContributeForm extends Component {
                         please check the{' '}
                         <a href="#troubleshooting">troubleshooting</a> section
                         on this page or email{' '}
-                        <a href="mailto:info@openapparel.org">
-                            info@openapparel.org
+                        <a href="mailto:info@opensupplyhub.org">
+                            info@opensupplyhub.org
                         </a>
                         .
                     </div>

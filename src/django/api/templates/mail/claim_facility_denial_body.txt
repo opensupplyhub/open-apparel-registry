@@ -12,7 +12,7 @@ Here's the reason for the denial:
 {{ denial_reason }}
 {% endif %}
 
-The claim information is inaccurate. If you believe this denial to be inaccurate, you can reach out to the OS Hub team to provide additional, clarifying information at: info@openapparel.org The team will review your claim and get back to you.
+The claim information is inaccurate. If you believe this denial to be inaccurate, you can reach out to the OS Hub team to provide additional, clarifying information at: info@opensupplyhub.org The team will review your claim and get back to you.
 
 Best wishes,
 
