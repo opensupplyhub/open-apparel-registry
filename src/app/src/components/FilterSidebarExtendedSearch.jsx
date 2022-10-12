@@ -151,7 +151,7 @@ function FilterSidebarExtendedSearch({
             <ShowOnly when={!embed}>
                 <div className="form__field">
                     <StyledSelect
-                        label="Contributor Type"
+                        label="Data Contributor Type"
                         id="contributorType"
                         name={CONTRIBUTOR_TYPES}
                         options={contributorTypeOptions || []}
