@@ -42,7 +42,7 @@ vagrant@vagrant:/vagrant$
 
 ### Google Maps Platform
 
-The OS Hub requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API.
+OS Hub requires a Google Maps Platform API key to interface with the Maps JavaScript API, Maps Static API, and Maps Geocoding API.
 
 Without an API key, facility detail maps will not load on the client and geocoding will not function on the server. The basemap will also be low-resolution and watermarked with "for development purposes only."
 

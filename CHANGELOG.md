@@ -98,6 +98,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Non-apparel facility_type_processing_type handling [#2232](https://github.com/open-apparel-registry/open-apparel-registry/pull/2232)
 - Allow super users to remove list items they don't own [#2228](https://github.com/open-apparel-registry/open-apparel-registry/pull/2228)
 - Allow facility list items to be removed from pending lists [#2228](https://github.com/open-apparel-registry/open-apparel-registry/pull/2228)
+- Update copy text for OS Hub [#2237](https://github.com/open-apparel-registry/open-apparel-registry/pull/2237)
 
 ### Deprecated
 

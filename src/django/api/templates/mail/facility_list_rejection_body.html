@@ -7,11 +7,11 @@
     </head>
     <body>
         <p>
-            Hi,
+            Hi there,
         </p>
         <p>
-            You're receiving this email because we rejected your request to upload data to the
-            Open Supply Hub:
+            We’re writing to let you know that your request to upload a dataset to Open Supply Hub was rejected, due to issues with
+            the data in your list. The details of your list are as follows:
         </p>
         <ul>
             <li>
@@ -26,14 +26,20 @@
         </ul>
         {% if rejection_reason|length %}
         <p>
-            Here's the reason for the rejection:
+            Not to worry! Below are details on the data issue(s), as well as guidance on how you can address these issues and
+            get your list approved.
         </p>
         <p>
             {{ rejection_reason }}
         </p>
         {% endif %}
         <p>
-            Best wishes,
+            For any questions, feel free to reach out to the OS Hub team:
+            <a href="mailto:info@opensupplyhub.org">info@opensupplyhub.org</a>.
+            We appreciate your support as we work to maintain a high quality dataset that is open and beneficial to all who need it.
+            </p>
+            <p>
+                All the best,
         </p>
         {% include "mail/signature_block.html" %}
     </body>

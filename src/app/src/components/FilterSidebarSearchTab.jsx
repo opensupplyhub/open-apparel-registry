@@ -249,7 +249,7 @@ function FilterSidebarSearchTab({
                 {!embed ? (
                     <a
                         className={`${classes.helpSubheadStyle} control-link inherit-font`}
-                        href="mailto:info@openapparel.org?subject=Reporting an issue"
+                        href="mailto:info@opensupplyhub.org?subject=Reporting an issue"
                     >
                         Have a suggestion? Let us know!
                     </a>

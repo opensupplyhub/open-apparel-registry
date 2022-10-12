@@ -131,8 +131,8 @@ function ReportFacilityStatusDialog({
                         Please provide information the OS Hub team can use to
                         verify this status change. Should you need to share or
                         attach a document or screenshot, please email it to{' '}
-                        <a href="mailto:info@openapparel.org">
-                            info@openapparel.org
+                        <a href="mailto:info@opensupplyhub.org">
+                            info@opensupplyhub.org
                         </a>{' '}
                         after completing this form.
                     </DialogContentText>

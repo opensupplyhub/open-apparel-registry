@@ -348,7 +348,7 @@ export const contributeFileDescription = Object.freeze({
     id: contributeFieldsEnum.description,
     label: `Enter a description of this facility list and include a timeframe
 for the list's validity`,
-    hint: `example: 'This is the Alpha Brand list of suppliers for their apparel products valid from June 2021 to Sept 2021'`,
+    hint: `example: 'This is the Alpha Company list of suppliers for their retail products valid from Jan 2023 to June 2023'`,
     type: inputTypesEnum.text,
     placeholder: 'Facility List Description',
 });
@@ -594,6 +594,8 @@ export const SelectedMarkerColor = '#FFCF3F';
 // when the width is set to 100%
 export const minimum100PercentWidthEmbedHeight = '500px';
 
+export const DONATE_LINK = 'https://givebutter.com/opensupplyhub2022';
+
 export const NavbarItems = [
     {
         type: 'link',
@@ -622,7 +624,7 @@ export const NavbarItems = [
                         {
                             type: 'button',
                             label: 'Donate',
-                            href: `${InfoLink}/${InfoPaths.donate}`,
+                            href: DONATE_LINK,
                         },
                     ],
                 },
@@ -780,7 +782,7 @@ export const NavbarItems = [
                         {
                             type: 'button',
                             label: 'Donate',
-                            href: `${InfoLink}/${InfoPaths.donate}`,
+                            href: DONATE_LINK,
                         },
                     ],
                 },
@@ -811,11 +813,7 @@ export const MobileNavbarItems = [
 export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 
 export const FooterLinks = [
-    {
-        label: 'Donate',
-        href: `${InfoLink}/${InfoPaths.donate}`,
-    },
-
+    { label: 'Donate', href: DONATE_LINK },
     { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },
     { label: 'FAQs', href: `${InfoLink}/${InfoPaths.faqs}` },
     {
@@ -824,7 +822,7 @@ export const FooterLinks = [
     },
     { label: 'Media Hub', href: `${InfoLink}/${InfoPaths.mediaHub}` },
     { label: 'Contact Us', href: `${InfoLink}/${InfoPaths.contactUs}` },
-    { label: 'Reporting Line', href: '' },
+    { label: 'Reporting Line', href: 'https://opensupplyhub.allvoices.co/' },
 ];
 
 export const SocialMediaLinks = [
@@ -1163,4 +1161,4 @@ export const SILVER_MAP_STYLE = [
 ];
 
 export const EXTENDED_FIELDS_EXPLANATORY_TEXT =
-    'These fields were added to the OS Hub in March 2022. As more data is contributed, more results will become available.';
+    'These fields were added to OS Hub in March 2022. As more data is contributed, more results will become available.';
