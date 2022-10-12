@@ -142,7 +142,16 @@ function FilterSidebarSearchTab({
 
     if (fetchingOptions) {
         return (
-            <div className="control-panel__content">
+            <div
+                className="control-panel__content"
+                style={{
+                    minWidth: '50vw',
+                    minHeight: '90vh',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
                 <CircularProgress />
             </div>
         );
