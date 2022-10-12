@@ -4,16 +4,24 @@ mkdir -p logs
 
 # tile request load w\ 5 times the number of parallel requests and
 # a random cache key suffix to avoid CloudFront
-VU_MULTIPLIER=5 \
-CACHE_KEY_SUFFIX=$(echo $(date) | shasum | cut -c1-8) \
-docker-compose -f docker-compose.yml run --rm \
-  k6 run /scripts/zoom_rio_de_janerio_with_contributor_filter.js \
-  &> logs/tile_test.log &
+runtime="10 minutes"
+endtime=$(date -ud "$runtime" +%s)
 
-# homepage load with 10 concurrent users each running the test 10 times
+echo "Start Time: `date +%H:%M:%S`"
+while [[ $(date -u +%s) -le $endtime ]]
+do
+    VU_MULTIPLIER=5 \
+CACHE_KEY_SUFFIX=$(echo $(date) | shasum | cut -c1-8) \
+  docker-compose -f docker-compose.yml run --rm \
+    k6 run /scripts/zoom_rio_de_janerio_with_contributor_filter.js \
+    &> logs/tile_test.log &
+done
+echo "End Time: `date +%H:%M:%S`"
+
+# homepage load with 5 concurrent users each running the test 250 times
 CLIENT_KEY=bbd21248d53d958583f36a87b84067d5 \
 docker-compose -f docker-compose.yml \
-  run --rm k6 run -u 10 -i 100 /scripts/browse_homepage.js \
+  run --rm k6 run -u 5 -i 250 /scripts/browse_homepage.js \
   &> logs/browse_homepage.log &
 
 # To invoke the facility download load test with a custom filter
