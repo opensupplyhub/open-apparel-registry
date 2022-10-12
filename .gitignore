@@ -49,6 +49,9 @@ research/dedupe/gazetteer/gazetteer_output.csv
 research/dedupe/gazetteer/gazetteer_pass_2_output.csv
 research/dedupe/gazetteer/gazetteer_training.json
 
+# File fields
+src/django/django_files
+
 # Lambda
 deployment/terraform/lambda-functions/**/*.zip
 deployment/terraform/lambda-functions/**/*.out
