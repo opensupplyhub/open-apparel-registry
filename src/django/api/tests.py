@@ -82,7 +82,7 @@ from api.limits import check_api_limits, get_end_of_year
 from api.close_list import close_list
 from api.facility_type_processing_type import (
     FACILITY_TYPE, PROCESSING_TYPE, EXACT_MATCH, ALIAS_MATCH,
-    FUZZY_MATCH, ALL_PROCESSING_TYPES, ALL_FACILITY_TYPES,
+    FUZZY_MATCH, SKIPPED_MATCHING, ALL_PROCESSING_TYPES, ALL_FACILITY_TYPES,
     PROCESSING_TYPES_TO_FACILITY_TYPES, ASSEMBLY,
     RAW_MATERIAL_PROCESSING_OR_PRODUCTION,
     WET_ROLLER_PRINTING,
@@ -972,6 +972,10 @@ class GeocodingTest(TestCase):
 
 
 class FacilityAndProcessingTypeTest(TestCase):
+    def setUp(self):
+        self.sector = ['Apparel']
+        self.nonapparel_sector = ['Health']
+
     def test_exact_processing_type_match(self):
         processing_type_input = 'assembly'
         expected_output = (
@@ -981,7 +985,8 @@ class FacilityAndProcessingTypeTest(TestCase):
             ],
             ALL_PROCESSING_TYPES[ASSEMBLY]
         )
-        output = get_facility_and_processing_type(processing_type_input)
+        output = get_facility_and_processing_type(processing_type_input,
+                                                  self.sector)
         self.assertEqual(output, expected_output)
 
     def test_exact_facility_type_match(self):
@@ -992,7 +997,8 @@ class FacilityAndProcessingTypeTest(TestCase):
             facility_type_value,
             facility_type_value,
         )
-        output = get_facility_and_processing_type(facility_type_input)
+        output = get_facility_and_processing_type(facility_type_input,
+                                                  self.sector)
         self.assertEqual(output, expected_output)
 
     def test_alias_processing_type_match(self):
@@ -1004,7 +1010,8 @@ class FacilityAndProcessingTypeTest(TestCase):
             ],
             ALL_PROCESSING_TYPES[WET_ROLLER_PRINTING]
         )
-        output = get_facility_and_processing_type(processing_type_input)
+        output = get_facility_and_processing_type(processing_type_input,
+                                                  self.sector)
         self.assertEqual(output, expected_output)
 
     def test_fuzzy_processing_type_match(self):
@@ -1016,7 +1023,8 @@ class FacilityAndProcessingTypeTest(TestCase):
             ],
             ALL_PROCESSING_TYPES[ASSEMBLY]
         )
-        output = get_facility_and_processing_type(processing_type_input)
+        output = get_facility_and_processing_type(processing_type_input,
+                                                  self.sector)
         self.assertEqual(output, expected_output)
 
     def test_fuzzy_facility_type_match(self):
@@ -1029,7 +1037,26 @@ class FacilityAndProcessingTypeTest(TestCase):
             facility_type_value,
             facility_type_value,
         )
-        output = get_facility_and_processing_type(facility_type_input)
+        output = get_facility_and_processing_type(facility_type_input,
+                                                  self.sector)
+        self.assertEqual(output, expected_output)
+
+    def test_processing_type_sector_nonapparel(self):
+        processing_type_input = 'assembly'
+        expected_output = (
+            PROCESSING_TYPE, SKIPPED_MATCHING, None, processing_type_input
+        )
+        output = get_facility_and_processing_type(processing_type_input,
+                                                  self.nonapparel_sector)
+        self.assertEqual(output, expected_output)
+
+    def test_exact_facility_type_match_sector_nonapparel(self):
+        facility_type_input = 'raw material processing or production'
+        expected_output = (
+            PROCESSING_TYPE, SKIPPED_MATCHING, None, facility_type_input
+        )
+        output = get_facility_and_processing_type(facility_type_input,
+                                                  self.nonapparel_sector)
         self.assertEqual(output, expected_output)
 
 
@@ -9165,7 +9192,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
             'country': "US",
             'name': "Azavea",
             'address': "990 Spring Garden St., Philadelphia PA 19123",
-            'sector': 'Apparel',
+            'sector': ['Health', 'Apparel'],
             'facility_type': ['office hq', 'final product assembly']
         }), content_type='application/json')
         facility_data = json.loads(facility_response.content)
@@ -9177,6 +9204,25 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         data = json.loads(response.content)
         self.assertEqual(data['count'], 1)
         self.assertEqual(data['features'][0]['id'], facility_id)
+
+    @patch('api.geocoding.requests.get')
+    def test_search_by_facility_type_omits_nonapparel(self, mock_get):
+        mock_get.return_value = Mock(ok=True, status_code=200)
+        mock_get.return_value.json.return_value = geocoding_data
+        self.join_group_and_login()
+        self.client.post(self.url, json.dumps({
+            'country': "US",
+            'name': "Azavea",
+            'address': "990 Spring Garden St., Philadelphia PA 19123",
+            'sector': 'Health',
+            'facility_type': ['office hq', 'final product assembly']
+        }), content_type='application/json')
+
+        response = self.client.get(
+            self.url + '?facility_type=final%20product%20assembly'
+        )
+        data = json.loads(response.content)
+        self.assertEqual(data['count'], 0)
 
 
 class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
