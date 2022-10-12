@@ -136,7 +136,7 @@ function AuthMenu({
                     Register/Contribute
                 </Link>
                 <Link
-                    className="app-header-button"
+                    className="app-header-button disabled-link"
                     to={authLoginFormRoute}
                     href={authLoginFormRoute}
                     disabled={sessionFetching}

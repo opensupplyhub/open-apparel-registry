@@ -69,7 +69,7 @@ function MobileContributeButton({
                 </div>
                 <div className="mobile-nav__item mobile-nav__item--button">
                     <Link
-                        className="button app-header-button"
+                        className="button app-header-button disabled-link"
                         to={authLoginFormRoute}
                         href={authLoginFormRoute}
                         disabled={sessionFetching}

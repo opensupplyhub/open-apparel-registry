@@ -12,7 +12,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import EmbeddedFooter from './components/EmbeddedFooter';
 import ResetPasswordForm from './components/ResetPasswordForm';
-import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
 import MapAndSidebar from './components/MapAndSidebar';
 import FacilityLists from './components/FacilityLists';
@@ -158,7 +157,7 @@ class Routes extends Component {
                                 <Route
                                     exact
                                     path={authLoginFormRoute}
-                                    component={LoginForm}
+                                    component={NotAvailable('Login')}
                                 />
                                 <Route
                                     exact
