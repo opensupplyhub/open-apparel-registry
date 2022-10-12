@@ -2,6 +2,7 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import { func, shape, string, bool } from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import { userPropType } from '../util/propTypes';
 import { getEmbeddedMapSrc } from '../util/util';
@@ -125,15 +126,12 @@ function EmbeddedMapConfig({
             </Typography>
             <Typography paragraph>
                 To begin,{' '}
-                <a
-                    href="https://openapparel.org/contribute"
-                    className="inline-link"
-                >
-                    contribute your supplier data
-                </a>{' '}
-                (via upload or API) to the OS Hub with all of the data fields
-                you wish to have displayed on your map using the template
-                supplied to you by the OS Hub Team.{' '}
+                <Link to="/contribute" className="inline-link">
+                    upload your supplier data
+                </Link>{' '}
+                (via upload or API) to OS Hub with all of the data fields you
+                wish to have displayed on your map using the template supplied
+                to you by the OS Hub Team.{' '}
                 <strong>
                     This list must include any additional data points you would
                     like to display on your customized map, such as facility
@@ -158,8 +156,8 @@ function EmbeddedMapConfig({
                     Embedded Map info page
                 </a>{' '}
                 or email{' '}
-                <a href="mailto:info@openapparel.org" className="inline-link">
-                    info@openapparel.org
+                <a href="mailto:info@opensupplyhub.org" className="inline-link">
+                    info@opensupplyhub.org
                 </a>
                 .
             </Typography>
