@@ -594,6 +594,8 @@ export const SelectedMarkerColor = '#FFCF3F';
 // when the width is set to 100%
 export const minimum100PercentWidthEmbedHeight = '500px';
 
+export const DONATE_LINK = 'https://givebutter.com/opensupplyhub2022';
+
 export const NavbarItems = [
     {
         type: 'link',
@@ -622,7 +624,7 @@ export const NavbarItems = [
                         {
                             type: 'button',
                             label: 'Donate',
-                            href: `${InfoLink}/${InfoPaths.donate}`,
+                            href: DONATE_LINK,
                         },
                     ],
                 },
@@ -780,7 +782,7 @@ export const NavbarItems = [
                         {
                             type: 'button',
                             label: 'Donate',
-                            href: `${InfoLink}/${InfoPaths.donate}`,
+                            href: DONATE_LINK,
                         },
                     ],
                 },
@@ -811,11 +813,7 @@ export const MobileNavbarItems = [
 export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 
 export const FooterLinks = [
-    {
-        label: 'Donate',
-        href: `${InfoLink}/${InfoPaths.donate}`,
-    },
-
+    { label: 'Donate', href: DONATE_LINK },
     { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },
     { label: 'FAQs', href: `${InfoLink}/${InfoPaths.faqs}` },
     {
@@ -824,7 +822,7 @@ export const FooterLinks = [
     },
     { label: 'Media Hub', href: `${InfoLink}/${InfoPaths.mediaHub}` },
     { label: 'Contact Us', href: `${InfoLink}/${InfoPaths.contactUs}` },
-    { label: 'Reporting Line', href: '' },
+    { label: 'Reporting Line', href: 'https://opensupplyhub.allvoices.co/' },
 ];
 
 export const SocialMediaLinks = [
