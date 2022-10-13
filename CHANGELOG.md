@@ -101,6 +101,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add an activate() method to TrainedModel [#2114](https://github.com/open-apparel-registry/open-apparel-registry/pull/2114)
 - Rewrite the GazetteerCache to work with database-backed gazetteer [#2134](https://github.com/open-apparel-registry/open-apparel-registry/pull/2134)
 - Update train model command [#2147](https://github.com/open-apparel-registry/open-apparel-registry/pull/2147)
+- Store dedupe model in FileField [#2241](https://github.com/open-apparel-registry/open-apparel-registry/pull/2241)
 
 ### Deprecated
 
