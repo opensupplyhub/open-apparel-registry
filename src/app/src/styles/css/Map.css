@@ -9,7 +9,7 @@
   align-items: flex-start;
 
   max-width: 100%;
-  overflow: scroll;
+  overflow: auto;
 }
 
 @media (min-width: 600px) {

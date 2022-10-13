@@ -129,6 +129,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix parse errors [#2207](https://github.com/open-apparel-registry/open-apparel-registry/pull/2207)
 - OS Hub style fixes [#2222](https://github.com/open-apparel-registry/open-apparel-registry/pull/2222)
 - Fix gtag.js script tag [#2229](https://github.com/open-apparel-registry/open-apparel-registry/pull/2229)
+- Fix initial page load layout bug [#2238](https://github.com/open-apparel-registry/open-apparel-registry/pull/2238)
 
 ### Security
 
