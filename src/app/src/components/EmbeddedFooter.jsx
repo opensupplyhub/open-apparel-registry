@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../styles/images/OAR_PoweredBy_white.svg';
+import logo from '../styles/images/OSH_PoweredBy.png';
 import { InfoLink } from '../util/constants';
 
 const EmbeddedFooter = () => (
