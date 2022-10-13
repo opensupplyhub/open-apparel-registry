@@ -65,8 +65,8 @@ class LoginForm extends Component {
                 <AppGrid title="Log In" style={{ marginBottom: '100px' }}>
                     <Grid item xs={12} sm={7}>
                         <p>
-                            You must be a registered user to contribute to the
-                            Open Supply Hub.
+                            You must be a registered user to contribute to Open
+                            Supply Hub.
                             <br />
                             Don&apos;t have an account?{' '}
                             <Link
