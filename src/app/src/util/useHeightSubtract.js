@@ -8,7 +8,7 @@ function useElementsHeight(className) {
 }
 
 function useFooterHeight() {
-    return useElementsHeight('footer-height-subtract');
+    return useElementsHeight('footer-height-contributor');
 }
 
 function useHeaderHeight() {
