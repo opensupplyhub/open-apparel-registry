@@ -9,13 +9,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [72] 2022-10-14
+
+### Added
+
 - Add CloudFront function for redirecting to OS Hub excluding embeds [#2171](https://github.com/open-apparel-registry/open-apparel-registry/pull/2171)
 
 ### Changed
 
 - Delete matched facilities from created contributer [#2155](https://github.com/open-apparel-registry/open-apparel-registry/pull/2153)
-
-### Deprecated
 
 ### Removed
 - Prepare code for read-only database [#2184](https://github.com/open-apparel-registry/open-apparel-registry/pull/2184)
@@ -1254,7 +1266,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/71...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/72...HEAD
+[72]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/72
 [71]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/71
 [70]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/70
 [69]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/69
