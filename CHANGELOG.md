@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [73-OSHUB] 2022-10-14
+
+### Added
+
 - Filter facilities by sectors [#1930](https://github.com/open-apparel-registry/open-apparel-registry/pull/1930)
 - Add new Average Match Count, Confirm Reject Counts, and Error Items reports [#1855](https://github.com/open-apparel-registry/open-apparel-registry/pull/1855/commits)
 - Get sector from CSV or API and store on `FacilityListItem` [#1868](https://github.com/open-apparel-registry/open-apparel-registry/pull/1868)
@@ -100,10 +114,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allow facility list items to be removed from pending lists [#2228](https://github.com/open-apparel-registry/open-apparel-registry/pull/2228)
 - Update copy text for OS Hub [#2237](https://github.com/open-apparel-registry/open-apparel-registry/pull/2237)
 - Update embedded map footer logo [#2243](https://github.com/open-apparel-registry/open-apparel-registry/pull/2243)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -1301,7 +1311,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/65...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/73-OSHUB...HEAD
+[73-OSHUB]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/73-OSHUB
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
 [65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
 [64]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/64
