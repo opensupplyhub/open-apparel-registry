@@ -1,7 +1,6 @@
 /* eslint-env jest */
 /* eslint-disable no-useless-escape */
 
-const mapValues = require('lodash/mapValues');
 const isEqual = require('lodash/isEqual');
 const includes = require('lodash/includes');
 const turf = require('@turf/turf');
@@ -26,10 +25,6 @@ const {
     getCheckedFromEvent,
     getFileFromInputRef,
     getFileNameFromInputRef,
-    createSignupErrorMessages,
-    createSignupRequestData,
-    createProfileUpdateErrorMessages,
-    createProfileUpdateRequestData,
     createErrorListFromResponseObject,
     mapDjangoChoiceTuplesToSelectOptions,
     allListsAreEmpty,
@@ -48,7 +43,6 @@ const {
     getNumberFromParsedQueryStringParamOrUseDefault,
     createPaginationOptionsFromQueryString,
     createParamsFromQueryString,
-    makeReportADataIssueEmailLink,
     makeFeatureCollectionFromSingleFeature,
     createConfirmFacilityListItemMatchURL,
     createRejectFacilityListItemMatchURL,
@@ -77,11 +71,6 @@ const {
 } = require('../util/util');
 
 const {
-    OTHER,
-    registrationFieldsEnum,
-    registrationFormFields,
-    profileFieldsEnum,
-    profileFormFields,
     DEFAULT_PAGE,
     DEFAULT_ROWS_PER_PAGE,
     ENTER_KEY,
@@ -671,93 +660,6 @@ it('gets an empty string for the filename from an empty file input ref', () => {
         .toEqual('');
 });
 
-it('creates a list of error messages if any required signup or profile update fields are missing', () => {
-    const incompleteSignupForm = mapValues(registrationFieldsEnum, '');
-
-    const expectedSignupErrorMessageCount = registrationFormFields
-        .filter(({ required }) => required)
-        .filter(({ id }) => id !== registrationFieldsEnum.otherContributorType)
-        .length;
-
-    expect(createSignupErrorMessages(incompleteSignupForm).length)
-        .toEqual(expectedSignupErrorMessageCount);
-
-    const incompleteProfileForm = mapValues(profileFieldsEnum, '');
-
-    const expectedProfileErrorMessageCount = profileFormFields
-        .filter(({ required }) => required)
-        .filter(({ id }) => id !== registrationFieldsEnum.otherContributorType)
-        .length;
-
-    expect(createProfileUpdateErrorMessages(incompleteProfileForm).length)
-        .toEqual(expectedProfileErrorMessageCount);
-});
-
-it('creates zero error messages if all required signup or profile update fields are present', () => {
-    const completeSignupForm = registrationFieldsEnum;
-
-    expect(createSignupErrorMessages(completeSignupForm).length)
-        .toEqual(0);
-
-    const completeProfileForm = profileFieldsEnum;
-
-    expect(createProfileUpdateErrorMessages(completeProfileForm).length)
-        .toEqual(0);
-});
-
-it('creates an error message for missing otherContributorType field when it is required', () => {
-    const completeSignupForm = Object.assign({}, registrationFieldsEnum, {
-        [registrationFieldsEnum.contributorType]: OTHER,
-        [registrationFieldsEnum.otherContributorType]: '',
-    });
-
-    expect(createSignupErrorMessages(completeSignupForm).length)
-        .toEqual(1);
-
-    const completeProfileForm = Object.assign({}, profileFieldsEnum, {
-        [registrationFieldsEnum.contributorType]: OTHER,
-        [registrationFieldsEnum.otherContributorType]: '',
-    });
-
-    expect(createProfileUpdateErrorMessages(completeProfileForm).length)
-        .toEqual(1);
-});
-
-it('creates no error message for missing otherContributorType field when present', () => {
-    const completeSignupForm = Object.assign({}, registrationFieldsEnum, {
-        [registrationFieldsEnum.contributorType]: OTHER,
-        [registrationFieldsEnum.otherContributorType]: 'other contributor type',
-    });
-
-    expect(createSignupErrorMessages(completeSignupForm).length)
-        .toEqual(0);
-
-    const completeProfileForm = Object.assign({}, profileFieldsEnum, {
-        [registrationFieldsEnum.contributorType]: OTHER,
-        [registrationFieldsEnum.otherContributorType]: 'other contributor type',
-    });
-
-    expect(createProfileUpdateErrorMessages(completeProfileForm).length)
-        .toEqual(0);
-});
-
-it('correctly reformats data to send to Django from the signup form state', () => {
-    // drop `confirmPassword` since it's sent as `password` to Django
-    const {
-        confirmPassword,
-        ...completeForm
-    } = registrationFieldsEnum;
-
-    const signupRequestData = createSignupRequestData(completeForm);
-
-    registrationFormFields.forEach(({ id, modelFieldName }) =>
-        expect(signupRequestData[modelFieldName]).toEqual(completeForm[id]));
-
-    const profileRequestData = createProfileUpdateRequestData(profileFieldsEnum);
-
-    profileFormFields.forEach(({ id, modelFieldName }) =>
-        expect(profileRequestData[modelFieldName]).toEqual(profileFieldsEnum[id]));
-});
 
 it('creates a list of field errors from a Django error object', () => {
     const djangoErrors = {
@@ -988,13 +890,6 @@ it('creates params from a query string', () => {
     const expectedParamsForIgnoredArg = {};
     expect(createParamsFromQueryString(ignoredArgQueryString))
         .toEqual(expectedParamsForIgnoredArg);
-});
-
-it('creates an email link for reporting a data issue for a facility with a given OAR ID', () => {
-    const oarID = 'oarID';
-    const expectedMatch = 'mailto:info@openapparel.org?subject=Reporting a data issue on ID oarID';
-
-    expect(makeReportADataIssueEmailLink(oarID)).toBe(expectedMatch);
 });
 
 it('creates a geojson FeatureCollection from a single geojson Feature', () => {

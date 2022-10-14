@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { arrayOf, bool, func, shape, string } from 'prop-types';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 
@@ -25,7 +24,7 @@ import {
 
 import { userPropType } from '../util/propTypes';
 
-import { authRegisterFormRoute, facilitiesRoute } from '../util/constants';
+import { facilitiesRoute } from '../util/constants';
 
 import { formValidationErrorMessageStyle } from '../util/styles';
 
@@ -64,20 +63,6 @@ class LoginForm extends Component {
             <AppOverflow>
                 <AppGrid title="Log In">
                     <Grid item xs={12} sm={7}>
-                        <p>
-                            You must be a registered user to contribute to the
-                            Open Apparel Registry.
-                            <br />
-                            Don&apos;t have an account?{' '}
-                            <Link
-                                to={authRegisterFormRoute}
-                                href={authRegisterFormRoute}
-                                className="link-underline"
-                            >
-                                Register
-                            </Link>
-                            .
-                        </p>
                         <div className="form__field">
                             <label
                                 className="form__label"

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { arrayOf, bool, func, string } from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { toast } from 'react-toastify';
@@ -181,13 +180,6 @@ class UserProfile extends Component {
             </React.Fragment>
         );
 
-        const toolbar =
-            isCurrentUsersProfile && !allowEdits ? (
-                <Link to="/settings" href="/settings">
-                    Edit
-                </Link>
-            ) : null;
-
         const showErrorMessages =
             isEditableProfile &&
             errorsUpdatingProfile &&
@@ -240,7 +232,6 @@ class UserProfile extends Component {
             <AppOverflow>
                 <AppGrid title={title} style={profileStyles.appGridContainer}>
                     <Grid item xs={12} sm={7}>
-                        {toolbar}
                         {profileInputs}
                         {facilityLists}
                         {errorMessages}

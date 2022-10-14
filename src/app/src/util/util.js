@@ -36,11 +36,8 @@ import * as XLSX from 'xlsx';
 import env from './env';
 
 import {
-    OTHER,
     FEATURE_COLLECTION,
     inputTypesEnum,
-    registrationFieldsEnum,
-    registrationFormFields,
     profileFormFields,
     facilitiesRoute,
     DEFAULT_PAGE,
@@ -183,9 +180,6 @@ export const makeGetClientInfoURL = () => {
             : '';
     return `${clientInfoURL}${clientInfoURLSuffix}`;
 };
-
-export const makeLogDownloadUrl = (path, recordCount) =>
-    `/api/log-download/?path=${path}&record_count=${recordCount}`;
 
 export const makeUpdateFacilityLocationURL = oarID =>
     `/api/facilities/${oarID}/update-location/`;
@@ -481,18 +475,9 @@ const makeCreateFormErrorMessagesFn = fields => form =>
 
         const missingFieldMessage = `Missing required field ${label}`;
 
-        if (id === registrationFieldsEnum.otherContributorType) {
-            return form[registrationFieldsEnum.contributorType] === OTHER
-                ? acc.concat(missingFieldMessage)
-                : acc;
-        }
-
         return acc.concat(missingFieldMessage);
     }, []);
 
-export const createSignupErrorMessages = makeCreateFormErrorMessagesFn(
-    registrationFormFields,
-);
 export const createProfileUpdateErrorMessages = makeCreateFormErrorMessagesFn(
     profileFormFields,
 );
@@ -506,9 +491,6 @@ const makeCreateFormRequestDataFn = fields => form =>
         {},
     );
 
-export const createSignupRequestData = makeCreateFormRequestDataFn(
-    registrationFormFields,
-);
 export const createProfileUpdateRequestData = makeCreateFormRequestDataFn(
     profileFormFields,
 );
@@ -572,9 +554,6 @@ export const makePaginatedFacilityListItemsDetailLinkWithRowCount = (
 
 export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) =>
     Object.freeze([page * rowsPerPage, (page + 1) * rowsPerPage]);
-
-export const makeReportADataIssueEmailLink = oarId =>
-    `mailto:info@openapparel.org?subject=Reporting a data issue on ID ${oarId}`;
 
 export const makeDisputeClaimEmailLink = oarId =>
     `mailto:info@openapparel.org?subject=Disputing a claim of facility ID ${oarId}`;

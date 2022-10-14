@@ -26,13 +26,12 @@ from rest_framework.test import APITestCase
 from waffle.testutils import override_switch, override_flag
 
 from api.constants import (ProcessingAction,
-                           LogDownloadQueryParams,
                            UpdateLocationParams,
                            FeatureGroups)
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
-                        RequestLog, DownloadLog, FacilityLocation, Source,
+                        RequestLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
                         FacilityActivityReport, ExtendedField, FacilityIndex,
@@ -136,6 +135,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(FacilityListItem.objects.all().count(),
                          previous_item_count + len(self.test_csv_rows) - 1)
 
+    @skip('DB is read-only')
     def test_creates_nonstandard_fields(self):
         response = self.client.post(reverse('facility-list-list'),
                                     {'file': self.test_file},
@@ -4567,40 +4567,6 @@ class PermissionsTests(TestCase):
         self.assertFalse(check_host('foo'))
 
 
-class RequestLogMiddlewareTest(APITestCase):
-    def setUp(self):
-        self.email = 'test@example.com'
-        self.password = 'password'
-        self.name = 'Test User'
-        self.user = User(email=self.email)
-        self.user.set_password(self.password)
-        self.user.save()
-
-        Contributor.objects.create(name=self.name, admin=self.user)
-
-    def test_request_without_token_is_not_logged(self):
-        self.client.login(email=self.email, password=self.password)
-        response = self.client.get(reverse('facility-list-list'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(0, RequestLog.objects.filter(user=self.user).count())
-
-    def test_request_with_token_is_logged(self):
-        token = Token.objects.create(user=self.user)
-        path = reverse('facility-list-list')
-        response = self.client.get(
-            path,
-            HTTP_AUTHORIZATION='Token {0}'.format(token))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(1, RequestLog.objects.filter(user=self.user).count())
-
-        log = RequestLog.objects.first()
-        self.assertEqual(self.user, log.user)
-        self.assertEqual(str(token), log.token)
-        self.assertEqual('GET', log.method)
-        self.assertEqual(path, log.path)
-        self.assertEqual(200, log.response_code)
-
-
 class FacilityClaimChangesTest(TestCase):
     def setUp(self):
         self.email = 'test@example.com'
@@ -4766,63 +4732,6 @@ class FacilityClaimSerializerTests(TestCase):
         self.assertIn('production_type_choices', data)
         self.assertIsNotNone(data['production_type_choices'])
         self.assertNotEqual([], data['production_type_choices'])
-
-
-class LogDownloadTests(APITestCase):
-    def setUp(self):
-        self.email = 'test@example.com'
-        self.password = 'password'
-        self.name = 'Test User'
-        self.user = User(email=self.email)
-        self.user.set_password(self.password)
-        self.user.save()
-
-        self.path = reverse('log_download')
-
-    def test_requires_login(self):
-        response = self.client.post(self.path)
-        self.assertEqual(401, response.status_code)
-
-    def test_requires_arguments(self):
-        self.client.login(email=self.email, password=self.password)
-        response = self.client.post(self.path)
-        self.assertEqual(400, response.status_code)
-
-        content = json.loads(response.content)
-        self.assertIn(LogDownloadQueryParams.PATH, content)
-        self.assertIn(LogDownloadQueryParams.RECORD_COUNT, content)
-
-    def test_requires_post(self):
-        self.client.login(email=self.email, password=self.password)
-        url = '{}?{}={}&{}={}'.format(
-            self.path,
-            LogDownloadQueryParams.PATH,
-            '/a/path/',
-            LogDownloadQueryParams.RECORD_COUNT,
-            1,
-        )
-        response = self.client.get(url)
-        self.assertEqual(405, response.status_code)
-
-    def test_creates_record(self):
-        DownloadLog.objects.all().delete()
-        self.client.login(email=self.email, password=self.password)
-        expected_path = '/a/path'
-        expected_record_count = 42
-        url = '{}?{}={}&{}={}'.format(
-            self.path,
-            LogDownloadQueryParams.PATH,
-            expected_path,
-            LogDownloadQueryParams.RECORD_COUNT,
-            expected_record_count,
-        )
-        response = self.client.post(url)
-        self.assertEqual(204, response.status_code)
-
-        self.assertEqual(1, DownloadLog.objects.all().count())
-        log = DownloadLog.objects.first()
-        self.assertEqual(expected_path, log.path)
-        self.assertEqual(expected_record_count, log.record_count)
 
 
 class TilePermissionsTest(APITestCase):
@@ -6470,11 +6379,13 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
 
         self.assertEqual(response.status_code, 403)
 
+    @skip('DB is read-only')
     def test_empty_body_is_invalid(self):
         self.join_group_and_login()
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 400)
 
+    @skip('DB is read-only')
     def test_missing_fields_are_invalid(self):
         self.join_group_and_login()
 
@@ -6496,11 +6407,13 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         })
         self.assertEqual(response.status_code, 400)
 
+    @skip('DB is read-only')
     def test_valid_request(self):
         self.join_group_and_login()
         response = self.client.post(self.url, self.valid_facility)
         self.assertEqual(response.status_code, 201)
 
+    @skip('DB is read-only')
     def test_raw_data_json_formatted_with_singlequote(self):
         self.join_group_and_login()
         response = self.client.post(self.url, self.valid_facility)
@@ -6508,6 +6421,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         list_item = FacilityListItem.objects.get(id=data['item_id'])
         self.assertTrue(is_json(list_item.raw_data))
 
+    @skip('DB is read-only')
     def test_raw_data_json_formatted_with_doublequote(self):
         self.join_group_and_login()
         response = self.client.post(self.url, {
@@ -6520,6 +6434,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         list_item = FacilityListItem.objects.get(id=data['item_id'])
         self.assertTrue(is_json(list_item.raw_data))
 
+    @skip('DB is read-only')
     def test_raw_data_json_formatted_with_querydict(self):
         self.join_group_and_login()
         query_dict = QueryDict('', mutable=True)
@@ -6541,12 +6456,14 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         list_item = FacilityListItem.objects.get(id=data['item_id'])
         self.assertTrue(is_json(list_item.raw_data))
 
+    @skip('DB is read-only')
     def test_valid_request_with_params(self):
         self.join_group_and_login()
         url_with_query = '{}?create=false&public=true'.format(self.url)
         response = self.client.post(url_with_query, self.valid_facility)
         self.assertEqual(response.status_code, 200)
 
+    @skip('DB is read-only')
     def test_private_permission(self):
         self.join_group_and_login()
         url_with_query = '{}?public=false'.format(self.url)
@@ -6562,6 +6479,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         response = self.client.post(url_with_query, self.valid_facility)
         self.assertEqual(response.status_code, 201)
 
+    @skip('DB is read-only')
     def test_creates_nonstandard_fields(self):
         self.join_group_and_login()
         self.client.post(self.url, self.valid_facility)
@@ -6571,6 +6489,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         self.assertEquals(1, len(fields))
         self.assertIn('extra_1', fields)
 
+    @skip('DB is read-only')
     def test_exact_matches_with_create_false(self):
         self.join_group_and_login()
         url_with_query = '{}?create=false&public=true'.format(self.url)
@@ -6579,6 +6498,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         response_two = self.client.post(url_with_query, self.valid_facility)
         self.assertEqual(response_two.status_code, 200)
 
+    @skip('DB is read-only')
     def test_handles_exact_matches_with_empty_strings(self):
         self.join_group_and_login()
         url_with_query = '{}?public=true'.format(self.url)
@@ -8046,6 +7966,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_submit_parent_company_no_match(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8093,6 +8014,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertIn(self.contributor.id, facility_index.parent_company_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_submit_parent_company_duplicate(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8119,6 +8041,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertEqual(1, len(facility_index.parent_company_id))
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_name(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8140,6 +8063,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertEquals(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_id(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8161,6 +8085,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertEquals(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_multiple(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8190,6 +8115,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_array(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8211,6 +8137,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertIn('b', facility_index.product_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_string(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8232,6 +8159,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertIn('b', facility_index.product_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_list_validation(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8246,6 +8174,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertEqual(response.status_code, 400)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_max_count(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8275,6 +8204,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
                          len(facility_index.product_type))
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_product_type(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8301,6 +8231,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_single_processing_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8342,6 +8273,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
                          facility_index.processing_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_multiple_facility_values(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8377,6 +8309,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEqual(0, len(facility_index.processing_type))
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_non_taxonomy_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8399,6 +8332,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEqual(['Sewing'], index_row.processing_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_processing_type(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8418,6 +8352,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEquals(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_facility_type(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8445,6 +8380,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_single_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8465,6 +8401,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('1001-5000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_range_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8485,6 +8422,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('Less than 1000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_crossrange_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8507,6 +8445,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('5001-10000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_maxrange_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8527,6 +8466,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('More than 10000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_range(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8574,6 +8514,7 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
         self.long_name = '杭州湾开发区兴慈二路与滨海二路叉口恒元工业园区A3'
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data

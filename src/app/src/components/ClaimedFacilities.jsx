@@ -2,7 +2,6 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import ClaimedFacilitiesList from './ClaimedFacilitiesList';
-import ClaimedFacilitiesDetails from './ClaimedFacilitiesDetails';
 import RouteNotFound from './RouteNotFound';
 import AppOverflow from './AppOverflow';
 import AppGrid from './AppGrid';
@@ -36,7 +35,11 @@ export default function ClaimedFacilities() {
                         exact
                         path={claimedFacilitiesDetailRoute}
                         render={() => (
-                            <Route component={ClaimedFacilitiesDetails} />
+                            <Route
+                                component={() => (
+                                    <p>This feature is not available.</p>
+                                )}
+                            />
                         )}
                     />
                     <Route

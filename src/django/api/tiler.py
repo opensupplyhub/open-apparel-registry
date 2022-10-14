@@ -67,8 +67,10 @@ def get_facility_grid_vector_tile(params, layer, z, x, y):
     st_asmvt_query = \
         'SELECT ST_AsMVT(q, \'{}\') FROM ({}) AS q'.format(layer, join_query)
 
+    txn_query = 'START TRANSACTION READ WRITE'
+
     full_query = ';\n'.join([
-        hex_grid_query, hex_grid_idx_query, st_asmvt_query
+        txn_query, hex_grid_query, hex_grid_idx_query, st_asmvt_query
     ])
 
     with connection.cursor() as cursor:

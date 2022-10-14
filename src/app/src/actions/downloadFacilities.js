@@ -1,24 +1,25 @@
 import { createAction } from 'redux-act';
 import get from 'lodash/get';
 
-import apiRequest from '../util/apiRequest';
-
 import { fetchNextPageOfFacilities } from './facilities';
 
 import {
-    makeLogDownloadUrl,
     logErrorAndDispatchFailure,
     downloadFacilitiesCSV,
     downloadFacilitiesXLSX,
 } from '../util/util';
 
-export const startLogDownload = createAction('START_LOG_DOWNLOAD');
-export const failLogDownload = createAction('FAIL_LOG_DOWNLOAD');
-export const completeLogDownload = createAction('COMPLETE_LOG_DOWNLOAD');
+export const startDownloadFacilities = createAction(
+    'START_DOWNLOAD_FACILITIES',
+);
+export const failDownloadFacilities = createAction('FAIL_DOWNLOAD_FACILITIES');
+export const completeDownloadFacilities = createAction(
+    'COMPLETE_DOWNLOAD_FACILITIES',
+);
 
-export function logDownload(format, options) {
+export function downloadFacilities(format, options) {
     return async (dispatch, getState) => {
-        const downloadFacilities =
+        const downloadFacilitiesFunction =
             format === 'csv' ? downloadFacilitiesCSV : downloadFacilitiesXLSX;
 
         const isEmbedded = options?.isEmbedded || false;
@@ -27,7 +28,7 @@ export function logDownload(format, options) {
             const {
                 facilities: {
                     facilities: {
-                        data: { features: facilities, count },
+                        data: { features: facilities },
                         nextPageURL,
                     },
                 },
@@ -46,14 +47,8 @@ export function logDownload(format, options) {
                 false,
             );
 
-            const path = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-
-            if (!isEmbedded) {
-                await apiRequest.post(makeLogDownloadUrl(path, count));
-            }
-
             if (!nextPageURL) {
-                downloadFacilities(facilities, {
+                downloadFacilitiesFunction(facilities, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
                     includeExtendedFields: extendedFieldsAreActive,
@@ -96,7 +91,7 @@ export function logDownload(format, options) {
                     },
                 } = getState();
 
-                downloadFacilities(features, {
+                downloadFacilitiesFunction(features, {
                     includePPEFields: ppeIsActive,
                     includeClosureFields: reportsAreActive,
                     includeExtendedFields: extendedFieldsAreActive,
@@ -104,13 +99,13 @@ export function logDownload(format, options) {
                 });
             }
 
-            return dispatch(completeLogDownload());
+            return dispatch(completeDownloadFacilities());
         } catch (err) {
             return dispatch(
                 logErrorAndDispatchFailure(
                     err,
                     'An error prevented the download',
-                    failLogDownload,
+                    failDownloadFacilities,
                 ),
             );
         }

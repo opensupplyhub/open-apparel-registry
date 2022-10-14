@@ -1,16 +1,11 @@
 import { createAction } from 'redux-act';
-import get from 'lodash/get';
-import snakeCase from 'lodash/snakeCase';
-import mapKeys from 'lodash/mapKeys';
 
 import apiRequest from '../util/apiRequest';
 
 import {
     logErrorAndDispatchFailure,
     makeGetFacilityByOARIdURL,
-    makeClaimFacilityAPIURL,
     makeParentCompanyOptionsAPIURL,
-    claimAFacilityFormIsValid,
     mapDjangoChoiceTuplesToSelectOptions,
 } from '../util/util';
 
@@ -79,59 +74,6 @@ export const updateClaimAFacilityPreferredContactMethod = createAction(
 export const updateClaimAFacilityLinkedinProfile = createAction(
     'UPDATE_CLAIM_A_FACILITY_LINKEDIN_PROFILE',
 );
-
-export const startSubmitClaimAFacilityData = createAction(
-    'START_SUBMIT_CLAIM_A_FACILITY_DATA',
-);
-export const failSubmitClaimAFacilityData = createAction(
-    'FAIL_SUBMIT_CLAIM_A_FACILITY_DATA',
-);
-export const completeSubmitClaimAFacilityData = createAction(
-    'COMPLETE_SUBMIT_CLAIM_A_FACILITY_DATA',
-);
-
-export function submitClaimAFacilityData(oarID) {
-    return (dispatch, getState) => {
-        const {
-            claimFacility: {
-                claimData: { formData },
-            },
-        } = getState();
-
-        if (!claimAFacilityFormIsValid(formData)) {
-            return null;
-        }
-
-        const postData = mapKeys(
-            Object.assign({}, formData, {
-                preferredContactMethod: get(
-                    formData,
-                    'preferredContactMethod.value',
-                    null,
-                ),
-                parentCompany: get(formData, 'parentCompany.value', null),
-            }),
-            (_, k) => snakeCase(k),
-        );
-
-        dispatch(startSubmitClaimAFacilityData());
-
-        return apiRequest
-            .post(makeClaimFacilityAPIURL(oarID), postData)
-            .then(({ data }) =>
-                dispatch(completeSubmitClaimAFacilityData(data)),
-            )
-            .catch(err =>
-                dispatch(
-                    logErrorAndDispatchFailure(
-                        err,
-                        'An error prevented submitting facility claim data',
-                        failSubmitClaimAFacilityData,
-                    ),
-                ),
-            );
-    };
-}
 
 export const startFetchParentCompanyOptions = createAction(
     'START_FETCH_PARENT_COMPANY_OPTIONS',
