@@ -2,10 +2,10 @@ import { createReducer } from 'redux-act';
 import update from 'immutability-helper';
 
 import {
-    startLogDownload,
-    failLogDownload,
-    completeLogDownload,
-} from '../actions/logDownload';
+    startDownloadFacilities,
+    failDownloadFacilities,
+    completeDownloadFacilities,
+} from '../actions/downloadFacilities';
 
 const initialState = Object.freeze({
     fetching: false,
@@ -14,17 +14,17 @@ const initialState = Object.freeze({
 
 export default createReducer(
     {
-        [startLogDownload]: state =>
+        [startDownloadFacilities]: state =>
             update(state, {
                 fetching: { $set: true },
                 error: { $set: initialState.error },
             }),
-        [failLogDownload]: (state, payload) =>
+        [failDownloadFacilities]: (state, payload) =>
             update(state, {
                 fetching: { $set: false },
                 error: { $set: payload },
             }),
-        [completeLogDownload]: state =>
+        [completeDownloadFacilities]: state =>
             update(state, {
                 fetching: { $set: false },
                 error: { $set: initialState.error },

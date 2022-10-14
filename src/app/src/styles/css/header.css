@@ -22,7 +22,7 @@
 }
 
 .goog-te-menu-frame {
-    top: 80px !important;
+    top: 140px !important;
     box-shadow: none !important;
 }
 
@@ -268,7 +268,7 @@ button.app-header-button {
     position: absolute;
     height: 0;
     overflow: hidden;
-    top: 80px;
+    top: 140px;
     left: 0;
     z-index: 99999999
 }

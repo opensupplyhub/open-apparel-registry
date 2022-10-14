@@ -15,9 +15,6 @@ import {
     updateClaimAFacilityDescription,
     updateClaimAFacilityVerificationMethod,
     updateClaimAFacilityPreferredContactMethod,
-    startSubmitClaimAFacilityData,
-    failSubmitClaimAFacilityData,
-    completeSubmitClaimAFacilityData,
     startFetchParentCompanyOptions,
     failFetchParentCompanyOptions,
     completeFetchParentCompanyOptions,
@@ -199,26 +196,6 @@ export default createReducer(
                     formData: {
                         linkedinProfile: { $set: payload },
                     },
-                },
-            }),
-        [startSubmitClaimAFacilityData]: state =>
-            update(state, {
-                claimData: {
-                    error: { $set: initialState.claimData.error },
-                    fetching: { $set: true },
-                },
-            }),
-        [failSubmitClaimAFacilityData]: (state, error) =>
-            update(state, {
-                claimData: {
-                    error: { $set: error },
-                    fetching: { $set: false },
-                },
-            }),
-        [completeSubmitClaimAFacilityData]: state =>
-            update(state, {
-                claimData: {
-                    fetching: { $set: false },
                 },
             }),
         [clearClaimFacilityDataAndForm]: () => initialState,

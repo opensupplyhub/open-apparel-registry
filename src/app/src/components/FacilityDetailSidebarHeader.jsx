@@ -85,15 +85,9 @@ const getContent = ({
             },
         };
     }
-    return {
-        primary: 'Are you the owner or manager?',
-        secondary: 'Claim this facility',
-        icon: <BadgeUnclaimed />,
-        style: {
-            background: 'rgb(61, 50, 138)',
-            color: 'rgb(255, 255, 255)',
-        },
-    };
+
+    // Facility is unclaim, but db is read-only
+    return null;
 };
 
 const FacilityDetailSidebarHeader = ({
@@ -115,6 +109,10 @@ const FacilityDetailSidebarHeader = ({
         claimantName,
         embedContributor,
     });
+
+    if (!content) {
+        return null;
+    }
 
     return (
         <div className={classes.header} style={content.style}>

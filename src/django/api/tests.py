@@ -26,13 +26,12 @@ from rest_framework.test import APITestCase
 from waffle.testutils import override_switch, override_flag
 
 from api.constants import (ProcessingAction,
-                           LogDownloadQueryParams,
                            UpdateLocationParams,
                            FeatureGroups)
 from api.models import (Facility, FacilityList, FacilityListItem,
                         FacilityClaim, FacilityClaimReviewNote,
                         FacilityMatch, FacilityAlias, Contributor, User,
-                        RequestLog, DownloadLog, FacilityLocation, Source,
+                        RequestLog, FacilityLocation, Source,
                         ApiLimit, ApiBlock, ContributorNotifications,
                         EmbedConfig, EmbedField, NonstandardField,
                         FacilityActivityReport, ExtendedField, FacilityIndex,
@@ -136,6 +135,7 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(FacilityListItem.objects.all().count(),
                          previous_item_count + len(self.test_csv_rows) - 1)
 
+    @skip('DB is read-only')
     def test_creates_nonstandard_fields(self):
         response = self.client.post(reverse('facility-list-list'),
                                     {'file': self.test_file},
@@ -2971,6 +2971,12 @@ class FacilityDeleteTest(APITestCase):
         self.user.set_password(self.user_password)
         self.user.save()
 
+        self.other_user_email = 'other@example.com'
+        self.other_user_password = 'other123'
+        self.other_user = User.objects.create(email=self.other_user_email)
+        self.other_user.set_password(self.other_user_password)
+        self.other_user.save()
+
         self.superuser_email = 'super@example.com'
         self.superuser_password = 'example123'
         self.superuser = User.objects.create_superuser(
@@ -2981,6 +2987,12 @@ class FacilityDeleteTest(APITestCase):
             .objects \
             .create(admin=self.user,
                     name='test contributor',
+                    contrib_type=Contributor.OTHER_CONTRIB_TYPE)
+
+        self.other_contributor = Contributor \
+            .objects \
+            .create(admin=self.other_user,
+                    name='other contributor',
                     contrib_type=Contributor.OTHER_CONTRIB_TYPE)
 
         self.list = FacilityList \
@@ -3103,7 +3115,7 @@ class FacilityDeleteTest(APITestCase):
                     source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
-                    contributor=self.contributor)
+                    contributor=self.other_contributor)
 
         list_item_2 = FacilityListItem \
             .objects \
@@ -3136,7 +3148,7 @@ class FacilityDeleteTest(APITestCase):
                     source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
-                    contributor=self.contributor)
+                    contributor=self.other_contributor)
 
         list_item_3 = FacilityListItem \
             .objects \
@@ -3188,6 +3200,115 @@ class FacilityDeleteTest(APITestCase):
 
         # We should have replaced the alias with one pointing to the new
         # facility
+        alias.refresh_from_db()
+        self.assertEqual(match_3.facility, alias.facility)
+
+    def test_match_from_other_contributor_is_promoted(self):
+        initial_facility_count = Facility.objects.all().count()
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List')
+
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(1, 1),
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility,
+                    source=source_2)
+
+        match_2 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='')
+
+        list_3 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='three',
+                    name='Third List')
+
+        source_3 = Source \
+            .objects \
+            .create(facility_list=list_3,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.other_contributor)
+
+        list_item_3 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(2, 2),
+                    source=source_3,
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility)
+
+        match_3 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_3,
+                    confidence=0.85,
+                    results='')
+
+        alias = FacilityAlias.objects.create(
+            facility=self.facility,
+            oar_id='US1234567ABCDEF')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        # The original facility should be deleted and have no matches
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(facility=self.facility).count())
+        self.assertEqual(
+            0, Facility.objects.filter(id=self.facility.id).count())
+
+        # We should have "promoted" the other contributor's
+        # matched facility to replace the deleted facility
+        facility_count = Facility.objects.all().count()
+        self.assertEqual(facility_count, initial_facility_count)
+        self.assertEqual(2, FacilityAlias.objects.all().count())
+
+        # match 2 should be deleted because it's from the
+        # deleted facility's contributor
+        list_item_2.refresh_from_db()
+        self.assertEqual(
+            FacilityListItem.DELETED, list_item_2.status)
+        self.assertEqual(
+            0, FacilityMatch.objects.filter(id=match_2.id).count())
+
+        # We should have created a new alias
+        new_alias = FacilityAlias.objects.exclude(
+            oar_id='US1234567ABCDEF').first()
+        self.assertEqual(FacilityAlias.DELETE, new_alias.reason)
+        self.assertEqual(self.facility.id, new_alias.oar_id)
+
+        # We should have replaced the alias with one pointing to the new
+        # facility
+        match_3.refresh_from_db()
         alias.refresh_from_db()
         self.assertEqual(match_3.facility, alias.facility)
 
@@ -3259,7 +3380,7 @@ class FacilityDeleteTest(APITestCase):
                     source_type=Source.LIST,
                     is_active=True,
                     is_public=True,
-                    contributor=self.contributor)
+                    contributor=self.other_contributor)
 
         list_item_2 = FacilityListItem \
             .objects \
@@ -3293,6 +3414,53 @@ class FacilityDeleteTest(APITestCase):
         self.assertEqual(1, FacilityAlias.objects.all().count())
         alias = FacilityAlias.objects.first()
         self.assertEqual(list_item_2, alias.facility.created_from)
+
+    def test_other_matches_from_same_contributor_are_deleted(self):
+        initial_facility_count = Facility.objects.all().count()
+        list_2 = FacilityList \
+            .objects \
+            .create(header='header',
+                    file_name='two',
+                    name='Second List')
+
+        source_2 = Source \
+            .objects \
+            .create(facility_list=list_2,
+                    source_type=Source.LIST,
+                    is_active=True,
+                    is_public=True,
+                    contributor=self.contributor)
+
+        list_item_2 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    geocoded_point=Point(1, 1),
+                    row_index=1,
+                    status=FacilityListItem.MATCHED,
+                    facility=self.facility,
+                    source=source_2)
+
+        FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.AUTOMATIC,
+                    facility=self.facility,
+                    facility_list_item=list_item_2,
+                    confidence=0.65,
+                    results='',
+                    is_active=False)
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.delete(self.facility_url)
+        self.assertEqual(204, response.status_code)
+
+        # The facility should be deleted and not be replaced
+        # since both items/matches came from the same contributor.
+        facility_count = Facility.objects.all().count()
+        self.assertEqual(facility_count, initial_facility_count - 1)
+        self.assertEqual(0, FacilityAlias.objects.all().count())
 
     def test_rejected_match_is_deleted_not_promoted(self):
         list_2 = FacilityList \
@@ -4399,40 +4567,6 @@ class PermissionsTests(TestCase):
         self.assertFalse(check_host('foo'))
 
 
-class RequestLogMiddlewareTest(APITestCase):
-    def setUp(self):
-        self.email = 'test@example.com'
-        self.password = 'password'
-        self.name = 'Test User'
-        self.user = User(email=self.email)
-        self.user.set_password(self.password)
-        self.user.save()
-
-        Contributor.objects.create(name=self.name, admin=self.user)
-
-    def test_request_without_token_is_not_logged(self):
-        self.client.login(email=self.email, password=self.password)
-        response = self.client.get(reverse('facility-list-list'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(0, RequestLog.objects.filter(user=self.user).count())
-
-    def test_request_with_token_is_logged(self):
-        token = Token.objects.create(user=self.user)
-        path = reverse('facility-list-list')
-        response = self.client.get(
-            path,
-            HTTP_AUTHORIZATION='Token {0}'.format(token))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(1, RequestLog.objects.filter(user=self.user).count())
-
-        log = RequestLog.objects.first()
-        self.assertEqual(self.user, log.user)
-        self.assertEqual(str(token), log.token)
-        self.assertEqual('GET', log.method)
-        self.assertEqual(path, log.path)
-        self.assertEqual(200, log.response_code)
-
-
 class FacilityClaimChangesTest(TestCase):
     def setUp(self):
         self.email = 'test@example.com'
@@ -4598,63 +4732,6 @@ class FacilityClaimSerializerTests(TestCase):
         self.assertIn('production_type_choices', data)
         self.assertIsNotNone(data['production_type_choices'])
         self.assertNotEqual([], data['production_type_choices'])
-
-
-class LogDownloadTests(APITestCase):
-    def setUp(self):
-        self.email = 'test@example.com'
-        self.password = 'password'
-        self.name = 'Test User'
-        self.user = User(email=self.email)
-        self.user.set_password(self.password)
-        self.user.save()
-
-        self.path = reverse('log_download')
-
-    def test_requires_login(self):
-        response = self.client.post(self.path)
-        self.assertEqual(401, response.status_code)
-
-    def test_requires_arguments(self):
-        self.client.login(email=self.email, password=self.password)
-        response = self.client.post(self.path)
-        self.assertEqual(400, response.status_code)
-
-        content = json.loads(response.content)
-        self.assertIn(LogDownloadQueryParams.PATH, content)
-        self.assertIn(LogDownloadQueryParams.RECORD_COUNT, content)
-
-    def test_requires_post(self):
-        self.client.login(email=self.email, password=self.password)
-        url = '{}?{}={}&{}={}'.format(
-            self.path,
-            LogDownloadQueryParams.PATH,
-            '/a/path/',
-            LogDownloadQueryParams.RECORD_COUNT,
-            1,
-        )
-        response = self.client.get(url)
-        self.assertEqual(405, response.status_code)
-
-    def test_creates_record(self):
-        DownloadLog.objects.all().delete()
-        self.client.login(email=self.email, password=self.password)
-        expected_path = '/a/path'
-        expected_record_count = 42
-        url = '{}?{}={}&{}={}'.format(
-            self.path,
-            LogDownloadQueryParams.PATH,
-            expected_path,
-            LogDownloadQueryParams.RECORD_COUNT,
-            expected_record_count,
-        )
-        response = self.client.post(url)
-        self.assertEqual(204, response.status_code)
-
-        self.assertEqual(1, DownloadLog.objects.all().count())
-        log = DownloadLog.objects.first()
-        self.assertEqual(expected_path, log.path)
-        self.assertEqual(expected_record_count, log.record_count)
 
 
 class TilePermissionsTest(APITestCase):
@@ -6302,11 +6379,13 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
 
         self.assertEqual(response.status_code, 403)
 
+    @skip('DB is read-only')
     def test_empty_body_is_invalid(self):
         self.join_group_and_login()
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 400)
 
+    @skip('DB is read-only')
     def test_missing_fields_are_invalid(self):
         self.join_group_and_login()
 
@@ -6328,11 +6407,13 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         })
         self.assertEqual(response.status_code, 400)
 
+    @skip('DB is read-only')
     def test_valid_request(self):
         self.join_group_and_login()
         response = self.client.post(self.url, self.valid_facility)
         self.assertEqual(response.status_code, 201)
 
+    @skip('DB is read-only')
     def test_raw_data_json_formatted_with_singlequote(self):
         self.join_group_and_login()
         response = self.client.post(self.url, self.valid_facility)
@@ -6340,6 +6421,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         list_item = FacilityListItem.objects.get(id=data['item_id'])
         self.assertTrue(is_json(list_item.raw_data))
 
+    @skip('DB is read-only')
     def test_raw_data_json_formatted_with_doublequote(self):
         self.join_group_and_login()
         response = self.client.post(self.url, {
@@ -6352,6 +6434,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         list_item = FacilityListItem.objects.get(id=data['item_id'])
         self.assertTrue(is_json(list_item.raw_data))
 
+    @skip('DB is read-only')
     def test_raw_data_json_formatted_with_querydict(self):
         self.join_group_and_login()
         query_dict = QueryDict('', mutable=True)
@@ -6373,12 +6456,14 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         list_item = FacilityListItem.objects.get(id=data['item_id'])
         self.assertTrue(is_json(list_item.raw_data))
 
+    @skip('DB is read-only')
     def test_valid_request_with_params(self):
         self.join_group_and_login()
         url_with_query = '{}?create=false&public=true'.format(self.url)
         response = self.client.post(url_with_query, self.valid_facility)
         self.assertEqual(response.status_code, 200)
 
+    @skip('DB is read-only')
     def test_private_permission(self):
         self.join_group_and_login()
         url_with_query = '{}?public=false'.format(self.url)
@@ -6394,6 +6479,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         response = self.client.post(url_with_query, self.valid_facility)
         self.assertEqual(response.status_code, 201)
 
+    @skip('DB is read-only')
     def test_creates_nonstandard_fields(self):
         self.join_group_and_login()
         self.client.post(self.url, self.valid_facility)
@@ -6403,6 +6489,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         self.assertEquals(1, len(fields))
         self.assertIn('extra_1', fields)
 
+    @skip('DB is read-only')
     def test_exact_matches_with_create_false(self):
         self.join_group_and_login()
         url_with_query = '{}?create=false&public=true'.format(self.url)
@@ -6411,6 +6498,7 @@ class FacilitySubmitTest(FacilityAPITestCaseBase):
         response_two = self.client.post(url_with_query, self.valid_facility)
         self.assertEqual(response_two.status_code, 200)
 
+    @skip('DB is read-only')
     def test_handles_exact_matches_with_empty_strings(self):
         self.join_group_and_login()
         url_with_query = '{}?public=true'.format(self.url)
@@ -7878,6 +7966,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_submit_parent_company_no_match(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -7925,6 +8014,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertIn(self.contributor.id, facility_index.parent_company_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_submit_parent_company_duplicate(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -7951,6 +8041,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertEqual(1, len(facility_index.parent_company_id))
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_name(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -7972,6 +8063,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertEquals(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_id(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -7993,6 +8085,7 @@ class ParentCompanyTestCase(FacilityAPITestCaseBase):
         self.assertEquals(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_multiple(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8022,6 +8115,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_array(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8043,6 +8137,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertIn('b', facility_index.product_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_string(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8064,6 +8159,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertIn('b', facility_index.product_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_list_validation(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8078,6 +8174,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
         self.assertEqual(response.status_code, 400)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_max_count(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8107,6 +8204,7 @@ class ProductTypeTestCase(FacilityAPITestCaseBase):
                          len(facility_index.product_type))
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_product_type(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8133,6 +8231,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_single_processing_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8174,6 +8273,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
                          facility_index.processing_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_multiple_facility_values(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8209,6 +8309,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEqual(0, len(facility_index.processing_type))
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_non_taxonomy_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8231,6 +8332,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEqual(['Sewing'], index_row.processing_type)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_processing_type(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8250,6 +8352,7 @@ class FacilityAndProcessingTypeAPITest(FacilityAPITestCaseBase):
         self.assertEquals(data['features'][0]['id'], facility_id)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_facility_type(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8277,6 +8380,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.url = reverse('facility-list')
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_single_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8297,6 +8401,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('1001-5000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_range_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8317,6 +8422,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('Less than 1000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_crossrange_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8339,6 +8445,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('5001-10000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_maxrange_value(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8359,6 +8466,7 @@ class NumberOfWorkersAPITest(FacilityAPITestCaseBase):
         self.assertIn('More than 10000', facility_index.number_of_workers)
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search_by_range(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
@@ -8406,6 +8514,7 @@ class NativeLanguageNameAPITest(FacilityAPITestCaseBase):
         self.long_name = '杭州湾开发区兴慈二路与滨海二路叉口恒元工业园区A3'
 
     @patch('api.geocoding.requests.get')
+    @skip('DB is read-only')
     def test_search(self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data

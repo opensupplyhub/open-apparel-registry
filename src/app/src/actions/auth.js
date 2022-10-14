@@ -8,15 +8,9 @@ import {
     logErrorAndDispatchFailure,
     makeUserLoginURL,
     makeUserLogoutURL,
-    makeUserSignupURL,
-    makeUserConfirmEmailURL,
     makeResetPasswordEmailURL,
     makeResetPasswordConfirmURL,
-    createSignupErrorMessages,
-    createSignupRequestData,
 } from '../util/util';
-
-import { registrationFieldsEnum } from '../util/constants';
 
 export const startSubmitSignUpForm = createAction('START_SUBMIT_SIGN_UP_FORM');
 export const failSubmitSignUpForm = createAction('FAIL_SUBMIT_SIGN_UP_FORM');
@@ -95,69 +89,6 @@ export const completeSubmitResetPasswordForm = createAction(
 export const resetResetPasswordFormState = createAction(
     'RESET_RESET_PASSWORD_FORM_STATE',
 );
-
-export const startConfirmAccountRegistration = createAction(
-    'START_CONFIRM_ACCOUNT_REGISTRATION',
-);
-export const failConfirmAccountRegistration = createAction(
-    'FAIL_CONFIRM_ACCOUNT_REGISTRATION',
-);
-export const completeConfirmAccountRegistration = createAction(
-    'COMPLETE_CONFIRM_ACCOUNT_REGISTRATION',
-);
-export const resetConfirmAccountRegistration = createAction(
-    'RESET_CONFIRM_ACCOUNT_REGISTRATION',
-);
-
-export function submitSignUpForm() {
-    return (dispatch, getState) => {
-        dispatch(startSubmitSignUpForm());
-
-        const {
-            auth: {
-                signup: { form },
-            },
-        } = getState();
-
-        const missingRequiredFieldErrorMessages = createSignupErrorMessages(
-            form,
-        );
-
-        if (missingRequiredFieldErrorMessages.length) {
-            return dispatch(
-                failSubmitSignUpForm(missingRequiredFieldErrorMessages),
-            );
-        }
-
-        if (
-            form[registrationFieldsEnum.password] !==
-            form[registrationFieldsEnum.confirmPassword]
-        ) {
-            return dispatch(
-                failSubmitSignUpForm([
-                    "Password and confirmation password don't match",
-                ]),
-            );
-        }
-
-        // Drop confirmPassword from request sent to Django, since it's sent as password
-        const { confirmPassword, ...dataForAPI } = form;
-        const signupData = createSignupRequestData(dataForAPI);
-
-        return apiRequest
-            .post(makeUserSignupURL(), signupData)
-            .then(({ data }) => dispatch(completeSubmitSignUpForm(data)))
-            .catch(e =>
-                dispatch(
-                    logErrorAndDispatchFailure(
-                        e,
-                        'An error prevented signing up',
-                        failSubmitSignUpForm,
-                    ),
-                ),
-            );
-    };
-}
 
 export function submitLoginForm() {
     return (dispatch, getState) => {
@@ -343,35 +274,6 @@ export function submitResetPassword() {
                         e,
                         'An error prevented resetting your password',
                         failSubmitResetPasswordForm,
-                    ),
-                ),
-            );
-    };
-}
-
-export function confirmAccountRegistration(key) {
-    return dispatch => {
-        dispatch(startConfirmAccountRegistration(key));
-
-        if (!key) {
-            return dispatch(
-                logErrorAndDispatchFailure(
-                    null,
-                    'An error prevented confirming the account',
-                    failConfirmAccountRegistration,
-                ),
-            );
-        }
-
-        return apiRequest
-            .post(makeUserConfirmEmailURL(), { key })
-            .then(() => dispatch(completeConfirmAccountRegistration()))
-            .catch(err =>
-                dispatch(
-                    logErrorAndDispatchFailure(
-                        err,
-                        'An error prevented confirming the account',
-                        failConfirmAccountRegistration,
                     ),
                 ),
             );

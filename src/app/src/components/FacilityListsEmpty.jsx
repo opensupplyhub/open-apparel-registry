@@ -1,7 +1,4 @@
 import React, { memo } from 'react';
-import { Link } from 'react-router-dom';
-
-import { contributeRoute } from '../util/constants';
 
 const contributeRouteLink = 'contributeRouteLink';
 
@@ -22,18 +19,8 @@ const FacilityListsEmpty = memo(() => (
         style={facilityListsEmptyStyles.containerStyle}
     >
         <label htmlFor={contributeRouteLink}>
-            You currently have no lists to view. Please contribute a list of
-            factories to the OAR first.
+            You currently have no lists to view.
         </label>
-        <Link
-            id={contributeRouteLink}
-            to={contributeRoute}
-            href={contributeRoute}
-            style={facilityListsEmptyStyles.linkStyle}
-            className="outlined-button outlined-button--link"
-        >
-            Contribute
-        </Link>
     </div>
 ));
 

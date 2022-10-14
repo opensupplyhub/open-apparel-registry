@@ -1340,11 +1340,6 @@ class FacilityMergeQueryParamsSerializer(Serializer):
                 'Facility {} does not exist.'.format(merge_id))
 
 
-class LogDownloadQueryParamsSerializer(Serializer):
-    path = CharField(required=True)
-    record_count = IntegerField(required=True)
-
-
 class FacilityUpdateLocationParamsSerializer(Serializer):
     # The Google geocoder returns points with 7 decimals of precision, which is
     # "[the] practical limit of commercial surveying"

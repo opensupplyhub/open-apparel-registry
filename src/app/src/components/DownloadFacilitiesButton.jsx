@@ -8,10 +8,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { toast } from 'react-toastify';
 
 import {
-    logDownload,
-    startLogDownload,
-    failLogDownload,
-} from '../actions/logDownload';
+    downloadFacilities,
+    startDownloadFacilities,
+    failDownloadFacilities,
+} from '../actions/downloadFacilities';
 import { fetchFacilities } from '../actions/facilities';
 import { FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE } from '../util/constants';
 
@@ -26,7 +26,7 @@ function DownloadFacilitiesButton({
     /* from state */
     dispatch,
     isEmbedded,
-    logDownloadError,
+    downloadFacilitiesError,
     user,
     /* from props */
     setLoginRequiredDialogIsOpen,
@@ -35,23 +35,24 @@ function DownloadFacilitiesButton({
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     useEffect(() => {
-        if (requestedDownload && logDownloadError) {
+        if (requestedDownload && downloadFacilitiesError) {
             toast('A problem prevented downloading the facilities');
             setRequestedDownload(false);
         }
-    }, [logDownloadError, requestedDownload]);
+    }, [downloadFacilitiesError, requestedDownload]);
 
     const handleClick = event => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
 
     const handleDownload = format => {
-        dispatch(startLogDownload());
+        dispatch(startDownloadFacilities());
         dispatch(
             fetchFacilities({
                 pageSize: FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE,
                 detail: true,
-                onSuccess: () => dispatch(logDownload(format, { isEmbedded })),
-                onFailure: () => dispatch(failLogDownload()),
+                onSuccess: () =>
+                    dispatch(downloadFacilities(format, { isEmbedded })),
+                onFailure: () => dispatch(failDownloadFacilities()),
             }),
         );
     };
@@ -96,23 +97,23 @@ function DownloadFacilitiesButton({
 }
 
 DownloadFacilitiesButton.defaultProps = {
-    logDownloadError: null,
+    downloadFacilitiesError: null,
 };
 
 DownloadFacilitiesButton.propTypes = {
-    logDownloadError: arrayOf(string),
+    downloadFacilitiesError: arrayOf(string),
 };
 
 function mapStateToProps({
     auth: {
         user: { user },
     },
-    logDownload: { error: logDownloadError },
+    downloadFacilities: { error: downloadFacilitiesError },
     embeddedMap: { embed: isEmbedded },
 }) {
     return {
         user,
-        logDownloadError,
+        downloadFacilitiesError,
         isEmbedded,
     };
 }

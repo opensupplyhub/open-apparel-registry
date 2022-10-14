@@ -1,7 +1,6 @@
 import operator
 import os
 import sys
-import traceback
 import csv
 import json
 import requests
@@ -23,7 +22,6 @@ from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models import Extent
 from django.conf import settings
 from django.http import Http404
-from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import redirect
 from django.views.decorators.cache import cache_control
@@ -62,18 +60,11 @@ from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
                            FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
-                           FacilityCreateQueryParams,
                            ProcessingAction,
-                           LogDownloadQueryParams,
                            UpdateLocationParams,
                            FeatureGroups,
                            NumberOfWorkersRanges)
 from api.geocoding import geocode_address
-from api.matching import (match_item,
-                          exact_match_item,
-                          text_match_item,
-                          GazetteerCacheTimeoutError)
-from api.helpers import clean
 from api.models import (FacilityList,
                         FacilityListItem,
                         FacilityClaim,
@@ -84,7 +75,6 @@ from api.models import (FacilityList,
                         FacilityActivityReport,
                         Contributor,
                         User,
-                        DownloadLog,
                         Version,
                         FacilityLocation,
                         Source,
@@ -98,11 +88,7 @@ from api.models import (FacilityList,
                         index_extendedfields)
 from api.processing import (parse_csv_line,
                             parse_csv,
-                            parse_xlsx,
-                            get_country_code,
-                            save_match_details,
-                            save_exact_match_details,
-                            reduce_matches)
+                            parse_xlsx)
 from api.serializers import (FacilityListSerializer,
                              FacilityListItemSerializer,
                              FacilityListItemsQueryParamsSerializer,
@@ -112,15 +98,12 @@ from api.serializers import (FacilityListSerializer,
                              FacilitySerializer,
                              FacilityDetailsSerializer,
                              FacilityMatchSerializer,
-                             FacilityCreateBodySerializer,
-                             FacilityCreateQueryParamsSerializer,
                              UserSerializer,
                              UserProfileSerializer,
                              FacilityClaimSerializer,
                              FacilityClaimDetailsSerializer,
                              ApprovedFacilityClaimSerializer,
                              FacilityMergeQueryParamsSerializer,
-                             LogDownloadQueryParamsSerializer,
                              FacilityUpdateLocationParamsSerializer,
                              ApiBlockSerializer,
                              FacilityActivityReportSerializer,
@@ -143,8 +126,7 @@ from api.renderers import MvtRenderer
 from api.facility_history import (create_facility_history_list,
                                   create_associate_match_change_reason,
                                   create_dissociate_match_change_reason)
-from api.extended_fields import (create_extendedfields_for_single_item,
-                                 update_extendedfields_for_list_item,
+from api.extended_fields import (update_extendedfields_for_list_item,
                                  create_extendedfields_for_claim,
                                  get_product_types)
 from api.facility_type_processing_type import (
@@ -639,27 +621,6 @@ class RootAutoSchema(AutoSchema):
 
         return super(RootAutoSchema, self).get_link(
             path, method, base_url)
-
-
-@api_view(['POST'])
-@permission_classes([IsRegisteredAndConfirmed])
-@schema(RootAutoSchema())
-def log_download(request):
-    params = LogDownloadQueryParamsSerializer(data=request.query_params)
-    if not params.is_valid():
-        raise ValidationError(params.errors)
-
-    path = request.query_params.get(LogDownloadQueryParams.PATH)
-    record_count = request.query_params.get(
-        LogDownloadQueryParams.RECORD_COUNT)
-
-    DownloadLog.objects.create(
-        user=request.user,
-        path=path,
-        record_count=record_count,
-    )
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FacilitiesAPIFilterBackend(BaseFilterBackend):
@@ -1253,313 +1214,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                               FeatureGroups.CAN_SUBMIT_FACILITY):
             raise PermissionDenied()
 
-        body_serializer = FacilityCreateBodySerializer(data=request.data)
-        body_serializer.is_valid(raise_exception=True)
-
-        clean_name = clean(body_serializer.validated_data.get('name'))
-        if clean_name is None:
-            clean_name = ''
-            raise ValidationError({
-              "clean_name": [
-                "This field may not be blank."
-              ]
-            })
-        clean_address = clean(body_serializer.validated_data.get('address'))
-        if clean_address is None:
-            clean_address = ''
-            raise ValidationError({
-              "clean_address": [
-                "This field may not be blank."
-              ]
-            })
-
-        params_serializer = FacilityCreateQueryParamsSerializer(
-            data=request.query_params)
-        params_serializer.is_valid(raise_exception=True)
-        should_create = params_serializer.validated_data[
-            FacilityCreateQueryParams.CREATE]
-        public_submission = params_serializer.validated_data[
-            FacilityCreateQueryParams.PUBLIC]
-        private_allowed = flag_is_active(
-            request._request, FeatureGroups.CAN_SUBMIT_PRIVATE_FACILITY)
-        if not public_submission and not private_allowed:
-            raise PermissionDenied('Cannot submit a private facility')
-        text_only_fallback = params_serializer.validated_data[
-            FacilityCreateQueryParams.TEXT_ONLY_FALLBACK]
-
-        parse_started = str(datetime.utcnow())
-
-        source = Source.objects.create(
-            contributor=request.user.contributor,
-            source_type=Source.SINGLE,
-            is_public=public_submission,
-            create=should_create
-        )
-
-        country_code = get_country_code(
-            body_serializer.validated_data.get('country'))
-        name = body_serializer.validated_data.get('name')
-        address = body_serializer.validated_data.get('address')
-        ppe_product_types = \
-            body_serializer.validated_data.get('ppe_product_types')
-        ppe_contact_phone = \
-            body_serializer.validated_data.get('ppe_contact_phone')
-        ppe_contact_email = \
-            body_serializer.validated_data.get('ppe_contact_email')
-        ppe_website = body_serializer.validated_data.get('ppe_website')
-
-        fields = list(request.data.keys())
-        create_nonstandard_fields(fields, request.user.contributor)
-
-        item = FacilityListItem.objects.create(
-            source=source,
-            row_index=0,
-            raw_data=json.dumps(request.data),
-            status=FacilityListItem.PARSED,
-            name=name,
-            clean_name=clean_name,
-            address=address,
-            clean_address=clean_address,
-            country_code=country_code,
-            ppe_product_types=ppe_product_types,
-            ppe_contact_phone=ppe_contact_phone,
-            ppe_contact_email=ppe_contact_email,
-            ppe_website=ppe_website,
-            processing_results=[{
-                'action': ProcessingAction.PARSE,
-                'started_at': parse_started,
-                'error': False,
-                'finished_at': str(datetime.utcnow()),
-                'is_geocoded': False,
-            }]
-        )
-
-        result = {
-            'matches': [],
-            'item_id': item.id,
-            'geocoded_geometry': None,
-            'geocoded_address': None,
-            'status': item.status,
-        }
-
-        try:
-            create_extendedfields_for_single_item(item, request.data)
-        except (core_exceptions.ValidationError, ValueError) as e:
-            error_message = ''
-
-            if isinstance(e, ValueError):
-                error_message = str(e)
-            else:
-                error_message = e.message
-
-            item.status = FacilityListItem.ERROR_PARSING
-            item.processing_results.append({
-                'action': ProcessingAction.PARSE,
-                'started_at': parse_started,
-                'error': True,
-                'message': error_message,
-                'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow()),
-            })
-            item.save()
-            result['status'] = item.status
-            result['message'] = error_message
-            return Response(result,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        geocode_started = str(datetime.utcnow())
-        try:
-            geocode_result = geocode_address(address, country_code)
-            if geocode_result['result_count'] > 0:
-                item.status = FacilityListItem.GEOCODED
-                item.geocoded_point = Point(
-                    geocode_result["geocoded_point"]["lng"],
-                    geocode_result["geocoded_point"]["lat"]
-                )
-                item.geocoded_address = geocode_result["geocoded_address"]
-
-                result['geocoded_geometry'] = {
-                    'type': 'Point',
-                    'coordinates': [
-                        geocode_result["geocoded_point"]["lng"],
-                        geocode_result["geocoded_point"]["lat"],
-                    ]
-                }
-                result['geocoded_address'] = item.geocoded_address
-            else:
-                item.status = FacilityListItem.GEOCODED_NO_RESULTS
-
-            item.processing_results.append({
-                'action': ProcessingAction.GEOCODE,
-                'started_at': geocode_started,
-                'error': False,
-                'skipped_geocoder': False,
-                'data': geocode_result['full_response'],
-                'finished_at': str(datetime.utcnow()),
-            })
-
-            item.save()
-        except Exception as e:
-            item.status = FacilityListItem.ERROR_GEOCODING
-            item.processing_results.append({
-                'action': ProcessingAction.GEOCODE,
-                'started_at': geocode_started,
-                'error': True,
-                'message': str(e),
-                'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow()),
-            })
-            item.save()
-            result['status'] = item.status
-            return Response(result,
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        match_started = str(datetime.utcnow())
-
-        try:
-            exact_match_results = exact_match_item(country_code, name, address,
-                                                   request.user.contributor,
-                                                   item.id)
-            item_matches = exact_match_results['item_matches']
-            exact_match_count = len(item_matches.keys())
-            if exact_match_count > 0:
-                match_objects = save_exact_match_details(exact_match_results)
-                for item_id, matches in item_matches.items():
-                    result['item_id'] = item_id
-                    result['status'] = item.status
-                    for m in matches:
-                        facility_id = m.get('facility_id')
-                        facility = Facility.objects.get(id=facility_id)
-                        context = {'request': request}
-                        facility_dict = FacilityDetailsSerializer(
-                            facility, context=context).data
-                        result['matches'].append(facility_dict)
-            else:
-                match_results = match_item(country_code, name, address,
-                                           item.id)
-                item_matches = match_results['item_matches']
-
-                gazetteer_match_count = len(item_matches.keys())
-
-                if gazetteer_match_count == 0 and text_only_fallback:
-                    # When testing with more realistic data the text matching
-                    # was returning dozens of results. Limiting to the first 5
-                    # is reasonable because the results are sorted with the
-                    # highest confidence first.
-                    text_only_matches = {
-                        item.id:
-                        list(text_match_item(item.country_code,
-                                             item.name)[:5])}
-                else:
-                    text_only_matches = {}
-
-                match_objects = save_match_details(
-                    match_results, text_only_matches=text_only_matches)
-
-                automatic_threshold = \
-                    match_results['results']['automatic_threshold']
-
-                for item_id, matches in item_matches.items():
-                    result['item_id'] = item_id
-                    result['status'] = item.status
-                    for (facility_id, score), match in \
-                            zip(reduce_matches(matches), match_objects):
-                        facility = Facility.objects.get(id=facility_id)
-                        context = {'request': request}
-                        facility_dict = FacilityDetailsSerializer(
-                            facility, context=context).data
-                        # calling `round` alone was not trimming digits
-                        facility_dict['confidence'] = float(str(round(score,
-                                                                      4)))
-                        # If there is a single match for an item, it only needs
-                        # to be confirmed if it has a low score.
-                        if score < automatic_threshold or \
-                                len(match_objects) > 1:
-                            if should_create:
-                                facility_dict['confirm_match_url'] = reverse(
-                                    'facility-match-confirm',
-                                    kwargs={'pk': match.pk})
-                                facility_dict['reject_match_url'] = reverse(
-                                    'facility-match-reject',
-                                    kwargs={'pk': match.pk})
-                        result['matches'].append(facility_dict)
-
-                # Append the text only match results to the response if there
-                # were no gazetteer matches
-                if gazetteer_match_count == 0:
-                    for match in match_objects:
-                        if match.results and match.results['text_only_match']:
-                            item.status = FacilityListItem.POTENTIAL_MATCH
-                            context = {'request': request}
-                            facility_dict = FacilityDetailsSerializer(
-                                match.facility, context=context).data
-                            facility_dict['confidence'] = match.confidence
-                            facility_dict['text_only_match'] = True
-                            if should_create:
-                                facility_dict['confirm_match_url'] = reverse(
-                                    'facility-match-confirm',
-                                    kwargs={'pk': match.pk})
-                                facility_dict['reject_match_url'] = reverse(
-                                    'facility-match-reject',
-                                    kwargs={'pk': match.pk})
-                            result['matches'].append(facility_dict)
-
-        except GazetteerCacheTimeoutError as te:
-            item.status = FacilityListItem.ERROR_MATCHING
-            item.processing_results.append({
-                'action': ProcessingAction.MATCH,
-                'started_at': match_started,
-                'error': True,
-                'message': str(te),
-                'finished_at': str(datetime.utcnow())
-            })
-            item.save()
-            result['status'] = item.status
-            result['message'] = (
-                'A timeout occurred waiting for match results. Training may '
-                'be in progress. Retry your request in a few minutes')
-            return Response(result,
-                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        except Exception as e:
-            item.status = FacilityListItem.ERROR_MATCHING
-            item.processing_results.append({
-                'action': ProcessingAction.MATCH,
-                'started_at': match_started,
-                'error': True,
-                'message': str(e),
-                'trace': traceback.format_exc(),
-                'finished_at': str(datetime.utcnow())
-            })
-            item.save()
-            result['status'] = item.status
-            return Response(result,
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        item.refresh_from_db()
-        result['item_id'] = item.id
-        result['status'] = item.status
-
-        if item.facility is not None:
-            # If the item has been linked to a facility,
-            # update the ExtendedFields
-            update_extendedfields_for_list_item(item)
-            result['oar_id'] = item.facility.id
-            if item.facility.created_from == item:
-                result['status'] = FacilityListItem.NEW_FACILITY
-        elif (item.status == FacilityListItem.MATCHED
-              and len(item_matches.keys()) == 0):
-            # This branch handles the case where they client has specified
-            # `create=false` but there are no matches, which means that we
-            # would have attempted to create a new `Facility`.
-            if item.geocoded_point is None:
-                result['status'] = FacilityListItem.ERROR_MATCHING
-            else:
-                result['status'] = FacilityListItem.NEW_FACILITY
-
-        if should_create and result['status'] != FacilityListItem.ERROR_MATCHING: # noqa
-            return Response(result, status=status.HTTP_201_CREATED)
-        else:
-            return Response(result, status=status.HTTP_200_OK)
+        return Response('Uploading new data to the OAR is disabled as of '
+                        'October 14 while we prepare to transition this '
+                        'database into Open Supply Hub.',
+                        status=status.HTTP_403_FORBIDDEN)
 
     @transaction.atomic
     def destroy(self, request, pk=None):
@@ -1578,26 +1236,37 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 'Facilities with approved claims cannot be deleted'
             )
 
-        now = str(datetime.utcnow())
-        list_items = FacilityListItem \
-            .objects \
-            .filter(facility=facility) \
-            .filter(Q(source__create=False) | Q(id=facility.created_from.id))
-        for list_item in list_items:
-            list_item.status = FacilityListItem.DELETED
-            list_item.processing_results.append({
+        def delete_facility_match(match):
+            match.changeReason = 'Deleted {}'.format(facility.id)
+            match.delete()
+
+        def delete_facility_list_item(item):
+            item.status = FacilityListItem.DELETED
+            item.processing_results.append({
                 'action': ProcessingAction.DELETE_FACILITY,
                 'started_at': now,
                 'error': False,
                 'finished_at': now,
                 'deleted_oar_id': facility.id,
             })
-            list_item.facility = None
-            list_item.save()
+            item.facility = None
+            item.save()
+
+        now = str(timezone.now())
+        created_by_contributor = facility.created_from.source.contributor
+
+        list_items = FacilityListItem \
+            .objects \
+            .filter(facility=facility) \
+            .filter(
+                Q(source__create=False) |
+                Q(id=facility.created_from.id) |
+                Q(source__contributor=created_by_contributor))
+        for list_item in list_items:
+            delete_facility_list_item(list_item)
 
         for match in facility.get_created_from_matches():
-            match.changeReason = 'Deleted {}'.format(facility.id)
-            match.delete()
+            delete_facility_match(match)
 
         other_matches = facility.get_other_matches()
         if other_matches.count() > 0:
@@ -1605,13 +1274,24 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                 best_match = max(
                     other_matches.filter(
                         status__in=(FacilityMatch.AUTOMATIC,
-                                    FacilityMatch.CONFIRMED)).exclude(
-                        facility_list_item__geocoded_point__isnull=True),
+                                    FacilityMatch.CONFIRMED)
+                        ).exclude(
+                            facility_list_item__geocoded_point__isnull=True
+                        ).exclude(**{
+                            "facility_list_item__source__contributor":
+                            created_by_contributor}),
                     key=lambda m: m.confidence)
             except ValueError:
                 # Raised when there are no AUTOMATIC or CONFIRMED matches
                 best_match = None
             if best_match:
+                for match in other_matches.filter(**{
+                    "facility_list_item__source__contributor":
+                    created_by_contributor
+                }):
+                    delete_facility_match(match)
+                    delete_facility_list_item(match.facility_list_item)
+
                 best_item = best_match.facility_list_item
 
                 promoted_facility = Facility.objects.create(
@@ -1684,20 +1364,8 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                         reason=FacilityAlias.DELETE)
             else:
                 for other_match in other_matches:
-                    other_match.changeReason = 'Deleted {}'.format(facility.id)
-                    other_match.delete()
-
-                    other_item = other_match.facility_list_item
-                    other_item.status = FacilityListItem.DELETED
-                    other_item.processing_results.append({
-                        'action': ProcessingAction.DELETE_FACILITY,
-                        'started_at': now,
-                        'error': False,
-                        'finished_at': now,
-                        'deleted_oar_id': facility.id,
-                    })
-                    other_item.facility = None
-                    other_item.save()
+                    delete_facility_match(other_match)
+                    delete_facility_list_item(other_match.facility_list_item)
 
         for claim in FacilityClaim.objects.filter(facility=facility):
             claim.changeReason = 'Deleted {}'.format(facility.id)
@@ -2890,7 +2558,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         def make_q_from_status(status):
             if status in special_case_q_statements:
-                return(special_case_q_statements[status])
+                return (special_case_q_statements[status])
             else:
                 return Q(status=status)
 

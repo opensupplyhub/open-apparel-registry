@@ -128,16 +128,15 @@ function AuthMenu({
         return (
             <>
                 <Link
-                    className="app-header-button"
+                    className="app-header-button disabled-link"
                     style={styles.contributeButton}
                     to={authRegisterFormRoute}
                     href={authRegisterFormRoute}
-                    disabled={sessionFetching}
                 >
                     Register/Contribute
                 </Link>
                 <Link
-                    className="app-header-button"
+                    className="app-header-button disabled-link"
                     to={authLoginFormRoute}
                     href={authLoginFormRoute}
                     disabled={sessionFetching}
@@ -160,10 +159,11 @@ function AuthMenu({
                 }}
             >
                 <Link
-                    className="app-header-button"
+                    className="app-header-button disabled-link"
                     style={styles.contributeButton}
                     to={contributeRoute}
                     href={contributeRoute}
+                    disabled
                 >
                     Contribute
                 </Link>

@@ -6,8 +6,9 @@ export const OTHER = 'Other';
 export const FACILITIES_REQUEST_PAGE_SIZE = 50;
 export const FACILITIES_DOWNLOAD_REQUEST_PAGE_SIZE = 10;
 
-export const WEB_HEADER_HEIGHT = '80px';
-export const MOBILE_HEADER_HEIGHT = '68px';
+// Header height + read-only banner height
+export const WEB_HEADER_HEIGHT = '140px';
+export const MOBILE_HEADER_HEIGHT = '170px';
 
 export const InfoLink = 'https://info.openapparel.org';
 
@@ -150,23 +151,6 @@ const accountOtherContributorTypeField = Object.freeze({
     modelFieldName: 'other_contributor_type',
 });
 
-const accountPasswordField = Object.freeze({
-    id: registrationFieldsEnum.password,
-    label: 'Password',
-    type: inputTypesEnum.password,
-    required: true,
-    modelFieldName: 'password',
-    hideOnViewOnlyProfile: true,
-});
-
-const accountConfirmPasswordField = Object.freeze({
-    id: registrationFieldsEnum.confirmPassword,
-    label: 'Confirm Password',
-    type: inputTypesEnum.password,
-    required: true,
-    modelFieldName: 'confirmPassword',
-});
-
 const accountCurrentPasswordField = Object.freeze({
     id: profileFieldsEnum.currentPassword,
     label: 'Current Password',
@@ -196,39 +180,6 @@ const accountConfirmNewPasswordField = Object.freeze({
     required: false,
 });
 
-const accountNewsletterField = Object.freeze({
-    id: registrationFieldsEnum.newsletter,
-    label:
-        "I'd like to receive important email updates about OAR features and data.",
-    modelFieldName: 'should_receive_newsletter',
-    type: inputTypesEnum.checkbox,
-});
-
-const accountTOSField = Object.freeze({
-    id: registrationFieldsEnum.tos,
-    label: 'Terms of Service',
-    link: Object.freeze({
-        prefixText: 'Agree to ',
-        url: `${InfoLink}/${InfoPaths.termsOfUse}`,
-    }),
-    required: true,
-    modelFieldName: 'has_agreed_to_terms_of_service',
-    type: inputTypesEnum.checkbox,
-});
-
-export const registrationFormFields = Object.freeze([
-    accountEmailField,
-    accountNameField,
-    accountDescriptionField,
-    accountWebsiteField,
-    accountContributorTypeField,
-    accountOtherContributorTypeField,
-    accountPasswordField,
-    accountConfirmPasswordField,
-    accountNewsletterField,
-    accountTOSField,
-]);
-
 export const profileFormFields = Object.freeze([
     accountEmailField,
     accountNameField,
@@ -246,7 +197,6 @@ export const settingsRoute = '/settings';
 export const authLoginFormRoute = '/auth/login';
 export const authRegisterFormRoute = '/auth/register';
 export const authResetPasswordFormRoute = '/auth/resetpassword/:uid';
-export const authConfirmRegistrationRoute = '/auth/confirm/:uid';
 export const contributeRoute = '/contribute';
 export const listsRoute = '/lists';
 export const facilityListItemsRoute = '/lists/:listID';
@@ -704,12 +654,8 @@ export const createUserDropdownLinks = (
 };
 
 export const facilitySidebarActions = {
-    SUGGEST_AN_EDIT: 'Suggest an edit',
-    REPORT_AS_DUPLICATE: 'Report as duplicate',
-    REPORT_AS_CLOSED: 'Report as closed',
     REPORT_AS_REOPENED: 'Report as reopened',
     DISPUTE_CLAIM: 'Dispute claim',
-    CLAIM_FACILITY: 'Claim this facility',
     VIEW_ON_OAR: 'View on the Open Apparel Registry',
 };
 

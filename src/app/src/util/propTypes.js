@@ -14,7 +14,6 @@ import includes from 'lodash/includes';
 import partial from 'lodash/partial';
 
 import {
-    registrationFieldsEnum,
     profileFieldsEnum,
     facilityListItemStatusChoicesEnum,
     FEATURE,
@@ -29,27 +28,6 @@ import {
     EXTENDED_PROFILE_FLAG,
     facilityClaimStatusChoicesEnum,
 } from './constants';
-
-export const registrationFormValuesPropType = shape({
-    [registrationFieldsEnum.email]: string.isRequired,
-    [registrationFieldsEnum.name]: string.isRequired,
-    [registrationFieldsEnum.description]: string.isRequired,
-    [registrationFieldsEnum.website]: string.isRequired,
-    [registrationFieldsEnum.contributorType]: string.isRequired,
-    [registrationFieldsEnum.otherContributorType]: string.isRequired,
-    [registrationFieldsEnum.password]: string.isRequired,
-    [registrationFieldsEnum.confirmPassword]: string.isRequired,
-    [registrationFieldsEnum.newsletter]: bool.isRequired,
-    [registrationFieldsEnum.tos]: bool.isRequired,
-});
-
-export const registrationFormInputHandlersPropType = shape(
-    Object.values(registrationFieldsEnum).reduce(
-        (accumulator, key) =>
-            Object.assign({}, accumulator, { [key]: func.isRequired }),
-        {},
-    ),
-);
 
 export const userPropType = shape({
     email: string.isRequired,

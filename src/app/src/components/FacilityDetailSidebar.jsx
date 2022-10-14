@@ -38,13 +38,7 @@ import {
     CLAIM_A_FACILITY,
 } from '../util/constants';
 
-import {
-    makeReportADataIssueEmailLink,
-    makeReportADuplicateEmailLink,
-    makeDisputeClaimEmailLink,
-    makeClaimFacilityLink,
-    getLocationWithoutEmbedParam,
-} from '../util/util';
+import { getLocationWithoutEmbedParam } from '../util/util';
 
 const detailsSidebarStyles = theme =>
     Object.freeze({
@@ -180,7 +174,6 @@ const FacilityDetailSidebar = ({
         params: { oarID },
     },
     userHasPendingFacilityClaim,
-    facilityIsClaimedByCurrentUser,
     embedContributor,
     embedConfig,
     searchForFacilities,
@@ -287,7 +280,6 @@ const FacilityDetailSidebar = ({
 
     const oarId = data.properties.oar_id;
     const isClaimed = !!data?.properties?.claim_info;
-    const claimFacility = () => push(makeClaimFacilityLink(oarId));
 
     const renderExtendedField = ({ label, fieldName, formatValue }) => {
         let values = get(data, `properties.extended_fields.${fieldName}`, []);
@@ -370,7 +362,6 @@ const FacilityDetailSidebar = ({
                     fetching={fetching}
                     push={push}
                     oarId={data.properties.oar_id}
-                    onClaimFacility={claimFacility}
                     onBack={() => {
                         clearFacility();
                         searchForFacilities(vectorTileFlagIsActive);
@@ -434,39 +425,7 @@ const FacilityDetailSidebar = ({
                 <ShowOnly when={embed}>{renderEmbedFields()}</ShowOnly>
                 <div className={classes.actions}>
                     <ShowOnly when={!embed}>
-                        <FacilityDetailSidebarAction
-                            href={makeReportADataIssueEmailLink(oarId)}
-                            iconName="pencil"
-                            text={facilitySidebarActions.SUGGEST_AN_EDIT}
-                            link
-                        />
-                        <FacilityDetailSidebarAction
-                            href={makeReportADuplicateEmailLink(oarId)}
-                            iconName="clone"
-                            text={facilitySidebarActions.REPORT_AS_DUPLICATE}
-                            link
-                        />
                         <ReportFacilityStatus data={data} />
-                        <ShowOnly when={!facilityIsClaimedByCurrentUser}>
-                            {isClaimed ? (
-                                <FacilityDetailSidebarAction
-                                    href={makeDisputeClaimEmailLink(oarId)}
-                                    iconName="shield-alt"
-                                    text={facilitySidebarActions.DISPUTE_CLAIM}
-                                    link
-                                />
-                            ) : (
-                                <ShowOnly when={!userHasPendingFacilityClaim}>
-                                    <FacilityDetailSidebarAction
-                                        iconName="shield-check"
-                                        text={
-                                            facilitySidebarActions.CLAIM_FACILITY
-                                        }
-                                        onClick={claimFacility}
-                                    />
-                                </ShowOnly>
-                            )}
-                        </ShowOnly>
                     </ShowOnly>
                     <ShowOnly when={embed}>
                         <FacilityDetailSidebarAction
