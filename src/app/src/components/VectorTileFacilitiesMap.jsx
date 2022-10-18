@@ -67,6 +67,7 @@ function VectorTileFacilitiesMap({
     navigateToFacilities,
     isMobile,
     disableZoom,
+    disableZoomToSearch,
 }) {
     const mapRef = useUpdateLeafletMapImperatively(resetButtonClickCount, {
         osID,
@@ -78,7 +79,7 @@ function VectorTileFacilitiesMap({
         ),
         isVectorTileMap: true,
         extent,
-        zoomToSearch,
+        zoomToSearch: disableZoomToSearch ? false : zoomToSearch,
         boundary,
     });
 
