@@ -62,6 +62,7 @@ class Map extends Component {
                                             <VectorTileFacilitiesMap
                                                 {...props}
                                                 disableZoom
+                                                disableZoomToSearch
                                             />
                                         )}
                                     />
