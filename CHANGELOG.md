@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Allow default batch job memory and vCPU count to be set by vars [#2257](https://github.com/open-apparel-registry/open-apparel-registry/pull/2257)
+
 ### Deprecated
 
 ### Removed
