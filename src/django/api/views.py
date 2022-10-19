@@ -227,7 +227,7 @@ def add_user_to_mailing_list(email, name, contrib_type):
                           data=new_contact)
 
         # Raise error for error statuses other than existing contact
-        contact_already_exists = r.status_code != 409
+        contact_already_exists = r.status_code == 409
         if not contact_already_exists:
             r.raise_for_status()
 
