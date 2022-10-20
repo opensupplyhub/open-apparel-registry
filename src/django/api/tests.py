@@ -4419,6 +4419,58 @@ class FacilityMergeTest(APITestCase):
         self.assertIn('target', data)
         self.assertIn('merge', data)
 
+    def test_merge_handles_rejected_matches(self):
+        list_item_3 = FacilityListItem \
+            .objects \
+            .create(name='Item',
+                    address='Address',
+                    country_code='US',
+                    sector=['Apparel'],
+                    row_index=1,
+                    status=FacilityListItem.CONFIRMED_MATCH,
+                    source=self.source_3)
+
+        facility_3 = Facility \
+            .objects \
+            .create(name='Name',
+                    address='Address',
+                    country_code='US',
+                    location=Point(0, 0),
+                    created_from=list_item_3)
+
+        match_3 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.CONFIRMED,
+                    facility=facility_3,
+                    facility_list_item=list_item_3,
+                    confidence=0.85,
+                    results='')
+
+        list_item_3.facility = facility_3
+        list_item_3.save()
+
+        match_4 = FacilityMatch \
+            .objects \
+            .create(status=FacilityMatch.REJECTED,
+                    facility=self.facility_2,
+                    facility_list_item=list_item_3,
+                    confidence=0.85,
+                    results='')
+
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+        response = self.client.post(self.merge_url)
+        self.assertEqual(200, response.status_code)
+
+        list_item_3.refresh_from_db()
+        match_3.refresh_from_db()
+        match_4.refresh_from_db()
+
+        self.assertEqual(facility_3, list_item_3.facility)
+        self.assertEqual(facility_3, match_3.facility)
+        self.assertEqual(self.facility_1, match_4.facility)
+        self.assertEqual(FacilityMatch.REJECTED, match_4.status)
+
 
 class FacilitySplitTest(APITestCase):
     def setUp(self):
