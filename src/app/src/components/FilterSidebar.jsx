@@ -20,7 +20,7 @@ import FilterIcon from './FilterIcon';
 import FeatureFlag from './FeatureFlag';
 import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
-import Map from './Map';
+import MapWithHookedHeight from './MapWithHookedHeight';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
 
 import { VECTOR_TILE } from '../util/constants';
@@ -224,7 +224,7 @@ class FilterSidebar extends Component {
                                     width: '100%',
                                 }}
                             >
-                                <Map />
+                                <MapWithHookedHeight />
                             </div>
                         )}
                     </Grid>
