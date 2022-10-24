@@ -3106,8 +3106,33 @@ class TrainedModel(models.Model):
                     """
                     ALTER TABLE dedupe_indexed_records
                     RENAME TO dedupe_indexed_records_{prev_active_version_id};
+
+                    ALTER TABLE dedupe_indexed_records_{prev_active_version_id}
+                    RENAME CONSTRAINT dedupe_indexed_records_pkey
+                    TO dedupe_indexed_records_{prev_active_version_id}_pkey;
+
+                    ALTER TABLE dedupe_indexed_records_{prev_active_version_id}
+                    RENAME CONSTRAINT unique_blockkey_recordid
+                    TO unique_blockkey_recordid_{prev_active_version_id};
+
+                    ALTER INDEX dedupe_indexed_records_idx
+                    RENAME TO
+                    dedupe_indexed_records_{prev_active_version_id}_idx;
+
                     ALTER TABLE dedupe_indexed_records_{active_version_id}
                     RENAME TO dedupe_indexed_records;
+
+                    ALTER INDEX dedupe_indexed_records_{active_version_id}_idx
+                    RENAME TO dedupe_indexed_records_idx;
+
+                    ALTER TABLE dedupe_indexed_records
+                    RENAME CONSTRAINT
+                    dedupe_indexed_records_{active_version_id}_block_key_record_id_key
+                    TO unique_blockkey_recordid;
+
+                    ALTER INDEX dedupe_indexed_records_{active_version_id}_pkey
+                    RENAME TO dedupe_indexed_records_pkey;
+
                         """.format(**{
                             "prev_active_version_id": prev_active_version_id,
                             "active_version_id": self.pk,
