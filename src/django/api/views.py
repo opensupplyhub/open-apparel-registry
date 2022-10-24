@@ -3210,7 +3210,9 @@ class FacilityListViewSet(viewsets.ModelViewSet):
                         Q(status='CONFIRMED_MATCH') &
                         ~Q(facility__created_from_id=F('id')) &
                         ~Q(facilitymatch__is_active=False)),
-            FacilityListItem.REMOVED: Q(facilitymatch__is_active=False),
+            FacilityListItem.REMOVED: Q(
+                        Q(facilitymatch__is_active=False) |
+                        Q(status=FacilityListItem.ITEM_REMOVED)),
         }
 
         def make_q_from_status(status):
