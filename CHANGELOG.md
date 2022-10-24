@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Disable zoom to search on facility detail page [#2250](https://github.com/open-apparel-registry/open-apparel-registry/pull/2250)
 - Fix loging when checking for existing Hubspot contac [#2259](https://github.com/open-apparel-registry/open-apparel-registry/pull/2259)
 - Fix map not appearing at medium widths [#2263](https://github.com/open-apparel-registry/open-apparel-registry/pull/2263/files)
+- Exclude rejected match items from merge transfer [#2261](https://github.com/open-apparel-registry/open-apparel-registry/pull/2261)
 
 ### Security
 
@@ -1320,7 +1321,7 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 - Initial release.
 
 [unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/73-OSHUB...HEAD
-[73-OSHUB]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/73-OSHUB
+[73-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/73-OSHUB
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
 [65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
 [64]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/64

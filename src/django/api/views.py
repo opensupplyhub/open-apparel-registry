@@ -2079,24 +2079,28 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if target.conditionally_set_ppe(merge):
             target.save()
 
+        inactive_match_statuses = (FacilityMatch.PENDING,
+                                   FacilityMatch.REJECTED)
         now = str(timezone.now())
         for merge_match in merge.facilitymatch_set.all():
             merge_match.facility = target
-            merge_match.status = FacilityMatch.MERGED
+            if merge_match.status not in inactive_match_statuses:
+                merge_match.status = FacilityMatch.MERGED
             merge_match._change_reason = 'Merged {} into {}'.format(
                 merge.id, target.id)
             merge_match.save()
 
-            merge_item = merge_match.facility_list_item
-            merge_item.facility = target
-            merge_item.processing_results.append({
-                'action': ProcessingAction.MERGE_FACILITY,
-                'started_at': now,
-                'error': False,
-                'finished_at': now,
-                'merged_os_id': merge.id,
-            })
-            merge_item.save()
+            if merge_match.status not in inactive_match_statuses:
+                merge_item = merge_match.facility_list_item
+                merge_item.facility = target
+                merge_item.processing_results.append({
+                    'action': ProcessingAction.MERGE_FACILITY,
+                    'started_at': now,
+                    'error': False,
+                    'finished_at': now,
+                    'merged_os_id': merge.id,
+                })
+                merge_item.save()
 
         # Submitting facilities through the API with create=false will create a
         # FacilityListItem record but not a FacilityMatch. This loop handles

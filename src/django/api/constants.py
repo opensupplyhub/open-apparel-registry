@@ -26,6 +26,7 @@ class ProcessingAction:
     MOVE_FACILITY = 'move_facility'
     NOTIFY_COMPLETE = 'notify_complete'
     ITEM_REMOVED = 'item_removed'
+    UNDO_MERGE = 'undo_merge'
 
 
 class FacilitiesQueryParams:
