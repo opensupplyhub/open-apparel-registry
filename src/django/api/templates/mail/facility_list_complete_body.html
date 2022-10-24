@@ -1,53 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>
-            Open Supply Hub List Processing Completed
-        </title>
-    </head>
-    <body>
-        <p>
-            Hi there,
-        </p>
-        <p>
-            Thank you for submitting {{ list_name }} to Open Supply Hub. This list has been approved by the OS Hub team and has completed processing. This means that all facilities from the list that did not require additional verification by our team are now live on OS Hub. The admin view of your list is now available here: <a href="{{ list_url }}">{{ list_url }}</a>.
-        </p>
-        <p><strong>What's next?</strong></p>
-        <p><strong>For You:</strong></p>
-        <ol>
-            <li>
-                <strong> Check for and Resolve Errors: </strong> Some entries in your list may have generated an error message. You can review these entries to see whether it’s caused by an error in data entry, such as a country name being mis-spelled, or whether our geo-coder is unable to plot the facility due to the address lacking sufficient details. Check out <a href="http://info.opensupplyhub.org/faqs">our FAQs</a> for more information on error types and how to resolve them. Once you have pin-pointed the cause of the error, update your facility information in your Excel/CSV file and re-upload your FULL list to OS Hub again (uploading one facility at a time results in multiple lists that are harder to manage in the future).
-            </li>
-            <li>
-                <strong> NOTE: Data Points Beyond Name and Address </strong> If you uploaded additional data points beyond facility name and address, note that you won’t be able to see these data points in your admin view – but don’t worry, they are there. You can confirm that we’ve received them by selecting the “Download submitted file” from the admin view of your list (linked above) or by searching/downloading your list in <a href="https://www.opensupplyhub.org/">Open Supply Hub</a>.
-            </li>
-        </ol>
-        <strong>Behind the Scenes:</strong>
-        <ol>
-            <li>
-                <strong> Finalizing facility matches: </strong> If some of the facilities you uploaded aren’t yet showing up in your public-facing list on OS Hub and are appearing as a “Potential Match” in your admin view, this means our algorithm flagged them to be checked by a human, to confirm whether or not they match an existing facility in the database. This helps us accurately address more nuanced matching cases and maintain a higher level of data quality in OS Hub. The OS Hub team is now working through these instances in your list. If you would prefer to complete this step yourself, instead of our Data Moderation team, please reach out to <a href="mailto:info@opensupplyhub.org">info@opensupplyhub.org</a>.You can see each facility’s current match status here: <a href="{{ list_url }}">{{ list_url }}</a>.
-            </li>
-        </ol>
-        <strong> Once your list is finalized: </strong>
-        <ol>
-            <li>
-                <strong> See who else is connected with your facilities/suppliers: </strong>Once you have uploaded data  to OS Hub, check out your facility profiles to see which other companies and organizations are connected with the facilities you uploaded. What collaborations could you explore working on together? If you want to search for facilities that you share with a specific contributor, you can use our contributor search feature – be sure to check the “show only shared facilities” option.
-            </li>
-            <li>
-                <strong>Share your OS Hub contribution: </strong>Link directly to your facility/supplier data on OS Hub from your website, so your users can easily search and navigate through your list. <a href="https://info.opensupplyhub.org/stories-resources/assets-for-stakeholders">These free graphics are available</a> for use to point users to your OS Hub contribution on your website, LinkedIn profile, and/or on social media. You can also display your facility/supplier data as an <a href="https://info.opensupplyhub.org/embedded-map">interactive map, embedded on your website</a>.
-            </li>
-            <li>
-                <strong>Encourage your facilities/suppliers to claim their profiles or claim your facility, if you are the owner: </strong>By claiming their facilities on OS Hub, facility owners or senior management can provide facility location data straight from the source, as well as add additional details to their profiles, including MOQs, lead times, certifications, and more.
-                <br/>
-                If you are a brand or organization uploading a facility list, you can find suggested text for <a href="https://info.opensupplyhub.org/stories-resources/encourage-your-facilities-to-claim-their-profiles">a message to your suppliers here</a>, to encourage them to claim their profiles.</li>
-            </li>
-        </ol>
-        <p>
-            For any questions, feel free to reach out to the OS Hub team: <a href="mailto:info@opensupplyhub.org">info@opensupplyhub.org</a>
-        </p>
-        <p>
-            All the best,
-        </p>
-        {% include "mail/signature_block.html" %}
-    </body>
+  <head>
+    <title>
+      Open Supply Hub List Processing Completed
+    </title>
+  </head>
+  <body>
+    <p>
+      Hi there,
+    </p>
+    <p>
+      Thank you for submitting {{ list_name }} to Open Supply Hub. This list has
+      been approved by the OS Hub team and has completed processing. This means
+      that all facilities from the list that did not generate errors or require
+      additional verification by our team are now live on OS Hub. The admin view
+      of your list is now available here:
+      <a href="{{ list_url }}">{{ list_url }}</a>.
+    </p>
+    <p><strong>One Last Step</strong></p>
+    <p><strong>Check for and Resolve Errors or Removed Items: </strong></p>
+    <p>
+      Click on the list link above and then filter the facilities within your
+      list to check for facilities with one of the possible “Error” or “Removed”
+      statuses. Facilities with either of these statuses are not published in
+      your list on OS Hub.
+    </p>
+    <ol>
+      <li>
+        <strong>Errors: </strong>Some entries in your list may have generated an
+        error message. You can review these entries to see whether the cause is:
+        <ul>
+          <li>
+            An error in data entry (such as a country name being mis-spelled)
+          </li>
+          <li>
+            Our geo-coder being unable to plot the facility due to the address
+            lacking sufficient details, or containing irrelevant information
+          </li>
+        </ul>
+        Check out <a href="http://info.opensupplyhub.org/faqs">our FAQs</a> for
+        more information on error types and how to resolve them.
+      </li>
+      <li>
+        <strong>Removed Items: </strong>Some facilities in your list may not
+        have met quality standards for address information. This could be due
+        to:
+        <ul>
+          <li>Repeating or insufficient elements</li>
+          <li>
+            Incorrect formatting of additional data fields e.g.
+            sector_product_type, faciliity_type_processing_type, etc.
+          </li>
+        </ul>
+        If you see any items with a “Removed” status, these are items that our
+        team reviewed and removed before your list was processed.
+      </li>
+    </ol>
+    <p>
+      Once you have pin-pointed the cause of the error or removal, update your
+      facility information in your Excel/CSV file and re-upload your FULL list
+      to the OS Hub again (uploading one facility at a time results in multiple
+      lists that are harder to manage in the future). You will be able to
+      replace the previous version you uploaded, so only your most recent list
+      is available for the public to see.
+    </p>
+    <p>
+      Have questions or want to learn more about what’s happening when you
+      upload your list?
+      <a
+        href="http://info.opensupplyhub.org/resources/how-to-upload-your-data-to-open-supply-hub"
+        >Check out this guide</a
+      >.
+    </p>
+
+    <strong> Once your list is finalized: </strong>
+    <ol>
+      <li>
+        <strong
+          >See who else is connected with your facilities/suppliers: </strong
+        >Once you have uploaded data to OS Hub, check out the profiles of the
+        facilities you added, to see which other organizations are connected to
+        them. What collaborations could you work on together?
+      </li>
+      <li>
+        <strong>Share your OS Hub contribution: </strong>
+        Link directly to your facility/supplier data on the OS Hub from your
+        website, so your users can easily search and navigate through your list.
+        <a
+          href="https://info.opensupplyhub.org/resources/assets-for-stakeholders"
+          >These free graphics</a
+        >
+        are available for use to point users to your OS Hub contribution on your
+        website, LinkedIn profile, and/or on social media. You can also display
+        your facility/supplier data as an
+        <a href="https://info.opensupplyhub.org/embedded-map"
+          >interactive map, embedded on your website</a
+        >.
+      </li>
+      <li>
+        <strong
+          >Encourage your facilities/suppliers to claim their profiles or claim
+          your facility, if you are the owner:
+        </strong>
+        By claiming their facilities on OS Hub, facility owners or senior
+        management can provide facility location data straight from the source,
+        as well as add additional details to their profiles, including MOQs,
+        lead times, certifications, and more. If you are a brand or organization
+        uploading a facility list, you can
+        <a
+          href="https://info.opensupplyhub.org/resources/encourage-your-facilities-to-claim-their-profiles"
+          >use this suggested text for a message to your suppliers</a
+        >, to encourage them to claim their profiles.
+      </li>
+    </ol>
+    <p>
+      For any questions, feel free to reach out to the OS Hub team:
+      <a href="mailto:info@opensupplyhub.org">info@opensupplyhub.org</a>
+    </p>
+    <p>
+      All the best,
+    </p>
+    {% include "mail/signature_block.html" %}
+  </body>
 </html>
