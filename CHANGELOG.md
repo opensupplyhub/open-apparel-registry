@@ -19,6 +19,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [74-OSHUB] 2022-10-26
+
+### Added
+
+- Add managemnt command to replace oar_id in JSON fields [#2251](https://github.com/open-apparel-registry/open-apparel-registry/pull/2251)
+
+### Changed
+
+- Allow default batch job memory and vCPU count to be set by vars [#2257](https://github.com/open-apparel-registry/open-apparel-registry/pull/2257)
+- Copy changes [#2265](https://github.com/open-apparel-registry/open-apparel-registry/pull/2265)
+- Include Unspecified in the sectors API response [#2272](https://github.com/open-apparel-registry/open-apparel-registry/pull/2272)
+- Update og:url meta tag to opensupplyhub.org [#2276](https://github.com/open-apparel-registry/open-apparel-registry/pull/2276/files)
+
+### Fixed
+
+- Disable zoom to search on facility detail page [#2250](https://github.com/open-apparel-registry/open-apparel-registry/pull/2250)
+- Fix loging when checking for existing Hubspot contac [#2259](https://github.com/open-apparel-registry/open-apparel-registry/pull/2259)
+- Fix map not appearing at medium widths [#2263](https://github.com/open-apparel-registry/open-apparel-registry/pull/2263/files)
+- Exclude rejected match items from merge transfer [#2261](https://github.com/open-apparel-registry/open-apparel-registry/pull/2261)
+- Fix removed list filtering [#2266](https://github.com/open-apparel-registry/open-apparel-registry/pull/2266)
+
 ## [73-OSHUB] 2022-10-14
 
 ### Added
@@ -1311,8 +1332,9 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/73-OSHUB...HEAD
-[73-OSHUB]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/73-OSHUB
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/74-OSHUB...HEAD
+[74-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/74-OSHUB
+[73-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/73-OSHUB
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
 [65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
 [64]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/64

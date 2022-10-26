@@ -284,6 +284,14 @@ variable "batch_ami_id" {
   default = "ami-002e2fef4b94f8fd0"
 }
 
+variable "batch_default_job_vcpus" {
+  default = 2
+}
+
+variable "batch_default_job_memory" {
+  default = 4096
+}
+
 variable "batch_default_ce_min_vcpus" {
   default = "0"
 }

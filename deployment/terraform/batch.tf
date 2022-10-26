@@ -52,6 +52,8 @@ data "template_file" "default_job_definition" {
 
   vars = {
     image_url                        = "${module.ecr_repository_batch.repository_url}:${var.image_tag}"
+    vcpus                            = var.batch_default_job_vcpus
+    memory                           = var.batch_default_job_memory
     postgres_host                    = aws_route53_record.database.name
     postgres_port                    = module.database_enc.port
     postgres_user                    = var.rds_database_username

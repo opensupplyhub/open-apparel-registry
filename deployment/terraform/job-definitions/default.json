@@ -1,7 +1,7 @@
 {
   "image": "${image_url}",
-  "vcpus": 2,
-  "memory": 4096,
+  "vcpus": ${vcpus},
+  "memory": ${memory},
   "command": ["./manage.py", "batch_process", "--list-id" , "Ref::listid", "--action", "Ref::action"],
   "environment": [
       { "name": "AWS_DEFAULT_REGION", "value": "${aws_region}" },

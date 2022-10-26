@@ -74,7 +74,7 @@ class ConfirmRegistration extends Component {
                                         to={contributeRoute}
                                         href={contributeRoute}
                                     >
-                                        Contribute a list of facilities
+                                        Upload a list of facilities
                                     </Link>
                                 </li>
                                 <li>
@@ -82,7 +82,8 @@ class ConfirmRegistration extends Component {
                                         to={facilitiesRoute}
                                         href={facilitiesRoute}
                                     >
-                                        Search the existing facilities
+                                        Search and download facilities in Open
+                                        Supply Hub
                                     </Link>
                                 </li>
                             </ul>
