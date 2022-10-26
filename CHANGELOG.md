@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix loging when checking for existing Hubspot contac [#2259](https://github.com/open-apparel-registry/open-apparel-registry/pull/2259)
 - Fix map not appearing at medium widths [#2263](https://github.com/open-apparel-registry/open-apparel-registry/pull/2263/files)
 - Exclude rejected match items from merge transfer [#2261](https://github.com/open-apparel-registry/open-apparel-registry/pull/2261)
+- Fix removed list filtering [#2266](https://github.com/open-apparel-registry/open-apparel-registry/pull/2266)
 
 ### Security
 
