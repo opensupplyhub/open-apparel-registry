@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [74-OSHUB] 2022-10-26
+
+### Added
+
 - Add managemnt command to replace oar_id in JSON fields [#2251](https://github.com/open-apparel-registry/open-apparel-registry/pull/2251)
 
 ### Changed
@@ -18,10 +32,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Include Unspecified in the sectors API response [#2272](https://github.com/open-apparel-registry/open-apparel-registry/pull/2272)
 - Update og:url meta tag to opensupplyhub.org [#2276](https://github.com/open-apparel-registry/open-apparel-registry/pull/2276/files)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Disable zoom to search on facility detail page [#2250](https://github.com/open-apparel-registry/open-apparel-registry/pull/2250)
@@ -29,8 +39,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix map not appearing at medium widths [#2263](https://github.com/open-apparel-registry/open-apparel-registry/pull/2263/files)
 - Exclude rejected match items from merge transfer [#2261](https://github.com/open-apparel-registry/open-apparel-registry/pull/2261)
 - Fix removed list filtering [#2266](https://github.com/open-apparel-registry/open-apparel-registry/pull/2266)
-
-### Security
 
 ## [73-OSHUB] 2022-10-14
 
@@ -1324,7 +1332,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/73-OSHUB...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/74-OSHUB...HEAD
+[74-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/74-OSHUB
 [73-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/73-OSHUB
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
 [65]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/65
