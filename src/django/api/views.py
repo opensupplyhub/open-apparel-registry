@@ -748,8 +748,6 @@ def sectors(request):
             .distinct()
         )
 
-    submitted_sectors.discard('Unspecified')
-
     return Response(sorted(list(submitted_sectors)))
 
 
