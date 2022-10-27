@@ -21,4 +21,5 @@ WHERE c.id IN (
   )
 )
 AND u.email NOT LIKE '%openapparel.org%'
+AND u.email NOT LIKE '%opensupplyhub.org%'
 ORDER BY u.created_at, email

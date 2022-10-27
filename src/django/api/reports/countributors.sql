@@ -9,4 +9,5 @@ SELECT
 FROM api_user u
 JOIN api_contributor c ON u.id = c.admin_id
 AND u.email NOT LIKE '%openapparel.org%'
+AND u.email NOT LIKE '%opensupplyhub.org%'
 ORDER BY u.created_at, email
