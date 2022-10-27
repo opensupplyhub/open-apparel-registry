@@ -59,7 +59,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             for name in contributors:
                 user = User.objects._create_user(
-                    email='info+{}@openapparel.org'.format(
+                    email='info+{}@opensupplyhub.org'.format(
                         slugify(name, allow_unicode=True)),
                     password=password,
                     is_superuser=False,

@@ -57,7 +57,7 @@ fake_uuid4() {
 }
 
 select_users() {
-    echo "select id from \"api_user\" where email not like '%@azavea.com' and email not like '%@openapparel.org'"
+    echo "select id from \"api_user\" where email not like '%@azavea.com' and email not like '%@openapparel.org' and email not like '%@opensupplyhub.org'"
     if [ -n "$ALLOWED_EMAILS" ]; then
         echo " and not (email = ANY(string_to_array('$ALLOWED_EMAILS', ' ')))"
     fi
