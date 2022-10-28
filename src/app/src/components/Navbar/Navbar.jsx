@@ -55,9 +55,15 @@ export default function Navbar() {
         mobileMode ? ' mobile-nav-is-active' : ''
     }`;
 
+    const isStaging = window.ENVIRONMENT.ENVIRONMENT === 'staging';
+
     const Header = (
         <header className={headerClassName} id="header">
-            <div className="header__main">
+            <div
+                className={`header__main${
+                    isStaging ? ' header__main--staging' : ''
+                }`}
+            >
                 <Logo />
                 <nav className="nav" id="nav" role="navigation">
                     {NavbarItems.map(item => {
