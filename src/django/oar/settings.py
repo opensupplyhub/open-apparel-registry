@@ -61,6 +61,7 @@ DEBUG = (ENVIRONMENT == 'Development')
 
 ALLOWED_HOSTS = [
     '.openapparel.org',
+    '.opensupplyhub.org',
 ]
 
 if ENVIRONMENT == 'Development':
@@ -330,7 +331,7 @@ else:
     EMAIL_BACKEND = 'django_amazon_ses.EmailBackend'
 
 DEFAULT_FROM_EMAIL = os.getenv(
-    'DEFAULT_FROM_EMAIL', 'noreply@oshstaging.openapparel.org')
+    'DEFAULT_FROM_EMAIL', 'noreply@staging.opensupplyhub.org')
 
 NOTIFICATION_EMAIL_TO = os.getenv(
     'NOTIFICATION_EMAIL_TO', 'notification@example.com')
@@ -444,6 +445,7 @@ CORS_ALLOW_METHODS = [
 # origins that are authorized to make cross-site HTTP
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://\w+\.openapparel\.org$",
+    r"^https://\w+\.opensupplyhub\.org$",
     r"^https://oar\.niceandserious\.com$",
     r"^http://localhost",
     r"http://127.0.0.1",

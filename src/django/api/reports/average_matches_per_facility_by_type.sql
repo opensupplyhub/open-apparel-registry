@@ -18,6 +18,7 @@ FROM (
   WHERE to_char(m.created_at, 'YYYY-MM') != to_char(now(), 'YYYY-MM')
   AND m.status not in ('REJECTED', 'PENDING')
   AND not u.email like '%openapparel.org%'
+  AND not u.email like '%opensupplyhub.org%'
   GROUP BY to_char(m.created_at, 'YYYY-MM'), f.id, contrib_type
 ) s
 GROUP BY month, contrib_type

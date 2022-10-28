@@ -13,6 +13,7 @@ FROM (
   WHERE to_char(s.created_at, 'YYYY-MM') != to_char(now(), 'YYYY-MM')
   AND s.create = true
   AND NOT u.email LIKE '%openapparel.org%'
+  AND NOT u.email LIKE '%opensupplyhub.org%'
   AND NOT u.email LIKE '%azavea.com%'
   ORDER BY to_char(s.created_at, 'YYYY-MM'), c.id
 ) q
