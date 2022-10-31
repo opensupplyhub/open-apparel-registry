@@ -82,13 +82,13 @@ function SubmenuColumnSectionItem({ sectionItem }) {
         case 'button':
             return (
                 <li className="nav-submenu__list-item nav-submenu__list-item--button">
-                    <Link
+                    <a
                         className="button button--yellow"
-                        to={sectionItem.href}
+                        href={sectionItem.href}
                         onClick={createMenuClickHandler(sectionItem.action)}
                     >
                         <span>{sectionItem.label}</span>
-                    </Link>
+                    </a>
                 </li>
             );
         case 'auth-button':

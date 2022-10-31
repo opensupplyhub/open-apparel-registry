@@ -53,7 +53,7 @@ export const InfoPaths = {
     resources: 'resources',
 
     // Footer
-    termsOfService: 'terms-of-service',
+    termsOfService: 'terms-of-use',
     mediaHub: 'media-hub',
 };
 
