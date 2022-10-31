@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
+- Fix broken header and footer links [#2289](https://github.com/open-apparel-registry/open-apparel-registry/pull/2289)
 
 ### Security
 
