@@ -464,6 +464,7 @@ $pink-500: #FFA6D0;
     @include svg(480, 301);
     width: 100%;
     display: none;
+    pointer-events: none;
 
     @include media($xl-screen-up) {
         display: block;
