@@ -17,7 +17,7 @@ export const InfoLink = 'https://info.opensupplyhub.org';
 export const InfoPaths = {
     storiesResources: 'stories-resources',
     privacyPolicy: 'privacy-policy',
-    contribute: 'stories-resources/how-to-contribute-data',
+    contribute: 'resources/preparing-data',
     dataQuality: 'how-the-oar-improves-data-quality',
     claimedFacilities: 'stories-resources/claim-a-facility',
     termsOfUse: 'terms-of-use',
