@@ -28,7 +28,7 @@ If you see any items with a “Removed” status, these are items that our team 
 
 Once you have pin-pointed the cause of the error or removal, update your facility information in your Excel/CSV file and re-upload your FULL list to the OS Hub again (uploading one facility at a time results in multiple lists that are harder to manage in the future). You will be able to replace the previous version you uploaded, so only your most recent list is available for the public to see.
 
-Have questions or want to learn more about what’s happening when you upload your list? Check out this guide (http://info.opensupplyhub.org/resources/how-to-upload-your-data-to-open-supply-hub).
+Have questions or want to learn more about what’s happening when you upload your list? Check out this guide (https://info.opensupplyhub.org/resources/uploading-to-open-supply-hub).
 
 Once your list is finalized:
 

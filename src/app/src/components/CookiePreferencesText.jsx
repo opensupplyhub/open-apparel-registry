@@ -8,11 +8,11 @@ const CookiePreferencesText = () => (
         cookies and share information with Google Analytics. For more
         information, please visit our{' '}
         <a
-            href={`${InfoLink}/${InfoPaths.termsOfUse}`}
+            href={`${InfoLink}/${InfoPaths.termsOfService}`}
             target="_blank"
             rel="noreferrer"
         >
-            Terms of Use
+            Terms of Service
         </a>{' '}
         and{' '}
         <a
