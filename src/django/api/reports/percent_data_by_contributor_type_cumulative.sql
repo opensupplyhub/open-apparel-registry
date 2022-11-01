@@ -17,6 +17,7 @@ FROM (
             JOIN api_user u ON u.id = c.admin_id
         WHERE m.status NOT IN ('REJECTED', 'PENDING')
         AND u.email NOT LIKE '%openapparel.org%'
+        AND u.email NOT LIKE '%opensupplyhub.org%'
         GROUP BY m.facility_id, u.email, c.contrib_type
     ) as match
     JOIN (
@@ -38,6 +39,7 @@ JOIN (
             JOIN api_user u ON u.id = c.admin_id
         WHERE m.status NOT IN ('REJECTED', 'PENDING')
         AND u.email NOT LIKE '%openapparel.org%'
+        AND u.email NOT LIKE '%opensupplyhub.org%'
         GROUP BY m.facility_id, u.email
     ) as fm
     JOIN (

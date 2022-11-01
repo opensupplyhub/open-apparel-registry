@@ -11,6 +11,7 @@ FROM (
   WHERE to_char(s.created_at, 'YYYY-MM') != to_char(now(), 'YYYY-MM')
   AND s.create = 't'
   AND NOT u.email LIKE '%openapparel.org%'
+  AND NOT u.email LIKE '%opensupplyhub.org%'
   AND NOT u.email LIKE '%azavea.com%'
   GROUP BY c.id
 ) s

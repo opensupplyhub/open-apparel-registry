@@ -12,7 +12,7 @@ FROM (
   JOIN api_user u ON u.id = c.admin_id
   WHERE to_char(s.created_at, 'YYYY-MM') != to_char(now(), 'YYYY-MM')
   AND s.create = true
-  AND u.email LIKE '%openapparel.org%'
+  AND (u.email LIKE '%openapparel.org%' OR u.email LIKE '%opensupplyhub.org%')
   ORDER BY to_char(s.created_at, 'YYYY-MM'), c.id
 ) q
 GROUP BY month, source_type

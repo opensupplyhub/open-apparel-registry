@@ -2,7 +2,9 @@
 
 SELECT
   to_char(i.created_at, 'YYYY-MM') AS month,
-  CASE WHEN u.email LIKE '%openapparel.org%' THEN 'y' ELSE 'n' END AS is_public_list,
+  CASE WHEN (u.email LIKE '%openapparel.org%'
+             OR u.email LIKE '%opensupplyhub.org%')
+       THEN 'y' ELSE 'n' END AS is_public_list,
   COUNT(*) AS item_count
   FROM api_facilitylistitem i
          JOIN api_source s on i.source_id = s.id

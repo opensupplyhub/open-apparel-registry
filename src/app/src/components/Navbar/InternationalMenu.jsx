@@ -60,7 +60,7 @@ function Submenu() {
                     href="https://info.opensupplyhub.org/turkey"
                     target=""
                 >
-                    <span>Türk</span>
+                    <span>Türkiye</span>
                 </a>
                 <a
                     className="nav-submenu__link "

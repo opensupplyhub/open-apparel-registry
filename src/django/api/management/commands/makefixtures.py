@@ -117,7 +117,7 @@ def make_user(pk, email=None, is_superuser=None, is_staff=None):
 
 
 def make_users(count=100):
-    admins = [make_user(1, email='admin@openapparel.org',
+    admins = [make_user(1, email='admin@opensupplyhub.org',
                         is_superuser=True, is_staff=True)]
     users = [make_user(pk, is_superuser=False) for pk in range(2, count+1)]
     return admins + users

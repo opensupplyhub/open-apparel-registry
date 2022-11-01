@@ -284,6 +284,35 @@ $pink-500: #FFA6D0;
     }
   }
 
+  .header__main--staging {
+    background: $purple-500;
+
+    .nav-link:hover {
+      color: white;
+    }
+
+    .nav-item:hover,
+    .nav-submenu-is-active {
+
+      .nav-submenu-button,
+      .nav-submenu-button__arrow {
+        color: white !important;
+
+        path {
+          fill: white !important;
+        }
+
+        &::after {
+          background-color: white;
+        }
+      }
+    }
+
+    .nav-item .nav-submenu-button--language svg.nav-submenu-button__international path:first-child {
+      fill: none !important;
+    }
+  }
+
   .header__home {
     text-decoration: none;
     display: flex;

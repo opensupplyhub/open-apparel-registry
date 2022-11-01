@@ -11,7 +11,8 @@ SELECT
   FROM (
       SELECT
           MIN(to_char(m.created_at, 'YYYY-MM')) AS month,
-          u.email LIKE '%openapparel.org%' AS is_public_list,
+          (u.email LIKE '%openapparel.org%'
+              OR u.email LIKE '%opensupplyhub.org%') AS is_public_list,
           m.facility_id
       FROM api_facilitymatch m
           JOIN api_facilitylistitem i on m.facility_list_item_id = i.id

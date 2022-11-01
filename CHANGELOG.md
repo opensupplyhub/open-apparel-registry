@@ -19,6 +19,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [75-OSHUB] 2022-11-01
+
+### Added
+- Add Open Graph preview image and Twitter card info [#2286](https://github.com/open-apparel-registry/open-apparel-registry/pull/2286)
+
+### Changed
+
+- Update openapparel.org references [#2281](https://github.com/open-apparel-registry/open-apparel-registry/pull/2281)
+- Change header banner color in staging [#2285](https://github.com/open-apparel-registry/open-apparel-registry/pull/2285)
+- Update various copy and links [#2292](https://github.com/open-apparel-registry/open-apparel-registry/pull/2292)
+
+### Fixed
+- Fix broken header and footer links [#2289](https://github.com/open-apparel-registry/open-apparel-registry/pull/2289)
+
 ## [74-OSHUB] 2022-10-26
 
 ### Added
@@ -1332,7 +1346,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/74-OSHUB...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/75-OSHUB...HEAD
+[76-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/75-OSHUB
 [74-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/74-OSHUB
 [73-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/73-OSHUB
 [66]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/66
