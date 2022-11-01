@@ -170,7 +170,7 @@ class Routes extends Component {
                                 </Route>
                                 <Route exact path="/tos">
                                     <ExternalRedirect
-                                        to={`${InfoLink}/${InfoPaths.termsOfUse}`}
+                                        to={`${InfoLink}/${InfoPaths.termsOfService}`}
                                     />
                                 </Route>
                                 <Route

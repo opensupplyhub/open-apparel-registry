@@ -20,7 +20,7 @@ export const InfoPaths = {
     contribute: 'resources/preparing-data',
     dataQuality: 'resources/a-free-universal-id-matching-algorithm',
     claimedFacilities: 'stories-resources/claim-a-facility',
-    termsOfUse: 'terms-of-use',
+    termsOfService: 'terms-of-service',
 
     // How It Works
     home: '',
@@ -53,7 +53,6 @@ export const InfoPaths = {
     resources: 'resources',
 
     // Footer
-    termsOfService: 'terms-of-use',
     mediaHub: 'media-hub',
 };
 
@@ -266,7 +265,7 @@ const accountTOSField = Object.freeze({
     label: 'Terms of Service',
     link: Object.freeze({
         prefixText: 'Agree to ',
-        url: `${InfoLink}/${InfoPaths.termsOfUse}`,
+        url: `${InfoLink}/${InfoPaths.termsOfService}`,
     }),
     required: true,
     modelFieldName: 'has_agreed_to_terms_of_service',
