@@ -18,7 +18,7 @@ export const InfoPaths = {
     storiesResources: 'stories-resources',
     privacyPolicy: 'privacy-policy',
     contribute: 'resources/preparing-data',
-    dataQuality: 'how-the-oar-improves-data-quality',
+    dataQuality: 'resources/a-free-universal-id-matching-algorithm',
     claimedFacilities: 'stories-resources/claim-a-facility',
     termsOfUse: 'terms-of-use',
 
