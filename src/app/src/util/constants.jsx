@@ -896,7 +896,7 @@ export const SocialMediaLinks = [
                 />
             </svg>
         ),
-        href: 'https://github.com/open-supply-hub',
+        href: 'https://github.com/opensupplyhub/pyoshub',
     },
 ];
 
