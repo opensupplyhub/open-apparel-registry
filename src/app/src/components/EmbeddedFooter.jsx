@@ -14,7 +14,7 @@ const EmbeddedFooter = () => (
                 src={logo}
                 alt="Powered by Open Supply Hub"
                 width="150"
-                style={{ margin: '8px' }}
+                style={{ margin: '8px 24px' }}
             />
         </a>
     </footer>
