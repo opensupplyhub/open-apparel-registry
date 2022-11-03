@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Tooltip from '@material-ui/core/Tooltip';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { toast } from 'react-toastify';
 
@@ -19,6 +19,7 @@ const downloadFacilitiesStyles = theme =>
             height: '45px',
             margin: '5px 0',
             backgroundColor: theme.palette.action.main,
+            color: theme.palette.getContrastText(theme.palette.action.main),
             fontSize: '16px',
             fontWeight: 900,
             lineHeight: '20px',
@@ -52,9 +53,14 @@ function DownloadFacilitiesButton({
     disabled,
     setLoginRequiredDialogIsOpen,
     classes,
+    theme,
 }) {
     const [requestedDownload, setRequestedDownload] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const actionContrastText = theme.palette.getContrastText(
+        theme.palette.action.main,
+    );
 
     useEffect(() => {
         if (requestedDownload && logDownloadError) {
@@ -105,11 +111,19 @@ function DownloadFacilitiesButton({
                 >
                     <div className={classes.buttonContent}>
                         <DownloadIcon
-                            color={disabled ? 'rgba(0, 0, 0, 0.26)' : '#1C1B1F'}
+                            color={
+                                disabled
+                                    ? 'rgba(0, 0, 0, 0.26)'
+                                    : actionContrastText
+                            }
                         />
                         <span className={classes.buttonText}>Download</span>
                         <ArrowDropDownIcon
-                            color={disabled ? 'rgba(0, 0, 0, 0.26)' : '#1C1B1F'}
+                            color={
+                                disabled
+                                    ? 'rgba(0, 0, 0, 0.26)'
+                                    : actionContrastText
+                            }
                         />
                     </div>
                 </Button>
@@ -158,5 +172,5 @@ function mapStateToProps({
 }
 
 export default connect(mapStateToProps)(
-    withStyles(downloadFacilitiesStyles)(DownloadFacilitiesButton),
+    withTheme()(withStyles(downloadFacilitiesStyles)(DownloadFacilitiesButton)),
 );

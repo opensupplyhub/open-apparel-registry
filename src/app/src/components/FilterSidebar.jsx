@@ -9,6 +9,7 @@ import {
     Tab,
     Tabs,
     withStyles,
+    withTheme,
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CloseIcon from '@material-ui/icons/Close';
@@ -74,16 +75,18 @@ const filterSidebarStyles = theme =>
         },
         filterButton: {
             backgroundColor: theme.palette.action.main,
-            color: '#000',
+            '&:hover': {
+                backgroundColor: theme.palette.action.dark,
+            },
+            color: theme.palette.secondary.contrastText,
             fontWeight: 900,
         },
         tab: {
-            backgroundColor: theme.palette.secondary,
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.secondary.contrastText,
             borderColor: '#000',
             borderStyle: 'solid',
             borderWidth: 1,
-            // omit shared border
-            borderRightWidth: 0,
             fontWeight: 800,
         },
     });
@@ -127,7 +130,12 @@ class FilterSidebar extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags, classes, secondaryColor } = this.props;
+        const { fetchingFeatureFlags, classes, theme } = this.props;
+
+        const actionContrastText = theme.palette.getContrastText(
+            theme.palette.action.main,
+        );
+        const tabContrastText = theme.palette.secondary.contrastText;
 
         const renderHeader = ({ multiLine }) =>
             this.props.facilitiesCount > 0 && (
@@ -179,15 +187,29 @@ class FilterSidebar extends Component {
                                             alignItems: 'center',
                                         }}
                                     >
-                                        <FacilitiesIcon />
+                                        <FacilitiesIcon
+                                            color={
+                                                this.props
+                                                    .activeFilterSidebarTab ===
+                                                    0 && tabContrastText
+                                            }
+                                        />
                                         LIST
                                     </div>
                                 }
                                 className={classes.tab}
                                 style={
                                     this.props.activeFilterSidebarTab === 0
-                                        ? {}
-                                        : { backgroundColor: '#fff' }
+                                        ? {
+                                              // omit shared border
+                                              borderRightWidth: 0,
+                                          }
+                                        : {
+                                              backgroundColor: '#fff',
+                                              color: '#000',
+                                              // omit shared border
+                                              borderRightWidth: 0,
+                                          }
                                 }
                             />
                             <Tab
@@ -198,24 +220,30 @@ class FilterSidebar extends Component {
                                             alignItems: 'center',
                                         }}
                                     >
-                                        <MapIcon />
+                                        <MapIcon
+                                            color={
+                                                this.props
+                                                    .activeFilterSidebarTab ===
+                                                    1 && tabContrastText
+                                            }
+                                        />
                                         MAP
                                     </div>
                                 }
-                                style={{
-                                    backgroundColor:
-                                        this.props.activeFilterSidebarTab === 1
-                                            ? secondaryColor
-                                            : '#fff',
-                                    borderColor: '#000',
-                                    borderStyle: 'solid',
-                                    borderWidth: 1,
-                                    fontWeight: 800,
-                                }}
+                                className={classes.tab}
+                                style={
+                                    this.props.activeFilterSidebarTab === 1
+                                        ? {}
+                                        : {
+                                              backgroundColor: '#fff',
+                                              color: '#000',
+                                          }
+                                }
                             />
                             <div style={{ padding: '10px' }} />
                             <Button
                                 Icon={FilterIcon}
+                                color={actionContrastText}
                                 onClick={() =>
                                     this.props.toggleFilterModal(true)
                                 }
@@ -347,6 +375,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default withStyles(filterSidebarStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(FilterSidebar),
+export default withTheme()(
+    withStyles(filterSidebarStyles)(
+        connect(mapStateToProps, mapDispatchToProps)(FilterSidebar),
+    ),
 );

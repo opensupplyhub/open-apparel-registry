@@ -100,6 +100,7 @@ const filterSidebarSearchTabStyles = theme =>
             '&:hover': {
                 backgroundColor: theme.palette.action.dark,
             },
+            color: theme.palette.getContrastText(theme.palette.action.main),
         },
         ...filterSidebarStyles,
     });
