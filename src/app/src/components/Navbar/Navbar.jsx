@@ -50,6 +50,30 @@ export default function Navbar() {
         }
     }, [mobileMode]);
 
+    useEffect(() => {
+        if (activeSubmenu) {
+            const closeHeaderOnOutsideClick = event => {
+                const headerElement = document.getElementById('header');
+                const headerWasClicked = headerElement.contains(event.target);
+
+                if (!headerWasClicked) {
+                    setActiveSubmenu(null);
+                }
+            };
+
+            document.addEventListener('click', closeHeaderOnOutsideClick);
+
+            return () => {
+                document.removeEventListener(
+                    'click',
+                    closeHeaderOnOutsideClick,
+                );
+            };
+        }
+
+        return () => {};
+    }, [activeSubmenu]);
+
     const {
         renderNavItem,
         renderMobileNavItem,
