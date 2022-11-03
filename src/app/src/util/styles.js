@@ -106,6 +106,14 @@ export const makeFilterStyles = theme =>
         selectStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
         }),
+        searchInput: Object.freeze({
+            backgroundColor: '#fff',
+            paddingLeft: 0,
+            borderRadius: 0,
+        }),
+        notchedOutline: {
+            borderRadius: 0,
+        },
     });
 
 export const claimAFacilityFormStyles = Object.freeze({
