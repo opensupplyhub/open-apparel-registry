@@ -19,11 +19,7 @@ function CountryNameFilter({
     return (
         <div className="form__field">
             <StyledSelect
-                label={
-                    <div style={{ display: 'flex' }}>
-                        <p>Country Name</p>
-                    </div>
-                }
+                label="Country Name"
                 name={COUNTRIES}
                 options={countryOptions || []}
                 value={countries}
