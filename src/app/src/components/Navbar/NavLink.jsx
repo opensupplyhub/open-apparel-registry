@@ -12,7 +12,6 @@ export default function NavLink({ label, href, external, mobile = false }) {
             <a
                 className={className}
                 href={href}
-                target="_blank"
                 rel="noreferrer"
                 onClick={createMenuClickHandler()}
             >
