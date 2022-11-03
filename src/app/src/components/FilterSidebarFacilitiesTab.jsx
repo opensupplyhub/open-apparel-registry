@@ -15,6 +15,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
+import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 import InfiniteAnyHeight from 'react-infinite-any-height';
 import noop from 'lodash/noop';
@@ -46,15 +47,17 @@ import BadgeClaimed from './BadgeClaimed';
 import CopyLinkIcon from './CopyLinkIcon';
 import { useResultListHeight } from '../util/useHeightSubtract';
 
-const facilitiesTabStyles = Object.freeze({
+const makeFacilitiesTabStyles = theme => ({
     noResultsTextStyles: Object.freeze({
         margin: '30px',
+        fontFamily: theme.typography.fontFamily,
     }),
     linkStyles: Object.freeze({
         color: '#191919',
         flexDirection: 'column',
         display: 'flex',
         textDecoration: 'none',
+        fontFamily: theme.typography.fontFamily,
     }),
     listItemStyles: Object.freeze({
         wordWrap: 'anywhere',
@@ -62,6 +65,7 @@ const facilitiesTabStyles = Object.freeze({
         alignItems: 'start',
         maxWidth: '750px',
         minWidth: '310px',
+        fontFamily: theme.typography.fontFamily,
     }),
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
@@ -91,6 +95,7 @@ const facilitiesTabStyles = Object.freeze({
         fontWeight: 'bold',
         padding: '0 5px',
         marginTop: '5px',
+        fontFamily: theme.typography.fontFamily,
     }),
 });
 
@@ -108,6 +113,7 @@ function FilterSidebarFacilitiesTab({
     },
     handleScroll,
     scrollTop,
+    classes,
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
         false,
@@ -151,14 +157,14 @@ function FilterSidebarFacilitiesTab({
                 <div className="control-panel__body">
                     <Typography
                         variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
+                        className={classes.noResultsTextStyles}
                         align="center"
                     >
                         An error prevented fetching facilities
                     </Typography>
                     <Typography
                         variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
+                        className={classes.noResultsTextStyles}
                         align="center"
                     >
                         <Button
@@ -185,7 +191,7 @@ function FilterSidebarFacilitiesTab({
                 <div className="control-panel__body">
                     <Typography
                         variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
+                        className={classes.noResultsTextStyles}
                         align="center"
                     >
                         No facilities matching this search
@@ -207,17 +213,12 @@ function FilterSidebarFacilitiesTab({
         : 0;
 
     const listHeaderInsetComponent = (
-        <div
-            style={facilitiesTabStyles.listHeaderStyles}
-            className="results-height-subtract"
-        >
+        <div className={`${classes.listHeaderStyles} results-height-subtract`}>
             <Typography variant="subheading" align="center">
-                <div style={facilitiesTabStyles.titleRowStyles}>
+                <div className={classes.titleRowStyles}>
                     {downloadingCSV ? (
-                        <div style={facilitiesTabStyles.listHeaderButtonStyles}>
-                            <div
-                                style={facilitiesTabStyles.downloadLabelStyles}
-                            >
+                        <div className={classes.listHeaderButtonStyles}>
+                            <div className={classes.downloadLabelStyles}>
                                 Downloading...
                             </div>
                             <LinearProgress
@@ -279,7 +280,7 @@ function FilterSidebarFacilitiesTab({
     const loadingElement = facilities.length !== facilitiesCount && (
         <Fragment>
             <Divider />
-            <ListItem style={facilitiesTabStyles.listItemStyles}>
+            <ListItem className={classes.listItemStyles}>
                 <ListItemText primary="Loading more facilities..." />
             </ListItem>
         </Fragment>
@@ -314,14 +315,12 @@ function FilterSidebarFacilitiesTab({
                             }) => (
                                 <div
                                     key={osID}
-                                    style={facilitiesTabStyles.listItemStyles}
+                                    className={classes.listItemStyles}
                                 >
                                     <Divider />
                                     <ListItem
                                         key={osID}
-                                        style={
-                                            facilitiesTabStyles.listItemStyles
-                                        }
+                                        className={classes.listItemStyles}
                                     >
                                         <Link
                                             to={{
@@ -337,9 +336,7 @@ function FilterSidebarFacilitiesTab({
                                                 osID,
                                                 search,
                                             )}
-                                            style={
-                                                facilitiesTabStyles.linkStyles
-                                            }
+                                            className={classes.linkStyles}
                                         >
                                             <span
                                                 style={{
@@ -397,8 +394,8 @@ function FilterSidebarFacilitiesTab({
                                                 flag={REPORT_A_FACILITY}
                                             >
                                                 <div
-                                                    style={
-                                                        facilitiesTabStyles.closureRibbon
+                                                    className={
+                                                        classes.closureRibbon
                                                     }
                                                 >
                                                     Closed facility
@@ -513,5 +510,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(FilterSidebarFacilitiesTab),
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(withStyles(makeFacilitiesTabStyles)(FilterSidebarFacilitiesTab)),
 );

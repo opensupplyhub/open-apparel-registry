@@ -46,11 +46,32 @@ import FacilitiesIcon from './FacilitiesIcon';
 
 const filterSidebarStyles = theme =>
     Object.freeze({
-        searchTab: Object.freeze({
-            '*': {
-                fontFamily: theme.typography.fontFamily,
-            },
-        }),
+        header: {
+            padding: '24px',
+            fontFamily: theme.typography.fontFamily,
+        },
+        headerText: {
+            fontWeight: 900,
+            fontSize: '44px',
+            margin: 0,
+            lineHeight: '48px',
+            fontFamily: theme.typography.fontFamily,
+        },
+        resultsSpan: { fontWeight: 800 },
+        filterDrawer: {
+            backgroundColor: '#fff',
+            height: '100%',
+        },
+        filterDrawerContents: {
+            alignItems: 'center',
+            paddingLeft: '1em',
+            paddingRight: '1em',
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
+        filterDrawerHeader: {
+            fontFamily: theme.typography.fontFamily,
+        },
     });
 
 class FilterSidebar extends Component {
@@ -92,7 +113,23 @@ class FilterSidebar extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags } = this.props;
+        const { fetchingFeatureFlags, classes } = this.props;
+
+        const renderHeader = ({ multiLine }) =>
+            this.props.facilitiesCount > 0 && (
+                <div className={`${classes.header} results-height-subtract`}>
+                    <h1 className={classes.headerText}>
+                        <FacilityIcon /> Facilities
+                    </h1>
+                    {multiLine ? (
+                        <span className={classes.resultsSpan}>
+                            {`${this.props.facilitiesCount} results`}
+                        </span>
+                    ) : (
+                        `${this.props.facilitiesCount} results`
+                    )}
+                </div>
+            );
 
         if (fetchingFeatureFlags) {
             return <CircularProgress />;
@@ -184,28 +221,8 @@ class FilterSidebar extends Component {
                         </Tabs>
                         {this.props.activeFilterSidebarTab === 0 && (
                             <Grid item sm={12}>
-                                {this.props.facilitiesCount > 0 && (
-                                    <div
-                                        className="results-height-subtract"
-                                        style={{
-                                            padding: '24px',
-                                        }}
-                                    >
-                                        <h1
-                                            style={{
-                                                fontWeight: 900,
-                                                fontSize: '44px',
-                                                margin: 0,
-                                                lineHeight: '48px',
-                                            }}
-                                        >
-                                            <FacilityIcon /> Facilities
-                                        </h1>
-                                        <span style={{ fontWeight: 800 }}>
-                                            {`${this.props.facilitiesCount} results`}
-                                        </span>
-                                    </div>
-                                )}
+                                {renderHeader({ multiLine: true })}
+
                                 <FeatureFlag
                                     flag={VECTOR_TILE}
                                     alternative={
@@ -236,26 +253,7 @@ class FilterSidebar extends Component {
                 </Hidden>
                 <Hidden mdDown>
                     <Grid item sm={12} md={4}>
-                        {this.props.facilitiesCount > 0 && (
-                            <div
-                                className="results-height-subtract"
-                                style={{
-                                    padding: '24px',
-                                }}
-                            >
-                                <h1
-                                    style={{
-                                        fontWeight: 900,
-                                        fontSize: '44px',
-                                        margin: 0,
-                                        lineHeight: '48px',
-                                    }}
-                                >
-                                    <FacilityIcon /> Facilities
-                                </h1>
-                                {`${this.props.facilitiesCount} results`}
-                            </div>
-                        )}
+                        {renderHeader({})}
                         <FeatureFlag
                             flag={VECTOR_TILE}
                             alternative={
@@ -270,22 +268,11 @@ class FilterSidebar extends Component {
                     open={this.props.filterModalOpen}
                     onClose={() => this.props.toggleFilterModal(false)}
                 >
-                    <div
-                        style={{
-                            backgroundColor: '#fff',
-                            height: '100%',
-                        }}
-                    >
-                        <div
-                            style={{
-                                alignItems: 'center',
-                                paddingLeft: '1em',
-                                paddingRight: '1em',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <h1>Filters</h1>
+                    <div className={classes.filterDrawer}>
+                        <div className={classes.filterDrawerContents}>
+                            <h1 className={classes.filterDrawerHeader}>
+                                Filters
+                            </h1>
                             <IconButton
                                 onClick={() =>
                                     this.props.toggleFilterModal(false)
