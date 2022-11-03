@@ -49,7 +49,7 @@ import { useResultListHeight } from '../util/useHeightSubtract';
 
 const makeFacilitiesTabStyles = theme => ({
     noResultsTextStyles: Object.freeze({
-        margin: '30px',
+        margin: '30px !important',
         fontFamily: theme.typography.fontFamily,
     }),
     linkStyles: Object.freeze({

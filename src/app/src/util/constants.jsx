@@ -588,6 +588,8 @@ export const PPE_FIELD_NAMES = Object.freeze([
 export const OARFont = "'Darker Grotesque',sans-serif";
 export const OARColor = '#8428FA';
 export const SelectedMarkerColor = '#FFCF3F';
+export const OARActionColor = '#FFCF3F';
+export const OARSecondaryColor = '#FFA6D0';
 
 // A CSS size value that is used to set a lower bound on the iframe height
 // when the width is set to 100%

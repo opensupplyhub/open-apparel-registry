@@ -72,6 +72,20 @@ const filterSidebarStyles = theme =>
         filterDrawerHeader: {
             fontFamily: theme.typography.fontFamily,
         },
+        filterButton: {
+            backgroundColor: theme.palette.action.main,
+            color: '#000',
+            fontWeight: 900,
+        },
+        tab: {
+            backgroundColor: theme.palette.secondary,
+            borderColor: '#000',
+            borderStyle: 'solid',
+            borderWidth: 1,
+            // omit shared border
+            borderRightWidth: 0,
+            fontWeight: 800,
+        },
     });
 
 class FilterSidebar extends Component {
@@ -113,7 +127,7 @@ class FilterSidebar extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags, classes } = this.props;
+        const { fetchingFeatureFlags, classes, secondaryColor } = this.props;
 
         const renderHeader = ({ multiLine }) =>
             this.props.facilitiesCount > 0 && (
@@ -169,18 +183,12 @@ class FilterSidebar extends Component {
                                         LIST
                                     </div>
                                 }
-                                style={{
-                                    backgroundColor:
-                                        this.props.activeFilterSidebarTab === 0
-                                            ? '#FFA6D0'
-                                            : '#fff',
-                                    borderColor: '#000',
-                                    borderStyle: 'solid',
-                                    borderWidth: 1,
-                                    // omit shared border
-                                    borderRightWidth: 0,
-                                    fontWeight: 800,
-                                }}
+                                className={classes.tab}
+                                style={
+                                    this.props.activeFilterSidebarTab === 0
+                                        ? {}
+                                        : { backgroundColor: '#fff' }
+                                }
                             />
                             <Tab
                                 label={
@@ -197,7 +205,7 @@ class FilterSidebar extends Component {
                                 style={{
                                     backgroundColor:
                                         this.props.activeFilterSidebarTab === 1
-                                            ? '#FFA6D0'
+                                            ? secondaryColor
                                             : '#fff',
                                     borderColor: '#000',
                                     borderStyle: 'solid',
@@ -211,11 +219,7 @@ class FilterSidebar extends Component {
                                 onClick={() =>
                                     this.props.toggleFilterModal(true)
                                 }
-                                style={{
-                                    backgroundColor: '#FFCF3F',
-                                    color: '#000',
-                                    fontWeight: 900,
-                                }}
+                                className={classes.filterButton}
                                 text="FILTERS"
                             />
                         </Tabs>

@@ -4,10 +4,13 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import Routes from './Routes';
 import { fetchEmbedConfig } from './actions/embeddedMap';
-import { OARColor } from './util/constants';
+import { OARColor, OARSecondaryColor, OARActionColor } from './util/constants';
 import EmbeddedMapUnauthorized from './components/EmbeddedMapUnauthorized';
 
 import './App.css';
+
+const configOrDefault = (configColor, defaultColor) =>
+    !configColor || configColor === OARColor ? defaultColor : configColor;
 
 function App({
     embed,
@@ -35,6 +38,21 @@ function App({
                         main: config.color || OARColor,
                         coloredBackground:
                             config.color === OARColor ? '#c7d2fa' : '',
+                    },
+                    secondary: {
+                        main: configOrDefault(config.color, OARSecondaryColor),
+                    },
+                    action: {
+                        main: configOrDefault(config.color, OARActionColor),
+                        contrastText: 'rgba(0, 0, 0, 0.87)',
+                        dark: configOrDefault(
+                            config.color,
+                            'rgb(178, 144, 44)',
+                        ),
+                        light: configOrDefault(
+                            config.color,
+                            'rgb(255, 216, 101)',
+                        ),
                     },
                 },
             }),

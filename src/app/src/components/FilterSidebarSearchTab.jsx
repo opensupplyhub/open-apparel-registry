@@ -31,8 +31,6 @@ import { fetchFacilities } from '../actions/facilities';
 
 import { recordSearchTabResetButtonClick } from '../actions/ui';
 
-import COLOURS from '../util/COLOURS';
-
 import {
     contributorOptionsPropType,
     contributorTypeOptionsPropType,
@@ -96,6 +94,12 @@ const filterSidebarSearchTabStyles = theme =>
             minWidth: '36px',
             minHeight: '36px',
         }),
+        actionButton: {
+            backgroundColor: theme.palette.action.main,
+            '&:hover': {
+                backgroundColor: theme.palette.action.dark,
+            },
+        },
         ...filterSidebarStyles,
     });
 
@@ -151,12 +155,7 @@ function FilterSidebarSearchTab({
         <Button
             variant="contained"
             type="submit"
-            className={classes.font}
-            style={{
-                boxShadow: 'none',
-                backgroundColor: COLOURS.NAVIGATION,
-                color: COLOURS.NEAR_BLACK,
-            }}
+            className={`${classes.font} ${classes.actionButton}`}
             onClick={() => searchForFacilities(vectorTileFlagIsActive)}
             disabled={fetchingOptions}
             fullWidth
@@ -172,7 +171,7 @@ function FilterSidebarSearchTab({
             onClick={() => resetFilters(embed)}
             disableRipple
             className={classes.reset}
-            color="primary"
+            color="secondary"
             disabled={fetchingOptions}
         >
             <i className={`${classes.icon} fas fa-fw fa-undo`} />
