@@ -611,12 +611,12 @@ export const NavbarItems = [
                     label: 'What is OS Hub?',
                     items: [
                         {
-                            type: 'link',
+                            type: 'button',
                             label: 'Introduction',
                             href: InfoLink,
                         },
                         {
-                            type: 'link',
+                            type: 'button',
                             label: 'FAQs',
                             href: `${InfoLink}/${InfoPaths.faqs}`,
                         },
