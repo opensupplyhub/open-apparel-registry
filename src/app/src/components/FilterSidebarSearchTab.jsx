@@ -80,6 +80,7 @@ const filterSidebarSearchTabStyles = theme =>
             color: theme.palette.primary.main,
             paddingTop: '0.5rem',
             paddingBottom: '0.5rem',
+            paddingLeft: '24px',
             textDecoration: 'none',
             lineHeight: '17px',
             '&:hover': {
