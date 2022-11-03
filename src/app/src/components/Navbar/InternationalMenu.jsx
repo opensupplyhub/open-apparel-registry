@@ -49,11 +49,11 @@ function Submenu() {
                     <span>বাংলা</span>
                 </a>
                 <a
-                    className="nav-submenu__link nav-submenu__link--lighter-font-weight"
+                    className="nav-submenu__link nav-submenu__link"
                     href="https://info.opensupplyhub.org/india"
                     target=""
                 >
-                    <span>हिन्दी</span>
+                    <span>India</span>
                 </a>
                 <a
                     className="nav-submenu__link "

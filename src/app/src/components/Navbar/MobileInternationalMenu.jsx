@@ -62,7 +62,7 @@ export default function MobileInternationalMenu({
                         href="https://info.opensupplyhub.org/india"
                         target=""
                     >
-                        हिन्दी
+                        India
                     </a>
                 </div>
                 <div className="mobile-nav__item">
@@ -71,7 +71,7 @@ export default function MobileInternationalMenu({
                         href="https://info.opensupplyhub.org/turkey"
                         target=""
                     >
-                        Türk
+                        Türkiye
                     </a>
                 </div>
                 <div className="mobile-nav__item">
