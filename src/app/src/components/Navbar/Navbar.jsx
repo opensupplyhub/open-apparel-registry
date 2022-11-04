@@ -21,10 +21,18 @@ export default function Navbar() {
         const handleMediaChange = e => setMobileMode(e.matches);
         const mediaQueryList = window.matchMedia(breakpoint);
 
-        mediaQueryList.addEventListener('change', handleMediaChange);
+        if (typeof mediaQueryList.addEventListener === 'function') {
+            mediaQueryList.addEventListener('change', handleMediaChange);
+        } else {
+            mediaQueryList.addListener(handleMediaChange);
+        }
 
         return () => {
-            mediaQueryList.removeEventListener('change', handleMediaChange);
+            if (typeof mediaQueryList.addEventListener === 'function') {
+                mediaQueryList.removeEventListener('change', handleMediaChange);
+            } else {
+                mediaQueryList.removeListener(handleMediaChange);
+            }
         };
     }, []);
 
