@@ -877,7 +877,7 @@ export const SocialMediaLinks = [
                 />
             </svg>
         ),
-        href: 'https://www.youtube.com/channel/UCZ8Qn5HvFHX453JfI4dhYpA',
+        href: 'https://www.youtube.com/channel/UCy-66mcBwX2wlUM6kvKUrGw',
     },
     {
         label: 'Github',
