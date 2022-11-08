@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Support mediaQueryList event listener in older Safari [#2303](https://github.com/open-apparel-registry/open-apparel-registry/pull/2303)
+- Handle additional merge errors [#2299](https://github.com/open-apparel-registry/open-apparel-registry/pull/2299)
 
 ### Security
 
