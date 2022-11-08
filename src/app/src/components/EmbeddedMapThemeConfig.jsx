@@ -111,7 +111,7 @@ function EmbeddedMapThemeConfig({
                             />
                             <FormControlLabel
                                 value={OARColor}
-                                label="OS Hub Blue"
+                                label="OS Hub Green"
                                 style={styles.radioItem}
                                 control={
                                     <Radio
@@ -120,7 +120,7 @@ function EmbeddedMapThemeConfig({
                                         value={OARColor}
                                         name="theme-color"
                                         inputProps={{
-                                            'aria-label': 'OS Hub Blue',
+                                            'aria-label': 'OS Hub Green',
                                         }}
                                         style={styles.radio}
                                     />
