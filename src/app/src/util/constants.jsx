@@ -813,15 +813,19 @@ export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 
 export const FooterLinks = [
     { label: 'Donate', href: DONATE_LINK },
-    { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },
+    {
+        label: 'Subscribe',
+        href: 'https://share.hsforms.com/1bQwXClZUTjihXk3wt1SX2Abujql',
+    },
     { label: 'FAQs', href: `${InfoLink}/${InfoPaths.faqs}` },
+    { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },
+    { label: 'Media Hub', href: `${InfoLink}/${InfoPaths.mediaHub}` },
     {
         label: 'Terms of Service',
         href: `${InfoLink}/${InfoPaths.termsOfService}`,
     },
-    { label: 'Media Hub', href: `${InfoLink}/${InfoPaths.mediaHub}` },
-    { label: 'Contact Us', href: `${InfoLink}/${InfoPaths.contactUs}` },
     { label: 'Reporting Line', href: 'https://opensupplyhub.allvoices.co/' },
+    { label: 'Contact Us', href: `${InfoLink}/${InfoPaths.contactUs}` },
 ];
 
 export const SocialMediaLinks = [
