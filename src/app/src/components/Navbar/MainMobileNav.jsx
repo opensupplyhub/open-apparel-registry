@@ -58,7 +58,6 @@ function MainMobileNav({
                     <a
                         className="mobile-nav__link"
                         href={`${InfoLink}/${InfoPaths.storiesResources}`}
-                        target="_blank"
                         rel="noreferrer"
                         onClick={handleClose}
                     >
