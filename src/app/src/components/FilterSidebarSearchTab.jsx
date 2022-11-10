@@ -101,6 +101,7 @@ const filterSidebarSearchTabStyles = theme =>
                 backgroundColor: theme.palette.action.dark,
             },
             color: theme.palette.getContrastText(theme.palette.action.main),
+            flex: 1,
         },
         ...filterSidebarStyles,
     });
@@ -160,7 +161,6 @@ function FilterSidebarSearchTab({
             className={`${classes.font} ${classes.actionButton}`}
             onClick={() => searchForFacilities(vectorTileFlagIsActive)}
             disabled={fetchingOptions}
-            fullWidth
         >
             Search
         </Button>
@@ -214,8 +214,9 @@ function FilterSidebarSearchTab({
 
             <div
                 className={`${classes.sidebarDiv} ${classes.bottomSidebarDiv} filter-list-subtract`}
+                style={{ maxHeight: '120px' }}
             >
-                <div className="form__action" style={{ marginBottom: '40px' }}>
+                <div style={{ margin: '6px 0', display: 'flex' }}>
                     {searchResetButtonGroup()}
                 </div>
                 <ShowOnly when={!embed || embedExtendedFields.length}>
