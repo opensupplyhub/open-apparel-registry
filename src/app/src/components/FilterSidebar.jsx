@@ -159,7 +159,7 @@ class FilterSidebar extends Component {
 
         return (
             <>
-                <Hidden lgUp>
+                <Hidden smUp>
                     <Grid
                         item
                         style={{
@@ -278,13 +278,13 @@ class FilterSidebar extends Component {
                         )}
                     </Grid>
                 </Hidden>
-                <Hidden mdDown>
-                    <Grid item md={3}>
+                <Hidden only="xs">
+                    <Grid item sm={3}>
                         <FilterSidebarSearchTab />
                     </Grid>
                 </Hidden>
-                <Hidden mdDown>
-                    <Grid item sm={12} md={4}>
+                <Hidden only="xs">
+                    <Grid item xs={12} sm={4}>
                         {renderHeader({})}
                         <FeatureFlag
                             flag={VECTOR_TILE}
