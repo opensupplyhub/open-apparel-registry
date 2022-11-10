@@ -16,13 +16,20 @@ import { facilitiesRoute, mainRoute } from '../util/constants';
 const zoomStyles = theme =>
     Object.freeze({
         controlsStyle: Object.freeze({
-            background: 'white',
             fontFamily: theme.typography.fontFamily,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderRadius: '0',
-            boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.2)',
+            [theme.breakpoints.up('sm')]: {
+                maxWidth: '235px',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+            },
+            [theme.breakpoints.up('md')]: {
+                maxWidth: '320px',
+                flexDirection: 'row',
+                alignItems: 'center',
+            },
         }),
         zoomStyle: Object.freeze({
             display: 'flex',
@@ -32,11 +39,21 @@ const zoomStyles = theme =>
         areaStyle: Object.freeze({
             fontWeight: 400,
             borderRadius: 0,
+            background: 'white',
+            '&:hover': {
+                background: 'white',
+            },
         }),
         dividerStyle: {
             width: '0px',
             height: '32px',
             borderLeft: '1px solid rgba(0, 0, 0, 0.3)',
+            [theme.breakpoints.up('sm')]: {
+                display: 'none',
+            },
+            [theme.breakpoints.up('md')]: {
+                display: 'block',
+            },
         },
     });
 
