@@ -89,6 +89,17 @@ const filterSidebarStyles = theme =>
             borderWidth: 1,
             fontWeight: 800,
         },
+        searchContainer: {
+            minWidth: '200px',
+        },
+        resultsContainer: {
+            [theme.breakpoints.up('sm')]: {
+                minWidth: '250px',
+            },
+            [theme.breakpoints.up('md')]: {
+                minWidth: '320px',
+            },
+        },
     });
 
 class FilterSidebar extends Component {
@@ -279,12 +290,17 @@ class FilterSidebar extends Component {
                     </Grid>
                 </Hidden>
                 <Hidden only="xs">
-                    <Grid item sm={3}>
+                    <Grid item sm={3} className={classes.searchContainer}>
                         <FilterSidebarSearchTab />
                     </Grid>
                 </Hidden>
                 <Hidden only="xs">
-                    <Grid item xs={12} sm={4}>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                        className={classes.resultsContainer}
+                    >
                         {renderHeader({})}
                         <FeatureFlag
                             flag={VECTOR_TILE}
