@@ -66,6 +66,12 @@ const makeFacilitiesTabStyles = theme => ({
         maxWidth: '750px',
         minWidth: '310px',
         fontFamily: theme.typography.fontFamily,
+        [theme.breakpoints.up('sm')]: {
+            minWidth: '240px',
+        },
+        [theme.breakpoints.up('md')]: {
+            minWidth: '310px',
+        },
     }),
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
