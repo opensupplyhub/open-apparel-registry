@@ -50,6 +50,12 @@ const filterSidebarStyles = theme =>
         header: {
             padding: '24px',
             fontFamily: theme.typography.fontFamily,
+            [theme.breakpoints.up('sm')]: {
+                padding: '12px 24px',
+            },
+            [theme.breakpoints.up('md')]: {
+                padding: '24px',
+            },
         },
         headerText: {
             fontWeight: 900,

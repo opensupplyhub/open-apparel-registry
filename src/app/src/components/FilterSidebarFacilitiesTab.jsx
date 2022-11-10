@@ -76,8 +76,16 @@ const makeFacilitiesTabStyles = theme => ({
     titleRowStyles: Object.freeze({
         display: 'flex',
         alignItems: 'center',
-        padding: '6px 1rem',
+        padding: '0 1rem',
         justifyContent: 'space-around',
+        [theme.breakpoints.up('sm')]: {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+        },
+        [theme.breakpoints.up('md')]: {
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
     }),
     listHeaderButtonStyles: Object.freeze({
         height: '45px',
@@ -97,6 +105,18 @@ const makeFacilitiesTabStyles = theme => ({
         marginTop: '5px',
         fontFamily: theme.typography.fontFamily,
     }),
+    copyLinkButton: {
+        height: '45px',
+        fontSize: '16px',
+        fontWeight: '900',
+        lineWeight: '20px',
+    },
+    copyLinkButtonContent: {
+        display: 'flex',
+        alignItems: 'center',
+        textTransform: 'none',
+        whiteSpace: 'nowrap',
+    },
 });
 
 function FilterSidebarFacilitiesTab({
@@ -214,66 +234,53 @@ function FilterSidebarFacilitiesTab({
 
     const listHeaderInsetComponent = (
         <div className={`${classes.listHeaderStyles} results-height-subtract`}>
-            <Typography variant="subheading" align="center">
-                <div className={classes.titleRowStyles}>
-                    {downloadingCSV ? (
-                        <div className={classes.listHeaderButtonStyles}>
-                            <div className={classes.downloadLabelStyles}>
-                                Downloading...
-                            </div>
-                            <LinearProgress
-                                variant="determinate"
-                                value={progress}
-                            />
+            <div className={classes.titleRowStyles}>
+                {downloadingCSV ? (
+                    <div className={classes.listHeaderButtonStyles}>
+                        <div className={classes.downloadLabelStyles}>
+                            Downloading...
                         </div>
-                    ) : (
-                        <FeatureFlag
-                            flag={ALLOW_LARGE_DOWNLOADS}
-                            alternative={
-                                <DownloadFacilitiesButton
-                                    disabled={
-                                        facilitiesCount >=
-                                        FACILITIES_DOWNLOAD_DEFAULT_LIMIT
-                                    }
-                                    setLoginRequiredDialogIsOpen={
-                                        setLoginRequiredDialogIsOpen
-                                    }
-                                />
-                            }
-                        >
+                        <LinearProgress
+                            variant="determinate"
+                            value={progress}
+                        />
+                    </div>
+                ) : (
+                    <FeatureFlag
+                        flag={ALLOW_LARGE_DOWNLOADS}
+                        alternative={
                             <DownloadFacilitiesButton
-                                allowLargeDownloads
+                                disabled={
+                                    facilitiesCount >=
+                                    FACILITIES_DOWNLOAD_DEFAULT_LIMIT
+                                }
                                 setLoginRequiredDialogIsOpen={
                                     setLoginRequiredDialogIsOpen
                                 }
                             />
-                        </FeatureFlag>
-                    )}
-                    <CopySearch>
-                        <Button
-                            variant="outlined"
-                            onClick={noop}
-                            style={{
-                                fontSize: '16px',
-                                fontWeight: '900',
-                                lineWeight: '20px',
-                                marginLeft: '1em',
-                            }}
-                        >
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    textTransform: 'none',
-                                }}
-                            >
-                                <CopyLinkIcon />
-                                Copy Link
-                            </div>
-                        </Button>
-                    </CopySearch>
-                </div>
-            </Typography>
+                        }
+                    >
+                        <DownloadFacilitiesButton
+                            allowLargeDownloads
+                            setLoginRequiredDialogIsOpen={
+                                setLoginRequiredDialogIsOpen
+                            }
+                        />
+                    </FeatureFlag>
+                )}
+                <CopySearch>
+                    <Button
+                        variant="outlined"
+                        onClick={noop}
+                        className={classes.copyLinkButton}
+                    >
+                        <div className={classes.copyLinkButtonContent}>
+                            <CopyLinkIcon />
+                            Copy Link
+                        </div>
+                    </Button>
+                </CopySearch>
+            </div>
         </div>
     );
 
