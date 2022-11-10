@@ -5,9 +5,11 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
+import InputLabel from '@material-ui/core/InputLabel';
 import { withStyles } from '@material-ui/core/styles';
 
 import { updateFacilityFreeTextQueryFilter } from '../../actions/filters';
+import { makeFilterStyles } from '../../util/styles';
 
 import {
     getValueFromEvent,
@@ -15,22 +17,6 @@ import {
 } from '../../util/util';
 
 import { DEFAULT_SEARCH_TEXT } from '../../util/constants';
-
-const filterStyles = Object.freeze({
-    searchInput: Object.freeze({
-        backgroundColor: '#fff',
-        paddingLeft: 0,
-        borderRadius: 0,
-    }),
-    notchedOutline: {
-        borderRadius: 0,
-    },
-    inputLabelStyle: {
-        fontSize: '18px',
-        fontWeight: 700,
-        color: '#000',
-    },
-});
 
 const FACILITIES = 'FACILITIES';
 
@@ -41,10 +27,17 @@ function TextSearchFilter({
     submitFormOnEnterKeyPress,
     classes,
     searchLabel,
+    marginTop,
 }) {
     return (
-        <div>
-            <p style={filterStyles.inputLabelStyle}>{searchLabel}</p>
+        <div className="form__field" style={{ marginTop }}>
+            <InputLabel
+                shrink={false}
+                htmlFor={FACILITIES}
+                className={classes.inputLabelStyle}
+            >
+                {searchLabel}
+            </InputLabel>
             <TextField
                 id={FACILITIES}
                 placeholder="e.g. ABC Textiles Limited"
@@ -92,6 +85,7 @@ function mapStateToProps({
         facilityFreeTextQuery,
         searchLabel: embed ? config.text_search_label : DEFAULT_SEARCH_TEXT,
         embedExtendedFields: config.extended_fields,
+        marginTop: embed ? '36px' : 0,
     };
 }
 
@@ -109,4 +103,4 @@ function mapDispatchToProps(dispatch, { searchForFacilities }) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(withStyles(filterStyles)(TextSearchFilter));
+)(withStyles(makeFilterStyles)(TextSearchFilter));

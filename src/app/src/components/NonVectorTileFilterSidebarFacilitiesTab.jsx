@@ -13,6 +13,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
+import { withStyles } from '@material-ui/core/styles';
 import get from 'lodash/get';
 import InfiniteAnyHeight from 'react-infinite-any-height';
 import includes from 'lodash/includes';
@@ -66,16 +67,19 @@ const sortFacilitiesAlphabeticallyByName = data =>
             },
         );
 
-const facilitiesTabStyles = Object.freeze({
+const makeFacilitiesTabStyles = theme => ({
     noResultsTextStyles: Object.freeze({
+        fontFamily: theme.typography.fontFamily,
         margin: '30px',
     }),
     linkStyles: Object.freeze({
         display: 'flex',
         textDecoration: 'none',
+        fontFamily: theme.typography.fontFamily,
     }),
     listItemStyles: Object.freeze({
         wordWrap: 'anywhere',
+        fontFamily: theme.typography.fontFamily,
     }),
     listHeaderStyles: Object.freeze({
         backgroundColor: COLOURS.WHITE,
@@ -104,6 +108,7 @@ function NonVectorTileFilterSidebarFacilitiesTab({
     returnToSearchTab,
     filterText,
     updateFilterText,
+    classes,
 }) {
     const [loginRequiredDialogIsOpen, setLoginRequiredDialogIsOpen] = useState(
         false,
@@ -131,14 +136,14 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                 <div className="control-panel__body">
                     <Typography
                         variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
+                        className={classes.noResultsTextStyles}
                         align="center"
                     >
                         An error prevented fetching facilities
                     </Typography>
                     <Typography
                         variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
+                        className={classes.noResultsTextStyles}
                         align="center"
                     >
                         <Button
@@ -165,14 +170,14 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                 <div className="control-panel__body">
                     <Typography
                         variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
+                        className={classes.noResultsTextStyles}
                         align="center"
                     >
                         No facilities to display
                     </Typography>
                     <Typography
                         variant="body1"
-                        style={facilitiesTabStyles.noResultsTextStyles}
+                        className={classes.noResultsTextStyles}
                         align="center"
                     >
                         <Button
@@ -214,12 +219,9 @@ function NonVectorTileFilterSidebarFacilitiesTab({
     );
 
     const listHeaderInsetComponent = (
-        <div
-            style={facilitiesTabStyles.listHeaderStyles}
-            className="results-height-subtract"
-        >
+        <div className={`${classes.listHeaderStyles} results-height-subtract`}>
             <Typography variant="subheading" align="center">
-                <div style={facilitiesTabStyles.titleRowStyles}>
+                <div className={classes.titleRowStyles}>
                     {headerDisplayString}
                     <FeatureFlag
                         flag={ALLOW_LARGE_DOWNLOADS}
@@ -244,7 +246,7 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                     </FeatureFlag>
                 </div>
             </Typography>
-            <div style={facilitiesTabStyles.listHeaderTextSearchStyles}>
+            <div className={classes.listHeaderTextSearchStyles}>
                 <label htmlFor={SEARCH_TERM_INPUT}>Filter results</label>
                 <ControlledTextInput
                     id={SEARCH_TERM_INPUT}
@@ -282,9 +284,7 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                                     <Divider />
                                     <ListItem
                                         key={osID}
-                                        style={
-                                            facilitiesTabStyles.listItemStyles
-                                        }
+                                        className={classes.listItemStyles}
                                     >
                                         <Link
                                             to={{
@@ -296,9 +296,7 @@ function NonVectorTileFilterSidebarFacilitiesTab({
                                                 },
                                             }}
                                             href={makeFacilityDetailLink(osID)}
-                                            style={
-                                                facilitiesTabStyles.linkStyles
-                                            }
+                                            className={classes.linkStyles}
                                         >
                                             <ListItemText
                                                 primary={`${name} - ${countryName}`}
@@ -408,4 +406,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(NonVectorTileFilterSidebarFacilitiesTab);
+)(withStyles(makeFacilitiesTabStyles)(NonVectorTileFilterSidebarFacilitiesTab));

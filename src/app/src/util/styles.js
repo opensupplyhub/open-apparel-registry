@@ -99,12 +99,21 @@ export const makeFilterStyles = theme =>
             fontSize: '18px',
             fontWeight: 700,
             color: '#000',
-            transform: 'translate(0, -8px) scale(1)',
-            paddingBottom: '0.5rem',
+            padding: '0.5rem 0',
+            display: 'flex',
+            alignContent: 'center',
         }),
         selectStyle: Object.freeze({
             fontFamily: theme.typography.fontFamily,
         }),
+        searchInput: Object.freeze({
+            backgroundColor: '#fff',
+            paddingLeft: 0,
+            borderRadius: 0,
+        }),
+        notchedOutline: {
+            borderRadius: 0,
+        },
     });
 
 export const claimAFacilityFormStyles = Object.freeze({

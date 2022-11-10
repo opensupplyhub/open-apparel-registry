@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { func, string, bool } from 'prop-types';
 import { connect } from 'react-redux';
-import IconButton from '@material-ui/core/IconButton';
-import Popover from '@material-ui/core/Popover';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import InfoIcon from '@material-ui/icons/Info';
 
 import ShowOnly from '../ShowOnly';
 import StyledSelect from './StyledSelect';
+import ContributorTooltip from './ContributorTooltip';
 
 import {
     contributorOptionsPropType,
@@ -20,25 +18,6 @@ import {
     updateListFilter,
     updateCombineContributorsFilterOption,
 } from '../../actions/filters';
-
-const styles = {
-    popover: {
-        fontSize: '15px',
-        padding: '10px',
-        lineHeight: '22px',
-        maxWidth: '320px',
-        margin: '0 14px',
-    },
-    popoverLineItem: {
-        marginBottom: '6px',
-    },
-    popoverHeading: {
-        fontWeight: 'bold',
-    },
-    icon: {
-        color: 'rgba(0, 0, 0, 0.38)',
-    },
-};
 
 const CONTRIBUTORS = 'CONTRIBUTORS';
 const LISTS = 'LISTS';
@@ -58,67 +37,18 @@ function ContributorFilter({
     updateList,
     contributorListBottomMargin,
 }) {
-    const [
-        contributorPopoverAnchorEl,
-        setContributorPopoverAnchorEl,
-    ] = useState(null);
-
-    const contributorInfoPopoverContent = (
-        <div style={styles.popover}>
-            <p style={styles.popoverHeading}>
-                Do you want to see only facilities which these contributors
-                share? If so, tick this box.
-            </p>
-            <p>
-                There are now two ways to filter a Contributor search on OS Hub:
-            </p>
-            <ol>
-                <li style={styles.popoverLineItem}>
-                    You can search for all the facilities of multiple
-                    contributors. This means that the results would show all of
-                    the facilities contributed to OS Hub by, for example, BRAC
-                    University or Clarks. Some facilities might have been
-                    contributed by BRAC University but not by Clarks, or
-                    vice-versa.
-                </li>
-                <li style={styles.popoverLineItem}>
-                    By checking the “Show only shared facilities” box, this
-                    adjusts the search logic to “AND”. This means that your
-                    results will show only facilities contributed by BOTH BRAC
-                    University AND Clarks (as well as potentially other
-                    contributors). In this way, you can more quickly filter to
-                    show the specific Contributor overlap you are interested in.
-                </li>
-            </ol>
-        </div>
-    );
-
     return (
-        <div>
+        <div className="form__field">
             <ShowOnly when={!embed}>
                 <StyledSelect
-                    label={
-                        <div style={{ display: 'flex' }}>
-                            <p>Data Contributor</p>
-                            <ShowOnly
-                                when={contributors && contributors.length > 1}
-                            >
-                                <IconButton
-                                    onClick={
-                                        // eslint-disable-next-line no-confusing-arrow
-                                        e =>
-                                            contributorPopoverAnchorEl
-                                                ? null
-                                                : setContributorPopoverAnchorEl(
-                                                      e.currentTarget,
-                                                  )
-                                    }
-                                >
-                                    <InfoIcon />
-                                </IconButton>
-                            </ShowOnly>
-                        </div>
-                    }
+                    label="Data Contributor"
+                    renderIcon={() => (
+                        <ShowOnly
+                            when={contributors && contributors.length > 1}
+                        >
+                            <ContributorTooltip />
+                        </ShowOnly>
+                    )}
                     name={CONTRIBUTORS}
                     options={contributorOptions || []}
                     value={contributors}
@@ -138,23 +68,6 @@ function ContributorFilter({
                             }
                             label="Show only shared facilities"
                         />
-
-                        <Popover
-                            id="contributor-info-popover"
-                            anchorOrigin={{
-                                vertical: 'center',
-                                horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                                vertical: 'center',
-                                horizontal: 'left',
-                            }}
-                            open={!!contributorPopoverAnchorEl}
-                            anchorEl={contributorPopoverAnchorEl}
-                            onClick={() => setContributorPopoverAnchorEl(null)}
-                        >
-                            {contributorInfoPopoverContent}
-                        </Popover>
                     </div>
                 </ShowOnly>
             </ShowOnly>

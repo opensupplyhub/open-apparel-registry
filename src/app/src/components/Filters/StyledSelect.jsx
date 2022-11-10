@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { string, bool } from 'prop-types';
+import { string, bool, func } from 'prop-types';
 import InputLabel from '@material-ui/core/InputLabel';
 import ReactSelect from 'react-select';
 import { withStyles } from '@material-ui/core/styles';
@@ -43,7 +43,15 @@ const makeSelectFilterStyles = color => {
     };
 };
 
-function StyledSelect({ name, label, color, creatable, classes, ...rest }) {
+function StyledSelect({
+    name,
+    label,
+    color,
+    creatable,
+    classes,
+    renderIcon,
+    ...rest
+}) {
     const selectFilterStyles = makeSelectFilterStyles(color);
     return (
         <>
@@ -52,7 +60,7 @@ function StyledSelect({ name, label, color, creatable, classes, ...rest }) {
                 htmlFor={name}
                 className={classes.inputLabelStyle}
             >
-                {label}
+                {label} {renderIcon()}
             </InputLabel>
             {creatable ? (
                 <CreatableInputOnly
@@ -96,12 +104,14 @@ function StyledSelect({ name, label, color, creatable, classes, ...rest }) {
 
 StyledSelect.defaultProps = {
     creatable: false,
+    renderIcon: () => {},
 };
 
 StyledSelect.propTypes = {
     name: string.isRequired,
     label: string.isRequired,
     creatable: bool,
+    renderIcon: func,
 };
 
 function mapStateToProps({ embeddedMap: { config } }) {
