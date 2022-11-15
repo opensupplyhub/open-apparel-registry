@@ -110,10 +110,14 @@ export const makeFilterStyles = theme =>
             backgroundColor: '#fff',
             paddingLeft: 0,
             borderRadius: 0,
+            paddingRight: 0,
         }),
-        notchedOutline: {
+        notchedOutline: Object.freeze({
             borderRadius: 0,
-        },
+        }),
+        searchAdornment: Object.freeze({
+            padding: 0,
+        }),
     });
 
 export const claimAFacilityFormStyles = Object.freeze({

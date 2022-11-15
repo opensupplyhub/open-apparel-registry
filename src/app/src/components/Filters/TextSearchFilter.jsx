@@ -51,7 +51,10 @@ function TextSearchFilter({
                 }}
                 InputProps={{
                     endAdornment: (
-                        <InputAdornment position="end">
+                        <InputAdornment
+                            position="end"
+                            className={classes.searchAdornment}
+                        >
                             <IconButton
                                 aria-label={searchLabel}
                                 onClick={searchForFacilities}
