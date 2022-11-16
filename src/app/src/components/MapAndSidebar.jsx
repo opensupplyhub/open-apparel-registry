@@ -17,7 +17,7 @@ function MapAndSidebar() {
         <Fragment>
             <Grid container className="map-sidebar-container">
                 <Route component={SidebarWithErrorBoundary} />
-                <Hidden mdDown>
+                <Hidden only="xs">
                     <Map height={mapHeight} />
                 </Hidden>
             </Grid>

@@ -18,6 +18,7 @@ const downloadFacilitiesStyles = theme =>
         listHeaderButtonStyles: Object.freeze({
             height: '45px',
             margin: '5px 0',
+            marginRight: '1em',
             backgroundColor: theme.palette.action.main,
             color: theme.palette.getContrastText(theme.palette.action.main),
             fontSize: '16px',

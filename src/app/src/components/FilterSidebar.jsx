@@ -50,6 +50,12 @@ const filterSidebarStyles = theme =>
         header: {
             padding: '24px',
             fontFamily: theme.typography.fontFamily,
+            [theme.breakpoints.up('sm')]: {
+                padding: '12px 24px',
+            },
+            [theme.breakpoints.up('md')]: {
+                padding: '24px',
+            },
         },
         headerText: {
             fontWeight: 900,
@@ -88,6 +94,17 @@ const filterSidebarStyles = theme =>
             borderStyle: 'solid',
             borderWidth: 1,
             fontWeight: 800,
+        },
+        searchContainer: {
+            minWidth: '200px',
+        },
+        resultsContainer: {
+            [theme.breakpoints.up('sm')]: {
+                minWidth: '250px',
+            },
+            [theme.breakpoints.up('md')]: {
+                minWidth: '320px',
+            },
         },
     });
 
@@ -159,7 +176,7 @@ class FilterSidebar extends Component {
 
         return (
             <>
-                <Hidden lgUp>
+                <Hidden smUp>
                     <Grid
                         item
                         style={{
@@ -278,13 +295,18 @@ class FilterSidebar extends Component {
                         )}
                     </Grid>
                 </Hidden>
-                <Hidden mdDown>
-                    <Grid item md={3}>
+                <Hidden only="xs">
+                    <Grid item sm={3} className={classes.searchContainer}>
                         <FilterSidebarSearchTab />
                     </Grid>
                 </Hidden>
-                <Hidden mdDown>
-                    <Grid item sm={12} md={4}>
+                <Hidden only="xs">
+                    <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                        className={classes.resultsContainer}
+                    >
                         {renderHeader({})}
                         <FeatureFlag
                             flag={VECTOR_TILE}

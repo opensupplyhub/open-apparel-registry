@@ -11,7 +11,7 @@ import { OARColor } from '../../util/constants';
 import ArrowDropDownIcon from '../ArrowDropDownIcon';
 import CreatableInputOnly from '../CreatableInputOnly';
 
-const makeSelectFilterStyles = color => {
+const makeSelectFilterStyles = (color, windowWidth) => {
     const themeColor = color || OARColor;
     return {
         multiValue: provided => ({
@@ -40,6 +40,11 @@ const makeSelectFilterStyles = color => {
                 },
             };
         },
+        clearIndicator: provided => ({
+            ...provided,
+            padding:
+                windowWidth > 699 && windowWidth < 900 ? 0 : provided.padding,
+        }),
     };
 };
 
@@ -50,9 +55,10 @@ function StyledSelect({
     creatable,
     classes,
     renderIcon,
+    windowWidth,
     ...rest
 }) {
-    const selectFilterStyles = makeSelectFilterStyles(color);
+    const selectFilterStyles = makeSelectFilterStyles(color, windowWidth);
     return (
         <>
             <InputLabel
@@ -114,9 +120,15 @@ StyledSelect.propTypes = {
     renderIcon: func,
 };
 
-function mapStateToProps({ embeddedMap: { config } }) {
+function mapStateToProps({
+    embeddedMap: { config },
+    ui: {
+        window: { innerWidth },
+    },
+}) {
     return {
         color: config?.color,
+        windowWidth: innerWidth,
     };
 }
 

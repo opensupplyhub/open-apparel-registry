@@ -33,8 +33,8 @@ class Map extends Component {
         return (
             <Grid
                 item
-                sm={12}
-                md={7}
+                xs={12}
+                sm={7}
                 className="map-container"
                 style={this.props.height ? { height: this.props.height } : {}}
             >

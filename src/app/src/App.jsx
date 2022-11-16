@@ -30,6 +30,15 @@ function App({
     const theme = useMemo(
         () =>
             createMuiTheme({
+                breakpoints: {
+                    values: {
+                        xs: 0,
+                        sm: 700,
+                        md: 900,
+                        lg: 1280,
+                        xl: 1920,
+                    },
+                },
                 typography: {
                     fontFamily: config.font,
                 },
