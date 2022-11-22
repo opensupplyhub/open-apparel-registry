@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Add subscribe link to footer [#2300](https://github.com/open-apparel-registry/open-apparel-registry/pull/2300)
+- Add a banner soliciting donations untile the end of 2022 [#2318](https://github.com/open-apparel-registry/open-apparel-registry/pull/2318)
 
 ### Changed
 - Update Youtube link [#2305](https://github.com/open-apparel-registry/open-apparel-registry/pull/2305)

@@ -1,0 +1,7 @@
+a.banner-link,
+a.banner-link:link,
+a.banner-link:hover,
+a.banner-link:visited,
+a.banner-link:active {
+    color: #FCCF3F;
+}
