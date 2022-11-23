@@ -283,7 +283,7 @@ function FilterSidebarSearchTab({
                         <CountryNameFilter />
                     </Grid>
                 </Grid>
-                <ShowOnly when={!embed || embedExtendedFields.length}>
+                <ShowOnly when={!embed || embedExtendedFields?.length}>
                     {expandButton}
                 </ShowOnly>
                 <div className={classes.buttonGroup}>

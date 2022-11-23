@@ -4,7 +4,15 @@ import PropTypes from 'prop-types';
 
 class Button extends PureComponent {
     render() {
-        const { onClick, text, Icon, disabled, style } = this.props;
+        const {
+            onClick,
+            text,
+            Icon,
+            disabled,
+            style,
+            className,
+            color,
+        } = this.props;
 
         return (
             <MaterialButton
@@ -19,9 +27,10 @@ class Button extends PureComponent {
                 }}
                 variant="contained"
                 color="primary"
+                className={className}
             >
                 <div style={{ display: 'flex' }}>
-                    {Icon && <Icon />}
+                    {Icon && <Icon color={color} />}
                     {text}
                 </div>
             </MaterialButton>

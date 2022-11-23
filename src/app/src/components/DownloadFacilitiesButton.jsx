@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Tooltip from '@material-ui/core/Tooltip';
+import { withStyles, withTheme } from '@material-ui/core/styles';
 
 import { toast } from 'react-toastify';
 
@@ -12,16 +13,35 @@ import downloadFacilities from '../actions/downloadFacilities';
 import DownloadIcon from './DownloadIcon';
 import ArrowDropDownIcon from './ArrowDropDownIcon';
 
-const downloadFacilitiesStyles = Object.freeze({
-    listHeaderButtonStyles: Object.freeze({
-        height: '45px',
-        margin: '5px 0',
-    }),
-    buttonText: Object.freeze({
-        marginLeft: '0.2rem',
-        marginRight: '0.6rem',
-    }),
-});
+const downloadFacilitiesStyles = theme =>
+    Object.freeze({
+        listHeaderButtonStyles: Object.freeze({
+            height: '45px',
+            margin: '5px 0',
+            marginRight: '1em',
+            backgroundColor: theme.palette.action.main,
+            color: theme.palette.getContrastText(theme.palette.action.main),
+            fontSize: '16px',
+            fontWeight: 900,
+            lineHeight: '20px',
+            '&:hover': {
+                backgroundColor: theme.palette.action.dark,
+            },
+        }),
+        buttonText: Object.freeze({
+            marginLeft: '0.2rem',
+            marginRight: '0.6rem',
+        }),
+        downloadTooltip: {
+            fontSize: '0.875rem',
+            fontFamily: theme.typography.fontFamily,
+        },
+        buttonContent: {
+            display: 'flex',
+            alignItems: 'center',
+            textTransform: 'none',
+        },
+    });
 
 function DownloadFacilitiesButton({
     /* from state */
@@ -33,9 +53,15 @@ function DownloadFacilitiesButton({
     allowLargeDownloads,
     disabled,
     setLoginRequiredDialogIsOpen,
+    classes,
+    theme,
 }) {
     const [requestedDownload, setRequestedDownload] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const actionContrastText = theme.palette.getContrastText(
+        theme.palette.action.main,
+    );
 
     useEffect(() => {
         if (requestedDownload && logDownloadError) {
@@ -67,7 +93,7 @@ function DownloadFacilitiesButton({
                 allowLargeDownloads ? (
                     ''
                 ) : (
-                    <p style={{ fontSize: '0.875rem' }}>
+                    <p className={classes.downloadTooltip}>
                         Downloads are supported only for searches resulting in
                         10,000 facilities or less.
                     </p>
@@ -79,32 +105,26 @@ function DownloadFacilitiesButton({
                 <Button
                     disabled={disabled}
                     variant="outlined"
-                    styles={downloadFacilitiesStyles.listHeaderButtonStyles}
+                    className={classes.listHeaderButtonStyles}
                     aria-owns={anchorEl ? 'download-menu' : undefined}
                     aria-haspopup="true"
                     onClick={handleClick}
-                    style={{
-                        backgroundColor: '#FFCF3F',
-                        fontSize: '16px',
-                        fontWeight: 900,
-                        lineHeight: '20px',
-                    }}
                 >
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            textTransform: 'none',
-                        }}
-                    >
+                    <div className={classes.buttonContent}>
                         <DownloadIcon
-                            color={disabled ? 'rgba(0, 0, 0, 0.26)' : '#1C1B1F'}
+                            color={
+                                disabled
+                                    ? 'rgba(0, 0, 0, 0.26)'
+                                    : actionContrastText
+                            }
                         />
-                        <span style={downloadFacilitiesStyles.buttonText}>
-                            Download
-                        </span>
+                        <span className={classes.buttonText}>Download</span>
                         <ArrowDropDownIcon
-                            color={disabled ? 'rgba(0, 0, 0, 0.26)' : '#1C1B1F'}
+                            color={
+                                disabled
+                                    ? 'rgba(0, 0, 0, 0.26)'
+                                    : actionContrastText
+                            }
                         />
                     </div>
                 </Button>
@@ -152,4 +172,6 @@ function mapStateToProps({
     };
 }
 
-export default connect(mapStateToProps)(DownloadFacilitiesButton);
+export default connect(mapStateToProps)(
+    withTheme()(withStyles(downloadFacilitiesStyles)(DownloadFacilitiesButton)),
+);

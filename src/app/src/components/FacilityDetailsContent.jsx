@@ -82,6 +82,7 @@ const detailsStyles = theme =>
         link: {
             color: theme.palette.primary.main,
             paddingLeft: theme.spacing.unit * 2,
+            fontFamily: theme.typography.fontFamily,
         },
     });
 

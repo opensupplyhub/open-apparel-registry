@@ -9,6 +9,7 @@ import {
     Tab,
     Tabs,
     withStyles,
+    withTheme,
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CloseIcon from '@material-ui/icons/Close';
@@ -46,11 +47,65 @@ import FacilitiesIcon from './FacilitiesIcon';
 
 const filterSidebarStyles = theme =>
     Object.freeze({
-        searchTab: Object.freeze({
-            '*': {
-                fontFamily: theme.typography.fontFamily,
+        header: {
+            padding: '24px',
+            fontFamily: theme.typography.fontFamily,
+            [theme.breakpoints.up('sm')]: {
+                padding: '12px 24px',
             },
-        }),
+            [theme.breakpoints.up('md')]: {
+                padding: '24px',
+            },
+        },
+        headerText: {
+            fontWeight: 900,
+            fontSize: '44px',
+            margin: 0,
+            lineHeight: '48px',
+            fontFamily: theme.typography.fontFamily,
+        },
+        resultsSpan: { fontWeight: 800 },
+        filterDrawer: {
+            backgroundColor: '#fff',
+            height: '100%',
+        },
+        filterDrawerContents: {
+            alignItems: 'center',
+            paddingLeft: '1em',
+            paddingRight: '1em',
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
+        filterDrawerHeader: {
+            fontFamily: theme.typography.fontFamily,
+        },
+        filterButton: {
+            backgroundColor: theme.palette.action.main,
+            '&:hover': {
+                backgroundColor: theme.palette.action.dark,
+            },
+            color: theme.palette.secondary.contrastText,
+            fontWeight: 900,
+        },
+        tab: {
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.secondary.contrastText,
+            borderColor: '#000',
+            borderStyle: 'solid',
+            borderWidth: 1,
+            fontWeight: 800,
+        },
+        searchContainer: {
+            minWidth: '200px',
+        },
+        resultsContainer: {
+            [theme.breakpoints.up('sm')]: {
+                minWidth: '250px',
+            },
+            [theme.breakpoints.up('md')]: {
+                minWidth: '320px',
+            },
+        },
     });
 
 class FilterSidebar extends Component {
@@ -92,7 +147,28 @@ class FilterSidebar extends Component {
     }
 
     render() {
-        const { fetchingFeatureFlags } = this.props;
+        const { fetchingFeatureFlags, classes, theme } = this.props;
+
+        const actionContrastText = theme.palette.getContrastText(
+            theme.palette.action.main,
+        );
+        const tabContrastText = theme.palette.secondary.contrastText;
+
+        const renderHeader = ({ multiLine }) =>
+            this.props.facilitiesCount > 0 && (
+                <div className={`${classes.header} results-height-subtract`}>
+                    <h1 className={classes.headerText}>
+                        <FacilityIcon /> Facilities
+                    </h1>
+                    {multiLine ? (
+                        <span className={classes.resultsSpan}>
+                            {`${this.props.facilitiesCount} results`}
+                        </span>
+                    ) : (
+                        `${this.props.facilitiesCount} results`
+                    )}
+                </div>
+            );
 
         if (fetchingFeatureFlags) {
             return <CircularProgress />;
@@ -100,7 +176,7 @@ class FilterSidebar extends Component {
 
         return (
             <>
-                <Hidden lgUp>
+                <Hidden smUp>
                     <Grid
                         item
                         style={{
@@ -128,22 +204,30 @@ class FilterSidebar extends Component {
                                             alignItems: 'center',
                                         }}
                                     >
-                                        <FacilitiesIcon />
+                                        <FacilitiesIcon
+                                            color={
+                                                this.props
+                                                    .activeFilterSidebarTab ===
+                                                    0 && tabContrastText
+                                            }
+                                        />
                                         LIST
                                     </div>
                                 }
-                                style={{
-                                    backgroundColor:
-                                        this.props.activeFilterSidebarTab === 0
-                                            ? '#FFA6D0'
-                                            : '#fff',
-                                    borderColor: '#000',
-                                    borderStyle: 'solid',
-                                    borderWidth: 1,
-                                    // omit shared border
-                                    borderRightWidth: 0,
-                                    fontWeight: 800,
-                                }}
+                                className={classes.tab}
+                                style={
+                                    this.props.activeFilterSidebarTab === 0
+                                        ? {
+                                              // omit shared border
+                                              borderRightWidth: 0,
+                                          }
+                                        : {
+                                              backgroundColor: '#fff',
+                                              color: '#000',
+                                              // omit shared border
+                                              borderRightWidth: 0,
+                                          }
+                                }
                             />
                             <Tab
                                 label={
@@ -153,59 +237,41 @@ class FilterSidebar extends Component {
                                             alignItems: 'center',
                                         }}
                                     >
-                                        <MapIcon />
+                                        <MapIcon
+                                            color={
+                                                this.props
+                                                    .activeFilterSidebarTab ===
+                                                    1 && tabContrastText
+                                            }
+                                        />
                                         MAP
                                     </div>
                                 }
-                                style={{
-                                    backgroundColor:
-                                        this.props.activeFilterSidebarTab === 1
-                                            ? '#FFA6D0'
-                                            : '#fff',
-                                    borderColor: '#000',
-                                    borderStyle: 'solid',
-                                    borderWidth: 1,
-                                    fontWeight: 800,
-                                }}
+                                className={classes.tab}
+                                style={
+                                    this.props.activeFilterSidebarTab === 1
+                                        ? {}
+                                        : {
+                                              backgroundColor: '#fff',
+                                              color: '#000',
+                                          }
+                                }
                             />
                             <div style={{ padding: '10px' }} />
                             <Button
                                 Icon={FilterIcon}
+                                color={actionContrastText}
                                 onClick={() =>
                                     this.props.toggleFilterModal(true)
                                 }
-                                style={{
-                                    backgroundColor: '#FFCF3F',
-                                    color: '#000',
-                                    fontWeight: 900,
-                                }}
+                                className={classes.filterButton}
                                 text="FILTERS"
                             />
                         </Tabs>
                         {this.props.activeFilterSidebarTab === 0 && (
                             <Grid item sm={12}>
-                                {this.props.facilitiesCount > 0 && (
-                                    <div
-                                        className="results-height-subtract"
-                                        style={{
-                                            padding: '24px',
-                                        }}
-                                    >
-                                        <h1
-                                            style={{
-                                                fontWeight: 900,
-                                                fontSize: '44px',
-                                                margin: 0,
-                                                lineHeight: '48px',
-                                            }}
-                                        >
-                                            <FacilityIcon /> Facilities
-                                        </h1>
-                                        <span style={{ fontWeight: 800 }}>
-                                            {`${this.props.facilitiesCount} results`}
-                                        </span>
-                                    </div>
-                                )}
+                                {renderHeader({ multiLine: true })}
+
                                 <FeatureFlag
                                     flag={VECTOR_TILE}
                                     alternative={
@@ -229,33 +295,19 @@ class FilterSidebar extends Component {
                         )}
                     </Grid>
                 </Hidden>
-                <Hidden mdDown>
-                    <Grid item md={3}>
+                <Hidden only="xs">
+                    <Grid item sm={3} className={classes.searchContainer}>
                         <FilterSidebarSearchTab />
                     </Grid>
                 </Hidden>
-                <Hidden mdDown>
-                    <Grid item sm={12} md={4}>
-                        {this.props.facilitiesCount > 0 && (
-                            <div
-                                className="results-height-subtract"
-                                style={{
-                                    padding: '24px',
-                                }}
-                            >
-                                <h1
-                                    style={{
-                                        fontWeight: 900,
-                                        fontSize: '44px',
-                                        margin: 0,
-                                        lineHeight: '48px',
-                                    }}
-                                >
-                                    <FacilityIcon /> Facilities
-                                </h1>
-                                {`${this.props.facilitiesCount} results`}
-                            </div>
-                        )}
+                <Hidden only="xs">
+                    <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                        className={classes.resultsContainer}
+                    >
+                        {renderHeader({})}
                         <FeatureFlag
                             flag={VECTOR_TILE}
                             alternative={
@@ -270,22 +322,11 @@ class FilterSidebar extends Component {
                     open={this.props.filterModalOpen}
                     onClose={() => this.props.toggleFilterModal(false)}
                 >
-                    <div
-                        style={{
-                            backgroundColor: '#fff',
-                            height: '100%',
-                        }}
-                    >
-                        <div
-                            style={{
-                                alignItems: 'center',
-                                paddingLeft: '1em',
-                                paddingRight: '1em',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <h1>Filters</h1>
+                    <div className={classes.filterDrawer}>
+                        <div className={classes.filterDrawerContents}>
+                            <h1 className={classes.filterDrawerHeader}>
+                                Filters
+                            </h1>
                             <IconButton
                                 onClick={() =>
                                     this.props.toggleFilterModal(false)
@@ -356,6 +397,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default withStyles(filterSidebarStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(FilterSidebar),
+export default withTheme()(
+    withStyles(filterSidebarStyles)(
+        connect(mapStateToProps, mapDispatchToProps)(FilterSidebar),
+    ),
 );

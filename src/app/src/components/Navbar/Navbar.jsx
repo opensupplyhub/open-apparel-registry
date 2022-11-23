@@ -5,6 +5,7 @@ import '../../styles/css/header.scss';
 import { MobileNavbarItems, NavbarItems } from '../../util/constants';
 import Logo from './Logo';
 import BurgerButton from './BurgerButton';
+import NavbarQ42022Banner from './NavbarQ42022Banner';
 import GoogleTranslateBar from './GoogleTranslateBar';
 import MenuClickHandlerContext from './MenuClickHandlerContext';
 
@@ -21,10 +22,18 @@ export default function Navbar() {
         const handleMediaChange = e => setMobileMode(e.matches);
         const mediaQueryList = window.matchMedia(breakpoint);
 
-        mediaQueryList.addEventListener('change', handleMediaChange);
+        if (typeof mediaQueryList.addEventListener === 'function') {
+            mediaQueryList.addEventListener('change', handleMediaChange);
+        } else {
+            mediaQueryList.addListener(handleMediaChange);
+        }
 
         return () => {
-            mediaQueryList.removeEventListener('change', handleMediaChange);
+            if (typeof mediaQueryList.addEventListener === 'function') {
+                mediaQueryList.removeEventListener('change', handleMediaChange);
+            } else {
+                mediaQueryList.removeListener(handleMediaChange);
+            }
         };
     }, []);
 
@@ -41,6 +50,30 @@ export default function Navbar() {
             setShowMobileMenu(false);
         }
     }, [mobileMode]);
+
+    useEffect(() => {
+        if (activeSubmenu) {
+            const closeHeaderOnOutsideClick = event => {
+                const headerElement = document.getElementById('header');
+                const headerWasClicked = headerElement.contains(event.target);
+
+                if (!headerWasClicked) {
+                    setActiveSubmenu(null);
+                }
+            };
+
+            document.addEventListener('click', closeHeaderOnOutsideClick);
+
+            return () => {
+                document.removeEventListener(
+                    'click',
+                    closeHeaderOnOutsideClick,
+                );
+            };
+        }
+
+        return () => {};
+    }, [activeSubmenu]);
 
     const {
         renderNavItem,
@@ -122,6 +155,7 @@ export default function Navbar() {
 
     return (
         <>
+            <NavbarQ42022Banner />
             <GoogleTranslateBar />
             <MenuClickHandlerContext.Provider value={createMenuClickHandler}>
                 {Header}

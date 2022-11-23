@@ -292,7 +292,7 @@ function EmbeddedMapFieldsConfig({
                             Choose which fields to display on your map (the
                             number of fields you are able to display corresponds
                             to your Embedded Map package). Facility name,
-                            address, and OS Hub ID will always be included.
+                            address, and OS ID will always be included.
                         </Typography>
                         {errors?.embed_fields && (
                             <Typography style={{ color: 'red' }}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { string, bool } from 'prop-types';
+import { string, bool, func } from 'prop-types';
 import InputLabel from '@material-ui/core/InputLabel';
 import ReactSelect from 'react-select';
 import { withStyles } from '@material-ui/core/styles';
@@ -11,7 +11,7 @@ import { OARColor } from '../../util/constants';
 import ArrowDropDownIcon from '../ArrowDropDownIcon';
 import CreatableInputOnly from '../CreatableInputOnly';
 
-const makeSelectFilterStyles = color => {
+const makeSelectFilterStyles = (color, windowWidth) => {
     const themeColor = color || OARColor;
     return {
         multiValue: provided => ({
@@ -40,11 +40,25 @@ const makeSelectFilterStyles = color => {
                 },
             };
         },
+        clearIndicator: provided => ({
+            ...provided,
+            padding:
+                windowWidth > 699 && windowWidth < 900 ? 0 : provided.padding,
+        }),
     };
 };
 
-function StyledSelect({ name, label, color, creatable, classes, ...rest }) {
-    const selectFilterStyles = makeSelectFilterStyles(color);
+function StyledSelect({
+    name,
+    label,
+    color,
+    creatable,
+    classes,
+    renderIcon,
+    windowWidth,
+    ...rest
+}) {
+    const selectFilterStyles = makeSelectFilterStyles(color, windowWidth);
     return (
         <>
             <InputLabel
@@ -52,7 +66,7 @@ function StyledSelect({ name, label, color, creatable, classes, ...rest }) {
                 htmlFor={name}
                 className={classes.inputLabelStyle}
             >
-                {label}
+                {label} {renderIcon()}
             </InputLabel>
             {creatable ? (
                 <CreatableInputOnly
@@ -96,17 +110,25 @@ function StyledSelect({ name, label, color, creatable, classes, ...rest }) {
 
 StyledSelect.defaultProps = {
     creatable: false,
+    renderIcon: () => {},
 };
 
 StyledSelect.propTypes = {
     name: string.isRequired,
     label: string.isRequired,
     creatable: bool,
+    renderIcon: func,
 };
 
-function mapStateToProps({ embeddedMap: { config } }) {
+function mapStateToProps({
+    embeddedMap: { config },
+    ui: {
+        window: { innerWidth },
+    },
+}) {
     return {
         color: config?.color,
+        windowWidth: innerWidth,
     };
 }
 

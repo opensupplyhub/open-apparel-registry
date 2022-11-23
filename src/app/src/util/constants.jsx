@@ -588,6 +588,8 @@ export const PPE_FIELD_NAMES = Object.freeze([
 export const OARFont = "'Darker Grotesque',sans-serif";
 export const OARColor = '#8428FA';
 export const SelectedMarkerColor = '#FFCF3F';
+export const OARActionColor = '#FFCF3F';
+export const OARSecondaryColor = '#FFA6D0';
 
 // A CSS size value that is used to set a lower bound on the iframe height
 // when the width is set to 100%
@@ -611,12 +613,12 @@ export const NavbarItems = [
                     label: 'What is OS Hub?',
                     items: [
                         {
-                            type: 'link',
+                            type: 'button',
                             label: 'Introduction',
                             href: InfoLink,
                         },
                         {
-                            type: 'link',
+                            type: 'button',
                             label: 'FAQs',
                             href: `${InfoLink}/${InfoPaths.faqs}`,
                         },
@@ -813,15 +815,19 @@ export const EmbeddedMapInfoLink = `${InfoLink}/${InfoPaths.embeddedMap}`;
 
 export const FooterLinks = [
     { label: 'Donate', href: DONATE_LINK },
-    { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },
+    {
+        label: 'Subscribe',
+        href: 'https://share.hsforms.com/1bQwXClZUTjihXk3wt1SX2Abujql',
+    },
     { label: 'FAQs', href: `${InfoLink}/${InfoPaths.faqs}` },
+    { label: 'Privacy Policy', href: `${InfoLink}/${InfoPaths.privacyPolicy}` },
+    { label: 'Media Hub', href: `${InfoLink}/${InfoPaths.mediaHub}` },
     {
         label: 'Terms of Service',
         href: `${InfoLink}/${InfoPaths.termsOfService}`,
     },
-    { label: 'Media Hub', href: `${InfoLink}/${InfoPaths.mediaHub}` },
-    { label: 'Contact Us', href: `${InfoLink}/${InfoPaths.contactUs}` },
     { label: 'Reporting Line', href: 'https://opensupplyhub.allvoices.co/' },
+    { label: 'Contact Us', href: `${InfoLink}/${InfoPaths.contactUs}` },
 ];
 
 export const SocialMediaLinks = [
@@ -877,7 +883,7 @@ export const SocialMediaLinks = [
                 />
             </svg>
         ),
-        href: 'https://www.youtube.com/channel/UCZ8Qn5HvFHX453JfI4dhYpA',
+        href: 'https://www.youtube.com/channel/UCy-66mcBwX2wlUM6kvKUrGw',
     },
     {
         label: 'Github',
