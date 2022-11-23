@@ -5,6 +5,7 @@ import '../../styles/css/header.scss';
 import { MobileNavbarItems, NavbarItems } from '../../util/constants';
 import Logo from './Logo';
 import BurgerButton from './BurgerButton';
+import NavbarQ42022Banner from './NavbarQ42022Banner';
 import GoogleTranslateBar from './GoogleTranslateBar';
 import MenuClickHandlerContext from './MenuClickHandlerContext';
 
@@ -154,6 +155,7 @@ export default function Navbar() {
 
     return (
         <>
+            <NavbarQ42022Banner />
             <GoogleTranslateBar />
             <MenuClickHandlerContext.Provider value={createMenuClickHandler}>
                 {Header}
