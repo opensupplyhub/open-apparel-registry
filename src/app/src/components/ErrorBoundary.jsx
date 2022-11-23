@@ -41,8 +41,8 @@ class ErrorBoundary extends Component {
                 <div style={styles.errorContainer}>
                     <h2>Whoops! Something went wrong :(</h2>
                     <p>
-                        Weve recorded the issue and are working on a fix. If
-                        this problem persists, contact support and send along
+                        We&apos;ve recorded the issue and are working on a fix.
+                        If this problem persists, contact support and send along
                         this text:
                     </p>
                     <div style={styles.hash} className="notranslate">

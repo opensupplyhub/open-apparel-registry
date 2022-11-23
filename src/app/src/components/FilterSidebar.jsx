@@ -23,6 +23,7 @@ import FilterSidebarSearchTab from './FilterSidebarSearchTab';
 import FilterSidebarFacilitiesTab from './FilterSidebarFacilitiesTab';
 import MapWithHookedHeight from './MapWithHookedHeight';
 import NonVectorTileFilterSidebarFacilitiesTab from './NonVectorTileFilterSidebarFacilitiesTab';
+import SimpleErrorBoundary from './SimpleErrorBoundary';
 
 import { VECTOR_TILE } from '../util/constants';
 
@@ -270,16 +271,17 @@ class FilterSidebar extends Component {
                         </Tabs>
                         {this.props.activeFilterSidebarTab === 0 && (
                             <Grid item sm={12}>
-                                {renderHeader({ multiLine: true })}
-
-                                <FeatureFlag
-                                    flag={VECTOR_TILE}
-                                    alternative={
-                                        <NonVectorTileFilterSidebarFacilitiesTab />
-                                    }
-                                >
-                                    <FilterSidebarFacilitiesTab />
-                                </FeatureFlag>
+                                <SimpleErrorBoundary>
+                                    {renderHeader({ multiLine: true })}
+                                    <FeatureFlag
+                                        flag={VECTOR_TILE}
+                                        alternative={
+                                            <NonVectorTileFilterSidebarFacilitiesTab />
+                                        }
+                                    >
+                                        <FilterSidebarFacilitiesTab />
+                                    </FeatureFlag>
+                                </SimpleErrorBoundary>
                             </Grid>
                         )}
                         {this.props.activeFilterSidebarTab === 1 && (
@@ -290,14 +292,18 @@ class FilterSidebar extends Component {
                                     width: '100%',
                                 }}
                             >
-                                <MapWithHookedHeight />
+                                <SimpleErrorBoundary>
+                                    <MapWithHookedHeight />
+                                </SimpleErrorBoundary>
                             </div>
                         )}
                     </Grid>
                 </Hidden>
                 <Hidden only="xs">
                     <Grid item sm={3} className={classes.searchContainer}>
-                        <FilterSidebarSearchTab />
+                        <SimpleErrorBoundary>
+                            <FilterSidebarSearchTab />
+                        </SimpleErrorBoundary>
                     </Grid>
                 </Hidden>
                 <Hidden only="xs">
@@ -307,15 +313,17 @@ class FilterSidebar extends Component {
                         sm={4}
                         className={classes.resultsContainer}
                     >
-                        {renderHeader({})}
-                        <FeatureFlag
-                            flag={VECTOR_TILE}
-                            alternative={
-                                <NonVectorTileFilterSidebarFacilitiesTab />
-                            }
-                        >
-                            <FilterSidebarFacilitiesTab />
-                        </FeatureFlag>
+                        <SimpleErrorBoundary>
+                            {renderHeader({})}
+                            <FeatureFlag
+                                flag={VECTOR_TILE}
+                                alternative={
+                                    <NonVectorTileFilterSidebarFacilitiesTab />
+                                }
+                            >
+                                <FilterSidebarFacilitiesTab />
+                            </FeatureFlag>
+                        </SimpleErrorBoundary>
                     </Grid>
                 </Hidden>
                 <Modal
