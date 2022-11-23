@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
+import Grid from '@material-ui/core/Grid';
 
 import { facilitiesRoute, mainRoute } from '../util/constants';
 
@@ -20,6 +21,17 @@ export default class SidebarWithErrorBoundary extends Component {
     }
 
     render() {
+        if (this.state.hasError) {
+            return (
+                <Grid item xs={12} sm={7}>
+                    <h2>Whoops! Something went wrong :(</h2>
+                    <p>
+                        We&apos;ve recorded the issue and are working on a fix.
+                    </p>
+                </Grid>
+            );
+        }
+
         return (
             <Switch>
                 <Route
