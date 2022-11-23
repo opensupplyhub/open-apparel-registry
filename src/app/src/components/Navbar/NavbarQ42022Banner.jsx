@@ -2,7 +2,7 @@ import React from 'react';
 
 import '../../styles/css/navbarQ42022Banner.css';
 
-const expirationTime = new Date('Jan 1 2023 00:00:00 GMT-0000').getTime();
+const expirationTime = new Date('Jan 31 2023 00:00:00 GMT-0000').getTime();
 
 export default function NavbarQ42022Banner() {
     const isExpired = new Date().getTime() > expirationTime;
