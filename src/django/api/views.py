@@ -1905,8 +1905,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     @action(detail=False, methods=['get'])
     def count(self, request):
         """
-        Returns a count of total Facilities available in the Open Apparel
-        Registry.
+        Returns a count of total Facilities available in Open Supply Hub.
 
         ### Sample Response
             { "count": 100000 }
