@@ -289,6 +289,8 @@ class FacilityListCreateTest(APITestCase):
         response_json = json.loads(response.content)
         original_list = FacilityList.objects.get(pk=response_json['id'])
 
+        self.assertTrue(original_list.source.is_active)
+
         # Upload replacement
         response = self.post_header_only_file(replaces=response_json['id'])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -298,6 +300,12 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 2)
         self.assertEqual(new_list.replaces.id, original_list.id)
+
+        # The original list source should not be deactivated. It will be
+        # deactived after the replacement is processed
+        self.assertEqual(new_list.status, FacilityList.PENDING)
+        original_list.source.refresh_from_db()
+        self.assertTrue(original_list.source.is_active)
 
     def test_cant_replace_twice(self):
         previous_list_count = FacilityList.objects.all().count()
@@ -6523,6 +6531,14 @@ class FacilityHistoryEndpointTest(FacilityAPITestCaseBase):
              'replaces': self.list_for_confirm_or_remove.id},
             format='multipart')
         self.assertEqual(replace_response.status_code, status.HTTP_200_OK)
+        response_json = json.loads(replace_response.content)
+        new_list_id = response_json['id']
+        call_command('batch_process',
+                     *['--list-id', new_list_id, '--action', 'parse'])
+        call_command('batch_process',
+                     *['--list-id', new_list_id, '--action', 'geocode'])
+        call_command('batch_process',
+                     *['--list-id', new_list_id, '--action', 'match'])
 
         removed_match_response = self.client.get(
             self.facility_two_history_url,
