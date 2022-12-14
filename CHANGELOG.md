@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Copy edits [#2323](https://github.com/open-apparel-registry/open-apparel-registry/pull/2323)
 - Keep list active until replacement is fully matched [#2333](https://github.com/open-apparel-registry/open-apparel-registry/pull/2333)
+- Only include approved lists in the facility-lists API [#2336](https://github.com/open-apparel-registry/open-apparel-registry/pull/2336)
 
 ### Deprecated
 
