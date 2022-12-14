@@ -4249,9 +4249,11 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
 
 class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    View active Facility Lists filtered by Contributor.
+    View Facility Lists that are both active and approved filtered by
+    Contributor.
     """
-    queryset = FacilityList.objects.filter(source__is_active=True)
+    queryset = FacilityList.objects.filter(source__is_active=True,
+                                           status=FacilityList.APPROVED)
 
     @swagger_auto_schema(manual_parameters=[openapi.Parameter(
         'contributors',
