@@ -20,7 +20,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 ### Fixed
-- Handle slow-loading embed config [#2319](https://github.com/open-apparel-registry/open-apparel-registry/pull/2319)
 - Prevent infinite loading on error [#2321](https://github.com/open-apparel-registry/open-apparel-registry/pull/2321)
 
 ### Security
