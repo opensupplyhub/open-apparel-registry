@@ -536,7 +536,7 @@ export const claimAFacilityFormFields = Object.freeze({
         id: 'parent-company',
         label: 'Parent company / supplier group',
         aside: `If you cannot find the parent company / supplier group
-        in this list consider inviting them to register with the Open Supply Hub.`,
+        in this list consider inviting them to register with Open Supply Hub.`,
     }),
     website: Object.freeze({
         id: 'website',
@@ -959,7 +959,7 @@ export const facilityDetailsActions = {
     REPORT_AS_REOPENED: 'Report as Reopened',
     DISPUTE_CLAIM: 'Dispute Claim',
     CLAIM_FACILITY: 'Claim this Facility',
-    VIEW_ON_OAR: 'View on the Open Supply Hub',
+    VIEW_ON_OAR: 'View on Open Supply Hub',
 };
 
 export const EXTENDED_FIELD_TYPES = [

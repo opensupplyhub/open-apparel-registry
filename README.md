@@ -1,6 +1,6 @@
 # Open Supply Hub
 
-The Open Supply Hub (OS Hub) is a tool to identify every goods production facility worldwide.
+Open Supply Hub (OS Hub) is a tool to identify every goods production facility worldwide.
 
 - [Requirements](#requirements)
 - [Setup](#setup)
@@ -108,7 +108,7 @@ Three users in development have embedded map access by default. User c2@example.
 
 In order to access the embedded map for a user with permissions, you must go to their Settings
 page and set up the basic map configuration, including height and width. A preview will then
-be available on their page, or you can visit http://localhost:6543/?embed=1&contributors=id where 'id' is the contributor's id. 
+be available on their page, or you can visit http://localhost:6543/?embed=1&contributors=id where 'id' is the contributor's id.
 
 ### Ports
 
@@ -120,7 +120,7 @@ be available on their page, or you can visit http://localhost:6543/?embed=1&cont
 
 ### Parallel Development of OS Hub & OAR
 
-The Open Supply Hub is the successor to the Open Apparel Registry (OAR), and OS Hub
+Open Supply Hub is the successor to the Open Apparel Registry (OAR), and OS Hub
 will replace OAR when it is launched. During the beta period, both applications
 will be deployed and developed in parallel. Features development for OAR also need to
 be included in OS Hub, but there are OS Hub-specific features and related architectural

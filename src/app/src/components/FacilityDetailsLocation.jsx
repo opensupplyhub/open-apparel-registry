@@ -18,7 +18,7 @@ const getDetailsText = ({
             have access to accurate coordinates for this facility, please report
             them ${
                 embed
-                    ? 'on the Open Supply Hub.'
+                    ? 'on Open Supply Hub.'
                     : `using the "${facilityDetailsActions.SUGGEST_AN_EDIT}" link below.`
             }`;
     }

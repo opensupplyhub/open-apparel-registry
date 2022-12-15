@@ -1905,8 +1905,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
     @action(detail=False, methods=['get'])
     def count(self, request):
         """
-        Returns a count of total Facilities available in the Open Apparel
-        Registry.
+        Returns a count of total Facilities available in Open Supply Hub.
 
         ### Sample Response
             { "count": 100000 }
@@ -3022,16 +3021,6 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             contributor=contributor,
             source_type=Source.LIST,
             facility_list=new_list)
-
-        if replaces is not None:
-            replaces_source_qs = Source.objects.filter(facility_list=replaces)
-            if replaces_source_qs.exists():
-                for replaced_source in replaces_source_qs:
-                    # Use `save` on the instances rather than calling `update`
-                    # on the queryset to ensure that the custom save logic is
-                    # triggered
-                    replaced_source.is_active = False
-                    replaced_source.save()
 
         items = [FacilityListItem(row_index=idx,
                                   raw_data=row,
@@ -4260,9 +4249,11 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
 
 class ContributorFacilityListViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    View active Facility Lists filtered by Contributor.
+    View Facility Lists that are both active and approved filtered by
+    Contributor.
     """
-    queryset = FacilityList.objects.filter(source__is_active=True)
+    queryset = FacilityList.objects.filter(source__is_active=True,
+                                           status=FacilityList.APPROVED)
 
     @swagger_auto_schema(manual_parameters=[openapi.Parameter(
         'contributors',

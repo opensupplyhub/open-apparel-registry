@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from api.constants import ProcessingAction
-from api.models import FacilityList, FacilityListItem
+from api.models import FacilityList, FacilityListItem, Source
 from api.matching import match_facility_list_items, identify_exact_matches
 from api.processing import (parse_facility_list_item,
                             geocode_facility_list_item,
@@ -83,6 +83,16 @@ class Command(BaseCommand):
             result = match_facility_list_items(facility_list)
             with transaction.atomic():
                 save_match_details(result)
+                if facility_list.replaces is not None:
+                    replaces_source_qs = Source.objects.filter(
+                        facility_list=facility_list.replaces)
+                    if replaces_source_qs.exists():
+                        for replaced_source in replaces_source_qs:
+                            # Use `save` on the instances rather than calling
+                            # `update` on the queryset to ensure that the
+                            # custom save logic is triggered
+                            replaced_source.is_active = False
+                            replaced_source.save()
 
             success_count = len(result['processed_list_item_ids']) + \
                 len(exact_result['processed_list_item_ids'])

@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Security
 
+## [77-OSHUB] 2022-12-15
+
+### Changed
+
+- Copy edits [#2323](https://github.com/open-apparel-registry/open-apparel-registry/pull/2323)
+- Keep list active until replacement is fully matched [#2333](https://github.com/open-apparel-registry/open-apparel-registry/pull/2333)
+- Only include approved lists in the facility-lists API [#2336](https://github.com/open-apparel-registry/open-apparel-registry/pull/2336)
+
 ## [76-OSHUB] 2022-11-23
 
 ### Added
@@ -29,18 +37,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update Youtube link [#2305](https://github.com/open-apparel-registry/open-apparel-registry/pull/2305)
 - Header copy and usability changes [#2301](https://github.com/open-apparel-registry/open-apparel-registry/pull/2301)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Support mediaQueryList event listener in older Safari [#2303](https://github.com/open-apparel-registry/open-apparel-registry/pull/2303)
 - Handle additional merge errors [#2299](https://github.com/open-apparel-registry/open-apparel-registry/pull/2299)
 - Fix embedded map styling [#2298](https://github.com/open-apparel-registry/open-apparel-registry/pull/2298)
 - Handle medium viewport [#2308](https://github.com/open-apparel-registry/open-apparel-registry/pull/2308)
-
-### Security
 
 ## [75-OSHUB] 2022-11-01
 
@@ -1369,7 +1371,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/76-OSHUB...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/77-OSHUB...HEAD
+[77-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/77-OSHUB
 [76-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/76-OSHUB
 [75-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/75-OSHUB
 [74-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/74-OSHUB
