@@ -18,7 +18,6 @@ const initialConfig = Object.freeze({
     hideSectorData: false,
     contributor: null,
     font: OARFont,
-    extended_fields: [],
 });
 
 const initialState = Object.freeze({
