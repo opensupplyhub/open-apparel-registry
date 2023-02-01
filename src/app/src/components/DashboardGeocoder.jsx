@@ -175,7 +175,7 @@ function DashboardGeocoder({ countryOptions, fetchingOptions, getCountries }) {
                             googleMapsLoaderConf={{
                                 KEY: GOOGLE_CLIENT_SIDE_API_KEY,
                                 REGION: country.value || COUNTRY_CODES.default,
-                                VERSION: 3.37,
+                                VERSION: '3.51',
                             }}
                             type="roadmap"
                             continuousWorld
