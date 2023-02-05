@@ -3430,6 +3430,18 @@ class FacilityListViewTests(BaseFacilityListTests):
 
         self.assertEqual(403, response.status_code)
 
+    def test_source_is_set_to_inactive_on_list_reject(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            '/api/facility-lists/{}/reject/'.format(self.superlist.id))
+
+        self.assertEqual(200, response.status_code)
+
+        source = Source.objects.get(pk=self.superlist.source.pk)
+        self.assertEqual(False, source.is_active)
+
     @override_settings(ENVIRONMENT="production")
     @patch('api.aws_batch.submit_jobs')
     def test_approve_submits_batch_job(self, mock_submit_jobs):

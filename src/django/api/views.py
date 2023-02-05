@@ -3141,7 +3141,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             }
         """
         try:
-            facility_list = self.queryset.get(id=pk)
+            facility_list = self.queryset.select_related('source').get(id=pk)
         except FacilityList.DoesNotExist:
             raise NotFound()
 
@@ -3149,6 +3149,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         facility_list.status_change_by = request.user
         facility_list.status = FacilityList.REJECTED
         facility_list.save()
+
+        source = facility_list.source
+        source.is_active = False
+        source.save()
 
         send_facility_list_rejection_email(request, facility_list)
 
