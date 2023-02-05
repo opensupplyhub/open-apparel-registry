@@ -81,6 +81,7 @@ class FeatureGroups:
 
 class FacilityListStatus:
     MATCHED = "MATCHED"
+    REPLACED = "REPLACED"
 
 
 class FacilityHistoryActions:

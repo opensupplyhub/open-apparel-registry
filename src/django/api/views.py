@@ -2882,6 +2882,8 @@ class AdminFacilityListView(ListAPIView):
                             FacilityListItem.ERROR_MATCHING
                         ])
             facility_lists = facility_lists.filter(source__in=sources)
+        elif status == FacilityListStatus.REPLACED:
+            facility_lists = facility_lists.filter(replaced_by__isnull=False)
         elif status is not None:
             facility_lists = facility_lists.filter(status=status)
 
@@ -3061,6 +3063,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         """
         try:
             facility_lists = FacilityList.objects \
+                .select_related('replaced_by') \
                 .filter(source__contributor=request.user.contributor) \
                 .order_by('-created_at')
         except User.contributor.RelatedObjectDoesNotExist:
@@ -3091,6 +3094,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             else:
                 facility_lists = FacilityList.objects.filter(
                     source__contributor=request.user.contributor)
+
+            facility_lists = facility_lists.select_related('replaced_by')
 
             facility_list = facility_lists.get(pk=pk)
             response_data = self.serializer_class(facility_list).data

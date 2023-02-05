@@ -358,6 +358,7 @@ class FacilityListSerializer(ModelSerializer):
     is_public = SerializerMethodField()
     item_count = SerializerMethodField()
     items_url = SerializerMethodField()
+    status = SerializerMethodField()
     statuses = SerializerMethodField()
     status_counts = SerializerMethodField()
     contributor_id = SerializerMethodField()
@@ -392,6 +393,12 @@ class FacilityListSerializer(ModelSerializer):
     def get_items_url(self, facility_list):
         return reverse('facility-list-items',
                        kwargs={'pk': facility_list.pk})
+
+    def get_status(self, facility_list):
+        if hasattr(facility_list, 'replaced_by'):
+            return FacilityList.REPLACED
+
+        return facility_list.status
 
     def get_statuses(self, facility_list):
         try:
@@ -540,7 +547,8 @@ class FacilityListQueryParamsSerializer(Serializer):
     match_responsibility = ChoiceField(choices=MatchResponsibility.CHOICES,
                                        required=False)
     status = ChoiceField(choices=[FacilityList.MATCHED, FacilityList.APPROVED,
-                                  FacilityList.REJECTED, FacilityList.PENDING],
+                                  FacilityList.REJECTED, FacilityList.PENDING,
+                                  FacilityList.REPLACED],
                          required=False)
 
 

@@ -83,12 +83,14 @@ export const facilityListStatusChoicesEnum = Object.freeze({
     APPROVED: 'APPROVED',
     REJECTED: 'REJECTED',
     MATCHED: 'MATCHED',
+    REPLACED: 'REPLACED',
 });
 export const facilityListStatusChoices = [
     { value: facilityListStatusChoicesEnum.MATCHED, label: 'Matched' },
     { value: facilityListStatusChoicesEnum.PENDING, label: 'Pending' },
     { value: facilityListStatusChoicesEnum.APPROVED, label: 'Approved' },
     { value: facilityListStatusChoicesEnum.REJECTED, label: 'Rejected' },
+    { value: facilityListStatusChoicesEnum.REPLACED, label: 'Replaced' },
 ];
 
 // These choices must be kept in sync with the identical list

@@ -300,11 +300,19 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 2)
         self.assertEqual(new_list.replaces.id, original_list.id)
+        self.assertEqual(new_list.status, FacilityList.PENDING)
+
+        response = self.client.get(
+            reverse('facility-list-detail', args=[original_list.id]))
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json['status'], FacilityList.REPLACED)
+
+        original_list.refresh_from_db()
+
+        self.assertTrue(hasattr(original_list, 'replaced_by'))
 
         # The original list source should not be deactivated. It will be
         # deactived after the replacement is processed
-        self.assertEqual(new_list.status, FacilityList.PENDING)
-        original_list.source.refresh_from_db()
         self.assertTrue(original_list.source.is_active)
 
     def test_cant_replace_twice(self):
