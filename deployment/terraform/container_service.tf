@@ -96,8 +96,28 @@ resource "aws_lb_listener" "app" {
   certificate_arn   = module.cert_lb.arn
 
   default_action {
+    type = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      status_code = 403
+      message_body = "Access denied"
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "cdn_auth" {
+  listener_arn = aws_lb_listener.app.id
+
+  condition {
+    http_header {
+      http_header_name = "X-CloudFront-Auth"
+      values = [var.cloudfront_auth_token]
+    }
+  }
+
+  action {
+    type = "forward"
     target_group_arn = aws_lb_target_group.app.id
-    type             = "forward"
   }
 }
 
