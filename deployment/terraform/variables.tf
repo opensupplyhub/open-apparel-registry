@@ -35,6 +35,9 @@ variable "r53_public_hosted_zone" {
 variable "cloudfront_price_class" {
 }
 
+variable "cloudfront_auth_token" {
+}
+
 variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
 }
