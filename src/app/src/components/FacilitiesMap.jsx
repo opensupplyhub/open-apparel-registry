@@ -253,7 +253,7 @@ function FacilitiesMap({
                 googleMapsLoaderConf={{
                     KEY: GOOGLE_CLIENT_SIDE_API_KEY,
                     REGION: countryCode,
-                    VERSION: 3.37,
+                    VERSION: '3.51',
                 }}
                 type="roadmap"
                 continuousWorld
