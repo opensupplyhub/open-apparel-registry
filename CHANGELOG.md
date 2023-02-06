@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+-  Added load balance check for cloudfront auth header [#2364](https://github.com/open-apparel-registry/open-apparel-registry/pull/2364)
+
 ### Changed
 
 - Updated Google Maps API version to 3.51 [#2361](https://github.com/open-apparel-registry/open-apparel-registry/pull/2361)
