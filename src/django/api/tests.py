@@ -10704,7 +10704,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
                              'data one', '', '', '', '', '', '', '', 'False']
         self.assertEquals(rows[0], expected_base_row)
 
-    def test_private_source_is_anonymized(self):
+    def test_inactive_source_is_anonymized(self):
         list_item = self.create_additional_list_item()
         list_item.source.is_active = False
         list_item.source.save()
@@ -10720,7 +10720,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         contributor = rows[1][self.contributor_column_index]
         self.assertEquals(contributor, 'An Other (API)')
 
-    def test_inactive_source_is_anonymized(self):
+    def test_private_source_is_anonymized(self):
         list_item = self.create_additional_list_item()
         list_item.source.is_public = False
         list_item.source.save()
