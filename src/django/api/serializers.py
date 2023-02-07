@@ -928,7 +928,9 @@ class FacilityDownloadSerializer(Serializer):
         if is_embed_mode:
             contributor_id = get_embed_contributor_id(self)
             facility_matches = facility_matches.filter(
-                facility_list_item__source__contributor_id=contributor_id)
+                facility_list_item__source__contributor_id=contributor_id,
+                facility_list_item__source__is_active=True,
+                is_active=True)
 
         facility_matches = facility_matches.order_by('-created_at')
 
