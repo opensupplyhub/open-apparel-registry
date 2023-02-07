@@ -59,7 +59,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
-                           FacilityListItemsQueryParams, FacilityListStatus,
+                           FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
                            FacilityCreateQueryParams,
                            MatchResponsibility,
@@ -2874,7 +2874,7 @@ class AdminFacilityListView(ListAPIView):
 
         status = params.data.get(
             FacilityListQueryParams.STATUS)
-        if status == FacilityListStatus.MATCHED:
+        if status == FacilityList.MATCHED:
             sources = Source.objects \
                 .filter(facilitylistitem__status__in=[
                             FacilityListItem.MATCHED,
@@ -2882,7 +2882,7 @@ class AdminFacilityListView(ListAPIView):
                             FacilityListItem.ERROR_MATCHING
                         ])
             facility_lists = facility_lists.filter(source__in=sources)
-        elif status == FacilityListStatus.REPLACED:
+        elif status == FacilityList.REPLACED:
             facility_lists = facility_lists.filter(replaced_by__isnull=False)
         elif status is not None:
             facility_lists = facility_lists.filter(status=status)
