@@ -6,6 +6,7 @@ from django.contrib.admin import AdminSite
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 from waffle.models import Flag, Sample, Switch
@@ -59,6 +60,22 @@ class FacilityHistoryAdmin(SimpleHistoryAdmin):
     history_list_display = ('name', 'address', 'location')
 
     readonly_fields = ('created_from',)
+
+
+class FacilityListAdmin(admin.ModelAdmin):
+    readonly_fields = ('replaced_by_link',)
+
+    @admin.display(description='Replaced by')
+    def replaced_by_link(self, obj):
+        return mark_safe(
+            '<a href="{}">{}</a>'.format(
+                reverse(
+                    'admin:api_facilitylist_change',
+                    args=[obj.replaced_by.id]
+                ),
+                obj.replaced_by
+            )
+        )
 
 
 class FacilityListItemAdmin(admin.ModelAdmin):
@@ -167,7 +184,7 @@ class SectorAdmin(admin.ModelAdmin):
 admin_site.register(models.Version)
 admin_site.register(models.User, OarUserAdmin)
 admin_site.register(models.Contributor, ContributorAdmin)
-admin_site.register(models.FacilityList)
+admin_site.register(models.FacilityList, FacilityListAdmin)
 admin_site.register(models.ExtendedField, ExtendedFieldAdmin)
 admin_site.register(models.Source, SourceAdmin)
 admin_site.register(models.FacilityListItem, FacilityListItemAdmin)
