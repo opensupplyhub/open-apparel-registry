@@ -7742,6 +7742,10 @@ class FacilitySearchTest(FacilityAPITestCaseBase):
         self.list_item_two_b.facility = self.facility_two
         self.list_item_two_b.save()
 
+        self.alias = FacilityAlias.objects.create(
+            facility=self.facility_two,
+            os_id='US1234567ABCDEF')
+
         self.base_url = reverse('facility-list')
         self.contributor_or_url = self.base_url + \
             '?contributors={}&contributors={}'
@@ -7808,6 +7812,22 @@ class FacilitySearchTest(FacilityAPITestCaseBase):
                 self.contributor.id,
                 self.contributor_two.id))
         self.assert_response_count(response, 0)
+
+    def test_search_aliased_id(self):
+        response = self.client.get(
+            '{}?q={}'.format(
+                self.base_url,
+                self.alias.os_id
+            )
+        )
+
+        self.assert_response_count(response, 1)
+
+        response_json = json.loads(response.content)
+        self.assertEqual(
+            self.alias.facility.id,
+            response_json['features'][0]['id']
+        )
 
 
 class ListWithoutSourceTest(TestCase):
