@@ -907,11 +907,18 @@ class FacilityDownloadSerializer(Serializer):
                 most_recent_match = facility_matches.first()
                 base_list_item = most_recent_match.facility_list_item
 
-        claim = None
         try:
             claim = FacilityClaim.objects.get(facility=facility,
                                               status=FacilityClaim.APPROVED)
+        except FacilityClaim.DoesNotExist:
+            claim = None
 
+        claimed_by_embed_contributor = (
+            claim is not None
+            and contributor_id is not None
+            and int(contributor_id) == claim.contributor.id)
+
+        if (claim and not is_embed_mode) or claimed_by_embed_contributor:
             sector = claim.sector if claim.sector is not None \
                 else base_list_item.sector
             base_row.append('|'.join(sector))
@@ -921,13 +928,15 @@ class FacilityDownloadSerializer(Serializer):
                     claim, user_can_see_detail)
                 base_row.append(contribution)
             else:
-                base_row.extend(['' for f in contributor_fields])
+                contributor_field_values = assign_contributor_field_values(
+                    base_list_item, contributor_fields)
+                base_row.extend([f['value'] if f['value'] is not None else ''
+                                 for f in contributor_field_values])
 
             extended_fields = ExtendedField.objects.filter(
                 facility_claim=claim).values('value', 'field_name')
             base_row.extend(format_download_extended_fields(extended_fields))
-
-        except FacilityClaim.DoesNotExist:
+        else:
             match_is_active = facility_matches.filter(
                 facility_list_item=base_list_item,
                 is_active=True).exists()
