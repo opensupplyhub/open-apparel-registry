@@ -79,10 +79,6 @@ class FeatureGroups:
     CAN_VIEW_FULL_CONTRIB_DETAIL = 'can_view_full_contrib_detail'
 
 
-class FacilityListStatus:
-    MATCHED = "MATCHED"
-
-
 class FacilityHistoryActions:
     CREATE = 'CREATE'
     UPDATE = 'UPDATE'

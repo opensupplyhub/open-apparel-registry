@@ -300,11 +300,19 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 2)
         self.assertEqual(new_list.replaces.id, original_list.id)
+        self.assertEqual(new_list.status, FacilityList.PENDING)
+
+        response = self.client.get(
+            reverse('facility-list-detail', args=[original_list.id]))
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json['status'], FacilityList.REPLACED)
+
+        original_list.refresh_from_db()
+
+        self.assertTrue(hasattr(original_list, 'replaced_by'))
 
         # The original list source should not be deactivated. It will be
         # deactived after the replacement is processed
-        self.assertEqual(new_list.status, FacilityList.PENDING)
-        original_list.source.refresh_from_db()
         self.assertTrue(original_list.source.is_active)
 
     def test_cant_replace_twice(self):
@@ -3429,6 +3437,18 @@ class FacilityListViewTests(BaseFacilityListTests):
             '/api/facility-lists/{}/reject/'.format(self.superlist.id))
 
         self.assertEqual(403, response.status_code)
+
+    def test_source_is_set_to_inactive_on_list_reject(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            '/api/facility-lists/{}/reject/'.format(self.superlist.id))
+
+        self.assertEqual(200, response.status_code)
+
+        source = Source.objects.get(pk=self.superlist.source.pk)
+        self.assertEqual(False, source.is_active)
 
     @override_settings(ENVIRONMENT="production")
     @patch('api.aws_batch.submit_jobs')

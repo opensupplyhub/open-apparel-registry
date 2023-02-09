@@ -515,6 +515,7 @@ class FacilityList(models.Model):
         blank=True,
         unique=True,
         on_delete=models.PROTECT,
+        related_name='replaced_by',
         help_text=('If not null this list is an updated version of the '
                    'list specified by this field.'))
     match_responsibility = models.CharField(
@@ -537,6 +538,7 @@ class FacilityList(models.Model):
     REJECTED = 'REJECTED'
 
     MATCHED = 'MATCHED'
+    REPLACED = 'REPLACED'
 
     STATUS_CHOICES = (
         (PENDING, PENDING),
