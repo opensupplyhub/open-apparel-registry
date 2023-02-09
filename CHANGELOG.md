@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
--  Added load balance check for cloudfront auth header [#2364](https://github.com/open-apparel-registry/open-apparel-registry/pull/2364)
+- Added load balance check for cloudfront auth header [#2364](https://github.com/open-apparel-registry/open-apparel-registry/pull/2364)
+- Check facility query string for aliased OS ID [#2366](https://github.com/open-apparel-registry/open-apparel-registry/pull/2366)
 
 ### Changed
 
