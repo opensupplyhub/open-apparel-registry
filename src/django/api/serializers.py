@@ -358,6 +358,7 @@ class FacilityListSerializer(ModelSerializer):
     is_public = SerializerMethodField()
     item_count = SerializerMethodField()
     items_url = SerializerMethodField()
+    status = SerializerMethodField()
     statuses = SerializerMethodField()
     status_counts = SerializerMethodField()
     contributor_id = SerializerMethodField()
@@ -392,6 +393,12 @@ class FacilityListSerializer(ModelSerializer):
     def get_items_url(self, facility_list):
         return reverse('facility-list-items',
                        kwargs={'pk': facility_list.pk})
+
+    def get_status(self, facility_list):
+        if hasattr(facility_list, 'replaced_by'):
+            return FacilityList.REPLACED
+
+        return facility_list.status
 
     def get_statuses(self, facility_list):
         try:
@@ -540,7 +547,8 @@ class FacilityListQueryParamsSerializer(Serializer):
     match_responsibility = ChoiceField(choices=MatchResponsibility.CHOICES,
                                        required=False)
     status = ChoiceField(choices=[FacilityList.MATCHED, FacilityList.APPROVED,
-                                  FacilityList.REJECTED, FacilityList.PENDING],
+                                  FacilityList.REJECTED, FacilityList.PENDING,
+                                  FacilityList.REPLACED],
                          required=False)
 
 
@@ -884,15 +892,35 @@ class FacilityDownloadSerializer(Serializer):
             .facilitymatch_set \
             .filter(status__in=[FacilityMatch.AUTOMATIC,
                                 FacilityMatch.CONFIRMED,
-                                FacilityMatch.MERGED])
+                                FacilityMatch.MERGED]) \
+            .order_by('-created_at')
 
-        claim = None
+        base_list_item = facility.created_from
+        contributor_id = None
+        if is_embed_mode:
+            contributor_id = get_embed_contributor_id(self)
+            facility_matches = facility_matches.filter(
+                facility_list_item__source__contributor_id=contributor_id,
+                facility_list_item__source__is_active=True,
+                is_active=True)
+            if facility_matches.count() > 0:
+                most_recent_match = facility_matches.first()
+                base_list_item = most_recent_match.facility_list_item
+
         try:
             claim = FacilityClaim.objects.get(facility=facility,
                                               status=FacilityClaim.APPROVED)
+        except FacilityClaim.DoesNotExist:
+            claim = None
 
+        claimed_by_embed_contributor = (
+            claim is not None
+            and contributor_id is not None
+            and int(contributor_id) == claim.contributor.id)
+
+        if (claim and not is_embed_mode) or claimed_by_embed_contributor:
             sector = claim.sector if claim.sector is not None \
-                else facility.created_from.sector
+                else base_list_item.sector
             base_row.append('|'.join(sector))
 
             if not is_embed_mode:
@@ -900,44 +928,41 @@ class FacilityDownloadSerializer(Serializer):
                     claim, user_can_see_detail)
                 base_row.append(contribution)
             else:
-                base_row.extend(['' for f in contributor_fields])
+                contributor_field_values = assign_contributor_field_values(
+                    base_list_item, contributor_fields)
+                base_row.extend([f['value'] if f['value'] is not None else ''
+                                 for f in contributor_field_values])
 
             extended_fields = ExtendedField.objects.filter(
                 facility_claim=claim).values('value', 'field_name')
             base_row.extend(format_download_extended_fields(extended_fields))
-
-        except FacilityClaim.DoesNotExist:
+        else:
             match_is_active = facility_matches.filter(
-                facility_list_item=facility.created_from,
+                facility_list_item=base_list_item,
                 is_active=True).exists()
             base_row = add_non_base_fields(
-                base_row, facility.created_from, match_is_active)
+                base_row, base_list_item, match_is_active)
 
         base_row.append(facility.is_closed if facility.is_closed else 'False')
 
         rows.append(base_row)
 
-        if is_embed_mode:
-            contributor_id = get_embed_contributor_id(self)
-            facility_matches = facility_matches.filter(
-                facility_list_item__source__contributor_id=contributor_id)
+        if not is_embed_mode:
+            for facility_match in facility_matches:
+                list_item = facility_match.facility_list_item
+                # Skip the current item if it was used as the base row
+                if claim is None and facility.created_from_id == list_item.id:
+                    continue
 
-        facility_matches = facility_matches.order_by('-created_at')
+                row = [facility.id,
+                       format_download_date(list_item.source.created_at),
+                       '', '', '', '', '', '']
+                row = add_non_base_fields(row, list_item,
+                                          facility_match.is_active)
+                # Add a blank slot for closure status
+                row.append('')
 
-        for facility_match in facility_matches:
-            list_item = facility_match.facility_list_item
-            # Skip the current item if it was used as the base row
-            if claim is None and facility.created_from_id == list_item.id:
-                continue
-
-            row = [facility.id,
-                   format_download_date(list_item.source.created_at),
-                   '', '', '', '', '', '']
-            row = add_non_base_fields(row, list_item, facility_match.is_active)
-            # Add a blank slot for closure status
-            row.append('')
-
-            rows.append(row)
+                rows.append(row)
 
         return rows
 

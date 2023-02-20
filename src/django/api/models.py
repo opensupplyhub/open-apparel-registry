@@ -32,7 +32,7 @@ from api.constants import (
     MatchResponsibility
 )
 from api.countries import COUNTRY_CHOICES
-from api.os_id import make_os_id
+from api.os_id import make_os_id, string_matches_os_id_format
 from api.constants import (Affiliations, Certifications, FacilitiesQueryParams)
 from api.helpers import (prefix_a_an,
                          get_single_contributor_field_values,
@@ -515,6 +515,7 @@ class FacilityList(models.Model):
         blank=True,
         unique=True,
         on_delete=models.PROTECT,
+        related_name='replaced_by',
         help_text=('If not null this list is an updated version of the '
                    'list specified by this field.'))
     match_responsibility = models.CharField(
@@ -537,6 +538,7 @@ class FacilityList(models.Model):
     REJECTED = 'REJECTED'
 
     MATCHED = 'MATCHED'
+    REPLACED = 'REPLACED'
 
     STATUS_CHOICES = (
         (PENDING, PENDING),
@@ -1422,7 +1424,16 @@ class FacilityManager(models.Manager):
 
         facilities_qs = FacilityIndex.objects.all()
 
+        if id is None and string_matches_os_id_format(free_text_query):
+            id = free_text_query
+            free_text_query = None
+
         if id is not None:
+            try:
+                id = FacilityAlias.objects.get(pk=id).facility_id
+            except FacilityAlias.DoesNotExist:
+                pass
+
             facilities_qs = facilities_qs.filter(id=id)
 
         if free_text_query is not None:

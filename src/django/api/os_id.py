@@ -1,5 +1,6 @@
 import base32_crockford
 import random
+import re
 
 from django.utils import timezone
 
@@ -77,3 +78,10 @@ def validate_os_id(raw_id, raise_on_invalid=True):
         else:
             return False
     return True
+
+
+os_id_regex = re.compile('[A-Z]{2}[0-9]{7}[A-Z0-9]{6}')
+
+
+def string_matches_os_id_format(string):
+    return os_id_regex.match(string or '') is not None

@@ -59,7 +59,7 @@ from oar.settings import MAX_UPLOADED_FILE_SIZE_IN_BYTES, ENVIRONMENT
 
 from api.constants import (CsvHeaderField,
                            FacilityListQueryParams,
-                           FacilityListItemsQueryParams, FacilityListStatus,
+                           FacilityListItemsQueryParams,
                            FacilityMergeQueryParams,
                            FacilityCreateQueryParams,
                            MatchResponsibility,
@@ -2874,7 +2874,7 @@ class AdminFacilityListView(ListAPIView):
 
         status = params.data.get(
             FacilityListQueryParams.STATUS)
-        if status == FacilityListStatus.MATCHED:
+        if status == FacilityList.MATCHED:
             sources = Source.objects \
                 .filter(facilitylistitem__status__in=[
                             FacilityListItem.MATCHED,
@@ -2882,6 +2882,8 @@ class AdminFacilityListView(ListAPIView):
                             FacilityListItem.ERROR_MATCHING
                         ])
             facility_lists = facility_lists.filter(source__in=sources)
+        elif status == FacilityList.REPLACED:
+            facility_lists = facility_lists.filter(replaced_by__isnull=False)
         elif status is not None:
             facility_lists = facility_lists.filter(status=status)
 
@@ -3061,6 +3063,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         """
         try:
             facility_lists = FacilityList.objects \
+                .select_related('replaced_by') \
                 .filter(source__contributor=request.user.contributor) \
                 .order_by('-created_at')
         except User.contributor.RelatedObjectDoesNotExist:
@@ -3091,6 +3094,8 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             else:
                 facility_lists = FacilityList.objects.filter(
                     source__contributor=request.user.contributor)
+
+            facility_lists = facility_lists.select_related('replaced_by')
 
             facility_list = facility_lists.get(pk=pk)
             response_data = self.serializer_class(facility_list).data
@@ -3141,7 +3146,7 @@ class FacilityListViewSet(viewsets.ModelViewSet):
             }
         """
         try:
-            facility_list = self.queryset.get(id=pk)
+            facility_list = self.queryset.select_related('source').get(id=pk)
         except FacilityList.DoesNotExist:
             raise NotFound()
 
@@ -3149,6 +3154,10 @@ class FacilityListViewSet(viewsets.ModelViewSet):
         facility_list.status_change_by = request.user
         facility_list.status = FacilityList.REJECTED
         facility_list.save()
+
+        source = facility_list.source
+        source.is_active = False
+        source.save()
 
         send_facility_list_rejection_email(request, facility_list)
 

@@ -300,11 +300,19 @@ class FacilityListCreateTest(APITestCase):
         self.assertEqual(FacilityList.objects.all().count(),
                          previous_list_count + 2)
         self.assertEqual(new_list.replaces.id, original_list.id)
+        self.assertEqual(new_list.status, FacilityList.PENDING)
+
+        response = self.client.get(
+            reverse('facility-list-detail', args=[original_list.id]))
+        response_json = json.loads(response.content)
+        self.assertEqual(response_json['status'], FacilityList.REPLACED)
+
+        original_list.refresh_from_db()
+
+        self.assertTrue(hasattr(original_list, 'replaced_by'))
 
         # The original list source should not be deactivated. It will be
         # deactived after the replacement is processed
-        self.assertEqual(new_list.status, FacilityList.PENDING)
-        original_list.source.refresh_from_db()
         self.assertTrue(original_list.source.is_active)
 
     def test_cant_replace_twice(self):
@@ -3429,6 +3437,18 @@ class FacilityListViewTests(BaseFacilityListTests):
             '/api/facility-lists/{}/reject/'.format(self.superlist.id))
 
         self.assertEqual(403, response.status_code)
+
+    def test_source_is_set_to_inactive_on_list_reject(self):
+        self.client.login(email=self.superuser_email,
+                          password=self.superuser_password)
+
+        response = self.client.post(
+            '/api/facility-lists/{}/reject/'.format(self.superlist.id))
+
+        self.assertEqual(200, response.status_code)
+
+        source = Source.objects.get(pk=self.superlist.source.pk)
+        self.assertEqual(False, source.is_active)
 
     @override_settings(ENVIRONMENT="production")
     @patch('api.aws_batch.submit_jobs')
@@ -7722,6 +7742,10 @@ class FacilitySearchTest(FacilityAPITestCaseBase):
         self.list_item_two_b.facility = self.facility_two
         self.list_item_two_b.save()
 
+        self.alias = FacilityAlias.objects.create(
+            facility=self.facility_two,
+            os_id='US1234567ABCDEF')
+
         self.base_url = reverse('facility-list')
         self.contributor_or_url = self.base_url + \
             '?contributors={}&contributors={}'
@@ -7788,6 +7812,22 @@ class FacilitySearchTest(FacilityAPITestCaseBase):
                 self.contributor.id,
                 self.contributor_two.id))
         self.assert_response_count(response, 0)
+
+    def test_search_aliased_id(self):
+        response = self.client.get(
+            '{}?q={}'.format(
+                self.base_url,
+                self.alias.os_id
+            )
+        )
+
+        self.assert_response_count(response, 1)
+
+        response_json = json.loads(response.content)
+        self.assertEqual(
+            self.alias.facility.id,
+            response_json['features'][0]['id']
+        )
 
 
 class ListWithoutSourceTest(TestCase):
@@ -10664,7 +10704,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
                              'data one', '', '', '', '', '', '', '', 'False']
         self.assertEquals(rows[0], expected_base_row)
 
-    def test_private_source_is_anonymized(self):
+    def test_inactive_source_is_anonymized(self):
         list_item = self.create_additional_list_item()
         list_item.source.is_active = False
         list_item.source.save()
@@ -10680,7 +10720,7 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         contributor = rows[1][self.contributor_column_index]
         self.assertEquals(contributor, 'An Other (API)')
 
-    def test_inactive_source_is_anonymized(self):
+    def test_private_source_is_anonymized(self):
         list_item = self.create_additional_list_item()
         list_item.source.is_public = False
         list_item.source.save()

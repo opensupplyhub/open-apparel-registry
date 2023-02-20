@@ -157,6 +157,8 @@ function FacilityListsTable({ facilityLists, history: { push } }) {
                                             }
                                         } else if (list.status === 'REJECTED') {
                                             status = 'Rejected';
+                                        } else if (list.status === 'REPLACED') {
+                                            status = 'Replaced';
                                         } else if (list.status === 'APPROVED') {
                                             if (
                                                 sum([
