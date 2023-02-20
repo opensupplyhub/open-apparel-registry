@@ -9,14 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added load balance check for cloudfront auth header [#2364](https://github.com/open-apparel-registry/open-apparel-registry/pull/2364)
-- Check facility query string for aliased OS ID [#2366](https://github.com/open-apparel-registry/open-apparel-registry/pull/2366)
-
 ### Changed
-
-- Updated Google Maps API version to 3.51 [#2361](https://github.com/open-apparel-registry/open-apparel-registry/pull/2361)
-- Updated approval workflow [#2363](https://github.com/open-apparel-registry/open-apparel-registry/pull/2362)
-- Revise embed CSV/XLSX download format and content [#2365](https://github.com/open-apparel-registry/open-apparel-registry/pull/2365)
 
 ### Deprecated
 
@@ -25,6 +18,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [78-OSHUB] 2023-02-20
+
+### Added
+
+- Added load balance check for cloudfront auth header [#2364](https://github.com/open-apparel-registry/open-apparel-registry/pull/2364)
+- Check facility query string for aliased OS ID [#2366](https://github.com/open-apparel-registry/open-apparel-registry/pull/2366)
+
+### Changed
+
+- Updated Google Maps API version to 3.51 [#2361](https://github.com/open-apparel-registry/open-apparel-registry/pull/2361)
+- Updated approval workflow [#2363](https://github.com/open-apparel-registry/open-apparel-registry/pull/2362)
+- Revise embed CSV/XLSX download format and content [#2365](https://github.com/open-apparel-registry/open-apparel-registry/pull/2365)
 
 ## [77-OSHUB] 2022-12-15
 
@@ -1378,7 +1384,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/77-OSHUB...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/78-OSHUB...HEAD
+[78-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/78-OSHUB
 [77-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/77-OSHUB
 [76-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/76-OSHUB
 [75-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/75-OSHUB
