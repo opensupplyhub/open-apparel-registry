@@ -60,7 +60,7 @@ def send_claim_facility_confirmation_email(request, facility_claim):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(claim_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [facility_claim.email],
         html_message=html_template.render(claim_dictionary)
     )
@@ -85,7 +85,7 @@ def send_claim_facility_approval_email(request, facility_claim):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(approval_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [facility_claim.email],
         html_message=html_template.render(approval_dictionary)
     )
@@ -109,7 +109,7 @@ def send_claim_facility_denial_email(request, facility_claim):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(denial_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [facility_claim.email],
         html_message=html_template.render(denial_dictionary)
     )
@@ -133,7 +133,7 @@ def send_claim_facility_revocation_email(request, facility_claim):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(revocation_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [facility_claim.email],
         html_message=html_template.render(revocation_dictionary)
     )
@@ -159,7 +159,7 @@ def send_approved_claim_notice_to_one_contributor(request, claim, contributor):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(notice_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [contributor.admin.email],
         html_message=html_template.render(notice_dictionary)
     )
@@ -209,7 +209,7 @@ def send_claim_update_note_to_one_contributor(request, claim, contributor):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(notice_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [contributor.admin.email],
         html_message=html_template.render(notice_dictionary)
     )
@@ -368,7 +368,7 @@ def notify_facility_list_complete(list_id):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(notification_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [notification_to],
         html_message=html_template.render(notification_dictionary)
     )
@@ -390,7 +390,7 @@ def send_facility_list_rejection_email(request, facility_list):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(denial_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [facility_list.source.contributor.admin.email],
         html_message=html_template.render(denial_dictionary)
     )

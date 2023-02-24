@@ -40,9 +40,9 @@ Once your list is finalized:
 
 If you are a brand or organization uploading a facility list, you can use this suggested text for a message to your suppliers (https://info.opensupplyhub.org/resources/encourage-your-facilities-to-claim-their-profiles), to encourage them to claim their profiles.
 
-For any questions, feel free to reach out to the OS Hub team: info@opensupplyhub.org.
+For any questions, feel free to reach out to the OS Hub team: data@opensupplyhub.org.
 
 All the best,
 
-{% include "mail/signature_block.txt" %}
+{% include "mail/data_team_signature_block.txt" %}
 {% endblock content %}

@@ -17,5 +17,5 @@ The following details have been changed:
 {% endif %}
 
 Best wishes,
-{% include "mail/signature_block.txt" %}
+{% include "mail/data_team_signature_block.txt" %}
 {% endblock content %}

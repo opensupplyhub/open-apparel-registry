@@ -17,5 +17,5 @@ For any questions, feel free to reach out to the OS Hub team: info@opensupplyhub
 
 Best wishes,
 
-{% include "mail/signature_block.txt" %}
+{% include "mail/data_team_signature_block.txt" %}
 {% endblock content %}
