@@ -1,19 +1,19 @@
 {% block content %}
 Hi there,
 
-We’re writing to let you know that your request to upload a dataset to Open Supply Hub was rejected, due to issues with the data in your list. The details of your list are as follows:
+We’re writing to let you know that your request to upload a data list to Open Supply Hub was rejected. The details of your list are as follows:
 
 - Facility list: {{ facility_list_name }} created on {{ facility_list_created_at }}
 - Facility list description: {{ facility_list_description }}
 - Facility list URL: {{ facility_list_url }}
 
 {% if rejection_reason|length %}
-Not to worry! Below are details on the data issue(s), as well as guidance on how you can address these issues and get your list approved. 
+Not to worry! Below are details on the reason for rejection, as well as guidance on next steps: 
 
 {{ rejection_reason }}
 {% endif %}
 
-For any questions, feel free to reach out to the OS Hub team: info@opensupplyhub.org. We appreciate your support as we work to maintain a high quality dataset that is open and beneficial to all who need it.
+For any questions, feel free to reach out to the OS Hub Data Team: data@opensupplyhub.org. We appreciate your support as we work to maintain a high quality dataset that is open and beneficial to all who need it.
 
 Best wishes,
 
