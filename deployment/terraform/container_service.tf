@@ -149,6 +149,7 @@ data "template_file" "app" {
     oar_client_key                   = var.oar_client_key
     external_domain                  = var.r53_public_hosted_zone
     default_from_email               = var.default_from_email
+    data_from_email                  = var.data_from_email
     notification_email_to            = var.notification_email_to
     hubspot_api_key                  = var.hubspot_api_key
     hubspot_subscription_id          = var.hubspot_subscription_id
@@ -197,6 +198,7 @@ data "template_file" "app_cli" {
     oar_client_key                   = var.oar_client_key
     external_domain                  = var.r53_public_hosted_zone
     default_from_email               = var.default_from_email
+    data_from_email                  = var.data_from_email
     notification_email_to            = var.notification_email_to
     hubspot_api_key                  = var.hubspot_api_key
     hubspot_subscription_id          = var.hubspot_subscription_id

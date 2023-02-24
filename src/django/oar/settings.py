@@ -333,6 +333,9 @@ else:
 DEFAULT_FROM_EMAIL = os.getenv(
     'DEFAULT_FROM_EMAIL', 'noreply@staging.opensupplyhub.org')
 
+DATA_FROM_EMAIL = os.getenv(
+    'DATA_FROM_EMAIL', 'data@staging.opensupplyhub.org')
+
 NOTIFICATION_EMAIL_TO = os.getenv(
     'NOTIFICATION_EMAIL_TO', 'notification@example.com')
 
