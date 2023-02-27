@@ -1016,7 +1016,7 @@ it('creates params from a query string', () => {
 
 it('creates an email link for reporting a data issue for a facility with a given OS ID', () => {
     const osID = 'osID';
-    const expectedMatch = 'mailto:info@opensupplyhub.org?subject=Reporting a data issue on ID osID';
+    const expectedMatch = 'mailto:data@opensupplyhub.org?subject=Reporting a data issue on ID osID';
 
     expect(makeReportADataIssueEmailLink(osID)).toBe(expectedMatch);
 });
@@ -1525,7 +1525,7 @@ it('creates an API URL for merging two facilties', () => {
     const toMergeID = 'toMergeID';
 
     const expectedURL =
-          '/api/facilities/merge/?target=targetID&merge=toMergeID';
+        '/api/facilities/merge/?target=targetID&merge=toMergeID';
 
     expect(isEqual(
         expectedURL,
