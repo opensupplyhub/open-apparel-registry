@@ -26,6 +26,7 @@
         { "name": "BATCH_JOB_DEF_NAME", "value": "${batch_job_def_name}" },
         { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
         { "name": "DEFAULT_FROM_EMAIL", "value": "${default_from_email}" },
+        { "name": "DATA_FROM_EMAIL", "value": "${data_from_email}" },
         { "name": "NOTIFICATION_EMAIL_TO", "value": "${notification_email_to}" },
         { "name": "HUBSPOT_API_KEY", "value": "${hubspot_api_key}" },
         { "name": "HUBSPOT_SUBSCRIPTION_ID", "value": "${hubspot_subscription_id}" },

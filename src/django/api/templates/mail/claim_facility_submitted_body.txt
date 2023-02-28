@@ -20,5 +20,5 @@ We'll review your request to claim the facility and get in touch if we need any 
 
 Best wishes,
 
-{% include "mail/signature_block.txt" %}
+{% include "mail/data_team_signature_block.txt" %}
 {% endblock content %}

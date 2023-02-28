@@ -16,5 +16,5 @@ You are approved! You can now complete your profile, adding business information
 
 Best wishes,
 
-{% include "mail/signature_block.txt" %}
+{% include "mail/data_team_signature_block.txt" %}
 {% endblock content %}

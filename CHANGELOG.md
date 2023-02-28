@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+- Added data@opensupplyhub.org email [#2373](https://github.com/open-apparel-registry/open-apparel-registry/pull/2373)
 
 ### Changed
 
