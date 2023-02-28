@@ -261,7 +261,7 @@ variable "django_secret_key" {
 variable "default_from_email" {
 }
 
-variable "default_data_email" {
+variable "data_from_email" {
 }
 
 variable "notification_email_to" {
