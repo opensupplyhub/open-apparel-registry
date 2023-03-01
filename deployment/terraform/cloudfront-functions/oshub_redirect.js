@@ -22,35 +22,7 @@ function handler(event) {
     var request = event.request;
     var uri = request.uri;
 
-    // If this is an embed request, allow it to proceed to the ALB
-    if (request.querystring.embed && request.querystring.embed.value === '1') {
-        return request;
-    }
-
-
-    // Ensure that any resources fetched by the client after when loading an
-    // ebedded map are not redirected
-    if (uri.substring(1, 5) === 'web/'
-        || uri.substring(1, 5) === 'api/'
-        || uri.substring(1, 19) === 'api-feature-flags/'
-        || uri.substring(1, 10) === 'favicon/'
-        || uri.substring(1, 8) === 'images/'
-        || uri.substring(1, 8) === 'static/'
-       ) {
-        // If the referrer starts with one of the following then we want to
-        // allow the request to pass through unmodified
-        //     https://staging.openapparel.org/
-        //     https://openapparel.org/
-        var passThroughRefererRegex = /^https:\/\/(staging\.|)openapparel\.org\//gm;
-
-        if (request.headers.referer
-            && request.headers.referer.value
-            && passThroughRefererRegex.test(request.headers.referer.value)) {
-            return request;
-        }
-    }
-
-    // Redirect all other requests
+    // Redirect all requests
     var location = '';
     var host = 'opensupplyhub.org';
 
