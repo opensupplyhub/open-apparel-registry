@@ -227,7 +227,7 @@ COUNTRY_CHOICES = [
     ('TO', 'Tonga'),
     ('TT', 'Trinidad and Tobago'),
     ('TN', 'Tunisia'),
-    ('TR', 'Turkey'),
+    ('TR', 'Türkiye'),
     ('TM', 'Turkmenistan'),
     ('TC', 'Turks and Caicos Islands'),
     ('TV', 'Tuvalu'),
@@ -1063,6 +1063,12 @@ COUNTRY_CODES = {
     'tunisia': 'TN',
     'tur': 'TR',
     'turkey': 'TR',
+    'türki̇ye': 'TR',
+    # NOTE: The entry below not a duplicate. Unicode chars appear similar
+    'türkiye': 'TR',
+    'turkiye': 'TR',
+    # NOTE: The entry below not a duplicate. Unicode chars appear similar
+    'turki̇ye': 'TR',
     'turkmenistan': 'TM',
     'turks & caicos isl&s': 'TC',
     'turks & caicos isl&s (the)': 'TC',
