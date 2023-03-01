@@ -52,7 +52,7 @@ function handler(event) {
 
     // Redirect all other requests
     var location = '';
-    var host = 'www.opensupplyhub.org';
+    var host = 'opensupplyhub.org';
 
     if (Object.keys(request.querystring).length > 0) {
         location = `https://${host}${uri}?${objectToQueryString(request.querystring)}`;    }
