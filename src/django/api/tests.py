@@ -11066,3 +11066,8 @@ class CountryCodeParserTests(TestCase):
             get_country_code('Hong Kong SAR'),
             'HK'
         )
+
+    def test_parse_turkiye(self):
+        names = ('Türkiye', 'Turkiye', 'TÜRKİYE', 'TURKİYE', 'Turkey')
+        for name in names:
+            self.assertEqual(get_country_code(name), 'TR')
