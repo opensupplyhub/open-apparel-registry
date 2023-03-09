@@ -42,29 +42,6 @@ node {
 					}
 				}
 			}
-
-			// Plan and apply the current state of the staging infrastructure
-			// as outlined by whatever branch of the `open-apparel-registry`
-			// repository passes the conditional above (`develop`,
-			// `test/*`, `release/*`, `hotfix/*`).
-			stage('infra') {
-				// Use `git` to get the primary repository's current commmit SHA and
-		        // set it as the value of the `GIT_COMMIT` environment variable.
-		        env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-
-		        // Environment used in Rollbar deploy notifications.
-		        // https://docs.rollbar.com/reference#post-deploy
-		        env.OAR_DEPLOYMENT_ENVIRONMENT = 'staging'
-
-				wrap([$class: 'AnsiColorBuildWrapper']) {
-					sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra plan'
-					withCredentials([[$class: 'StringBinding',
-									credentialsId: 'OAR_ROLLBAR_ACCESS_TOKEN',
-									variable: 'OAR_ROLLBAR_ACCESS_TOKEN']]) {
-						sh 'docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply'
-					}
-				}
-			}
 		}
 
         stage('notify') {
