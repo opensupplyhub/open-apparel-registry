@@ -190,6 +190,10 @@ variable "rds_work_mem" {
   default = "20000"
 }
 
+variable "rds_deletion_protection" {
+  default = true
+}
+
 variable "app_ecs_desired_count" {
   default = "1"
 }

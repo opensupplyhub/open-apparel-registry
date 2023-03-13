@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Update spelling of TR to Türkiye and accept multiple versions [#2375](https://github.com/open-apparel-registry/open-apparel-registry/pull/2375)
+- Enable deletion protection for RDS databases [#2382](https://github.com/open-apparel-registry/open-apparel-registry/pull/2382)
 
 ### Deprecated
 
