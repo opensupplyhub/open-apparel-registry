@@ -8,20 +8,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-- Added data@opensupplyhub.org email [#2373](https://github.com/open-apparel-registry/open-apparel-registry/pull/2373) [#2374](https://github.com/open-apparel-registry/open-apparel-registry/pull/2374)
 
 ### Changed
-- Update spelling of TR to Türkiye and accept multiple versions [#2375](https://github.com/open-apparel-registry/open-apparel-registry/pull/2375)
-- Enable deletion protection for RDS databases [#2382](https://github.com/open-apparel-registry/open-apparel-registry/pull/2382)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Fix facility download [#2379](https://github.com/open-apparel-registry/open-apparel-registry/pull/2379)
 
 ### Security
+
+## [79-OSHUB] 2023-03-23
+
+### Added
+- Added data@opensupplyhub.org email [#2373](https://github.com/open-apparel-registry/open-apparel-registry/pull/2373) [#2374](https://github.com/open-apparel-registry/open-apparel-registry/pull/2374)
+
+### Changed
+- Update spelling of TR to Türkiye and accept multiple versions [#2375](https://github.com/open-apparel-registry/open-apparel-registry/pull/2375)
+- Enable deletion protection for RDS databases [#2382](https://github.com/open-apparel-registry/open-apparel-registry/pull/2382)
+- Send clousure report emails from the data@ email addres and change address in email body and claim form [#2389](https://github.com/open-apparel-registry/open-apparel-registry/pull/2389)
+
+### Fixed
+- Fix facility download [#2379](https://github.com/open-apparel-registry/open-apparel-registry/pull/2379)
 
 ## [78-OSHUB] 2023-02-20
 
@@ -1388,7 +1397,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 - Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/78-OSHUB...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/79-OSHUB...HEAD
+[79-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/79-OSHUB
 [78-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/78-OSHUB
 [77-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/77-OSHUB
 [76-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/76-OSHUB

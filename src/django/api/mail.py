@@ -343,7 +343,7 @@ def send_report_result(report):
     send_mail(
         subj_template.render().rstrip(),
         text_template.render(report_dictionary),
-        settings.DEFAULT_FROM_EMAIL,
+        settings.DATA_FROM_EMAIL,
         [report.reported_by_contributor.admin.email],
         html_message=html_template.render(report_dictionary)
     )
