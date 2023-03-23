@@ -98,6 +98,7 @@ module "database_enc" {
   storage_encrypted          = var.rds_storage_encrypted
   subnet_group               = aws_db_subnet_group.default.name
   parameter_group            = aws_db_parameter_group.default.name
+  deletion_protection        = var.rds_deletion_protection
 
   alarm_cpu_threshold                = var.rds_cpu_threshold_percent
   alarm_disk_queue_threshold         = var.rds_disk_queue_threshold

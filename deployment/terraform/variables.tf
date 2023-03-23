@@ -190,6 +190,10 @@ variable "rds_work_mem" {
   default = "20000"
 }
 
+variable "rds_deletion_protection" {
+  default = true
+}
+
 variable "app_ecs_desired_count" {
   default = "1"
 }
@@ -259,6 +263,9 @@ variable "django_secret_key" {
 }
 
 variable "default_from_email" {
+}
+
+variable "data_from_email" {
 }
 
 variable "notification_email_to" {

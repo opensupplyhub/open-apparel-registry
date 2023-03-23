@@ -10790,6 +10790,24 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         expected_contributor = 'An Other (API)'
         self.assertEqual(contributor, expected_contributor)
 
+    def test_handle_incomplete_raw_data(self):
+        incomplete_raw_data = '"US","Towel Factory 42","42 Dolphin St"'
+        self.contrib_list_item.raw_data = incomplete_raw_data
+        self.contrib_list_item.save()
+
+        params = 'embed=1&contributors={}&q={}'.format(
+            self.contributor.id, self.contrib_facility.id)
+        response = self.get_facility_download(params)
+        rows = self.get_rows(response)
+
+        self.assertEquals(len(rows), 1)
+
+        expected_base_row = [self.contrib_facility.id, self.date,
+                             'Towel Factory 42', '42 Dolphin St',
+                             'US', 'United States', 0.0, 0.0, 'Apparel',
+                             '', '', '', '', '', '', '', '', 'False']
+        self.assertEquals(rows[0], expected_base_row)
+
 
 class WebhookTests(APITestCase):
     def test_log_event(self):
@@ -11066,3 +11084,8 @@ class CountryCodeParserTests(TestCase):
             get_country_code('Hong Kong SAR'),
             'HK'
         )
+
+    def test_parse_turkiye(self):
+        names = ('Türkiye', 'Turkiye', 'TÜRKİYE', 'TURKİYE', 'Turkey')
+        for name in names:
+            self.assertEqual(get_country_code(name), 'TR')

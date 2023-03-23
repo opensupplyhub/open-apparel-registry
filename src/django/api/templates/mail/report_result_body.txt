@@ -7,7 +7,7 @@ Thanks for reporting {{ facility_name }} facility as {{ closure_state|lower }}.
 
 {% if status_change_reason|length %}OS Hub Team review notes: {{ status_change_reason }}{% endif %}
 
-{% if is_rejected %}If you have additional evidence that can be used to verify the facility has {{ closure_state|lower }}, this can be shared with: info@opensupplyhub.org{% endif %}{% if is_closure and is_confirmed %}Should you receive reports that the facility is re-opened in the future, you can share this update with the OS Hub Team.{% endif %}
+{% if is_rejected %}If you have additional evidence that can be used to verify the facility has {{ closure_state|lower }}, this can be shared with: data@opensupplyhub.org{% endif %}{% if is_closure and is_confirmed %}Should you receive reports that the facility is re-opened in the future, you can share this update with the OS Hub Team.{% endif %}
 
 Best wishes,
 

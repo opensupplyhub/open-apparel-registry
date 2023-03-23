@@ -69,7 +69,11 @@ def get_list_contributor_field_values(item, fields):
     for f in fields:
         if f['column_name'] in list_fields:
             index = list_fields.index(f['column_name'])
-            f['value'] = try_parse_int_from_float(data_values[index])
+            if 0 <= index < len(data_values):
+                value = data_values[index]
+            else:
+                value = None
+            f['value'] = try_parse_int_from_float(value)
 
     return fields
 

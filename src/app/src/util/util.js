@@ -635,13 +635,13 @@ export const makeSliceArgumentsForTablePagination = (page, rowsPerPage) =>
     Object.freeze([page * rowsPerPage, (page + 1) * rowsPerPage]);
 
 export const makeReportADataIssueEmailLink = osId =>
-    `mailto:info@opensupplyhub.org?subject=Reporting a data issue on ID ${osId}`;
+    `mailto:data@opensupplyhub.org?subject=Reporting a data issue on ID ${osId}`;
 
 export const makeDisputeClaimEmailLink = osId =>
-    `mailto:info@opensupplyhub.org?subject=Disputing a claim of facility ID ${osId}`;
+    `mailto:data@opensupplyhub.org?subject=Disputing a claim of facility ID ${osId}`;
 
 export const makeReportADuplicateEmailLink = osId =>
-    `mailto:info@opensupplyhub.org?subject=Reporting ID ${osId} as a duplicate facility`;
+    `mailto:data@opensupplyhub.org?subject=Reporting ID ${osId} as a duplicate facility`;
 
 export const makeFeatureCollectionFromSingleFeature = feature =>
     Object.freeze({
