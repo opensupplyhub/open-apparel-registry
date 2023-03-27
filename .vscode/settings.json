@@ -1,0 +1,5 @@
+{
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "snyk.advanced.additionalParameters": "--command=python3 --all-projects"
+}

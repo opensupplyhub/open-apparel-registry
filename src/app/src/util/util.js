@@ -32,6 +32,7 @@ import { featureCollection, bbox } from '@turf/turf';
 import { saveAs } from 'file-saver';
 import hash from 'object-hash';
 import * as XLSX from 'xlsx';
+import ESAPI from 'node-esapi';
 
 import env from './env';
 
@@ -791,8 +792,9 @@ export const removeDuplicatesFromOtherLocationsData = otherLocationsData =>
         return false;
     });
 
-export const getLocationWithoutEmbedParam = () =>
-    window.location.href.replace('&embed=1', '').replace('embed=1', '');
+export const getLocationWithoutEmbedParam = () => {
+    ESAPI.encoder().encodeForURL(window.location.href.replace('&embed=1', '').replace('embed=1', ''));
+}
 
 export const getEmbeddedMapSrc = ({ contributor, timestamp }) => {
     const qs = timestamp
