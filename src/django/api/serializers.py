@@ -125,6 +125,7 @@ def prefer_contributor_name(serializer):
 
 class PipeSeparatedField(ListField):
     """Accepts either a list or a pipe-delimited string as input"""
+
     def to_internal_value(self, data):
         if isinstance(data, str):
             data = data.split('|')
@@ -734,10 +735,10 @@ class FacilitySerializer(GeoFeatureModelSerializer):
             return fields
 
         list_item = FacilityListItem.objects.filter(
-                facility=facility,
-                source__contributor=contributor,
-                source__is_active=True,
-                facilitymatch__is_active=True).order_by('-created_at').first()
+            facility=facility,
+            source__contributor=contributor,
+            source__is_active=True,
+            facilitymatch__is_active=True).order_by('-created_at').first()
 
         return assign_contributor_field_values(list_item, fields)
 
@@ -769,11 +770,11 @@ class FacilitySerializer(GeoFeatureModelSerializer):
 
         for field_name, _ in ExtendedField.FIELD_CHOICES:
             serializer = ExtendedFieldListSerializer(
-                        fields.filter(field_name=field_name),
-                        many=True,
-                        context={'user_can_see_detail': user_can_see_detail,
-                                 'embed_mode_active': embed_mode_active}
-                    )
+                fields.filter(field_name=field_name),
+                many=True,
+                context={'user_can_see_detail': user_can_see_detail,
+                         'embed_mode_active': embed_mode_active}
+            )
 
             if field_name == ExtendedField.NAME and not embed_mode_active:
                 unsorted_data = serializer.data
@@ -998,12 +999,12 @@ def assign_contributor_field_values(list_item, fields):
 
     if list_item.source.source_type == 'SINGLE':
         contributor_fields = get_single_contributor_field_values(
-                                list_item, contributor_fields
-                            )
+            list_item, contributor_fields
+        )
     else:
         contributor_fields = get_list_contributor_field_values(
-                                list_item, contributor_fields
-                             )
+            list_item, contributor_fields
+        )
 
     return [
         {
@@ -1043,12 +1044,12 @@ def get_contributor_id(contributor, user_can_see_detail):
 
 def create_name_field(name, contributor, updated_at, user_can_see_detail):
     return {
-      'value': name,
-      'field_name': ExtendedField.NAME,
-      'contributor_id': get_contributor_id(contributor, user_can_see_detail),
-      'contributor_name':
-      get_contributor_name(contributor, user_can_see_detail),
-      'updated_at': updated_at,
+        'value': name,
+        'field_name': ExtendedField.NAME,
+        'contributor_id': get_contributor_id(contributor, user_can_see_detail),
+        'contributor_name':
+        get_contributor_name(contributor, user_can_see_detail),
+        'updated_at': updated_at,
     }
 
 
@@ -1074,13 +1075,13 @@ def get_facility_names(facility):
 def create_address_field(address, contributor, updated_at,
                          user_can_see_detail, is_from_claim=False):
     return {
-      'value': address,
-      'field_name': ExtendedField.ADDRESS,
-      'contributor_id': get_contributor_id(contributor, user_can_see_detail),
-      'contributor_name':
-      get_contributor_name(contributor, user_can_see_detail),
-      'updated_at': updated_at,
-      'is_from_claim': is_from_claim,
+        'value': address,
+        'field_name': ExtendedField.ADDRESS,
+        'contributor_id': get_contributor_id(contributor, user_can_see_detail),
+        'contributor_name':
+        get_contributor_name(contributor, user_can_see_detail),
+        'updated_at': updated_at,
+        'is_from_claim': is_from_claim,
     }
 
 
@@ -1298,10 +1299,10 @@ class FacilityDetailsSerializer(FacilitySerializer):
                     embed_config=config, visible=True).order_by('order')
 
         list_item = FacilityListItem.objects.filter(
-                facility=facility,
-                source__contributor=contributor,
-                source__is_active=True,
-                facilitymatch__is_active=True).order_by('-created_at').first()
+            facility=facility,
+            source__contributor=contributor,
+            source__is_active=True,
+            facilitymatch__is_active=True).order_by('-created_at').first()
 
         return assign_contributor_field_values(list_item, fields)
 
@@ -1868,14 +1869,14 @@ class EmbedConfigSerializer(ModelSerializer):
 
     def get_embed_fields(self, instance):
         embed_fields = EmbedField.objects.filter(
-                            embed_config=instance).order_by('order')
+            embed_config=instance).order_by('order')
         return EmbedFieldsSerializer(embed_fields, many=True).data
 
     def get_extended_fields(self, instance):
         try:
             extended_fields = ExtendedField.objects \
-                        .filter(contributor_id=instance.contributor.id) \
-                        .values_list('field_name', flat=True).distinct()
+                .filter(contributor_id=instance.contributor.id) \
+                .values_list('field_name', flat=True).distinct()
             return extended_fields
         except Contributor.DoesNotExist:
             return []
