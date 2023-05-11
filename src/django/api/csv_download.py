@@ -41,15 +41,7 @@ def get_download_claim_contribution(claim, user_can_see_detail):
     return contribution
 
 
-def format_download_extended_fields(fields):
-    extended_fields = [
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-    ]
+def format_download_extended_fields(fields, extended_fields):
     for field in fields:
         field_name = field.get('field_name', None)
         value = field.get('value', None)
@@ -58,34 +50,39 @@ def format_download_extended_fields(fields):
         if field_name == ExtendedField.NUMBER_OF_WORKERS:
             min = value.get('min', 0)
             max = value.get('max', 0)
-            extended_fields[0] = str(max) if max == min \
+            result = str(max) if max == min \
                 else "{}-{}".format(min, max)
+            extended_fields[0].append(result)
         elif field_name == ExtendedField.PARENT_COMPANY:
             contributor_name = value.get('contributor_name', None)
             name = value.get('name', None)
-            extended_fields[1] = contributor_name \
+            result = contributor_name \
                 if contributor_name is not None else name
+            extended_fields[1].append(result)
         elif field_name == ExtendedField.FACILITY_TYPE:
             raw_values = value.get('raw_values', [])
-            extended_fields[2] = combine_raw_values(
-                raw_values, extended_fields[2])
+            result = combine_raw_values(raw_values, extended_fields[2])
+            extended_fields[2].extend(result)
 
             matched_values = value.get('matched_values', [])
-            extended_fields[3] = "|".join([m_value[2]
-                                          for m_value in matched_values
-                                          if m_value[2] is not None])
+            result = [m_value[2]
+                      for m_value in matched_values
+                      if m_value[2] is not None]
+            extended_fields[3].extend(result)
         elif field_name == ExtendedField.PROCESSING_TYPE:
             raw_values = value.get('raw_values', [])
-            extended_fields[2] = combine_raw_values(
-                raw_values, extended_fields[2])
+            result = combine_raw_values(raw_values, extended_fields[2])
+            extended_fields[2].extend(result)
 
             matched_values = value.get('matched_values', [])
-            extended_fields[4] = "|".join([m_value[3]
-                                          for m_value in matched_values
-                                          if m_value[3] is not None])
+            result = [m_value[3]
+                      for m_value in matched_values
+                      if m_value[3] is not None]
+            extended_fields[4].extend(result)
         elif field_name == ExtendedField.PRODUCT_TYPE:
             raw_values = value.get('raw_values', [])
-            extended_fields[5] = "|".join(value_to_set(raw_values))
+            result = value_to_set(raw_values)
+            extended_fields[5].extend(result)
 
     return extended_fields
 
@@ -100,5 +97,4 @@ def combine_raw_values(new_values, old_values):
     old_set = set()
     if len(old_values) != 0:
         old_set = value_to_set(old_values)
-    return "|".join(
-        value_to_set(new_values).union(old_set))
+    return value_to_set(new_values).union(old_set)
