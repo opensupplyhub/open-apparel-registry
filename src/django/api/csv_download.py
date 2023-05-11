@@ -7,6 +7,14 @@ def format_download_date(date):
     return date.strftime("%Y-%m-%d")
 
 
+def add_contribution(value, contribution):
+    return f'{value} [{contribution}]' if contribution else value
+
+
+def add_many_contributions(values, contribution):
+    return [add_contribution(value, contribution) for value in values]
+
+
 def get_download_contribution(source, match_is_active, user_can_see_detail):
     contribution = '[Unknown Contributor]'
     is_visible = source.is_active and source.is_public and match_is_active
@@ -41,51 +49,57 @@ def get_download_claim_contribution(claim, user_can_see_detail):
     return contribution
 
 
-def format_download_extended_fields(fields):
-    extended_fields = [
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-    ]
+def format_download_extended_fields(fields, extended_fields):
     for field in fields:
         field_name = field.get('field_name', None)
         value = field.get('value', None)
+        contribution = field.get('contribution', None)
         if value is None:
             continue
         if field_name == ExtendedField.NUMBER_OF_WORKERS:
             min = value.get('min', 0)
             max = value.get('max', 0)
-            extended_fields[0] = str(max) if max == min \
+            result = str(max) if max == min \
                 else "{}-{}".format(min, max)
+            extended_fields[0].append(add_contribution(result, contribution))
         elif field_name == ExtendedField.PARENT_COMPANY:
             contributor_name = value.get('contributor_name', None)
             name = value.get('name', None)
-            extended_fields[1] = contributor_name \
+            result = contributor_name \
                 if contributor_name is not None else name
+            extended_fields[1].append(add_contribution(result, contribution))
         elif field_name == ExtendedField.FACILITY_TYPE:
             raw_values = value.get('raw_values', [])
-            extended_fields[2] = combine_raw_values(
-                raw_values, extended_fields[2])
+            result = combine_raw_values(
+                add_many_contributions(value_to_set(raw_values), contribution),
+                extended_fields[2])
+            extended_fields[2].append(result)
 
             matched_values = value.get('matched_values', [])
-            extended_fields[3] = "|".join([m_value[2]
-                                          for m_value in matched_values
-                                          if m_value[2] is not None])
+            result = "|".join(add_many_contributions(
+                [m_value[2]
+                 for m_value in matched_values
+                 if m_value[2] is not None], contribution))
+            extended_fields[3].append(result)
         elif field_name == ExtendedField.PROCESSING_TYPE:
             raw_values = value.get('raw_values', [])
-            extended_fields[2] = combine_raw_values(
-                raw_values, extended_fields[2])
+            result = combine_raw_values(
+                add_many_contributions(
+                    value_to_set(raw_values), contribution),
+                extended_fields[2])
+            extended_fields[2].append(result)
 
             matched_values = value.get('matched_values', [])
-            extended_fields[4] = "|".join([m_value[3]
-                                          for m_value in matched_values
-                                          if m_value[3] is not None])
+            result = "|".join(add_many_contributions(
+                [m_value[3]
+                 for m_value in matched_values
+                 if m_value[3] is not None], contribution))
+            extended_fields[4].append(result)
         elif field_name == ExtendedField.PRODUCT_TYPE:
             raw_values = value.get('raw_values', [])
-            extended_fields[5] = "|".join(value_to_set(raw_values))
+            result = "|".join(value_to_set(
+                add_many_contributions(raw_values, contribution)))
+            extended_fields[5].append(result)
 
     return extended_fields
 

@@ -857,26 +857,35 @@ class FacilityDownloadSerializer(Serializer):
         if is_embed_mode:
             contributor_fields = self.get_contributor_fields()
 
-        def add_non_base_fields(row, list_item, match_is_active):
-            row.append('|'.join(list_item.sector))
+        sectors = []
+        contributions_dict = defaultdict(str)
+        contributor_fields_array = []
+        extended_fields = [[], [], [], [], [], []]
+
+        def add_contributions(arr, contribution):
+            return [a if contribution is None else f'{a} [{contribution}]'
+                    for a in arr]
+
+        def add_non_base_fields(list_item, match_is_active):
+            contribution = None
             if not is_embed_mode:
                 contribution = get_download_contribution(
                     list_item.source, match_is_active, user_can_see_detail)
-                row.append(contribution)
-            else:
-                contributor_field_values = assign_contributor_field_values(
-                    list_item, contributor_fields)
-                row.extend([f['value'] if f['value'] is not None else ''
-                            for f in contributor_field_values])
+                contributions_dict[list_item.id] = contribution
 
-            extended_fields = ExtendedField.objects.filter(
-                facility_list_item=list_item
-            ).values('value', 'field_name')
-            row.extend(format_download_extended_fields(extended_fields))
+            format_download_extended_fields(
+                [{
+                    'value': ef['value'],
+                    'field_name': ef['field_name'],
+                    'contribution': contribution
+                } for ef in ExtendedField.objects.filter(
+                    facility_list_item=list_item
+                ).values('value', 'field_name')],
+                extended_fields)
 
-            return row
-
-        rows = []
+            if list_item.sector is not None:
+                sectors.extend(add_contributions(
+                    list_item.sector, contribution))
 
         base_row = [
             facility.id,
@@ -920,33 +929,41 @@ class FacilityDownloadSerializer(Serializer):
             and int(contributor_id) == claim.contributor.id)
 
         if (claim and not is_embed_mode) or claimed_by_embed_contributor:
-            sector = claim.sector if claim.sector is not None \
-                else base_list_item.sector
-            base_row.append('|'.join(sector))
-
+            contribution = None
             if not is_embed_mode:
                 contribution = get_download_claim_contribution(
                     claim, user_can_see_detail)
-                base_row.append(contribution)
+                contributions_dict['claim'] = contribution
             else:
                 contributor_field_values = assign_contributor_field_values(
                     base_list_item, contributor_fields)
-                base_row.extend([f['value'] if f['value'] is not None else ''
-                                 for f in contributor_field_values])
+                contributor_fields_array = [
+                    f['value'] if f['value'] is not None else ''
+                    for f in contributor_field_values]
 
-            extended_fields = ExtendedField.objects.filter(
-                facility_claim=claim).values('value', 'field_name')
-            base_row.extend(format_download_extended_fields(extended_fields))
+            format_download_extended_fields(
+                [{
+                    'value': ef['value'],
+                    'field_name': ef['field_name'],
+                    'contribution': contribution
+                } for ef in ExtendedField.objects.filter(
+                    facility_claim=claim).values('value', 'field_name')],
+                extended_fields)
+
+            sector = claim.sector if claim.sector is not None \
+                else base_list_item.sector
+            sectors.extend(add_contributions(sector, contribution))
         else:
             match_is_active = facility_matches.filter(
                 facility_list_item=base_list_item,
                 is_active=True).exists()
-            base_row = add_non_base_fields(
-                base_row, base_list_item, match_is_active)
-
-        base_row.append(facility.is_closed if facility.is_closed else 'False')
-
-        rows.append(base_row)
+            if is_embed_mode:
+                contributor_field_values = assign_contributor_field_values(
+                    base_list_item, contributor_fields)
+                contributor_fields_array = [
+                    f['value'] if f['value'] is not None else ''
+                    for f in contributor_field_values]
+            add_non_base_fields(base_list_item, match_is_active)
 
         if not is_embed_mode:
             for facility_match in facility_matches:
@@ -955,17 +972,19 @@ class FacilityDownloadSerializer(Serializer):
                 if claim is None and facility.created_from_id == list_item.id:
                     continue
 
-                row = [facility.id,
-                       format_download_date(list_item.source.created_at),
-                       '', '', '', '', '', '']
-                row = add_non_base_fields(row, list_item,
-                                          facility_match.is_active)
-                # Add a blank slot for closure status
-                row.append('')
+                add_non_base_fields(list_item, facility_match.is_active)
 
-                rows.append(row)
+        base_row.append('|'.join(sectors))
+        if not is_embed_mode:
+            valid_contributors = [
+                c for c in contributions_dict.values() if c]
+            base_row.append('|'.join(valid_contributors))
+        else:
+            base_row.extend(contributor_fields_array)
+        base_row.extend(['|'.join(set(efs)) for efs in extended_fields])
+        base_row.append(facility.is_closed if facility.is_closed else 'False')
 
-        return rows
+        return [base_row]
 
     def get_contributor_fields(self):
         request = self.context.get('request') \
@@ -1310,7 +1329,7 @@ class FacilityDetailsSerializer(FacilitySerializer):
         user_can_see_detail = can_user_see_detail(self)
         list_item = facility.created_from
         matches = facility.facilitymatch_set \
-                          .filter(facility_list_item=list_item)
+            .filter(facility_list_item=list_item)
         should_display_associations = \
             any([m.should_display_association for m in matches])
         display_detail = user_can_see_detail and should_display_associations \
@@ -1697,7 +1716,7 @@ class UserPasswordResetSerializer(PasswordResetSerializer):
 
 
 class UserPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
-    @transaction.atomic
+    @ transaction.atomic
     def save(self):
         self.user.save()
 
@@ -1903,8 +1922,8 @@ class ExtendedFieldListSerializer(ModelSerializer):
         if list_item_id is not None:
             matches = FacilityMatch.objects.filter(
                 facility_list_item_id=list_item_id)
-            should_display_association = \
-                any([m.should_display_association for m in matches])
+            should_display_association = any(
+                [m.should_display_association for m in matches])
 
         return should_display_association and user_can_see_detail
 
@@ -1926,10 +1945,10 @@ class ExtendedFieldListSerializer(ModelSerializer):
         from_claim = Q(facility_list_item=None)
         from_active_list = Q(facility_list_item__source__is_active=True)
         vals = ExtendedField.objects.filter(facility=instance.facility) \
-                                    .filter(field_name=instance.field_name) \
-                                    .filter(value=instance.value) \
-                                    .filter(from_claim | from_active_list) \
-                                    .count()
+            .filter(field_name=instance.field_name) \
+            .filter(value=instance.value) \
+            .filter(from_claim | from_active_list) \
+            .count()
         return vals
 
     def get_is_from_claim(self, instance):
