@@ -858,34 +858,24 @@ class FacilityDownloadSerializer(Serializer):
             contributor_fields = self.get_contributor_fields()
 
         sectors = []
-        contributions_dict = defaultdict(str)
+        contributions_arr = []
         contributor_fields_array = []
         extended_fields = [[], [], [], [], [], []]
-
-        def add_contributions(arr, contribution):
-            return [a if contribution is None else f'{a} [{contribution}]'
-                    for a in arr]
 
         def add_non_base_fields(list_item, match_is_active):
             contribution = None
             if not is_embed_mode:
                 contribution = get_download_contribution(
                     list_item.source, match_is_active, user_can_see_detail)
-                contributions_dict[list_item.id] = contribution
+                contributions_arr.append(contribution)
 
-            format_download_extended_fields(
-                [{
-                    'value': ef['value'],
-                    'field_name': ef['field_name'],
-                    'contribution': contribution
-                } for ef in ExtendedField.objects.filter(
-                    facility_list_item=list_item
-                ).values('value', 'field_name')],
+            format_download_extended_fields(ExtendedField.objects.filter(
+                facility_list_item=list_item
+            ).values('value', 'field_name'),
                 extended_fields)
 
             if list_item.sector is not None:
-                sectors.extend(add_contributions(
-                    list_item.sector, contribution))
+                sectors.extend(list_item.sector)
 
         base_row = [
             facility.id,
@@ -933,7 +923,7 @@ class FacilityDownloadSerializer(Serializer):
             if not is_embed_mode:
                 contribution = get_download_claim_contribution(
                     claim, user_can_see_detail)
-                contributions_dict['claim'] = contribution
+                contributions_arr.append(contribution)
             else:
                 contributor_field_values = assign_contributor_field_values(
                     base_list_item, contributor_fields)
@@ -942,17 +932,13 @@ class FacilityDownloadSerializer(Serializer):
                     for f in contributor_field_values]
 
             format_download_extended_fields(
-                [{
-                    'value': ef['value'],
-                    'field_name': ef['field_name'],
-                    'contribution': contribution
-                } for ef in ExtendedField.objects.filter(
-                    facility_claim=claim).values('value', 'field_name')],
+                ExtendedField.objects.filter(
+                    facility_claim=claim).values('value', 'field_name'),
                 extended_fields)
 
             sector = claim.sector if claim.sector is not None \
                 else base_list_item.sector
-            sectors.extend(add_contributions(sector, contribution))
+            sectors.extend(sector)
         else:
             match_is_active = facility_matches.filter(
                 facility_list_item=base_list_item,
@@ -974,10 +960,10 @@ class FacilityDownloadSerializer(Serializer):
 
                 add_non_base_fields(list_item, facility_match.is_active)
 
-        base_row.append('|'.join(sectors))
+        base_row.append('|'.join(set(sectors)))
         if not is_embed_mode:
             valid_contributors = [
-                c for c in contributions_dict.values() if c]
+                c for c in contributions_arr if c]
             base_row.append('|'.join(valid_contributors))
         else:
             base_row.extend(contributor_fields_array)

@@ -7,14 +7,6 @@ def format_download_date(date):
     return date.strftime("%Y-%m-%d")
 
 
-def add_contribution(value, contribution):
-    return f'{value} [{contribution}]' if contribution else value
-
-
-def add_many_contributions(values, contribution):
-    return [add_contribution(value, contribution) for value in values]
-
-
 def get_download_contribution(source, match_is_active, user_can_see_detail):
     contribution = '[Unknown Contributor]'
     is_visible = source.is_active and source.is_public and match_is_active
@@ -53,7 +45,6 @@ def format_download_extended_fields(fields, extended_fields):
     for field in fields:
         field_name = field.get('field_name', None)
         value = field.get('value', None)
-        contribution = field.get('contribution', None)
         if value is None:
             continue
         if field_name == ExtendedField.NUMBER_OF_WORKERS:
@@ -61,45 +52,36 @@ def format_download_extended_fields(fields, extended_fields):
             max = value.get('max', 0)
             result = str(max) if max == min \
                 else "{}-{}".format(min, max)
-            extended_fields[0].append(add_contribution(result, contribution))
+            extended_fields[0].append(result)
         elif field_name == ExtendedField.PARENT_COMPANY:
             contributor_name = value.get('contributor_name', None)
             name = value.get('name', None)
             result = contributor_name \
                 if contributor_name is not None else name
-            extended_fields[1].append(add_contribution(result, contribution))
+            extended_fields[1].append(result)
         elif field_name == ExtendedField.FACILITY_TYPE:
             raw_values = value.get('raw_values', [])
-            result = combine_raw_values(
-                add_many_contributions(value_to_set(raw_values), contribution),
-                extended_fields[2])
-            extended_fields[2].append(result)
+            result = combine_raw_values(raw_values, extended_fields[2])
+            extended_fields[2].extend(result)
 
             matched_values = value.get('matched_values', [])
-            result = "|".join(add_many_contributions(
-                [m_value[2]
-                 for m_value in matched_values
-                 if m_value[2] is not None], contribution))
-            extended_fields[3].append(result)
+            result = [m_value[2]
+                      for m_value in matched_values
+                      if m_value[2] is not None]
+            extended_fields[3].extend(result)
         elif field_name == ExtendedField.PROCESSING_TYPE:
             raw_values = value.get('raw_values', [])
-            result = combine_raw_values(
-                add_many_contributions(
-                    value_to_set(raw_values), contribution),
-                extended_fields[2])
-            extended_fields[2].append(result)
+            result = combine_raw_values(raw_values, extended_fields[2])
+            extended_fields[2].extend(result)
 
             matched_values = value.get('matched_values', [])
-            result = "|".join(add_many_contributions(
-                [m_value[3]
-                 for m_value in matched_values
-                 if m_value[3] is not None], contribution))
-            extended_fields[4].append(result)
+            result = [m_value[3]
+                      for m_value in matched_values
+                      if m_value[3] is not None]
         elif field_name == ExtendedField.PRODUCT_TYPE:
             raw_values = value.get('raw_values', [])
-            result = "|".join(value_to_set(
-                add_many_contributions(raw_values, contribution)))
-            extended_fields[5].append(result)
+            result = value_to_set(raw_values)
+            extended_fields[5].extend(result)
 
     return extended_fields
 
@@ -114,5 +96,4 @@ def combine_raw_values(new_values, old_values):
     old_set = set()
     if len(old_values) != 0:
         old_set = value_to_set(old_values)
-    return "|".join(
-        value_to_set(new_values).union(old_set))
+    return value_to_set(new_values).union(old_set)
