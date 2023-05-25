@@ -212,16 +212,16 @@ def add_user_to_mailing_list(email, name, contrib_type):
             return None
 
         headers = {
-          'Authorization': "Bearer {}".format(settings.HUBSPOT_API_KEY),
-          'Content-Type': 'application/json'
+            'Authorization': "Bearer {}".format(settings.HUBSPOT_API_KEY),
+            'Content-Type': 'application/json'
         }
 
         # Add new contact
         new_contact = json.dumps({
-          "properties": {
-            "company": name,
-            "email": email,
-          }
+            "properties": {
+                "company": name,
+                "email": email,
+            }
         })
         r = requests.post(HUBSPOT_CONTACT_URL, headers=headers,
                           data=new_contact)
@@ -957,7 +957,7 @@ facilities_list_parameters = [
             'The sectors that this facility belongs to. '
             'Values must match those returned from the '
             '`GET /api/sectors` endpoint'
-            )
+        )
     )
 ]
 facilities_create_parameters = [
@@ -1397,7 +1397,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
               "geocoded_address": null,
               "status": "ERROR_MATCHING"
             }
-        """ # noqa
+        """  # noqa
         # Adding the @permission_classes decorator was not working so we
         # explicitly invoke our custom permission class.
         if not IsRegisteredAndConfirmed().has_permission(request, self):
@@ -1413,17 +1413,17 @@ class FacilitiesViewSet(mixins.ListModelMixin,
         if clean_name is None:
             clean_name = ''
             raise ValidationError({
-              "clean_name": [
-                "This field may not be blank."
-              ]
+                "clean_name": [
+                    "This field may not be blank."
+                ]
             })
         clean_address = clean(body_serializer.validated_data.get('address'))
         if clean_address is None:
             clean_address = ''
             raise ValidationError({
-              "clean_address": [
-                "This field may not be blank."
-              ]
+                "clean_address": [
+                    "This field may not be blank."
+                ]
             })
 
         params_serializer = FacilityCreateQueryParamsSerializer(
@@ -1727,7 +1727,7 @@ class FacilitiesViewSet(mixins.ListModelMixin,
             else:
                 result['status'] = FacilityListItem.NEW_FACILITY
 
-        if should_create and result['status'] != FacilityListItem.ERROR_MATCHING: # noqa
+        if should_create and result['status'] != FacilityListItem.ERROR_MATCHING:  # noqa
             return Response(result, status=status.HTTP_201_CREATED)
         else:
             return Response(result, status=status.HTTP_200_OK)
@@ -1789,10 +1789,10 @@ class FacilitiesViewSet(mixins.ListModelMixin,
                     other_matches.filter(
                         status__in=(FacilityMatch.AUTOMATIC,
                                     FacilityMatch.CONFIRMED)
-                        ).exclude(
-                            facility_list_item__geocoded_point__isnull=True
-                        ).exclude(**{
-                            "facility_list_item__source__contributor":
+                    ).exclude(
+                        facility_list_item__geocoded_point__isnull=True
+                    ).exclude(**{
+                        "facility_list_item__source__contributor":
                             created_by_contributor}),
                     key=lambda m: m.confidence)
             except ValueError:
@@ -2877,10 +2877,10 @@ class AdminFacilityListView(ListAPIView):
         if status == FacilityList.MATCHED:
             sources = Source.objects \
                 .filter(facilitylistitem__status__in=[
-                            FacilityListItem.MATCHED,
-                            FacilityListItem.POTENTIAL_MATCH,
-                            FacilityListItem.ERROR_MATCHING
-                        ])
+                    FacilityListItem.MATCHED,
+                    FacilityListItem.POTENTIAL_MATCH,
+                    FacilityListItem.ERROR_MATCHING
+                ])
             facility_lists = facility_lists.filter(source__in=sources)
         elif status == FacilityList.REPLACED:
             facility_lists = facility_lists.filter(replaced_by__isnull=False)
@@ -3195,20 +3195,20 @@ class FacilityListViewSet(viewsets.ModelViewSet):
 
         special_case_q_statements = {
             FacilityListItem.NEW_FACILITY: Q(
-                        Q(status__in=('MATCHED', 'CONFIRMED_MATCH')) &
-                        Q(facility__created_from_id=F('id')) &
-                        ~Q(facilitymatch__is_active=False)),
+                Q(status__in=('MATCHED', 'CONFIRMED_MATCH')) &
+                Q(facility__created_from_id=F('id')) &
+                ~Q(facilitymatch__is_active=False)),
             FacilityListItem.MATCHED: Q(
-                        Q(status='MATCHED') &
-                        ~Q(facility__created_from_id=F('id')) &
-                        ~Q(facilitymatch__is_active=False)),
+                Q(status='MATCHED') &
+                ~Q(facility__created_from_id=F('id')) &
+                ~Q(facilitymatch__is_active=False)),
             FacilityListItem.CONFIRMED_MATCH: Q(
-                        Q(status='CONFIRMED_MATCH') &
-                        ~Q(facility__created_from_id=F('id')) &
-                        ~Q(facilitymatch__is_active=False)),
+                Q(status='CONFIRMED_MATCH') &
+                ~Q(facility__created_from_id=F('id')) &
+                ~Q(facilitymatch__is_active=False)),
             FacilityListItem.REMOVED: Q(
-                        Q(facilitymatch__is_active=False) |
-                        Q(status=FacilityListItem.ITEM_REMOVED)),
+                Q(facilitymatch__is_active=False) |
+                Q(status=FacilityListItem.ITEM_REMOVED)),
         }
 
         def make_q_from_status(status):
@@ -4170,9 +4170,10 @@ class IsListAndAdminOrNotList(IsAdminUser):
     """
     Custom permission to only allow access to lists for admins
     """
+
     def has_permission(self, request, view):
         is_admin = super(IsListAndAdminOrNotList, self) \
-                    .has_permission(request, view)
+            .has_permission(request, view)
         return view.action != 'list' or is_admin
 
 
@@ -4205,8 +4206,8 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
             raise NotFound()
 
         facility_activity_report = update_facility_activity_report_status(
-                                    facility_activity_report, request,
-                                    'CONFIRMED')
+            facility_activity_report, request,
+            'CONFIRMED')
 
         facility = facility_activity_report.facility
         if facility_activity_report.closure_state == 'CLOSED':
@@ -4216,7 +4217,7 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
         facility.save()
 
         response_data = FacilityActivityReportSerializer(
-                        facility_activity_report).data
+            facility_activity_report).data
 
         return Response(response_data)
 
@@ -4241,11 +4242,11 @@ class FacilityActivityReportViewSet(viewsets.GenericViewSet):
             raise NotFound()
 
         facility_activity_report = update_facility_activity_report_status(
-                                    facility_activity_report, request,
-                                    'REJECTED')
+            facility_activity_report, request,
+            'REJECTED')
 
         response_data = FacilityActivityReportSerializer(
-                        facility_activity_report).data
+            facility_activity_report).data
 
         return Response(response_data)
 

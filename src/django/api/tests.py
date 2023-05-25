@@ -783,7 +783,7 @@ geocoding_data = {'results': [{'address_components': [
     {'long_name': 'United States', 'short_name': 'US',
      'types': ['country', 'political']},
     {'long_name': '19123', 'short_name': '19123', 'types': ['postal_code']}
-    ],
+],
     'formatted_address': '990 Spring Garden St, Philadelphia, PA 19123, USA',
     'geometry': {'bounds': {
         'northeast': {'lat': 39.9614743, 'lng': -75.15379639999999},
@@ -798,139 +798,141 @@ geocoding_data = {'results': [{'address_components': [
     'status': 'OK'}
 
 geocoding_data_no_country = {
-   "results": [
-      {
-         "address_components": [
-            {
-               "long_name": "4WHM+QCX",
-               "short_name": "4WHM+QCX",
-               "types": ["plus_code"]
+    "results": [
+        {
+            "address_components": [
+                {
+                    "long_name": "4WHM+QCX",
+                    "short_name": "4WHM+QCX",
+                    "types": ["plus_code"]
+                },
+                {
+                    "long_name": "Famagusta",
+                    "short_name": "Famagusta",
+                    "types": ["locality", "political"]
+                },
+                {
+                    "long_name": "99450",
+                    "short_name": "99450",
+                    "types": ["postal_code"]
+                }
+            ],
+            "formatted_address": "4WHM+QCX, Famagusta 99450",
+            "geometry": {
+                "location": {"lat": 35.1294866, "lng": 33.9336133},
+                "location_type": "GEOMETRIC_CENTER",
+                "viewport": {
+                    "northeast": {
+                        "lat": 35.1308355802915,
+                        "lng": 33.9349622802915
+                    },
+                    "southwest": {
+                        "lat": 35.1281376197085,
+                        "lng": 33.9322643197085
+                    }
+                }
             },
-            {
-               "long_name": "Famagusta",
-               "short_name": "Famagusta",
-               "types": ["locality", "political"]
-            },
-            {
-               "long_name": "99450",
-               "short_name": "99450",
-               "types": ["postal_code"]
-            }
-         ],
-         "formatted_address": "4WHM+QCX, Famagusta 99450",
-         "geometry": {
-            "location": {"lat": 35.1294866, "lng": 33.9336133},
-            "location_type": "GEOMETRIC_CENTER",
-            "viewport": {
-               "northeast": {
-                  "lat": 35.1308355802915,
-                  "lng": 33.9349622802915
-               },
-               "southwest": {
-                  "lat": 35.1281376197085,
-                  "lng": 33.9322643197085
-               }
-            }
-         },
-         "partial_match": True,
-         "place_id": "ChIJDzTqezLI3xQRW5kjGEGLRzA",
-         "types": ["establishment", "point_of_interest"]
-      }
-   ],
-   "status": "OK"
+            "partial_match": True,
+            "place_id": "ChIJDzTqezLI3xQRW5kjGEGLRzA",
+            "types": ["establishment", "point_of_interest"]
+        }
+    ],
+    "status": "OK"
 }
 
 geocoding_data_second_country = {
-   "results": [
-      {
-         "address_components": [
-            {
-               "long_name": "Noor Bagh",
-               "short_name": "Noor Bagh",
-               "types": ["political", "sublocality", "sublocality_level_1"]
+    "results": [
+        {
+            "address_components": [
+                {
+                    "long_name": "Noor Bagh",
+                    "short_name": "Noor Bagh",
+                    "types": ["political",
+                              "sublocality",
+                              "sublocality_level_1"]
+                },
+                {
+                    "long_name": "Srinagar",
+                    "short_name": "Srinagar",
+                    "types": ["locality", "political"]
+                },
+                {
+                    "long_name": "190009",
+                    "short_name": "190009",
+                    "types": ["postal_code"]
+                }
+            ],
+            "formatted_address": "Noor Bagh, Srinagar 190009",
+            "geometry": {
+                "bounds": {
+                    "northeast": {"lat": 34.07490560000001, "lng": 74.8043599},
+                    "southwest": {"lat": 34.0734423, "lng": 74.8023449}
+                },
+                "location": {"lat": 34.0742387, "lng": 74.8035549},
+                "location_type": "APPROXIMATE",
+                "viewport": {
+                    "northeast": {
+                        "lat": 34.07552293029151,
+                        "lng": 74.8047013802915
+                    },
+                    "southwest": {
+                        "lat": 34.07282496970851,
+                        "lng": 74.80200341970848
+                    }
+                }
             },
-            {
-               "long_name": "Srinagar",
-               "short_name": "Srinagar",
-               "types": ["locality", "political"]
+            "partial_match": True,
+            "place_id": "ChIJmQlkN-2P4TgR6u3glWeOMTE",
+            "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+            "address_components": [
+                {
+                    "long_name": "Kaliakair",
+                    "short_name": "Kaliakair",
+                    "types": ["locality", "political"]
+                },
+                {
+                    "long_name": "Gazipur District",
+                    "short_name": "Gazipur District",
+                    "types": ["administrative_area_level_2", "political"]
+                },
+                {
+                    "long_name": "Dhaka Division",
+                    "short_name": "Dhaka Division",
+                    "types": ["administrative_area_level_1", "political"]
+                },
+                {
+                    "long_name": "Bangladesh",
+                    "short_name": "BD",
+                    "types": ["country", "political"]
+                }
+            ],
+            "formatted_address": "Kaliakair, Bangladesh",
+            "geometry": {
+                "bounds": {
+                    "northeast": {"lat": 24.0840819, "lng": 90.2365494},
+                    "southwest": {"lat": 24.0535966, "lng": 90.2030754}
+                },
+                "location": {"lat": 24.0694528, "lng": 90.2221213},
+                "location_type": "APPROXIMATE",
+                "viewport": {
+                    "northeast": {
+                        "lat": 24.0840819,
+                        "lng": 90.2365494
+                    },
+                    "southwest": {
+                        "lat": 24.0535966,
+                        "lng": 90.2030754
+                    }
+                }
             },
-            {
-               "long_name": "190009",
-               "short_name": "190009",
-               "types": ["postal_code"]
-            }
-         ],
-         "formatted_address": "Noor Bagh, Srinagar 190009",
-         "geometry": {
-            "bounds": {
-               "northeast": {"lat": 34.07490560000001, "lng": 74.8043599},
-               "southwest": {"lat": 34.0734423, "lng": 74.8023449}
-            },
-            "location": {"lat": 34.0742387, "lng": 74.8035549},
-            "location_type": "APPROXIMATE",
-            "viewport": {
-               "northeast": {
-                  "lat": 34.07552293029151,
-                  "lng": 74.8047013802915
-               },
-               "southwest": {
-                  "lat": 34.07282496970851,
-                  "lng": 74.80200341970848
-               }
-            }
-         },
-         "partial_match": True,
-         "place_id": "ChIJmQlkN-2P4TgR6u3glWeOMTE",
-         "types": ["political", "sublocality", "sublocality_level_1"]
-      },
-      {
-         "address_components": [
-            {
-               "long_name": "Kaliakair",
-               "short_name": "Kaliakair",
-               "types": ["locality", "political"]
-            },
-            {
-               "long_name": "Gazipur District",
-               "short_name": "Gazipur District",
-               "types": ["administrative_area_level_2", "political"]
-            },
-            {
-               "long_name": "Dhaka Division",
-               "short_name": "Dhaka Division",
-               "types": ["administrative_area_level_1", "political"]
-            },
-            {
-               "long_name": "Bangladesh",
-               "short_name": "BD",
-               "types": ["country", "political"]
-            }
-         ],
-         "formatted_address": "Kaliakair, Bangladesh",
-         "geometry": {
-            "bounds": {
-               "northeast": {"lat": 24.0840819, "lng": 90.2365494},
-               "southwest": {"lat": 24.0535966, "lng": 90.2030754}
-            },
-            "location": {"lat": 24.0694528, "lng": 90.2221213},
-            "location_type": "APPROXIMATE",
-            "viewport": {
-               "northeast": {
-                  "lat": 24.0840819,
-                  "lng": 90.2365494
-               },
-               "southwest": {
-                  "lat": 24.0535966,
-                  "lng": 90.2030754
-               }
-            }
-         },
-         "partial_match":  True,
-         "place_id": "ChIJTfs3ierjVTcRysKYnbOKmZM",
-         "types": ["locality", "political"]
-      }
-   ],
-   "status": "OK"
+            "partial_match":  True,
+            "place_id": "ChIJTfs3ierjVTcRysKYnbOKmZM",
+            "types": ["locality", "political"]
+        }
+    ],
+    "status": "OK"
 }
 
 
@@ -1095,97 +1097,101 @@ class FacilityAndProcessingTypeTest(TestCase):
 
 
 listitem_geocode_data = {
-   "results": [
-      {
-         "address_components": [
-            {
-               "long_name": "Linjiacunzhen",
-               "short_name": "Linjiacunzhen",
-               "types": ["political", "sublocality", "sublocality_level_2"]
+    "results": [
+        {
+            "address_components": [
+                {
+                    "long_name": "Linjiacunzhen",
+                    "short_name": "Linjiacunzhen",
+                    "types": ["political",
+                              "sublocality",
+                              "sublocality_level_2"]
+                },
+                {
+                    "long_name": "Zhucheng",
+                    "short_name": "Zhucheng",
+                    "types": ["political",
+                              "sublocality",
+                              "sublocality_level_1"]
+                },
+                {
+                    "long_name": "Weifang",
+                    "short_name": "Weifang",
+                    "types": ["locality", "political"]
+                },
+                {
+                    "long_name": "Shandong",
+                    "short_name": "Shandong",
+                    "types": ["administrative_area_level_1", "political"]
+                },
+                {
+                    "long_name": "China",
+                    "short_name": "CN",
+                    "types": ["country", "political"]
+                },
+                {
+                    "long_name": "262232",
+                    "short_name": "262232",
+                    "types": ["postal_code"]
+                }
+            ],
+            "formatted_address": "Linjiacunzhen, Zhucheng, " +
+            "Weifang, Shandong, China, 262232",
+            "geometry": {
+                "location": {"lat": 35.994813, "lng": 119.65418},
+                "location_type": "APPROXIMATE",
+                "viewport": {
+                    "northeast": {"lat": 36.0038401, "lng": 119.6701874},
+                    "southwest": {"lat": 35.9857849, "lng": 119.6381726}
+                }
             },
-            {
-               "long_name": "Zhucheng",
-               "short_name": "Zhucheng",
-               "types": ["political", "sublocality", "sublocality_level_1"]
+            "partial_match": True,
+            "place_id": "ChIJV5SPiTEkvjUR7ErhmnSRTR8",
+            "types": ["political", "sublocality", "sublocality_level_2"]
+        },
+        {
+            "address_components": [
+                {
+                    "long_name": "396210",
+                    "short_name": "396210",
+                    "types": ["postal_code"]
+                },
+                {
+                    "long_name": "Daman",
+                    "short_name": "Daman",
+                    "types": ["administrative_area_level_2", "political"]
+                },
+                {
+                    "long_name": "Dadra and Nagar Haveli and Daman and Diu",
+                    "short_name": "DH",
+                    "types": ["administrative_area_level_1", "political"]
+                },
+                {
+                    "long_name": "India",
+                    "short_name": "IN",
+                    "types": ["country", "political"]
+                }
+            ],
+            "formatted_address":  "Dadra and Nagar Haveli and Daman and " +
+            "Diu 396210, India",
+            "geometry": {
+                "bounds": {
+                    "northeast": {"lat": 20.4696847, "lng": 72.8751228},
+                    "southwest": {"lat": 20.4051972, "lng": 72.82805549999999}
+                },
+                "location": {"lat": 20.4346424, "lng": 72.8456399},
+                "location_type": "APPROXIMATE",
+                "viewport": {
+                    "northeast": {"lat": 20.4696847, "lng": 72.8751228},
+                    "southwest": {"lat": 20.4051972, "lng": 72.82805549999999}
+                }
             },
-            {
-               "long_name": "Weifang",
-               "short_name": "Weifang",
-               "types": ["locality", "political"]
-            },
-            {
-               "long_name": "Shandong",
-               "short_name": "Shandong",
-               "types": ["administrative_area_level_1", "political"]
-            },
-            {
-               "long_name": "China",
-               "short_name": "CN",
-               "types": ["country", "political"]
-            },
-            {
-               "long_name": "262232",
-               "short_name": "262232",
-               "types": ["postal_code"]
-            }
-         ],
-         "formatted_address": "Linjiacunzhen, Zhucheng, " +
-                              "Weifang, Shandong, China, 262232",
-         "geometry": {
-            "location": {"lat": 35.994813, "lng": 119.65418},
-            "location_type": "APPROXIMATE",
-            "viewport": {
-               "northeast": {"lat": 36.0038401, "lng": 119.6701874},
-               "southwest": {"lat": 35.9857849, "lng": 119.6381726}
-            }
-         },
-         "partial_match": True,
-         "place_id": "ChIJV5SPiTEkvjUR7ErhmnSRTR8",
-         "types": ["political", "sublocality", "sublocality_level_2"]
-      },
-      {
-         "address_components": [
-            {
-               "long_name": "396210",
-               "short_name": "396210",
-               "types": ["postal_code"]
-            },
-            {
-               "long_name": "Daman",
-               "short_name": "Daman",
-               "types": ["administrative_area_level_2", "political"]
-            },
-            {
-               "long_name": "Dadra and Nagar Haveli and Daman and Diu",
-               "short_name": "DH",
-               "types": ["administrative_area_level_1", "political"]
-            },
-            {
-               "long_name": "India",
-               "short_name": "IN",
-               "types": ["country", "political"]
-            }
-         ],
-         "formatted_address":  "Dadra and Nagar Haveli and Daman and " +
-                               "Diu 396210, India",
-         "geometry": {
-            "bounds": {
-               "northeast": {"lat": 20.4696847, "lng": 72.8751228},
-               "southwest": {"lat": 20.4051972, "lng": 72.82805549999999}
-            },
-            "location": {"lat": 20.4346424, "lng": 72.8456399},
-            "location_type": "APPROXIMATE",
-            "viewport": {
-               "northeast": {"lat": 20.4696847, "lng": 72.8751228},
-               "southwest": {"lat": 20.4051972, "lng": 72.82805549999999}
-            }
-         },
-         "partial_match": True,
-         "place_id": "ChIJ8d4EeIra4DsR3xkUSZh_-ng",
-         "types": ["postal_code"]
-      }
-   ],
-   "status": "OK"
+            "partial_match": True,
+            "place_id": "ChIJ8d4EeIra4DsR3xkUSZh_-ng",
+            "types": ["postal_code"]
+        }
+    ],
+    "status": "OK"
 }
 
 
@@ -2122,7 +2128,7 @@ class DedupeMatchingTests(TestCase):
         facility_list = self.create_list([
             (facility.country_code, junk_chars(facility.name.upper()),
              junk_chars(facility.address.upper()))],
-                                         status=FacilityListItem.PARSED)
+            status=FacilityListItem.PARSED)
         result = match_facility_list_items(facility_list)
         self.assertTrue(result['results']['no_geocoded_items'])
 
@@ -7413,8 +7419,8 @@ class FacilitySearchContributorTest(FacilityAPITestCaseBase):
         contributors = self.fetch_facility_contributors(self.facility)
         self.assertEqual(1, len(contributors))
         self.assertEqual(
-                'An Auditor / Certification Scheme / Service Provider',
-                contributors[0].get('name'))
+            'An Auditor / Certification Scheme / Service Provider',
+            contributors[0].get('name'))
 
         self.contributor.contrib_type = 'Brand / Retailer'
         self.contributor.save()
@@ -8220,7 +8226,7 @@ class ApiLimitTest(TestCase):
                          contributor=self.contrib_one).count(), 0)
 
         warning = ContributorNotifications.objects.get(
-                  contributor=self.contrib_one)
+            contributor=self.contrib_one)
         self.assertIsNone(warning.api_limit_warning_sent_on)
 
     def test_limit_warning_sent_once(self):
@@ -8236,11 +8242,11 @@ class ApiLimitTest(TestCase):
                          contributor=self.contrib_two).count(), 0)
 
         warning = ContributorNotifications.objects.get(
-                  contributor=self.contrib_one)
+            contributor=self.contrib_one)
         self.assertIsNotNone(warning.api_limit_warning_sent_on)
 
         warning_two = ContributorNotifications.objects.get(
-                      contributor=self.contrib_two)
+            contributor=self.contrib_two)
         self.assertEqual(warning_two.api_limit_warning_sent_on,
                          self.notification_time)
 
@@ -8261,11 +8267,11 @@ class ApiLimitTest(TestCase):
                          contributor=self.contrib_two).count(), 1)
 
         notice = ContributorNotifications.objects.get(
-                 contributor=self.contrib_one)
+            contributor=self.contrib_one)
         self.assertIsNotNone(notice.api_limit_exceeded_sent_on)
 
         notice_two = ContributorNotifications.objects.get(
-                     contributor=self.contrib_two)
+            contributor=self.contrib_two)
         self.assertEqual(notice_two.api_limit_exceeded_sent_on,
                          self.notification_time)
 
@@ -10138,7 +10144,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
 
     @patch('api.geocoding.requests.get')
     def test_posting_to_new_facility_should_create_index_with_sector(
-      self, mock_get):
+            self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
@@ -10159,7 +10165,7 @@ class IndexFacilitiesTest(FacilityAPITestCaseBase):
 
     @patch('api.geocoding.requests.get')
     def test_posting_to_existing_facility_should_update_sector(
-      self, mock_get):
+            self, mock_get):
         mock_get.return_value = Mock(ok=True, status_code=200)
         mock_get.return_value.json.return_value = geocoding_data
         self.join_group_and_login()
@@ -10357,20 +10363,22 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         self.contrib_api_list_item.facility = self.contrib_facility_two
         self.contrib_api_list_item.save()
 
-        self.default_headers = ['os_id', 'contribution_date', 'name',
-                                'address', 'country_code', 'country_name',
-                                'lat', 'lng', 'sector', 'contributor (list)',
-                                'number_of_workers', 'parent_company',
-                                'processing_type_facility_type_raw',
-                                'facility_type', 'processing_type',
-                                'product_type', 'is_closed']
-
-        self.contrib_facility_base_row = [self.contrib_facility.id,
-                                          self.date, 'Towel Factory 42',
-                                          '42 Dolphin St', 'US',
-                                          'United States', 0.0, 0.0, 'Apparel',
-                                          'test contributor 1 (First List)',
-                                          '', '', '', '', '', '', 'False']
+        self.default_headers = [
+            'os_id', 'contribution_date', 'name',
+            'address', 'country_code', 'country_name',
+            'lat', 'lng', 'sector', 'contributor (list)',
+            'number_of_workers', 'parent_company',
+            'processing_type_facility_type_raw',
+            'facility_type', 'processing_type',
+            'product_type', 'is_closed']
+        self.contrib_facility_base_row = [
+            self.contrib_facility.id,
+            self.date, 'Towel Factory 42',
+            '42 Dolphin St', 'US',
+            'United States', 0.0, 0.0,
+            'Apparel',
+            'test contributor 1 (First List)',
+            '', '', '', '', '', '', 'False']
 
         self.user_two = User.objects.create(email='test2@example.com')
         self.contributor_two = Contributor \
@@ -10483,9 +10491,9 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
                 field_name='facility_type',
                 value={'raw_values': ['biological recycling'],
                        'matched_values': [
-                        ['PROCESSING_TYPE', 'EXACT',
-                         'Raw Material Processing or Production',
-                         'Biological Recycling']]},
+                    ['PROCESSING_TYPE', 'EXACT',
+                     'Raw Material Processing or Production',
+                     'Biological Recycling']]},
                 contributor=self.contributor,
                 facility=self.facility,
                 facility_claim_id=claim_id,
@@ -10498,9 +10506,9 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
                 field_name='processing_type',
                 value={'raw_values': ['biological recycling'],
                        'matched_values': [
-                        ['PROCESSING_TYPE', 'EXACT',
-                         'Raw Material Processing or Production',
-                         'Biological Recycling']]},
+                    ['PROCESSING_TYPE', 'EXACT',
+                     'Raw Material Processing or Production',
+                     'Biological Recycling']]},
                 contributor=self.contributor,
                 facility=self.facility,
                 facility_claim_id=claim_id,
@@ -10592,7 +10600,8 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         base_row = self.get_rows(response)[0]
         expected_base_row = [self.facility.id, self.date, 'Name',
                              'Address', 'US', 'United States', 0.0, 0.0,
-                             'Apparel', 'test contributor 1 (First List)', '',
+                             'Apparel',
+                             'test contributor 1 (First List)', '',
                              '', '', '', '', '', 'False']
         self.assertEqual(len(base_row), len(expected_base_row))
         self.assertEqual(base_row, expected_base_row)
@@ -10638,31 +10647,31 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         params = 'q={}'.format(self.facility.id)
         response = self.get_facility_download(params)
         base_row = self.get_rows(response)[0]
-        expected_base_row = [self.facility.id, self.date, 'Name',
-                             'Address', 'US', 'United States', 0.0, 0.0,
-                             'Apparel', 'test contributor 1 (First List)',
-                             '100-5000', 'Contributor', 'biological recycling',
-                             'Raw Material Processing or Production',
-                             'Biological Recycling', 'Shirts', 'False']
-        self.assertEqual(len(base_row), len(expected_base_row))
-        self.assertEqual(base_row, expected_base_row)
+        row = [self.facility.id, self.date, 'Name',
+               'Address', 'US', 'United States', 0.0, 0.0,
+               'Apparel', 'test contributor 1 (First List)',
+               '100-5000', 'Contributor',
+               'biological recycling',
+               'Raw Material Processing or Production',
+               'Biological Recycling',
+               'Shirts', 'False']
+        self.assertEqual(len(base_row), len(row))
+        self.assertEqual(base_row, row)
 
     def test_claim_base_row(self):
         self.create_claim()
         params = 'q={}'.format(self.facility.id)
         response = self.get_facility_download(params)
         rows = self.get_rows(response)
-        claim_row = [self.facility.id, self.date, 'Claim Name',
-                     'Address', 'US', 'United States', 0.0, 0.0, 'Apparel',
-                     'test contributor 1 (Claimed)', '20',
-                     'Contributor', 'biological recycling',
-                     'Raw Material Processing or Production',
-                     'Biological Recycling', 'Shirts', 'False']
-        list_item_row = [self.facility.id, self.date, '', '', '', '', '', '',
-                         'Apparel', 'test contributor 1 (First List)', '', '',
-                         '', '', '', '', '']
-        self.assertEquals(rows[0], claim_row)
-        self.assertEquals(rows[1], list_item_row)
+        row = [
+            self.facility.id, self.date, 'Claim Name',
+            'Address', 'US', 'United States', 0.0, 0.0,
+            'Apparel',
+            'test contributor 1 (Claimed)|test contributor 1 (First List)',
+            '20', 'Contributor', 'biological recycling',
+            'Raw Material Processing or Production',
+            'Biological Recycling', 'Shirts', 'False']
+        self.assertEquals(rows[0], row)
 
     def test_handles_additional_list_items(self):
         self.create_additional_list_item()
@@ -10675,16 +10684,16 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
 
         rows = self.get_rows(response)
 
-        expected_base_row = self.contrib_facility_base_row
-        self.assertEqual(expected_base_row, rows[0])
-
-        expected_additional_row = [self.contrib_facility.id, self.date, '',
-                                   '', '', '', '', '', 'Apparel',
-                                   'test contributor 1 (API)', '0-100',
-                                   'Contributor A', 'biological recycling',
-                                   'Raw Material Processing or Production',
-                                   'Biological Recycling', 'a', '']
-        self.assertEqual(expected_additional_row, rows[1])
+        row = [
+            self.contrib_facility.id, self.date, 'Towel Factory 42',
+            '42 Dolphin St', 'US', 'United States', 0.0, 0.0,
+            'Apparel',
+            'test contributor 1 (First List)|test contributor 1 (API)',
+            '0-100', 'Contributor A', 'biological recycling',
+            'Raw Material Processing or Production',
+            'Biological Recycling', 'a', 'False']
+        print(rows[0])
+        self.assertEqual(row, rows[0])
 
     def test_embed_excludes_alt_contributors(self):
         list_item = self.create_additional_list_item()
@@ -10712,13 +10721,16 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         params = 'q={}'.format(self.contrib_facility.id)
         response = self.get_facility_download(params)
         rows = self.get_rows(response)
-        self.assertEquals(len(rows), 2)
 
-        expected_base_row = self.contrib_facility_base_row
-        self.assertEquals(rows[0], expected_base_row)
-
-        contributor = rows[1][self.contributor_column_index]
-        self.assertEquals(contributor, 'An Other (API)')
+        row = [
+            self.contrib_facility.id, self.date, 'Towel Factory 42',
+            '42 Dolphin St', 'US', 'United States', 0.0, 0.0,
+            'Apparel',
+            'test contributor 1 (First List)|An Other (API)',
+            '0-100', 'Contributor A', 'biological recycling',
+            'Raw Material Processing or Production',
+            'Biological Recycling', 'a', 'False']
+        self.assertEquals(rows[0], row)
 
     def test_private_source_is_anonymized(self):
         list_item = self.create_additional_list_item()
@@ -10728,13 +10740,15 @@ class FacilityDownloadTest(FacilityAPITestCaseBase):
         params = 'q={}'.format(self.contrib_facility.id)
         response = self.get_facility_download(params)
         rows = self.get_rows(response)
-        self.assertEquals(len(rows), 2)
 
-        expected_base_row = self.contrib_facility_base_row
-        self.assertEquals(rows[0], expected_base_row)
-
-        contributor = rows[1][self.contributor_column_index]
-        self.assertEquals(contributor, 'An Other (API)')
+        row = [self.contrib_facility.id, self.date, 'Towel Factory 42',
+               '42 Dolphin St', 'US', 'United States', 0.0, 0.0,
+               'Apparel',
+               'test contributor 1 (First List)|An Other (API)',
+               '0-100', 'Contributor A', 'biological recycling',
+               'Raw Material Processing or Production',
+               'Biological Recycling', 'a', 'False']
+        self.assertEquals(rows[0], row)
 
     def test_inactive_match_is_anonymized(self):
         self.match.is_active = False
