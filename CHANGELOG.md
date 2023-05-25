@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
--   Revert to previous download format [#2403](https://github.com/open-apparel-registry/open-apparel-registry/pull/2403)
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 ### Security
+
+## [80-OSHUB] 2023-05-25
+
+### Changed
+
+-   Revert to previous download format [#2403](https://github.com/open-apparel-registry/open-apparel-registry/pull/2403)
 
 ## [79-OSHUB] 2023-03-23
 
@@ -1406,7 +1410,8 @@ Directly connect health check to GazetteerCache and remove the use of threading 
 
 -   Initial release.
 
-[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/79-OSHUB...HEAD
+[unreleased]: https://github.com/open-apparel-registry/open-apparel-registry/compare/80-OSHUB...HEAD
+[80-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/80-OSHUB
 [79-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/79-OSHUB
 [78-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/78-OSHUB
 [77-oshub]: https://github.com/open-apparel-registry/open-apparel-registry/releases/tag/77-OSHUB
